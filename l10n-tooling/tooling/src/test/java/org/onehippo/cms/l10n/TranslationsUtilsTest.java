@@ -28,8 +28,8 @@ public class TranslationsUtilsTest {
 
     @Test
     public void testSourceBundleFileToTargetBundleFileMapping() {
-        String bundleFileName = mapSourceBundleFileToTargetBundleFile("dummy-repository-translations.json", BundleType.REPOSITORY, "nl");
-        assertEquals("dummy-repository-translations_nl.json", bundleFileName);
+        String bundleFileName = mapSourceBundleFileToTargetBundleFile("dummy-repository-translations.yaml", BundleType.REPOSITORY, "nl");
+        assertEquals("dummy-repository-translations_nl.yaml", bundleFileName);
     }
     
     @Test
@@ -38,7 +38,7 @@ public class TranslationsUtilsTest {
         assertEquals("angular/project/app/i18n/registry.json", registryFile);
         registryFile = mapResourceBundleToRegistryInfoFile(BundleType.WICKET, "org/example/TestPlugin.properties");
         assertEquals("org/example/TestPlugin.registry.json", registryFile);
-        registryFile = mapResourceBundleToRegistryInfoFile(BundleType.REPOSITORY, "example-translations_en.json");
+        registryFile = mapResourceBundleToRegistryInfoFile(BundleType.REPOSITORY, "example-translations_en.yaml");
         assertEquals("example-translations.registry.json", registryFile);
     }
 
@@ -49,7 +49,7 @@ public class TranslationsUtilsTest {
         bundleFileName = mapRegistryFileToResourceBundleFile("com/onehippo/cms7/localizer/test/DummyWicketPlugin.registry.json", BundleType.WICKET, "nl");
         assertEquals("com/onehippo/cms7/localizer/test/DummyWicketPlugin_nl.properties", bundleFileName);
         bundleFileName = mapRegistryFileToResourceBundleFile("dummy-repository-translations.registry.json", BundleType.REPOSITORY, "nl");
-        assertEquals("dummy-repository-translations_nl.json", bundleFileName);
+        assertEquals("dummy-repository-translations_nl.yaml", bundleFileName);
     }
     
 }

@@ -27,7 +27,7 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
     
     @Override
     protected RepositoryResourceBundle createResourceBundle() {
-        final String fileName = "dummy-repository-translations_nl.json";
+        final String fileName = "dummy-repository-translations_nl.yaml";
         return new RepositoryResourceBundle("foo", fileName, new File(temporaryFolder.getRoot(), fileName));
     }
     
@@ -39,10 +39,6 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
         resourceBundle.save();
         resourceBundle.load();
         assertEquals(resourceBundle.getEntries().get("key"), "value");
-        final File extensionFile = resourceBundle.getExtensionFile();
-        assertTrue(extensionFile.exists());
-        final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
-        assertTrue(extension.containsResourceBundle(resourceBundle));
     }
     
     @Test
@@ -65,14 +61,6 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
         assertBundlesAndExtensionExist: {
             assertTrue(bundle1.exists());
             assertTrue(bundle2.exists());
-            extensionFile = bundle1.getExtensionFile();
-            assertTrue(extensionFile.exists());
-            assertEquals(extensionFile, bundle2.getExtensionFile());
-            final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
-            assertTrue(extension.containsResourceBundle(bundle1));
-            assertTrue(extension.containsResourceBundle(bundle2));
-//        System.out.println(FileUtils.readFileToString(extensionFile));
-//        System.out.println(FileUtils.readFileToString(new File(temporaryFolder.getRoot(), bundle1.getFileName())));
         }
 
         bundle2.delete();
@@ -80,11 +68,6 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
         assertOneBundleAndExtensionExist: {
             assertTrue(bundle1.exists());
             assertFalse(bundle2.exists());
-            assertTrue(extensionFile.exists());
-            final RepositoryExtension extension = RepositoryExtension.load(extensionFile);
-            assertTrue(extension.containsResourceBundle(bundle1));
-//        System.out.println(FileUtils.readFileToString(extensionFile));
-//        System.out.println(FileUtils.readFileToString(new File(temporaryFolder.getRoot(), bundle1.getFileName())));
         }
         
         bundle1.delete();
@@ -92,7 +75,6 @@ public class RepositoryResourceBundleTest extends ResourceBundleTest {
         assertNoBundlesAndNoExtensionExist: {
             assertFalse(bundle1.exists());
             assertFalse(new File(temporaryFolder.getRoot(), bundle1.getFileName()).exists());
-            assertFalse(extensionFile.exists());
         }
     }
     

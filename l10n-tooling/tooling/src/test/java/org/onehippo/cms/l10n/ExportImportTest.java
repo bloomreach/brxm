@@ -59,7 +59,7 @@ public abstract class ExportImportTest {
         resourceBundle.getEntries().put("key", String.valueOf(System.currentTimeMillis()));
         resourceBundle.save();
 
-        resourceBundle = registrar.getRegistry().getResourceBundle("bundle", "dummy-repository-translations_en.json", BundleType.REPOSITORY);
+        resourceBundle = registrar.getRegistry().getResourceBundle("bundle", "dummy-repository-translations_en.yaml", BundleType.REPOSITORY);
         resourceBundle.getEntries().put("key", String.valueOf(System.currentTimeMillis()));
         resourceBundle.save();
     }
@@ -77,7 +77,6 @@ public abstract class ExportImportTest {
     abstract ImportFileReader getImportFileReader();
 
     @Test
-    @Ignore
     public void testExporter() throws Exception {
         final File export = getExporter(temporaryFolder.getRoot()).export("nl");
         final List<String[]> records = getImportFileReader().read(export);
@@ -118,7 +117,6 @@ public abstract class ExportImportTest {
     }
 
     @Test
-    @Ignore
     public void testImporter() throws Exception {
         final RegistryInfo angularRegistryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
         final RegistryInfo repositoryRegistryInfo = registrar.getRegistry().getRegistryInfo("dummy-repository-translations.registry.json");

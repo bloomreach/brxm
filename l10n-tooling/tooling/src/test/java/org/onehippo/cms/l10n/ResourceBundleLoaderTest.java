@@ -23,12 +23,13 @@ import java.util.Collection;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import static org.junit.Assert.assertEquals;
 
 public class ResourceBundleLoaderTest {
 
     @Test
-    @Ignore
     public void testGetHippoArtifactsOnClasspath() throws Exception {
         final Collection<ArtifactInfo> infos = new ArrayList<>();
         new ResourceBundleLoader(Arrays.asList("en"), getClass().getClassLoader()) {
@@ -37,8 +38,8 @@ public class ResourceBundleLoaderTest {
                 infos.add(artifactInfo);
             }
         }.loadBundles();
-        assertEquals(1, infos.size());
-        ArtifactInfo dummyInfo = infos.iterator().next();
+
+        ArtifactInfo dummyInfo = Lists.newArrayList(infos).get(infos.size() - 1);
         assertEquals("hippo-cms-l10n-tooling-test-dummy", dummyInfo.getArtifactId());
         assertEquals("org.onehippo.cms.l10n", dummyInfo.getGroupId());
         assertEquals(8, dummyInfo.getEntries().size());

@@ -19,10 +19,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RepositoryResourceBundleLoaderTest {
 
@@ -31,16 +33,19 @@ public class RepositoryResourceBundleLoaderTest {
         final Collection<ResourceBundle> bundles = new RepositoryResourceBundleLoader(
                 Arrays.asList("en"), getClass().getClassLoader()).loadBundles();
         assertEquals(2, bundles.size());
-        final Iterator<ResourceBundle> bundleIterator = bundles.iterator();
-        ResourceBundle bundle = bundleIterator.next();
-        assertEquals("bundle", bundle.getName());
-        assertEquals(1, bundle.getEntries().size());
-        Map.Entry<String, String> entry = bundle.getEntries().entrySet().iterator().next();
+
+        Optional<ResourceBundle> bundle = bundles.stream().filter(b -> "bundle".equals(b.getName())).findFirst();
+        assertTrue(bundle.isPresent());
+        assertEquals("bundle", bundle.get().getName());
+        assertEquals(1, bundle.get().getEntries().size());
+        Map.Entry<String, String> entry = bundle.get().getEntries().entrySet().iterator().next();
         assertEquals("key", entry.getKey());
         assertEquals("value", entry.getValue());
-        assertEquals("en", bundle.getLocale());
-        bundle = bundleIterator.next();
-        assertEquals("anotherBundle", bundle.getName());
+        assertEquals("en", bundle.get().getLocale());
+
+        Optional<ResourceBundle> anotherBundle = bundles.stream().filter(b -> "anotherBundle".equals(b.getName())).findFirst();
+        assertTrue(anotherBundle.isPresent());
+        assertEquals("anotherBundle", anotherBundle.get().getName());
     }
 
 }

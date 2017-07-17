@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/bundle:
+      /en:
+        key: value
+      /nl:
+        key: waarde
+      /fr:
+        key: valeur
+    /hippo:configuration/hippo:translations/anotherBundle:
+      /en:
+        key: value
+      /nl:
+        key: waarde

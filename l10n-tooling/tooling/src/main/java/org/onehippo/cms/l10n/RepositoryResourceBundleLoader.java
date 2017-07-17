@@ -15,144 +15,116 @@
  */
 package org.onehippo.cms.l10n;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.stream.Stream;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.model.PathConfigurationReader;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import net.sf.json.JSONObject;
+import static org.onehippo.cms.l10n.RepositoryResourceBundle.HIPPO_CONFIGURATION_HIPPO_TRANSLATIONS;
+import static org.onehippo.cms.l10n.RepositoryResourceBundle.JCR_PRIMARY_TYPE;
 
 class RepositoryResourceBundleLoader extends ResourceBundleLoader {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryResourceBundleLoader.class);
+    public static final String YAML_EXT = ".yaml";
+    public static final String HCM_MODULE_YAML = "hcm-module" + YAML_EXT;
 
     RepositoryResourceBundleLoader(final Collection<String> locales, final ClassLoader classLoader) {
         super(locales, classLoader);
     }
-    
+
     @Override
     protected void collectResourceBundles(final ArtifactInfo artifactInfo, final Collection<ResourceBundle> bundles) throws IOException {
+        // for all jars with hcm-module.yaml files ...
         try {
-            // for all jars with hippoecm-extension.xml files ...
-            final ZipFile zipFile = new ZipFile(artifactInfo.getJarFile());
-            final ZipEntry extension = zipFile.getEntry("hippoecm-extension.xml");
-            if (extension != null) {
-                // ... gather all the hippo:resourcebundle initialize items ...
-                ExtensionParser extensionParser = new ExtensionParser();
-                try (InputStream extensionStream = zipFile.getInputStream(extension)) {
-                    extensionParser.parse(extensionStream);
-                }
-                for (String resourceBundlesFile : extensionParser.resourceBundles) {
-                    final ZipEntry bundleEntry = zipFile.getEntry(resourceBundlesFile);
-                    if (bundleEntry != null) {
-                        // ... such hippo:resourcebundle files contain multiple resource bundles ... collect them
-                        try (InputStream inputStream = zipFile.getInputStream(bundleEntry)) {
-                            final String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                            final JSONObject jsonObject = JSONObject.fromObject(json);
-                            // ... the resource bundle representations need to contain enough information
-                            // to assemble a new hippo:resourcebundle file for a different language later
-                            // ... this information is encoded in the key
-                            collectResourceBundles(jsonObject, resourceBundlesFile, locales, new Path(), bundles);
-                        }
-                    } else {
-                        log.warn("Extension file contains invalid resourcebundle: '{}' not found in jar", resourceBundlesFile);
-                    }
+            final File jarFile = artifactInfo.getJarFile();
+            try (final FileSystem fileSystem = createZipFileSystem(jarFile.toPath().toString())) {
+                java.nio.file.Path descriptor = fileSystem.getPath(HCM_MODULE_YAML);
+
+                if (Files.exists(descriptor)) {
+                    final PathConfigurationReader configurationReader = new PathConfigurationReader();
+                    final ModuleImpl module = configurationReader.read(fileSystem.getPath(HCM_MODULE_YAML)).getModuleContext().getModule();
+
+                    final Stream<DefinitionNodeImpl> configDefinitionStream = module.getConfigSources().stream()
+                            .flatMap(s -> s.getDefinitions().stream())
+                            .filter(d -> d instanceof ConfigDefinitionImpl)
+                            .map(d -> ((ConfigDefinitionImpl) d).getNode())
+                            .filter(d -> d.getPath().startsWith(HIPPO_CONFIGURATION_HIPPO_TRANSLATIONS));
+                    configDefinitionStream.forEach(definitionNode ->
+                            collectResourceBundles(definitionNode, definitionNode.getDefinition().getSource().getPath(), locales, bundles));
                 }
             }
-        } catch (URISyntaxException e) {
+
+        } catch (URISyntaxException | ParserException e) {
             throw new IOException(e);
         }
     }
 
-    static void collectResourceBundles(final JSONObject jsonObject, final String fileName, final Collection<String> locales, final Path path, final Collection<ResourceBundle> bundles) {
+    private static FileSystem createZipFileSystem(final String zipFilename) throws IOException {
+        final java.nio.file.Path path = Paths.get(zipFilename);
+        final URI uri = URI.create("jar:file:" + path.toUri().getPath());
+        final Map<String, String> env = new HashMap<>();
+        return FileSystems.newFileSystem(uri, env);
+    }
+
+    static void collectResourceBundles(final DefinitionNodeImpl node, final String fileName, final Collection<String> locales, final Collection<ResourceBundle> bundles) {
+
+        Path path = new Path();
+        String bundlePath = node.getPath().replace(HIPPO_CONFIGURATION_HIPPO_TRANSLATIONS, "");
+        if (bundlePath.startsWith("/")) {
+            bundlePath = bundlePath.substring(1);
+        }
+
+        final String[] chunks = bundlePath.split("/");
+        for (String chunk : chunks) {
+            path.push(chunk);
+        }
+
+        collectResourceBundles(node, fileName, locales, path, bundles);
+    }
+
+    private static void collectResourceBundles(final DefinitionNodeImpl node, final String fileName, final Collection<String> locales, final Path path, final Collection<ResourceBundle> bundles) {
+
         final Map<String, String> entries = new HashMap<>();
-        for (Object key : jsonObject.keySet()) {
-            Object value = jsonObject.get(key);
-            if (value instanceof JSONObject) {
-                path.push(key.toString());
-                collectResourceBundles((JSONObject) value, fileName, locales, path, bundles);
+
+        if (node.getNodes().size() > 0) {
+            for (Map.Entry<String, DefinitionNodeImpl> nodeEntry : node.getNodes().entrySet()) {
+                path.push(nodeEntry.getKey());
+                collectResourceBundles(nodeEntry.getValue(), fileName, locales, path, bundles);
                 path.pop();
-            } else if (value instanceof String) {
-                entries.put(key.toString(), value.toString());
             }
         }
+
+        if (node.getProperties().size() > 0) {
+            for (Map.Entry<String, DefinitionPropertyImpl> propertyEntry : node.getProperties().entrySet()) {
+                if (!propertyEntry.getKey().equals(JCR_PRIMARY_TYPE)) {
+                    entries.put(propertyEntry.getKey(), propertyEntry.getValue().getValue().getString());
+                }
+            }
+        }
+
         if (!entries.isEmpty() && locales.contains(path.toLocale())) {
             bundles.add(new RepositoryResourceBundle(path.toBundleName(), fileName, path.toLocale(), entries));
         }
-    }
-    
-    /**
-     * Collects all hippo:resourcebundle entries from a hippoecm-extension.xml file
-     */
-    static class ExtensionParser extends DefaultHandler {
-
-        private final Collection<String> resourceBundles = new ArrayList<>();
-        private boolean resourceBundlesProperty = false;
-        private boolean resourceBundlesValueProperty = false;
-
-        @Override
-        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            if (qName.equals("sv:property") && attributes.getValue("sv:name").equals("hippo:resourcebundles")) {
-                resourceBundlesProperty = true;
-            } else if (resourceBundlesProperty && qName.equals("sv:value")) {
-                resourceBundlesValueProperty = true;
-            }
-        }
-
-        @Override
-        public void characters(final char[] ch, final int start, final int length) throws SAXException {
-            if (resourceBundlesValueProperty) {
-                resourceBundles.add(String.valueOf(ch, start, length));
-            }
-        }
-
-        @Override
-        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-            if (resourceBundlesProperty && qName.equals("sv:property")) {
-                resourceBundlesProperty = false;
-            } else if (resourceBundlesValueProperty && qName.equals("sv:value")) {
-                resourceBundlesValueProperty = false;
-            }
-        }
-
-        Collection<String> parse(final InputStream in) throws IOException {
-            try {
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-                SAXParser parser = factory.newSAXParser();
-                parser.parse(new InputSource(in), this);
-            } catch (FactoryConfigurationError e) {
-                throw new IOException("SAX parser implementation not available", e);
-            } catch (ParserConfigurationException e) {
-                throw new IOException("SAX parser configuration error", e);
-            } catch (SAXException e) {
-                throw new IOException("SAX parsing error", e);
-            }
-            return resourceBundles;
-        }
-
     }
 
     /**
@@ -176,7 +148,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
         private String peek() {
             return elements.peek();
         }
-        
+
         String toBundleName() {
             final StringBuilder sb = new StringBuilder();
             final Iterator<String> iterator = elements.iterator();
@@ -191,7 +163,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
             }
             return sb.toString();
         }
-        
+
         String toLocale() {
             return peek();
         }

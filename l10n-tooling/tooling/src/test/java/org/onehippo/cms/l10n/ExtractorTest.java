@@ -40,12 +40,9 @@ public class ExtractorTest {
         assertFileExists("org/onehippo/cms/l10n/test/DummyWicketPlugin.properties");
         assertFileExists("org/onehippo/cms/l10n/test/DummyWicketPlugin_nl.properties");
         assertFileExists("org/onehippo/cms/l10n/test/DummyWicketPlugin_fr.properties");
-        assertFileExists("dummy-repository-translations_en.json");
-        assertFileExists("dummy-repository-translations_nl.json");
-        assertFileExists("dummy-repository-translations_fr.json");
-        assertFileExists("extensions/nl/hippoecm-extension.xml");
-        assertFileExists("extensions/fr/hippoecm-extension.xml");
-        assertFileNotExists("extensions/en/hippoecm-extension.xml");
+        assertFileExists("dummy-repository-translations_en.yaml");
+        assertFileExists("dummy-repository-translations_nl.yaml");
+        assertFileExists("dummy-repository-translations_fr.yaml");
     }
 
     private void assertFileExists(final String fileName) {

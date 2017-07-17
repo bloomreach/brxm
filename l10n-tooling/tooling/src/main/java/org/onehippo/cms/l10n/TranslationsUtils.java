@@ -32,13 +32,14 @@ import static org.onehippo.cms.l10n.BundleType.WICKET;
 public final class TranslationsUtils {
 
     static final String REGISTRY_FILE_SUFFIX = "registry.json";
+    private static final String REPOSITORY_RESOURCE_BUNDLE_EXT = ".yaml";
 
     private TranslationsUtils() {}
     
     public static String mapSourceBundleFileToTargetBundleFile(String sourceBundleFileName, BundleType bundleType, String locale) {
         switch (bundleType) {
             case REPOSITORY: {
-                return substringBefore(sourceBundleFileName, ".json") + "_" + locale + ".json";
+                return substringBefore(sourceBundleFileName, REPOSITORY_RESOURCE_BUNDLE_EXT) + "_" + locale + REPOSITORY_RESOURCE_BUNDLE_EXT;
             }
             case WICKET: {
                 return sourceBundleFileName;
@@ -72,7 +73,7 @@ public final class TranslationsUtils {
                 
             }
             case REPOSITORY: {
-                return substringBefore(registryFileName, "." + REGISTRY_FILE_SUFFIX) + "_" + locale + ".json";
+                return substringBefore(registryFileName, "." + REGISTRY_FILE_SUFFIX) + "_" + locale + REPOSITORY_RESOURCE_BUNDLE_EXT;
             }
             case WICKET: {
                 final String baseName = substringBefore(registryFileName, "." + REGISTRY_FILE_SUFFIX);
@@ -92,7 +93,7 @@ public final class TranslationsUtils {
                 return substringBeforeLast(bundleFileName, "/")
                         + "/" + REGISTRY_FILE_SUFFIX;
             case REPOSITORY: {
-                String baseName = substringBefore(bundleFileName, ".json");
+                String baseName = substringBefore(bundleFileName, REPOSITORY_RESOURCE_BUNDLE_EXT);
                 String locale = substringAfterLast(baseName, "_");
                 try {
                     // check if postfixed with locale string
@@ -125,7 +126,7 @@ public final class TranslationsUtils {
         BundleType bundleType;
         if (resourceBundleFile.endsWith("/en.json")) {
             bundleType = ANGULAR;
-        } else if (resourceBundleFile.endsWith(".json")) {
+        } else if (resourceBundleFile.endsWith(REPOSITORY_RESOURCE_BUNDLE_EXT)) {
             bundleType = REPOSITORY;
         } else if (resourceBundleFile.endsWith(".properties")) {
             bundleType = WICKET;
@@ -141,7 +142,7 @@ public final class TranslationsUtils {
                 return substringBefore(substringAfterLast(bundleFileName, "/"), ".json");
             }
             case REPOSITORY: {
-                final String locale = substringBefore(substringAfterLast(bundleFileName, "_"), ".json");
+                final String locale = substringBefore(substringAfterLast(bundleFileName, "_"), REPOSITORY_RESOURCE_BUNDLE_EXT);
                 try {
                     LocaleUtils.toLocale(locale);
                     return locale;

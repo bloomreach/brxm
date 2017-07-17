@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class MoverTest {
     @Test
     public void testMoveKey() throws IOException {
         final Mover mover = new Mover(temporaryFolder.getRoot(), "module", registrarLocales);
-        mover.moveKey("dummy-repository-translations.json", "bundle/key", "bundle/movedKey");
+        mover.moveKey("dummy-repository-translations.yaml", "bundle/key", "bundle/movedKey");
         final RegistryInfo registryInfo = registry.getRegistryInfo("dummy-repository-translations.registry.json");
         assertNull(registryInfo.getKeyData("bundle/key"));
         assertNotNull(registryInfo.getKeyData("bundle/movedKey"));
@@ -64,20 +63,13 @@ public class MoverTest {
             resourceBundle.setModuleName("module");
             assertEquals(1, resourceBundle.getEntries().size());
             assertTrue(resourceBundle.getEntries().containsKey("movedKey"));
-            if (!locale.equals("en")) {
-                final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
-                assertTrue(extension.containsResourceBundle(resourceBundle));
-                assertEquals(1, extension.getSize());
-            } else {
-                assertFalse(resourceBundle.getExtensionFile().exists());
-            }
         }
     }
     
     @Test
     public void testMoveBundle() throws IOException {
         final Mover mover = new Mover(temporaryFolder.getRoot(), "module", registrarLocales);
-        mover.moveBundle("dummy-repository-translations.json", "dummy-repository-translations-moved.json");
+        mover.moveBundle("dummy-repository-translations.yaml", "dummy-repository-translations-moved.yaml");
         RegistryInfo registryInfo = registry.getRegistryInfo("dummy-repository-translations.registry.json");
         assertFalse(registryInfo.exists());
         registryInfo = registry.getRegistryInfo("dummy-repository-translations-moved.registry.json");
@@ -86,11 +78,6 @@ public class MoverTest {
             final RepositoryResourceBundle resourceBundle = (RepositoryResourceBundle) registry.getResourceBundle("bundle", locale, registryInfo);
             resourceBundle.setModuleName("module");
             assertTrue(resourceBundle.exists());
-            if (!locale.equals("en")) {
-                final RepositoryExtension extension = RepositoryExtension.load(resourceBundle.getExtensionFile());
-                assertTrue(extension.containsResourceBundle(resourceBundle));
-                assertEquals(1, extension.getSize());
-            }
         }
     }
     
