@@ -23,15 +23,15 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.CircularDependencyException;
-import org.onehippo.cm.model.DuplicateNameException;
-import org.onehippo.cm.model.MissingDependencyException;
 import org.onehippo.cm.model.OrderableByName;
+import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
+import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
+import org.onehippo.cm.model.impl.exceptions.MissingDependencyException;
 
 /**
  * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link OrderableByName}s.
  * <p>
- * After sorting the provided list will be cleared and filled again with the sorted result!
+ * After sorting, the provided list will be cleared and filled again with the sorted result!
  * </p>
  * <p>
  * To guarantee a stable ordered result, independent of the ordering of the {@code OrderableByName}s in the list
@@ -44,7 +44,7 @@ import org.onehippo.cm.model.OrderableByName;
  * {@link DuplicateNameException}, {@link CircularDependencyException} or {@link MissingDependencyException}
  * respectively when encountered.
  * </p>
- * <p>The {@link #OrderableByNameListSorter(String)} constructor requires a {@code orderableTypeName} parameter which
+ * <p>The {@link #OrderableByNameListSorter(Class)} constructor requires a {@code orderableType} parameter which
  * will be used for constructing the above mentioned exceptions error message.</p>
  * <p>
  * Usage:
@@ -60,27 +60,29 @@ import org.onehippo.cm.model.OrderableByName;
  * Implementation based on <a href="https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search">
  *     https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search</a>
  * </p>
+ * @param <T> all objects sorted here are expected to be compatible with this type, and furthermore, {@link #sort(List)}
+ *            is defined to operate on a List of uniform type, which may be any subtype of T
  */
 public class OrderableByNameListSorter<T extends OrderableByName> {
 
     private final String orderableTypeName;
 
-    public OrderableByNameListSorter(final String orderableTypeName) {
-        this.orderableTypeName = orderableTypeName;
+    public OrderableByNameListSorter(final Class<T> orderableType) {
+        this.orderableTypeName = orderableType.getSimpleName();
     }
 
-    public void sort(final List<T> orderables)
+    public <U extends T> void sort(final List<U> orderables)
             throws DuplicateNameException, CircularDependencyException, MissingDependencyException {
         // using TreeMap ensures the orderables are processed in alphabetically sorted order
-        final Map<String, T> map = new TreeMap<>();
-        for (T o : orderables) {
+        final Map<String, U> map = new TreeMap<>();
+        for (U o : orderables) {
             if (map.put(o.getName(), o) != null) {
                 throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o.getName()));
             }
         }
-        final LinkedHashMap<String, T> sorted = new LinkedHashMap<>(orderables.size());
+        final LinkedHashMap<String, U> sorted = new LinkedHashMap<>(orderables.size());
         final List<String> dependencyChain = new ArrayList<>(sorted.size());
-        for (T orderable : map.values()) {
+        for (U orderable : map.values()) {
             sortDepthFirst(orderable, dependencyChain, sorted, map);
         }
 
@@ -88,8 +90,8 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
         orderables.addAll(sorted.values());
     }
 
-    private void sortDepthFirst(final T orderable, final List<String> dependencyChain,
-                                final LinkedHashMap<String, T> sorted, final Map<String, T> map)
+    private <U extends T> void sortDepthFirst(final U orderable, final List<String> dependencyChain,
+                                final LinkedHashMap<String, U> sorted, final Map<String, U> map)
             throws CircularDependencyException, MissingDependencyException {
         if (dependencyChain.contains(orderable.getName())) {
             dependencyChain.add(orderable.getName());

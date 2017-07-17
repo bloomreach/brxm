@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.onehippo.cm.model.impl.SourceLocationImpl;
+import org.onehippo.cm.model.impl.tree.SourceLocationImpl;
 
 public class EsvProperty {
 

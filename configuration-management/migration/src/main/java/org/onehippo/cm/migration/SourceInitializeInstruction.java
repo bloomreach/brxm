@@ -30,17 +30,17 @@ import javax.jcr.PropertyType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.PropertyOperation;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.ContentSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.PropertyOperation;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
@@ -337,12 +337,12 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 prop = null;
             } else {
                 if (property.isMergeSkip()) {
-                    log.warn("Skipping property " + prop.getPath() + " which already is defined at " + prop.getSourceLocation());
+                    log.warn("Skipping property " + prop.getJcrPath() + " which already is defined at " + prop.getSourceLocation());
                     return;
                 }
                 if (property.isMergeAppend()) {
                     if (prop.getValueType().ordinal() != property.getType()) {
-                        throw new EsvParseException("Invalid esv:merge=\"append\" for property " + prop.getPath() + " with different type " +
+                        throw new EsvParseException("Invalid esv:merge=\"append\" for property " + prop.getJcrPath() + " with different type " +
                                 ValueType.fromJcrType(property.getType()).name() + " at " + property.getSourceLocation() +
                                 " (from " + prop.getValueType().toString() + " at " + prop.getSourceLocation() + ")");
                     }
@@ -353,7 +353,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     String oldType = prop.getValue().getString();
                     if (!oldType.equals(newType)) {
                         if (!node.isDeltaOverlay()) {
-                            throw new EsvParseException("Redefining node " + defNode.getPath() + " type to " + newType + " at " +
+                            throw new EsvParseException("Redefining node " + defNode.getJcrPath() + " type to " + newType + " at " +
                                     property.getSourceLocation() + " (from " + oldType + " at " + prop.getSourceLocation() +
                                     ") not allowed: requires esv:merge=\"overlay\").");
                         } else {
@@ -368,7 +368,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     Set<String> newMixins = property.getValues().stream().map(EsvValue::getString).collect(Collectors.toSet());
                     if (!oldMixins.equals(newMixins)) {
                         if (!node.isDeltaOverlay()) {
-                            throw new EsvParseException("Redefining node " + defNode.getPath() + " mixins to " + newMixins +
+                            throw new EsvParseException("Redefining node " + defNode.getJcrPath() + " mixins to " + newMixins +
                                     " at " + property.getSourceLocation() + " (from " + oldMixins + " at " + prop.getSourceLocation() +
                                     ") not allowed: requires esv:merge=\"overlay\").");
                         } else {

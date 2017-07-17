@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.onehippo.cm.model.impl.SourceLocationImpl;
+import org.onehippo.cm.model.impl.tree.SourceLocationImpl;
 import org.xml.sax.SAXException;
 
 public class EsvNode {

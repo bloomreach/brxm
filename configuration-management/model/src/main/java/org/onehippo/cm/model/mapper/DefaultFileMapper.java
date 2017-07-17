@@ -15,8 +15,8 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.Value;
 
 /**
  * Default (fallback) file mapper. Uses property name as filename
@@ -26,8 +26,7 @@ public class DefaultFileMapper extends AbstractFileMapper {
     @Override
     public String apply(Value value) {
         final DefinitionProperty property = value.getParent();
-        final String propertyPath = property.getPath();
-        final String filePath = constructFilePathFromJcrPath(propertyPath);
+        final String filePath = constructFilePathFromJcrPath(property.getPath());
         return String.format("%s.%s", filePath, getFileExtension(property.getParent()));
     }
 }

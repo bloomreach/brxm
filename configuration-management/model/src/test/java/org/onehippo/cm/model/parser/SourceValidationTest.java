@@ -1072,18 +1072,6 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void snsNotAllowedInRootPath() {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /path/to[1]/node:\n"
-                + "      property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-
-        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain name indices");
-    }
-
-    @Test
     public void metaCategoryMustBeScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
@@ -1232,6 +1220,21 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         assertParserException(root, snsNodeValue,
                 "'.meta:residual-child-node-category' cannot be configured for explicitly indexed same-name siblings");
+    }
+
+    @Test
+    public void snsIndex0NotAllowed() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to:\n"
+                + "      /node[0]:\n"
+                + "        property: value\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node pathToMap = firstConfigTuple(root).getValueNode();
+        final Node snsNodeValue = firstTuple(pathToMap).getValueNode();
+
+        assertParserException(root, snsNodeValue, "JCR node index cannot be less than 1");
     }
 
     // start set for "explicit sequencing"

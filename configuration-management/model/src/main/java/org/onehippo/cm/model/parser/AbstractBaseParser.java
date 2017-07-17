@@ -29,10 +29,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.util.SnsUtils;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -157,6 +156,7 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
+    // TODO: convert to use NodePath API
     protected String asPathScalar(final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
         final String path = asStringScalar(node);
 
@@ -185,8 +185,8 @@ public abstract class AbstractBaseParser {
 
         for (String segment: pathSegments) {
             try {
-                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(segment);
-                if (!allowSnsIndices && parsedName.getRight() != 0) {
+                final JcrPathSegment parsedName = JcrPathSegment.get(segment);
+                if (!allowSnsIndices && parsedName.getIndex() != 0) {
                     throw new ParserException("Path must not contain name indices", node);
                 }
             } catch (IllegalArgumentException e) {

@@ -17,13 +17,22 @@ package org.onehippo.cm.model;
 
 import java.util.Set;
 
+/**
+ * Implementors of this class provide an explicit partial-ordering of their instances by specifying a name for
+ * themselves and a list of names of other items which must proceed them. This can then be used to produce a
+ * topological sorting of instances. It is expected that only "compatible" instances may be sorted together in this
+ * way, as defined by type compatibility with a specific implementation of this interface.
+ */
 public interface OrderableByName {
 
+    /**
+     * @return the name of this instance, which can be used by other instances in their {@link #getAfter()}
+     */
     String getName();
 
     /**
      * @return The <strong>ordered</strong> immutable set of {@link String}s after which
-     * this {@link OrderableByName} instance should be loaded.
+     * this {@link OrderableByName} instance should be sorted.
      */
     Set<String> getAfter();
 }

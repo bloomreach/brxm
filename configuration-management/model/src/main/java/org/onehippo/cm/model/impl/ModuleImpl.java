@@ -44,19 +44,33 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.NamespaceDefinition;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.javafx.sg.prism.NodePath;
 
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
@@ -327,10 +341,16 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         removedContentResources.add(resourcePath);
     }
 
+    /**
+     * @return a set of config resource paths that should be removed when serializing this module
+     */
     public Set<String> getRemovedConfigResources() {
         return removedConfigResources;
     }
 
+    /**
+     * @return a set of content resource paths that should be removed when serializing this module
+     */
     public Set<String> getRemovedContentResources() {
         return removedContentResources;
     }
@@ -417,7 +437,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
             // add the first definition path to manifest
-            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getPath());
+            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getJcrPath().toString());
         }
 
         // for each config source
@@ -596,7 +616,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     /**
      * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
      * descriptor for a set of modules.
-     * TODO remove when demo project is restructured to get rid of aggregated module structure
      * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
      */
     public String compileDummyDescriptor() {
@@ -629,12 +648,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
     private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
         public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
-            final String rootPath1 = def1.getNode().getPath();
-            final String rootPath2 = def2.getNode().getPath();
+            final JcrPath rootPath1 = def1.getNode().getJcrPath();
+            final JcrPath rootPath2 = def2.getNode().getJcrPath();
 
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
                 final String msg = String.format(
-                        "Duplicate content root paths '%s' in module '%s' in source files '%s' and '%s'.",
+                        "Duplicate definition root paths '%s' in module '%s' in source files '%s' and '%s'.",
                         rootPath1, getName(), def1.getOrigin(), def2.getOrigin());
                 throw new IllegalStateException(msg);
             }

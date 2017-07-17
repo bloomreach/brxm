@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -38,7 +42,7 @@ public class ConfigurationModelImplTest {
         assertEquals(0, model.getNamespaceDefinitions().size());
 
         final ConfigurationNodeImpl root = model.getConfigurationRootNode();
-        assertEquals("/", root.getPath());
+        assertEquals("/", root.getJcrPath().toString());
         assertEquals("", root.getName());
         assertNull(root.getParent());
         assertEquals(0, root.getNodes().size());
@@ -320,7 +324,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(5, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
     }
 
@@ -345,7 +349,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
     }
 
@@ -365,8 +369,39 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
+    }
+
+    @Test
+    public void sort_definitions_with_sns() throws Exception {
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter-sns.yaml", m1);
+
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
+
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
+
+        assertEquals(11, definitions.size());
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
+        assertEquals("[/a, /a/sns, /a/sns[2], /a/sns[3], /a/sns[4], /a/sns[5], /a/sns[6], /a/sns[7], /a/sns[8], /a/sns[9], /a/sns[10]]", roots);
+    }
+
+    @Test
+    public void reject_duplicate_sns_definition() throws Exception {
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter-sns-dup.yaml", m1);
+
+        try {
+            new ConfigurationModelImpl().addGroup(c1).build();
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]' and 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
+        }
     }
 
     @Test
@@ -388,7 +423,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate content root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
         }
     }
 

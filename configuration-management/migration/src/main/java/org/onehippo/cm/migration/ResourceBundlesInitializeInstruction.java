@@ -26,11 +26,11 @@ import java.util.Stack;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.json.JSONObject;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.ValueType;
 
 public class ResourceBundlesInitializeInstruction extends InitializeInstruction {
 
@@ -76,7 +76,7 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                 if (isTranslationMode()) {
                     Optional<ConfigDefinitionImpl> first = source.getDefinitions().stream()
                             .filter(d -> ((ConfigDefinitionImpl)d).getNode() != null)
-                            .map(d -> (ConfigDefinitionImpl)d).filter(d -> bundlePath.equals(d.getNode().getPath())).findFirst();
+                            .map(d -> (ConfigDefinitionImpl)d).filter(d -> bundlePath.equals(d.getNode().getJcrPath())).findFirst();
                     def = first.orElseGet(source::addConfigDefinition);
                 } else {
                     def = source.addConfigDefinition();

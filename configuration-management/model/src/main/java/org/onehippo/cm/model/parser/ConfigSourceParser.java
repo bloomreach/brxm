@@ -20,19 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionType;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.definition.Definition;
+import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
-import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.util.SnsUtils;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ValueType;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
@@ -103,7 +102,7 @@ public class ConfigSourceParser extends SourceParser {
     private void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);
+            final String key = asPathScalar(nodeTuple.getKeyNode(), true, true);
             constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }
@@ -123,7 +122,7 @@ public class ConfigSourceParser extends SourceParser {
                 final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
             } else if (key.equals(META_CATEGORY_KEY)) {
-                if (definitionNode.getPath().equals("/")) {
+                if (definitionNode.getJcrPath().equals("/")) {
                     throw new ParserException("Overriding '" + META_CATEGORY_KEY + "' on the root node is not supported", node);
                 }
                 final ConfigurationItemCategory category = constructCategory(tupleValue);
@@ -131,15 +130,15 @@ public class ConfigSourceParser extends SourceParser {
                     throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category
                             + "' cannot contain other keys", node);
                 }
-                final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(definitionNode.getName());
-                if (nameAndIndex.getRight() > 0) {
+                final JcrPathSegment nameAndIndex = JcrPathSegment.get(definitionNode.getName());
+                if (nameAndIndex.getIndex() > 0) {
                     throw new ParserException("'" + META_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }
                 definitionNode.setCategory(category);
             } else if (key.equals(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY)) {
-                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());
-                if (parsedName.getRight() > 0) {
+                final JcrPathSegment parsedName = JcrPathSegment.get(definitionNode.getName());
+                if (parsedName.getIndex() > 0) {
                     throw new ParserException("'" + META_RESIDUAL_CHILD_NODE_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }
@@ -186,7 +185,7 @@ public class ConfigSourceParser extends SourceParser {
         }
         for (Node node : nodes) {
             final String name = asStringScalar(node);
-            for (Definition definition : source.getModifiableDefinitions()) {
+            for (Definition definition : source.getDefinitions()) {
                 if (definition instanceof WebFileBundleDefinitionImpl) {
                     final WebFileBundleDefinitionImpl existingDefinition = (WebFileBundleDefinitionImpl) definition;
                     if (existingDefinition.getName().equals(name)) {

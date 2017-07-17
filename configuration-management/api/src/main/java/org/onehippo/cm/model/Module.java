@@ -16,12 +16,17 @@
 package org.onehippo.cm.model;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 
+/**
+ * Represents the atomic deployable unit in the Hippo Configuration Management (HCM) system. This is intended to equate
+ * conceptually to the level of Maven modules and artifact IDs in that dependency management system.
+ */
 public interface Module extends OrderableByName {
 
     /**
@@ -45,6 +50,9 @@ public interface Module extends OrderableByName {
      */
     Project getProject();
 
+    /**
+     * @return The immutable set of all {@link Source}s of this module, in undefined order.
+     */
     Set<? extends Source> getSources();
 
     /**
@@ -59,8 +67,6 @@ public interface Module extends OrderableByName {
      */
     Set<? extends Source> getConfigSources();
 
-    Double getSequenceNumber();
-
     /**
      * @return A helper object to access raw streams for configuration files.
      */
@@ -72,20 +78,14 @@ public interface Module extends OrderableByName {
     ResourceInputProvider getContentResourceInputProvider();
 
     /**
-     * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
-     * descriptor for a set of modules.
-     * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
-     * @throws IOException
+     * @return the current "sequence number" of this module, which describes the most recent set of actions from
+     * {@link #getActionsMap()} that have been applied to the JCR
      */
-    String compileDummyDescriptor();
+    Double getSequenceNumber();
 
     /**
-     * @return The immutable map of action items per version
+     * @return The immutable map of action items per version, which describe how to handle content source bootstrapping
      */
     Map<Double, Set<ActionItem>> getActionsMap();
-
-    Set<String> getRemovedConfigResources();
-
-    Set<String> getRemovedContentResources();
 
 }

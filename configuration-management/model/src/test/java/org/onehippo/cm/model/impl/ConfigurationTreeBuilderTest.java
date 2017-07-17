@@ -24,11 +24,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +52,7 @@ public class ConfigurationTreeBuilderTest {
         return property.getValue().getString();
     }
 
-    private String sortedCollectionToString(final Map<String, ? extends Object> map) {
+    private String sortedCollectionToString(final Map<String, ?> map) {
         return new ArrayList<>(map.keySet()).toString();
     }
 
@@ -1651,32 +1656,6 @@ public class ConfigurationTreeBuilderTest {
         assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
     }
 
-    @Test
-    public void simple_sns_definition() throws Exception {
-        final String yaml
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /sns[1]:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        property1: value1\n"
-                + "      /sns[2]:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        property2: value2\n"
-                + "";
-
-        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
-        builder.push(definition);
-        final ConfigurationNodeImpl root = builder.finishModule().build();
-
-        final ConfigurationNodeImpl test = root.getNode("test[1]");
-        assertEquals("[sns[1], sns[2]]", sortedCollectionToString(test.getNodes()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(test.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(test.getNode("sns[2]").getProperties()));
-    }
-
     private final String snsFixture = "definitions:\n"
             + "  config:\n"
             + "    /a:\n"
@@ -1692,7 +1671,20 @@ public class ConfigurationTreeBuilderTest {
             + "        property3: value3\n";
 
     @Test
-    public void delete_first_sns() throws Exception {
+    public void simple_sns_definition() throws Exception {
+        final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
+        builder.push((ContentDefinitionImpl) definition1.get(0));
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+
+        final ConfigurationNodeImpl test = root.getNode("a[1]");
+        assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(test.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(test.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(test.getNode("sns[2]").getProperties()));
+        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(test.getNode("sns[3]").getProperties()));
+    }
+
+    @Test
+    public void no_index_merges_with_index_1() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
         builder.push((ContentDefinitionImpl) definition1.get(0));
 
@@ -1700,6 +1692,25 @@ public class ConfigurationTreeBuilderTest {
                 + "  config:\n"
                 + "    /a:\n"
                 + "      /sns[1]:\n"
+                + "        property2: value2";
+        final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(yaml2);
+        builder.push((ContentDefinitionImpl) definition2.get(0));
+
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        assertEquals("[jcr:primaryType, property1, property2]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
+    }
+
+    @Test
+    public void delete_first_sns() throws Exception {
+        final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
+        builder.push((ContentDefinitionImpl) definition1.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      /sns:\n"
                 + "        .meta:delete: true";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definition2.get(0));
@@ -1818,7 +1829,7 @@ public class ConfigurationTreeBuilderTest {
     }
 
     @Test
-    public void reject_sns_if_lower_index_is_missing() throws Exception {
+    public void reject_sns_in_node_if_lower_index_is_missing() throws Exception {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
@@ -1830,6 +1841,26 @@ public class ConfigurationTreeBuilderTest {
 
         try {
             builder.push((ContentDefinitionImpl) definitions.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void reject_sns_in_root_if_lower_index_is_missing() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "    /a/sns[2]:\n"
+                + "      jcr:primaryType: foo\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("test-group/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
@@ -2229,6 +2260,6 @@ public class ConfigurationTreeBuilderTest {
                 + "        jcr:primaryType: foo\n";
         definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        final ConfigurationNodeImpl root = builder.finishModule().build();
+        builder.finishModule().build();
     }
 }

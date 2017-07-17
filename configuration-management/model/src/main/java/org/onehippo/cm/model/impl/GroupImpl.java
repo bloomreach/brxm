@@ -29,7 +29,7 @@ import org.onehippo.cm.model.Project;
 
 public class GroupImpl implements Group {
 
-    private static final OrderableByNameListSorter<ProjectImpl> projectsSorter = new OrderableByNameListSorter<>(Project.class.getSimpleName());
+    private static final OrderableByNameListSorter<Project> projectsSorter = new OrderableByNameListSorter<>(Project.class);
 
     private final String name;
 

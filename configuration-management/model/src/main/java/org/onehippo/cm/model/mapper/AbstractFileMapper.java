@@ -16,14 +16,15 @@
 package org.onehippo.cm.model.mapper;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.tree.DefinitionNode;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
 
@@ -50,13 +51,13 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
                 : DEFAULT_EXTENSION;
     }
 
-    protected String constructFilePathFromJcrPath(String jcrPath) {
-        final String[] split = jcrPath.split(PATH_DELIMITER);
-        return Arrays.stream(split).map(this::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER));
+    protected String constructFilePathFromJcrPath(String path) {
+        JcrPath jcrPath = JcrPath.get(path);
+        return jcrPath.stream().map(JcrPathSegment::toString).map(this::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER, "/", ""));
     }
 
-    protected String mapNodeNameToFileName(String part) {
-        return part.contains(NS_DELIMITER) ? part.substring(part.indexOf(NS_DELIMITER) + 1) : part;
+    protected String mapNodeNameToFileName(String name) {
+        return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
     }
 
     protected boolean isType(DefinitionNode node, String nodeType) {

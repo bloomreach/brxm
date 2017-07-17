@@ -26,7 +26,7 @@ import javax.jcr.PropertyType;
 
 import org.apache.jackrabbit.util.Base64;
 import org.apache.jackrabbit.util.ISO8601;
-import org.onehippo.cm.model.impl.SourceLocationImpl;
+import org.onehippo.cm.model.impl.tree.SourceLocationImpl;
 
 public class EsvValue {
 

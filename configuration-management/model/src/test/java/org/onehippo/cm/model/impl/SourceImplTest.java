@@ -19,7 +19,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Test;
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.source.Source;
 
 import static java.util.Comparator.comparing;
 import static org.junit.Assert.assertEquals;

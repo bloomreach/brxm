@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.tree.Value;
 
 /**
  * Value to File mapper. Maps JCR value to filename using smart name resolvers

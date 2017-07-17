@@ -37,9 +37,6 @@
     <Logger name="org.onehippo.cm.migration" level="debug"/>
     <Logger name="org.onehippo.cm.model.parser.AbstractBaseParser" level="info"/>
     <Logger name="org.onehippo.cm.model.impl.ConfigurationModelImpl" level="warn"/>
-    <Logger name="org.onehippo.cm.engine.autoexport.DefinitionMergeService" level="debug"/>
-    <Logger name="org.onehippo.cm.engine.autoexport.DefinitionMergeTest" level="debug"/>
-
 
     <Root level="info">
       <AppenderRef ref="console"/>

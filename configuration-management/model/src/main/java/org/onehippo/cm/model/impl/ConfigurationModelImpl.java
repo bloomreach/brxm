@@ -32,21 +32,28 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private static final OrderableByNameListSorter<GroupImpl> groupSorter = new OrderableByNameListSorter<>(Group.class.getSimpleName());
+    private static final OrderableByNameListSorter<Group> groupSorter = new OrderableByNameListSorter<>(Group.class);
 
     private final Map<String, GroupImpl> groupMap = new HashMap<>();
     private final List<GroupImpl> groups = new ArrayList<>();
@@ -345,16 +352,23 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationNodeImpl resolveNode(String path) {
+        return resolveNode(JcrPath.get(path));
+    }
+
+    /**
+     * Find a ConfigurationNode by its absolute path.
+     * @param path the path of a node
+     * @return a ConfigurationNode or null, if no node exists with this path
+     */
+    public ConfigurationNodeImpl resolveNode(JcrPath path) {
         // special handling for root node
-        if (path.equals("/")) {
+        if (path.isRoot()) {
             return getConfigurationRootNode();
         }
 
-        String[] segments = StringUtils.stripStart(path, "/").split("/");
-
         ConfigurationNodeImpl currentNode = getConfigurationRootNode();
-        for (String segment : segments) {
-            currentNode = currentNode.getNode(createIndexedName(segment));
+        for (JcrPathSegment segment : path) {
+            currentNode = currentNode.getNode(segment.forceIndex());
             if (currentNode == null) {
                 return null;
             }
@@ -364,12 +378,21 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationPropertyImpl resolveProperty(String path) {
-        ConfigurationNodeImpl node = resolveNode(StringUtils.substringBeforeLast(path, "/"));
+        return resolveProperty(JcrPath.get(path));
+    }
+
+    /**
+     * Find a ConfigurationProperty by its absolute path.
+     * @param path the path of a property
+     * @return a ConfigurationProperty or null, if no property exists with this path
+     */
+    public ConfigurationPropertyImpl resolveProperty(JcrPath path) {
+        ConfigurationNodeImpl node = resolveNode(path.getParent());
         if (node == null) {
             return null;
         }
         else {
-            return node.getProperty(StringUtils.substringAfterLast(path, "/"));
+            return node.getProperty(path.getLastSegment().toString());
         }
     }
 
