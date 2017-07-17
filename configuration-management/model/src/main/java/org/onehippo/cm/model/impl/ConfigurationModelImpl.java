@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.impl.path.JcrPath.ROOT;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
@@ -363,7 +362,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     public ConfigurationNodeImpl resolveNode(JcrPath path) {
         // special handling for root node
-        if (path == ROOT) {
+        if (path.isRoot()) {
             return getConfigurationRootNode();
         }
 

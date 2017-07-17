@@ -57,7 +57,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public ConfigurationNodeImpl getNode(final String name) {
-        return modifiableNodes.get(name);
+        return getNode(JcrPathSegment.get(name));
     }
 
     public ConfigurationNodeImpl getNode(final JcrPathSegment name) {

@@ -129,7 +129,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @return the final segment of this {@link JcrPath}, which may represent a JCR Node or Property
      */
     public JcrPathSegment getLastSegment() {
-        if (this == ROOT) {
+        if (isRoot()) {
             // todo: should this return a constant NodePathSegment instead?
             throw new IllegalStateException("Root path has no path segments!");
         }
@@ -142,7 +142,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @throws IllegalStateException iff {@link #isRoot()}
      */
     public JcrPath getParent() {
-        if (this == ROOT) {
+        if (isRoot()) {
             throw new IllegalStateException("Cannot get the parent of ROOT!");
         }
 
@@ -258,10 +258,10 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @see Path#resolve(Path)
      */
     public JcrPath resolve(final JcrPath other) {
-        if (other == ROOT) {
+        if (other.isRoot()) {
             return this;
         }
-        if (this == ROOT && other.isAbsolute()) {
+        if (isRoot() && other.isAbsolute()) {
             return other;
         }
 
@@ -299,7 +299,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @see Path#relativize(Path)
      */
     public JcrPath relativize(final JcrPath other) {
-        if (other == ROOT) {
+        if (other.isRoot()) {
             return new JcrPath(segments, false);
         }
 
@@ -320,7 +320,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * {@link #isAbsolute()} == true
      */
     public JcrPath toAbsolutePath() {
-        if (absolute || this == ROOT) {
+        if (absolute || isRoot()) {
             return this;
         }
 
@@ -331,7 +331,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @return a NodePath equivalent to this one, except that each segment has had forceIndex() applied to it
      */
     public JcrPath toFullyIndexedPath() {
-        if (this == ROOT) {
+        if (isRoot()) {
             return this;
         }
 
@@ -344,7 +344,7 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
      * @return a NodePath equivalent to this one, except that each segment has had suppressIndex() applied to it
      */
     public JcrPath toMinimallyIndexedPath() {
-        if (this == ROOT) {
+        if (isRoot()) {
             return this;
         }
 
