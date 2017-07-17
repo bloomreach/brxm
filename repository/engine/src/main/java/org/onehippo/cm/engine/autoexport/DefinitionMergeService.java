@@ -101,12 +101,8 @@ public class DefinitionMergeService {
             pathPatterns = new PatternSet(patterns);
         }
 
-        boolean matchesPath(String path) {
-            return pathPatterns.matches(path);
-        }
-
         boolean matchesPath(JcrPath path) {
-            return matchesPath(path.toString());
+            return pathPatterns.matches(path.toString());
         }
     }
 
