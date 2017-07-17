@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-cms-dummy
+    after: hippo-cms
+module: hippo-dummy-test
