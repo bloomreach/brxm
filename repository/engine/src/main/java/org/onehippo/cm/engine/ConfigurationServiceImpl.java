@@ -93,12 +93,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
 
+    /**
+     * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
+     */
     private ConfigurationModelImpl baselineModel;
+
+    /**
+     * This should be non-null on any successful startup.
+     */
     private ConfigurationModelImpl runtimeConfigurationModel;
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
         session = configurationServiceSession;
+
+        // set event userData to identify events coming from this HCM session
         session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
         log.info("ConfigurationService: start");
         try {
@@ -127,11 +136,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
             final boolean mustConfigure = first || configure;
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
+
             final boolean isProjectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
             boolean startAutoExportService = configure && autoExportAllowed;
 
-            baselineModel = loadBaselineModel();
+            ConfigurationModelImpl baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -164,8 +174,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
-                        // set the runtime model to bootstrap here just in case storing the baseline fails
+                        // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
                         runtimeConfigurationModel = bootstrapModel;
+
                         log.info("ConfigurationService: store bootstrap config");
                         success = storeBaselineModel(bootstrapModel);
                     }
@@ -178,6 +189,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         // reload the baseline after storing, so we have a JCR-backed view of our modules
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
                         baselineModel = loadBaselineModel();
+
+                        // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
+                        if (autoExportAllowed) {
+                            this.baselineModel = baselineModel;
+                        }
 
                         // also, we prefer using source modules over baseline modules
                         runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
@@ -193,9 +209,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         log.info("ConfigurationService: start autoexport service");
                         startAutoExportService();
                     }
+
                 } finally {
                     if (bootstrapModel != null) {
                         try {
+                            // we need to close the bootstrap model because it's backed by ZipFileSystem(s)
                             bootstrapModel.close();
                         } catch (Exception e) {
                             log.error("Error closing bootstrap configuration", e);
@@ -204,6 +222,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 }
             }
             else {
+                // if we're not doing any bootstrap, use the baseline model as our runtime model
+                runtimeConfigurationModel = baselineModel;
+
                 log.info("ConfigurationService: start repository services");
                 startRepositoryServicesTask.execute();
             }
@@ -294,9 +315,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * @param updatedModules modules that have been changed by auto-export and need to be stored in the baseline
      * @return true if and only if the baseline update was stored successfully
      */
-    // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
+            if (baselineModel == null) {
+                baselineModel = loadBaselineModel();
+            }
+
             baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel, session);
             runtimeConfigurationModel = mergeWithSourceModules(updatedModules, baselineModel);
             return true;

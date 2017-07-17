@@ -41,22 +41,22 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.definition.Definition;
-import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,6 @@ import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
@@ -88,7 +87,6 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
-import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -794,19 +792,29 @@ public class ConfigurationBaselineService {
         if (!appliedPaths.contains(path)) {
             appliedPaths.add(path);
             final String[] newPaths = appliedPaths.toArray(new String[appliedPaths.size()]);
-            getOrCreateContentNode(session).setProperty(HCM_CONTENT_PATHS_APPLIED, newPaths);
+            session.getNode(HCM_CONTENT_NODE_PATH).setProperty(HCM_CONTENT_PATHS_APPLIED, newPaths);
         }
         session.save();
     }
 
-    private Node getOrCreateContentNode(final Session session) throws RepositoryException {
-        final Node rootNode = session.getRootNode();
-        final Node hcmRootNode = rootNode.hasNode(HCM_ROOT)
-                ? rootNode.getNode(HCM_ROOT)
-                : rootNode.addNode(HCM_ROOT, NT_HCM_ROOT);
-        return hcmRootNode.hasNode(NT_HCM_CONTENT)
-                ? hcmRootNode.getNode(NT_HCM_CONTENT)
-                : hcmRootNode.addNode(NT_HCM_CONTENT, NT_HCM_CONTENT);
+    /**
+     * Create the hcm:content node for registering applied content paths.
+     *
+     * @param session the JCR Session to use
+     */
+    void createContentNode(final Session session) throws RepositoryException {
+        session.getNode(HCM_ROOT_PATH).addNode(NT_HCM_CONTENT, NT_HCM_CONTENT);
+        session.save();
+    }
+
+    /**
+     * Check if the content node already exists
+     *
+     * @param session the JCR Session to use
+     * @return true if the node exists, false otherwise
+     */
+    boolean contentNodeExists(final Session session) throws RepositoryException {
+        return session.nodeExists(HCM_CONTENT_NODE_PATH);
     }
 
     /**

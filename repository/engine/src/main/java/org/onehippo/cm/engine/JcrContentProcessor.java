@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT;
 import static org.onehippo.cm.engine.ValueProcessor.collectVerifiedValue;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
@@ -94,8 +93,7 @@ public class JcrContentProcessor {
      * @param nodePath Node path
      * @param actionType current action type
      * @param session current session
-     * @param allowIgnoreConflict if true and node exists with action type APPEND <em>may</em> be ignored, iff system
-     *                            parameter {@link Constants#SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT}=true
+     * @param allowIgnoreConflict if true and node exists with action type APPEND <em>may</em> be ignored
      * @return true if there is no conflict, false if there was a conflict but the above system parameter is true
      * @throws RepositoryException if node exists and action type is APPEND and !allowIgnoreConflict
      */
@@ -103,7 +101,7 @@ public class JcrContentProcessor {
                                          final boolean allowIgnoreConflict) throws RepositoryException {
         final boolean nodeExists = session.nodeExists(nodePath);
         if (nodeExists && actionType == APPEND) {
-            if (allowIgnoreConflict && Boolean.getBoolean(SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT)) {
+            if (allowIgnoreConflict) {
                 return false;
             }
             throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
@@ -120,15 +118,18 @@ public class JcrContentProcessor {
      *
      * @param definitionNode
      * @param actionType
+     * @param session JCR session to use
+     * @param isUpgradeTo12 flag indicating that the system is busy upgrading to CMS 12.x
      * @throws RepositoryException
      */
-    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws RepositoryException {
+    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType,
+                                   final Session session, final boolean isUpgradeTo12) throws RepositoryException {
         if (actionType == null) {
             throw new IllegalArgumentException("Action type cannot be null");
         }
 
         try {
-            if (!validateAppendAction(definitionNode.getPath().toString(), actionType, session, true)) {
+            if (!validateAppendAction(definitionNode.getPath().toString(), actionType, session, isUpgradeTo12)) {
                 // node exists and actionType is APPEND but ignore content conflict system parameter == true: ignore
                 return;
             }
