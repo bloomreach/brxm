@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ public class PluginConfigMapper implements Serializable {
     
     public static void populate(Object bean, IValueMap config) throws MappingException {
         try {
-            Map<String, Object> entries = BeanUtils.describe(bean);
+            Map<String, String> entries = BeanUtils.describe(bean);
             BeanUtilsBean bub = BeanUtilsBean.getInstance();
-            for (Map.Entry<String, Object> entry : entries.entrySet()) {
+            for (Map.Entry<String, String> entry : entries.entrySet()) {
                 if ("class".equals(entry.getKey())) {
                     continue;
                 }
