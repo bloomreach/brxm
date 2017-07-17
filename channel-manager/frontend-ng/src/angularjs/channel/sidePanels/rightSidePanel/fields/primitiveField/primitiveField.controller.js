@@ -15,11 +15,12 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(FieldService, SharedSpaceToolbarService) {
+  constructor(FieldService, SharedSpaceToolbarService, $rootScope) {
     'ngInject';
 
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
+    this.$rootScope = $rootScope;
   }
 
   getFieldName(index) {
@@ -52,6 +53,7 @@ class PrimitiveFieldCtrl {
     this.onFieldFocus();
 
     this.oldValues = angular.copy(this.fieldValues);
+    this.FieldService.unsetFocusedInput();
 
     if ($event) {
       $event.target = angular.element($event.target);
@@ -59,16 +61,15 @@ class PrimitiveFieldCtrl {
     }
   }
 
-  blurPrimitive($event) {
-    const relatedTarget = angular.element($event.relatedTarget);
+  blurPrimitive($event = null) {
+    if ($event) {
+      $event.target = angular.element($event.relatedTarget);
 
-    if (this.FieldService.shouldPreserveFocus(relatedTarget)) {
-      $event.target.focus();
-      this.FieldService.triggerInputFocus();
-      return;
+      if (this.FieldService.shouldPreserveFocus($event.target)) {
+        this.FieldService.triggerInputFocus();
+        return;
+      }
     }
-    this.FieldService.unsetFocusedInput();
-
     delete this.hasFocus;
     this.onFieldBlur();
     this._draftField();

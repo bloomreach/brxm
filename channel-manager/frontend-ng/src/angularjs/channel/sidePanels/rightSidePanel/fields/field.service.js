@@ -56,7 +56,9 @@ class FieldService {
       if (this._customFocusCallback) {
         this._customFocusCallback();
       } else {
-        this._focusedInput.focus();
+        setTimeout(() => {
+          this._focusedInput.focus();
+        }, 0);
       }
     }
   }

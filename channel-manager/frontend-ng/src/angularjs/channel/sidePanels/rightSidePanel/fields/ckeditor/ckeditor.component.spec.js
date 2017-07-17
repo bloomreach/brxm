@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('CKEditor Component', () => {
+fdescribe('CKEditor Component', () => {
   let $componentController;
 
   let $ctrl;
@@ -90,15 +90,17 @@ describe('CKEditor Component', () => {
     ngModel.$viewValue = '<p>initial value</p>';
   });
 
-  function init() {
-    $ctrl.$onInit();
-    $scope.$apply();
-  }
-
   function getEventListener(event) {
     expect(editor.on).toHaveBeenCalledWith(event, jasmine.any(Function));
     const onCall = editor.on.calls.all().find(call => call.args[0] === event);
     return onCall.args[1];
+  }
+
+  function init() {
+    $ctrl.$onInit();
+    $scope.$apply();
+    const instanceReady = getEventListener('instanceReady');
+    instanceReady();
   }
 
   it('initializes the component', () => {
@@ -185,13 +187,6 @@ describe('CKEditor Component', () => {
         customFocus: jasmine.any(Function),
       },
     });
-  });
-
-  it('calls the onBlur handler when blurred', () => {
-    init();
-    const onEditorBlur = getEventListener('blur');
-    onEditorBlur();
-    expect($ctrl.onBlur).toHaveBeenCalled();
   });
 
   it('destroys the editor once the scope is destroyed', () => {

@@ -61,15 +61,15 @@ class CKEditorController {
         }
       });
 
+      this.editor.on('focus', $event => this.onEditorFocus($event));
+      this.editor.on('blur', $event => this.onEditorBlur($event));
+      this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
+      this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
+
       // CKEditor has been replaced
       this.editor.on('instanceReady', () => {
-        this.editor.on('focus', $event => this.onEditorFocus($event));
-        // this.editor.on('blur', $event => this.onEditorBlur($event));
-        this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
-        this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
-
-        const editableElement = this.$element.find('.cke_editable');
-        editableElement.on('blur', $event => this.onEditorBlur($event));
+        this.editableElement = this.$element.find('.cke_editable');
+        this.editableElement.on('blur', $event => this.onEditorBlur($event));
       });
     });
   }
@@ -98,13 +98,13 @@ class CKEditorController {
   onEditorFocus() {
     this.$scope.$apply(() => {
       this.textAreaElement.addClass('focused');
+    });
 
-      this.onFocus({
-        $event: {
-          target: this.$element.find('.cke_editable'),
-          customFocus: () => this.editor.focus(),
-        },
-      });
+    this.onFocus({
+      $event: {
+        target: this.$element.find('.cke_editable'),
+        customFocus: () => this.editor.focus(),
+      },
     });
 
     this.SharedSpaceToolbarService.showToolbar({
