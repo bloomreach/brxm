@@ -22,6 +22,7 @@ class ProjectToggleController {
     HippoIframeService,
     ProjectService,
     CmsService,
+    $mdSelect,
   ) {
     'ngInject';
 
@@ -30,6 +31,7 @@ class ProjectToggleController {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.CmsService = CmsService;
+    this.$mdSelect = $mdSelect;
   }
 
   $onInit() {
@@ -47,8 +49,12 @@ class ProjectToggleController {
   }
 
   set selectedProject(selectedProject) {
-    this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
-    this.ProjectService.updateSelectedProject(selectedProject.id);
+    // TODO (meggermont): Temporary work-around for https://github.com/angular/material/issues/10747
+    // Please bump to md-select version where the issue has been fix and remove this kludge.
+    this.$mdSelect.hide().then(() => {
+      this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
+      this.ProjectService.updateSelectedProject(selectedProject.id);
+    });
   }
 }
 
