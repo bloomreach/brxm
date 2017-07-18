@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/settings:
+      locales:
+        operation: add
+        type: string
+        value: [${locale}]
