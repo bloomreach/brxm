@@ -62,7 +62,6 @@ class CKEditorController {
       });
 
       this.editor.on('focus', $event => this.onEditorFocus($event));
-      this.editor.on('blur', $event => this.onEditorBlur($event));
       this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
       this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
 
