@@ -197,15 +197,19 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
             return true;
         }
 
-        return startsWith(new JcrPath(ImmutableList.of(other), false));
+        return getSegment(0).equals(other);
     }
 
     /**
      * @see Path#startsWith(Path)
      */
     public boolean startsWith(final JcrPath other) {
+        if (other.isRoot()) {
+            return true;
+        }
+
         return (other.getSegmentCount() <= segments.size())
-                && Iterables.elementsEqual(this, other);
+                && Iterables.elementsEqual(segments.subList(0, other.getSegmentCount()), other);
     }
 
     /**
@@ -223,13 +227,17 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
             return true;
         }
 
-        return endsWith(new JcrPath(ImmutableList.of(other), false));
+        return getLastSegment().equals(other);
     }
 
     /**
      * @see Path#endsWith(Path)
      */
     public boolean endsWith(final JcrPath other) {
+        if (other.isRoot()) {
+            return true;
+        }
+
         return (other.getSegmentCount() <= segments.size())
                 && Iterables.elementsEqual(
                         segments.subList(segments.size() - other.getSegmentCount(), segments.size()),

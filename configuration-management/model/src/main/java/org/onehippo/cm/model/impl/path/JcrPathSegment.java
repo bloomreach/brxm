@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -90,7 +91,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
      * @param index the desired new index
      */
     private JcrPathSegment(final String name, final int index) {
-        this.name = name.intern();
+        this.name = StringUtils.strip(name, "/").trim().intern();
         this.index = index;
         checkArgs();
     }
@@ -101,7 +102,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
      */
     private JcrPathSegment(final String fullName) {
         final Pair<String, Integer> split = splitIndexedName(fullName);
-        this.name = split.getLeft().intern();
+        this.name = StringUtils.strip(split.getLeft(), "/").trim().intern();
         this.index = split.getRight();
         checkArgs();
     }

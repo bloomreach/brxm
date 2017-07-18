@@ -124,4 +124,34 @@ public class JcrPathTest {
         assertTrue("TreeSet containing fully-indexed path should automatically also contain minimally-indexed path",
                 set.contains(minimal));
     }
+
+    @Test
+    public void starts_with() {
+        assertTrue(JcrPath.get("/my/test/path").startsWith("/my/test/"));
+        assertTrue(JcrPath.get("/my/test/path").startsWith("my/test/"));
+        assertTrue(JcrPath.get("/my/test/path").startsWith("/"));
+
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("/my/test/")));
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("my/test/")));
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("/")));
+
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("/my")));
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("my")));
+        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("/")));
+    }
+
+    @Test
+    public void ends_with() {
+        assertTrue(JcrPath.get("/my/test/path").endsWith("/test/path"));
+        assertTrue(JcrPath.get("/my/test/path").endsWith("test/path"));
+        assertTrue(JcrPath.get("/my/test/path").endsWith("/"));
+
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("/test/path")));
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("test/path")));
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("/")));
+
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("/path")));
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("path")));
+        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("/")));
+    }
 }
