@@ -36,6 +36,7 @@
     <commons-csv.version>1.4</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
     <apache-poi.version>3.16</apache-poi.version>
+    <hippo.hcm.version>1.0.0</hippo.hcm.version>
     <junit.version>4.10</junit.version>
   </properties>
 
@@ -96,6 +97,11 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
         <version>${apache-poi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-model</artifactId>
+        <version>${hippo.hcm.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

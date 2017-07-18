@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -168,6 +168,11 @@ public class RepositoryResourceBundle extends ResourceBundle {
         }
     }
 
+    /**
+     * Every bundle goes into its own root definitions
+     * i.e. /hippo:configuration/hippo:translations/path/to/bundle
+     * instead of hierarchy based form and reusing common paths.
+     */
     private class RepositoryBundleSerializer extends Serializer {
 
         @Override

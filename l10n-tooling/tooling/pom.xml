@@ -29,7 +29,6 @@
 
   <properties>
     <maven.version>3.2.1</maven.version>
-    <hcm.version>1.0.0</hcm.version>
   </properties>
 
   <dependencies>
@@ -37,7 +36,6 @@
     <dependency>
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-model</artifactId>
-      <version>${hcm.version}</version>
     </dependency>
 
     <dependency>

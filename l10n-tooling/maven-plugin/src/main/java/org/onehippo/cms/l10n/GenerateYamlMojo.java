@@ -49,10 +49,17 @@ public class GenerateYamlMojo extends AbstractL10nMojo {
             final Path modulePath = getBaseDir().toPath();
             final String outputDirectory = project.getBuild().getOutputDirectory();
             final Path srcTplModuleDescriptorPath = modulePath.resolve("resources").resolve("hcm-module.yaml");
+            final Path srcTplAddLocalePath = modulePath.resolve("resources").resolve("add-locale.yaml");
 
             if (!Files.exists(srcTplModuleDescriptorPath)) {
                 log.info(ANSI_YELLOW + "hcm-module.yaml file doesnt exist, skipping... " + srcTplModuleDescriptorPath.getParent()  + ANSI_RESET);
                 return;
+            }
+
+            String addLocalesTpl = null;
+            if (Files.exists(srcTplAddLocalePath)) {
+                log.info(ANSI_YELLOW + "Reading " + srcTplAddLocalePath + ANSI_RESET);
+                addLocalesTpl = FileUtils.readFileToString(srcTplAddLocalePath.toFile(), Charset.forName("UTF-8"));
             }
 
             log.info(ANSI_YELLOW + "Reading " + srcTplModuleDescriptorPath + ANSI_RESET);
@@ -65,6 +72,14 @@ public class GenerateYamlMojo extends AbstractL10nMojo {
                     log.info(ANSI_YELLOW + "Copying hcm-module.yaml from " + srcTplModuleDescriptorPath.getParent() + " to " + targetFile.getParent() + ANSI_RESET);
                     final String moduleHcm = moduleHcmTpl.replace("${locale}", locale);
                     Files.write(targetFile, moduleHcm.getBytes());
+
+                    if (addLocalesTpl != null) {
+                        final Path localeTargetFile = hcmConfigFolder.resolve("add-locale.yaml");
+                        log.info(ANSI_YELLOW + "Copying add-locale.yaml from " + srcTplAddLocalePath.getParent() + " to " + localeTargetFile.getParent() + ANSI_RESET);
+                        String localeHcm = addLocalesTpl.replace("${locale}", locale);
+                        Files.write(localeTargetFile, localeHcm.getBytes());
+                    }
+
                 } else {
                     log.info(ANSI_RED + "No hcm-config folder was found, skipping..." + srcTplModuleDescriptorPath.getParent() + ANSI_RESET);
                 }
