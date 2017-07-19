@@ -131,6 +131,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>**/*.yaml</exclude>
                 <!-- Apache licensed  -->
                 
               </excludes>
