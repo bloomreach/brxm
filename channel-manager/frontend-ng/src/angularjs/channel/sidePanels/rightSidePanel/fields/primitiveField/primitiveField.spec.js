@@ -171,9 +171,11 @@ describe('PrimitiveField', () => {
       target: mockTargetElement,
       customFocus: null,
     };
+    spyOn(FieldService, 'unsetFocusedInput');
     spyOn(FieldService, 'setFocusedInput');
 
     $ctrl.focusPrimitive($event);
+    expect(FieldService.unsetFocusedInput).toHaveBeenCalledWith();
     expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
   });
 
@@ -183,17 +185,14 @@ describe('PrimitiveField', () => {
     };
     spyOn(FieldService, 'shouldPreserveFocus').and.returnValue(true);
     spyOn(FieldService, 'triggerInputFocus');
-    spyOn(FieldService, 'unsetFocusedInput');
 
     $ctrl.blurPrimitive($event);
     expect(FieldService.shouldPreserveFocus).toHaveBeenCalledWith($event.target);
     expect(FieldService.triggerInputFocus).toHaveBeenCalled();
-    expect(FieldService.unsetFocusedInput).not.toHaveBeenCalled();
 
     // if should not preserve focus
     FieldService.shouldPreserveFocus.and.returnValue(false);
     $ctrl.blurPrimitive($event);
-    expect(FieldService.unsetFocusedInput).toHaveBeenCalled();
   });
 
   it('keeps track of the focused state', () => {

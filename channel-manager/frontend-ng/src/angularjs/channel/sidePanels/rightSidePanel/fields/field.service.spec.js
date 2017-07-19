@@ -134,8 +134,11 @@ describe('field service', () => {
         FieldService.setFocusedInput(mockInputElement);
         spyOn(FieldService._focusedInput, 'focus');
 
+        jasmine.clock().install();
         FieldService.triggerInputFocus();
+        jasmine.clock().tick(10);
         expect(FieldService._focusedInput.focus).toHaveBeenCalled();
+        jasmine.clock().uninstall();
       });
 
       it('should call the custom focus callback if one was specified', () => {

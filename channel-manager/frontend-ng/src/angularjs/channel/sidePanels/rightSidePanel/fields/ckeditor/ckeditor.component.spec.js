@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('CKEditor Component', () => {
+describe('CKEditor Component', () => {
   let $componentController;
 
   let $ctrl;
