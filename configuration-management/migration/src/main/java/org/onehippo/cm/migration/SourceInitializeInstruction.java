@@ -113,8 +113,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         int index = 0;
         EsvNode node = null;
         while (getContentPath().startsWith(nodePath)) {
-            if (elements.length > index+1) {
-                if (getContentPath().startsWith(nodePath+"/"+elements[index+1])) {
+            if (elements.length > index + 1) {
+                if (getContentPath().startsWith(nodePath + "/" + elements[index + 1])) {
                     index++;
                     nodePath = nodePath + "/" + elements[index];
                 } else {
@@ -315,10 +315,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         for (EsvNode child : node.getChildren()) {
             final String childPath = calculatePath(child, path, nodeDefinitions, node.getChildren());
             if (!isContent(path) && isContent(childPath)) {
-                throw new EsvParseException(
-                        "Migration to content definitions is only supported when the entire resource is content; node "
-                        + childPath + " defined at " + child.getSourceLocation()
-                        + " is content but its parent is configuration");
+                final SourceImpl sourceImpl = source.getModule().addContentSource(getSourcePath());
+                processNode(child, childPath, sourceImpl, null, nodeDefinitions, deltaNodes);
             } else {
                 processNode(child, childPath, source, defNode, nodeDefinitions, deltaNodes);
             }

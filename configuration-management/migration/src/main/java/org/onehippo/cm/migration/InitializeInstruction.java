@@ -147,7 +147,7 @@ public class InitializeInstruction {
 
     private static final String CONTENT_ROOT = "/content";
     private static final String[] standardContentRootPrefixes =
-            {CONTENT_ROOT, "/content/documents", "/content/gallery", "/content/assets", "/content/attic" };
+            {CONTENT_ROOT, "/content/documents", "/content/gallery", "/content/assets", "/content/attic", "/content/urlrewriter" };
 
     private final String name;
     private final Type type;
