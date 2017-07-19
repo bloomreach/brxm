@@ -43,6 +43,10 @@
       border-bottom: 2px solid $blue-500;
       margin-bottom: 0;
     }
+
+    &.cke_invalid {
+      border-bottom-color: $red-a700 !important;
+    }
   }
 }
 

@@ -69,6 +69,8 @@ class CKEditorController {
       this.editor.on('instanceReady', () => {
         this.editableElement = this.$element.find('.cke_editable');
         this.editableElement.on('blur', $event => this.onEditorBlur($event));
+
+        this._validate();
       });
     });
   }
@@ -92,6 +94,27 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.ngModel.$setViewValue(this.editor.getData());
     });
+    this._validate();
+  }
+
+  _validate() {
+    this.fieldObject.$setValidity('required', true);
+    const rawValue = $(this.editor.getSnapshot()).text().trim(); // rawValue contains the CKEditor field value, stripped from any HTML entities or whitespaces.
+
+    // Validate 'required', field should have a value
+    if (this.isRequired) {
+      if (!rawValue.length) {
+        this.$invalid = true;
+        this.fieldObject.$setValidity('required', false);
+      }
+    }
+
+    const cke = this.$element.find('.cke');
+    if (this.fieldObject.$invalid) {
+      cke.addClass('cke_invalid');
+    } else {
+      cke.removeClass('cke_invalid');
+    }
   }
 
   onEditorFocus() {
@@ -109,6 +132,7 @@ class CKEditorController {
     this.SharedSpaceToolbarService.showToolbar({
       hasBottomToolbar: this.config.hasBottomToolbar,
     });
+    this._validate();
   }
 
   onEditorBlur($event) {
@@ -118,6 +142,8 @@ class CKEditorController {
     if (!this.FieldService.shouldPreserveFocus(relatedTarget) && this.SharedSpaceToolbarService.isToolbarPinned === false) {
       this.SharedSpaceToolbarService.hideToolbar();
     }
+
+    this._validate();
   }
 
   _openLinkPicker(selectedLink) {
