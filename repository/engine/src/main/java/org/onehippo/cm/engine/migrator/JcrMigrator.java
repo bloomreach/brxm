@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.migrators;
+package org.onehippo.cm.engine.migrator;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -21,10 +21,20 @@ import javax.jcr.Session;
 import org.onehippo.cm.model.ConfigurationModel;
 
 /**
- * Pre CM Content Migrators run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
- * is applied to the JCR Nodes
+ * <p>
+ *    {@link JcrMigrator}s run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
+ *    is applied to the JCR Nodes (thus before applied to config or content). Be aware that {@link JcrMigrator}s always
+ *    run at startup hence should always have an initial check whether they should run!
+ * </p>
+ * <p>
+ *    For a Migrator to run it has to implement this interface and have the {@link Migrator} class annotation and be
+ *    in a certain package. There is no specific order in which migrators run so a migrator should not rely on other migrators.
+ * </p>
+ * <p>
+ *     A {@link Migrator} implementation must have no-arg public constructor
+ * </p>
  */
-public interface PreCmContentApplyMigrator {
+public interface JcrMigrator {
 
     /**
      * @return {@code true} if something changed as a result of this migrator

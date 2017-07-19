@@ -13,18 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.migrators;
+package org.onehippo.cm.engine.migrator;
 
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.onehippo.cm.model.ConfigurationModel;
-
-public class HstChannelMigrator implements PreCmContentApplyMigrator {
-
-    @Override
-    public boolean migrate(final Session session, final ConfigurationModel configurationModel) throws RepositoryException {
-        return true;
-    }
+/**
+ * Only {@link Migrator}s that have this class annotation will run
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface Migrator {
 }
