@@ -19,19 +19,21 @@ class SharedSpaceToolbarService {
     'ngInject';
 
     this.triggerCallback = angular.noop;
+    this.isToolbarPinned = false;
   }
 
   registerTriggerCallback(fn) {
     this.triggerCallback = fn;
   }
 
-  showToolbar(options) {
+  showToolbar(options = {}) {
     this.triggerCallback(true, {
-      hasBottomToolbar: options.hasBottomToolbar,
+      hasBottomToolbar: options.hasBottomToolbar || false,
     });
   }
 
   hideToolbar() {
+    if (this.isToolbarPinned) return;
     this.triggerCallback(false);
   }
 }

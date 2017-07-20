@@ -32,6 +32,7 @@ const ckeditorComponent = {
     name: '<',
     onBlur: '&',
     onFocus: '&',
+    fieldObject: '=',
   },
 };
 

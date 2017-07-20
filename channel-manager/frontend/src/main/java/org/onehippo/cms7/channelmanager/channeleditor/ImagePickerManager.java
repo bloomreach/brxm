@@ -22,6 +22,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
+import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
@@ -48,6 +49,8 @@ class ImagePickerManager extends PickerManager {
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
         behavior = new StatelessImagePickerBehavior(context, getPickerConfig(), imageService);
         behavior.setCloseAction(new PickedAction<>(channelEditorId, "onImagePicked", fieldNodeModel));
+        behavior.setCancelAction((RichTextEditorAction<RichTextEditorImageLink>) richTextEditorImageLink ->
+                String.format("Ext.getCmp('%s').%s();", channelEditorId, "onImagePickCancelled"));
     }
 
     ImagePickerBehavior getBehavior() {

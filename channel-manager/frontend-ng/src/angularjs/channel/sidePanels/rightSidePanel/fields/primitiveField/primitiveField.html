@@ -74,7 +74,9 @@
               config="::$ctrl.fieldType.config"
               is-required="::$ctrl.fieldType.required"
               on-focus="$ctrl.focusPrimitive($event)"
-              on-blur="$ctrl.blurPrimitive($event)">
+              on-blur="$ctrl.blurPrimitive($event)"
+              field-object="$ctrl.form[$ctrl.getFieldName()]"
+              ng-class="{ 'is-invalid': !$ctrl.isValid() }">
     </ckeditor>
 
     <div ng-if="::$last"

@@ -15,10 +15,12 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(FieldService) {
+  constructor(FieldService, SharedSpaceToolbarService, $rootScope) {
     'ngInject';
 
     this.FieldService = FieldService;
+    this.SharedSpaceToolbarService = SharedSpaceToolbarService;
+    this.$rootScope = $rootScope;
   }
 
   getFieldName(index) {
@@ -51,35 +53,36 @@ class PrimitiveFieldCtrl {
     this.onFieldFocus();
 
     this.oldValues = angular.copy(this.fieldValues);
+    this.FieldService.unsetFocusedInput();
 
     if ($event) {
       $event.target = angular.element($event.target);
-
       this.FieldService.setFocusedInput($event.target, $event.customFocus);
-
-      $event.target.on('blur.focusedInputBlurHandler', (e) => {
-        const relatedTarget = angular.element(e.relatedTarget);
-
-        if (!this.FieldService.shouldUnsetFocus(relatedTarget)) {
-          this.FieldService.unsetFocusedInput();
-        }
-
-        $event.target.off('.focusedInputBlurHandler'); // Unbind self
-      });
     }
   }
 
-  blurPrimitive() {
+  blurPrimitive($event = null) {
+    if ($event) {
+      $event.target = angular.element($event.relatedTarget);
+
+      if (this.FieldService.shouldPreserveFocus($event.target)) {
+        this.FieldService.triggerInputFocus();
+        return;
+      }
+    }
     delete this.hasFocus;
     this.onFieldBlur();
-
-    if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
-    }
+    this._draftField();
   }
 
   valueChanged() {
     this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
+  }
+
+  _draftField() {
+    if (!angular.equals(this.oldValues, this.fieldValues)) {
+      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
+    }
   }
 }
 

@@ -233,13 +233,15 @@
       this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
     },
 
-    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, callback) {
-      this.linkPickerCallback = callback;
+    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
+      this.linkPickerSuccessCallback = successCallback;
+      this.linkPickerCancelCallback = cancelCallback;
       this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
     },
 
-    _showImagePicker: function(fieldId, dialogConfig, selectedImage, callback) {
-      this.imagePickerCallback = callback;
+    _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this.imagePickerSuccessCallback = successCallback;
+      this.imagePickerCancelCallback = cancelCallback;
       this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imagePickerWicketUrl);
     },
 
@@ -256,14 +258,26 @@
     },
 
     onLinkPicked: function(link) {
-      if (this.linkPickerCallback) {
-        this.linkPickerCallback(link);
+      if (this.linkPickerSuccessCallback) {
+        this.linkPickerSuccessCallback(link);
       }
     },
 
     onImagePicked: function(image) {
-      if (this.imagePickerCallback) {
-        this.imagePickerCallback(image);
+      if (this.imagePickerSuccessCallback) {
+        this.imagePickerSuccessCallback(image);
+      }
+    },
+
+    onLinkPickCancelled: function () {
+      if(this.linkPickerCancelCallback) {
+        this.linkPickerCancelCallback();
+      }
+    },
+
+    onImagePickCancelled: function () {
+      if(this.imagePickerCancelCallback) {
+        this.imagePickerCancelCallback();
       }
     },
 

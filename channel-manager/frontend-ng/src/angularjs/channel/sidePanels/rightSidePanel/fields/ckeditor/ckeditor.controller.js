@@ -15,7 +15,7 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService, SharedSpaceToolbarService) {
+  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService, SharedSpaceToolbarService, FieldService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -25,6 +25,7 @@ class CKEditorController {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
+    this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
   }
 
@@ -60,10 +61,17 @@ class CKEditorController {
         }
       });
 
-      this.editor.on('focus', () => this.onEditorFocus());
-      this.editor.on('blur', () => this.onEditorBlur());
+      this.editor.on('focus', $event => this.onEditorFocus($event));
       this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
       this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
+
+      // CKEditor has been replaced
+      this.editor.on('instanceReady', () => {
+        this.editableElement = this.$element.find('.cke_editable');
+        this.editableElement.on('blur', $event => this.onEditorBlur($event));
+      });
+
+      this._validate();
     });
   }
 
@@ -86,51 +94,83 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.ngModel.$setViewValue(this.editor.getData());
     });
+    this._validate();
+  }
+
+  _validate() {
+    this.fieldObject.$setValidity('required', true);
+
+    const rawValue = this._getRawValue();
+    // Validate 'required', field should have a value
+    if (this.isRequired) {
+      if (!rawValue.length) {
+        this.fieldObject.$setValidity('required', false);
+      }
+    }
   }
 
   onEditorFocus() {
     this.$scope.$apply(() => {
       this.textAreaElement.addClass('focused');
+    });
 
-      this.onFocus({
-        $event: {
-          target: this.$element.find('.cke_contents'),
-          customFocus: () => this.editor.focus(),
-        },
-      });
+    this.onFocus({
+      $event: {
+        target: this.$element.find('.cke_editable'),
+        customFocus: () => this.editor.focus(),
+      },
     });
 
     this.SharedSpaceToolbarService.showToolbar({
       hasBottomToolbar: this.config.hasBottomToolbar,
     });
+    this._validate();
   }
 
-  onEditorBlur() {
-    this.$scope.$apply(() => {
-      this.textAreaElement.removeClass('focused');
-    });
-    this.onBlur();
+  onEditorBlur($event) {
+    this.onBlur({ $event });
 
-    this.SharedSpaceToolbarService.hideToolbar();
+    const relatedTarget = angular.element($event.relatedTarget);
+    if (!this.FieldService.shouldPreserveFocus(relatedTarget) && this.SharedSpaceToolbarService.isToolbarPinned === false) {
+      this.SharedSpaceToolbarService.hideToolbar();
+    }
+
+    this._validate();
   }
 
   _openLinkPicker(selectedLink) {
+    this.SharedSpaceToolbarService.isToolbarPinned = true;
     const linkPickerConfig = this.config.hippopicker.internalLink;
     this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
       this.editor.execCommand('insertInternalLink', link);
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+    }, () => {
+      // Cancel callback
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+      this.editor.focus();
     });
   }
 
   _openImagePicker(selectedImage) {
     const imagePickerConfig = this.config.hippopicker.image;
+    this.SharedSpaceToolbarService.isToolbarPinned = true;
     this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
       // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
       // runs at the same level; two directories up from the angular app. Because of this we need to prepend
       // all internal images with a prefix as shown below.
       image.f_url = `../../${image.f_url}`;
-
       this.editor.execCommand('insertImage', image);
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+    }, () => {
+      // Cancel callback
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+      this.editor.focus();
     });
+  }
+
+  _getRawValue() {
+    // CKEditor field value, stripped from any HTML entities or whitespaces.
+    return $(this.editor.getSnapshot()).text().trim();
   }
 }
 

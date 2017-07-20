@@ -29,13 +29,16 @@ class FieldService {
     this._customFocusCallback = null;
   }
 
-  shouldUnsetFocus(relatedTarget) {
-    const validSelectors = [
-      '.btn-fullwidth',
-      '.btn-normalwidth',
+  shouldPreserveFocus(relatedTarget) {
+    // validExpressions is an array containing functions.
+    // The functions will be evaluated, and if at least one of them is true,
+    // "true" will be returned, therefore input focus will be preserved. Otherwise, false.
+    const validExpressions = [
+      () => relatedTarget.is('.btn-fullwidth') || relatedTarget.is('.btn-normalwidth'),
+      () => relatedTarget.is('.btn-overlay-toggle'),
     ];
 
-    return validSelectors.some(selector => relatedTarget.is(selector));
+    return validExpressions.some(expression => expression());
   }
 
   setFocusedInput(element, customFocusCallback = null) {
@@ -53,7 +56,9 @@ class FieldService {
       if (this._customFocusCallback) {
         this._customFocusCallback();
       } else {
-        this._focusedInput.focus();
+        setTimeout(() => {
+          this._focusedInput.focus();
+        }, 0);
       }
     }
   }

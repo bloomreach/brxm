@@ -171,16 +171,28 @@ describe('PrimitiveField', () => {
       target: mockTargetElement,
       customFocus: null,
     };
-
     spyOn(FieldService, 'setFocusedInput');
-    spyOn(FieldService, 'shouldUnsetFocus').and.returnValue(false);
-    spyOn(FieldService, 'unsetFocusedInput');
 
     $ctrl.focusPrimitive($event);
     expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
+  });
 
-    $event.target.triggerHandler('blur.focusedInputBlurHandler');
-    expect(FieldService.shouldUnsetFocus).toHaveBeenCalled();
+  it('handles $event object if supplied upon blur', () => {
+    const $event = {
+      relatedTarget: angular.element('<input type="text">'),
+    };
+    spyOn(FieldService, 'shouldPreserveFocus').and.returnValue(true);
+    spyOn(FieldService, 'triggerInputFocus');
+    spyOn(FieldService, 'unsetFocusedInput');
+
+    $ctrl.blurPrimitive($event);
+    expect(FieldService.shouldPreserveFocus).toHaveBeenCalledWith($event.target);
+    expect(FieldService.triggerInputFocus).toHaveBeenCalled();
+    expect(FieldService.unsetFocusedInput).not.toHaveBeenCalled();
+
+    // if should not preserve focus
+    FieldService.shouldPreserveFocus.and.returnValue(false);
+    $ctrl.blurPrimitive($event);
     expect(FieldService.unsetFocusedInput).toHaveBeenCalled();
   });
 

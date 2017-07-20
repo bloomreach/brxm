@@ -87,12 +87,12 @@ describe('field service', () => {
   });
 
   describe('input focus preserve feature', () => {
-    it('shouldUnsetFocus should return true when selector is valid and false when invalid', () => {
+    it('shouldPreserveFocus should return true when at least one expression is true and false otherwise', () => {
       const relatedTarget = $('<button></button>');
       relatedTarget.addClass('btn-fullwidth'); // selector is now valid (.btn-fullwidth)
-      expect(FieldService.shouldUnsetFocus(relatedTarget)).toEqual(true);
+      expect(FieldService.shouldPreserveFocus(relatedTarget)).toEqual(true);
       relatedTarget.removeClass('btn-fullwidth'); // remove valid selector
-      expect(FieldService.shouldUnsetFocus(relatedTarget)).toEqual(false);
+      expect(FieldService.shouldPreserveFocus(relatedTarget)).toEqual(false);
     });
 
     it('should set focused input', () => {

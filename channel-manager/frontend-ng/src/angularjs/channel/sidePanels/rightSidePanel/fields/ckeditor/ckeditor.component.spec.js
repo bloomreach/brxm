@@ -27,6 +27,7 @@ describe('CKEditor Component', () => {
   let editor;
   let $q;
   let ngModel;
+  let fieldObject;
 
   const $element = angular.element('<div><textarea></textarea></div>');
 
@@ -57,6 +58,7 @@ describe('CKEditor Component', () => {
       'getData',
       'on',
       'setData',
+      'getSnapshot',
     ]);
     CKEditor.replace.and.returnValue(editor);
 
@@ -67,6 +69,21 @@ describe('CKEditor Component', () => {
 
     ngModel.$setViewValue.and.callFake((html) => {
       ngModel.$viewValue = html;
+    });
+
+    fieldObject = jasmine.createSpyObj('fieldObject', [
+      '$setValidity',
+      '$valid',
+      '$invalid',
+      '$error',
+    ]);
+    fieldObject.$error = {};
+
+
+    fieldObject.$setValidity.and.callFake((field, isValid) => {
+      fieldObject.$error[field] = isValid;
+      fieldObject.$valid = isValid;
+      fieldObject.$invalid = !isValid;
     });
 
     spyOn(CKEditorService, 'loadCKEditor').and.returnValue($q.resolve(CKEditor));
@@ -88,17 +105,20 @@ describe('CKEditor Component', () => {
     });
 
     ngModel.$viewValue = '<p>initial value</p>';
+    $ctrl.fieldObject = fieldObject;
   });
-
-  function init() {
-    $ctrl.$onInit();
-    $scope.$apply();
-  }
 
   function getEventListener(event) {
     expect(editor.on).toHaveBeenCalledWith(event, jasmine.any(Function));
     const onCall = editor.on.calls.all().find(call => call.args[0] === event);
     return onCall.args[1];
+  }
+
+  function init() {
+    $ctrl.$onInit();
+    $scope.$apply();
+    const instanceReady = getEventListener('instanceReady');
+    instanceReady();
   }
 
   it('initializes the component', () => {
@@ -187,16 +207,50 @@ describe('CKEditor Component', () => {
     });
   });
 
-  it('calls the onBlur handler when blurred', () => {
-    init();
-    const onEditorBlur = getEventListener('blur');
-    onEditorBlur();
-    expect($ctrl.onBlur).toHaveBeenCalled();
-  });
-
   it('destroys the editor once the scope is destroyed', () => {
     init();
     $ctrl.$onDestroy();
     expect(editor.destroy).toHaveBeenCalled();
+  });
+
+  describe('CKEditor field validation', () => {
+    beforeEach(() => {
+      init();
+      $ctrl.fieldObject.$valid = true;
+      $ctrl.fieldObject.$invalid = false;
+      $ctrl.fieldObject.$error = {};
+
+      spyOn($ctrl, '_getRawValue');
+    });
+
+    afterEach(() => {
+      $ctrl.fieldObject.$setValidity.calls.reset();
+    });
+
+    it('validates CKEditor when field is required and value is valid', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue('Valid value');
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$valid).toEqual(true);
+    });
+
+    it('validates CKEditor when field is required and value is completely empty', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue('');
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
+      expect($ctrl.fieldObject.$invalid).toEqual(true);
+    });
+
+    it('validates CKEditor when field is required and value is pure whitespaces', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue($('    \n\n   \n\r\t ').text().trim());
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
+      expect($ctrl.fieldObject.$invalid).toEqual(true);
+    });
   });
 });
