@@ -26,6 +26,8 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
@@ -41,8 +43,6 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
 
-import com.google.common.collect.ImmutableMap;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -57,16 +57,21 @@ public class ParserValueTest extends AbstractBaseTest {
 
         final GroupImpl base = assertGroup(ImmutableMap.of(group.getName(), group), "base", new String[0], 1);
         final ProjectImpl project = assertProject(base, "project1", new String[0], 1);
-        final ModuleImpl module = assertModule(project, "module1", new String[0], 2);
+        final ModuleImpl module = assertModule(project, "module1", new String[0], 3);
         final SourceImpl source = assertSource(module, "base.yaml", 5);
-        final SourceImpl contentSource = assertSource(module, "content.yaml", 1);
 
+        final SourceImpl contentSource = assertSource(module, "content.yaml", 1);
         final ContentDefinitionImpl contentDefinition = assertDefinition(contentSource, 0, ContentDefinitionImpl.class);
         final DefinitionNodeImpl contentDetectedNode = assertNode(contentDefinition, "/node", "node", contentDefinition, 0, 6);
         assertProperty(contentDetectedNode, "/node/double", "double", contentDefinition, ValueType.DOUBLE, 3.1415);
         assertProperty(contentDetectedNode, "/node/longAsInt", "longAsInt", contentDefinition, ValueType.LONG, (long) 42);
         assertProperty(contentDetectedNode, "/node/longAsLong", "longAsLong", contentDefinition, ValueType.LONG, 4200000000L);
         assertProperty(contentDetectedNode, "/node/string", "string", contentDefinition, ValueType.STRING, "hello world");
+
+        final SourceImpl snsSource = assertSource(module, "sns-content.yaml", 1);
+        final ContentDefinitionImpl snsDefinition = assertDefinition(snsSource, 0, ContentDefinitionImpl.class);
+        final DefinitionNodeImpl snsNode = assertNode(snsDefinition, "/sns[1]", "sns[1]", snsDefinition, 0, 1);
+        assertProperty(snsNode, "/sns[1]/property", "property", snsDefinition, ValueType.STRING, "value");
 
         final ConfigDefinitionImpl autoDetectedDefinition = assertDefinition(source, 0, ConfigDefinitionImpl.class);
         final DefinitionNodeImpl autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, 2, 6);
