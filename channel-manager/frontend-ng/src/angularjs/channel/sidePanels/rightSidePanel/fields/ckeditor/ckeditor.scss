@@ -21,31 +21,41 @@
     width: 0 !important;
   }
 }
-
-.cke {
-  .cke_button__source {
-    display: none;
+ckeditor {
+  &.is-invalid {
+    .cke {
+      border-bottom-color: $red-a700 !important;
+    }
   }
 
-  .cke_wysiwyg_div {
-    padding: 8px !important;
+  &:not(.is-invalid) {
+    .cke {
+      border-bottom-color: $blue-500 !important;
+    }
   }
 
-  .md-resize-handle {
-    display: none !important;
-  }
-
-  // CKEditor input area (:not is required to exclude toolbars)
-  &[class*='cke_editor_input_']:not(.cke_shared) {
-    margin-bottom: 1px;
-
-    &.cke_focus {
-      border-bottom: 2px solid $blue-500;
-      margin-bottom: 0;
+  .cke {
+    .cke_button__source {
+      display: none;
     }
 
-    &.cke_invalid {
-      border-bottom-color: $red-a700 !important;
+    .cke_wysiwyg_div {
+      padding: 8px !important;
+    }
+
+    .md-resize-handle {
+      display: none !important;
+    }
+
+    // CKEditor input area (:not is required to exclude toolbars)
+    &[class*='cke_editor_input_']:not(.cke_shared) {
+      margin-bottom: 1px;
+
+      &.cke_focus {
+        border-bottom-width: 2px;
+        border-bottom-style: solid;
+        margin-bottom: 0;
+      }
     }
   }
 }

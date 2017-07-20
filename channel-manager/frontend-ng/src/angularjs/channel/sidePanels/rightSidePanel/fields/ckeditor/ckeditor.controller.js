@@ -69,9 +69,9 @@ class CKEditorController {
       this.editor.on('instanceReady', () => {
         this.editableElement = this.$element.find('.cke_editable');
         this.editableElement.on('blur', $event => this.onEditorBlur($event));
-
-        this._validate();
       });
+
+      this._validate();
     });
   }
 
@@ -104,7 +104,6 @@ class CKEditorController {
     // Validate 'required', field should have a value
     if (this.isRequired) {
       if (!rawValue.length) {
-        this.$invalid = true;
         this.fieldObject.$setValidity('required', false);
       }
     }
