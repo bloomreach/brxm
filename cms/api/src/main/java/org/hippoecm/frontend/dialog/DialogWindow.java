@@ -188,7 +188,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     private void internalShow(Dialog dialog) {
         this.dialog = dialog;
         dialog.setDialogService(this);
-        setTitle(new EscapeHtmlStringModel(new StringWithoutLineBreaksModel(dialog.getTitle())));
+        setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
         setContent(dialog.getComponent());
         setWindowClosedCallback(new Callback(dialog));
 
