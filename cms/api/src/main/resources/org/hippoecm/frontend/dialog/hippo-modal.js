@@ -170,7 +170,7 @@
      * Returns the modal window markup with specified element identifiers and without a form element.
      */
     Wicket.Window.getMarkup = function(idWindow, idClassElement, idCaption, idContent, idTop, idTopLeft, idTopRight, idLeft, idRight, idBottomLeft, idBottomRight, idBottom, idCaptionText, isFrame) {
-        var s = "<div class=\"wicket-modal\" id=\"" + idWindow + "\" style=\"top: 10px; left: 10px; width: 100px;\">" +
+        var s = "<div class=\"wicket-modal\" id=\"" + idWindow + "\" role=\"dialog\" aria-labelledBy=\""+idCaptionText+"\" style=\"top: 10px; left: 10px; width: 100px;\">" +
                 "<div id=\"" + idClassElement + "\">" +
                 "<div class=\"w_top_1\">" +
                 "<div class=\"w_topLeft\" id=\"" + idTopLeft + "\"></div>" +
@@ -182,7 +182,7 @@
                 "<div class=\"w_right\" id='" + idRight + "'>" +
                 "<div class=\"w_content_1\" onmousedown=\"Wicket.Event.stop(event);\">" +
                 "<div class=\"w_caption\"  id=\"" + idCaption + "\">" +
-                "<a class=\"w_close\" href=\"#\"></a>" +
+                "<a class=\"w_close\" style=\"z-index:1\" href=\"#\"></a>" +
                 "<span id=\"" + idCaptionText + "\" class=\"w_captionText\"></span>" +
                 "</div>" +
 
