@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
-    name: hippo-cms-translations
-    after: hippo-cms
+    name: hippo-plugin-taxonomy-translations
+    after: hippo-plugin-taxonomy
 module: hippo-plugin-taxonomy-l10n-${locale}

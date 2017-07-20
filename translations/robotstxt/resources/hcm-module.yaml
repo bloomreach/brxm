@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
-    name: hippo-cms-translations
-    after: hippo-cms
+    name: hippo-plugin-robotstxt-translations
+    after: hippo-plugin-robotstxt
 module: hippo-plugin-robotstxt-l10n-${locale}
