@@ -99,8 +99,8 @@ class CKEditorController {
 
   _validate() {
     this.fieldObject.$setValidity('required', true);
-    const rawValue = $(this.editor.getSnapshot()).text().trim(); // rawValue contains the CKEditor field value, stripped from any HTML entities or whitespaces.
 
+    const rawValue = this._getRawValue();
     // Validate 'required', field should have a value
     if (this.isRequired) {
       if (!rawValue.length) {
@@ -173,6 +173,11 @@ class CKEditorController {
       this.SharedSpaceToolbarService.isToolbarPinned = false;
       this.editor.focus();
     });
+  }
+
+  _getRawValue() {
+    // CKEditor field value, stripped from any HTML entities or whitespaces.
+    return $(this.editor.getSnapshot()).text().trim();
   }
 }
 

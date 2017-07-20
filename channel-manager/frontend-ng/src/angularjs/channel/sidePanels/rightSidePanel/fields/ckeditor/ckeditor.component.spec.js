@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('CKEditor Component', () => {
+describe('CKEditor Component', () => {
   let $componentController;
 
   let $ctrl;
@@ -27,6 +27,7 @@ fdescribe('CKEditor Component', () => {
   let editor;
   let $q;
   let ngModel;
+  let fieldObject;
 
   const $element = angular.element('<div><textarea></textarea></div>');
 
@@ -57,6 +58,7 @@ fdescribe('CKEditor Component', () => {
       'getData',
       'on',
       'setData',
+      'getSnapshot',
     ]);
     CKEditor.replace.and.returnValue(editor);
 
@@ -67,6 +69,21 @@ fdescribe('CKEditor Component', () => {
 
     ngModel.$setViewValue.and.callFake((html) => {
       ngModel.$viewValue = html;
+    });
+
+    fieldObject = jasmine.createSpyObj('fieldObject', [
+      '$setValidity',
+      '$valid',
+      '$invalid',
+      '$error',
+    ]);
+    fieldObject.$error = {};
+
+
+    fieldObject.$setValidity.and.callFake((field, isValid) => {
+      fieldObject.$error[field] = isValid;
+      fieldObject.$valid = isValid;
+      fieldObject.$invalid = !isValid;
     });
 
     spyOn(CKEditorService, 'loadCKEditor').and.returnValue($q.resolve(CKEditor));
@@ -88,6 +105,7 @@ fdescribe('CKEditor Component', () => {
     });
 
     ngModel.$viewValue = '<p>initial value</p>';
+    $ctrl.fieldObject = fieldObject;
   });
 
   function getEventListener(event) {
@@ -193,5 +211,46 @@ fdescribe('CKEditor Component', () => {
     init();
     $ctrl.$onDestroy();
     expect(editor.destroy).toHaveBeenCalled();
+  });
+
+  describe('CKEditor field validation', () => {
+    beforeEach(() => {
+      init();
+      $ctrl.fieldObject.$valid = true;
+      $ctrl.fieldObject.$invalid = false;
+      $ctrl.fieldObject.$error = {};
+
+      spyOn($ctrl, '_getRawValue');
+    });
+
+    afterEach(() => {
+      $ctrl.fieldObject.$setValidity.calls.reset();
+    });
+
+    it('validates CKEditor when field is required and value is valid', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue('Valid value');
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$valid).toEqual(true);
+    });
+
+    it('validates CKEditor when field is required and value is completely empty', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue('');
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
+      expect($ctrl.fieldObject.$invalid).toEqual(true);
+    });
+
+    it('validates CKEditor when field is required and value is pure whitespaces', () => {
+      $ctrl.isRequired = true;
+      $ctrl._getRawValue.and.returnValue($('    \n\n   \n  ').text().trim());
+
+      $ctrl._validate();
+      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
+      expect($ctrl.fieldObject.$invalid).toEqual(true);
+    });
   });
 });
