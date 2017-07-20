@@ -246,7 +246,7 @@ describe('CKEditor Component', () => {
 
     it('validates CKEditor when field is required and value is pure whitespaces', () => {
       $ctrl.isRequired = true;
-      $ctrl._getRawValue.and.returnValue($('    \n\n   \n  ').text().trim());
+      $ctrl._getRawValue.and.returnValue($('    \n\n   \n\r\t ').text().trim());
 
       $ctrl._validate();
       expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);

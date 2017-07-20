@@ -107,13 +107,6 @@ class CKEditorController {
         this.fieldObject.$setValidity('required', false);
       }
     }
-
-    const cke = this.$element.find('.cke');
-    if (this.fieldObject.$invalid) {
-      cke.addClass('cke_invalid');
-    } else {
-      cke.removeClass('cke_invalid');
-    }
   }
 
   onEditorFocus() {
