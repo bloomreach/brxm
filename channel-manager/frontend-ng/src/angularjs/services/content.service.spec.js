@@ -170,4 +170,44 @@ describe('ContentService', () => {
     expect(successCallback).not.toHaveBeenCalled();
     expect(failureCallback).toHaveBeenCalled();
   });
+
+  it('retrieves document-types async', () => {
+    const docType = { id: 'test' };
+    const result = jasmine.createSpy('result');
+
+    $httpBackend.expectGET('/test/ws/content/documenttypes/test').respond(200, docType);
+    ContentService.getDocumentType('test').then(result);
+
+    $httpBackend.expectGET('/test/ws/content/documenttypes/test').respond(200, docType);
+    ContentService.getDocumentType('test').then(result);
+    $httpBackend.flush();
+
+    expect(result).toHaveBeenCalledTimes(2);
+  });
+
+  it('sends draft requests synchronously and in order', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+    const doc = { id: '123' };
+    const fieldValue = [{ value: 'bla' }];
+
+    $httpBackend.when('POST', '/test/ws/content/documents/123/draft').respond(200, 'create');
+    $httpBackend.when('PUT', '/test/ws/content/documents/123/draft').respond(200, 'save');
+    $httpBackend.when('DELETE', '/test/ws/content/documents/123/draft').respond(200, 'delete');
+    $httpBackend.when('PUT', '/test/ws/content/documents/123/draft/fieldA', fieldValue).respond(200, 'updateField');
+
+    ContentService.createDraft(doc.id).then(successCallback, failureCallback);
+    ContentService.saveDraft(doc).then(successCallback, failureCallback);
+    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    ContentService.draftField('123', 'fieldA', fieldValue).then(successCallback, failureCallback);
+
+    $httpBackend.flush();
+
+    expect(successCallback).toHaveBeenCalledTimes(4);
+    expect(failureCallback).not.toHaveBeenCalled();
+    expect(successCallback.calls.argsFor(0)).toEqual(['create']);
+    expect(successCallback.calls.argsFor(1)).toEqual(['save']);
+    expect(successCallback.calls.argsFor(2)).toEqual(['delete']);
+    expect(successCallback.calls.argsFor(3)).toEqual(['updateField']);
+  });
 });

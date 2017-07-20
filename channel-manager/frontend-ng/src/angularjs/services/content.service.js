@@ -18,12 +18,16 @@ const REST_API_PATH = 'ws/content';
 
 class ContentService {
 
-  constructor($http, ConfigService, PathService) {
+  constructor($http, $q, ConfigService, PathService) {
     'ngInject';
 
     this.$http = $http;
+    this.$q = $q;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
+
+    this._queue = [];
+    this._running = false;
   }
 
   createDraft(id) {
@@ -38,20 +42,49 @@ class ContentService {
     return this._send('DELETE', ['documents', id, 'draft']);
   }
 
-  getDocumentType(id) {
-    return this._send('GET', ['documenttypes', id]);
-  }
-
   draftField(documentId, fieldName, value) {
     return this._send('PUT', ['documents', documentId, 'draft', fieldName], value);
   }
 
-  _send(method, pathElements, data) {
+  getDocumentType(id) {
+    return this._send('GET', ['documenttypes', id], null, true);
+  }
+
+  _send(method, pathElements, data = null, async = false) {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const url = encodeURI(path);
     const headers = {};
-    return this.$http({ method, url, headers, data })
-      .then(result => result.data);
+    const opts = { method, url, headers, data };
+    const promise = async ? this.$http(opts) : this._schedule(opts);
+
+    return promise.then(result => result.data);
+  }
+
+  _schedule(opts) {
+    const defer = this.$q.defer();
+
+    this._queue.push(() => {
+      this.$http(opts)
+      .then(
+        result => defer.resolve(result),
+        result => defer.reject(result))
+      .finally(() => this._next());
+    });
+
+    if (!this._running) {
+      this._running = true;
+      this._next();
+    }
+
+    return defer.promise;
+  }
+
+  _next() {
+    if (this._queue.length === 0) {
+      this._running = false;
+    } else {
+      this._queue.shift()();
+    }
   }
 }
 
