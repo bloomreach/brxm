@@ -1,0 +1,3 @@
+/content/container/sns:
+  jcr:primaryType: nt:unstructured
+  existing: existing1
