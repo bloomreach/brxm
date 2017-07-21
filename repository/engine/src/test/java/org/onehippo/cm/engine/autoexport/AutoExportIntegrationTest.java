@@ -125,7 +125,7 @@ public class AutoExportIntegrationTest {
         Fixture(final String name) {
             this.name = name;
         }
-        void test(final Modifier modifier) throws Exception {
+        void test(final JcrRunner jcrRunner) throws Exception {
             final Path projectPath = folder.newFolder("project").toPath();
             final Path resourcePath = projectPath.resolve(Paths.get("TestModuleFileSource", "src", "main", "resources"));
             Files.createDirectories(resourcePath);
@@ -140,7 +140,7 @@ public class AutoExportIntegrationTest {
 
             try (final LogLineWaiterWrapper waiter = new LogLineWaiterWrapper(repository.getRepositoryClassLoader(),
                     EventJournalProcessor.class.getName(), Level.INFO)) {
-                modifier.run(session);
+                jcrRunner.run(session);
                 session.save();
 
                 final String autoExportDiff = "Computed diff";
@@ -155,7 +155,8 @@ public class AutoExportIntegrationTest {
         }
     }
 
-    private interface Modifier {
+    @FunctionalInterface
+    private interface JcrRunner {
         void run(final Session session) throws Exception;
     }
 

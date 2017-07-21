@@ -42,7 +42,7 @@ public class IsolatedRepository {
     private final static Logger log = LoggerFactory.getLogger(IsolatedRepository.class);
 
     private static final String dbport = System.getProperty(IsolatedRepository.class.getName() + ".dbport", "9001");
-    private static final String repositoryConfig = "/org/hippoecm/repository/autoexport-integration-repository.xml";
+    private static final String repositoryConfig = "/org/hippoecm/repository/isolated-repository.xml";
 
     public static final Credentials CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
 
