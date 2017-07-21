@@ -30,6 +30,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
 import static org.onehippo.cm.model.Constants.OPERATION_KEY;
 import static org.onehippo.cm.model.Constants.PATH_KEY;
 import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
@@ -71,11 +72,15 @@ public class ContentSourceParser extends SourceParser {
             final String key = asStringScalar(tuple.getKeyNode());
             final Node tupleValue = tuple.getValueNode();
 
-            if (key.startsWith(META_KEY_PREFIX)) {
+            if (key.equals(META_ORDER_BEFORE_KEY)) {
+                final String name = asNodeOrderBeforeValue(tupleValue);
+                if (definitionNode.getName().equals(name)) {
+                    throw new ParserException("Invalid " + META_ORDER_BEFORE_KEY + " targeting this node itself", node);
+                }
+                definitionNode.setOrderBefore(name);
+            } else if (key.startsWith(META_KEY_PREFIX)) {
                 throw new ParserException("Content node cannot contain key '" + key + "'", node);
-            }
-
-            if (key.startsWith("/")) {
+            } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, tupleValue, definitionNode);
             } else {

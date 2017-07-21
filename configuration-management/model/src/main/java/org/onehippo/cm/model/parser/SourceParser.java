@@ -131,6 +131,10 @@ public abstract class SourceParser extends AbstractBaseParser {
         populateDefinitionNode(node, value);
     }
 
+    String asNodeOrderBeforeValue(final Node node) throws ParserException {
+        return asStringScalar(node);
+    }
+
     protected void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         if (name.equals(JCR_PRIMARYTYPE)) {
             constructJcrPrimaryTypeProperty(name, value, parent);

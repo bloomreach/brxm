@@ -171,10 +171,6 @@ public class ConfigSourceParser extends SourceParser {
         return true;
     }
 
-    private String asNodeOrderBeforeValue(final Node node) throws ParserException {
-        return asStringScalar(node);
-    }
-
     private void constructWebFileBundleDefinition(final Node definitionNode, final ConfigSourceImpl source) throws ParserException {
         List<Node> nodes;
         if (definitionNode.getNodeId() == scalar) {
