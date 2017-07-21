@@ -25,7 +25,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
-import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +32,11 @@ import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPE
 import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
 
 /**
- * Create a LocalHippoRepository running in its own isolated classloader. Because of this classloader isolation all
- * access to the repository internals must be done using reflection. Only the JCR API is shared with the test class so
- * that test cases can use JCR without reflection.
+ * Create a LocalHippoRepository running in its own isolated classloader. Running the repository in its own classloader
+ * has the benefit that static singletons that are part of the Hippo code base are not shared between instances,
+ * allowing users of this class to start multiple repositories after each other within the same JVM. Because of this
+ * classloader isolation all access to the repository internals must be done using reflection. Only the JCR API is
+ * shared with the test class so that test cases can use JCR without reflection.
  */
 public class IsolatedRepository {
 
@@ -53,11 +54,9 @@ public class IsolatedRepository {
     private URLClassLoader classLoader;
     private Object repository;
     private String repositoryPath;
-    private String h2Path;
-    private Server h2Server;
 
+    private String originalRepHome;
     private String originalRepoPath;
-    private String originalRepDbport;
     private String originalProjectBaseDir;
     private String originalAutoexportAllowed;
 
@@ -85,21 +84,18 @@ public class IsolatedRepository {
         FileUtils.forceMkdir(repositoryFolder);
         repositoryPath = repositoryFolder.getAbsolutePath();
 
-        final File h2Dir = new File(folder, "h2");
-        FileUtils.forceMkdir(h2Dir);
-        h2Path = h2Dir.getAbsolutePath();
-        h2Server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path).start();
-
+        originalRepHome = System.getProperty("rep.home", "");
         originalRepoPath = System.getProperty("repo.path", "");
-        originalRepDbport = System.getProperty("rep.dbport", "");
         originalProjectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY, "");
         originalAutoexportAllowed = System.getProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "");
 
+        System.setProperty("rep.home", repositoryPath);
         System.setProperty("repo.path", "");
-        System.setProperty("rep.dbport", dbport);
         if (autoExportEnabled) {
             System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "true");
+        } else {
+            System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         }
 
         try {
@@ -111,8 +107,8 @@ public class IsolatedRepository {
     }
 
     private void restoreSystemProperties() {
+        System.setProperty("rep.home", originalRepHome);
         System.setProperty("repo.path", originalRepoPath);
-        System.setProperty("rep.dbport", originalRepDbport);
         System.setProperty(PROJECT_BASEDIR_PROPERTY, originalProjectBaseDir);
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, originalAutoexportAllowed);
     }
@@ -146,9 +142,6 @@ public class IsolatedRepository {
     public void stop() throws Exception {
         if (repository != null) {
             close(repository);
-        }
-        if (h2Server != null) {
-            h2Server.stop();
         }
         restoreSystemProperties();
     }

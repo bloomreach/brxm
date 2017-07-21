@@ -162,6 +162,8 @@ public class AutoExportIntegrationTest {
 
     /**
      * Wrapper around {@link LogLineWaiter} that loads the {@link LogLineWaiter} object from a different classloader.
+     * For the LogLineWaiter to capture any output, it needs to be loaded from the same classloader as the class that
+     * is generating the log events.
      */
     private class LogLineWaiterWrapper implements AutoCloseable {
         private final Object collector;
