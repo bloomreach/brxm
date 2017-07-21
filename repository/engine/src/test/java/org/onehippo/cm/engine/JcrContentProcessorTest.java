@@ -31,7 +31,9 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.definition.ActionType;
@@ -137,6 +139,73 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
 
         applyAndSaveDefinitions(new String[]{source});
     }
+
+    @Test
+    public void order_before() throws Exception {
+
+        final String source1
+                = "/test/node1:\n" +
+                "  .meta:order-before: testChildNode\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  boolean: true\n" +
+                "  date: 2015-10-21T07:28:00+08:00\n" +
+                "  double: 3.1415\n" +
+                "  longAsLong: 4200000000\n" +
+                "  string: hello world";
+
+        final String source2
+                = "/test/node2:\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  boolean: true\n" +
+                "  date: 2015-10-21T07:28:00+08:00\n" +
+                "  double: 3.1415\n" +
+                "  longAsLong: 4200000000\n" +
+                "  string: hello world";
+
+        final String source3
+                = "/test/node3:\n" +
+                "  .meta:order-before: node2\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  boolean: true\n" +
+                "  date: 2015-10-21T07:28:00+08:00\n" +
+                "  double: 3.1415\n" +
+                "  string: hello world";
+
+        applyAndSaveDefinitions(new String[]{source1, source2, source3});
+
+        Node testChildNode = session.getNode("/test/testChildNode");
+        Node node1 = session.getNode("/test/node1");
+        Node node2 = session.getNode("/test/node2");
+        Node node3 = session.getNode("/test/node3");
+
+        Node node2Sibl = JcrUtils.getNextSiblingIfExists(node3);
+        Node testChildNodeSibl = JcrUtils.getNextSiblingIfExists(node1);
+
+        assertTrue(node2Sibl.getName().equals(node2.getName()));
+        assertTrue(testChildNodeSibl.getName().equals(testChildNode.getName()));
+    }
+
+    @Test
+    public void order_before_fail() throws Exception {
+
+        final String source3
+                = "/test/node3:\n" +
+                "  .meta:order-before: node2\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  boolean: true\n" +
+                "  date: 2015-10-21T07:28:00+08:00\n" +
+                "  double: 3.1415\n" +
+                "  string: hello world";
+
+        try
+        {
+            applyAndSaveDefinitions(new String[]{source3});
+            fail("Should fail because of missing order before node");
+        } catch(RuntimeException ex) {
+            assertTrue(ex.getMessage().contains("Failed to process order before property of node"));
+        }
+    }
+
 
     @Test
     public void append_content() throws Exception {

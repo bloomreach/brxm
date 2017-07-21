@@ -15,11 +15,23 @@
  */
 package org.onehippo.cm.engine;
 
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.definition.ActionType;
@@ -37,6 +49,12 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import com.google.common.collect.ImmutableList;
 
 import junit.framework.AssertionFailedError;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
@@ -44,6 +62,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConfigurationContentServiceTest {
@@ -108,6 +127,45 @@ public class ConfigurationContentServiceTest {
 
         verify(baselineService);
         verify(jcrContentProcessor);
+    }
+
+    @Test
+    public void testOrdering() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+
+        final ContentDefinitionImpl cc1 = addContentDefinition(module, "rsource13", "/c/c1");
+        cc1.getNode().setOrderBefore("a1");
+
+        final ContentDefinitionImpl a1 = addContentDefinition(module, "rsource1", "/a1");
+        final ContentDefinitionImpl a2 = addContentDefinition(module, "rsource2", "/a2");
+        final ContentDefinitionImpl a3 = addContentDefinition(module, "rsource3", "/a3");
+        a3.getNode().setOrderBefore("a2");
+        a2.getNode().setOrderBefore("a1");
+
+        addContentDefinition(module, "psource1", "/path/a1/b1/c1");
+        addContentDefinition(module, "psource2", "/path/a1/b1/c2");
+        addContentDefinition(module, "psource2", "/path/a1/b2/c1");
+
+        final ContentDefinitionImpl pa1 = addContentDefinition(module, "source1", "/path/a1");
+        final ContentDefinitionImpl pa2 = addContentDefinition(module, "source2", "/path/a2");
+        final ContentDefinitionImpl pa3 = addContentDefinition(module, "source3", "/path/a3");
+        final ContentDefinitionImpl pa4 = addContentDefinition(module, "source4", "/path/a4");
+
+        final ContentDefinitionImpl a1b1 = addContentDefinition(module, "source11", "/path/a1/b1");
+        final ContentDefinitionImpl a1b2 = addContentDefinition(module, "source12", "/path/a1/b2");
+        a1b2.getNode().setOrderBefore("b1");
+        pa2.getNode().setOrderBefore("a1");
+        pa4.getNode().setOrderBefore("a3");
+
+        Collections.shuffle(module.getContentDefinitions());
+
+        List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+
+        assertEquals(1, sortedDefinitions.indexOf(a2) - sortedDefinitions.indexOf(a3));
+        assertEquals(1, sortedDefinitions.indexOf(a1) - sortedDefinitions.indexOf(a2));
+        assertEquals(1, sortedDefinitions.indexOf(pa1) - sortedDefinitions.indexOf(pa2));
+        assertEquals(1, sortedDefinitions.indexOf(a1b1) - sortedDefinitions.indexOf(a1b2));
+        assertEquals(1, sortedDefinitions.indexOf(pa3) - sortedDefinitions.indexOf(pa4));
     }
 
     private ContentDefinitionImpl addContentDefinition(ModuleImpl module, String sourceName, String path) {

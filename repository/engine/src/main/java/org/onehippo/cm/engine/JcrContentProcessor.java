@@ -183,6 +183,16 @@ public class JcrContentProcessor {
         }
 
         final Node jcrNode = addNode(parentNode, definitionNode);
+        if (definitionNode.getOrderBefore() != null) {
+            if (parentNode.hasNode(definitionNode.getOrderBefore())) {
+                parentNode.orderBefore(jcrNode.getName(), definitionNode.getOrderBefore());
+            } else {
+                final String msg = String.format(
+                        "Failed to process order before property of node '%s' defined in %s: '%s': does not exist.",
+                        definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore());
+                throw new IllegalArgumentException(msg);
+            }
+        }
         applyProperties(definitionNode, jcrNode, unprocessedReferences);
         applyChildNodes(definitionNode, jcrNode, actionType, unprocessedReferences);
     }
@@ -223,6 +233,7 @@ public class JcrContentProcessor {
                     uuid, modelNode.getPath(), modelNode.getOrigin()));
         }
         // create node with a new uuid
+
         return parentNode.addNode(name, primaryType);
     }
 

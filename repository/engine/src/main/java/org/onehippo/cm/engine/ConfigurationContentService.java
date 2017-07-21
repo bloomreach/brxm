@@ -16,19 +16,26 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.ActionType;
@@ -44,6 +51,12 @@ import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
+import static java.util.Comparator.nullsLast;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
@@ -71,7 +84,7 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
-        final boolean isUpgradeTo12 = checkUpgradeTo12(session);
+        final boolean isUpgradeTo12 = checkUpgradeTo12  (session);
         boolean allModulesHaveSucceeded = true;
 
         for (ModuleImpl module : model.getModules()) {
@@ -123,10 +136,9 @@ public class ConfigurationContentService {
         processItemsToDelete(actionsToProcess, model, session, isUpgradeTo12);
         session.save();
 
-        sortContentDefinitions(module);
         final Collection<String> failedPaths = new ArrayList<>();
-
-        for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
+        List<ContentDefinitionImpl> sortedDefinitions = getSortedDefinitions(module.getContentDefinitions());
+        for (final ContentDefinitionImpl contentDefinition : sortedDefinitions) {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
@@ -180,13 +192,45 @@ public class ConfigurationContentService {
     }
 
     /**
-     * Sort content definitions in natural order of their root node paths,
-     * i.e. node with a shortest hierarchy path goes first
-     *
-     * @param module target module
+     * Sort content definitions in natural order of their root node paths and order before factor
      */
-    private void sortContentDefinitions(final ModuleImpl module) {
-        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getJcrPath()));
+    List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions) {
+
+        final Map<String, List<ContentDefinitionImpl>> itemsPerPath = contentDefinitions.stream().collect(Collectors.groupingBy(getParentPath(), TreeMap::new, mapping(a -> a, toList())));
+        for (String path : itemsPerPath.keySet()) {
+
+            final List<ContentDefinitionImpl> siblings = itemsPerPath.get(path);
+            siblings.sort(comparing(z -> z.getNode().getName(), naturalOrder()));
+
+            //sort nodes to reorder so that nodes which dont have any dependencies on nodes which also has order before tag get ordered first
+            final Stream<ContentDefinitionImpl> orderSortedStream = siblings.stream()
+                    .filter(definition -> StringUtils.isNotEmpty(definition.getNode().getOrderBefore()))
+                    .sorted(Comparator.comparing(x -> this.getNodeIndex(x.getNode().getOrderBefore(), siblings)));
+
+            orderSortedStream.forEach(nodeToReorder -> {
+                final String orderBeforeNodeName = nodeToReorder.getNode().getOrderBefore();
+                int nodeIndex = getNodeIndex(orderBeforeNodeName, siblings);
+                if (nodeIndex != -1) {
+                    siblings.remove(nodeToReorder);
+                    siblings.add(nodeIndex, nodeToReorder);
+                }
+            });
+        }
+
+        return itemsPerPath.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    private int getNodeIndex(final String orderBeforeNodeName, final List<ContentDefinitionImpl> contentDefinitions) {
+        for (ContentDefinitionImpl contentDefinition : contentDefinitions) {
+            if (contentDefinition.getNode().getName().equals(orderBeforeNodeName)) {
+                return contentDefinitions.indexOf(contentDefinition);
+            }
+        }
+        return -1;
+    }
+
+    private Function<ContentDefinitionImpl, String> getParentPath() {
+        return p -> Paths.get(p.getNode().getPath()).getParent().toString();
     }
 
     /**
