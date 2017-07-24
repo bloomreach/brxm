@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /config:
+      jcr:primaryType: nt:unstructured
+    /content:
+      .meta:category: content

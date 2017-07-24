@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /config/container/sns[3]:
+      jcr:primaryType: nt:unstructured
+      existing: existing3
