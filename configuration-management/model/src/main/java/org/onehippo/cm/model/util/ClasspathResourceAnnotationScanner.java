@@ -32,41 +32,56 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+/**
+ * Utility to load classes from the classpath using a marker annotation. This is intended for internal use within the
+ * Hippo CMS and HST, and not for general use by third parties.
+ */
 public class ClasspathResourceAnnotationScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathResourceAnnotationScanner.class);
 
-    private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+    // cache intermediate results of previous calls to scan... as long as caller holds a reference to this instance
+    private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+    private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
 
+    /**
+     * Produces a set of full class-names for classes that match a marker annotation and also one of a specified set of
+     * resource location patterns.
+     * @param annotationType the Class representing the marker annotation for classes we wish to find
+     * @param locationPatterns resource location patterns following {@link PathMatchingResourcePatternResolver} syntax
+     * @return a Set<String> of full class-names for matching classes, suitable for use via Class.forName()
+     */
     public Set<String> scanClassNamesAnnotatedBy(Class<? extends Annotation> annotationType, String ... locationPatterns) {
 
+        // we need a constraint on the resource paths, so we don't scan the entire classpath
+        // this method is intended for internal platform use, so we don't want to pick up third-party hacks
         if (locationPatterns == null || locationPatterns.length == 0) {
             throw new IllegalArgumentException("Provide one or more location pattern(s).");
         }
 
-        final Set<String> annotatedClassNames = new LinkedHashSet<String>();
-
-        final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
+        // filter results by matching the given annotation class
+        TypeFilter typeFilter = new AnnotationTypeFilter(annotationType);
 
         try {
-            TypeFilter typeFilter = new AnnotationTypeFilter(annotationType);
+            // accumulate unique results
+            final Set<String> annotatedClassNames = new LinkedHashSet<>();
 
+            // check all resources matching any of the patterns
             for (String locationPattern : locationPatterns) {
-                Resource[] resources = resourcePatternResolver.getResources(locationPattern);
+                for (Resource resource : resourcePatternResolver.getResources(locationPattern)) {
 
-                for (Resource resource : resources) {
                     MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
-
                     if (typeFilter.match(metadataReader, metadataReaderFactory)) {
-                        annotatedClassNames.add(metadataReader.getAnnotationMetadata().getClassName());
+                        // getClassMetadata() is cheaper than getAnnotationMetadata()
+                        annotatedClassNames.add(metadataReader.getClassMetadata().getClassName());
                     }
                 }
             }
-        } catch (IOException e) {
+            return annotatedClassNames;
+        }
+        catch (IOException e) {
             log.error("Cannot load resource(s) from the classpath.", e);
             throw new RuntimeException("Cannot load resource(s) from the classpath.", e);
         }
-
-        return annotatedClassNames;
     }
 }
