@@ -22,6 +22,7 @@ class ComponentCatalogService {
     MaskService,
     OverlayService,
     PageStructureService,
+    FeedbackService,
     ) {
     'ngInject';
 
@@ -32,6 +33,7 @@ class ComponentCatalogService {
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
+    this.FeedbackService = FeedbackService;
   }
 
   getSelectedComponent() {
@@ -99,6 +101,10 @@ class ComponentCatalogService {
       } else {
         this.PageStructureService.showComponentProperties(newComponent);
       }
+    }).catch(() => {
+      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
+        component: component.label,
+      });
     });
   }
 }
