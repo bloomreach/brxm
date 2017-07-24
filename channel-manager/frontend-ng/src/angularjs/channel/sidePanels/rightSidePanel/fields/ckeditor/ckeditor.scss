@@ -28,12 +28,6 @@ ckeditor {
     }
   }
 
-  &:not(.is-invalid) {
-    .cke {
-      border-bottom-color: $blue-500 !important;
-    }
-  }
-
   .cke {
     .cke_button__source {
       display: none;
@@ -52,6 +46,7 @@ ckeditor {
       margin-bottom: 1px;
 
       &.cke_focus {
+        border-bottom-color: $blue-500 !important;
         border-bottom-style: solid;
         border-bottom-width: 2px;
         margin-bottom: 0;

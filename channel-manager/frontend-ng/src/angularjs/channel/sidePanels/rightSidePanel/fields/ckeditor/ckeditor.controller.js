@@ -65,12 +65,14 @@ class CKEditorController {
       this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
       this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
 
-      // CKEditor has been replaced
+      // CKEditor has been replaced and instance is ready
       this.editor.on('instanceReady', () => {
         this.editableElement = this.$element.find('.cke_editable');
         this.editableElement.on('blur', $event => this.onEditorBlur($event));
-      });
 
+        this.editor.on('dialogShow', () => { this.SharedSpaceToolbarService.isToolbarPinned = true; });
+        this.editor.on('dialogHide', () => { this.SharedSpaceToolbarService.isToolbarPinned = false; });
+      });
       this._validate();
     });
   }
