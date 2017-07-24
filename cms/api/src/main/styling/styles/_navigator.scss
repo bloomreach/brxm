@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,11 +21,21 @@
   height: 100%;
 }
 
-.navigator-center-body .hippo-list-documents {
+.navigator-center-body {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: auto;
+  height: 100%;
+}
 
-  border-left: 1px solid $doclist-body-border-color;
+.navigator-center-body .hippo-list-documents {
 
   > thead {
     border-left: 1px solid $doclist-head-border-color;
+  }
+
+  > tbody {
+    border-left: 1px solid $doclist-body-border-color;
+    width: auto !important;
   }
 }
