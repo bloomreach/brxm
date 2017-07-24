@@ -44,8 +44,6 @@ class CKEditorController {
       editorConfig.removePlugins += 'sourcearea,resize,maximize';
       editorConfig.removeButtons = 'Source';
 
-      console.log(editorConfig);
-
       editorConfig.language = this.ConfigService.locale;
 
       this._applyEditorCSS(editorConfig);
