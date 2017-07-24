@@ -285,13 +285,15 @@ describe('CKEditor Component', () => {
 
       it('should call success callback', () => {
         const linkObj = { link: 'link' };
-        args[4](linkObj);
+        const successCallback = args[4];
+        successCallback(linkObj);
         expect(editor.execCommand).toHaveBeenCalledWith('insertInternalLink', linkObj);
         expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
       });
 
       it('should call fail (cancel) callback', () => {
-        args[5]();
+        const failCallback = args[5];
+        failCallback();
         expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
         expect(editor.focus).toHaveBeenCalled();
       });
@@ -321,13 +323,15 @@ describe('CKEditor Component', () => {
 
       it('should call success callback', () => {
         const imageObj = { image: 'image', f_url: 'furl' };
-        args[4](imageObj);
+        const successCallback = args[4];
+        successCallback(imageObj);
         expect(editor.execCommand).toHaveBeenCalledWith('insertImage', imageObj);
         expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
       });
 
       it('should call fail (cancel) callback', () => {
-        args[5]();
+        const failCallback = args[5];
+        failCallback();
         expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
         expect(editor.focus).toHaveBeenCalled();
       });
