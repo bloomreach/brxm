@@ -24,11 +24,12 @@ import org.onehippo.cm.model.ConfigurationModel;
  * <p>
  *    {@link JcrMigrator}s run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
  *    is applied to the JCR Nodes (thus before applied to config or content). Be aware that {@link JcrMigrator}s always
- *    run at startup hence should always have an initial check whether they should run!
+ *    run at startup hence should always have a fast initial check whether they have any work to do!
  * </p>
  * <p>
  *    For a Migrator to run it has to implement this interface and have the {@link Migrator} class annotation and be
- *    in a certain package. There is no specific order in which migrators run so a migrator should not rely on other migrators.
+ *    in one of the hippo internal packages. There is no specific order in which migrators run so a migrator should not
+ *    rely on other migrators.
  * </p>
  * <p>
  *     A {@link Migrator} implementation must have no-arg public constructor
@@ -37,7 +38,10 @@ import org.onehippo.cm.model.ConfigurationModel;
 public interface JcrMigrator {
 
     /**
-     * @return {@code true} if something changed as a result of this migrator
+     * Run a migration of JCR data that must be executed before applying HCM config changes. This method is expected
+     * to receive a clean Session (with no pending changes) and to save() its own changes, if necessary. Changes that
+     * are not save()d will be discarded by the caller.
+     * @return {@code true} if something changed as a result of this migrator (used only as a hint for the caller)
      */
     boolean migrate(final Session session, final ConfigurationModel configurationModel) throws RepositoryException;
 }

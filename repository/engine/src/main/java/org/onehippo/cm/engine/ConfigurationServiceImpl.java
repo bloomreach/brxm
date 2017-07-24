@@ -107,10 +107,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      */
     private ConfigurationModelImpl runtimeConfigurationModel;
 
-
-    private List<JcrMigrator> migrators = new ArrayList<>();
-
-
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
 
@@ -179,13 +175,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         }
                     }
 
-                    if (!first) {
-                        log.info("Loading migrators");
-                        loadMigrators();
-                        if (!migrators.isEmpty()) {
-                            log.info("Running migrators {}", migrators);
-                            runMigrators(bootstrapModel, migrators);
-                        }
+                    log.info("Loading migrators");
+                    final List<JcrMigrator> migrators = loadMigrators();
+                    if (!migrators.isEmpty()) {
+                        log.info("Running migrators: {}", migrators);
+                        runMigrators(bootstrapModel, migrators);
                     }
 
                     log.info("ConfigurationService: apply bootstrap config");
@@ -603,7 +597,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     /**
-     * TODO Should we short-circuit if the first migrator fails and return with an exception or continue with the next?
+     * Run all migrators. The session is expected to be clean (no pending changes) when this method is called
+     * and after it returns. Failure of one migrator is not expected to prevent any other from running.
      * @return {@code true} if all migrators ran without Exception. If one migrator
      * fails during their {@link JcrMigrator#migrate(Session, ConfigurationModel)}, {@code false} is
      * returned.
@@ -611,11 +606,20 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private void runMigrators(final ConfigurationModelImpl model, final List<JcrMigrator> migrators) {
         for (JcrMigrator migrator : migrators) {
             try {
-                if (migrator.migrate(session, model)) {
-                    session.save();
-                }
+                migrator.migrate(session, model);
             } catch (Exception e) {
                 log.error("Failed to migrate '{}'", migrator , e);
+            }
+            finally {
+                // clean up any changes that haven't been saved by the migrator
+                try {
+                    if (session.hasPendingChanges()) {
+                        session.refresh(false);
+                    }
+                }
+                catch (RepositoryException e2) {
+                    log.error("Exception attempting to refresh session after failed migration", e2);
+                }
             }
         }
     }
@@ -656,7 +660,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * <p>
      *  Load all migrators by classpath scanning. Of course, on purpose, this will only scan the webapp in which the
      *  repository lives. Since we do not want to provide a generic pattern for third-party / end projects to kick in,
-     *  we only load {@link JcrMigrator}s that are below one of these classpaths:
+     *  we only load {@link JcrMigrator}s that are below one of these packages:
      *  <ul>
      *      <li>org/hippoecm</li>
      *      <li>org/onehippo</li>
@@ -666,12 +670,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * </p>
      *
      */
-    private void loadMigrators() {
+    private List<JcrMigrator> loadMigrators() {
         Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(Migrator.class,
                 "classpath*:org/hippoecm/**/*.class",
                 "classpath*:org/onehippo/**/*.class",
                 "classpath*:com/onehippo/**/*.class");
 
+        List<JcrMigrator> migrators = new ArrayList<>();
         for (String migratorClassName : migratorClassNames) {
             try {
                 Class<?> migratorClass = Class.forName(migratorClassName);
@@ -690,6 +695,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 log.error("Could not instantiate migrator '{}'. Migrator will not run.", migratorClassName, e);
             }
         }
+        return migrators;
     }
-
 }
