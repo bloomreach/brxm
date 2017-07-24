@@ -609,16 +609,6 @@
         "es" : "UNRESOLVED"
       }
     },
-    "TOOLBAR_BUTTON_LEFT_SIDE_PANEL" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "LEFT_SIDE_PANEL_TAB_SITEMAP" : {
       "status" : "ADDED",
       "locales" : {
@@ -867,16 +857,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "NORMAL_WIDTH" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "NOT_ALL_FIELDS_SHOWN_LINK" : {
       "status" : "ADDED",
       "locales" : {
@@ -1038,6 +1018,46 @@
       }
     },
     "CORE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_CHANNEL_CONFIRM" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "RESTORE_WIDTH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
