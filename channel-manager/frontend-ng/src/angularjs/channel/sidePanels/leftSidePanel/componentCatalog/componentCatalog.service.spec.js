@@ -24,6 +24,7 @@ describe('ComponentCatalogService', () => {
   let MaskService;
   let OverlayService;
   let PageStructureService;
+  let FeedbackService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -38,6 +39,7 @@ describe('ComponentCatalogService', () => {
       _MaskService_,
       _OverlayService_,
       _PageStructureService_,
+      _FeedbackService_,
     ) => {
       $q = _$q_;
       $log = _$log_;
@@ -48,6 +50,7 @@ describe('ComponentCatalogService', () => {
       MaskService = _MaskService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
+      FeedbackService = _FeedbackService_;
     });
   });
 
@@ -130,6 +133,17 @@ describe('ComponentCatalogService', () => {
       ComponentCatalogService.addComponentToContainer();
       $rootScope.$apply();
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
+    });
+
+    it('should handle error when thrown, upon adding a component to container', () => {
+      PageStructureService.addComponentToContainer.and.returnValue($q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      ComponentCatalogService.addComponentToContainer({ label: 'Banner' });
+      $rootScope.$apply();
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
+        component: 'Banner',
+      });
     });
 
     it('should show component properties dialog if component contains no head contributions', () => {
