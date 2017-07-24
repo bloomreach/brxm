@@ -64,10 +64,6 @@
     "menu.show.groups" : {
       "status" : "CLEAN",
       "locales" : null
-    },
-    "action.hstconfigeditor" : {
-      "status" : "CLEAN",
-      "locales" : null
     }
   }
 }

@@ -108,10 +108,6 @@
     "channelexception.mount.exists" : {
       "status" : "CLEAN",
       "locales" : null
-    },
-    "field.hstConfigEditor" : {
-      "status" : "CLEAN",
-      "locales" : null
     }
   }
 }
