@@ -28,6 +28,8 @@ describe('CKEditor Component', () => {
   let $q;
   let ngModel;
   let fieldObject;
+  let SharedSpaceToolbarService;
+  let CmsService;
 
   const $element = angular.element('<div><textarea></textarea></div>');
 
@@ -41,12 +43,16 @@ describe('CKEditor Component', () => {
             _CKEditorService_,
             _ConfigService_,
             _DomService_,
+            _SharedSpaceToolbarService_,
+            _CmsService_,
             _$q_) => {
       $componentController = _$componentController_;
       $scope = $rootScope.$new();
       CKEditorService = _CKEditorService_;
       ConfigService = _ConfigService_;
       DomService = _DomService_;
+      SharedSpaceToolbarService = _SharedSpaceToolbarService_;
+      CmsService = _CmsService_;
       $q = _$q_;
     });
 
@@ -59,6 +65,8 @@ describe('CKEditor Component', () => {
       'on',
       'setData',
       'getSnapshot',
+      'focus',
+      'execCommand',
     ]);
     CKEditor.replace.and.returnValue(editor);
 
@@ -251,6 +259,78 @@ describe('CKEditor Component', () => {
       $ctrl._validate();
       expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
       expect($ctrl.fieldObject.$invalid).toEqual(true);
+    });
+  });
+
+  describe('link picker', () => {
+    beforeEach(() => {
+      init();
+      $ctrl.config.hippopicker = {};
+      $ctrl.config.hippopicker.internalLink = 'internalLinkTest';
+    });
+
+    it('should open link picker', () => {
+      $ctrl._openLinkPicker();
+      expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(true);
+    });
+
+    describe('callbacks', () => {
+      let args = [];
+
+      beforeEach(() => {
+        spyOn(CmsService, 'publish');
+        $ctrl._openLinkPicker();
+        args = CmsService.publish.calls.allArgs()[0];
+      });
+
+      it('should call success callback', () => {
+        const linkObj = { link: 'link' };
+        args[4](linkObj);
+        expect(editor.execCommand).toHaveBeenCalledWith('insertInternalLink', linkObj);
+        expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
+      });
+
+      it('should call fail (cancel) callback', () => {
+        args[5]();
+        expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
+        expect(editor.focus).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('image picker', () => {
+    beforeEach(() => {
+      init();
+      $ctrl.config.hippopicker = {};
+      $ctrl.config.hippopicker.image = 'imageTest';
+    });
+
+    it('should open image picker', () => {
+      $ctrl._openImagePicker();
+      expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(true);
+    });
+
+    describe('callbacks', () => {
+      let args = [];
+
+      beforeEach(() => {
+        spyOn(CmsService, 'publish');
+        $ctrl._openImagePicker();
+        args = CmsService.publish.calls.allArgs()[0];
+      });
+
+      it('should call success callback', () => {
+        const imageObj = { image: 'image', f_url: 'furl' };
+        args[4](imageObj);
+        expect(editor.execCommand).toHaveBeenCalledWith('insertImage', imageObj);
+        expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
+      });
+
+      it('should call fail (cancel) callback', () => {
+        args[5]();
+        expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(false);
+        expect(editor.focus).toHaveBeenCalled();
+      });
     });
   });
 });
