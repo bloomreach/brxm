@@ -23,10 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Only {@link Migrator}s that have this class annotation will run
+ * Only {@link ConfigurationPreApplyMigrator}s that have this class annotation will run
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Migrator {
+public @interface PreMigrator {
 }

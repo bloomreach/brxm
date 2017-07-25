@@ -22,20 +22,20 @@ import org.onehippo.cm.model.ConfigurationModel;
 
 /**
  * <p>
- *    {@link JcrMigrator}s run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
- *    is applied to the JCR Nodes (thus before applied to config or content). Be aware that {@link JcrMigrator}s always
+ *    {@link ConfigurationPreApplyMigrator}s run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
+ *    is applied to the JCR Nodes (thus before applied to config or content). Be aware that {@link ConfigurationPreApplyMigrator}s always
  *    run at startup hence should always have a fast initial check whether they have any work to do!
  * </p>
  * <p>
- *    For a Migrator to run it has to implement this interface and have the {@link Migrator} class annotation and be
+ *    For a migrator to run it has to implement this interface and have the {@link PreMigrator} class annotation and be
  *    in one of the hippo internal packages. There is no specific order in which migrators run so a migrator should not
  *    rely on other migrators.
  * </p>
  * <p>
- *     A {@link Migrator} implementation must have no-arg public constructor
+ *     A {@link ConfigurationPreApplyMigrator} implementation must have no-arg public constructor
  * </p>
  */
-public interface JcrMigrator {
+public interface ConfigurationPreApplyMigrator {
 
     /**
      * Run a migration of JCR data that must be executed before applying HCM config changes. This method is expected
