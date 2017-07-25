@@ -58,6 +58,10 @@ class ComponentCatalogService {
   }
 
   selectComponent(component) {
+    if (!this.OverlayService.isComponentsOverlayDisplayed) {
+      this.toggleOverlayByComponent = true;
+      this.OverlayService.showComponentsOverlay(true);
+    }
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();
@@ -68,6 +72,10 @@ class ComponentCatalogService {
   }
 
   _handleMaskClick() {
+    if (this.toggleOverlayByComponent) {
+      this.toggleOverlayByComponent = false;
+      this.OverlayService.showComponentsOverlay(false);
+    }
     delete this.selectedComponent;
     this.MaskService.unmask();
     this.SidePanelService.lowerSidePanelBeneathMask();
@@ -105,6 +113,11 @@ class ComponentCatalogService {
       this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
         component: component.label,
       });
+    }).finally(() => {
+      if (this.toggleOverlayByComponent) {
+        this.toggleOverlayByComponent = false;
+        this.OverlayService.showComponentsOverlay(false);
+      }
     });
   }
 }

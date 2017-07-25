@@ -68,7 +68,16 @@ describe('ComponentCatalogService', () => {
       spyOn(OverlayService, 'enableAddMode');
       spyOn(OverlayService, 'disableAddMode');
       spyOn(OverlayService, 'offContainerClick');
+      spyOn(OverlayService, 'showComponentsOverlay');
       spyOn(ComponentCatalogService, 'addComponentToContainer');
+    });
+
+    it('toggle components overlay by itself if it is not already toggled', () => {
+      OverlayService.isComponentsOverlayDisplayed = false;
+      ComponentCatalogService.selectComponent({ id: 'componentId' });
+
+      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
+      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(true);
     });
 
     it('should forward mask and zindexes handling and setup clickhandlers', () => {
@@ -92,6 +101,15 @@ describe('ComponentCatalogService', () => {
       expect(OverlayService.disableAddMode).toHaveBeenCalled();
       expect(OverlayService.offContainerClick).toHaveBeenCalled();
       expect(MaskService.removeClickHandler).toHaveBeenCalled();
+    });
+
+    it('remove overlay if it was added by ComponentCatalogService', () => {
+      OverlayService.isComponentsOverlayDisplayed = true;
+      ComponentCatalogService.toggleOverlayByComponent = true;
+      ComponentCatalogService._handleMaskClick();
+
+      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
+      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(false);
     });
   });
 
@@ -144,6 +162,18 @@ describe('ComponentCatalogService', () => {
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
         component: 'Banner',
       });
+    });
+
+    it('remove overlay if it was added by ComponentCatalogService', () => {
+      spyOn(OverlayService, 'showComponentsOverlay');
+      PageStructureService.addComponentToContainer.and.returnValue($q.reject());
+
+      ComponentCatalogService.toggleOverlayByComponent = true;
+      ComponentCatalogService.addComponentToContainer({ label: 'Banner' });
+      $rootScope.$apply();
+
+      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(false);
+      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
     });
 
     it('should show component properties dialog if component contains no head contributions', () => {
