@@ -308,6 +308,20 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         node.getSourceLocation());
             }
         }
+
+        if (defNode.getPath().equalsIgnoreCase("/content/urlrewriter")) {
+            //Moves properties starting from 'urlrewriter:' under /hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig node
+            final EsvNode urlrewriterNode = new EsvNode("urlrewriter", 0, node.getSourceLocation());
+            node.getProperties().stream()
+                    .filter(esvProperty -> esvProperty.getName().startsWith("urlrewriter:"))
+                    .forEach(esvProperty -> urlrewriterNode.getProperties().add(esvProperty));
+            node.getProperties().removeAll(urlrewriterNode.getProperties());
+            urlrewriterNode.setMerge(EsvMerge.COMBINE);
+
+            final SourceImpl configSource = source.getModule().addConfigSource("url-rewriter.yaml");
+            processNode(urlrewriterNode, "/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig", configSource, null, nodeDefinitions, deltaNodes);
+        }
+
         final boolean deltaNode = deltaNodes.contains(defNode);
         for (EsvProperty property : node.getProperties()) {
             processProperty(node, defNode, property, deltaNode);
