@@ -30,7 +30,7 @@
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-addon-crisp-api",
       "scope": "compile",
-      "version": "0.9.4",
+      "version": "${hippo.addon-crisp.version}",
       "targetPom": "cms"
     },
     {
@@ -38,7 +38,7 @@
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-addon-crisp-repository",
       "scope": "compile",
-      "version": "0.9.4",
+      "version": "${hippo.addon-crisp.version}",
       "targetPom": "cms"
     },
     {
@@ -46,7 +46,7 @@
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-personalization-components-repository",
       "scope": "compile",
-      "version": "0.1.0",
+      "version": "${hippo.addon-personalization.version}",
       "targetPom": "cms"
     },
     {
@@ -55,7 +55,7 @@
       "artifactId": "hippo-addon-personalization-dependencies",
       "scope": "compile",
       "type": "pom",
-      "version": "0.1.0",
+      "version": "${hippo.addon-personalization.version}",
       "targetPom": "site"
     }
   ]
