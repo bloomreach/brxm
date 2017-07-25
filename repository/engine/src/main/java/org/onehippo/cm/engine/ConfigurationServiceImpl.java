@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -39,12 +40,12 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
-import org.onehippo.cm.model.definition.ActionType;
+import org.onehippo.cm.engine.migrator.ConfigurationPreApplyMigrator;
+import org.onehippo.cm.engine.migrator.PreMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
-import org.onehippo.cm.model.source.ResourceInputProvider;
-import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -60,6 +61,9 @@ import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +109,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
+
         session = configurationServiceSession;
 
         // set event userData to identify events coming from this HCM session
@@ -158,8 +163,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
                             bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
                             if (e instanceof ConfigurationRuntimeException) {
                                 // no stacktrace needed, the exception message should be informative enough
@@ -171,8 +175,16 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         }
                     }
 
+                    log.info("Loading migrators");
+                    final List<ConfigurationPreApplyMigrator> migrators = loadMigrators();
+                    if (!migrators.isEmpty()) {
+                        log.info("Running migrators: {}", migrators);
+                        runMigrators(bootstrapModel, migrators);
+                    }
+
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
+
                     if (success) {
                         // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
                         runtimeConfigurationModel = bootstrapModel;
@@ -220,8 +232,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 // if we're not doing any bootstrap, use the baseline model as our runtime model
                 runtimeConfigurationModel = baselineModel;
 
@@ -257,8 +268,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 try {
                     // Ensure configurationModel resources are cleaned up (if any)
                     runtimeConfigurationModel.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     log.error("Error closing runtime configuration", e);
                 }
             }
@@ -298,7 +308,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         return autoExportService != null;
     }
 
-    /** INTERNAL USAGE ONLY **/
+    /**
+     * INTERNAL USAGE ONLY
+     **/
     @Override
     public boolean verifyConfigurationModel() throws RepositoryException {
         lockManager.lock();
@@ -312,6 +324,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     /**
      * Store the new baseline model as computed by auto-export, and make this the new runtimeConfigurationModel.
+     *
      * @param updatedModules modules that have been changed by auto-export and need to be stored in the baseline
      * @return true if and only if the baseline update was stored successfully
      */
@@ -324,8 +337,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel, session);
             runtimeConfigurationModel = mergeWithSourceModules(updatedModules, baselineModel);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to update the Configuration baseline after auto-export", e);
             return false;
         }
@@ -346,8 +358,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final ZipCompressor zipCompressor = new ZipCompressor();
             zipCompressor.zipDirectory(dirToZip.toPath(), file.getAbsolutePath());
             return file;
-        }
-        finally {
+        } finally {
             FileUtils.deleteQuietly(dirToZip);
         }
     }
@@ -377,6 +388,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 public boolean hasResource(final Source source, final String resourcePath) {
                     return false;
                 }
+
                 @Override
                 public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
                     throw new IOException("Plain YAML import does not support links to resources");
@@ -387,7 +399,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
             final ContentSourceParser sourceParser = new ContentSourceParser(resourceInputProvider);
             sourceParser.parse(inputStream, "/import", "console.yaml", module);
-            final ContentDefinition contentDefinition = (ContentDefinition) module.getContentSources().iterator().next().getDefinitions().get(0);
+            final ContentDefinition contentDefinition = (ContentDefinition)module.getContentSources().iterator().next().getDefinitions().get(0);
             contentService.importNode(((ContentDefinitionImpl)contentDefinition).getNode(), parentNode, ActionType.RELOAD);
         } catch (Exception e) {
             throw new RuntimeException("Import failed", e);
@@ -432,12 +444,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     session.getWorkspace().getNamespaceRegistry().registerNamespace(HCM_PREFIX, HCM_NAMESPACE);
                 }
                 if (!session.getWorkspace().getNodeTypeManager().hasNodeType(HIPPO_LOCK)) {
-                    try (InputStream is = getClass().getResourceAsStream("/"+HCM_CONFIG_FOLDER+"/hippo.cnd")) {
+                    try (InputStream is = getClass().getResourceAsStream("/" + HCM_CONFIG_FOLDER + "/hippo.cnd")) {
                         BootstrapUtils.initializeNodetypes(session, is, "hippo.cnd");
                     }
                 }
                 if (!session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)) {
-                    try (InputStream is = getClass().getResourceAsStream("/"+HCM_CONFIG_FOLDER+"/hcm.cnd")) {
+                    try (InputStream is = getClass().getResourceAsStream("/" + HCM_CONFIG_FOLDER + "/hcm.cnd")) {
                         BootstrapUtils.initializeNodetypes(session, is, "hcm.cnd");
                     }
                 }
@@ -445,7 +457,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 hcmRootNode.addNode(HIPPO_LOCK, HIPPO_LOCK);
                 session.save();
             }
-        } catch (RepositoryException|RuntimeException e) {
+        } catch (RepositoryException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -465,6 +477,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     /**
      * Read modules that were specified using the auto-export config as source files on the native filesystem.
+     *
      * @return a List of newly-loaded filesystem-backed Modules
      */
     private List<ModuleImpl> readModulesFromSourceFiles(final ConfigurationModelImpl bootstrapModel) throws IOException, ParserException {
@@ -557,8 +570,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     verify ? "and verified " : "",
                     stopWatch.toString());
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to apply config", e);
             if (mayFail) {
                 return false;
@@ -581,6 +593,34 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         } catch (Exception e) {
             log.error("Failed to store the Configuration baseline", e);
             return false;
+        }
+    }
+
+    /**
+     * Run all migrators. The session is expected to be clean (no pending changes) when this method is called
+     * and after it returns. Failure of one migrator is not expected to prevent any other from running.
+     * @return {@code true} if all migrators ran without Exception. If one migrator
+     * fails during their {@link ConfigurationPreApplyMigrator#migrate(Session, ConfigurationModel)}, {@code false} is
+     * returned.
+     */
+    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationPreApplyMigrator> migrators) {
+        for (ConfigurationPreApplyMigrator migrator : migrators) {
+            try {
+                migrator.migrate(session, model);
+            } catch (Exception e) {
+                log.error("Failed to migrate '{}'", migrator , e);
+            }
+            finally {
+                // clean up any changes that haven't been saved by the migrator
+                try {
+                    if (session.hasPendingChanges()) {
+                        session.refresh(false);
+                    }
+                }
+                catch (RepositoryException e2) {
+                    log.error("Exception attempting to refresh session after failed migration", e2);
+                }
+            }
         }
     }
 
@@ -614,5 +654,47 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         } catch (Exception e) {
             log.error("Failed to complete post-startup tasks", e);
         }
+    }
+
+    /**
+     * <p>
+     *  Load all migrators by classpath scanning. Of course, on purpose, this will only scan the webapp in which the
+     *  repository lives. Since we do not want to provide a generic pattern for third-party / end projects to kick in,
+     *  we only load {@link ConfigurationPreApplyMigrator}s that are below one of these packages:
+     *  <ul>
+     *      <li>org/hippoecm</li>
+     *      <li>org/onehippo</li>
+     *      <li>com/onehippo</li>
+     *  </ul>
+     *  If at some point we want to make the mechanism more generally available, we can relax the classpath scanning.
+     * </p>
+     *
+     */
+    private List<ConfigurationPreApplyMigrator> loadMigrators() {
+        Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(PreMigrator.class,
+                "classpath*:org/hippoecm/**/*.class",
+                "classpath*:org/onehippo/**/*.class",
+                "classpath*:com/onehippo/**/*.class");
+
+        List<ConfigurationPreApplyMigrator> migrators = new ArrayList<>();
+        for (String migratorClassName : migratorClassNames) {
+            try {
+                Class<?> migratorClass = Class.forName(migratorClassName);
+
+                Object object = migratorClass.newInstance();
+
+                if (object instanceof ConfigurationPreApplyMigrator) {
+                    ConfigurationPreApplyMigrator migrator = (ConfigurationPreApplyMigrator)object;
+                    log.info("Adding migrator '{}'", migrator);
+                    migrators.add(migrator);
+                } else {
+                    log.error("Skipping incorrect annotated class '{}' as migrator. Only subclasses of '{}' are allowed to " +
+                            "be annotation with '{}'.", migratorClassName, ConfigurationPreApplyMigrator.class.getName(), PreMigrator.class.getName());
+                }
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                log.error("Could not instantiate migrator '{}'. Migrator will not run.", migratorClassName, e);
+            }
+        }
+        return migrators;
     }
 }
