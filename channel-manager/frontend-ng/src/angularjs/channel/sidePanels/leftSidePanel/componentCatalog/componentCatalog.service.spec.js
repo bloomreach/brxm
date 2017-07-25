@@ -77,7 +77,7 @@ describe('ComponentCatalogService', () => {
       ComponentCatalogService.selectComponent({ id: 'componentId' });
 
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
-      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(true);
+      expect(OverlayService.toggleOverlayByComponent).toEqual(true);
     });
 
     it('should forward mask and zindexes handling and setup clickhandlers', () => {
@@ -105,11 +105,11 @@ describe('ComponentCatalogService', () => {
 
     it('remove overlay if it was added by ComponentCatalogService', () => {
       OverlayService.isComponentsOverlayDisplayed = true;
-      ComponentCatalogService.toggleOverlayByComponent = true;
+      OverlayService.toggleOverlayByComponent = true;
       ComponentCatalogService._handleMaskClick();
 
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
-      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(false);
+      expect(OverlayService.toggleOverlayByComponent).toEqual(false);
     });
   });
 
@@ -168,11 +168,11 @@ describe('ComponentCatalogService', () => {
       spyOn(OverlayService, 'showComponentsOverlay');
       PageStructureService.addComponentToContainer.and.returnValue($q.reject());
 
-      ComponentCatalogService.toggleOverlayByComponent = true;
+      OverlayService.toggleOverlayByComponent = true;
       ComponentCatalogService.addComponentToContainer({ label: 'Banner' });
       $rootScope.$apply();
 
-      expect(ComponentCatalogService.toggleOverlayByComponent).toEqual(false);
+      expect(OverlayService.toggleOverlayByComponent).toEqual(false);
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
     });
 

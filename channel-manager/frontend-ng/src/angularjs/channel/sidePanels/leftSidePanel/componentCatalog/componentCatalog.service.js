@@ -59,7 +59,7 @@ class ComponentCatalogService {
 
   selectComponent(component) {
     if (!this.OverlayService.isComponentsOverlayDisplayed) {
-      this.toggleOverlayByComponent = true;
+      this.OverlayService.toggleOverlayByComponent = true;
       this.OverlayService.showComponentsOverlay(true);
     }
     this.selectedComponent = component;
@@ -72,8 +72,8 @@ class ComponentCatalogService {
   }
 
   _handleMaskClick() {
-    if (this.toggleOverlayByComponent) {
-      this.toggleOverlayByComponent = false;
+    if (this.OverlayService.toggleOverlayByComponent) {
+      this.OverlayService.toggleOverlayByComponent = false;
       this.OverlayService.showComponentsOverlay(false);
     }
     delete this.selectedComponent;
@@ -114,8 +114,8 @@ class ComponentCatalogService {
         component: component.label,
       });
     }).finally(() => {
-      if (this.toggleOverlayByComponent) {
-        this.toggleOverlayByComponent = false;
+      if (this.OverlayService.toggleOverlayByComponent) {
+        this.OverlayService.toggleOverlayByComponent = false;
         this.OverlayService.showComponentsOverlay(false);
       }
     });
