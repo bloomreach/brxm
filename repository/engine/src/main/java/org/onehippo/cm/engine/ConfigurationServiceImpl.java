@@ -73,7 +73,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
-import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
@@ -134,21 +133,27 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
 
+        // create the /hcm:hcm node, if necessary, and acquire a write lock over the config
         ensureInitialized();
         lockManager.lock();
         try {
-            final boolean first = isNew();
+            // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
+            ConfigurationModelImpl baselineModel = loadBaselineModel();
+
+            // check the appropriate params to determine our state and bootstrap mode
+            // empty baseline means we've never applied the v12+ bootstrap model before, since we should have at
+            // least the hippo-cms group defined
+            final boolean first = baselineModel.getSortedGroups().isEmpty();
             final boolean fullConfigure =
                     first || "full".equalsIgnoreCase(System.getProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "false"));
             final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
             final boolean mustConfigure = first || configure;
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
 
-            final boolean isProjectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
+            // also, check params for auto-export state
+            final boolean isProjectBaseDirSet = StringUtils.isNotBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
             boolean startAutoExportService = configure && autoExportAllowed;
-
-            ConfigurationModelImpl baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -422,9 +427,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         return new String(out.toByteArray());
     }
 
-    private boolean isNew() throws RepositoryException {
-        return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)
-                && session.nodeExists(HCM_ROOT_PATH) && session.nodeExists(HCM_BASELINE_PATH));
+    /**
+     * if no /hcm:hcm node exists, we can assume this workspace hasn't run a v12+ HCM-style bootstrap yet
+     */
+    private boolean isFirstHcmStartup() throws RepositoryException {
+        return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT) && session.nodeExists(HCM_ROOT_PATH));
     }
 
     private boolean isNamespaceRegistered(final String prefix) throws RepositoryException {
@@ -438,7 +445,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private void ensureInitialized() throws RepositoryException {
         try {
-            if (isNew()) {
+            if (isFirstHcmStartup()) {
                 if (!isNamespaceRegistered(HIPPO_PREFIX)) {
                     session.getWorkspace().getNamespaceRegistry().registerNamespace(HIPPO_PREFIX, HIPPO_NAMESPACE);
                 }
@@ -533,6 +540,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         return modulesFromSourceFiles;
     }
 
+    /**
+     * @return a valid baseline, if one exists, or an empty ConfigurationModel
+     * @throws RepositoryException only if an unexpected repository problem occurs (not if the baseline is missing)
+     */
     private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
         try {
             ConfigurationModelImpl model = baselineService.loadBaseline(session);

@@ -165,6 +165,10 @@ public class ConfigurationContentService {
                 } catch (RepositoryException ex) {
                     log.error(String.format("Processing '%s' action for node failed: '%s'", action, baseNodePath), ex);
                     failedPaths.add(baseNodePath);
+
+                    // we need to clear changes in progress, since they apparently cause the session save to fail
+                    // we want to be able to process other content definitions without repeating the same problem(s)
+                    session.refresh(false);
                 }
             }
         }

@@ -546,6 +546,7 @@ public class ConfigurationBaselineService {
         // if the baseline node doesn't exist yet...
         if (!hcmRootNode.hasNode(HCM_BASELINE)) {
             // ... there's nothing to load
+            log.info("Attempted to load baseline, but no baseline node exists yet");
             result = null;
         }
         else {
