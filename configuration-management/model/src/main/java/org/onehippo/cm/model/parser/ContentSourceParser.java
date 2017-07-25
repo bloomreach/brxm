@@ -58,7 +58,7 @@ public class ContentSourceParser extends SourceParser {
 
         final ContentSourceImpl source = parent.addContentSource(path);
         final ContentDefinitionImpl definition = source.addContentDefinition();
-        final String key = asPathScalar(tuples.get(0).getKeyNode(), true, false);
+        final String key = asPathScalar(tuples.get(0).getKeyNode(), true, true);
         constructDefinitionNode(key, tuples.get(0).getValueNode(), definition);
 
         source.markUnchanged();
