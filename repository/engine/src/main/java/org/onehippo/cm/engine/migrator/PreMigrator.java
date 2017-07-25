@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Only {@link ConfigurationPreApplyMigrator}s that have this class annotation will run
+ * Only {@link ConfigurationMigrator}s that have this class annotation will run
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

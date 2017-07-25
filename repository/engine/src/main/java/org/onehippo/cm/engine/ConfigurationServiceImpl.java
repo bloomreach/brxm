@@ -40,7 +40,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
-import org.onehippo.cm.engine.migrator.ConfigurationPreApplyMigrator;
+import org.onehippo.cm.engine.migrator.ConfigurationMigrator;
 import org.onehippo.cm.engine.migrator.PreMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
@@ -176,7 +176,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     }
 
                     log.info("Loading migrators");
-                    final List<ConfigurationPreApplyMigrator> migrators = loadMigrators();
+                    final List<ConfigurationMigrator> migrators = loadMigrators();
                     if (!migrators.isEmpty()) {
                         log.info("Running migrators: {}", migrators);
                         runMigrators(bootstrapModel, migrators);
@@ -600,11 +600,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * Run all migrators. The session is expected to be clean (no pending changes) when this method is called
      * and after it returns. Failure of one migrator is not expected to prevent any other from running.
      * @return {@code true} if all migrators ran without Exception. If one migrator
-     * fails during their {@link ConfigurationPreApplyMigrator#migrate(Session, ConfigurationModel)}, {@code false} is
+     * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel)}, {@code false} is
      * returned.
      */
-    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationPreApplyMigrator> migrators) {
-        for (ConfigurationPreApplyMigrator migrator : migrators) {
+    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationMigrator> migrators) {
+        for (ConfigurationMigrator migrator : migrators) {
             try {
                 migrator.migrate(session, model);
             } catch (Exception e) {
@@ -660,7 +660,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * <p>
      *  Load all migrators by classpath scanning. Of course, on purpose, this will only scan the webapp in which the
      *  repository lives. Since we do not want to provide a generic pattern for third-party / end projects to kick in,
-     *  we only load {@link ConfigurationPreApplyMigrator}s that are below one of these packages:
+     *  we only load {@link ConfigurationMigrator}s that are below one of these packages:
      *  <ul>
      *      <li>org/hippoecm</li>
      *      <li>org/onehippo</li>
@@ -670,26 +670,26 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * </p>
      *
      */
-    private List<ConfigurationPreApplyMigrator> loadMigrators() {
+    private List<ConfigurationMigrator> loadMigrators() {
         Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(PreMigrator.class,
                 "classpath*:org/hippoecm/**/*.class",
                 "classpath*:org/onehippo/**/*.class",
                 "classpath*:com/onehippo/**/*.class");
 
-        List<ConfigurationPreApplyMigrator> migrators = new ArrayList<>();
+        List<ConfigurationMigrator> migrators = new ArrayList<>();
         for (String migratorClassName : migratorClassNames) {
             try {
                 Class<?> migratorClass = Class.forName(migratorClassName);
 
                 Object object = migratorClass.newInstance();
 
-                if (object instanceof ConfigurationPreApplyMigrator) {
-                    ConfigurationPreApplyMigrator migrator = (ConfigurationPreApplyMigrator)object;
+                if (object instanceof ConfigurationMigrator) {
+                    ConfigurationMigrator migrator = (ConfigurationMigrator)object;
                     log.info("Adding migrator '{}'", migrator);
                     migrators.add(migrator);
                 } else {
                     log.error("Skipping incorrect annotated class '{}' as migrator. Only subclasses of '{}' are allowed to " +
-                            "be annotation with '{}'.", migratorClassName, ConfigurationPreApplyMigrator.class.getName(), PreMigrator.class.getName());
+                            "be annotation with '{}'.", migratorClassName, ConfigurationMigrator.class.getName(), PreMigrator.class.getName());
                 }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 log.error("Could not instantiate migrator '{}'. Migrator will not run.", migratorClassName, e);
