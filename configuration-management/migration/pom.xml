@@ -97,6 +97,11 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -132,7 +137,67 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.onehippo.cm.migration.Esv2Yaml</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <!-- because we use the maven-shade-plugin, we need to strip out the jar signatures because we are
+                       intentionally changing the jar -->
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <finalName>esv2yaml-${project.version}</finalName>
+              <transformers>
+                <!-- See https://issues.apache.org/jira/browse/LOG4J2-673 why I added this transformer. TD;DR without this
+                 transformer, logging does not work in the uberjar -->
+                <transformer implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer" />
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <!-- See https://issues.apache.org/jira/browse/LOG4J2-673 why I added this dependency which has Apache License -->
+            <groupId>com.github.edwgiz</groupId>
+            <artifactId>maven-shade-plugin.log4j2-cachefile-transformer</artifactId>
+            <version>2.6.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
-
+  <pluginRepositories>
+    <pluginRepository>
+      <!-- repository needed for maven-shade-plugin.log4j2-cachefile-transformer -->
+      <id>oss.sonatype.org</id>
+      <name>OSS Sonatype Staging</name>
+      <url>https://oss.sonatype.org/content/groups/staging</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
