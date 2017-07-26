@@ -17,10 +17,7 @@
 package org.onehippo.cm.model.impl;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,10 +41,9 @@ import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
@@ -268,30 +264,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         final String modelManifest = manifestToString(manifest);
         log.debug("model manifest:\n{}", modelManifest);
 
-        return computeManifestDigest(modelManifest);
+        return DigestUtils.computeManifestDigest(modelManifest);
     }
-
-    /**
-     * Helper method to compute a digest string from a ConfigurationModel manifest.
-     * @param modelManifest the manifest whose digest we want to compute
-     * @return a digest string comparable to the baseline digest string, or "" if none can be computed
-     */
-    protected String computeManifestDigest(final String modelManifest) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
-            byte[] digest = md.digest(StandardCharsets.UTF_8.encode(modelManifest).array());
-            String modelDigestString = ModuleImpl.toDigestHexString(digest);
-            log.debug("model digest:\n{}", modelDigestString);
-
-            return modelDigestString;
-        }
-        catch (NoSuchAlgorithmException e) {
-            // NOTE: this should never happen, since the Java spec requires MD5 to be supported
-            log.error("{} algorithm not available for configuration baseline diff", DEFAULT_DIGEST, e);
-            return "";
-        }
-    }
-
+    
     /**
      * Helper for getDigest()
      * @param manifest

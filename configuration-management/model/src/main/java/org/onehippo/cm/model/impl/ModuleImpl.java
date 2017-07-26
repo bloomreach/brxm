@@ -20,9 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,10 +36,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.ActionItem;
@@ -67,11 +61,11 @@ import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
+import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
@@ -422,7 +416,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         if (!hasDescriptor) {
             // create a manifest item for a dummy descriptor
             String descriptor = this.compileDummyDescriptor();
-            String digest = digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
+            String digest = DigestUtils.digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
             items.put("/" + HCM_MODULE_YAML, digest);
         }
 
@@ -540,7 +534,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                 return false;
             }
 
-            String digestString = digestFromStream(is);
+            String digestString = DigestUtils.digestFromStream(is);
 
             // TODO dirty hack because RIP uses paths relative to content root instead of module root
             if (path.startsWith("/../")) {
@@ -574,41 +568,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         else {
             return valueIs;
         }
-    }
-
-    /**
-     * Helper to compute a digest string from an InputStream. This method ensures that the stream is closed.
-     * @param is the InputStream to digest
-     * @return a digest string suitable for use in a module manifest
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     */
-    private String digestFromStream(final InputStream is) {
-        try {
-            // use MD5 because it's fast and guaranteed to be supported, and crypto attacks are not a concern here
-            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
-
-            // digest the InputStream by copying it and discarding the output
-            try (InputStream dis = new DigestInputStream(is, md)) {
-                IOUtils.copyLarge(dis, new NullOutputStream());
-            }
-
-            // prepend algorithm using same style as used in Hippo CMS password hashing
-            return toDigestHexString(md.digest());
-        }
-        catch (IOException|NoSuchAlgorithmException e) {
-            throw new RuntimeException("Exception while computing resource digest", e);
-        }
-    }
-
-    /**
-     * Helper method to convert a byte[] produced by MessageDigest into a hex string marked with the digest algorithm.
-     * @param digest the raw digest byte[]
-     * @return a String suitable for long-term storage and eventual comparisons
-     */
-    public static String toDigestHexString(final byte[] digest) {
-        // prepend algorithm using same style as used in Hippo CMS password hashing
-        return "$" + DEFAULT_DIGEST + "$" + DatatypeConverter.printHexBinary(digest);
     }
 
     /**
