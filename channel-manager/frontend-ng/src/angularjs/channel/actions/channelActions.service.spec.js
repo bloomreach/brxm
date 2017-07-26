@@ -305,11 +305,22 @@ describe('ChannelActionsService', () => {
   // close channel
   it('closes a channel by publishing a close-channel event', () => {
     const close = getItem('close');
-    spyOn(CmsService, 'publish');
 
+    spyOn(CmsService, 'publish');
     spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
 
     close.onClick();
+    $rootScope.$apply();
+
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
+  });
+
+  it('closes a channel when receiving a close-channel event from the CMS', () => {
+    spyOn(CmsService, 'publish');
+    spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
+
+    window.CMS_TO_APP.publish('close-channel');
     $rootScope.$apply();
 
     expect(SidePanelService.close).toHaveBeenCalledWith('right');

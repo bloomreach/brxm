@@ -202,7 +202,8 @@
       this.toolbar.pushItem({
         card: this.items.get(0),
         click: function () {
-          this.layout.setActiveItem(0);
+          Hippo.ChannelManager.ChannelEditor.Instance.closeChannel();
+          return false;
         },
         scope: this
       });

@@ -99,6 +99,8 @@ class ChannelActionsService extends MenuService {
       translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
       onClick: () => this._closeChannel(),
     });
+
+    this.CmsService.subscribe('close-channel', () => this._closeChannel());
   }
 
   _isBranch() {

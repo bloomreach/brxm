@@ -321,6 +321,10 @@
       }.bind(this));
     },
 
+    closeChannel: function() {
+      this.hostToIFrame.publish('close-channel');
+    },
+
     _onCloseChannel: function() {
       this.fireEvent('show-channel-overview');
     },

@@ -92,13 +92,10 @@
         if (index === this.breadcrumbStackSize) {
           return;
         }
-        while (index + 1 < this.breadcrumbStackSize) {
-          this.popItem();
-        }
-        if (config.scope) {
-          config.click.apply(config.scope, arguments);
-        } else {
-          config.click.apply(breadcrumbItem, arguments);
+        if (config.click.apply(config.scope || breadcrumbItem, arguments) !== false) {
+          while (index + 1 < this.breadcrumbStackSize) {
+            this.popItem();
+          }
         }
       }, this);
 
