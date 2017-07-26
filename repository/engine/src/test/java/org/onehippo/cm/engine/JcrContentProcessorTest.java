@@ -32,13 +32,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.collections4.IteratorUtils;
+import com.google.common.io.Files;
+
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -51,8 +53,6 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -361,20 +361,6 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         assertEquals("[a, sns, b, sns, c]", createChildNodesString(snsNode));
         assertEquals("value1", session.getNode("/test/sns/sns[1]").getProperty("property").getValue().getString());
         assertEquals("value2", session.getNode("/test/sns/sns[2]").getProperty("property").getValue().getString());
-    }
-
-    @Test
-    public void expect_error_when_using_root_with_sns_index() throws Exception {
-        final String yaml =
-                "/test/sns[2]:\n" +
-                "  jcr:primaryType: nt:unstructured\n";
-
-        try {
-            applyAndSaveDefinitions(new String[]{yaml});
-            fail("Should have thrown exception");
-        } catch (ParserException e) {
-            assertEquals("Path must not contain name indices", e.getMessage());
-        }
     }
 
     @Test
