@@ -36,8 +36,8 @@
 
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <hippo.repository.version>5.0.0</hippo.repository.version>
-    <hippo.services.version>4.0.0</hippo.services.version>
+    <hippo.repository.version>5.0.1-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>4.0.1-SNAPSHOT</hippo.services.version>
 
     <jackrabbit.vault.version>3.1.6</jackrabbit.vault.version>
     <junit.version>4.11</junit.version>
@@ -128,7 +128,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
       <version>${hippo.repository.version}</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
