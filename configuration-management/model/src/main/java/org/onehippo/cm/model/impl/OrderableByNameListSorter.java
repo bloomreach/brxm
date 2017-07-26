@@ -109,13 +109,17 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
                     if (map.containsKey(dependency)) {
                         sortDepthFirst(map.get(dependency), dependencyChain, sorted, map);
                     } else {
-                        throw new MissingDependencyException(String.format("%s '%s' has a missing dependency '%s'",
-                                orderableTypeName, orderable.getName(), dependency));
+                        processMissingDependency(orderable, dependency);
                     }
                 }
                 dependencyChain.remove(orderable.getName());
             }
             sorted.put(orderable.getName(), orderable);
         }
+    }
+
+    protected <U extends T> void processMissingDependency(final U orderable, final String dependency) {
+        throw new MissingDependencyException(String.format("%s '%s' has a missing dependency '%s'",
+                orderableTypeName, orderable.getName(), dependency));
     }
 }
