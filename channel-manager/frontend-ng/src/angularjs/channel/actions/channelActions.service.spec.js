@@ -307,18 +307,26 @@ describe('ChannelActionsService', () => {
     const close = getItem('close');
     spyOn(CmsService, 'publish');
 
-    SidePanelService.panels = {
-      right: {
-        onCloseCallback: () => angular.noop(),
-      },
-    };
-
-    spyOn(SidePanelService.panels.right, 'onCloseCallback').and.returnValue($q.resolve());
+    spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
 
     close.onClick();
     $rootScope.$apply();
 
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
+  });
+
+  it('does not close a channel when closing the right side-panel failed', () => {
+    const close = getItem('close');
+    spyOn(CmsService, 'publish');
+
+    spyOn(SidePanelService, 'close').and.returnValue($q.reject());
+
+    close.onClick();
+    $rootScope.$apply();
+
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect(CmsService.publish).not.toHaveBeenCalled();
   });
 
   // delete channel

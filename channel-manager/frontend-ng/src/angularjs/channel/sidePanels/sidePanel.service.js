@@ -29,7 +29,7 @@ class SidePanelService {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
       onOpenCallback: onOpenCallback || angular.noop,
-      onCloseCallback: onCloseCallback || angular.noop,
+      onCloseCallback: onCloseCallback || (() => this.$q.resolve()),
     };
 
     this.panels[side] = panel;
@@ -63,9 +63,12 @@ class SidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       const panel = this.panels[side];
-      return this.$mdSidenav(panel.sideNavComponentId).close().then(() => {
-        this.OverlayService.sync();
-      });
+      return panel.onCloseCallback()
+        .then(() => this.$mdSidenav(panel.sideNavComponentId).close()
+          .then(() => {
+            this.OverlayService.sync();
+          }),
+        );
     }
     return this.$q.resolve();
   }

@@ -250,11 +250,11 @@ class ChannelActionsService extends MenuService {
     this.DialogService.show(alert);
   }
 
-  // Channel
+  // Close
   _closeChannel() {
-    this.CmsService.publish('close-channel');
+    this.SidePanelService.close('right')
+      .then(() => this.CmsService.publish('close-channel'));
   }
-
 }
 
 export default ChannelActionsService;

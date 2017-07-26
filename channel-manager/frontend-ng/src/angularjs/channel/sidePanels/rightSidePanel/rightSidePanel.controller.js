@@ -97,10 +97,14 @@ class RightSidePanelCtrl {
     this.lastSavedWidth = null;
     this.isFullWidth = false;
 
-    SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
-      this.openDocument(documentId);
-      this._onOpen();
-    });
+    SidePanelService.initialize('right', $element.find('.right-side-panel'),
+      // onOpen
+      (documentId) => {
+        this.openDocument(documentId);
+        this._onOpen();
+      },
+      // onClose
+      () => this._releaseDocument());
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
@@ -123,8 +127,15 @@ class RightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._resetState();
-    this._loadDocument(documentId);
+    if (this.documentId === documentId) {
+      return;
+    }
+    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
+      this._deleteDraft().finally(() => {
+        this._resetState();
+        this._loadDocument(documentId);
+      });
+    });
   }
 
   _resetState() {
@@ -383,10 +394,16 @@ class RightSidePanelCtrl {
   }
 
   close() {
-    this._confirmDiscardChanges().then(() => {
-      this._deleteDraft();
-      this._closePanel();
-    });
+    return this._releaseDocument()
+      .then(() => this._closePanel());
+  }
+
+  _releaseDocument() {
+    return this._confirmDiscardChanges()
+      .then(() => {
+        // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
+        this._deleteDraft();
+      });
   }
 
   onResize(newWidth) {
