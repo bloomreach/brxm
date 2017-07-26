@@ -30,7 +30,21 @@ import org.onehippo.cms7.services.WhiteboardService;
 @SuppressWarnings("UnusedDeclaration")
 public interface WebFilesService {
 
-    public static final String JCR_ROOT_PATH = "/webfiles";
+    String JCR_ROOT_PATH = "/webfiles";
+    String RELOAD_NEVER = "RELOAD_NEVER";
+    String RELOAD_IF_RUNTIME_UNCHANGED = "RELOAD_IF_RUNTIME_UNCHANGED";
+    String RELOAD_DISCARD_RUNTIME_CHANGES = "RELOAD_DISCARD_RUNTIME_CHANGES";
+
+    /**
+     * @param file {@link File}
+     * @return Check if given file is part of webfile bundle
+     */
+    boolean fileMatches(File file);
+
+    /**
+     * @return Reload mode for bundles
+     */
+    String reloadMode();
 
     /**
      * Creates a web files implementation based on JCR.
