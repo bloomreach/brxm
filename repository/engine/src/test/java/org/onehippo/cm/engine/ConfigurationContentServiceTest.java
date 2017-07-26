@@ -15,23 +15,12 @@
  */
 package org.onehippo.cm.engine;
 
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.definition.ActionType;
@@ -40,6 +29,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -49,12 +39,6 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import com.google.common.collect.ImmutableList;
 
 import junit.framework.AssertionFailedError;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
@@ -62,8 +46,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ConfigurationContentServiceTest {
 
@@ -157,22 +141,82 @@ public class ConfigurationContentServiceTest {
         pa2.getNode().setOrderBefore("a1");
         pa4.getNode().setOrderBefore("a3");
 
-        Collections.shuffle(module.getContentDefinitions());
+        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
 
-        List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        assertAfter(sortedDefinitions, a3, a2);
+        assertAfter(sortedDefinitions, a2, a1);
+        assertAfter(sortedDefinitions, pa2, pa1);
+        assertAfter(sortedDefinitions, a1b2, a1b1);
+        assertAfter(sortedDefinitions, pa4, pa3);
+    }
 
-        assertEquals(1, sortedDefinitions.indexOf(a2) - sortedDefinitions.indexOf(a3));
-        assertEquals(1, sortedDefinitions.indexOf(a1) - sortedDefinitions.indexOf(a2));
-        assertEquals(1, sortedDefinitions.indexOf(pa1) - sortedDefinitions.indexOf(pa2));
-        assertEquals(1, sortedDefinitions.indexOf(a1b1) - sortedDefinitions.indexOf(a1b2));
-        assertEquals(1, sortedDefinitions.indexOf(pa3) - sortedDefinitions.indexOf(pa4));
+    /**
+     * Verify that source definition's index is greater than the index of target definitions and thus,
+     * order before rule can be applied to the source during content apply operation (By the time we process order before dependent
+     * definition will exist in repository
+     */
+    private static void assertAfter(List<ContentDefinitionImpl> definitions, ContentDefinitionImpl source, ContentDefinitionImpl target) {
+        assertTrue(definitions.indexOf(source) > definitions.indexOf(target));
+    }
+
+    @Test
+    public void testComplexOrdering() {
+
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+
+        final ContentDefinitionImpl a1 = addContentDefinition(module, "s1", "/a1");
+        final ContentDefinitionImpl a2 = addContentDefinition(module, "s2", "/a2");
+        final ContentDefinitionImpl a3 = addContentDefinition(module, "s3", "/a3");
+        final ContentDefinitionImpl a4 = addContentDefinition(module, "s4", "/a4");
+        final ContentDefinitionImpl a5 = addContentDefinition(module, "s5", "/a5");
+        final ContentDefinitionImpl a6 = addContentDefinition(module, "s6", "/a6");
+        final ContentDefinitionImpl a7 = addContentDefinition(module, "s7", "/a7");
+
+        a2.getNode().setOrderBefore("a1");
+        a1.getNode().setOrderBefore("a3");
+        a3.getNode().setOrderBefore("a7");
+        a6.getNode().setOrderBefore("a4");
+
+        final ContentDefinitionImpl z = addContentDefinition(module, "s1", "/z");
+        final ContentDefinitionImpl b = addContentDefinition(module, "s2", "/b");
+        z.getNode().setOrderBefore("n");
+        b.getNode().setOrderBefore("z");
+
+        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+
+        assertAfter(sortedDefinitions, a2, a1);
+        assertAfter(sortedDefinitions, a1, a3);
+        assertAfter(sortedDefinitions, a3, a7);
+        assertAfter(sortedDefinitions, a6, a4);
+        assertAfter(sortedDefinitions, b, z);
+
+    }
+
+    @Test
+    public void test_ordering_circular_dependency() {
+
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+
+        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/ca1");
+        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/ca2");
+        final ContentDefinitionImpl ca3 = addContentDefinition(module, "s2", "/ca3");
+
+        ca1.getNode().setOrderBefore("ca3");
+        ca2.getNode().setOrderBefore("ca1");
+        ca3.getNode().setOrderBefore("ca2");
+
+        try {
+            configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            fail("Circular Dependency exception should have been raised");
+        } catch(CircularDependencyException ignore) {
+        }
     }
 
     private ContentDefinitionImpl addContentDefinition(ModuleImpl module, String sourceName, String path) {
-        ContentSourceImpl contentSource = module.addContentSource(sourceName);
-        ContentDefinitionImpl contentDefinition = new ContentDefinitionImpl(contentSource);
+        final ContentSourceImpl contentSource = module.addContentSource(sourceName);
+        final ContentDefinitionImpl contentDefinition = new ContentDefinitionImpl(contentSource);
         module.getContentDefinitions().add(contentDefinition);
-        DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, contentDefinition);
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, contentDefinition);
         contentDefinition.setNode(definitionNode);
         return contentDefinition;
     }
