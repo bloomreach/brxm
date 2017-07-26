@@ -84,12 +84,12 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
         }
 
         if (!basicHstConfigurationNodesPresent(session)) {
-            log.info("Root hst configuration nodes missing implying the model can't be valid");
+            log.info("Root hst configuration nodes missing implying the model can't be valid. Nothing to migrate");
+            return false;
         }
 
         log.info("Start HST Channel migration");
         removePreviewChannelsAndConfigurations(session);
-
 
         denormalizeSiteConfigurations(session, hstRoot);
 
