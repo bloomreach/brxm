@@ -25,6 +25,10 @@ import org.onehippo.cm.model.util.SnsUtils;
 
 import com.google.common.collect.Sets;
 
+/**
+ * Sort definitions by natural order and order before so that independent definitions come first.
+ * See also {@link OrderableByNameListSorter}
+ */
 public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDefinitionSorter.Item>{
 
     public ContentDefinitionSorter() {
