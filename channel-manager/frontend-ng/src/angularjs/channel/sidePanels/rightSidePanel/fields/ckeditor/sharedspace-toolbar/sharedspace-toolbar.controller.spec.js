@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('Sharedspace toolbar component controller', () => {
+describe('Sharedspace toolbar component controller', () => {
   let $rootScope;
   let $componentController;
   let $ctrl;
