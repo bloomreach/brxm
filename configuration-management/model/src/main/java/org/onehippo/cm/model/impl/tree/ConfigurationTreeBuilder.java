@@ -137,7 +137,7 @@ public class ConfigurationTreeBuilder {
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
-        if (definitionNode.isDeleted()) {
+        if (definitionNode.isDeletedAndEmpty()) {
             final String indexedName = createIndexedName(definitionNode.getName());
             if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
                 node.getParent().removeNode(indexedName, true);
@@ -145,7 +145,7 @@ public class ConfigurationTreeBuilder {
                 markNodeAsDeletedBy(node, definitionNode);
             }
             return;
-        } else if (definitionNode.isDelete() && !node.isNew()) {
+        } else if (definitionNode.isDelete() && !node.hasNoJcrNodesOrProperties()) {
             String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
                     definitionNode.getOrigin(), definitionNode.getJcrPath(), node.getOrigin());
             throw new IllegalArgumentException(msg);
@@ -381,9 +381,9 @@ public class ConfigurationTreeBuilder {
 
         if (definitionNode.isDelete()) {
             final String msg = String.format("%s: Trying to %sdelete node %s that does not exist.",
-                    definitionNode.getOrigin(), definitionNode.isDeleted() ? "" : "merge ", definitionNode.getJcrPath());
+                    definitionNode.getOrigin(), definitionNode.isDeletedAndEmpty() ? "" : "merge ", definitionNode.getJcrPath());
             logger.warn(msg);
-            if (definitionNode.isDeleted()) {
+            if (definitionNode.isDeletedAndEmpty()) {
                 return null;
             }
         }

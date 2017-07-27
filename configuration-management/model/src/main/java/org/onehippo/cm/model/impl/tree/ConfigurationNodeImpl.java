@@ -137,7 +137,11 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         modifiableNodes.clear();
     }
 
-    public boolean isNew() {
+    /**
+     * @return true iff no nodes or normal JCR properties are defined here; note that this excludes from consideration
+     *     any .meta properties, such as .meta:delete or category-related properties
+     */
+    public boolean hasNoJcrNodesOrProperties() {
         return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
     }
 

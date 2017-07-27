@@ -245,12 +245,28 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         orderBefore = null;
     }
 
+    /**
+     * @return true iff no nodes, properties, or .meta properties are defined here
+     */
     public boolean isEmpty() {
-        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty() && orderBefore == null;
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty() && orderBefore == null && !delete
+                && ignoreReorderedChildren == null && residualChildNodeCategory == null;
     }
 
-    public boolean isDeleted() {
-        return isDelete() && isEmpty();
+    /**
+     * Helper method for isDeletedAndEmpty -- should match isEmpty() in all cases except if isDelete()
+     * @return true iff no nodes, properties, or .meta properties are defined here -- OTHER THAN .meta:delete!
+     */
+    private boolean isEmptyExceptDelete() {
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty() && orderBefore == null
+                && ignoreReorderedChildren == null && residualChildNodeCategory == null;
+    }
+
+    /**
+     * @return true iff this node isDelete() and is otherwise empty
+     */
+    public boolean isDeletedAndEmpty() {
+        return isDelete() && isEmptyExceptDelete();
     }
 
     @Override

@@ -73,7 +73,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         switch (getType()) {
             case CONTENTDELETE:
                 if (node != null) {
-                    if (node.isDeleted()) {
+                    if (node.isDeletedAndEmpty()) {
                         log.warn("Ignoring hippo:contentdelete " + getName() + " at " + getInstructionNode().getSourceLocation() +
                                 ": path " + nodePath + " already deleted at " + node.getSourceLocation());
                     } else {
@@ -141,7 +141,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                 break;
             case CONTENTPROPDELETE:
                 if (node != null) {
-                    if (node.isDeleted()) {
+                    if (node.isDeletedAndEmpty()) {
                         log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
                                 " at " + getInstructionNode().getSourceLocation() +
                                 ":  parent node already deleted at " + node.getSourceLocation());
@@ -186,7 +186,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
-                        if (node.isDeleted()) {
+                        if (node.isDeletedAndEmpty()) {
                             log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
                                     " at " + getInstructionNode().getSourceLocation() +
                                     ":  nearest parent node already deleted at " + node.getSourceLocation());
@@ -224,7 +224,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                 }
                 DefinitionPropertyImpl prop = null;
                 if (node != null) {
-                    if (node.isDeleted()) {
+                    if (node.isDeletedAndEmpty()) {
                         log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for property " + getContentPath() +
                                 " at " + getInstructionNode().getSourceLocation() +
                                 ":  parent node already deleted at " + node.getSourceLocation());
@@ -260,7 +260,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
-                        if (node.isDeleted()) {
+                        if (node.isDeletedAndEmpty()) {
                             log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for property " + getContentPath() +
                                     " at " + getInstructionNode().getSourceLocation() +
                                     ":  nearest parent node already deleted at " + node.getSourceLocation());
