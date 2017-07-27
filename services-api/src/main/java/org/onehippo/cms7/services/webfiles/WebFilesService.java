@@ -31,8 +31,20 @@ import org.onehippo.cms7.services.WhiteboardService;
 public interface WebFilesService {
 
     String JCR_ROOT_PATH = "/webfiles";
+
+    /**
+     * Dont reload bundle even if it is modified at filesystem level
+     */
     String RELOAD_NEVER = "RELOAD_NEVER";
+
+    /**
+     * Reload bundle from JAR if bundle's runtime digest is consistent with the one from baseline
+     */
     String RELOAD_IF_RUNTIME_UNCHANGED = "RELOAD_IF_RUNTIME_UNCHANGED";
+
+    /**
+     * Reload bundle even if runtime digest is inconsistent with the one from baseline (runtime was modified)
+     */
     String RELOAD_DISCARD_RUNTIME_CHANGES = "RELOAD_DISCARD_RUNTIME_CHANGES";
 
     /**
