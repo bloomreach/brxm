@@ -96,7 +96,7 @@
     <quartz.version>2.2.1</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.4</easymock.version>
-    <powermock.version>1.6.5</powermock.version>
+    <powermock.version>1.7.0</powermock.version>
     <restassured.version>2.5.0</restassured.version>
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
@@ -266,6 +266,24 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-core</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
