@@ -57,6 +57,7 @@ class SharedSpaceToolbar {
 
     this.$element.animate({ maxHeight: state === true ? toolbarHeight : 0 }, animateOptions);
     this.sharedSpaceElement.animate({ top: state === true ? 0 : `-${toolbarHeight}px` }, animateOptions);
+
     this.rightSidePanelContent.animate({ scrollTop: scrollValue }, animateOptions);
   }
 }
