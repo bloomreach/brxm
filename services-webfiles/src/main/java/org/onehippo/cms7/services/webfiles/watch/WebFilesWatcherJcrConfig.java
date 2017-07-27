@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
     private static final String WATCHED_MODULES_PROPERTY = "watchedModules";
     private static final String WATCH_DELAY_MILLIS = "watchDelayMillis";
     private static final String MAX_FILE_LENGTH_KB = "maxFileLengthKb";
+    private static final String RELOAD_MODE = "reloadMode";
 
     private List<String> watchedModules;
     private List<String> includedFiles;
@@ -45,6 +47,7 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
     private List<String> useWatchServiceOnOsNames;
     private long watchDelayMillis;
     private long maxFileLengthBytes;
+    private String reloadMode;
 
     public WebFilesWatcherJcrConfig(final Node configNode) throws RepositoryException {
         watchedModules = getMultipleStringConfig(configNode, WATCHED_MODULES_PROPERTY, DEFAULT_WATCHED_MODULES);
@@ -53,6 +56,7 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
         useWatchServiceOnOsNames = getMultipleStringConfig(configNode, USE_WATCH_SERVICE_ON_OS_NAMES, DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES);
         watchDelayMillis = JcrUtils.getLongProperty(configNode, WATCH_DELAY_MILLIS, DEFAULT_WATCH_DELAY_MILLIS);
         maxFileLengthBytes = 1024 * JcrUtils.getLongProperty(configNode, MAX_FILE_LENGTH_KB, DEFAULT_MAX_FILE_LENGTH_KB);
+        reloadMode = JcrUtils.getStringProperty(configNode, RELOAD_MODE, WebFilesService.RELOAD_NEVER);
     }
 
     private List<String> getMultipleStringConfig(final Node configNode, final String propertyName, final String[] defaultValue) {
@@ -73,6 +77,11 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
     @Override
     public List<String> getWatchedModules() {
         return watchedModules;
+    }
+
+    @Override
+    public String getReloadMode() {
+        return reloadMode;
     }
 
     @Override

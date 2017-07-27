@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.onehippo.cms7.services.webfiles.WebFilesService;
+
 public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
 
     private final List<String> watchedModules;
@@ -61,6 +63,11 @@ public class WebFilesWatcherJavaConfig implements WebFilesWatcherConfig {
     @Override
     public List<String> getWatchedModules() {
         return watchedModules;
+    }
+
+    @Override
+    public String getReloadMode() {
+        return WebFilesService.RELOAD_NEVER;
     }
 
     @Override

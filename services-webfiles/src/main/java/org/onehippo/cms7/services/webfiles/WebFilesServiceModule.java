@@ -19,7 +19,6 @@ package org.onehippo.cms7.services.webfiles;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.observation.Event;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
@@ -61,7 +60,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
         watchedFiles.includeFiles(config.getIncludedFiles());
         watchedFiles.excludeDirectories(config.getExcludedDirectories());
 
-        service = new WebFilesServiceImpl(watchedFiles, config.getMaxFileLengthBytes());
+        service = new WebFilesServiceImpl(watchedFiles, config.getMaxFileLengthBytes(), config.getReloadMode());
         HippoServiceRegistry.registerService(service, WebFilesService.class);
 
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);

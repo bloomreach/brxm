@@ -13,3 +13,4 @@ definitions:
         maxFileLengthKb: 256
         useWatchServiceOnOsNames: [Linux]
         watchDelayMillis: 500
+        reloadMode: RELOAD_IF_RUNTIME_UNCHANGED

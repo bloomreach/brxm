@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.onehippo.cm.model.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,8 @@ class SubDirectoriesWatcher implements FileSystemListener {
 
     private static final Logger log = LoggerFactory.getLogger(SubDirectoriesWatcher.class);
 
-    private static final DirectoryStream.Filter<Path> DIRECTORY_FILTER = path -> Files.isDirectory(path);
+    private static final DirectoryStream.Filter<Path> DIRECTORY_FILTER = path ->
+            Files.isDirectory(path) && !(path.endsWith(Constants.HCM_CONFIG_FOLDER) || path.endsWith(Constants.HCM_CONTENT_FOLDER));
 
     private final Path rootDirectory;
     private final PathChangesListener listener;

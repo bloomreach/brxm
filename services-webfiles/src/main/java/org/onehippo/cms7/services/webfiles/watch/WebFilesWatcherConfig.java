@@ -36,6 +36,11 @@ public interface WebFilesWatcherConfig {
     List<String> getWatchedModules();
 
     /**
+     * @return bundle reload mode
+     */
+    String getReloadMode();
+
+    /**
      * @return all file name globbing patterns for files in web file bundles that should be watched
      * for changes. The pattern syntax is the same as used in {@link java.nio.file.FileSystem#getPathMatcher}, except
      * that slashes are not allowed (the pattern is supposed to match the file name part of the path only).
