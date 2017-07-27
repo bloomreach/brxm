@@ -116,7 +116,6 @@
     <module>yaml-converter</module>
     <module>tooling</module>
     <module>test</module>
-    <module>demo</module>
     <module>maven-plugin</module>
   </modules>
 
