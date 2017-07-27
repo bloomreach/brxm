@@ -30,12 +30,12 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.PathConfigurationReader;
-import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
