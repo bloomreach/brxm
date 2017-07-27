@@ -4,15 +4,15 @@
   "name": "Personalization Connector",
   "icon": "/essentials/images/bloomreachConnector.png",
   "introduction": "With the Personalization Connector tool, You can setup and configure the API connection information used by the Personalization components.",
-  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. Also, you need a BloomReach Personalization license in order to use this component. ",
+  "description": "Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. Also, you need a BloomReach Personalization license in order to use this component. ",
   "restClasses": [
     "org.onehippo.cms7.essentials.bloomreach.connector.rest.BloomreachConnectorResource"
   ],
   "type": "tool",
   "vendor": {
     "@type": "vendor",
-    "name": "Hippo (enterprise)",
-    "url": "http://www.onehippo.com"
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
   },
   "categories": {
     "application": [

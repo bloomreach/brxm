@@ -22,8 +22,8 @@
   "type": "tool",
   "vendor": {
     "@type": "vendor",
-    "name": "Hippo",
-    "url": "http://www.onehippo.com"
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
   },
   "libraries": [
     {

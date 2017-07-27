@@ -1,7 +1,8 @@
 {
   "vendor" : {
-    "url" : "https://www.onehippo.com",
-    "name" : "Hippo"
+    "@type": "vendor",
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
   },
   "name" : "Products categories",
   "introduction" : "Products Categories component",

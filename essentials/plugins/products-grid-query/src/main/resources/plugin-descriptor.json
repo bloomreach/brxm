@@ -1,7 +1,8 @@
 {
   "vendor" : {
-    "url" : "https://www.onehippo.com",
-    "name" : "Hippo"
+    "@type": "vendor",
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
   },
   "name" : "Product Grid (Query)",
   "introduction" : "With Product Grid (Query) you can place BloomReach Personalization Product Grids directly onto your page. This feature will be installed as a drag-and-drop component in the Channel Manager. With this component you can select the product grid using a query string.",
