@@ -18,8 +18,10 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -40,6 +42,7 @@ import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -76,7 +79,7 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
-        final boolean isUpgradeTo12 = checkUpgradeTo12  (session);
+        final boolean isUpgradeTo12 = checkUpgradeTo12(session);
         boolean allModulesHaveSucceeded = true;
 
         for (ModuleImpl module : model.getModules()) {
@@ -194,11 +197,22 @@ public class ConfigurationContentService {
 
         for (JcrPath path : itemsPerPath.keySet()) {
             final List<ContentDefinitionSorter.Item> siblings = itemsPerPath.get(path);
+            validateOrderBeforeDuplicates(siblings);
             final ContentDefinitionSorter contentDefinitionSorter = new ContentDefinitionSorter();
             contentDefinitionSorter.sort(siblings);
         }
 
         return itemsPerPath.values().stream().flatMap(Collection::stream).map(ContentDefinitionSorter.Item::getDefinition).collect(Collectors.toList());
+    }
+
+    private void validateOrderBeforeDuplicates(final List<ContentDefinitionSorter.Item> siblings) {
+        final List<String> orderBeforeList = siblings.stream().map(s -> s.getDefinition().getNode().getOrderBefore()).filter(Objects::nonNull).collect(toList());
+        final String orderBeforeDuplicates = siblings.stream().filter(i -> Collections.frequency(orderBeforeList, i.getDefinition().getNode().getOrderBefore()) > 1)
+                .distinct().map(i -> i.getDefinition().getNode().getPath() + " in " + i.getDefinition().getSource())
+                .collect(Collectors.joining(", "));
+        if (StringUtils.isNotEmpty(orderBeforeDuplicates)) {
+            log.warn("Following node(s) are referenced multiple times in order before: {}", orderBeforeDuplicates);
+        }
     }
 
     private Function<ContentDefinitionImpl, JcrPath> getParentPath() {

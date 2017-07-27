@@ -21,6 +21,7 @@ import java.util.Set;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.OrderableByNameListSorter;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.util.SnsUtils;
 
 import com.google.common.collect.Sets;
 
@@ -44,7 +45,7 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
 
         @Override
         public String getName() {
-            return definition.getNode().getName();
+            return SnsUtils.getUnindexedName(definition.getNode().getName());
         }
 
         @Override
@@ -59,7 +60,7 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
 
         @Override
         public String toString() {
-            return "OrderableItem{" +
+            return "ContentDefinitionSorter.Item{" +
                     "name='" + getName() + '\'' +
                     ", before='" + definition.getNode().getOrderBefore() + '\'' +
                     ", definition=" + definition +

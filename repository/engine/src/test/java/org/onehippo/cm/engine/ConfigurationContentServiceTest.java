@@ -30,6 +30,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
+import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -114,7 +115,7 @@ public class ConfigurationContentServiceTest {
     }
 
     @Test
-    public void testOrdering() {
+    public void test_ordering() {
         final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
 
         final ContentDefinitionImpl cc1 = addContentDefinition(module, "rsource13", "/c/c1");
@@ -150,20 +151,9 @@ public class ConfigurationContentServiceTest {
         assertAfter(sortedDefinitions, pa4, pa3);
     }
 
-    /**
-     * Verify that source definition's index is greater than the index of target definitions and thus,
-     * order before rule can be applied to the source during content apply operation (By the time we process order before dependent
-     * definition will exist in repository
-     */
-    private static void assertAfter(List<ContentDefinitionImpl> definitions, ContentDefinitionImpl source, ContentDefinitionImpl target) {
-        assertTrue(definitions.indexOf(source) > definitions.indexOf(target));
-    }
-
     @Test
-    public void testComplexOrdering() {
-
+    public void test_complex_ordering() {
         final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
-
         final ContentDefinitionImpl a1 = addContentDefinition(module, "s1", "/a1");
         final ContentDefinitionImpl a2 = addContentDefinition(module, "s2", "/a2");
         final ContentDefinitionImpl a3 = addContentDefinition(module, "s3", "/a3");
@@ -189,14 +179,11 @@ public class ConfigurationContentServiceTest {
         assertAfter(sortedDefinitions, a3, a7);
         assertAfter(sortedDefinitions, a6, a4);
         assertAfter(sortedDefinitions, b, z);
-
     }
 
     @Test
     public void test_ordering_circular_dependency() {
-
         final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
-
         final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/ca1");
         final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/ca2");
         final ContentDefinitionImpl ca3 = addContentDefinition(module, "s2", "/ca3");
@@ -212,6 +199,63 @@ public class ConfigurationContentServiceTest {
         }
     }
 
+    @Test
+    public void test_sns() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/p/ca1[2]");
+        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/p/ca2[2]");
+        final ContentDefinitionImpl ca3 = addContentDefinition(module, "s3", "/p/ca3[1]");
+        ca1.getNode().setOrderBefore("ca3");
+        ca3.getNode().setOrderBefore("ca2");
+
+        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        assertAfter(sortedDefinitions, ca1, ca3);
+        assertAfter(sortedDefinitions, ca3, ca2);
+    }
+
+    @Test
+    public void test_sns_duplicates() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/p/ca1");
+        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/p/ca1[1]");
+        final ContentDefinitionImpl ca3 = addContentDefinition(module, "s2", "/p/ca3");
+
+        ca1.getNode().setOrderBefore("ca3");
+
+        try {
+            configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            fail();
+        } catch (DuplicateNameException ignore) {}
+    }
+
+    @Test
+    public void test_order_before_duplicates() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/p/ca1");
+        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/p/ca2");
+        final ContentDefinitionImpl ca3 = addContentDefinition(module, "s2", "/p/ca3");
+        final ContentDefinitionImpl ca4 = addContentDefinition(module, "s2", "/p/ca4");
+        final ContentDefinitionImpl ca5 = addContentDefinition(module, "s2", "/p/ca5");
+
+        ca1.getNode().setOrderBefore("ca3");
+        ca2.getNode().setOrderBefore("ca3");
+
+        ca4.getNode().setOrderBefore("ca1");
+        ca5.getNode().setOrderBefore("ca1");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationContentService.class).build()) {
+            List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Following node(s) are referenced multiple times in order before")));
+
+            assertAfter(sortedDefinitions, ca4, ca1);
+            assertAfter(sortedDefinitions, ca5, ca1);
+            assertAfter(sortedDefinitions, ca2, ca3);
+            assertAfter(sortedDefinitions, ca1, ca3);
+            assertAfter(sortedDefinitions, ca2, ca1);
+        }
+    }
+
     private ContentDefinitionImpl addContentDefinition(ModuleImpl module, String sourceName, String path) {
         final ContentSourceImpl contentSource = module.addContentSource(sourceName);
         final ContentDefinitionImpl contentDefinition = new ContentDefinitionImpl(contentSource);
@@ -220,5 +264,15 @@ public class ConfigurationContentServiceTest {
         contentDefinition.setNode(definitionNode);
         return contentDefinition;
     }
+
+    /**
+     * Verify that source definition's index is greater than the index of target definitions and thus,
+     * order before rule can be applied to the source during content apply operation (By the time we process order before dependent
+     * definition will exist in repository
+     */
+    private static void assertAfter(List<ContentDefinitionImpl> definitions, ContentDefinitionImpl source, ContentDefinitionImpl target) {
+        assertTrue(definitions.indexOf(source) > definitions.indexOf(target));
+    }
+
 
 }
