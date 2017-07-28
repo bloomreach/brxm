@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.jcr.PropertyType;
 
@@ -43,6 +42,7 @@ import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 
+import static java.util.stream.Collectors.toSet;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
@@ -331,12 +331,31 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         for (EsvNode child : node.getChildren()) {
             final String childPath = calculatePath(child, path, nodeDefinitions, node.getChildren());
             if (!isContent(path) && isContent(childPath)) {
-                final SourceImpl sourceImpl = source.getModule().addContentSource(getSourcePath());
+                final Set<String> moduleContentSources = source.getModule().getContentSources().stream().map(SourceImpl::getPath).collect(toSet());
+                String contentSource = getSourcePath();
+                if (moduleContentSources.contains(contentSource)) {
+                    contentSource = generateSourceFilename(contentSource, moduleContentSources);
+                }
+                final SourceImpl sourceImpl = source.getModule().addContentSource(contentSource);
                 processNode(child, childPath, sourceImpl, null, nodeDefinitions, deltaNodes);
             } else {
                 processNode(child, childPath, source, defNode, nodeDefinitions, deltaNodes);
             }
         }
+    }
+
+    private String generateSourceFilename(final String filename, final Set<String> moduleSources) {
+        int suffix = 1;
+        final String name = StringUtils.substringBeforeLast(filename, ".");
+        final String ext = StringUtils.substringAfterLast(filename, ".");
+
+        String candidate = filename;
+        while(moduleSources.contains(candidate)) {
+            candidate = String.format("%s-%s.%s", name, suffix, ext);
+            suffix++;
+        }
+
+        return candidate;
     }
 
     private void processProperty(final EsvNode node, final DefinitionNodeImpl defNode, final EsvProperty property, final boolean deltaNode)
@@ -378,8 +397,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         return;
                     }
                 } else if (JCR_MIXINTYPES.equals(propertyName)) {
-                    Set<String> oldMixins = Arrays.stream(prop.getValues()).map(Value::getString).collect(Collectors.toSet());
-                    Set<String> newMixins = property.getValues().stream().map(EsvValue::getString).collect(Collectors.toSet());
+                    Set<String> oldMixins = Arrays.stream(prop.getValues()).map(Value::getString).collect(toSet());
+                    Set<String> newMixins = property.getValues().stream().map(EsvValue::getString).collect(toSet());
                     if (!oldMixins.equals(newMixins)) {
                         if (!node.isDeltaOverlay()) {
                             throw new EsvParseException("Redefining node " + defNode.getJcrPath() + " mixins to " + newMixins +
