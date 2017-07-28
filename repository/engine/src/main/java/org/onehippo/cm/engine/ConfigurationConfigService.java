@@ -123,7 +123,7 @@ public class ConfigurationConfigService {
                 if (module.isArchive()) {
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
-                    boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.reloadMode(), baselineService, session);
+                    boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);
                     if (reload) {
                         webFilesService.importJcrWebFileBundle(session, bundleZipFile, true);
                         final Map<String, String> bundlesDigests = baselineService.getBundlesDigests(session);
