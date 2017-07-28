@@ -74,7 +74,9 @@ public class ContentSourceParser extends SourceParser {
 
             if (key.equals(META_ORDER_BEFORE_KEY)) {
                 final String name = asNodeOrderBeforeValue(tupleValue);
-                if (definitionNode.getName().equals(name)) {
+                if (!definitionNode.isRoot()) {
+                    throw new ParserException(META_ORDER_BEFORE_KEY + " is not allowed at non root content definition", node);
+                } else if (definitionNode.getName().equals(name)) {
                     throw new ParserException("Invalid " + META_ORDER_BEFORE_KEY + " targeting this node itself", node);
                 }
                 definitionNode.setOrderBefore(name);
