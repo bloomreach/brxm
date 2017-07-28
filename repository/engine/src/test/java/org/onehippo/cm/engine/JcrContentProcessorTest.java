@@ -31,9 +31,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
-import org.apache.commons.collections4.IteratorUtils;
-import com.google.common.io.Files;
-
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -53,6 +50,8 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -151,7 +150,9 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
                 "  date: 2015-10-21T07:28:00+08:00\n" +
                 "  double: 3.1415\n" +
                 "  longAsLong: 4200000000\n" +
-                "  string: hello world";
+                "  string: hello world\n" +
+                "  /a:\n" +
+                "    jcr:primaryType: nt:unstructured\n";
 
         final String source2
                 = "/test/node2:\n" +
@@ -203,6 +204,30 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
             fail("Should fail because of missing order before node");
         } catch(RuntimeException ex) {
             assertTrue(ex.getMessage().contains("Failed to process order before property of node"));
+        }
+    }
+
+    @Test
+    public void order_before_non_root_fail() throws Exception {
+
+        final String source3
+                = "/test/node3:\n" +
+                "  .meta:order-before: node2\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  boolean: true\n" +
+                "  date: 2015-10-21T07:28:00+08:00\n" +
+                "  double: 3.1415\n" +
+                "  string: hello world\n" +
+                "  /a:\n" +
+                "   .meta:order-before: node2\n" +
+                "   jcr:primaryType: nt:unstructured\n";
+
+        try
+        {
+            applyAndSaveDefinitions(new String[]{source3});
+            fail();
+        } catch(ParserException ex) {
+            assertTrue(ex.getMessage().contains("is not allowed at non root content definition"));
         }
     }
 
