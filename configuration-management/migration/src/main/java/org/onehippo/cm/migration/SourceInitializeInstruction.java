@@ -184,7 +184,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         // TODO: add capability to check whether another module defined a node at this path.
         DefinitionNodeImpl def = nodeDefinitions.get(new MinimallyIndexedPath(base));
         if (def != null) {
-            if (def.isDeleted()) {
+            if (def.isDeletedAndEmpty()) {
                 return base;
             }
             int index = 2;
@@ -227,7 +227,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         defNode.getSourceLocation() + ".");
             }
         }
-        final boolean newNode = defNode == null || defNode.isDeleted();
+        final boolean newNode = defNode == null || defNode.isDeletedAndEmpty();
         if (newNode) {
             final boolean deleted = defNode != null && defNode.isDelete();
             if (deleted && defNode.isRoot()) {
