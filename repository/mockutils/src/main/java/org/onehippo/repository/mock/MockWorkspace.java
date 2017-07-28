@@ -47,7 +47,7 @@ public class MockWorkspace implements Workspace {
 
     private final MockSession session;
 
-    MockWorkspace(MockSession session) {
+    protected MockWorkspace(MockSession session) {
         this.session = session;
     }
 

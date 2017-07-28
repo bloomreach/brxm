@@ -39,7 +39,7 @@ public abstract class MockItem implements Item {
 
     private String name;
     private MockNode parent;
-    private MockSession session;
+    protected MockSession session;
 
     public MockItem(String name) {
         this.name = name;
@@ -115,7 +115,7 @@ public abstract class MockItem implements Item {
         return session;
     }
 
-    MockNode getRootNode() {
+    protected MockNode getRootNode() {
         if (isRootNode()) {
             return (MockNode)this;
         }
