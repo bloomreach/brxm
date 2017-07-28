@@ -56,7 +56,7 @@ public interface WebFilesService {
     /**
      * @return Reload mode for bundles
      */
-    String reloadMode();
+    String getReloadMode();
 
     /**
      * Creates a web files implementation based on JCR.
