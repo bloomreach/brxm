@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,11 @@ describe('ChannelSettings', () => {
     `);
     $compile($element)($scope);
     $scope.$digest();
+
+    // Append $element to the DOM so the form is "connected", otherwise Chrome 60+ does not submit the form
+    // (see https://stackoverflow.com/a/42081856). Add it as a Jasmine fixture so the added DOM is removed
+    // automatically after each test.
+    jasmine.getFixtures().set($element);
 
     return $element.controller('channelSettings');
   }

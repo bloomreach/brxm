@@ -119,6 +119,6 @@ describe('collapse controller', () => {
 
     $rootScope.$apply();
 
-    expect(collapseCtrl.toggledElement.attr('style')).toBe(undefined);
+    expect(collapseCtrl.toggledElement.attr('style')).toBeFalsy();
   });
 });
