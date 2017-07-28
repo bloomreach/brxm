@@ -49,13 +49,13 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
 
         @Override
         public String getName() {
-            return SnsUtils.getUnindexedName(definition.getNode().getName());
+            return SnsUtils.createIndexedName(definition.getNode().getName());
         }
 
         @Override
         public Set<String> getAfter() {
             return definition.getNode().getOrderBefore() == null ? Collections.emptySet()
-                    : Sets.newHashSet(definition.getNode().getOrderBefore());
+                    : Sets.newHashSet(SnsUtils.createIndexedName(definition.getNode().getOrderBefore()));
         }
 
         public ContentDefinitionImpl getDefinition() {

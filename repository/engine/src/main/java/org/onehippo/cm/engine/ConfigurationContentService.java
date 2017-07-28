@@ -187,6 +187,8 @@ public class ConfigurationContentService {
 
     /**
      * Sort content definitions in natural order of their root node paths and order before factor
+     * Item A that has order before on item B in this list then item B should be applied before item A, i.e.
+     * in reverse order
      */
     List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions) {
 

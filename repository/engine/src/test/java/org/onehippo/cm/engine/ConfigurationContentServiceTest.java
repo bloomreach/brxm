@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
@@ -47,6 +48,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -149,6 +151,8 @@ public class ConfigurationContentServiceTest {
         assertAfter(sortedDefinitions, pa2, pa1);
         assertAfter(sortedDefinitions, a1b2, a1b1);
         assertAfter(sortedDefinitions, pa4, pa3);
+
+        assertEquals("[a1, a2, a3, c1, a1, a2, a3, a4, b1, b2, c1, c2, c1]", sortedNames(sortedDefinitions));
     }
 
     @Test
@@ -179,6 +183,8 @@ public class ConfigurationContentServiceTest {
         assertAfter(sortedDefinitions, a3, a7);
         assertAfter(sortedDefinitions, a6, a4);
         assertAfter(sortedDefinitions, b, z);
+
+        assertEquals("[a7, a3, a1, a2, a4, a5, a6, z, b]", sortedNames(sortedDefinitions));
     }
 
     @Test
@@ -202,22 +208,26 @@ public class ConfigurationContentServiceTest {
     @Test
     public void test_sns() {
         final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
-        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/p/ca1[2]");
+        final ContentDefinitionImpl ca11 = addContentDefinition(module, "s2", "/p/ca1[1]");
+        final ContentDefinitionImpl ca12 = addContentDefinition(module, "s2", "/p/ca1[2]");
         final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/p/ca2[2]");
         final ContentDefinitionImpl ca3 = addContentDefinition(module, "s3", "/p/ca3[1]");
-        ca1.getNode().setOrderBefore("ca3");
-        ca3.getNode().setOrderBefore("ca2");
+        ca12.getNode().setOrderBefore("ca3[1]");
+        ca3.getNode().setOrderBefore("ca2[2]");
 
         final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
-        assertAfter(sortedDefinitions, ca1, ca3);
+        assertAfter(sortedDefinitions, ca12, ca3);
         assertAfter(sortedDefinitions, ca3, ca2);
+
+        assertEquals("[ca1[1], ca2[2], ca3[1], ca1[2]]", sortedNames(sortedDefinitions));
+
     }
 
     @Test
     public void test_sns_duplicates() {
         final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
         final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/p/ca1");
-        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/p/ca1[1]");
+        final ContentDefinitionImpl ca11 = addContentDefinition(module, "s2", "/p/ca1[1]");
         final ContentDefinitionImpl ca3 = addContentDefinition(module, "s2", "/p/ca3");
 
         ca1.getNode().setOrderBefore("ca3");
@@ -253,7 +263,14 @@ public class ConfigurationContentServiceTest {
             assertAfter(sortedDefinitions, ca2, ca3);
             assertAfter(sortedDefinitions, ca1, ca3);
             assertAfter(sortedDefinitions, ca2, ca1);
+
+            assertEquals("[ca3, ca1, ca2, ca4, ca5]", sortedNames(sortedDefinitions));
         }
+
+    }
+
+    private static String sortedNames(List<ContentDefinitionImpl> definitions) {
+        return definitions.stream().map(d -> d.getNode().getName()).collect(Collectors.toList()).toString();
     }
 
     private ContentDefinitionImpl addContentDefinition(ModuleImpl module, String sourceName, String path) {

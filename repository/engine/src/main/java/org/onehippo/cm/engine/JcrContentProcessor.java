@@ -185,7 +185,7 @@ public class JcrContentProcessor {
         final Node jcrNode = addNode(parentNode, definitionNode);
         if (definitionNode.getOrderBefore() != null) {
             if (parentNode.hasNode(definitionNode.getOrderBefore())) {
-                parentNode.orderBefore(jcrNode.getName(), definitionNode.getOrderBefore());
+                parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(definitionNode.getOrderBefore()));
             } else {
                 final String msg = String.format(
                         "Failed to process order before property of node '%s' defined in %s: '%s': does not exist.",
