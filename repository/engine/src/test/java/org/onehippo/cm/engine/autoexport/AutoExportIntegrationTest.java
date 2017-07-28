@@ -53,7 +53,6 @@ public class AutoExportIntegrationTest {
         });
     }
 
-    @Ignore
     @Test
     public void config_sns_deeptree() throws Exception {
         new Fixture("config_sns_deeptree").test(session -> {
@@ -64,7 +63,6 @@ public class AutoExportIntegrationTest {
         });
     }
 
-    @Ignore
     @Test
     public void config_sns_delete() throws Exception {
         new Fixture("config_sns_delete").test(session -> {
