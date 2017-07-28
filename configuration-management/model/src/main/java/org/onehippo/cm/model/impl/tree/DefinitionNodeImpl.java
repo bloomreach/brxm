@@ -25,6 +25,8 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.Maps;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.path.JcrPath;
@@ -34,8 +36,6 @@ import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
 import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.ValueType;
-
-import com.google.common.collect.Maps;
 
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
@@ -249,12 +249,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
      * @return true iff no nodes, properties, or .meta properties are defined here
      */
     public boolean isEmpty() {
-        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty() && orderBefore == null && !delete
-                && ignoreReorderedChildren == null && residualChildNodeCategory == null;
+        return !isDelete() && isEmptyExceptDelete();
     }
 
     /**
-     * Helper method for isDeletedAndEmpty -- should match isEmpty() in all cases except if isDelete()
      * @return true iff no nodes, properties, or .meta properties are defined here -- OTHER THAN .meta:delete!
      */
     private boolean isEmptyExceptDelete() {
