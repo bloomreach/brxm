@@ -82,7 +82,7 @@ public class WebFilesServiceImpl implements WebFilesService {
     }
 
     @Override
-    public String reloadMode() {
+    public String getReloadMode() {
         return reloadMode;
     }
 
