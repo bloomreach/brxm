@@ -196,17 +196,20 @@ public class ConfigurationContentService {
 
         for (JcrPath path : itemsPerPath.keySet()) {
             final List<ContentDefinitionSorter.Item> siblings = itemsPerPath.get(path);
-            validateOrderBeforeDuplicates(siblings);
+            warnForDuplicateOrderBefores(siblings);
             final ContentDefinitionSorter contentDefinitionSorter = new ContentDefinitionSorter();
             contentDefinitionSorter.sort(siblings);
         }
 
-        return itemsPerPath.values().stream().flatMap(Collection::stream).map(ContentDefinitionSorter.Item::getDefinition).collect(Collectors.toList());
+        return itemsPerPath.values().stream().flatMap(Collection::stream)
+                .map(ContentDefinitionSorter.Item::getDefinition).collect(Collectors.toList());
     }
 
-    private void validateOrderBeforeDuplicates(final List<ContentDefinitionSorter.Item> siblings) {
-        final List<String> orderBeforeList = siblings.stream().map(s -> s.getDefinition().getNode().getOrderBefore()).filter(Objects::nonNull).collect(toList());
-        final String orderBeforeDuplicates = siblings.stream().filter(i -> Collections.frequency(orderBeforeList, i.getDefinition().getNode().getOrderBefore()) > 1)
+    private void warnForDuplicateOrderBefores(final List<ContentDefinitionSorter.Item> siblings) {
+        final List<String> orderBeforeList = siblings.stream()
+                .map(s -> s.getDefinition().getNode().getOrderBefore()).filter(Objects::nonNull).collect(toList());
+        final String orderBeforeDuplicates = siblings.stream()
+                .filter(i -> Collections.frequency(orderBeforeList, i.getDefinition().getNode().getOrderBefore()) > 1)
                 .distinct().map(i -> i.getDefinition().getNode().getPath() + " in " + i.getDefinition().getSource())
                 .collect(Collectors.joining(", "));
         if (StringUtils.isNotEmpty(orderBeforeDuplicates)) {
@@ -215,7 +218,7 @@ public class ConfigurationContentService {
     }
 
     private Function<ContentDefinitionImpl, JcrPath> getParentPath() {
-        return definition -> JcrPath.get(definition.getNode().getPath()).getParent();
+        return definition -> definition.getNode().getJcrPath().getParent();
     }
 
     /**
