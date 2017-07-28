@@ -67,10 +67,11 @@
     </md-progress-linear>
   </md-toolbar>
 
-  <sharedspace-toolbar></sharedspace-toolbar>
+  <sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>
 
   <md-content flex="grow"
-              layout="column">
+              layout="column"
+              id="rightSidePanel-content">
 
     <md-subheader class="md-no-sticky"
                   ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"

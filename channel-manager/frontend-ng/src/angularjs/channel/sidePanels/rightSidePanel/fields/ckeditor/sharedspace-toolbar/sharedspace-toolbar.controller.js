@@ -15,10 +15,12 @@
  */
 
 class SharedSpaceToolbar {
-  constructor(SharedSpaceToolbarService, $rootScope) {
+  constructor($rootScope, $element, SharedSpaceToolbarService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.$element = $element;
+
     this.isVisible = this.isVisible || false;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
     this.showBottomToolbar = null;
@@ -26,6 +28,10 @@ class SharedSpaceToolbar {
 
   $onInit() {
     this.SharedSpaceToolbarService.registerTriggerCallback(this.setToolbarVisible.bind(this));
+    this.sharedSpaceElement = this.$element.find('.ckeditor-shared-space');
+    this.rightSidePanelContent = $('#rightSidePanel-content');
+
+    this.sharedSpaceElement.css('display', 'none');
   }
 
   $onDestroy() {
@@ -36,6 +42,23 @@ class SharedSpaceToolbar {
     this.isVisible = state;
     this.showBottomToolbar = options.hasBottomToolbar || false;
     this.$rootScope.$apply();
+    this._fixScrollingPosition(state);
+  }
+
+  _fixScrollingPosition(state) {
+    if (state === true) {
+      this.sharedSpaceElement.css('display', 'block');
+      this.sharedSpaceElement.css('top', `-${this.sharedSpaceElement.height()}px`);
+    }
+
+    const toolbarHeight = this.$element.find('.ckeditor-shared-space-top').height();
+    const scrollValue = state === true ? `+=${toolbarHeight}` : `-=${toolbarHeight}`;
+    const animateOptions = { duration: 200, ease: 'linear', queue: false };
+
+    this.$element.animate({ maxHeight: state === true ? toolbarHeight : 0 }, animateOptions);
+    this.sharedSpaceElement.animate({ top: state === true ? 0 : `-${toolbarHeight}px` }, animateOptions);
+
+    this.rightSidePanelContent.animate({ scrollTop: scrollValue }, animateOptions);
   }
 }
 

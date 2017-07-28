@@ -23,19 +23,18 @@ describe('Sharedspace toolbar component controller', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((
-      _$rootScope_,
-      _$componentController_,
-      _SharedSpaceToolbarService_,
-    ) => {
+    inject((_$rootScope_,
+            _$componentController_,
+            _SharedSpaceToolbarService_) => {
       $rootScope = _$rootScope_;
       $componentController = _$componentController_;
       SharedSpaceToolbarService = _SharedSpaceToolbarService_;
     });
 
-    $ctrl = $componentController('sharedspaceToolbar', {}, {
-      SharedSpaceToolbarService,
+    $ctrl = $componentController('sharedspaceToolbar', {
       $rootScope,
+      $element: angular.element('<div></div>'),
+      SharedSpaceToolbarService,
     });
   });
 
@@ -43,6 +42,8 @@ describe('Sharedspace toolbar component controller', () => {
     spyOn(SharedSpaceToolbarService, 'registerTriggerCallback');
     $ctrl.$onInit();
     expect(SharedSpaceToolbarService.registerTriggerCallback).toHaveBeenCalled();
+    expect($ctrl.sharedSpaceElement).toBeDefined();
+    expect($ctrl.rightSidePanelContent).toBeDefined();
   });
 
   it('should destroy component', () => {
@@ -60,5 +61,33 @@ describe('Sharedspace toolbar component controller', () => {
 
     expect($ctrl.isVisible).toEqual(true);
     expect($ctrl.showBottomToolbar).toEqual(false);
+  });
+
+  describe('fix scrolling position', () => {
+    const animateOptions = jasmine.any(Object);
+    const mockHeight = 110;
+
+    beforeEach(() => {
+      $ctrl.$onInit();
+      $ctrl.$element.append($('<div class="ckeditor-shared-space-top"></div>').height(mockHeight));
+
+      spyOn($ctrl.$element, 'animate');
+      spyOn($ctrl.sharedSpaceElement, 'animate');
+      spyOn($ctrl.rightSidePanelContent, 'animate');
+    });
+
+    it('should fix scrolling position when state is true', () => {
+      $ctrl._fixScrollingPosition(true);
+      expect($ctrl.$element.animate).toHaveBeenCalledWith({ maxHeight: mockHeight }, animateOptions);
+      expect($ctrl.sharedSpaceElement.animate).toHaveBeenCalledWith({ top: 0 }, animateOptions);
+      expect($ctrl.rightSidePanelContent.animate).toHaveBeenCalledWith({ scrollTop: `+=${mockHeight}` }, animateOptions);
+    });
+
+    it('should fix scrolling position when state is false', () => {
+      $ctrl._fixScrollingPosition(false);
+      expect($ctrl.$element.animate).toHaveBeenCalledWith({ maxHeight: 0 }, animateOptions);
+      expect($ctrl.sharedSpaceElement.animate).toHaveBeenCalledWith({ top: `-${mockHeight}px` }, animateOptions);
+      expect($ctrl.rightSidePanelContent.animate).toHaveBeenCalledWith({ scrollTop: `-=${mockHeight}` }, animateOptions);
+    });
   });
 });

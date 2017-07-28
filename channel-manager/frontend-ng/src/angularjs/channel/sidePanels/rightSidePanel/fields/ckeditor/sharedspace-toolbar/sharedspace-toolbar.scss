@@ -16,23 +16,18 @@
 @import 'variables';
 
 sharedspace-toolbar {
-  border-bottom: 1px solid $grey-200;
+  max-height: 0;
+  z-index: 2 !important;
+  border-color: $grey-200;
+  border-style: solid;
+  border-width: 1px 0px 1px 0px;
+  box-sizing: border-box;
 }
 
 .ckeditor-shared-space {
-  border-bottom: 0 !important;
-  height: 90px !important;
-  margin-top: -100% !important;
-  max-height: 90px !important;
-  min-height: auto !important;
+  position: relative;
   padding: 0;
-  transition: margin-top .4s !important;
-  z-index: 1 !important;
-
-  &.visible {
-    height: auto !important;
-    margin-top: 0 !important;
-    max-height: unset !important;
-    min-height: auto !important;
-  }
+  border: 0 !important;
+  min-height: auto !important;
+  z-index: 2 !important;
 }
