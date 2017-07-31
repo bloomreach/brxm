@@ -6,11 +6,10 @@ definitions:
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
         excludedDirectories: [.arch-ids, BitKeeper, .bzr, CVS, _darcs, .darcsrepo,
-          .git, .hg, .metadata, RCS, SCCS, .svn, hcm-config, hcm-content]
+          .git, .hg, .metadata, RCS, SCCS, .svn]
         includedFiles: ['*.css', '*.eot', '*.ftl', '*.gif', '*.html', '*.ico', '*.jpeg',
           '*.jpg', '*.js', '*.json', '*.map', '*.otf', '*.png', '*.svg', '*.ttf',
           '*.woff', '*.xml', '*.properties', '*.txt', '*.woff2']
         maxFileLengthKb: 256
         useWatchServiceOnOsNames: [Linux]
         watchDelayMillis: 500
-        reloadMode: RELOAD_IF_RUNTIME_UNCHANGED

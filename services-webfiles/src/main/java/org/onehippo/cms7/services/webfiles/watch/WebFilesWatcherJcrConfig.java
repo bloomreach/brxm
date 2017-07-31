@@ -56,7 +56,7 @@ public class WebFilesWatcherJcrConfig implements WebFilesWatcherConfig {
         useWatchServiceOnOsNames = getMultipleStringConfig(configNode, USE_WATCH_SERVICE_ON_OS_NAMES, DEFAULT_USE_WATCH_SERVICE_ON_OS_NAMES);
         watchDelayMillis = JcrUtils.getLongProperty(configNode, WATCH_DELAY_MILLIS, DEFAULT_WATCH_DELAY_MILLIS);
         maxFileLengthBytes = 1024 * JcrUtils.getLongProperty(configNode, MAX_FILE_LENGTH_KB, DEFAULT_MAX_FILE_LENGTH_KB);
-        reloadMode = JcrUtils.getStringProperty(configNode, RELOAD_MODE, WebFilesService.RELOAD_NEVER);
+        reloadMode = JcrUtils.getStringProperty(configNode, RELOAD_MODE, WebFilesService.RELOAD_DISCARD_RUNTIME_CHANGES);
     }
 
     private List<String> getMultipleStringConfig(final Node configNode, final String propertyName, final String[] defaultValue) {
