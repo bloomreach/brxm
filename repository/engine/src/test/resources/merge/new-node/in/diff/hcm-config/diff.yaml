@@ -27,3 +27,4 @@ definitions:
       jcr:primaryType: nt:unstructured
       /newAsChild2:
         jcr:primaryType: nt:unstructured
+        .meta:residual-child-node-category: content

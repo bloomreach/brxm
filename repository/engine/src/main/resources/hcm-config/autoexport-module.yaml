@@ -7,6 +7,8 @@ definitions:
         autoexport:enabled: true
         autoexport:modules: ['content:/']
         autoexport:excluded: ['/**/hippo:lockExpirationTime', '/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
+        autoexport:injectresidualchildnodecategory: []
+        autoexport:overrideresidualchildnodecategory: []
         autoexport:filteruuidpaths: []
         autoexport:lastrevision:
           .meta:category: system

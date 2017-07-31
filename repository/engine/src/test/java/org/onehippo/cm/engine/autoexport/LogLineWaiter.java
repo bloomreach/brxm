@@ -35,6 +35,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 public class LogLineWaiter implements AutoCloseable {
 
     public static final int DEFAULT_TIMEOUT = 5000;
+    public static final int INFINITE_TIMEOUT = -1;
 
     private final Log4jInterceptor interceptor;
 
@@ -108,19 +109,28 @@ public class LogLineWaiter implements AutoCloseable {
             }
             Thread.sleep(waitMs);
             waitMs *= 2;
-        } while (start + timeout > System.currentTimeMillis());
+        } while (timeout == INFINITE_TIMEOUT || start + timeout > System.currentTimeMillis());
 
+        final int eventCount = events.size();
         final StringBuilder builder = new StringBuilder();
         builder.append("Timeout of ").append(timeout).append(" ms exceeded; did not find matches for all messages in ")
-                .append(Arrays.asList(messages).toString()).append("; captured ").append(events.size())
+                .append(Arrays.asList(messages).toString()).append("; captured ").append(eventCount)
                 .append(" event messages:\n");
-        serializeAllEvents(builder);
+        serializeAllEvents(builder, events, eventCount);
 
         throw new TimeoutException(builder.toString());
     }
 
     public String serializeAllEvents(final StringBuilder builder) {
-        for (final LogEvent event : interceptor.getEvents()) {
+        final List<LogEvent> events = interceptor.getEvents();
+        final int eventCount = events.size();
+        return serializeAllEvents(builder, events, eventCount);
+    }
+
+    private String serializeAllEvents(final StringBuilder builder, final List<LogEvent> events, final int eventCount) {
+        // events are added asynchronously to the list by the interceptor, don't use for-each loop
+        for (int i = 0; i < eventCount; i++) {
+            final LogEvent event = events.get(i);
             builder.append(Instant.ofEpochMilli(event.getTimeMillis()).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
                     .append(' ').append(event.getMessage().getFormattedMessage()).append('\n');
         }

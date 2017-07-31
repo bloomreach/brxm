@@ -34,6 +34,8 @@ public final class AutoExportConstants {
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
     public static final String CONFIG_MODULES_PROPERTY_NAME = "autoexport:modules";
     public static final String CONFIG_EXCLUDED_PROPERTY_NAME = "autoexport:excluded";
+    public static final String CONFIG_OVERRIDE_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME = "autoexport:overrideresidualchildnodecategory";
+    public static final String CONFIG_INJECT_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME = "autoexport:injectresidualchildnodecategory";
     public static final String CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME = "autoexport:filteruuidpaths";
     public static final String CONFIG_LAST_REVISION_PROPERTY_NAME = "autoexport:lastrevision";
     public static final String CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME = "autoexport:ntrlastmodified";

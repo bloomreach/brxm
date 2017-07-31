@@ -34,8 +34,8 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -54,7 +54,6 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
-import static org.onehippo.cm.model.util.ConfigurationModelUtils.getCategoryForNode;
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 /**
@@ -178,7 +177,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
 
     protected boolean shouldExcludeNode(final String jcrPath) {
         if (configurationModel != null) {
-            final ConfigurationItemCategory category = getCategoryForNode(jcrPath, configurationModel);
+            final ConfigurationItemCategory category = autoExportConfig.getCategoryForNode(jcrPath, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
                 return true;
@@ -358,13 +357,14 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 log.debug("Ignoring node because of auto-export exclusion:\n\t{}", childNode.getPath());
                 continue;
             }
-            final String indexedJcrChildNodeName = createIndexedName(childNode);
-            final ConfigurationItemCategory category = configNode.getChildNodeCategory(indexedJcrChildNodeName);
+            final ConfigurationItemCategory category =
+                    autoExportConfig.getCategoryForNode(childNode.getPath(), configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
                 continue;
             }
 
+            final String indexedJcrChildNodeName = createIndexedName(childNode);
             if (orderingIsRelevant) {
                 indexedJcrChildNodeNames.add(indexedJcrChildNodeName);
             }

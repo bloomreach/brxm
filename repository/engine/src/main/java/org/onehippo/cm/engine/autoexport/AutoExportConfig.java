@@ -17,7 +17,6 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,10 +28,16 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.util.ConfigurationModelUtils;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_EXCLUDED_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_INJECT_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_OVERRIDE_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 
 public class AutoExportConfig {
@@ -43,6 +48,8 @@ public class AutoExportConfig {
     private Long lastRevision;
     private Map<String, Collection<String>> modules;
     private PatternSet exclusionContext;
+    private OverrideResidualMatchers overrideResidualContext;
+    private InjectResidualMatchers injectResidualMatchers;
     private PathsMap filterUuidPaths;
     private PathsMap ignoredPaths = new PathsMap();
 
@@ -79,25 +86,52 @@ public class AutoExportConfig {
 
     public PatternSet getExclusionContext() {
         if (exclusionContext == null) {
-            List<String> excluded = Collections.emptyList();
-            try {
-                if (node.hasProperty(CONFIG_EXCLUDED_PROPERTY_NAME)) {
-                    Value[] values = node.getProperty(CONFIG_EXCLUDED_PROPERTY_NAME).getValues();
-                    excluded = new ArrayList<>(values.length);
-                    for (Value value : values) {
-                        String exclude = value.getString();
-                        excluded.add(exclude);
-                        if (log.isDebugEnabled()) {
-                            log.debug("excluding path " + exclude);
-                        }
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to get excluded paths from repository", e);
+            final String[] values = getMultipleStringProperty(node, CONFIG_EXCLUDED_PROPERTY_NAME);
+            final List<String> excluded = new ArrayList<>(values.length);
+            for (final String value : values) {
+                excluded.add(value);
+                log.debug("excluding path '{}'", value);
             }
             exclusionContext = new PatternSet(excluded);
         }
         return exclusionContext;
+    }
+
+    public OverrideResidualMatchers getOverrideResidualMatchers() {
+        if (overrideResidualContext == null) {
+            final OverrideResidualMatchers matchers = new OverrideResidualMatchers();
+            final String[] values =
+                    getMultipleStringProperty(node, CONFIG_OVERRIDE_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME);
+            for (final String value : values) {
+                try {
+                    matchers.add(value);
+                } catch (IllegalArgumentException e) {
+                    log.warn("ignoring incorrectly formatted .meta:residual-child-node-category pattern '{}'", value, e);
+                }
+                log.debug("added .meta:residual-child-node-category override pattern '{}'", value);
+            }
+            overrideResidualContext = matchers;
+        }
+        return overrideResidualContext;
+    }
+
+    public InjectResidualMatchers getInjectResidualMatchers() {
+        if (injectResidualMatchers == null) {
+            final InjectResidualMatchers matchers = new InjectResidualMatchers();
+            final String[] values =
+                    getMultipleStringProperty(node, CONFIG_INJECT_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME);
+            for (final String value : values) {
+                try {
+                    matchers.add(value);
+                } catch (IllegalArgumentException e) {
+                    log.warn("ignoring incorrectly formatted .meta:residual-child-node-category inject pattern '{}'",
+                            value, e);
+                }
+                log.debug("added .meta:residual-child-node-category inject pattern '{}'", value);
+            }
+            injectResidualMatchers = matchers;
+        }
+        return injectResidualMatchers;
     }
 
     Map<String, Collection<String>> getModules() {
@@ -176,23 +210,32 @@ public class AutoExportConfig {
     PathsMap getFilterUuidPaths() {
         if (filterUuidPaths == null) {
             filterUuidPaths = new PathsMap();
-            try {
-                if (node.hasProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME)) {
-                    Value[] values = node.getProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME).getValues();
-                    for (int i = 0; i < values.length; i++) {
-                        Value value = values[i];
-                        String filterUuidPath = value.getString();
-                        filterUuidPaths.add(filterUuidPath);
-                        if (log.isDebugEnabled()) {
-                            log.debug("filtering uuid paths below " + filterUuidPath);
-                        }
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to get filter uuid paths from repository", e);
+            final String[] values = getMultipleStringProperty(node, CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME);
+            for (final String value: values) {
+                filterUuidPaths.add(value);
+                log.debug("filtering uuid paths below {}", value);
             }
         }
         return filterUuidPaths;
+    }
+
+    /**
+     * Returns the multiple string property value <code>propertyName</code> from <code>baseNode</code> or an empty array
+     * if no such property exists. Slight variation of {@link JcrUtils#getMultipleStringProperty(Node, String, String[])}
+     * to also catch and log any {@link RepositoryException}.
+     *
+     * @param baseNode     existing node that should be the base for the relative path
+     * @param propertyName property name of the property to get
+     * @return
+     */
+    private String[] getMultipleStringProperty(final Node baseNode, final String propertyName) {
+        final String[] defaultValue = new String[0];
+        try {
+            return JcrUtils.getMultipleStringProperty(baseNode, propertyName, defaultValue);
+        } catch (RepositoryException e) {
+            log.error("Failed to get auto export property {}, defaulting to no values", propertyName, e);
+            return defaultValue;
+        }
     }
 
     public boolean shouldFilterUuid(final String nodePath) {
@@ -240,4 +283,36 @@ public class AutoExportConfig {
     synchronized void resetLastRevision() {
         lastRevision = null;
     }
+
+    /**
+     * Determine the category of a node at the specified absolute path. This method differs from
+     * {@link ConfigurationModelUtils#getCategoryForNode(String, ConfigurationModel)} in the sense that it
+     * also takes the configured overrides for .meta:residual-child-node-category into account.
+     *
+     * @param absolutePropertyPath absolute path to property
+     * @param model                configuration model to check against
+     * @return                     category of the property pointed to
+     */
+    public ConfigurationItemCategory getCategoryForNode(final String absolutePropertyPath,
+                                                        final ConfigurationModelImpl model) {
+        return getCategoryForItem(absolutePropertyPath, false, model);
+    }
+
+    /**
+     * Determine the category of a node at the specified absolute path. This method differs from
+     * {@link ConfigurationModelUtils#getCategoryForItem(String, boolean, ConfigurationModel)} in the sense that it
+     * also takes the configured overrides for .meta:residual-child-node-category into account.
+     *
+     * @param absoluteItemPath absolute path a an item
+     * @param propertyPath     indicates whether the item is a node or property
+     * @param model            configuration model to check against
+     * @return                 category of the property pointed to
+     */
+    public ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath,
+                                                        final boolean propertyPath,
+                                                        final ConfigurationModel model) {
+        final OverrideResidualMatchers matchers = getOverrideResidualMatchers();
+        return ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
+    }
+
 }

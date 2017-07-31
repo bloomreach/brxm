@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/mychannel/hst:workspace:
+      jcr:primaryType: nt:unstructured
+      /hst:containers:
+        jcr:primaryType: nt:unstructured
+        /container:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          container-property: container-value

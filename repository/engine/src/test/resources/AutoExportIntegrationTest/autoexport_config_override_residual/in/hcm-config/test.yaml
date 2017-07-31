@@ -1,0 +1,31 @@
+definitions:
+  namespace:
+    hst:
+      uri: http://foo.bar
+      cnd: hst-dummy.cnd
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:injectresidualchildnodecategory:
+        operation: add
+        type: string
+        value: ['**/hst:workspace/**[hst:containercomponent]: content']
+      autoexport:overrideresidualchildnodecategory:
+        operation: add
+        type: string
+        value: ['/hst:hst/hst:configurations: config', '**/children-ignored-by-config:
+            system']
+    /hst:hst:
+      jcr:primaryType: nt:unstructured
+      /hst:configurations:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: nt:unstructured
+        /hippogogreen:
+          jcr:primaryType: nt:unstructured
+          /hst:workspace:
+            jcr:primaryType: nt:unstructured
+            /hst:containers:
+              jcr:primaryType: nt:unstructured
+        /ignored:
+          .meta:category: system
+        /children-ignored-by-config:
+          jcr:primaryType: nt:unstructured
