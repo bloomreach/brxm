@@ -118,6 +118,7 @@ class RightSidePanelCtrl {
 
     CmsService.subscribe('kill-editor', (documentId) => {
       if (this.documentId === documentId) {
+        this.deleteDraftOnClose = false;
         this._closePanel();
       }
     });
