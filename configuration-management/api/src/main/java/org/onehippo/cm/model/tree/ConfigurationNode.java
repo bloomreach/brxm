@@ -68,6 +68,16 @@ public interface ConfigurationNode<D extends DefinitionNode> extends Configurati
     ConfigurationItemCategory getChildNodeCategory(final String nodeName);
 
     /**
+     * Get the {@link ConfigurationItemCategory} of a child node by name. Node names must be indexed, e.g.
+     * <code>node[1]</code>.
+     * @param nodeName A child node name; node names must be indexed, e.g. <code>node[1]</code>.
+     * @param residualNodeCategoryOverride Override for this node's residual node category, or null for no override.
+     * @return The {@link ConfigurationItemCategory} of the child node, never returns null.
+     */
+    ConfigurationItemCategory getChildNodeCategory(final String nodeName,
+                                                   final ConfigurationItemCategory residualNodeCategoryOverride);
+
+    /**
      * Get the {@link ConfigurationItemCategory} of a child property by name.
      * @param propertyName A child property name.
      * @return The {@link ConfigurationItemCategory} of the child property, never returns null.

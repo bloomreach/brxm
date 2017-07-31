@@ -16,6 +16,8 @@
 
 package org.onehippo.cm.model.util;
 
+import java.util.function.Function;
+
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
@@ -36,7 +38,8 @@ public class ConfigurationModelUtils {
      * @param model            configuration model to check against
      * @return                 category of the node pointed to
      */
-    public static ConfigurationItemCategory getCategoryForNode(final String absoluteNodePath, final ConfigurationModel model) {
+    public static ConfigurationItemCategory getCategoryForNode(final String absoluteNodePath,
+                                                               final ConfigurationModel model) {
         return getCategoryForItem(absoluteNodePath, false, model);
     }
 
@@ -47,11 +50,42 @@ public class ConfigurationModelUtils {
      * @param model                configuration model to check against
      * @return                     category of the property pointed to
      */
-    public static ConfigurationItemCategory getCategoryForProperty(final String absolutePropertyPath, final ConfigurationModel model) {
+    public static ConfigurationItemCategory getCategoryForProperty(final String absolutePropertyPath,
+                                                                   final ConfigurationModel model) {
         return getCategoryForItem(absolutePropertyPath, true, model);
     }
 
-    public static ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath, final boolean propertyPath, ConfigurationModel model) {
+    /**
+     * Determine the category of an item at the specified absolute path.
+     *
+     * @param absoluteItemPath absolute path a an item
+     * @param propertyPath     indicates whether the item is a node or property
+     * @param model            configuration model to check against
+     * @return                 category of the property pointed to
+     */
+    public static ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath,
+                                                               final boolean propertyPath,
+                                                               final ConfigurationModel model) {
+        return getCategoryForItem(absoluteItemPath, propertyPath, model, (path) -> null);
+    }
+
+    /**
+     * Determine the category of an item at the specified absolute path, taking category overrides for specific node
+     * paths into account as well.
+     *
+     * @param absoluteItemPath                     absolute path a an item
+     * @param propertyPath                         indicates whether the item is a node or property
+     * @param model                                configuration model to check against
+     * @param residualNodeCategoryOverrideResolver function returning the .meta:residual-node-type-category override
+     *                                             for a given absolute node path, or null if no override is specified
+     * @return
+     */
+    public static ConfigurationItemCategory getCategoryForItem(
+            final String absoluteItemPath,
+            final boolean propertyPath,
+            final ConfigurationModel model,
+            final Function<String, ConfigurationItemCategory> residualNodeCategoryOverrideResolver) {
+
         if (absoluteItemPath.equals(SEPARATOR)) {
             return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
@@ -62,24 +96,32 @@ public class ConfigurationModelUtils {
         }
 
         final String[] pathSegments = absoluteItemPath.substring(1).split(SEPARATOR);
+        final StringBuilder parent = new StringBuilder("/");
 
         ConfigurationNode modelNode = model.getConfigurationRootNode();
         for (int i = 0; i < pathSegments.length; i++) {
             final String childName = pathSegments[i];
             if (i == pathSegments.length-1) {
+                final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
                 return propertyPath
                         ? modelNode.getChildPropertyCategory(childName)
-                        : modelNode.getChildNodeCategory(SnsUtils.createIndexedName(childName));
+                        : modelNode.getChildNodeCategory(SnsUtils.createIndexedName(childName), override);
             } else {
                 final String indexedChildName = SnsUtils.createIndexedName(childName);
                 if (modelNode.getNode(indexedChildName) != null) {
                     modelNode = modelNode.getNode(indexedChildName);
                 } else {
-                    return modelNode.getChildNodeCategory(indexedChildName);
+                    final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
+                    return modelNode.getChildNodeCategory(indexedChildName, override);
                 }
             }
+            if (parent.length() > 1) {
+                parent.append(SEPARATOR);
+            }
+            parent.append(childName);
         }
         // will never reach this but compiler needs to be kept happy
         throw new IllegalStateException("unexpected");
     }
+
 }

@@ -182,6 +182,15 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName) {
+        return getChildNodeCategory(indexedNodeName, null);
+    }
+
+    @Override
+    public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName,
+                                                          final ConfigurationItemCategory residualNodeCategoryOverride) {
+        final ConfigurationItemCategory effectiveResidualNodeCategory
+                = residualNodeCategoryOverride != null ? residualNodeCategoryOverride : residualNodeCategory;
+
         if (modifiableNodes.containsKey(indexedNodeName)) {
             return ConfigurationItemCategory.CONFIG;
         }
@@ -191,8 +200,8 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
             return childNodeCategorySettings.get(unindexedName).getLeft();
         }
 
-        if (residualNodeCategory != null) {
-            return residualNodeCategory;
+        if (effectiveResidualNodeCategory != null) {
+            return effectiveResidualNodeCategory;
         }
 
         return ConfigurationItemCategory.CONFIG;

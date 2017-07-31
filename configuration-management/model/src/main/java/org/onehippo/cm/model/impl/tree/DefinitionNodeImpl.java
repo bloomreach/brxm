@@ -147,6 +147,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return node;
     }
 
+    public void removeAllNodes() {
+        modifiableNodes.clear();
+    }
+
     /**
      * Insert a new node before the one with the name given by beforeThis.
      * @param name
