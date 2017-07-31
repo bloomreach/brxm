@@ -16,18 +16,18 @@
 @import 'variables';
 
 sharedspace-toolbar {
-  max-height: 0;
-  z-index: 2 !important;
   border-color: $grey-200;
   border-style: solid;
-  border-width: 1px 0px 1px 0px;
+  border-width: 1px 0;
   box-sizing: border-box;
+  max-height: 0;
+  z-index: 2 !important;
 }
 
 .ckeditor-shared-space {
-  position: relative;
-  padding: 0;
   border: 0 !important;
   min-height: auto !important;
+  padding: 0;
+  position: relative;
   z-index: 2 !important;
 }
