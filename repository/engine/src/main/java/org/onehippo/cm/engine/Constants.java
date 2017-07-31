@@ -34,6 +34,7 @@ public final class Constants {
     public static final String NT_HCM_DESCRIPTOR = "hcm:descriptor";
     public static final String NT_HCM_ACTIONS = "hcm:actions";
     public static final String NT_HCM_CONTENT = "hcm:content";
+    public static final String NT_HCM_BUNDLES = "hcm:webbundles";
     public static final String NT_HCM_CONTENT_SOURCE = "hcm:contentsource";
     public static final String NT_HCM_CONTENT_FOLDER = "hcm:contentfolder";
     public static final String NT_HCM_CONFIG_FOLDER = "hcm:configfolder";
@@ -48,6 +49,7 @@ public final class Constants {
     public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";
     public static final String HCM_ACTIONS = ACTIONS_YAML;
     public static final String HCM_CONTENT_PATHS_APPLIED = "hcm:contentPathsApplied";
+    public static final String HCM_BUNDLES_DIGESTS = "hcm:bundlesDigest";
     public static final String HCM_PROCESSED = "hcm:processed";
     public static final String HCM_CONTENT_PATH = "hcm:contentpath";
     public static final String HCM_YAML = "hcm:yaml";
@@ -58,6 +60,7 @@ public final class Constants {
     public static final String HCM_ROOT_PATH = "/" + HCM_ROOT;
     public static final String HCM_BASELINE_PATH = HCM_ROOT_PATH + "/" + HCM_BASELINE;
     public static final String HCM_CONTENT_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_CONTENT;
+    public static final String HCM_BUNDLE_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_BUNDLES;
 
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
 

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -44,10 +45,12 @@ import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cm.engine.impl.DigestBundleResolver;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
@@ -83,9 +86,9 @@ import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
 import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
 /**
- * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository.
- * Access to the repository is provided to this service through the API ({@link javax.jcr.Node} or
- * {@link Session}), this service is stateless.
+ * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository. Access to the
+ * repository is provided to this service through the API ({@link javax.jcr.Node} or {@link Session}), this service is
+ * stateless.
  */
 public class ConfigurationConfigService {
 
@@ -103,10 +106,10 @@ public class ConfigurationConfigService {
         }
     }
 
-    void writeWebfiles(final ConfigurationModel model, final Session session) throws IOException {
+    void writeWebfiles(final ConfigurationModel model, final ConfigurationBaselineService baselineService, final Session session) throws IOException, RepositoryException {
         if (!model.getWebFileBundleDefinitions().isEmpty()) {
-            final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
-            if (service == null) {
+            final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
+            if (webFilesService == null) {
                 log.warn(String.format("Skipping import web file bundles: service '%s' not available.",
                         WebFilesService.class.getName()));
                 return;
@@ -119,15 +122,77 @@ public class ConfigurationConfigService {
                 final Module module = webFileBundleDefinition.getSource().getModule();
                 if (module.isArchive()) {
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
-                    service.importJcrWebFileBundle(session, bundleZipFile, true);
+                    final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
+                    boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);
+                    if (reload) {
+                        webFilesService.importJcrWebFileBundle(session, bundleZipFile, true);
+                        final Map<String, String> bundlesDigests = baselineService.getBundlesDigests(session);
+                        final String baselineBundleDigest = bundlesDigests.get(bundleName);
+                        if ((baselineBundleDigest != null && !baselineBundleDigest.equals(fsBundleDigest)) || baselineBundleDigest == null) {
+                            baselineService.addOrUpdateBundleDigest(bundleName, fsBundleDigest, session);
+                        }
+                    }
                 } else {
+                    log.debug(String.format("Module '%s' is not an archive, perform bundle reload", module));
                     final FileResourceInputProvider resourceInputProvider =
                             (FileResourceInputProvider) module.getConfigResourceInputProvider();
                     final Path modulePath = getParentOrFsRoot(resourceInputProvider.getBasePath());
-                    service.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
+                    webFilesService.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
                 }
             }
         }
+    }
+
+    /**
+     * Check if bundle reload is required
+     * @param fsBundleDigest jar's bundle digest
+     * @param bundleName bundle name
+     * @param reloadMode reload mode,<pre/>
+     * RELOAD_NEVER - dont reload bundle even if it is modified at filesystem level <pre/>
+     * RELOAD_IF_RUNTIME_UNCHANGED - only reload bundle if bundle's runtime digest is consistent with the one from baseline<pre/>
+     * RELOAD_DISCARD_RUNTIME_CHANGES - reload bundle event if runtime digest is modified<pre/>
+     * @param baselineService baseline service
+     * @param session current session
+     */
+    boolean shouldReloadBundle(final String fsBundleDigest,
+                                       final String bundleName,
+                                       final String reloadMode,
+                                       final ConfigurationBaselineService baselineService,
+                                       final Session session) throws IOException, RepositoryException {
+
+        final Optional<String> baselineBundleDigest = baselineService.getBaselineBundleDigest(bundleName, session);
+        if (!baselineBundleDigest.isPresent()) {
+            log.info("baseline bundle does not exist, first bootstrap, (re)load");
+            return true;
+        } else if (fsBundleDigest.equals(baselineBundleDigest.get())) {
+            log.info("classpath & baseline bundle's digests are same, skip reload");
+            return false;
+        } else {
+            log.info("classpath & baseline bundles digests are different");
+            final JcrPath bundlePath = JcrPath.get(WebFilesService.JCR_ROOT_PATH, bundleName);
+            final boolean bundleNodeExists = session.nodeExists(bundlePath.toString());
+            if (bundleNodeExists) {
+                switch (reloadMode) {
+                    case WebFilesService.RELOAD_NEVER:
+                        log.info("reload mode is set to NEVER, skip reload");
+                        return false;
+                    case WebFilesService.RELOAD_IF_RUNTIME_UNCHANGED:
+                        final Node bundleNode = session.getNode(bundlePath.toString());
+                        final String runtimeDigest = DigestBundleResolver.calculateRuntimeBundleDigest(bundleNode);
+                        boolean shouldReload = runtimeDigest.equals(baselineBundleDigest.get());
+                        log.info("reload mode is set to RELOAD_IF_RUNTIME_UNCHANGED, should reload: {}", shouldReload);
+                        return shouldReload;
+                    case WebFilesService.RELOAD_DISCARD_RUNTIME_CHANGES:
+                        log.warn(String.format("Web bundle '%s' will be force reloaded and runtime changes will be lost", bundleName));
+                        return true;
+                    default:
+                        throw new RuntimeException(String.format("Unsupported reload mode '%s'", reloadMode));
+                }
+            } else {
+                log.warn(String.format("Bundle name '%s' does not exist in repository, skip processing bundle", bundlePath));
+            }
+        }
+        return false;
     }
 
     /**

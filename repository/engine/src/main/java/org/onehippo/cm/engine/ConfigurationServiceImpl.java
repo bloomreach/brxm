@@ -64,6 +64,8 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -646,8 +648,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             // webfiles
             try {
-                configService.writeWebfiles(bootstrapModel, session);
-                session.save();
+                final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
+                if (autoReloadService == null || !autoReloadService.isEnabled()) {
+                    configService.writeWebfiles(bootstrapModel, baselineService, session);
+                    session.save();
+                }
             } catch (IOException e) {
                 log.error("Error initializing webfiles", e);
             }

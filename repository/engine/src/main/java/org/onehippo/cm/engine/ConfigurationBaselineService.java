@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -61,9 +63,12 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_BUNDLES_DIGESTS;
+import static org.onehippo.cm.engine.Constants.HCM_BUNDLE_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CND;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
@@ -77,6 +82,7 @@ import static org.onehippo.cm.engine.Constants.HCM_YAML;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_BINARY;
+import static org.onehippo.cm.engine.Constants.NT_HCM_BUNDLES;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CND;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
@@ -119,6 +125,7 @@ public class ConfigurationBaselineService {
             stopWatch.start();
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
 
+            createNodeIfNecessary(hcmRootNode, NT_HCM_BUNDLES, NT_HCM_BUNDLES, false);
             Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
 
             // TODO: implement a smarter partial-update process instead of brute-force removal
@@ -779,6 +786,51 @@ public class ConfigurationBaselineService {
             }
         }
         return appliedContentPaths;
+    }
+
+    /**
+     * Obtain a bundle digests stored at baseline
+     */
+    public Map<String, String> getBundlesDigests(final Session session) throws RepositoryException {
+        final Map<String, String> bundles = new LinkedHashMap<>();
+
+        if (session.nodeExists(HCM_BUNDLE_NODE_PATH)) {
+            final Node hcmContentRoot = session.getNode(HCM_BUNDLE_NODE_PATH);
+            if (hcmContentRoot.hasProperty(HCM_BUNDLES_DIGESTS)) {
+                final Property bundleDigests = hcmContentRoot.getProperty(HCM_BUNDLES_DIGESTS);
+                for (final javax.jcr.Value value : bundleDigests.getValues()) {
+                    bundles.put(StringUtils.substringBefore(value.getString(), ":"), StringUtils.substringAfter(value.getString(), ":"));
+                }
+            }
+        }
+        return bundles;
+    }
+
+    /**
+     * Get digest for web bundle
+     * @param bundleName name of the bundle
+     * @param session the session to use
+     */
+    public Optional<String> getBaselineBundleDigest(final String bundleName, final Session session) throws RepositoryException {
+        final Map<String, String> bundlesDigests = getBundlesDigests(session);
+        final String digest = bundlesDigests.get(bundleName);
+        return StringUtils.isNotEmpty(digest) ? Optional.of(digest) : Optional.empty();
+    }
+
+    /**
+     * Adds or updates bundle digest at baseline
+     * @param bundleName webfile bundle name
+     * @param bundleDigest webfile bundle digest
+     * @param session the session to use
+     */
+    void addOrUpdateBundleDigest(final String bundleName, final String bundleDigest, final Session session) throws RepositoryException {
+        final Map<String, String> bundlesDigests = getBundlesDigests(session);
+        bundlesDigests.put(bundleName, bundleDigest);
+        final List<String> bundles = bundlesDigests.entrySet().stream().map(e -> e.getKey() + ":" + e.getValue()).collect(toList());
+        final String[] newPaths = bundles.toArray(new String[bundles.size()]);
+        session.getNode(HCM_BUNDLE_NODE_PATH).setProperty(HCM_BUNDLES_DIGESTS, newPaths);
+        //TODO SS: In case of save failure, refresh session without keeping changes
+        session.save();
     }
 
     /**
