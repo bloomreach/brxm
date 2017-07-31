@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -28,11 +27,8 @@ import java.util.zip.ZipEntry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.Text;
-import org.onehippo.cm.engine.ConfigurationBaselineService;
 import org.onehippo.cm.model.util.DigestUtils;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.bootstrap.util.PartialZipFile;
@@ -45,12 +41,6 @@ import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
  * Helper methods for dealing with bundle digest calculation/retrieval
  */
 public class DigestBundleResolver {
-
-    public static Optional<String> getBaselineBundleDigest(final String bundleName, final ConfigurationBaselineService baselineService, final Session session) throws RepositoryException {
-        final Map<String, String> bundlesDigests = baselineService.getBundlesDigests(session);
-        final String digest = bundlesDigests.get(bundleName);
-        return StringUtils.isNotEmpty(digest) ? Optional.of(digest) : Optional.empty();
-    }
 
     public static String calculateFsBundleDigest(final PartialZipFile bundleZipFile, final WebFilesService webfilesService) throws IOException {
         final Map<String, String> jarBundle = new TreeMap<>();

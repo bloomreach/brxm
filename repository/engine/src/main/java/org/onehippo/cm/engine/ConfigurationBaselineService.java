@@ -807,6 +807,17 @@ public class ConfigurationBaselineService {
     }
 
     /**
+     * Get digest for web bundle
+     * @param bundleName name of the bundle
+     * @param session the session to use
+     */
+    public Optional<String> getBaselineBundleDigest(final String bundleName, final Session session) throws RepositoryException {
+        final Map<String, String> bundlesDigests = getBundlesDigests(session);
+        final String digest = bundlesDigests.get(bundleName);
+        return StringUtils.isNotEmpty(digest) ? Optional.of(digest) : Optional.empty();
+    }
+
+    /**
      * Adds or updates bundle digest at baseline
      * @param bundleName webfile bundle name
      * @param bundleDigest webfile bundle digest
@@ -818,6 +829,7 @@ public class ConfigurationBaselineService {
         final List<String> bundles = bundlesDigests.entrySet().stream().map(e -> e.getKey() + ":" + e.getValue()).collect(toList());
         final String[] newPaths = bundles.toArray(new String[bundles.size()]);
         session.getNode(HCM_BUNDLE_NODE_PATH).setProperty(HCM_BUNDLES_DIGESTS, newPaths);
+        //TODO SS: In case of save failure, refresh session without keeping changes
         session.save();
     }
 

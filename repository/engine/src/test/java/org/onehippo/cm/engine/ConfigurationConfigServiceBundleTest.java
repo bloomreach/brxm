@@ -70,8 +70,8 @@ public class ConfigurationConfigServiceBundleTest {
     @Test
     public void baseline_bundle_digest_not_exists() throws Exception {
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.empty()).atLeastOnce();
-        replay(DigestBundleResolver.class);
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.empty()).atLeastOnce();
+        replay(baselineService);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, reloadMode, baselineService, session);
@@ -79,7 +79,7 @@ public class ConfigurationConfigServiceBundleTest {
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "baseline bundle does not exist, first bootstrap, (re)load")));
         }
-        verify(DigestBundleResolver.class);
+        verify(baselineService);
     }
 
     @Test
@@ -87,22 +87,22 @@ public class ConfigurationConfigServiceBundleTest {
 
         final String baselineBundleDigest = fsBundleDigest;
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
-        replay(DigestBundleResolver.class);
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
+        replay(baselineService);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, WebFilesService.RELOAD_NEVER, baselineService, session);
             assertEquals(false, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundle's digests are same, skip reload")));
+                    "classpath & baseline bundle's digests are same, skip reload")));
         }
     }
 
     @Test
     public void different_bundles_no_runtime() throws Exception {
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
-        replay(DigestBundleResolver.class);
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
+        replay(baselineService);
 
         expect(session.nodeExists("/webfiles/" + bundleName)).andReturn(false);
         replay(session);
@@ -111,7 +111,7 @@ public class ConfigurationConfigServiceBundleTest {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, reloadMode, baselineService, session);
             assertEquals(false, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundles digests are different")));
+                    "classpath & baseline bundles digests are different")));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     String.format("Bundle name '%s' does not exist in repository, skip processing bundle", bundlePath))));
         }
@@ -119,8 +119,8 @@ public class ConfigurationConfigServiceBundleTest {
     @Test
     public void different_bundles_never_mode() throws Exception {
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
-        replay(DigestBundleResolver.class);
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.of(baselineBundleDigest)).atLeastOnce();
+        replay(baselineService);
 
         expect(session.nodeExists(bundlePath.toString())).andReturn(true);
         replay(session);
@@ -129,7 +129,7 @@ public class ConfigurationConfigServiceBundleTest {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, WebFilesService.RELOAD_NEVER, baselineService, session);
             assertEquals(false, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundles digests are different")));
+                    "classpath & baseline bundles digests are different")));
         }
     }
 
@@ -143,8 +143,9 @@ public class ConfigurationConfigServiceBundleTest {
         expect(session.nodeExists(bundlePath.toString())).andReturn(true).times(2);
         replay(session);
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.of(baselineBundleDigest));
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.of(baselineBundleDigest));
         PowerMock.expectLastCall().times(2);
+        replay(baselineService);
         expect(DigestBundleResolver.calculateRuntimeBundleDigest(mockNode)).andReturn(runtimeDigest).once();
         expect(DigestBundleResolver.calculateRuntimeBundleDigest(mockNode)).andReturn("B").once();
         replay(DigestBundleResolver.class);
@@ -154,7 +155,7 @@ public class ConfigurationConfigServiceBundleTest {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, reloadMode, baselineService, session);
             assertEquals(false, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundles digests are different")));
+                    "classpath & baseline bundles digests are different")));
         }
 
         //runtimeDigest == baselineDigest
@@ -162,7 +163,7 @@ public class ConfigurationConfigServiceBundleTest {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, reloadMode, baselineService, session);
             assertEquals(true, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundles digests are different")));
+                    "classpath & baseline bundles digests are different")));
         }
     }
 
@@ -175,7 +176,8 @@ public class ConfigurationConfigServiceBundleTest {
         expect(session.getNode(bundlePath.toString())).andReturn(mockNode);
         replay(session);
 
-        expect(DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session)).andReturn(Optional.of(baselineBundleDigest));
+        expect(baselineService.getBaselineBundleDigest(bundleName, session)).andReturn(Optional.of(baselineBundleDigest));
+        replay(baselineService);
         expect(DigestBundleResolver.calculateRuntimeBundleDigest(mockNode)).andReturn(runtimeDigest);
         replay(DigestBundleResolver.class);
 
@@ -183,7 +185,7 @@ public class ConfigurationConfigServiceBundleTest {
             boolean reloadBundle = configurationConfigService.shouldReloadBundle(fsBundleDigest, bundleName, reloadMode, baselineService, session);
             assertEquals(true, reloadBundle);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "filesystem & baseline bundles digests are different")));
+                    "classpath & baseline bundles digests are different")));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     String.format("Web bundle '%s' will be force reloaded and runtime changes will be lost", bundleName))));
         }

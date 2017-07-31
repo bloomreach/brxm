@@ -133,6 +133,7 @@ public class ConfigurationConfigService {
                         }
                     }
                 } else {
+                    log.debug(String.format("Module '%s' is not an archive, perform bundle reload", module));
                     final FileResourceInputProvider resourceInputProvider =
                             (FileResourceInputProvider) module.getConfigResourceInputProvider();
                     final Path modulePath = getParentOrFsRoot(resourceInputProvider.getBasePath());
@@ -159,25 +160,28 @@ public class ConfigurationConfigService {
                                        final ConfigurationBaselineService baselineService,
                                        final Session session) throws IOException, RepositoryException {
 
-        final Optional<String> baselineBundleDigest = DigestBundleResolver.getBaselineBundleDigest(bundleName, baselineService, session);
+        final Optional<String> baselineBundleDigest = baselineService.getBaselineBundleDigest(bundleName, session);
         if (!baselineBundleDigest.isPresent()) {
             log.info("baseline bundle does not exist, first bootstrap, (re)load");
             return true;
         } else if (fsBundleDigest.equals(baselineBundleDigest.get())) {
-            log.info("filesystem & baseline bundle's digests are same, skip reload");
+            log.info("classpath & baseline bundle's digests are same, skip reload");
             return false;
         } else {
-            log.info("filesystem & baseline bundles digests are different");
+            log.info("classpath & baseline bundles digests are different");
             final JcrPath bundlePath = JcrPath.get(WebFilesService.JCR_ROOT_PATH, bundleName);
             final boolean bundleNodeExists = session.nodeExists(bundlePath.toString());
             if (bundleNodeExists) {
                 switch (reloadMode) {
                     case WebFilesService.RELOAD_NEVER:
+                        log.info("reload mode is set to NEVER, skip reload");
                         return false;
                     case WebFilesService.RELOAD_IF_RUNTIME_UNCHANGED:
                         final Node bundleNode = session.getNode(bundlePath.toString());
                         final String runtimeDigest = DigestBundleResolver.calculateRuntimeBundleDigest(bundleNode);
-                        return runtimeDigest.equals(baselineBundleDigest.get());
+                        boolean shouldReload = runtimeDigest.equals(baselineBundleDigest.get());
+                        log.info("reload mode is set to RELOAD_IF_RUNTIME_UNCHANGED, should reload: {}", shouldReload);
+                        return shouldReload;
                     case WebFilesService.RELOAD_DISCARD_RUNTIME_CHANGES:
                         log.warn(String.format("Web bundle '%s' will be force reloaded and runtime changes will be lost", bundleName));
                         return true;

@@ -34,7 +34,7 @@ public final class Constants {
     public static final String NT_HCM_DESCRIPTOR = "hcm:descriptor";
     public static final String NT_HCM_ACTIONS = "hcm:actions";
     public static final String NT_HCM_CONTENT = "hcm:content";
-    public static final String NT_HCM_BUNDLES = "hcm:bundles";
+    public static final String NT_HCM_BUNDLES = "hcm:webbundles";
     public static final String NT_HCM_CONTENT_SOURCE = "hcm:contentsource";
     public static final String NT_HCM_CONTENT_FOLDER = "hcm:contentfolder";
     public static final String NT_HCM_CONFIG_FOLDER = "hcm:configfolder";

@@ -85,12 +85,12 @@
 [hcm:content]
   - hcm:contentPathsApplied (string) multiple
 
-[hcm:bundles]
+[hcm:webbundles]
 - hcm:bundlesDigest (string) multiple
 
 // Root node for baseline and locking etc.
 [hcm:hcm]
   + hcm:baseline (hcm:baseline)
   + hcm:content (hcm:content)
-  + hcm:bundles (hcm:bundles)
+  + hcm:webbundles (hcm:webbundles)
   + hippo:lock (hippo:lock)
