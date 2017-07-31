@@ -93,6 +93,7 @@ class RightSidePanelCtrl {
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
+    this.deleteDraftOnClose = true;
 
     this.lastSavedWidth = null;
     this.isFullWidth = false;
@@ -147,6 +148,7 @@ class RightSidePanelCtrl {
     delete this.disableContentButtons;
 
     this.title = this.defaultTitle;
+    this.deleteDraftOnClose = true;
 
     this._resetForm();
   }
@@ -307,6 +309,8 @@ class RightSidePanelCtrl {
   }
 
   openContentEditor(mode, isPromptUnsavedChanges = true) {
+    this.deleteDraftOnClose = false;
+
     if (!isPromptUnsavedChanges) {
       this._closePanelAndOpenContent(mode);
       return;
@@ -399,11 +403,14 @@ class RightSidePanelCtrl {
   }
 
   _releaseDocument() {
-    return this._confirmDiscardChanges()
-      .then(() => {
-        // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
-        this._deleteDraft();
-      });
+    if (this.deleteDraftOnClose) {
+      return this._confirmDiscardChanges()
+        .then(() => {
+          // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
+          this._deleteDraft();
+        });
+    }
+    return this.$q.resolve();
   }
 
   onResize(newWidth) {
