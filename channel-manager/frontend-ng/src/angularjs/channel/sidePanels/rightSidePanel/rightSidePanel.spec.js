@@ -31,6 +31,7 @@ describe('RightSidePanel', () => {
   let $ctrl;
   let $scope;
   let dialog;
+  let sidePanelHandlers;
 
   const stringField = {
     id: 'ns:string',
@@ -122,6 +123,11 @@ describe('RightSidePanel', () => {
     });
     $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $rootScope.$apply();
+
+    sidePanelHandlers = {
+      onOpen: SidePanelService.initialize.calls.mostRecent().args[2],
+      onClose: SidePanelService.initialize.calls.mostRecent().args[3],
+    };
   });
 
   it('should set full width mode on and off', () => {
@@ -266,10 +272,8 @@ describe('RightSidePanel', () => {
 
     spyOn($ctrl, '_confirmSaveOrDiscardChanges').and.returnValue($q.resolve());
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    const onCloseCallback = SidePanelService.initialize.calls.mostRecent().args[3] || angular.noop;
-    onOpenCallback('test');
-    onCloseCallback();
+    sidePanelHandlers.onOpen('test');
+    sidePanelHandlers.onClose();
     $rootScope.$digest();
 
     expect($ctrl._confirmSaveOrDiscardChanges).toHaveBeenCalled();
@@ -294,8 +298,7 @@ describe('RightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -323,8 +326,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -341,10 +343,8 @@ describe('RightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     delete $ctrl.form;
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-
     expect(() => {
-      onOpenCallback('test');
+      sidePanelHandlers.onOpen('test');
       $rootScope.$digest();
     }).not.toThrow();
   });
@@ -393,7 +393,6 @@ describe('RightSidePanel', () => {
         },
       ],
     };
-    let onOpenCallback;
 
     beforeEach(() => {
       $ctrl.documentId = 'documentId';
@@ -407,8 +406,6 @@ describe('RightSidePanel', () => {
       ContentService.deleteDraft.and.returnValue($q.resolve());
       ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
       spyOn($scope, '$broadcast');
-
-      onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     });
 
     function expectNewDocument() {
@@ -426,7 +423,7 @@ describe('RightSidePanel', () => {
 
     it('does nothing when the same document is opened again', () => {
       $ctrl.form.$dirty = true;
-      onOpenCallback('documentId');
+      sidePanelHandlers.onOpen('documentId');
       expect(DialogService.show).not.toHaveBeenCalled();
       expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     });
@@ -435,7 +432,7 @@ describe('RightSidePanel', () => {
       $ctrl.form.$dirty = true;
       DialogService.show.and.returnValue($q.resolve('SAVE'));
 
-      onOpenCallback('newdoc');
+      sidePanelHandlers.onOpen('newdoc');
       $rootScope.$digest();
 
       expect(DialogService.show).toHaveBeenCalled();
@@ -450,7 +447,7 @@ describe('RightSidePanel', () => {
       DialogService.show.and.returnValue($q.resolve('SAVE'));
       ContentService.saveDraft.and.returnValue($q.reject({}));
 
-      onOpenCallback('newdoc');
+      sidePanelHandlers.onOpen('newdoc');
       $rootScope.$digest();
 
       expect(DialogService.show).toHaveBeenCalled();
@@ -467,7 +464,7 @@ describe('RightSidePanel', () => {
       $ctrl.form.$dirty = true;
       DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
-      onOpenCallback('newdoc');
+      sidePanelHandlers.onOpen('newdoc');
       $rootScope.$digest();
 
       expect(DialogService.show).toHaveBeenCalled();
@@ -481,7 +478,7 @@ describe('RightSidePanel', () => {
       $ctrl.form.$dirty = true;
       DialogService.show.and.returnValue($q.reject()); // Say Cancel
 
-      onOpenCallback('newdoc');
+      sidePanelHandlers.onOpen('newdoc');
       $rootScope.$digest();
 
       expect(DialogService.show).toHaveBeenCalled();
@@ -493,7 +490,7 @@ describe('RightSidePanel', () => {
     it('does not save pending changes when there are none', () => {
       $ctrl.form.$dirty = false;
 
-      onOpenCallback('newdoc');
+      sidePanelHandlers.onOpen('newdoc');
       $rootScope.$digest();
 
       expect(DialogService.show).not.toHaveBeenCalled();
@@ -507,8 +504,7 @@ describe('RightSidePanel', () => {
   it('fails to open a document with pending invalid changes in the draft', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -529,8 +525,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -551,8 +546,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -573,8 +567,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -591,8 +584,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -607,8 +599,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -624,8 +615,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -639,8 +629,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({}));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -657,8 +646,7 @@ describe('RightSidePanel', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -684,8 +672,7 @@ describe('RightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(doc));
     ContentService.getDocumentType.and.returnValue($q.reject({}));
 
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
+    sidePanelHandlers.onOpen('test');
     $rootScope.$digest();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
@@ -865,7 +852,10 @@ describe('RightSidePanel', () => {
 
   it('can discard pending changes before opening the content editor', () => {
     DialogService.show.and.returnValue($q.resolve('DISCARD'));
-    SidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.callFake(() => {
+      sidePanelHandlers.onClose();
+      return $q.resolve();
+    });
     $ctrl.documentId = 'test';
     $ctrl.doc = { displayName: 'Display Name' };
     $ctrl.form.$dirty = true;
@@ -874,6 +864,7 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
+    expect(DialogService.show.calls.count()).toEqual(1);
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
