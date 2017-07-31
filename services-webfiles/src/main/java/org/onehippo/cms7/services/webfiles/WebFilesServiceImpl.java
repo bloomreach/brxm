@@ -57,10 +57,12 @@ public class WebFilesServiceImpl implements WebFilesService {
 
     private final GlobFileNameMatcher importedFiles;
     private final long  maxFileLengthBytes;
+    private final String reloadMode;
 
-    public WebFilesServiceImpl(final GlobFileNameMatcher importedFiles, final long maxFileLengthBytes) {
+    public WebFilesServiceImpl(final GlobFileNameMatcher importedFiles, final long maxFileLengthBytes, final String reloadMode) {
         this.importedFiles = importedFiles;
         this.maxFileLengthBytes = maxFileLengthBytes;
+        this.reloadMode = reloadMode;
     }
 
     @Override
@@ -72,6 +74,18 @@ public class WebFilesServiceImpl implements WebFilesService {
             throw new WebFileException(warn("Cannot instantiate web file bundle for '%s' : '%s'", bundleName, e.toString()));
         }
     }
+
+    @Override
+    public boolean fileMatches(File file) {
+        boolean fileMatches = importedFiles.accept(file);
+        return file.isFile() ? fileMatches && file.length() < maxFileLengthBytes : fileMatches;
+    }
+
+    @Override
+    public String getReloadMode() {
+        return reloadMode;
+    }
+
 
     private Node getBundleRoot(final Session session, final String bundleName) throws RepositoryException {
         final Node webFilesRoot = getWebFilessRoot(session);
