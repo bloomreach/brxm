@@ -33,7 +33,7 @@ public interface WebFilesService {
     String JCR_ROOT_PATH = "/webfiles";
 
     /**
-     * Dont reload bundle even if it is modified at filesystem level
+     * Dont reload bundle even if it is modified at classpath level
      */
     String RELOAD_NEVER = "RELOAD_NEVER";
 
