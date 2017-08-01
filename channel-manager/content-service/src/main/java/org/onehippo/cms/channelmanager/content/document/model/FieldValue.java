@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.document.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -132,5 +133,27 @@ public class FieldValue {
 
     public boolean hasErrorInfo() {
         return errorInfo != null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final FieldValue that = (FieldValue) o;
+
+        // only include the 'value' fields so the comparison ignores different meta-data of different variants
+        return Objects.equals(value, that.value) &&
+                Objects.equals(fields, that.fields) &&
+                Objects.equals(chosenId, that.chosenId) &&
+                Objects.equals(chosenValue, that.chosenValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, fields, chosenId, chosenValue);
     }
 }

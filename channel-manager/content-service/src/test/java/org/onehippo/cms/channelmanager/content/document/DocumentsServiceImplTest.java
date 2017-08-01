@@ -57,6 +57,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -361,6 +362,44 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
+        final Node preview = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentType docType = provideDocumentType(handle);
+        final List<FieldType> fields = Collections.emptyList();
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        expect(docType.getId()).andReturn("document:type");
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.getFields()).andReturn(fields).anyTimes();
+
+        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.PUBLISHED))).andReturn(Optional.of(preview));
+        FieldTypeUtils.readFieldValues(eq(preview), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        PowerMock.replayAll(docType);
+
+        Document document = documentsService.createDraft(uuid, session, locale);
+        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getDisplayName(), equalTo("Display Name"));
+        assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
+        assertThat(document.getInfo().isDirty(), equalTo(false));
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void createDirtyDraft() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node draft = createMock(Node.class);
+        final Node preview = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
@@ -377,12 +416,18 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
 
+        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.PUBLISHED))).andReturn(Optional.of(preview));
+        expect(docType.getFields()).andReturn(fields);
+        FieldTypeUtils.readFieldValues(eq(preview), eq(fields), isA(Map.class));
+        expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
+
         PowerMock.replayAll(docType);
 
         Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
+        assertThat(document.getInfo().isDirty(), equalTo(true));
 
         PowerMock.verifyAll();
     }

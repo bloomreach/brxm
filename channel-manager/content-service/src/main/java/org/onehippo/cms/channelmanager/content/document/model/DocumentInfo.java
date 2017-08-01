@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -26,10 +27,14 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
  * It is part of a document and can be serialized into JSON to expose it through a REST API.
  * Type {@code type} attribute refers to the document's {@link DocumentType} by id.
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DocumentInfo {
 
     // enveloped reference to document type: { id: "namespace:typename" }
     private Type type;
+
+    // whether this document has auto-drafted changes that have not been saved to the preview variant yet
+    private boolean dirty;
 
     public Type getType() {
         return type;
@@ -53,4 +58,11 @@ public class DocumentInfo {
         }
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(final boolean dirty) {
+        this.dirty = dirty;
+    }
 }
