@@ -6,8 +6,7 @@
 definitions:
   config:
     /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:channel:
+      .meta:residual-child-node-category: content
       jcr:primaryType: hst:channel
       hst:name: ${projectName}
       hst:type: website
-      /hst:channelinfo:
-        .meta:category: content

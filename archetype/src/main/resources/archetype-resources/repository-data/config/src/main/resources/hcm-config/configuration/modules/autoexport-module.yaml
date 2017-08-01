@@ -2,11 +2,32 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/autoexport:
       /hippo:moduleconfig:
-        autoexport:enabled:
-          operation: override
-          type: boolean
-          value: true
-        autoexport:modules:
-          operation: override
-          type: string
-          value: ['repository-data/config:/']
+        autoexport:enabled: true
+        autoexport:modules: ['repository-data/config:/']
+        autoexport:injectresidualchildnodecategory: [
+            '**/hst:workspace/**[hst:containercomponent]: content',
+            '**/hst:workspace/**[hst:sitemenu]: content',
+            '**/hst:workspace/hst:abstractpages: content',
+            '**/hst:workspace/hst:channel: content',
+            '**/hst:workspace/hst:components: content',
+            '**/hst:workspace/hst:pages: content',
+            '**/hst:workspace/hst:sitemap: content',
+            '**/hst:workspace/hst:templates: content',
+            '/hst:hst/hst:hosts/**[hst:virtualhostgroup]: content',
+            '/hst:hst/hst:hosts/**[hst:virtualhost]: content',
+            '/hst:hst/hst:hosts/**[hst:mount]: content']
+        autoexport:overrideresidualchildnodecategory: [
+            '/hst:hst/hst:configurations: config',
+            '/hst:hst/hst:hosts: config',
+            '/hst:hst/hst:hosts/*: config',
+            '/hst:hst/hst:hosts/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*/*: config',
+            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*/*/*: config']
