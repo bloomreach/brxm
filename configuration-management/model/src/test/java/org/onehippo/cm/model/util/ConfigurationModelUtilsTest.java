@@ -41,16 +41,16 @@ public class ConfigurationModelUtilsTest {
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForNode("/a/b/c", model));
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForNode("/a/b/c/d", model));
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForProperty("/a/b/c/d", model));
-        assertEquals(ConfigurationItemCategory.SYSTEM,       ConfigurationModelUtils.getCategoryForProperty("/a/b/c/e", model));
+        assertEquals(ConfigurationItemCategory.SYSTEM, ConfigurationModelUtils.getCategoryForProperty("/a/b/c/e", model));
 
         assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForNode("/a/b/c-content", model));
         assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForNode("/a/b/c-content/d", model));
         assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-content/d", model));
 
-        assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content", model));
-        assertEquals(ConfigurationItemCategory.CONTENT,       ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content/d", model));
-        assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/d", model));
-        assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/e", model));
+        assertEquals(ConfigurationItemCategory.CONFIG,  ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content", model));
+        assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content/d", model));
+        assertEquals(ConfigurationItemCategory.CONFIG,  ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/d", model));
+        assertEquals(ConfigurationItemCategory.CONFIG,  ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/e", model));
 
         assertEquals(ConfigurationItemCategory.SYSTEM, ConfigurationModelUtils.getCategoryForNode("/a/b/c-system", model));
         assertEquals(ConfigurationItemCategory.SYSTEM, ConfigurationModelUtils.getCategoryForNode("/a/b/c-system/d", model));
@@ -60,7 +60,7 @@ public class ConfigurationModelUtilsTest {
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForNode("/a/b/c-absent", model));
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-absent/d", model));
 
-        assertEquals(ConfigurationItemCategory.SYSTEM,       ConfigurationModelUtils.getCategoryForNode("/absent", model));
+        assertEquals(ConfigurationItemCategory.SYSTEM, ConfigurationModelUtils.getCategoryForNode("/absent", model));
         assertEquals(ConfigurationItemCategory.CONFIG, ConfigurationModelUtils.getCategoryForProperty("/absent", model));
     }
 }
