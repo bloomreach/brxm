@@ -787,6 +787,46 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
+    public void updateDirtyDraftSuccess() throws Exception {
+        final Document document = new Document();
+        document.getInfo().setDirty(true);
+
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node draft = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentType docType = provideDocumentType(handle);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(EditingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
+        FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
+        expectLastCall();
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
+
+        expect(docType.getFields()).andReturn(Collections.emptyList());
+        FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
+        expectLastCall();
+
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
+        session.save();
+        expectLastCall();
+
+        PowerMock.replayAll(docType, session);
+
+        Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
+
+        assertThat(persistedDocument.getId(), equalTo(document.getId()));
+        assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
+        assertThat(persistedDocument.getFields(), equalTo(document.getFields()));
+        assertThat(persistedDocument.getInfo().isDirty(), equalTo(false));
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void updateDraftFieldNotAHandle() throws Exception {
         final String uuid = "uuid";
         final FieldPath fieldPath = new FieldPath("ns:field");

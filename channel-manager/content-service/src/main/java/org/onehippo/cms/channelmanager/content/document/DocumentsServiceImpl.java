@@ -135,6 +135,8 @@ class DocumentsServiceImpl implements DocumentsService {
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
+        document.getInfo().setDirty(false);
+
         return document;
     }
 
