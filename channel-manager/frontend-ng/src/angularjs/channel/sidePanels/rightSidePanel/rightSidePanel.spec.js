@@ -232,7 +232,10 @@ describe('RightSidePanel', () => {
 
   it('asks for confirmation when cancelling changes', () => {
     DialogService.show.and.returnValue($q.resolve());
-    SidePanelService.close.and.returnValue($q.resolve());
+
+    const deferClose = $q.defer();
+    SidePanelService.close.and.returnValue(deferClose.promise);
+
     $ctrl.doc = {
       displayName: 'test',
     };
@@ -243,12 +246,18 @@ describe('RightSidePanel', () => {
     $ctrl.close();
     $rootScope.$digest();
 
+    expect($ctrl.deleteDraftOnClose).toBe(false);
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
+
+    deferClose.resolve();
+    $rootScope.$digest();
+
     expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
       documentName: 'test',
     });
     expect($ctrl.editing).toBeFalsy();
+    expect($ctrl.deleteDraftOnClose).toBe(true);
   });
 
   it('asks doesn\'t delete and close if discarding is not confirmed', () => {
@@ -841,6 +850,9 @@ describe('RightSidePanel', () => {
 
     const mode = 'view';
     $ctrl.openContentEditor(mode);
+
+    expect($ctrl.deleteDraftOnClose).toBe(false);
+
     $rootScope.$digest();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
@@ -861,6 +873,9 @@ describe('RightSidePanel', () => {
     $ctrl.form.$dirty = true;
 
     $ctrl.openContentEditor('edit');
+
+    expect($ctrl.deleteDraftOnClose).toBe(false);
+
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -881,6 +896,9 @@ describe('RightSidePanel', () => {
     SidePanelService.close.and.returnValue($q.resolve());
 
     $ctrl.openContentEditor('edit');
+
+    expect($ctrl.deleteDraftOnClose).toBe(false);
+
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -940,9 +958,11 @@ describe('RightSidePanel', () => {
     $ctrl.documentId = 'documentId';
 
     onKillEditor('differentId');
+    expect($ctrl.deleteDraftOnClose).toBe(true);
     expect(SidePanelService.close).not.toHaveBeenCalled();
 
     onKillEditor('documentId');
+    expect($ctrl.deleteDraftOnClose).toBe(false);
     expect(SidePanelService.close).toHaveBeenCalled();
   });
 

@@ -400,7 +400,10 @@ class RightSidePanelCtrl {
 
   close() {
     return this._releaseDocument()
-      .then(() => this._closePanel());
+      .then(() => {
+        this.deleteDraftOnClose = false;
+        this._closePanel();
+      });
   }
 
   _releaseDocument() {
