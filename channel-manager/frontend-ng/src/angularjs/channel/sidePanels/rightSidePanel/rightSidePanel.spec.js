@@ -180,6 +180,7 @@ describe('RightSidePanel', () => {
     expect(SidePanelService.initialize).toHaveBeenCalled();
     expect($ctrl.doc).not.toBeDefined();
     expect($ctrl.docType).not.toBeDefined();
+    expect($ctrl.isDocumentDirty()).toBeFalsy();
   });
 
   it('knows when it is locked open', () => {
@@ -205,6 +206,30 @@ describe('RightSidePanel', () => {
 
     delete $ctrl.form;
     expect($ctrl.closeButtonLabel()).toBe('Close');
+  });
+
+  it('knows the document is dirty when the backend says so', () => {
+    $ctrl.doc = {
+      info: {
+        dirty: true,
+      },
+    };
+    expect($ctrl.isDocumentDirty()).toBe(true);
+  });
+
+  it('knows the document is dirty when the form is dirty', () => {
+    $ctrl.form.$dirty = true;
+    expect($ctrl.isDocumentDirty()).toBe(true);
+  });
+
+  it('knows the document is dirty when both the backend says so and the form is dirty', () => {
+    $ctrl.doc = {
+      info: {
+        dirty: true,
+      },
+    };
+    $ctrl.form.$dirty = true;
+    expect($ctrl.isDocumentDirty()).toBe(true);
   });
 
   it('closes the panel', () => {
