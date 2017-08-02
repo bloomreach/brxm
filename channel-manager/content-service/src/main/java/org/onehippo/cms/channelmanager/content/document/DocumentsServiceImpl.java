@@ -85,11 +85,11 @@ class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
-        boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
-                .map(preview -> {
-                    final Map<String, List<FieldValue>> previewFields = new HashMap<>();
-                    FieldTypeUtils.readFieldValues(preview, docType.getFields(), previewFields);
-                    return !document.getFields().equals(previewFields);
+        boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED)
+                .map(unpublished -> {
+                    final Map<String, List<FieldValue>> unpublishedFields = new HashMap<>();
+                    FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), unpublishedFields);
+                    return !document.getFields().equals(unpublishedFields);
                 })
                 .orElse(false);
 

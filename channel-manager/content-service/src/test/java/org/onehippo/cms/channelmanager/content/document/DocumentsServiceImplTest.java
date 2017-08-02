@@ -362,7 +362,7 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
-        final Node preview = createMock(Node.class);
+        final Node unpublished = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
@@ -379,8 +379,8 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields).anyTimes();
 
-        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.PUBLISHED))).andReturn(Optional.of(preview));
-        FieldTypeUtils.readFieldValues(eq(preview), eq(fields), isA(Map.class));
+        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
+        FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall();
 
         PowerMock.replayAll(docType);
@@ -399,7 +399,7 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
-        final Node preview = createMock(Node.class);
+        final Node unpublished = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
@@ -416,9 +416,9 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
 
-        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.PUBLISHED))).andReturn(Optional.of(preview));
+        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
         expect(docType.getFields()).andReturn(fields);
-        FieldTypeUtils.readFieldValues(eq(preview), eq(fields), isA(Map.class));
+        FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
         PowerMock.replayAll(docType);
