@@ -342,7 +342,7 @@ class RightSidePanelCtrl {
   }
 
   _confirmSaveOrDiscardChanges(messageKey) {
-    if (!this._isFormDirty()) {
+    if (!this.isDocumentDirty()) {
       return this.$q.resolve('DISCARD'); // No pending changes, no dialog, continue normally.
     }
 
@@ -378,14 +378,18 @@ class RightSidePanelCtrl {
   }
 
   _saveDraft() {
-    if (!this._isFormDirty()) {
+    if (!this.isDocumentDirty()) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
   }
 
   closeButtonLabel() {
-    return this._isFormDirty() ? this.cancelLabel : this.closeLabel;
+    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  }
+
+  isDocumentDirty() {
+    return (this.doc && this.doc.info && this.doc.info.dirty) || this._isFormDirty();
   }
 
   _isFormDirty() {
@@ -423,7 +427,7 @@ class RightSidePanelCtrl {
   }
 
   _confirmDiscardChanges() {
-    if (!this._isFormDirty()) {
+    if (!this.isDocumentDirty()) {
       return this.$q.resolve();
     }
     const messageParams = {

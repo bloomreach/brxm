@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,9 +35,9 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -83,6 +84,17 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
+
+        boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED)
+                .map(unpublished -> {
+                    final Map<String, List<FieldValue>> unpublishedFields = new HashMap<>();
+                    FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), unpublishedFields);
+                    return !document.getFields().equals(unpublishedFields);
+                })
+                .orElse(false);
+
+        document.getInfo().setDirty(isDirty);
+
         return document;
     }
 
@@ -122,6 +134,8 @@ class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
+
+        document.getInfo().setDirty(false);
 
         return document;
     }
