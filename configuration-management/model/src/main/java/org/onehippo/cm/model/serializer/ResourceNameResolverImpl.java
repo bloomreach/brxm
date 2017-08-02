@@ -34,8 +34,8 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
      */
     @Override
     public String generateName(final String filePath) {
-        final String lowerCaseFilePath = filePath.toLowerCase();
-        final String generatedPath = FilePathUtils.generateUniquePath(lowerCaseFilePath, knownFileEntries::contains, 0);
+        final String generatedPath = FilePathUtils.generateUniquePath(filePath,
+                entry -> knownFileEntries.stream().anyMatch(entry::equalsIgnoreCase), 0);
         knownFileEntries.add(generatedPath);
         return generatedPath;
     }
