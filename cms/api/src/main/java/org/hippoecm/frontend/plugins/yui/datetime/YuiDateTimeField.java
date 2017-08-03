@@ -159,7 +159,7 @@ public class YuiDateTimeField extends DateTimeField {
 
                 // the date will be in the server's timezone
                 setDate(datetime.toDate());
-                //setModelObject(datetime.toDate());
+                setModelObject(datetime.toDate());
             } catch (final RuntimeException e) {
                 error(e.getMessage());
                 invalid();
