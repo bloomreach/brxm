@@ -5,6 +5,8 @@
 - autoexport:enabled (boolean) = 'true' mandatory autocreated
 - autoexport:modules (string) multiple
 - autoexport:excluded (string) multiple
+- autoexport:overrideresidualchildnodecategory (string) multiple
+- autoexport:injectresidualchildnodecategory (string) multiple
 - autoexport:filteruuidpaths (string) multiple
 - autoexport:reloadonstartuppaths (string) multiple
 - autoexport:ntrlastmodified (long)

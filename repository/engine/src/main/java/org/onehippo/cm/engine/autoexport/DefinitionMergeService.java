@@ -36,23 +36,24 @@ import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.ExportContentProcessor;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.source.Source;
-import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
-import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationItemImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
@@ -61,15 +62,14 @@ import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionItem;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
@@ -565,6 +565,8 @@ public class DefinitionMergeService {
 
         to.setOrderBefore(from.getOrderBefore());
         to.setIgnoreReorderedChildren(from.getIgnoreReorderedChildren());
+        to.setResidualChildNodeCategory(from.getResidualChildNodeCategory());
+        to.setCategory(from.getCategory());
 
         // copy properties using special method that migrates resources properly
         for (final DefinitionPropertyImpl fromProperty : from.getProperties().values()) {

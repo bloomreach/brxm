@@ -115,11 +115,76 @@ public class AutoExportIntegrationTest {
         });
     }
 
+    @Test
+    public void autoexport_config_inject_residual() throws Exception {
+        new Fixture("autoexport_config_inject_residual").test(session -> {
+            // this fixture uses the following configuration:
+            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content', '/base/*: system']
+            final Node containers = session.getNode("/hst:hst/hst:configurations/hippogogreen/hst:workspace/hst:containers");
+
+            // add a new container matching the pattern, its nodes should go into content, the property to config
+            final Node container = containers.addNode("container", "hst:containercomponent");
+            container.setProperty("container-property", "container-value");
+            final Node containerItem = container.addNode("containeritem", "hst:containeritemcomponent");
+            containerItem.setProperty("item-property", "item-value");
+
+            // add another container not matching the pattern
+            final Node nonMatch = containers.addNode("non-match", "nt:unstructured");
+            nonMatch.addNode("containeritem", "hst:containeritemcomponent").setProperty("item-property", "item-value");
+
+            // modify an existing container matching the pattern, it should stay in config
+            final Node existing = containers.getNode("existing");
+            existing.addNode("containeritem", "hst:containeritemcomponent").setProperty("item-property", "item-value");
+
+            // add system node, only 'node' should go to config
+            final Node node = session.getNode("/base").addNode("node", "nt:unstructured");
+            node.addNode("ignored", "nt:unstructured");
+            node.addNode("ignored", "nt:unstructured");
+        });
+    }
+
+    @Test
+    public void autoexport_config_override_residual() throws Exception {
+        new Fixture("autoexport_config_override_residual").test(session -> {
+            // this fixture uses the following configuration:
+            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content']
+            // autoexport:overrideresidualchildnodecategory: ['/hst:hst/hst:configurations: config', '**/children-ignored-by-config: system']
+            final Node configurations = session.getNode("/hst:hst/hst:configurations");
+
+            // add a new channel, the channel should be exported to config, the nodes within "container" to content
+            // due to the injectresidual setting
+            final Node mychannel = configurations.addNode("mychannel", "nt:unstructured");
+            final Node container = mychannel.addNode("hst:workspace", "nt:unstructured")
+                    .addNode("hst:containers", "nt:unstructured")
+                    .addNode("container", "hst:containercomponent");
+            container.setProperty("container-property", "container-value");
+            final Node containerItem = container.addNode("containeritem", "hst:containeritemcomponent");
+            containerItem.setProperty("item-property", "item-value");
+
+            // the node "ignored" has explicit .meta:category: runtime
+            // test that explicitly defined .meta:category is respected
+            final Node ignored = configurations.addNode("ignored", "nt:unstructured");
+            ignored.setProperty("ignored-property", "ignored-value");
+
+            // new nodes under 'children-ignored-by-config' are expected to be ignored, properties go to config
+            final Node ignoredByConfig = session.getNode("/test/children-ignored-by-config");
+            ignoredByConfig.addNode("node", "nt:unstructured");
+            ignoredByConfig.setProperty("property", "value");
+
+            // new nodes under '/test' are expected to have category injected (content), and the subnode
+            // 'inject-and-override' also has an explicit category override (config)
+            final Node test = session.getNode("/test");
+            test.addNode("inject-and-override", "nt:unstructured").addNode("config", "nt:unstructured");
+            test.addNode("inject-only", "nt:unstructured").addNode("content", "nt:unstructured");
+        });
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     private class Fixture extends AbstractBaseTest {
         private final String name;
+        private final boolean debug = false;
         Fixture(final String name) {
             this.name = name;
         }
@@ -143,7 +208,14 @@ public class AutoExportIntegrationTest {
 
                 final String autoExportDiff = "Computed diff";
                 final String autoExportComplete = "Full auto-export cycle in";
-                waiter.waitFor(new String[]{autoExportDiff, autoExportComplete});
+                waiter.waitFor(new String[]{autoExportDiff, autoExportComplete},
+                        debug ? LogLineWaiter.INFINITE_TIMEOUT : LogLineWaiter.DEFAULT_TIMEOUT);
+
+                if (debug) {
+                    final StringBuilder builder = new StringBuilder();
+                    waiter.serializeAllEvents(builder);
+                    System.out.println(builder.toString());
+                }
             }
 
             session.logout();
@@ -179,8 +251,11 @@ public class AutoExportIntegrationTest {
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
             }
         }
-        void waitFor(final String[] messages) throws Exception {
-            collector.getClass().getMethod("waitFor", String[].class).invoke(collector, (Object) messages);
+        void waitFor(final String[] messages, final int timeout) throws Exception {
+            collector.getClass().getMethod("waitFor", String[].class, int.class).invoke(collector, messages, timeout);
+        }
+        public String serializeAllEvents(final StringBuilder builder) throws Exception {
+            return (String) collector.getClass().getMethod("serializeAllEvents", StringBuilder.class).invoke(collector, builder);
         }
         @Override
         public void close() throws Exception {

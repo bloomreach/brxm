@@ -6,4 +6,5 @@ definitions:
         .meta:ignore-reordered-children: true
         jcr:primaryType: nt:unstructured
         /newAsChild2:
+          .meta:residual-child-node-category: content
           jcr:primaryType: nt:unstructured

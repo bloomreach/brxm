@@ -52,12 +52,15 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.engine.AutoExportContentProcessor;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
-import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.PathConfigurationReader;
@@ -66,12 +69,14 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ValueType;
-import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
+import static org.onehippo.cm.model.definition.DefinitionType.CONFIG;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class EventJournalProcessor {
@@ -449,9 +454,9 @@ public class EventJournalProcessor {
                                    final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
         if (!autoExportConfig.isExcludedPath(eventPath)) {
 
-            final ConfigurationItemCategory category =
-                    ConfigurationModelUtils.getCategoryForItem(eventPath, propertyPath,
-                            configurationService.getRuntimeConfigurationModel());
+            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
+            final ConfigurationItemCategory category = autoExportConfig.getCategoryForItem(eventPath, propertyPath,
+                    configurationService.getRuntimeConfigurationModel());
 
             // for config, we want to store the paths of the parents of changed nodes or properties
             // (that way, we always have a node to scan for detailed changes)
@@ -585,6 +590,8 @@ public class EventJournalProcessor {
             autoExportContentProcessor.exportConfigNode(eventProcessorSession, path, configSource);
         }
 
+        injectResidualCategoryOverrides(configSource);
+
         // empty defs rarely happen when a new node ends up having only excluded properties -- clean them up
         configSource.cleanEmptyDefinitions();
 
@@ -604,6 +611,48 @@ public class EventJournalProcessor {
         log.info("Diff computed in {}", stopWatch.toString());
 
         return module;
+    }
+
+    /**
+     * Injects .meta:residual-child-node-category properties in definitions to be exported where indicated by patterns
+     * in the auto-export configuration; also, in case the category "content" is injected, moves child nodes of those
+     * definitions to content definitions, in case the category "system" is injected, removes child nodes of those
+     * definition.
+     *
+     * @param configSource the {@link ConfigSourceImpl} to scan for definition nodes
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    private void injectResidualCategoryOverrides(final ConfigSourceImpl configSource) throws RepositoryException, IOException {
+        for (AbstractDefinitionImpl definition : configSource.getDefinitions()) {
+            if (definition.getType() == CONFIG) {
+                final ConfigDefinitionImpl configDefinition = (ConfigDefinitionImpl) definition;
+                injectResidualCategoryOverrides(configDefinition.getNode());
+            }
+        }
+    }
+
+    private void injectResidualCategoryOverrides(final DefinitionNodeImpl node) throws RepositoryException, IOException {
+        final ConfigurationItemCategory inject = autoExportConfig.getInjectResidualMatchers().getMatch(node, currentModel);
+
+        if (inject == CONTENT || inject == SYSTEM) {
+            // for hst:hosts, we need to support both injecting and overriding at the same time
+            final ConfigurationItemCategory override = autoExportConfig.getOverrideResidualMatchers().getMatch(node.getPath());
+            final ConfigurationItemCategory effective = override != null ? override : inject;
+            for (DefinitionNodeImpl child : node.getNodes().values()) {
+                if (effective == CONTENT) {
+                    pendingChanges.getAddedContent().add(child.getPath());
+                }
+            }
+            if (effective != ConfigurationItemCategory.CONFIG) {
+                node.removeAllNodes();
+            }
+            node.setResidualChildNodeCategory(inject);
+        }
+
+        for (DefinitionNodeImpl child : node.getNodes().values()) {
+            injectResidualCategoryOverrides(child);
+        }
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
