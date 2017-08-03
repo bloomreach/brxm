@@ -19,6 +19,8 @@ package org.onehippo.cm.model.util;
 import java.util.function.Function;
 
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.slf4j.Logger;
@@ -86,28 +88,28 @@ public class ConfigurationModelUtils {
             final ConfigurationModel model,
             final Function<String, ConfigurationItemCategory> residualNodeCategoryOverrideResolver) {
 
-        if (absoluteItemPath.equals(SEPARATOR)) {
+        final JcrPath itemPath = JcrPath.get(absoluteItemPath);
+        if (itemPath.equals(JcrPath.ROOT)) {
             return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
 
-        if (!absoluteItemPath.startsWith(SEPARATOR)) {
+        if (!itemPath.isAbsolute()) {
             logger.warn("{} is not a valid absolute path", absoluteItemPath);
             return ConfigurationItemCategory.CONFIG;
         }
 
-        final String[] pathSegments = absoluteItemPath.substring(1).split(SEPARATOR);
-        final StringBuilder parent = new StringBuilder("/");
-
+        JcrPath parent = JcrPath.ROOT;
         ConfigurationNode modelNode = model.getConfigurationRootNode();
-        for (int i = 0; i < pathSegments.length; i++) {
-            final String childName = pathSegments[i];
-            if (i == pathSegments.length-1) {
+        for (int i = 0; i < itemPath.getSegmentCount(); i++) {
+            final JcrPathSegment childSegment = itemPath.getSegment(i);
+            final String childName = childSegment.toString();
+            final String indexedChildName = childSegment.forceIndex().toString();
+            if (i == itemPath.getSegmentCount() - 1) {
                 final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
                 return propertyPath
                         ? modelNode.getChildPropertyCategory(childName)
-                        : modelNode.getChildNodeCategory(SnsUtils.createIndexedName(childName), override);
+                        : modelNode.getChildNodeCategory(indexedChildName, override);
             } else {
-                final String indexedChildName = SnsUtils.createIndexedName(childName);
                 if (modelNode.getNode(indexedChildName) != null) {
                     modelNode = modelNode.getNode(indexedChildName);
                 } else {
@@ -115,10 +117,7 @@ public class ConfigurationModelUtils {
                     return modelNode.getChildNodeCategory(indexedChildName, override);
                 }
             }
-            if (parent.length() > 1) {
-                parent.append(SEPARATOR);
-            }
-            parent.append(childName);
+            parent = parent.resolve(childSegment);
         }
         // will never reach this but compiler needs to be kept happy
         throw new IllegalStateException("unexpected");
