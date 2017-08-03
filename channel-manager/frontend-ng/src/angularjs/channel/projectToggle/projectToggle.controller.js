@@ -22,6 +22,9 @@ class ProjectToggleController {
     HippoIframeService,
     ProjectService,
     CmsService,
+    ChannelActionsService,
+    ChannelService,
+    DialogService,
     $mdSelect,
   ) {
     'ngInject';
@@ -31,6 +34,9 @@ class ProjectToggleController {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.CmsService = CmsService;
+    this.ChannelActionsService = ChannelActionsService;
+    this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
     this.$mdSelect = $mdSelect;
   }
 
@@ -51,9 +57,24 @@ class ProjectToggleController {
   set selectedProject(selectedProject) {
     // TODO (meggermont): Temporary work-around for https://github.com/angular/material/issues/10747
     // Please bump to md-select version where the issue has been fix and remove this kludge.
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+        documentName: this.selectedProject.name,
+      }))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
     this.$mdSelect.hide().then(() => {
-      this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
-      this.ProjectService.updateSelectedProject(selectedProject.id);
+      if (this.ChannelActionsService.hasAnyChanges()) {
+        this.DialogService.show(confirm).then(() => {
+          this.ChannelService.discardOwnChanges();
+          this.ProjectService.updateSelectedProject(selectedProject.id);
+          this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
+        });
+      } else {
+        this.ProjectService.updateSelectedProject(selectedProject.id);
+        this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
+      }
     });
   }
 }

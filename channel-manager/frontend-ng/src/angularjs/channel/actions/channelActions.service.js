@@ -51,7 +51,7 @@ class ChannelActionsService extends MenuService {
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
-      isIconVisible: () => this._hasAnyChanges(),
+      isIconVisible: () => this.hasAnyChanges(),
       iconSvg: 'attention',
     })
     .addAction('settings', {
@@ -61,7 +61,7 @@ class ChannelActionsService extends MenuService {
       onClick: () => this._showChannelSettings(),
     })
     .addDivider({
-      isVisible: () => this._isChannelSettingsAvailable() && this._hasAnyChanges(),
+      isVisible: () => this._isChannelSettingsAvailable() && this.hasAnyChanges(),
     })
     .addAction('publish', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
@@ -87,7 +87,7 @@ class ChannelActionsService extends MenuService {
       onClick: () => this._showManageChanges(),
     })
     .addDivider({
-      isVisible: () => this._isChannelSettingsAvailable() || this._hasAnyChanges(),
+      isVisible: () => this._isChannelSettingsAvailable() || this.hasAnyChanges(),
     })
     .addAction('delete', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
@@ -122,7 +122,7 @@ class ChannelActionsService extends MenuService {
     this.showSubPage('manage-changes');
   }
 
-  _hasAnyChanges() {
+  hasAnyChanges() {
     return this._hasOwnChanges() || this._hasChangesToManage();
   }
 
