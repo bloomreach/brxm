@@ -167,9 +167,15 @@ public class AutoExportIntegrationTest {
             ignored.setProperty("ignored-property", "ignored-value");
 
             // new nodes under 'children-ignored-by-config' are expected to be ignored, properties go to config
-            final Node ignoredByConfig = session.getNode("/hst:hst/hst:configurations/children-ignored-by-config");
+            final Node ignoredByConfig = session.getNode("/test/children-ignored-by-config");
             ignoredByConfig.addNode("node", "nt:unstructured");
             ignoredByConfig.setProperty("property", "value");
+
+            // new nodes under '/test' are expected to have category injected (content), and the subnode
+            // 'inject-and-override' also has an explicit category override (config)
+            final Node test = session.getNode("/test");
+            test.addNode("inject-and-override", "nt:unstructured").addNode("config", "nt:unstructured");
+            test.addNode("inject-only", "nt:unstructured").addNode("content", "nt:unstructured");
         });
     }
 

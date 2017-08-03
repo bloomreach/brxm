@@ -633,17 +633,21 @@ public class EventJournalProcessor {
     }
 
     private void injectResidualCategoryOverrides(final DefinitionNodeImpl node) throws RepositoryException, IOException {
-        final InjectResidualMatchers matchers = autoExportConfig.getInjectResidualMatchers();
-        final ConfigurationItemCategory category = matchers.getMatch(node, currentModel);
+        final ConfigurationItemCategory inject = autoExportConfig.getInjectResidualMatchers().getMatch(node, currentModel);
 
-        if (category == CONTENT || category == SYSTEM) {
+        if (inject == CONTENT || inject == SYSTEM) {
+            // for hst:hosts, we need to support both injecting and overriding at the same time
+            final ConfigurationItemCategory override = autoExportConfig.getOverrideResidualMatchers().getMatch(node.getPath());
+            final ConfigurationItemCategory effective = override != null ? override : inject;
             for (DefinitionNodeImpl child : node.getNodes().values()) {
-                if (category == CONTENT) {
+                if (effective == CONTENT) {
                     pendingChanges.getAddedContent().add(child.getPath());
                 }
             }
-            node.removeAllNodes();
-            node.setResidualChildNodeCategory(category);
+            if (effective != ConfigurationItemCategory.CONFIG) {
+                node.removeAllNodes();
+            }
+            node.setResidualChildNodeCategory(inject);
         }
 
         for (DefinitionNodeImpl child : node.getNodes().values()) {

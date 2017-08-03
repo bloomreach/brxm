@@ -8,12 +8,13 @@ definitions:
       autoexport:injectresidualchildnodecategory:
         operation: add
         type: string
-        value: ['**/hst:workspace/**[hst:containercomponent]: content']
+        value: ['**/hst:workspace/**[hst:containercomponent]: content', '/test/*:
+            content']
       autoexport:overrideresidualchildnodecategory:
         operation: add
         type: string
-        value: ['/hst:hst/hst:configurations: config', '**/children-ignored-by-config:
-            system']
+        value: ['/hst:hst/hst:configurations: config', '/test/children-ignored-by-config:
+            system', '/test/inject-and-override: config']
     /hst:hst:
       jcr:primaryType: nt:unstructured
       /hst:configurations:
@@ -27,8 +28,16 @@ definitions:
               jcr:primaryType: nt:unstructured
         /ignored:
           .meta:category: system
-        /children-ignored-by-config:
-          jcr:primaryType: nt:unstructured
-          property: value
         /mychannel:
           jcr:primaryType: nt:unstructured
+    /test:
+      jcr:primaryType: nt:unstructured
+      /children-ignored-by-config:
+        jcr:primaryType: nt:unstructured
+        property: value
+      /inject-and-override:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: nt:unstructured
+      /inject-only:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: nt:unstructured
