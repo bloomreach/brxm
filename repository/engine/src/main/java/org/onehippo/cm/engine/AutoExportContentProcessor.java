@@ -177,6 +177,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
 
     protected boolean shouldExcludeNode(final String jcrPath) {
         if (configurationModel != null) {
+            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
             final ConfigurationItemCategory category = autoExportConfig.getCategoryForNode(jcrPath, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
@@ -357,6 +358,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 log.debug("Ignoring node because of auto-export exclusion:\n\t{}", childNode.getPath());
                 continue;
             }
+            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
             final ConfigurationItemCategory category =
                     autoExportConfig.getCategoryForNode(childNode.getPath(), configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {

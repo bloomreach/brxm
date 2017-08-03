@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -43,12 +42,12 @@ public class OverrideResidualMatchersTest {
     }
 
     private void expectNoError(final String string) {
-        new OverrideResidualMatchers(Stream.of(string).collect(Collectors.toList()));
+        new OverrideResidualMatchers(string);
     }
 
     private void expectError(final String string) {
         try {
-            new OverrideResidualMatchers(Stream.of(string).collect(Collectors.toList()));
+            new OverrideResidualMatchers(string);
             fail("Expected error parsing " + string);
         } catch (IllegalArgumentException e) {
             // ignore

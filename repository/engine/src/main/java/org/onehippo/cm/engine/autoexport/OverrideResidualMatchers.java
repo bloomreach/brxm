@@ -16,22 +16,23 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
+/**
+ * Class representing the patterns for the .meta:residual-child-node-category override configuration.
+ *
+ * A pattern should be formatted as "path: category". The path pattern supports wildcards: * matches any number of
+ * characters except a /, ** matches any number of characters.
+ */
 class OverrideResidualMatchers {
 
     private final List<Matcher> matchers;
 
-    OverrideResidualMatchers() {
-        this(Collections.emptyList());
-    }
-
-    OverrideResidualMatchers(final List<String> patterns) throws IllegalArgumentException {
-        this.matchers = new ArrayList<>(patterns.size());
+    OverrideResidualMatchers(final String... patterns) throws IllegalArgumentException {
+        this.matchers = new ArrayList<>(patterns.length);
         for (String pattern : patterns) {
             matchers.add(new Matcher(pattern));
         }
@@ -41,6 +42,10 @@ class OverrideResidualMatchers {
         matchers.add(new Matcher(string));
     }
 
+    /**
+     * @return the category of the first matching pattern, if there is a pattern match on the path of the given node,
+     *         or null, if there is no match
+     */
     ConfigurationItemCategory getMatch(final String path) {
         for (final Matcher matcher : matchers) {
             if (matcher.matches(path)) {

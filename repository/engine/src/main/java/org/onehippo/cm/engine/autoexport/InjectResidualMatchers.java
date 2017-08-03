@@ -16,7 +16,6 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,16 +28,20 @@ import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
+/**
+ * Class representing the patterns for the .meta:residual-child-node-category injection configuration.
+ *
+ * A pattern should be formatted as "path[primarytype]: category"; the primarytype element is optional. The path
+ * pattern supports wildcards: * matches any number of characters except a /, ** matches any number of characters.
+ * The overall pattern matches if the node itself is new (does not exist in the configuration model) and if a
+ * primarytype element is used it should match exactly with the primarytype of the new node.
+ */
 class InjectResidualMatchers {
 
     private final List<Matcher> matchers;
 
-    InjectResidualMatchers() {
-        this(Collections.emptyList());
-    }
-
-    InjectResidualMatchers(final List<String> patterns) throws IllegalArgumentException {
-        this.matchers = new ArrayList<>(patterns.size());
+    InjectResidualMatchers(final String... patterns) throws IllegalArgumentException {
+        this.matchers = new ArrayList<>(patterns.length);
         for (String pattern : patterns) {
             matchers.add(new Matcher(pattern));
         }
@@ -48,6 +51,10 @@ class InjectResidualMatchers {
         matchers.add(new Matcher(string));
     }
 
+    /**
+     * @return the category of the first matching pattern, if there is a pattern match on the path of the given node,
+     *         or null, if there is no match
+     */
     ConfigurationItemCategory getMatch(final DefinitionNodeImpl node, final ConfigurationModelImpl currentModel)
             throws RepositoryException {
         for (final Matcher matcher : matchers) {
@@ -91,6 +98,8 @@ class InjectResidualMatchers {
                 if (betweenBrackets.equals("")) {
                     throw new IllegalArgumentException(illegalFormatMessage);
                 }
+
+                // handle case that the text between brackets is an SNS index and not a primarytype
                 boolean isSns = false;
                 try {
                     Integer.parseInt(betweenBrackets);

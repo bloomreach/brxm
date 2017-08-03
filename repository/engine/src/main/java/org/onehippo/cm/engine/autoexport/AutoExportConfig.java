@@ -289,13 +289,13 @@ public class AutoExportConfig {
      * {@link ConfigurationModelUtils#getCategoryForNode(String, ConfigurationModel)} in the sense that it
      * also takes the configured overrides for .meta:residual-child-node-category into account.
      *
-     * @param absolutePropertyPath absolute path to property
-     * @param model                configuration model to check against
-     * @return                     category of the property pointed to
+     * @param absoluteNodePath absolute path to a node
+     * @param model            configuration model to check against
+     * @return                 category of the node pointed to
      */
-    public ConfigurationItemCategory getCategoryForNode(final String absolutePropertyPath,
+    public ConfigurationItemCategory getCategoryForNode(final String absoluteNodePath,
                                                         final ConfigurationModelImpl model) {
-        return getCategoryForItem(absolutePropertyPath, false, model);
+        return getCategoryForItem(absoluteNodePath, false, model);
     }
 
     /**

@@ -454,6 +454,7 @@ public class EventJournalProcessor {
                                    final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
         if (!autoExportConfig.isExcludedPath(eventPath)) {
 
+            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
             final ConfigurationItemCategory category = autoExportConfig.getCategoryForItem(eventPath, propertyPath,
                     configurationService.getRuntimeConfigurationModel());
 
@@ -612,6 +613,16 @@ public class EventJournalProcessor {
         return module;
     }
 
+    /**
+     * Injects .meta:residual-child-node-category properties in definitions to be exported where indicated by patterns
+     * in the auto-export configuration; also, in case the category "content" is injected, moves child nodes of those
+     * definitions to content definitions, in case the category "system" is injected, removes child nodes of those
+     * definition.
+     *
+     * @param configSource the {@link ConfigSourceImpl} to scan for definition nodes
+     * @throws RepositoryException
+     * @throws IOException
+     */
     private void injectResidualCategoryOverrides(final ConfigSourceImpl configSource) throws RepositoryException, IOException {
         for (AbstractDefinitionImpl definition : configSource.getDefinitions()) {
             if (definition.getType() == CONFIG) {
