@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinition;
@@ -67,6 +68,7 @@ class MigrateNodeTypesToV12 {
         checkDeprecatedTypeNotInUse(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
         migrateDomains();
         migrateModuleConfig();
+        migrateUrlRewriter();
 
         ntr.ignoreNextCheckReferencesInContent();
         ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
@@ -74,6 +76,53 @@ class MigrateNodeTypesToV12 {
         if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
             throw new RuntimeException("Migrated to V12.0.0, please restart again.");
         }
+    }
+
+    void migrateUrlRewriter() throws RepositoryException {
+
+        final String sourceNodePath = "/content/urlrewriter";
+        final boolean sourceNodeExists = session.nodeExists(sourceNodePath);
+        final String destinationNodePath = "/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig";
+        final boolean destinationNodeExists = session.nodeExists(destinationNodePath);
+
+        boolean saveNeeded = false;
+        if (sourceNodeExists && destinationNodeExists) {
+            log.info("Migrating urlrewriter");
+            final Node sourceNode = session.getNode(sourceNodePath);
+            final Node destinationNode = session.getNode(destinationNodePath);
+            for(PropertyIterator iterator = sourceNode.getProperties(); iterator.hasNext();) {
+                final Property property = iterator.nextProperty();
+                if (property.getName().startsWith("urlrewriter:")) {
+                    log.info("Migrating property '{}'", property.getName());
+                    movePropertyToNode(property, destinationNode);
+                    saveNeeded = true;
+                }
+            }
+        } else {
+            log.info("Source node {} or destination node {} do not exist, skipping migrating url rewriter", sourceNodePath, destinationNodePath);
+        }
+
+        if (saveNeeded) {
+            session.save();
+        }
+    }
+
+    private void movePropertyToNode(final Property sourceProperty, final Node destinationNode) throws RepositoryException {
+
+        final String propertyName = sourceProperty.getName();
+        if (destinationNode.hasProperty(propertyName)) {
+            destinationNode.getProperty(propertyName).remove();
+        }
+
+        log.info(String.format("Setting property '%s' to destination node '%s'", propertyName, destinationNode.getPath()));
+        if (sourceProperty.isMultiple()) {
+            destinationNode.setProperty(propertyName, sourceProperty.getValues());
+        } else {
+            destinationNode.setProperty(propertyName, sourceProperty.getValue());
+        }
+
+        log.info(String.format("Removing property '%s' from source node", propertyName));
+        sourceProperty.remove();
     }
 
     private void checkDeprecatedTypeNotInUse(final String nodeType) throws RepositoryException {
