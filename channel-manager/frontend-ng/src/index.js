@@ -16,4 +16,4 @@
 
 import './vendor.scss';
 import './index.scss';
-import './angularjs/hippo-cm';
+import './app/hippo-cm';

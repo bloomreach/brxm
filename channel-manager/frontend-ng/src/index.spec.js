@@ -145,5 +145,5 @@ beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
 beforeEach(mockMdIcon);
 
-const context = require.context('./angularjs', true, /\.js$/);
+const context = require.context('./app', true, /\.js$/);
 context.keys().forEach(context);
