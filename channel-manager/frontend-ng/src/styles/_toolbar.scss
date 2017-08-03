@@ -33,6 +33,10 @@ md-toolbar.hippo-toolbar {
   md-menu-bar {
     padding-left: 2px;
 
+    .md-open > .md-button {
+      background-color: $grey-300;
+    }
+
     md-menu > .md-button {
       margin-right: 0;
       min-width: initial;
