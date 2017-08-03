@@ -56,7 +56,8 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /de:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: Zusammengestellter Pfad
+        facetPath: 'Zusammengesetzter Pfad (optional: Inhaltspfad kann auch verwendet
+          werden)'
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /de:
         hidePastEvents: Vergangene Events ausblenden

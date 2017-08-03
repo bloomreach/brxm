@@ -42,14 +42,8 @@
       "locales" : null
     },
     "admin-system-info-title-help" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "admin-groups-title" : {
       "status" : "CLEAN",

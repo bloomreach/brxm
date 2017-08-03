@@ -55,7 +55,7 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: 平面路径
+        facetPath: 平面路径（可选：也可使用内容路径）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /zh:
         hidePastEvents: 隐藏过去事件

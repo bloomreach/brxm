@@ -56,7 +56,8 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /fr:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: Chemin composé
+        facetPath: 'Chemin composé ﻿(option : le chemin du contenu peut aussi être
+          utilisé)'
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /fr:
         hidePastEvents: Cacher événements passés

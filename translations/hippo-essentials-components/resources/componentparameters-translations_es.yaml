@@ -56,7 +56,8 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /es:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: Ruta compuesta
+        facetPath: 'Ruta compuesta (opcional: también puede utilizarse la ruta de
+          contenido)'
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /es:
         hidePastEvents: Ocultar eventos pasados

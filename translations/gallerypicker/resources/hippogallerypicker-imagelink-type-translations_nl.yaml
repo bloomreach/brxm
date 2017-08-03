@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippogallerypicker:imagelink:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Image link

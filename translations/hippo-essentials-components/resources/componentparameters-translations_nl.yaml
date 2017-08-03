@@ -56,7 +56,7 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: Zoek facet pad
+        facetPath: 'Zoek facetpad (optioneel: contentpad kan ook gebruikt worden)'
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /nl:
         hidePastEvents: Verberg afgelopen evenementen
