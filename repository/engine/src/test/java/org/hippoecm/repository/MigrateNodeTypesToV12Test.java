@@ -48,7 +48,6 @@ public class MigrateNodeTypesToV12Test {
 
     MigrateNodeTypesToV12 testedClass;
 
-
     @Before
     public void setUp() throws Exception {
 
@@ -97,6 +96,7 @@ public class MigrateNodeTypesToV12Test {
 
         Property property = createNiceMock(Property.class);
         expect(propertyIterator.hasNext()).andReturn(true).times(1);
+        expect(propertyIterator.next()).andReturn(property);
         expect(propertyIterator.nextProperty()).andReturn(property);
         replay(propertyIterator);
 
