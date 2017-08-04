@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "hippo-ngbp"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "prefix": "hippo"
+    }
+  ],
+  "defaults": {
+    "styleExt": "scss"
+  }
+}
