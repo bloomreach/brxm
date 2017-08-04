@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import ngAnimate from 'angular-animate';
-import ngMaterial from 'angular-material';
-import ngMessages from 'angular-messages';
-import ngTranslate from 'angular-translate';
-import ngLocalStorage from 'angular-local-storage';
-import 'angular-translate-loader-static-files';
-import uiRouter from 'angular-ui-router';
-import ngDeviceDetector from 'ng-device-detector';
+import { module } from 'angular';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UpgradeModule  } from '@angular/upgrade/static';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './services/browser.service';
@@ -54,41 +50,54 @@ import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
 
-const hippoCmng = angular
-  .module('hippo-cm', [
-    ngMessages,
-    ngMaterial,
-    ngTranslate,
-    ngAnimate,
-    ngLocalStorage,
-    uiRouter,
-    channelModule.name,
-    ngDeviceDetector,
-  ])
-  .config(config)
-  .run(run)
-  .constant('HstConstants', HstConstants)
-  .service('BrowserService', BrowserService)
-  .service('CatalogService', CatalogService)
-  .service('CmsService', CmsService)
-  .service('ConfigService', ConfigService)
-  .service('ContentService', ContentService)
-  .service('DialogService', DialogService)
-  .service('HstService', HstService)
-  .service('SessionService', SessionService)
-  .service('SiteMapService', SiteMapService)
-  .service('SiteMapItemService', SiteMapItemService)
-  .service('SiteMenuService', SiteMenuService)
-  .service('DomService', DomService)
-  .service('FeedbackService', FeedbackService)
-  .service('PathService', PathService)
-  .service('ProjectService', ProjectService)
-  .service('HippoGlobal', HippoGlobal)
-  .directive('illegalCharacters', illegalCharactersDirective)
-  .directive('stopPropagation', stopPropagationDirective)
-  .directive('scrollToIf', scrollToIfDirective)
-  .filter('getByProperty', getByPropertyFilter)
-  .filter('incrementProperty', incrementPropertyFilter)
-  .filter('startWithSlash', startWithSlashFilter);
+module('hippo-cm', [
+  'ngMessages',
+  'ngMaterial',
+  'pascalprecht.translate',
+  'ngAnimate',
+  'LocalStorageModule',
+  'ng.deviceDetector',
+  'ui.router',
+  channelModule.name,
+])
+.config(config)
+.run(run)
+.constant('HstConstants', HstConstants)
+.service('BrowserService', BrowserService)
+.service('CatalogService', CatalogService)
+.service('CmsService', CmsService)
+.service('ConfigService', ConfigService)
+.service('ContentService', ContentService)
+.service('DialogService', DialogService)
+.service('HstService', HstService)
+.service('SessionService', SessionService)
+.service('SiteMapService', SiteMapService)
+.service('SiteMapItemService', SiteMapItemService)
+.service('SiteMenuService', SiteMenuService)
+.service('DomService', DomService)
+.service('FeedbackService', FeedbackService)
+.service('PathService', PathService)
+.service('ProjectService', ProjectService)
+.service('HippoGlobal', HippoGlobal)
+.directive('illegalCharacters', illegalCharactersDirective)
+.directive('stopPropagation', stopPropagationDirective)
+.directive('scrollToIf', scrollToIfDirective)
+.filter('getByProperty', getByPropertyFilter)
+.filter('incrementProperty', incrementPropertyFilter)
+.filter('startWithSlash', startWithSlashFilter);
 
-export default hippoCmng;
+@NgModule({
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    UpgradeModule,
+  ],
+})
+export class AppModule {
+  constructor(private upgrade: UpgradeModule) {}
+
+  ngDoBootstrap() {
+    this.upgrade.bootstrap(document.body, ['hippo-cm'], { strictDi: true });
+  }
+}
+

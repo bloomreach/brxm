@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+import 'core-js/es6';
+import 'core-js/es7/reflect';
+import 'zone.js/dist/zone';
+import 'hammerjs';
+
+import 'angular';
+import 'angular-animate';
+import 'angular-aria';
+import 'angular-material';
+import 'angular-messages';
+import 'angular-translate';
+import 'angular-local-storage';
+import 'angular-translate-loader-static-files';
+import 'angular-ui-router';
+import 'ng-device-detector';
+
 import './vendor.scss';
-import './index.scss';
-import './app/hippo-cm';
