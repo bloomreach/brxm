@@ -121,7 +121,6 @@ definitions:
               wicket.model: ${wicket.model}
       /category:
         jcr:primaryType: hipposysedit:templatetype
-        jcr:mixinTypes: ['editor:editable']
         /hipposysedit:nodetype:
           jcr:primaryType: hippo:handle
           jcr:mixinTypes: ['mix:referenceable']
