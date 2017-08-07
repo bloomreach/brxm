@@ -51,12 +51,15 @@ class MigrateNodeTypesToV12 {
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
+    private final boolean dryRun;
     private final NodeTypeManager ntm;
     private final QueryManager qm;
 
-    public MigrateNodeTypesToV12(final Session rootSession, final HippoNodeTypeRegistry ntr) throws RepositoryException {
+    public MigrateNodeTypesToV12(final Session rootSession, final HippoNodeTypeRegistry ntr, final boolean dryRun)
+            throws RepositoryException {
         this.session = rootSession;
         this.ntr = ntr;
+        this.dryRun = dryRun;
         this.ntm = rootSession.getWorkspace().getNodeTypeManager();
         this.qm = rootSession.getWorkspace().getQueryManager();
     }
@@ -72,11 +75,15 @@ class MigrateNodeTypesToV12 {
         migrateModuleConfig();
         migrateUrlRewriter();
 
-        ntr.ignoreNextCheckReferencesInContent();
-        ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
-        log.info("Migrated");
-        if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
-            throw new RuntimeException("Migrated to V12.0.0, please restart again.");
+        if (!dryRun) {
+            ntr.ignoreNextCheckReferencesInContent();
+            ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
+            log.info("Migrated");
+            if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
+                throw new RuntimeException("Migrated to V12.0.0, please restart again.");
+            }
+        } else {
+            log.info("MigrateToV12 dry-run completed.");
         }
     }
 
@@ -109,7 +116,7 @@ class MigrateNodeTypesToV12 {
                     sourceNodePath);
         }
 
-        if (saveNeeded) {
+        if (!dryRun && saveNeeded) {
             session.save();
         }
     }
@@ -191,7 +198,7 @@ class MigrateNodeTypesToV12 {
                 saveNeeded = true;
             }
         }
-        if (saveNeeded) {
+        if (!dryRun && saveNeeded) {
             session.save();
         }
     }
@@ -211,7 +218,7 @@ class MigrateNodeTypesToV12 {
                 }
             }
         }
-        if (saveNeeded) {
+        if (!dryRun && saveNeeded) {
             session.save();
         }
     }
@@ -220,7 +227,7 @@ class MigrateNodeTypesToV12 {
         if (session.nodeExists("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig")) {
             log.info("Migrating eforms");
             Node node = session.getNode("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig");
-            if (fixEformsModuleConfigPrimaryType(node)) {
+            if (!dryRun && fixEformsModuleConfigPrimaryType(node)) {
                 session.save();
             }
         }
@@ -274,14 +281,16 @@ class MigrateNodeTypesToV12 {
     }
 
     private void removeAllSNSFromNTD(final String nodeTypeName) throws RepositoryException {
-        log.info("Removing SNS from "+nodeTypeName);
-        NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeTypeName));
-        for (Object nd: ntt.getNodeDefinitionTemplates()) {
-            NodeDefinitionTemplate ndt = (NodeDefinitionTemplate)nd;
-            ndt.setSameNameSiblings(false);
+        if (!dryRun) {
+            log.info("Removing SNS from "+nodeTypeName);
+            NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeTypeName));
+            for (Object nd: ntt.getNodeDefinitionTemplates()) {
+                NodeDefinitionTemplate ndt = (NodeDefinitionTemplate)nd;
+                ndt.setSameNameSiblings(false);
+            }
+            ntr.ignoreNextConflictingContent();
+            ntm.registerNodeType(ntt,true);
         }
-        ntr.ignoreNextConflictingContent();
-        ntm.registerNodeType(ntt,true);
     }
 
     private void moveToUniqueName(final Node node, final String nameCandidate) throws RepositoryException {

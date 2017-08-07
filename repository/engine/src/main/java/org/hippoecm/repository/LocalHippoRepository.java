@@ -21,33 +21,22 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
-import org.apache.jackrabbit.core.fs.FileSystemException;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
-import org.onehippo.cm.engine.StartRepositoryServicesTask;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
-import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.onehippo.repository.bootstrap.InitializationProcessorImpl;
@@ -55,13 +44,9 @@ import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.onehippo.repository.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEFOLDER;
-import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
 
@@ -268,60 +253,24 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
-        final RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
-        jackrabbitRepository = new LocalRepositoryImpl(repConfig);
-
+        jackrabbitRepository = new LocalRepositoryImpl(createRepositoryConfig());
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
-        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
-        Session bootstrapSession = null, lockSession = null;
-        boolean locked = false;
 
-        new MigrateNodeTypesToV12(rootSession,(HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry()).migrateIfNeeded();
+        configurationService = initializeConfiguration(rootSession);
+        HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
+    }
 
-        try {
-            ensureRootIsReferenceable(rootSession);
+    protected RepositoryConfig createRepositoryConfig() throws RepositoryException {
+        return RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
+    }
 
-            final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+    protected ConfigurationServiceImpl initializeConfiguration(final Session rootSession) throws RepositoryException {
+        final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+        final Session configurationServiceSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
+        migrateToV12IfNeeded(configurationServiceSession, false);
 
-            final StartRepositoryServicesTask startRepositoryServicesTask = () -> start(rootSession);
-
-            if (true) {
-                configurationService = new ConfigurationServiceImpl()
-                        .start(DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials),
-                                startRepositoryServicesTask);
-                HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
-            }
-            else {
-                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                List<PostStartupTask> postStartupTasks = Collections.emptyList();
-
-                if (!initializedBefore(rootSession) || isContentBootstrapEnabled()) {
-                    lockSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                    initializeRepositoryConfiguration(initializationProcessor, bootstrapSession);
-                    initializationProcessor.lock(lockSession);
-                    locked = true;
-                    postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
-                }
-
-                startRepositoryServicesTask.execute();
-
-                log.debug("Executing post-startup tasks");
-                for (PostStartupTask task : postStartupTasks) {
-                    task.execute();
-                }
-            }
-        } finally {
-            if (lockSession != null) {
-                if (locked) {
-                    initializationProcessor.unlock(lockSession);
-                }
-                lockSession.logout();
-            }
-            if (bootstrapSession != null) {
-                bootstrapSession.logout();
-            }
-        }
+        return new ConfigurationServiceImpl().start(configurationServiceSession,() -> start(rootSession));
     }
 
     protected void start(final Session rootSession) throws RepositoryException {
@@ -336,117 +285,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
     }
 
-    protected void initializeRepositoryConfiguration(final InitializationProcessorImpl initializationProcessor,
-                                                     final Session bootstrapSession) throws RepositoryException {
-        initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
-        if (!bootstrapSession.nodeExists("/hippo:configuration")) {
-            log.debug("Initializing configuration content");
-            BootstrapUtils.initializeNodecontent(bootstrapSession, "/", getClass().getResource("configuration.xml"));
-            bootstrapSession.save();
-        } else {
-            log.debug("Initial configuration content already present");
-        }
-    }
-
-    protected void ensureRootIsReferenceable(final Session rootSession) throws RepositoryException {
-        if(!rootSession.getRootNode().isNodeType(MIX_REFERENCEABLE)) {
-            rootSession.getRootNode().addMixin(MIX_REFERENCEABLE);
-            rootSession.save();
-        }
-    }
-
-    protected boolean initializedBefore(final Session systemSession) throws RepositoryException {
-        return systemSession.getWorkspace().getNodeTypeManager().hasNodeType(NT_INITIALIZEFOLDER);
-    }
-
-    protected boolean isContentBootstrapEnabled() {
-        return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
-    }
-
-    protected List<PostStartupTask> contentBootstrap(final InitializationProcessorImpl initializationProcessor, final Session systemSession) throws RepositoryException {
-        final List<Node> pendingItems;
-        try {
-            pendingItems = initializationProcessor.loadExtensions(systemSession);
-        } catch (IOException ex) {
-            throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
-        }
-        return initializationProcessor.processInitializeItems(systemSession, pendingItems);
-    }
-
-    private void initializeSystemNodeTypes(final InitializationProcessorImpl initializationProcessor, final Session systemSession, final FileSystem fileSystem) throws RepositoryException {
-        final Session syncSession = systemSession.impersonate(new SimpleCredentials("system", new char[] {}));
-
-        final Properties checksumProperties = new Properties();
-        try {
-            if (fileSystem.exists("/cnd-checksums")) {
-                InputStream in = null;
-                try {
-                    in = fileSystem.getInputStream("/cnd-checksums");
-                    checksumProperties.load(in);
-                } catch (IOException e) {
-                    log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
-                } finally {
-                    IOUtils.closeQuietly(in);
-                }
-            }
-        } catch (FileSystemException e) {
-            log.error("Failed to read cnd checksum from the file system. All system cnds will be reloaded", e);
-        }
-        for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
-            InputStream cndStream = null;
-            try {
-                final String cndPath = "hcm-config/"+cndName;
-                cndStream = getClass().getClassLoader().getResourceAsStream(cndPath);
-                final String checksum = getChecksum(cndStream);
-                cndStream.close();
-                if (!checksum.equals(checksumProperties.getProperty(cndName))) {
-                    log.info("Initializing nodetypes from: " + cndName);
-                    cndStream = getClass().getClassLoader().getResourceAsStream(cndPath);
-                    BootstrapUtils.initializeNodetypes(syncSession, cndStream, cndName);
-                    syncSession.save();
-                    checksumProperties.setProperty(cndName, checksum);
-                } else {
-                    log.info("No need to reload " + cndName + ": no changes");
-                }
-            } catch (NoSuchAlgorithmException | RepositoryException | IOException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } finally {
-                if (cndStream != null) { try { cndStream.close(); } catch (IOException ignore) {} }
-            }
-
-        }
-
-        OutputStream out = null;
-        try {
-            out = fileSystem.getOutputStream("/cnd-checksums");
-            checksumProperties.store(out, null);
-        } catch (IOException|FileSystemException e) {
-            log.error("Failed to store cnd checksum file.", e);
-        } finally {
-            IOUtils.closeQuietly(out);
-        }
-
-        syncSession.logout();
-    }
-
-    private String getChecksum(final InputStream cndStream) throws IOException, NoSuchAlgorithmException {
-        final MessageDigest md5 = MessageDigest.getInstance("SHA-256");
-        final byte[] buffer = new byte[1024];
-        int read;
-        do {
-            read = cndStream.read(buffer, 0, buffer.length);
-            if (read > 0) {
-                md5.update(buffer, 0, read);
-            }
-        } while (read > 0);
-
-        final byte[] bytes = md5.digest();
-        //convert the byte to hex format
-        final StringBuilder sb = new StringBuilder();
-        for (final byte b : bytes) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();
+    protected void migrateToV12IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
+        new MigrateNodeTypesToV12(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
+                .migrateIfNeeded();
     }
 
     @Override

@@ -62,7 +62,7 @@ public class MigrateNodeTypesToV12Test {
         expect(workspace.getNodeTypeManager()).andReturn(typeManager).once();
         replay(workspace);
 
-        testedClass = new MigrateNodeTypesToV12(session, registry);
+        testedClass = new MigrateNodeTypesToV12(session, registry, false);
     }
 
     @Test
