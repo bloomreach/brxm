@@ -57,42 +57,39 @@ class ChannelActionsService extends MenuService {
     .addAction('settings', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
       iconName: 'settings',
-      isVisible: () => this._isChannelSettingsAvailable(),
+      isEnabled: () => this._isChannelSettingsAvailable(),
       onClick: () => this._showChannelSettings(),
     })
-    .addDivider({
-      isVisible: () => this._isChannelSettingsAvailable() && this.hasAnyChanges(),
-    })
+    .addDivider()
     .addAction('publish', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
       iconName: 'publish',
-      isVisible: () => this._hasOwnChanges() && !this._isBranch(),
+      isVisible: () => !this._isBranch(),
+      isEnabled: () => this._hasOwnChanges(),
       onClick: () => this._publish(),
     })
      .addAction('confirm', {
        translationKey: 'TOOLBAR_MENU_CHANNEL_CONFIRM',
        iconName: 'publish',
-       isVisible: () => this._hasOwnChanges() && this._isBranch(),
+       isVisible: () => this._isBranch(),
+       isEnabled: () => this._hasOwnChanges(),
        onClick: () => this._publish(),
      })
     .addAction('discard-changes', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
-      isVisible: () => this._hasOwnChanges(),
+      isEnabled: () => this._hasOwnChanges(),
       onClick: () => this._discardChanges(),
     })
     .addAction('manage-changes', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
-      isVisible: () => this._hasChangesToManage(),
       isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
       onClick: () => this._showManageChanges(),
     })
-    .addDivider({
-      isVisible: () => this._isChannelSettingsAvailable() || this.hasAnyChanges(),
-    })
+    .addDivider()
     .addAction('delete', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
       iconName: 'delete',
-      isVisible: () => this._isChannelDeletionAvailable(),
+      isEnabled: () => this._isChannelDeletionAvailable(),
       onClick: () => this._deleteChannel(),
     })
     .addAction('close', {

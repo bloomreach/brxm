@@ -116,18 +116,18 @@ describe('ChannelActionsService', () => {
   // channel settings
   it('does not expose the "settings" option if the channel is not editable', () => {
     const settings = getItem('settings');
-    expect(settings.isVisible()).toBe(true);
+    expect(settings.isEnabled()).toBe(true);
 
     ChannelService.isEditable.and.returnValue(false);
-    expect(settings.isVisible()).toBe(false);
+    expect(settings.isEnabled()).toBe(false);
   });
 
   it('does not expose the "settings" option if the channel has no custom properties', () => {
     const settings = getItem('settings');
-    expect(settings.isVisible()).toBe(true);
+    expect(settings.isEnabled()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({ hasCustomProperties: false });
-    expect(settings.isVisible()).toBe(false);
+    expect(settings.isEnabled()).toBe(false);
   });
 
   it('opens the channel-settings subpage when "settings" option is clicked', () => {
@@ -140,34 +140,22 @@ describe('ChannelActionsService', () => {
   // first divider
   it('should show a divider between the "settings" option and the "changes" options', () => {
     const divider = getItem('divider-0');
-    expect(divider.isVisible()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'], hasCustomProperties: true });
     expect(divider.isVisible()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: [], hasCustomProperties: true });
-    expect(divider.isVisible()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'], hasCustomProperties: false });
-    expect(divider.isVisible()).toBe(false);
-
-    ChannelService.isEditable.and.returnValue(false);
-    expect(divider.isVisible()).toBe(false);
   });
 
   // publish changes
   it('shows the "publish" option when the user has changes', () => {
     const publish = getItem('publish');
-    expect(publish.isVisible()).toBe(false);
+    expect(publish.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
-    expect(publish.isVisible()).toBe(false);
+    expect(publish.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-    expect(publish.isVisible()).toBe(true);
+    expect(publish.isEnabled()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
-    expect(publish.isVisible()).toBe(true);
+    expect(publish.isEnabled()).toBe(true);
   });
 
   it('publishes own changes when "publish" is clicked', () => {
@@ -196,16 +184,16 @@ describe('ChannelActionsService', () => {
   // discard changes
   it('shows the "discard changes" option when the user has changes', () => {
     const discard = getItem('discard-changes');
-    expect(discard.isVisible()).toBe(false);
+    expect(discard.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
-    expect(discard.isVisible()).toBe(false);
+    expect(discard.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-    expect(discard.isVisible()).toBe(true);
+    expect(discard.isEnabled()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
-    expect(discard.isVisible()).toBe(true);
+    expect(discard.isEnabled()).toBe(true);
   });
 
   it('discards changes when "discard changes" option is clicked', () => {
@@ -248,38 +236,30 @@ describe('ChannelActionsService', () => {
   // manage changes
   it('enables the "manage changes" option when there are changes by other users', () => {
     const manageChanges = getItem('manage-changes');
-    expect(manageChanges.isVisible()).toBe(false);
     expect(manageChanges.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
     SessionService.canManageChanges.and.returnValue(false);
-    expect(manageChanges.isVisible()).toBe(false);
     expect(manageChanges.isEnabled()).toBe(false);
 
     SessionService.canManageChanges.and.returnValue(true);
-    expect(manageChanges.isVisible()).toBe(true);
     expect(manageChanges.isEnabled()).toBe(false);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
     SessionService.canManageChanges.and.returnValue(false);
-    expect(manageChanges.isVisible()).toBe(false);
     expect(manageChanges.isEnabled()).toBe(false);
 
     SessionService.canManageChanges.and.returnValue(true);
-    expect(manageChanges.isVisible()).toBe(true);
     expect(manageChanges.isEnabled()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser', 'otherUser'] });
     SessionService.canManageChanges.and.returnValue(false);
-    expect(manageChanges.isVisible()).toBe(false);
     expect(manageChanges.isEnabled()).toBe(false);
 
     SessionService.canManageChanges.and.returnValue(true);
-    expect(manageChanges.isVisible()).toBe(true);
     expect(manageChanges.isEnabled()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({});
-    expect(manageChanges.isVisible()).toBe(false);
     expect(manageChanges.isEnabled()).toBe(false);
   });
 
@@ -293,12 +273,6 @@ describe('ChannelActionsService', () => {
   // second divider
   it('shows a divider between either the "settings" or the "change" option(s), and the "close" option', () => {
     const divider = getItem('divider-1');
-    expect(divider.isVisible()).toBe(true);
-
-    ChannelService.isEditable.and.returnValue(false);
-    expect(divider.isVisible()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'], hasCustomProperties: true });
     expect(divider.isVisible()).toBe(true);
   });
 
@@ -343,10 +317,10 @@ describe('ChannelActionsService', () => {
   // delete channel
   it('doesn\'t expose the "delete" option if a user cannot delete a channel', () => {
     const del = getItem('delete');
-    expect(del.isVisible()).toBe(true);
+    expect(del.isEnabled()).toBe(true);
 
     SessionService.canDeleteChannel.and.returnValue(false);
-    expect(del.isVisible()).toBe(false);
+    expect(del.isEnabled()).toBe(false);
   });
 
   it('successfully deletes a channel', () => {
