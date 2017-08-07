@@ -105,8 +105,8 @@ class MigrateNodeTypesToV12 {
                 }
             }
         } else {
-            log.info("Source node {} or destination node {} do not exist, skipping migrating url rewriter",
-                    sourceNodePath, destinationNodePath);
+            log.info("Source node {} does not exist, skipping migrating url rewriter",
+                    sourceNodePath);
         }
 
         if (saveNeeded) {

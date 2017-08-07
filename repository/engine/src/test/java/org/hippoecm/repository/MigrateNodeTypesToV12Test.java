@@ -70,8 +70,8 @@ public class MigrateNodeTypesToV12Test {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MigrateNodeTypesToV12.class).build()) {
             testedClass.migrateUrlRewriter();
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(String.format("Source node %s or destination node " +
-                    "%s do not exist, skipping migrating url rewriter", URL_REWRITER_SRC, URL_REWRITER_DEST))));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    String.format("Source node %s does not exist, skipping migrating url rewriter", URL_REWRITER_SRC))));
         }
     }
 
