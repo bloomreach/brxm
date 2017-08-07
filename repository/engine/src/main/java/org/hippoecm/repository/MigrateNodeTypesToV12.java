@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinition;
@@ -34,10 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_MODULE_CONFIG;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MODULECONFIG;
 import static org.hippoecm.repository.api.HippoNodeType.NT_AUTHROLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAIN;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAINRULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_MODULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_ROLE;
 
 class MigrateNodeTypesToV12 {
@@ -67,6 +70,7 @@ class MigrateNodeTypesToV12 {
         checkDeprecatedTypeNotInUse(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
         migrateDomains();
         migrateModuleConfig();
+        migrateUrlRewriter();
 
         ntr.ignoreNextCheckReferencesInContent();
         ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
@@ -74,6 +78,69 @@ class MigrateNodeTypesToV12 {
         if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
             throw new RuntimeException("Migrated to V12.0.0, please restart again.");
         }
+    }
+
+    void migrateUrlRewriter() throws RepositoryException {
+
+        final String sourceNodePath = "/content/urlrewriter";
+        final String destinationNodePath = "/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig";
+
+        final boolean sourceNodeExists = session.nodeExists(sourceNodePath);
+        final boolean destinationNodeExists = session.nodeExists(destinationNodePath);
+
+        boolean saveNeeded = false;
+        if (sourceNodeExists) {
+            log.info("Migrating urlrewriter");
+            final Node sourceNode = session.getNode(sourceNodePath);
+            Node destinationNode = null;
+            for(PropertyIterator iterator = sourceNode.getProperties(); iterator.hasNext();) {
+                if (destinationNode == null) {
+                    destinationNode = destinationNodeExists ? session.getNode(destinationNodePath) : createUrlRewriterDestinationNode();
+                }
+                final Property property = iterator.nextProperty();
+                if (property.getName().startsWith("urlrewriter:")) {
+                    log.info("Migrating property '{}'", property.getName());
+                    movePropertyToNode(property, destinationNode);
+                    saveNeeded = true;
+                }
+            }
+        } else {
+            log.info("Source node {} does not exist, skipping migrating url rewriter",
+                    sourceNodePath);
+        }
+
+        if (saveNeeded) {
+            session.save();
+        }
+    }
+
+    private Node createUrlRewriterDestinationNode() throws RepositoryException {
+        final Node modulesNode = session.getNode("/hippo:configuration/hippo:modules");
+        String urlrewriter = "urlrewriter";
+        final Node urlrewriterNode = !modulesNode.hasNode(urlrewriter) ?
+                modulesNode.addNode(urlrewriter, NT_MODULE) :
+                modulesNode.getNode(urlrewriter);
+
+        return urlrewriterNode.hasNode(HIPPO_MODULECONFIG) ?
+                modulesNode.getNode(HIPPO_MODULECONFIG) : modulesNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+    }
+
+    private void movePropertyToNode(final Property sourceProperty, final Node destinationNode) throws RepositoryException {
+
+        final String propertyName = sourceProperty.getName();
+        if (destinationNode.hasProperty(propertyName)) {
+            destinationNode.getProperty(propertyName).remove();
+        }
+
+        log.info(String.format("Setting property '%s' to destination node '%s'", propertyName, destinationNode.getPath()));
+        if (sourceProperty.isMultiple()) {
+            destinationNode.setProperty(propertyName, sourceProperty.getValues());
+        } else {
+            destinationNode.setProperty(propertyName, sourceProperty.getValue());
+        }
+
+        log.info(String.format("Removing property '%s' from source node", propertyName));
+        sourceProperty.remove();
     }
 
     private void checkDeprecatedTypeNotInUse(final String nodeType) throws RepositoryException {
