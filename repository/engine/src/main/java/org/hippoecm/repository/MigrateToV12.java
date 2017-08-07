@@ -43,9 +43,9 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_MODULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_ROLE;
 
-class MigrateNodeTypesToV12 {
+class MigrateToV12 {
 
-    static final Logger log = LoggerFactory.getLogger(MigrateNodeTypesToV12.class);
+    static final Logger log = LoggerFactory.getLogger(MigrateToV12.class);
 
     private static String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
 
@@ -55,7 +55,7 @@ class MigrateNodeTypesToV12 {
     private final NodeTypeManager ntm;
     private final QueryManager qm;
 
-    public MigrateNodeTypesToV12(final Session rootSession, final HippoNodeTypeRegistry ntr, final boolean dryRun)
+    public MigrateToV12(final Session rootSession, final HippoNodeTypeRegistry ntr, final boolean dryRun)
             throws RepositoryException {
         this.session = rootSession;
         this.ntr = ntr;

@@ -286,7 +286,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     protected void migrateToV12IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
-        new MigrateNodeTypesToV12(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
+        new MigrateToV12(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
                 .migrateIfNeeded();
     }
 
