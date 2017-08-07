@@ -142,13 +142,12 @@ public final class ProjectUtils {
     }
 
     /**
-     * Returns Configuration root folder e.g. {@code /home/foo/myproject/repository-data/config}
+     * Returns Config root folder e.g. {@code /home/foo/myproject/repository-data/config}
      *
      * @return Configuration project folder
      */
     public static File getRepositoryDataConfigFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "config");
-
+        return getRepositoryDataSubFolder(context, context.getProjectSettings().getConfigSubModule());
     }
 
     /**
@@ -157,7 +156,7 @@ public final class ProjectUtils {
      * @return Content project folder
      */
     public static File getRepositoryDataContentFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "content");
+        return getRepositoryDataSubFolder(context, context.getProjectSettings().getContentSubModule());
     }
 
     /**
@@ -166,8 +165,13 @@ public final class ProjectUtils {
      * @return Webfiles project folder
      */
     public static File getRepositoryDataWebfilesFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "webfiles");
+        return getRepositoryDataSubFolder(context, context.getProjectSettings().getWebfilesSubModule());
     }
+
+    private static File getRepositoryDataSubFolder(final PluginContext context, final String subModule) {
+        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + subModule);
+    }
+
     /**
      * Returns Essentials root folder e.g. {@code /home/foo/myproject/essentials}
      *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.util.List;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,17 +30,19 @@ import static org.junit.Assert.assertTrue;
  */
 public class ProjectUtilsTest extends BaseResourceTest {
 
-
     @Test
     public void testSitePackages() throws Exception {
-        final List<String> sitePackages = ProjectUtils.getSitePackages(getContext());
+        final PluginContext context = getContext();
+
+        final List<String> sitePackages = ProjectUtils.getSitePackages(context);
         assertTrue(sitePackages.size() > 8);
         assertTrue(sitePackages.contains("org"));
         assertTrue(sitePackages.contains("org.dummy"));
 
+        // validate defaults
+        assertEquals("repository-data", ProjectUtils.getRepositoryDataFolder(context).getName());
+        assertEquals("config", ProjectUtils.getRepositoryDataConfigFolder(context).getName());
+        assertEquals("content", ProjectUtils.getRepositoryDataContentFolder(context).getName());
+        assertEquals("webfiles", ProjectUtils.getRepositoryDataWebfilesFolder(context).getName());
     }
-
-
-
-
 }

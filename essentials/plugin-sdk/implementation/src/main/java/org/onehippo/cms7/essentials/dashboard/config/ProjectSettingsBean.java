@@ -37,6 +37,8 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     public static final String MODULE_SITE = "site";
     public static final String MODULE_CMS = "cms";
     public static final String MODULE_REPOSITORY_DATA = "repository-data";
+    public static final String SUBMODULE_CONFIG = "config";
+    public static final String SUBMODULE_CONTENT = "content";
     public static final String SUBMODULE_WEBFILES = "webfiles";
 
     private String projectNamespace;
@@ -56,6 +58,8 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String siteModule;
     private String cmsModule;
     private String repositoryDataModule;
+    private String configSubModule;
+    private String contentSubModule;
     private String webfilesSubModule;
     private String beansFolder;
 
@@ -111,6 +115,32 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public void setRepositoryDataModule(final String repositoryDataFolder) {
         repositoryDataModule = repositoryDataFolder;
+    }
+
+    @Override
+    public String getConfigSubModule() {
+        if (Strings.isNullOrEmpty(configSubModule)) {
+            return SUBMODULE_CONFIG;
+        }
+        return configSubModule;
+    }
+
+    @Override
+    public void setConfigSubModule(final String configSubModule) {
+        this.configSubModule = configSubModule;
+    }
+
+    @Override
+    public String getContentSubModule() {
+        if (Strings.isNullOrEmpty(contentSubModule)) {
+            return SUBMODULE_CONTENT;
+        }
+        return contentSubModule;
+    }
+
+    @Override
+    public void setContentSubModule(final String contentSubModule) {
+        this.contentSubModule = contentSubModule;
     }
 
     @Override
