@@ -69,7 +69,8 @@ class CKEditorController {
       // CKEditor has been replaced and instance is ready
       this.editor.on('instanceReady', () => {
         this.editableElement = this.$element.find('.cke_editable');
-        this.editableElement.on('blur', $event => this.onEditorBlur($event));
+        this.editableElement.on('blur', ($event) => { this.blurEvent = $event; });
+        this.editor.on('blur', () => this.onEditorBlur(this.blurEvent));
 
         this.editor.on('dialogShow', () => { this.SharedSpaceToolbarService.isToolbarPinned = true; });
         this.editor.on('dialogHide', () => { this.SharedSpaceToolbarService.isToolbarPinned = false; });
