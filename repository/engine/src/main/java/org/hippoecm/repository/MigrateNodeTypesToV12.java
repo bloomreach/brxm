@@ -117,12 +117,12 @@ class MigrateNodeTypesToV12 {
     private Node createUrlRewriterDestinationNode() throws RepositoryException {
         final Node modulesNode = session.getNode("/hippo:configuration/hippo:modules");
         String urlrewriter = "urlrewriter";
-        final Node urlrewriterNode = !modulesNode.hasNode(urlrewriter) ?
-                modulesNode.addNode(urlrewriter, NT_MODULE) :
-                modulesNode.getNode(urlrewriter);
+        final Node urlrewriterNode = modulesNode.hasNode(urlrewriter) ?
+                modulesNode.getNode(urlrewriter) :
+                modulesNode.addNode(urlrewriter, NT_MODULE);
 
         return urlrewriterNode.hasNode(HIPPO_MODULECONFIG) ?
-                modulesNode.getNode(HIPPO_MODULECONFIG) : modulesNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+                urlrewriterNode.getNode(HIPPO_MODULECONFIG) : urlrewriterNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
     }
 
     private void movePropertyToNode(final Property sourceProperty, final Node destinationNode) throws RepositoryException {
