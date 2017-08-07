@@ -20,6 +20,7 @@
   top: 0;
   width: 100%;
   z-index: $z-index-mask;
+  outline: 0;
 
   &.masked {
     cursor: not-allowed;
