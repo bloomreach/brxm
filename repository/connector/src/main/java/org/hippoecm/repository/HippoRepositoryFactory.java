@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.repository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -31,6 +30,18 @@ public class HippoRepositoryFactory {
 
     private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
     private static HippoRepository defaultRepository = null;
+    private static Class localRepositoryClass = null;
+
+    private static Class getLocalHippoRepositoryClass() throws ClassNotFoundException {
+        if (localRepositoryClass == null) {
+            try {
+                localRepositoryClass = Class.forName("com.onehippo.repository.HippoEnterpriseRepository");
+            } catch (ClassNotFoundException e) {
+                localRepositoryClass = Class.forName("org.hippoecm.repository.LocalHippoRepository");
+            }
+        }
+        return localRepositoryClass;
+    }
 
     private HippoRepositoryFactory() {
     }
@@ -71,8 +82,7 @@ public class HippoRepositoryFactory {
         }
 
         try {
-            Class cls = Class.forName("org.hippoecm.repository.LocalHippoRepository");
-            defaultRepository = (HippoRepository) cls.getMethod("create", new Class[] { String.class } ).invoke(null, (String)null);
+            defaultRepository = (HippoRepository) getLocalHippoRepositoryClass().getMethod("create", new Class[] { String.class } ).invoke(null, (String)null);
         } catch(NoSuchMethodException ex) {
             throw new RepositoryException(ex);
         } catch(InvocationTargetException ex) {
@@ -175,7 +185,7 @@ public class HippoRepositoryFactory {
 
         // embedded/local with location
         try {
-            repository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+            repository = (HippoRepository) getLocalHippoRepositoryClass().getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
         } catch(ClassNotFoundException ex) {
             throw new RepositoryException(ex);
         } catch(NoSuchMethodException ex) {
@@ -200,5 +210,4 @@ public class HippoRepositoryFactory {
             defaultRepository = null;
         }
     }
-
 }
