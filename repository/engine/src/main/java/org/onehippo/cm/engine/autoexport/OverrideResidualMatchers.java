@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.util.PatternSet;
 
 /**
  * Class representing the patterns for the .meta:residual-child-node-category override configuration.
