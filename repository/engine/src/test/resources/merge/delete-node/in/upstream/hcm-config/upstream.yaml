@@ -4,3 +4,5 @@ definitions:
       jcr:primaryType: nt:unstructured
     /topmost/upstreamToDelete:
       jcr:primaryType: nt:unstructured
+      /childNode:
+        jcr:primaryType: nt:unstructured
