@@ -28,8 +28,8 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cm.engine.ExportConfig;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 
@@ -40,18 +40,15 @@ import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_MODUL
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_OVERRIDE_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 
-public class AutoExportConfig {
+public class AutoExportConfig extends ExportConfig {
 
     private final Node node;
     private final String nodePath;
     private Boolean enabled;
     private Long lastRevision;
     private Map<String, Collection<String>> modules;
-    private PatternSet exclusionContext;
     private OverrideResidualMatchers overrideResidualContext;
     private InjectResidualMatchers injectResidualMatchers;
-    private PathsMap filterUuidPaths;
-    private PathsMap ignoredPaths = new PathsMap();
 
     // constructor for testing purposes only
     AutoExportConfig(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PathsMap filterUuidPaths) {
@@ -59,8 +56,8 @@ public class AutoExportConfig {
         this.nodePath = null;
         this.enabled = enabled;
         this.modules = modules;
-        this.exclusionContext = exclusionContext;
-        this.filterUuidPaths = filterUuidPaths;
+        setExclusionContext(exclusionContext);
+        setFilterUuidPaths(filterUuidPaths);
     }
 
     public AutoExportConfig(final Node node) throws RepositoryException {
@@ -68,23 +65,8 @@ public class AutoExportConfig {
         this.nodePath = node.getPath();
     }
 
-    public String getModuleConfigPath() {
-        return nodePath;
-    }
-
-    public Session getModuleSession() throws RepositoryException {
-        return node.getSession();
-    }
-
-    public void addIgnoredPaths(final PathsMap ignoredPaths) {
-        this.ignoredPaths.addAll(ignoredPaths);
-    }
-
-    public boolean isExcludedPath(final String path) {
-        return ignoredPaths.matches(path) || getExclusionContext().matches(path);
-    }
-
     public PatternSet getExclusionContext() {
+        PatternSet exclusionContext = super.getExclusionContext();
         if (exclusionContext == null) {
             final String[] values = getMultipleStringProperty(node, CONFIG_EXCLUDED_PROPERTY_NAME);
             final List<String> excluded = new ArrayList<>(values.length);
@@ -93,8 +75,49 @@ public class AutoExportConfig {
                 log.debug("excluding path '{}'", value);
             }
             exclusionContext = new PatternSet(excluded);
+            setExclusionContext(exclusionContext);
         }
         return exclusionContext;
+    }
+
+    public PathsMap getFilterUuidPaths() {
+        PathsMap filterUuidPaths = super.getFilterUuidPaths();
+        if (filterUuidPaths == null) {
+            filterUuidPaths = new PathsMap();
+            setFilterUuidPaths(filterUuidPaths);
+            final String[] values = getMultipleStringProperty(node, CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME);
+            for (final String value: values) {
+                filterUuidPaths.add(value);
+                log.debug("filtering uuid paths below {}", value);
+            }
+        }
+        return filterUuidPaths;
+    }
+
+    /**
+     * Determine the category of a node or property at the specified absolute path. This method differs from
+     * {@link ConfigurationModelUtils#getCategoryForItem(String, boolean, ConfigurationModel)} and the super method
+     * {@link org.onehippo.cm.engine.ExportConfig#getCategoryForItem(String, boolean, ConfigurationModel)} that it
+     * also takes the configured overrides for .meta:residual-child-node-category into account.
+     *
+     * @param absoluteItemPath absolute path a an item
+     * @param propertyPath     indicates whether the item is a node or property
+     * @param model            configuration model to check against
+     * @return                 category of the node or property pointed to
+     */
+    public ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath,
+                                                        final boolean propertyPath,
+                                                        final ConfigurationModel model) {
+        final OverrideResidualMatchers matchers = getOverrideResidualMatchers();
+        return ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
+    }
+
+    public String getModuleConfigPath() {
+        return nodePath;
+    }
+
+    public Session getModuleSession() throws RepositoryException {
+        return node.getSession();
     }
 
     public OverrideResidualMatchers getOverrideResidualMatchers() {
@@ -161,7 +184,7 @@ public class AutoExportConfig {
     }
 
     public static void processModuleStrings(final ArrayList<String> moduleStrings,
-                                   final Map<String, Collection<String>> modules, final boolean logChanges) {
+                                            final Map<String, Collection<String>> modules, final boolean logChanges) {
         boolean rootRepositoryPathIsConfigured = false;
         Collection<String> allRepositoryPaths = new HashSet<>();
         for (String module : moduleStrings) {
@@ -195,7 +218,7 @@ public class AutoExportConfig {
     }
 
     private static void addRepositoryPath(final String modulePath, final String repositoryPath,
-                                   final Map<String, Collection<String>> modules, final boolean logChanges) {
+                                          final Map<String, Collection<String>> modules, final boolean logChanges) {
         Collection<String> repositoryPaths = modules.get(modulePath);
         if (repositoryPaths == null) {
             repositoryPaths = new ArrayList<>();
@@ -205,18 +228,6 @@ public class AutoExportConfig {
             log.info("Changes to repository path '{}' will be exported to directory '{}'", repositoryPath, modulePath);
         }
         repositoryPaths.add(repositoryPath);
-    }
-
-    PathsMap getFilterUuidPaths() {
-        if (filterUuidPaths == null) {
-            filterUuidPaths = new PathsMap();
-            final String[] values = getMultipleStringProperty(node, CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME);
-            for (final String value: values) {
-                filterUuidPaths.add(value);
-                log.debug("filtering uuid paths below {}", value);
-            }
-        }
-        return filterUuidPaths;
     }
 
     /**
@@ -236,10 +247,6 @@ public class AutoExportConfig {
             log.error("Failed to get auto export property {}, defaulting to no values", propertyName, e);
             return defaultValue;
         }
-    }
-
-    public boolean shouldFilterUuid(final String nodePath) {
-        return getFilterUuidPaths().matches(nodePath);
     }
 
     public synchronized boolean checkEnabled() {
@@ -283,36 +290,4 @@ public class AutoExportConfig {
     synchronized void resetLastRevision() {
         lastRevision = null;
     }
-
-    /**
-     * Determine the category of a node at the specified absolute path. This method differs from
-     * {@link ConfigurationModelUtils#getCategoryForNode(String, ConfigurationModel)} in the sense that it
-     * also takes the configured overrides for .meta:residual-child-node-category into account.
-     *
-     * @param absoluteNodePath absolute path to a node
-     * @param model            configuration model to check against
-     * @return                 category of the node pointed to
-     */
-    public ConfigurationItemCategory getCategoryForNode(final String absoluteNodePath,
-                                                        final ConfigurationModelImpl model) {
-        return getCategoryForItem(absoluteNodePath, false, model);
-    }
-
-    /**
-     * Determine the category of a node at the specified absolute path. This method differs from
-     * {@link ConfigurationModelUtils#getCategoryForItem(String, boolean, ConfigurationModel)} in the sense that it
-     * also takes the configured overrides for .meta:residual-child-node-category into account.
-     *
-     * @param absoluteItemPath absolute path a an item
-     * @param propertyPath     indicates whether the item is a node or property
-     * @param model            configuration model to check against
-     * @return                 category of the property pointed to
-     */
-    public ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath,
-                                                        final boolean propertyPath,
-                                                        final ConfigurationModel model) {
-        final OverrideResidualMatchers matchers = getOverrideResidualMatchers();
-        return ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
-    }
-
 }

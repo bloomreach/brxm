@@ -32,7 +32,6 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
@@ -64,16 +63,16 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
     private static final Logger log = LoggerFactory.getLogger(JcrConfigDeltaExporter.class);
 
     private ConfigurationModelImpl configurationModel;
-    private AutoExportConfig autoExportConfig;
+    private ExportConfig exportConfig;
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
             // facet-related generated property
             "hippo:count"
     );
 
-    public JcrConfigDeltaExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig autoExportConfig) {
+    public JcrConfigDeltaExporter(final ConfigurationModelImpl configurationModel, final ExportConfig exportConfig) {
         this.configurationModel = configurationModel;
-        this.autoExportConfig = autoExportConfig;
+        this.exportConfig = exportConfig;
     }
 
     protected void exportProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
@@ -94,13 +93,12 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         }
 
         final String propName = property.getName();
-        // skip suppressed properties if we're in auto-export mode
-        if ((autoExportConfig != null) && suppressedDelta.contains(propName)) {
+        // skip suppressed properties
+        if (suppressedDelta.contains(propName)) {
             return true;
         }
-        // use Configuration.filterUuidPaths during auto-export (suppressing export of jcr:uuid)
-        return (autoExportConfig != null) && propName.equals(JCR_UUID)
-                && autoExportConfig.shouldFilterUuid(property.getNode().getPath());
+        // check ExportConfig.filterUuidPaths for export (suppressing export of jcr:uuid)
+        return (propName.equals(JCR_UUID) && exportConfig.shouldFilterUuid(property.getNode().getPath()));
 
     }
 
@@ -127,7 +125,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         if (!jcrPath.equals("/") && (jcrPath.lastIndexOf("/") > 0)) {
             final String parentPath = StringUtils.substringBeforeLast(jcrPath, "/");
             if (!session.nodeExists(parentPath)) {
-                // todo: throw a more specific exception that we can catch in EventJournalProcessor
+                // todo: throw a more specific exception to be catched by invoker
                 throw new RepositoryException("Parent path of change is missing for path: " + parentPath);
             }
         }
@@ -177,15 +175,15 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
 
     protected boolean shouldExcludeNode(final String jcrPath) {
         if (configurationModel != null) {
-            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
-            final ConfigurationItemCategory category = autoExportConfig.getCategoryForNode(jcrPath, configurationModel);
+            // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
+            final ConfigurationItemCategory category = exportConfig.getCategoryForItem(jcrPath, true, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
                 return true;
             }
         }
-        if (autoExportConfig != null && autoExportConfig.isExcludedPath(jcrPath)) {
-            log.debug("Ignoring node because of auto-export exclusion:\n\t{}", jcrPath);
+        if (exportConfig.isExcludedPath(jcrPath)) {
+            log.debug("Ignoring node because of export exclusion:\n\t{}", jcrPath);
             return true;
         }
         return false;
@@ -219,8 +217,8 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
                 // skip SYSTEM property
                 continue;
             }
-            // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getJcrPath().toMinimallyIndexedPath().toString())) {
+            // use ExportConfig.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
+            if (propName.equals(JCR_UUID) && exportConfig.shouldFilterUuid(configNode.getJcrPath().toMinimallyIndexedPath().toString())) {
                 continue;
             }
 
@@ -354,13 +352,13 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         //   and already build an indexed list of non-skipped/ignored jcrChildNodeNames if we need to check node ordering
         final List<String> indexedJcrChildNodeNames = new ArrayList<>();
         for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-            if (autoExportConfig != null && autoExportConfig.isExcludedPath(childNode.getPath())) {
-                log.debug("Ignoring node because of auto-export exclusion:\n\t{}", childNode.getPath());
+            if (exportConfig.isExcludedPath(childNode.getPath())) {
+                log.debug("Ignoring node because of export exclusion:\n\t{}", childNode.getPath());
                 continue;
             }
-            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
+            // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
             final ConfigurationItemCategory category =
-                    autoExportConfig.getCategoryForNode(childNode.getPath(), configurationModel);
+                    exportConfig.getCategoryForItem(childNode.getPath(), true, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
                 continue;
@@ -470,5 +468,4 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
                 .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childName));
         childNode.setOrderBefore(beforeName);
     }
-
 }
