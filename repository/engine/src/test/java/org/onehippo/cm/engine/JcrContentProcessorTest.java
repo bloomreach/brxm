@@ -308,8 +308,8 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         importedNode.setProperty("binary", binary);
         session.save();
 
-        final ExportContentProcessor exportContentProcessor = new ExportContentProcessor();
-        ModuleImpl module = exportContentProcessor.exportNode(importedNode);
+        final JcrContentExporter jcrContentExporter = new JcrContentExporter();
+        ModuleImpl module = jcrContentExporter.exportNode(importedNode);
 
         File tempDir = Files.createTempDir();
         Path moduleRootPath = Paths.get(tempDir.getPath());

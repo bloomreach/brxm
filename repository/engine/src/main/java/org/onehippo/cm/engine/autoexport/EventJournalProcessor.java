@@ -49,7 +49,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
-import org.onehippo.cm.engine.AutoExportContentProcessor;
+import org.onehippo.cm.engine.JcrConfigDeltaExporter;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -584,10 +584,10 @@ public class EventJournalProcessor {
             }
         }
 
-        final AutoExportContentProcessor autoExportContentProcessor = new AutoExportContentProcessor(currentModel, autoExportConfig);
+        final JcrConfigDeltaExporter jcrConfigDeltaExporter = new JcrConfigDeltaExporter(currentModel, autoExportConfig);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
-            autoExportContentProcessor.exportConfigNode(eventProcessorSession, path, configSource);
+            jcrConfigDeltaExporter.exportConfigNode(eventProcessorSession, path, configSource);
         }
 
         injectResidualCategoryOverrides(configSource);

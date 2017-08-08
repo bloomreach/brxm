@@ -51,7 +51,7 @@ import static org.onehippo.cm.model.Constants.YAML_EXT;
 /**
  * Node export
  */
-public class ExportContentProcessor {
+public class JcrContentExporter {
 
     /**
      * Export specified node

@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.engine.ExportContentProcessor;
+import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -695,20 +695,14 @@ public class DefinitionMergeService {
         for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes().values()) {
             for (final DefinitionNodeImpl childDefItem : childConfigNode.getDefinitions()) {
                 // if child's DefinitionNode was part of a parent Definition, it may have already been removed
-                // also check the definition belongs to one of autoexport modules
                 final AbstractDefinitionImpl childDefinition = childDefItem.getDefinition();
-                if (!alreadyRemoved.contains(childDefinition)
-                        && isAutoExportModule(toExport.values(), childDefinition.getSource().getModule())) {
+                if (!alreadyRemoved.contains(childDefinition)) {
                     // otherwise, remove it now
                     removeOneDefinitionItem(childDefItem, alreadyRemoved, toExport);
                 }
             }
             removeDescendantDefinitions(childConfigNode, alreadyRemoved, toExport);
         }
-    }
-
-    private boolean isAutoExportModule(final Collection<ModuleImpl> autoExportModules, final ModuleImpl candidate) {
-        return autoExportModules.contains(candidate);
     }
 
     /**
@@ -1166,7 +1160,7 @@ public class DefinitionMergeService {
                             .map(JcrPath::toString).collect(toImmutableSet());
 
                     try {
-                        new ExportContentProcessor().exportNode(jcrSession.getNode(defPath.toString()), def,
+                        new JcrContentExporter().exportNode(jcrSession.getNode(defPath.toString()), def,
                                 true, excludedPaths);
                     }
                     catch (RepositoryException e) {

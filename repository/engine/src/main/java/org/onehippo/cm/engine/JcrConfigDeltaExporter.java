@@ -59,9 +59,9 @@ import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 /**
  * Node auto export
  */
-public class AutoExportContentProcessor extends ExportContentProcessor {
+public class JcrConfigDeltaExporter extends JcrContentExporter {
 
-    private static final Logger log = LoggerFactory.getLogger(AutoExportContentProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrConfigDeltaExporter.class);
 
     private ConfigurationModelImpl configurationModel;
     private AutoExportConfig autoExportConfig;
@@ -71,7 +71,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
             "hippo:count"
     );
 
-    public AutoExportContentProcessor(final ConfigurationModelImpl configurationModel, final AutoExportConfig autoExportConfig) {
+    public JcrConfigDeltaExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig autoExportConfig) {
         this.configurationModel = configurationModel;
         this.autoExportConfig = autoExportConfig;
     }

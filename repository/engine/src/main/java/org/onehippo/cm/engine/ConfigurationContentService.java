@@ -113,8 +113,8 @@ public class ConfigurationContentService {
      * @return Module containing single content definition
      */
     public ModuleImpl exportNode(Node node) throws RepositoryException {
-        final ExportContentProcessor exportContentProcessor = new ExportContentProcessor();
-        return exportContentProcessor.exportNode(node);
+        final JcrContentExporter jcrContentExporter = new JcrContentExporter();
+        return jcrContentExporter.exportNode(node);
     }
 
     /**
