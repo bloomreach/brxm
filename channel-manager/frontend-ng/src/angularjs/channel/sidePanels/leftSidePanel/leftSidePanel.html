@@ -38,7 +38,7 @@
         </md-list-item>
       </md-list>
     </md-tab>
-    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}">
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-disabled="$ctrl.isConfigurationLocked">
       <component-catalog components="$ctrl.getCatalog()"></component-catalog>
     </md-tab>
   </md-tabs>

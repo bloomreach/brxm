@@ -20,6 +20,7 @@ import LeftSidePanelCtrl from './leftSidePanel.controller';
 const leftSidePanelComponent = {
   bindings: {
     componentsVisible: '=',
+    isConfigurationLocked: '<',
   },
   controller: LeftSidePanelCtrl,
   template,
