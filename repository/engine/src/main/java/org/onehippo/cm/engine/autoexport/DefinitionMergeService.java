@@ -695,10 +695,10 @@ public class DefinitionMergeService {
         for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes().values()) {
             for (final DefinitionNodeImpl childDefItem : childConfigNode.getDefinitions()) {
                 // if child's DefinitionNode was part of a parent Definition, it may have already been removed
+                // also check the definition belongs to one of autoexport modules
                 final AbstractDefinitionImpl childDefinition = childDefItem.getDefinition();
-                //and definition belongs to one of autoexport modules
-                if (!alreadyRemoved.contains(childDefinition) && isAutoExportModule(toExport.values(),
-                        childDefinition.getSource().getModule())) {
+                if (!alreadyRemoved.contains(childDefinition)
+                        && isAutoExportModule(toExport.values(), childDefinition.getSource().getModule())) {
                     // otherwise, remove it now
                     removeOneDefinitionItem(childDefItem, alreadyRemoved, toExport);
                 }
@@ -710,7 +710,6 @@ public class DefinitionMergeService {
     private boolean isAutoExportModule(final Collection<ModuleImpl> autoExportModules, final ModuleImpl candidate) {
         return autoExportModules.contains(candidate);
     }
-
 
     /**
      * Remove one definition item, either by removing it from its parent or (if root) removing the entire definition.
