@@ -11,7 +11,6 @@
   ],
   "documentationLink": "http://www.onehippo.org/library/concepts/plugins/tagging/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
-  "packageClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingInstructionPackage",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"
   ],
