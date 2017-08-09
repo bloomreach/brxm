@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -47,15 +48,14 @@ public class AutoExportModuleWriter extends ModuleWriter {
 
     private void removeDeletedResources(final ModuleContext moduleContext) throws IOException {
         final ModuleImpl module = moduleContext.getModule();
-        log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
-        log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
-        for (final String removed : module.getRemovedConfigResources()) {
-            final Path removedPath = moduleContext.getConfigOutputProvider().getResourcePath(null, removed);
-            boolean wasDeleted = Files.deleteIfExists(removedPath);
-            log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
-        }
-        for (final String removed : module.getRemovedContentResources()) {
-            final Path removedPath = moduleContext.getContentOutputProvider().getResourcePath(null, removed);
+        removeResources(module.getRemovedConfigResources(), moduleContext.getConfigOutputProvider());
+        removeResources(module.getRemovedContentResources(), moduleContext.getContentOutputProvider());
+    }
+
+    private void removeResources(final Set<String> removedResources, final ResourceOutputProvider resourceOutputProvider)
+            throws IOException {
+        for (final String removed : removedResources) {
+            final Path removedPath = resourceOutputProvider.getResourcePath(null, removed);
             boolean wasDeleted = Files.deleteIfExists(removedPath);
             log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
         }
