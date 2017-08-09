@@ -21,7 +21,7 @@ import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 public class TaggingParameterService implements PluginParameterService {
     @Override
     public boolean hasSetup() {
-        return true;
+        return false;
     }
 
     @Override
