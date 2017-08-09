@@ -76,14 +76,15 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
-        final InputStream moduleDescriptorInputStream = new BufferedInputStream(Files.newInputStream(moduleDescriptorPath.toRealPath()));
+        try (InputStream inputStream = Files.newInputStream(moduleDescriptorPath.toRealPath());
+             final InputStream moduleDescriptorInputStream = new BufferedInputStream(inputStream)) {
 
-        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-        final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
-
-        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
-        readModule(module, moduleContext, verifyOnly);
-        return new ReadResult(moduleContext);
+            final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
+            final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
+            final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
+            readModule(module, moduleContext, verifyOnly);
+            return new ReadResult(moduleContext);
+        }
     }
 
     /**
@@ -108,7 +109,9 @@ public class PathConfigurationReader {
         final Path actionsDescriptorPath = moduleContext.getActionsDescriptorPath();
         if (Files.exists(actionsDescriptorPath)) {
             final ActionListParser parser = new ActionListParser();
-            parser.parse(Files.newInputStream(actionsDescriptorPath), actionsDescriptorPath.toString(), module);
+            try(InputStream inputStream = Files.newInputStream(actionsDescriptorPath)) {
+                parser.parse(inputStream, actionsDescriptorPath.toString(), module);
+            }
         }
     }
 
@@ -132,8 +135,9 @@ public class PathConfigurationReader {
         final List<Pair<Path, String>> contentSourceData = getSourceData(basePath);
         for (Pair<Path, String> pair : contentSourceData) {
             try {
-                sourceParser.parse(new BufferedInputStream(Files.newInputStream(pair.getLeft())),
-                        pair.getRight(), pair.getLeft().toString(), module);
+                try (final InputStream sourceInputStream = Files.newInputStream(pair.getLeft())) {
+                    sourceParser.parse(new BufferedInputStream(sourceInputStream), pair.getRight(), pair.getLeft().toString(), module);
+                }
             } catch (ParserException e) {
                 // add information about the module and source to the parser exception
                 e.setSource("[" + module.getFullName() + ": " + pair.getRight() + "]");

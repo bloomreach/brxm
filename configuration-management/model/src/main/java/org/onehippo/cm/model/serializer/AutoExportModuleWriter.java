@@ -51,11 +51,13 @@ public class AutoExportModuleWriter extends ModuleWriter {
         log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
         for (final String removed : module.getRemovedConfigResources()) {
             final Path removedPath = moduleContext.getConfigOutputProvider().getResourcePath(null, removed);
-            Files.deleteIfExists(removedPath);
+            boolean wasDeleted = Files.deleteIfExists(removedPath);
+            log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
         }
         for (final String removed : module.getRemovedContentResources()) {
             final Path removedPath = moduleContext.getContentOutputProvider().getResourcePath(null, removed);
-            Files.deleteIfExists(removedPath);
+            boolean wasDeleted = Files.deleteIfExists(removedPath);
+            log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
         }
     }
 
