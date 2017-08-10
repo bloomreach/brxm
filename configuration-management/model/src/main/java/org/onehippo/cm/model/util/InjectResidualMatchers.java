@@ -33,32 +33,59 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
  *
  * A pattern should be formatted as "path[primarytype]: category"; the primarytype element is optional. The path
  * pattern supports wildcards: * matches any number of characters except a /, ** matches any number of characters.
- * The overall pattern matches if the node itself is new (does not exist in the configuration model) and if a
- * primarytype element is used it should match exactly with the primarytype of the new node.
  */
-class InjectResidualMatchers {
+public class InjectResidualMatchers {
 
     private final List<Matcher> matchers;
 
-    InjectResidualMatchers(final String... patterns) throws IllegalArgumentException {
+    public InjectResidualMatchers(final String... patterns) throws IllegalArgumentException {
         this.matchers = new ArrayList<>(patterns.length);
         for (String pattern : patterns) {
             matchers.add(new Matcher(pattern));
         }
     }
 
-    void add(final String string) throws IllegalArgumentException {
+    public void add(final String string) throws IllegalArgumentException {
         matchers.add(new Matcher(string));
     }
 
     /**
+     * Determine if there is a matching pattern and return its category. A pattern matches iff:
+     * <ul>
+     *     <li>the given node's path matches the path pattern</li>
+     *     <li>the given node is new, i.e. it does not exist in the given {@link ConfigurationModelImpl}</li>
+     *     <li>the given node's primarytype is exactly the same the pattern's primarytype, if used</li>
+     * </ul>
+     * @param node         the node to check against the patterns
+     * @param currentModel the model to use to check if the node is new
      * @return the category of the first matching pattern, if there is a pattern match on the path of the given node,
      *         or null, if there is no match
+     * @throws RepositoryException
      */
-    ConfigurationItemCategory getMatch(final DefinitionNodeImpl node, final ConfigurationModelImpl currentModel)
+    public ConfigurationItemCategory getMatch(final DefinitionNodeImpl node, final ConfigurationModelImpl currentModel)
             throws RepositoryException {
         for (final Matcher matcher : matchers) {
             if (matcher.matches(node, currentModel)) {
+                return matcher.category;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Determine if there is a matching pattern and return its category. A pattern matches iff:
+     * <ul>
+     *     <li>the given path matches the path pattern</li>
+     *     <li>the given primarytype is exactly the same the pattern's primarytype, if used</li>
+     * </ul>
+     * @param path        the path to check against the patterns
+     * @param primarytype the primarytype of the node at the given path to check against the pattern
+     * @return the category of the first matching pattern, if there is a pattern match on the path of the given path
+     *         and primarytype, or null, if there is no match
+     */
+    public ConfigurationItemCategory getMatch(final String path, final String primarytype) {
+        for (final Matcher matcher : matchers) {
+            if (matcher.matches(path, primarytype)) {
                 return matcher.category;
             }
         }
@@ -135,6 +162,17 @@ class InjectResidualMatchers {
             }
             if (nodeType != null) {
                 return nodeType.equals(getPrimaryType(node));
+            } else {
+                return true;
+            }
+        }
+
+        boolean matches(final String path, final String primarytype) {
+            if (!pattern.matcher(path).matches()) {
+                return false;
+            }
+            if (nodeType != null) {
+                return nodeType.equals(primarytype);
             } else {
                 return true;
             }

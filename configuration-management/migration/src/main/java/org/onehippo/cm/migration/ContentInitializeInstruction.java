@@ -32,22 +32,27 @@ import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
+import org.onehippo.cm.model.util.InjectResidualMatchers;
 
 import static org.onehippo.cm.model.tree.PropertyType.SINGLE;
 
 public class ContentInitializeInstruction extends InitializeInstruction {
 
     protected ContentInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                           final InitializeInstruction combinedWith, final String[] contentRoots,
-                                           final Set<String> newContentRoots)
-            throws EsvParseException
-    {
-        super(instructionNode, type, combinedWith, contentRoots, newContentRoots);
+                                           final InitializeInstruction combinedWith,
+                                           final String[] contentRoots, final Set<String> newContentRoots,
+                                           final InjectResidualMatchers injectResidualCategoryMatchers,
+                                           final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+            throws EsvParseException {
+
+        super(instructionNode, type, combinedWith, contentRoots, newContentRoots, injectResidualCategoryMatchers,
+                injectResidualCategoryRegistry);
     }
 
     private String getNodePath() {
@@ -116,6 +121,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
                             }
                         }
+                        removeInjectResidualCategoryPath(nodePath);
                     }
                 } else {
                     if (isContent(nodePath)) {
