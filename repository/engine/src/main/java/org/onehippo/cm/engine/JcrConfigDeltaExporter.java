@@ -176,7 +176,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
     protected boolean shouldExcludeNode(final String jcrPath) {
         if (configurationModel != null) {
             // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
-            final ConfigurationItemCategory category = exportConfig.getCategoryForItem(jcrPath, true, configurationModel);
+            final ConfigurationItemCategory category = exportConfig.getCategoryForItem(jcrPath, false, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
                 return true;
@@ -358,7 +358,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
             }
             // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
             final ConfigurationItemCategory category =
-                    exportConfig.getCategoryForItem(childNode.getPath(), true, configurationModel);
+                    exportConfig.getCategoryForItem(childNode.getPath(), false, configurationModel);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
                 continue;
