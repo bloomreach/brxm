@@ -15,12 +15,15 @@
  */
 
 class resizeHandleController {
-  constructor($element, $document) {
+  constructor($element, $document, $scope) {
     'ngInject';
 
     this.$document = $document;
+    this.$scope = $scope;
     this.handle = $element;
     this.maxWidth = $('body').width() / 2;
+    this.hippoOverlay = {};
+    this.hippoOverlayTransitionTime = this.hippoOverlayTransitionTime;
   }
 
   $onInit() {
@@ -30,11 +33,14 @@ class resizeHandleController {
   _registerEvents(manipulatedElement) {
     this.handle.mousedown((mouseDownEvent) => {
       let newWidth;
-      const hippoIframe = $('hippo-iframe').find('iframe');
-      hippoIframe.css('pointer-events', 'none');
       const initialWidth = manipulatedElement.width();
       const initialX = mouseDownEvent.pageX;
+      const hippoIframe = $('hippo-iframe').find('iframe');
+      hippoIframe.css('pointer-events', 'none');
       manipulatedElement.addClass('in-resize');
+
+      this.hippoOverlay = hippoIframe.contents().find('.hippo-overlay');
+      this._hideHippoOverlay();
 
       this.$document.mousemove((moveEvent) => {
         const diff = initialX - moveEvent.pageX;
@@ -45,17 +51,33 @@ class resizeHandleController {
 
         if (manipulatedElement.width() >= 440 && manipulatedElement.width() <= this.maxWidth) {
           manipulatedElement.css('width', newWidth);
-          manipulatedElement.css('max-width', newWidth);
-          this.onResize({ newWidth });
+          // manipulatedElement.css('max-width', newWidth);
+          // this.onResize({ newWidth });
         }
       });
 
       this.$document.mouseup(() => {
-        this.$document.unbind('mousemove');
-        hippoIframe.css('pointer-events', 'auto');
+        hippoIframe.css('pointer-events', '');
+        this._showHippoOverlay();
         manipulatedElement.removeClass('in-resize');
+        this.$document.unbind('mousemove');
+        this.$document.unbind('mouseup');
       });
     });
+  }
+
+  _hideHippoOverlay() {
+    this.hippoOverlay.animate({
+      opacity: '0',
+    }, this.hippoOverlayTransitionTime);
+    setTimeout(() => this.hippoOverlay.css('display', ''), this.hippoOverlayTransitionTime);
+  }
+
+  _showHippoOverlay() {
+    this.hippoOverlay.css('display', '');
+    this.hippoOverlay.animate({
+      opacity: '1',
+    }, this.hippoOverlayTransitionTime);
   }
 }
 
