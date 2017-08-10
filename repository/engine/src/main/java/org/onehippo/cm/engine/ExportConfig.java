@@ -63,7 +63,7 @@ public class ExportConfig {
     /**
      * Determine the category of a node or property at the specified absolute path. This method simply delegates to
      * {@link ConfigurationModelUtils#getCategoryForItem(String, boolean, ConfigurationModel)}, but custom ExporterConfig
-     * implementations like {@link org.onehippo.cm.engine.autoexport.ExporterConfig} can override this to
+     * implementations like {@link org.onehippo.cm.engine.autoexport.AutoExportConfig} can override this to
      * provide custom handling.
      *
      * @param absoluteNodePath absolute path to a node
