@@ -70,7 +70,7 @@ class resizeHandleController {
     this.hippoOverlay.animate({
       opacity: '0',
     }, this.hippoOverlayTransitionTime);
-    setTimeout(() => this.hippoOverlay.css('display', ''), this.hippoOverlayTransitionTime);
+    setTimeout(() => this.hippoOverlay.css('display', 'none'), this.hippoOverlayTransitionTime);
   }
 
   _showHippoOverlay() {
