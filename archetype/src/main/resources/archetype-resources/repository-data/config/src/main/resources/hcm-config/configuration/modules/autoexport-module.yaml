@@ -18,15 +18,4 @@ definitions:
         autoexport:overrideresidualchildnodecategory: [
             '/hst:hst/hst:configurations: config',
             '/hst:hst/hst:hosts: config',
-            '/hst:hst/hst:hosts/*: config',
-            '/hst:hst/hst:hosts/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*/*: config',
-            '/hst:hst/hst:hosts/*/*/*/*/*/*/*/*/*/*/*/*: config']
+            '/hst:hst/hst:hosts/**: config']
