@@ -16,10 +16,10 @@
 package org.onehippo.cm.engine;
 
 import org.onehippo.cm.engine.autoexport.PathsMap;
-import org.onehippo.cm.engine.autoexport.PatternSet;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
+import org.onehippo.cm.model.util.PatternSet;
 
 public class ExportConfig {
 
