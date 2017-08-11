@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Session;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +43,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
@@ -202,7 +202,7 @@ public class ContentResourceTest extends CXFTest {
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
         .then()
-                .statusCode(200);
+                .statusCode(204);
     }
 
     @Test
