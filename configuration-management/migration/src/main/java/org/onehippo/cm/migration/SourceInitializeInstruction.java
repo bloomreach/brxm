@@ -29,6 +29,7 @@ import javax.jcr.PropertyType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
@@ -36,6 +37,7 @@ import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.mapper.AbstractFileMapper;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -356,7 +358,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 log.info("Exporting path '{}' as content", path);
 
                 final Set<String> moduleContentSources = source.getModule().getContentSources().stream().map(SourceImpl::getPath).collect(toSet());
-                String contentSource = getSourcePath();
+                String contentSource = AbstractFileMapper.constructFilePathFromJcrPath(childPath) + Constants.YAML_EXT;
                 if (moduleContentSources.contains(contentSource)) {
                     contentSource = generateSourceFilename(contentSource, moduleContentSources);
                 }
