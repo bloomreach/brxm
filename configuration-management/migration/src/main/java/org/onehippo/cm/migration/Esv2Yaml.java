@@ -83,6 +83,7 @@ public class Esv2Yaml {
     private static final String MODE = "m";
     private static final String ECM_LOCATION = "i";
     private static final String CONTENT_ROOTS = "content";
+    private static final String CUSTOM_INJECT_RESIDUAL_NODES_SHORT = "ir";
     private static final String CUSTOM_INJECT_RESIDUAL_NODES = "custominjectresidualcategory";
     private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
@@ -154,7 +155,8 @@ public class Esv2Yaml {
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
         options.addOption(MODE, "mode", true, "(optional) File system mode. git/move/copy. Default is copy");
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
-        options.addOption(CUSTOM_INJECT_RESIDUAL_NODES, true, "Custom paths to inject .meta:residual-child-node-category. Comma separated.");
+        options.addOption(CUSTOM_INJECT_RESIDUAL_NODES_SHORT, CUSTOM_INJECT_RESIDUAL_NODES, true,
+                "Custom paths to inject .meta:residual-child-node-category. Comma separated.");
         return options;
     }
 
