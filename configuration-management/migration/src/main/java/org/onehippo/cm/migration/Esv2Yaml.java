@@ -31,7 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.jcr.PropertyType;
 
@@ -53,7 +55,9 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
@@ -67,6 +71,8 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -486,7 +492,7 @@ public class Esv2Yaml {
 
         Set<String> resourceBundles = new HashSet<>();
         Set<DefinitionNode> deltaNodes = new HashSet<>();
-        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
+        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new LinkedHashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
         final ConfigDefinitionImpl resourceBundleParents = mainSource.addConfigDefinition();
@@ -523,6 +529,24 @@ public class Esv2Yaml {
                     break;
             }
         }
+
+        final List<DefinitionNodeImpl> objects = new ArrayList<>(nodeDefinitions.values());
+
+        for (int i = 0; i < objects.size(); i++) {
+            final DefinitionNodeImpl definition = objects.get(i);
+            if (definition.getDefinition().getSource() instanceof ContentSourceImpl) {
+                final JcrPath currentParentPath = JcrPath.get(definition.getPath()).getParent();
+                if (i != instructions.size() - 1 && definition.isRoot()) {
+                    final Optional<DefinitionNodeImpl> nextSibling = IntStream.range(i + 1, objects.size())
+                            .mapToObj(objects::get)
+                            .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
+                            .findFirst();
+
+                    nextSibling.ifPresent(x -> definition.setOrderBefore(x.getName()));
+                }
+            }
+        }
+
         if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
             // remove empty resourcebundles translations root definition parents
             for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
