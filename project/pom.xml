@@ -1013,7 +1013,9 @@
                 <phase>initialize</phase>
                 <goals><goal>run</goal></goals>
                 <configuration>
-                  <target><echo>${cargo.started.message}</echo><sleep hours="2147483647" /></target>
+                  <target unless="cargo.run.nowait">
+                    <echo>${cargo.started.message}</echo><sleep hours="2147483647" />
+                  </target>
                 </configuration>
               </execution>
             </executions>
