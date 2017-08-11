@@ -19,11 +19,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,6 +165,9 @@ public class InitializeInstruction {
     private final String[] contentRoots;
     private final Set<String> newContentRoots;
 
+    private final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry;
+    private final InjectResidualMatchers injectResidualCategoryMatchers;
+
     protected boolean isDownStream(final InitializeInstruction other) {
         if (other.getType() != Type.CONTENTRESOURCE) {
             // only contentresource upstream can have downstream instructions
@@ -236,11 +242,42 @@ public class InitializeInstruction {
                 return true;
             }
         }
+
+        // check the node is a sibling of a node for which .meta:residual-child-node-category was injected before
+        if (getInjectedResidualCategory(path) == ConfigurationItemCategory.CONTENT) {
+            return true;
+        }
+
         return false;
     }
 
+    protected void registerInjectResidualCategoryPath(final String path, final ConfigurationItemCategory category) {
+        injectResidualCategoryRegistry.put(path, category);
+    }
+
+    protected ConfigurationItemCategory removeInjectResidualCategoryPath(final String path) {
+        return injectResidualCategoryRegistry.remove(path);
+    }
+
+    protected ConfigurationItemCategory getInjectedResidualCategory(final String path) {
+        for (final Map.Entry<String, ConfigurationItemCategory> entry : injectResidualCategoryRegistry.entrySet()) {
+            if (path.startsWith(StringUtils.appendIfMissing(entry.getKey(), "/"))) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    protected InjectResidualMatchers getInjectResidualCategoryMatchers() {
+        return injectResidualCategoryMatchers;
+    }
+
     public static void parse(final EsvNode node, final List<InitializeInstruction> instructions,
-                             final String[] contentRoots, final Set<String> newContentRoots) throws EsvParseException {
+                             final String[] contentRoots, final Set<String> newContentRoots,
+                             final InjectResidualMatchers injectResidualCategoryMatchers,
+                             final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+            throws EsvParseException {
+
         // cater for initializeitems having 2 instructions (namespace+cnd, contentdelete+contentresource)
         InitializeInstruction first = null;
         InitializeInstruction second = null;
@@ -255,7 +292,8 @@ public class InitializeInstruction {
                 InitializeInstruction instruction;
                 switch (type) {
                     case CONTENTRESOURCE:
-                        instruction = new SourceInitializeInstruction(node, type, first, contentRoots, newContentRoots);
+                        instruction = new SourceInitializeInstruction(node, type, first, contentRoots,
+                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry);
                         break;
                     case RESOURCEBUNDLES:
                         instruction = new ResourceBundlesInitializeInstruction(node, type, first);
@@ -264,13 +302,14 @@ public class InitializeInstruction {
                     case CONTENTPROPDELETE:
                     case CONTENTPROPSET:
                     case CONTENTPROPADD:
-                        instruction = new ContentInitializeInstruction(node, type, first, contentRoots, newContentRoots);
+                        instruction = new ContentInitializeInstruction(node, type, first, contentRoots,
+                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry);
                         break;
                     case WEBFILEBUNDLE:
                         instruction = new WebFileBundleInstruction(node, type, first);
                         break;
                     default:
-                        instruction = new InitializeInstruction(node, type, first, null, null);
+                        instruction = new InitializeInstruction(node, type, first, null, null, null, null);
                 }
                 if (first != null) {
                     second = instruction;
@@ -292,10 +331,12 @@ public class InitializeInstruction {
     }
 
     protected InitializeInstruction(final EsvNode instructionNode, final Type type,
-                                    final InitializeInstruction combinedWith, final String[] contentRoots,
-                                    final Set<String> newContentRoots)
-            throws EsvParseException
-    {
+                                    final InitializeInstruction combinedWith,
+                                    final String[] contentRoots, final Set<String> newContentRoots,
+                                    final InjectResidualMatchers injectResidualCategoryMatchers,
+                                    final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+            throws EsvParseException {
+
         this.instructionNode = instructionNode;
         this.name = instructionNode.getName();
         this.type = type;
@@ -304,6 +345,8 @@ public class InitializeInstruction {
         this.sequence = value != null ? Double.valueOf(value) : -1.0;
         this.contentRoots = contentRoots;
         this.newContentRoots = newContentRoots;
+        this.injectResidualCategoryRegistry = injectResidualCategoryRegistry;
+        this.injectResidualCategoryMatchers = injectResidualCategoryMatchers;
     }
 
     public void setCombinedWith(final InitializeInstruction combinedWith) {

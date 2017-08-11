@@ -29,9 +29,9 @@ public class WebFileBundleInstruction extends InitializeInstruction {
 
     public WebFileBundleInstruction(final EsvNode instructionNode, final Type type,
                                     final InitializeInstruction combinedWith)
-            throws EsvParseException
-    {
-        super(instructionNode, type, combinedWith, null, null);
+            throws EsvParseException {
+
+        super(instructionNode, type, combinedWith, null, null, null, null);
     }
 
     public void processWebFileBundle(final ConfigSourceImpl source, final File moduleRoot) throws IOException {
