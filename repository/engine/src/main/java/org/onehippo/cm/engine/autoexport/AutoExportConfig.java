@@ -32,6 +32,8 @@ import org.onehippo.cm.engine.ExportConfig;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
+import org.onehippo.cm.model.util.InjectResidualMatchers;
+import org.onehippo.cm.model.util.PatternSet;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_EXCLUDED_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
