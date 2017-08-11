@@ -51,8 +51,7 @@ class resizeHandleController {
 
         if (manipulatedElement.width() >= 440 && manipulatedElement.width() <= this.maxWidth) {
           manipulatedElement.css('width', newWidth);
-          // manipulatedElement.css('max-width', newWidth);
-          // this.onResize({ newWidth });
+          this.onResize({ newWidth });
         }
       });
 
