@@ -58,7 +58,7 @@ public class SourceResourceCrawler {
         return resources;
     }
 
-    private void collectResourcesForNode(final DefinitionNodeImpl node, final List<Pair<ValueImpl, String>> resources) {
+    protected void collectResourcesForNode(final DefinitionNodeImpl node, final List<Pair<ValueImpl, String>> resources) {
         for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
             collectResourcesForProperty(childProperty, resources);
         }
@@ -68,7 +68,7 @@ public class SourceResourceCrawler {
         }
     }
 
-    private void collectResourcesForProperty(final DefinitionPropertyImpl property, final List<Pair<ValueImpl, String>> resources) {
+    protected void collectResourcesForProperty(final DefinitionPropertyImpl property, final List<Pair<ValueImpl, String>> resources) {
         if (property.getType() == PropertyType.SINGLE) {
             final ValueImpl value = property.getValue();
             if (value.isResource()) {
@@ -83,7 +83,7 @@ public class SourceResourceCrawler {
         }
     }
 
-    private void collectResourcesForNamespace(final NamespaceDefinitionImpl definition, List<Pair<ValueImpl, String>> resources) {
+    protected void collectResourcesForNamespace(final NamespaceDefinitionImpl definition, List<Pair<ValueImpl, String>> resources) {
         if (definition.getCndPath() != null) {
             resources.add(new MutablePair<>(definition.getCndPath(), definition.getCndPath().getString()));
         }

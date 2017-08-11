@@ -141,7 +141,7 @@ public abstract class AbstractBaseParser {
         return result;
     }
 
-    private boolean find(final String string, final String[] array1, final String[] array2) {
+    protected boolean find(final String string, final String[] array1, final String[] array2) {
         return ArrayUtils.contains(array1, string) || ArrayUtils.contains(array2, string);
     }
 
@@ -197,11 +197,11 @@ public abstract class AbstractBaseParser {
         return path;
     }
 
-    private boolean isRootNodePath(final String nodePath) {
+    protected boolean isRootNodePath(final String nodePath) {
         return "/".equals(nodePath);
     }
 
-    String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
+    protected String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
         final String resourcePath = asStringScalar(node);
 
         if (containsParentSegment(resourcePath)) {
@@ -216,7 +216,7 @@ public abstract class AbstractBaseParser {
         return resourcePath;
     }
 
-    private boolean containsParentSegment(final String resourceString) {
+    protected boolean containsParentSegment(final String resourceString) {
         for (final String pathElement : resourceString.split("/")) {
             if (pathElement.toString().equals("..")) {
                 return true;

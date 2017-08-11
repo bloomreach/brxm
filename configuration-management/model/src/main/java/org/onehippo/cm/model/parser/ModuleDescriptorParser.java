@@ -50,7 +50,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         return constructModule(moduleNode, project);
     }
 
-    private GroupImpl constructGroup(final Node src) throws ParserException {
+    protected GroupImpl constructGroup(final Node src) throws ParserException {
 
         if (src instanceof ScalarNode) {
             return new GroupImpl(asStringScalar(src));
@@ -63,7 +63,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    private ProjectImpl constructProject(final Node src, final GroupImpl parent) throws ParserException {
+    protected ProjectImpl constructProject(final Node src, final GroupImpl parent) throws ParserException {
         if (src instanceof ScalarNode) {
             return parent.addProject(asStringScalar(src));
         } else {
@@ -75,7 +75,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    private ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
+    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
         if (src instanceof ScalarNode) {
             return parent.addModule(asStringScalar(src));
         } else {

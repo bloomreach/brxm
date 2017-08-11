@@ -45,7 +45,7 @@ public class ModuleWriter {
 
     public ModuleWriter() {}
 
-    void write(final Path destination,
+    protected void write(final Path destination,
                final ModuleContext moduleContext,
                final boolean explicitSequencing) throws IOException {
         final Path moduleDescriptorPath = destination.resolve(Constants.HCM_MODULE_YAML);
@@ -76,9 +76,9 @@ public class ModuleWriter {
             final SourceSerializer sourceSerializer;
 
             if (SourceType.CONFIG == source.getType()) {
-                sourceSerializer = new SourceSerializer(moduleContext, source, explicitSequencing);
+                sourceSerializer = createSourceSerializer(moduleContext, source, explicitSequencing);
             } else /* SourceType.CONTENT */ {
-                sourceSerializer = new ContentSourceSerializer(moduleContext, source, explicitSequencing);
+                sourceSerializer = createContentSourceSerializer(moduleContext, source, explicitSequencing);
             }
 
             final List<PostProcessItem> resources = new ArrayList<>();
@@ -99,11 +99,21 @@ public class ModuleWriter {
         }
     }
 
-    boolean sourceShouldBeSkipped(final Source source) {
+    protected SourceSerializer createSourceSerializer(final ModuleContext moduleContext, final Source source,
+                                                      final boolean explicitSequencing) {
+        return new SourceSerializer(moduleContext, source, explicitSequencing);
+    }
+
+    protected ContentSourceSerializer createContentSourceSerializer(final ModuleContext moduleContext,
+                                                                    final Source source, final boolean explicitSequencing) {
+        return new ContentSourceSerializer(moduleContext, source, explicitSequencing);
+    }
+
+    protected boolean sourceShouldBeSkipped(final Source source) {
         return false;
     }
 
-    private void processBinaryItem(Source source, BinaryItem binaryItem, ModuleContext moduleContext) throws IOException {
+    protected void processBinaryItem(Source source, BinaryItem binaryItem, ModuleContext moduleContext) throws IOException {
 
         final String finalName = binaryItem.getNode().getValue();
         final InputStream inputStream;
@@ -122,7 +132,7 @@ public class ModuleWriter {
         IOUtils.closeQuietly(inputStream);
     }
 
-    void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
+    protected void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
         final ResourceInputProvider rip =  copyItem.getValue().getResourceInputProvider();
         final ResourceOutputProvider outputProvider = moduleContext.getOutputProvider(source);
 
@@ -149,7 +159,7 @@ public class ModuleWriter {
     }
 
     // TODO: move this processing somewhere else
-    InputStream getValueInputProvider(final ValueImpl value) throws IOException {
+    protected InputStream getValueInputProvider(final ValueImpl value) throws IOException {
         return value.getResourceInputStream();
     }
 }

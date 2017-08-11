@@ -86,20 +86,20 @@ public class ConfigSourceParser extends SourceParser {
         source.markUnchanged();
     }
 
-    private void constructNamespaceDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
+    protected void constructNamespaceDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final String prefix = asStringScalar(nodeTuple.getKeyNode());
             final Map<String, Node> map = asMapping(nodeTuple.getValueNode(), new String[]{URI_KEY}, new String[]{CND_KEY});
             final URI uri = asURIScalar(map.get(URI_KEY));
             final ValueImpl cndPath = map.containsKey(CND_KEY)
-                    ? new ValueImpl(asResourcePathScalar(map.get(CND_KEY), parent, resourceInputProvider),
+                    ? new ValueImpl(asResourcePathScalar(map.get(CND_KEY), parent, getResourceInputProvider()),
                                     ValueType.STRING, true, false)
                     : null;
             parent.addNamespaceDefinition(prefix, uri, cndPath);
         }
     }
 
-    private void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
+    protected void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
             final String key = asPathScalar(nodeTuple.getKeyNode(), true, true);
@@ -114,7 +114,7 @@ public class ConfigSourceParser extends SourceParser {
             final String key = asStringScalar(tuple.getKeyNode());
             final Node tupleValue = tuple.getValueNode();
             if (key.equals(META_DELETE_KEY)) {
-                if (!verifyOnly) {
+                if (!isVerifyOnly()) {
                     if (tuples.size() > 1) {
                         throw new ParserException("Node cannot contain '" + META_DELETE_KEY + "' and other keys", node);
                     }
@@ -162,7 +162,7 @@ public class ConfigSourceParser extends SourceParser {
         }
     }
 
-    private boolean asNodeDeleteValue(final Node node) throws ParserException {
+    protected boolean asNodeDeleteValue(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
         if (!object.equals(true)) {
@@ -171,7 +171,7 @@ public class ConfigSourceParser extends SourceParser {
         return true;
     }
 
-    private void constructWebFileBundleDefinition(final Node definitionNode, final ConfigSourceImpl source) throws ParserException {
+    protected void constructWebFileBundleDefinition(final Node definitionNode, final ConfigSourceImpl source) throws ParserException {
         List<Node> nodes;
         if (definitionNode.getNodeId() == scalar) {
             nodes = new ArrayList<>();

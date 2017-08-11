@@ -79,7 +79,7 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
      * @param source a Source with a reasonable getPath()
      * @return a relative path to the folder containing the given source, using UNIX style forward-slash separators
      */
-    private String getSourceFolder(final Source source) {
+    protected String getSourceFolder(final Source source) {
         return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }
 }

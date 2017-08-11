@@ -66,7 +66,7 @@ public class ActionListParser extends AbstractBaseParser {
         }
     }
 
-    private Set<ActionItem> collectActionItems(final Node node) throws ParserException {
+    protected Set<ActionItem> collectActionItems(final Node node) throws ParserException {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
         for (NodeTuple tuple : asTuples(node)) {
             final String path = asPathScalar(tuple.getKeyNode(), true, false);
@@ -78,7 +78,7 @@ public class ActionListParser extends AbstractBaseParser {
         return actionItems;
     }
 
-    private ActionItem asActionItem(final Node node, final String path) throws ParserException {
+    protected ActionItem asActionItem(final Node node, final String path) throws ParserException {
         String action = asStringScalar(node);
         ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
         if (type == ActionType.APPEND) {

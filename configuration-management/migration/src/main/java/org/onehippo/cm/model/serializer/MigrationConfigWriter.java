@@ -48,7 +48,7 @@ public class MigrationConfigWriter extends ModuleWriter {
      * <pre/>
      * COPY: Does nothing
      */
-    void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
+    protected void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
 
         final String hcmFolder = source.getType() == SourceType.CONFIG ? HCM_CONFIG_FOLDER : HCM_CONTENT_FOLDER;
         final Path sourceBasePath = ((FileResourceInputProvider)moduleContext.getInputProvider(source)).getBasePath();

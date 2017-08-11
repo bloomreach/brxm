@@ -105,7 +105,7 @@ public class PathConfigurationReader {
         processActionsList(module, moduleContext);
     }
 
-    private void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {
+    protected void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {
         final Path actionsDescriptorPath = moduleContext.getActionsDescriptorPath();
         if (Files.exists(actionsDescriptorPath)) {
             final ActionListParser parser = new ActionListParser();
@@ -115,7 +115,7 @@ public class PathConfigurationReader {
         }
     }
 
-    private void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
+    protected void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
         final Path contentBasePath = moduleContext.getContentRoot();
         if (Files.exists(contentBasePath)) {
             final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
@@ -123,7 +123,7 @@ public class PathConfigurationReader {
         }
     }
 
-    private void processConfigSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
+    protected void processConfigSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
         final Path configBasePath = moduleContext.getConfigRoot();
         if (Files.exists(configBasePath)) {
             final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
@@ -131,7 +131,7 @@ public class PathConfigurationReader {
         }
     }
 
-    private void parseSources(ModuleImpl module, Path basePath, SourceParser sourceParser) throws IOException, ParserException {
+    protected void parseSources(ModuleImpl module, Path basePath, SourceParser sourceParser) throws IOException, ParserException {
         final List<Pair<Path, String>> contentSourceData = getSourceData(basePath);
         for (Pair<Path, String> pair : contentSourceData) {
             try {
@@ -147,7 +147,7 @@ public class PathConfigurationReader {
     }
 
     // used to collect all sources and then sort them in processing order appropriately.
-    private List<Pair<Path, String>> getSourceData(final Path basePath) throws IOException {
+    protected List<Pair<Path, String>> getSourceData(final Path basePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
                 (filePath, fileAttr) -> fileAttr.isRegularFile() && filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT);
