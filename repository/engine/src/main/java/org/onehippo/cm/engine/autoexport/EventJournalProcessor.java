@@ -49,7 +49,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
-import org.onehippo.cm.engine.JcrConfigDeltaExporter;
+import org.onehippo.cm.engine.AutoExportConfigExporter;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -64,7 +64,6 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.PathConfigurationReader;
-import org.onehippo.cm.model.serializer.AutoExportModuleWriter;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -584,10 +583,10 @@ public class EventJournalProcessor {
             }
         }
 
-        final JcrConfigDeltaExporter jcrConfigDeltaExporter = new JcrConfigDeltaExporter(currentModel, autoExportConfig);
+        final AutoExportConfigExporter autoExportConfigExporter = new AutoExportConfigExporter(currentModel, autoExportConfig);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
-            jcrConfigDeltaExporter.exportConfigNode(eventProcessorSession, path, configSource);
+            autoExportConfigExporter.exportConfigNode(eventProcessorSession, path, configSource);
         }
 
         injectResidualCategoryOverrides(configSource);

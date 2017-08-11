@@ -58,9 +58,9 @@ import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 /**
  * Node auto export
  */
-public class JcrConfigDeltaExporter extends JcrContentExporter {
+public class AutoExportConfigExporter extends JcrContentExporter {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrConfigDeltaExporter.class);
+    private static final Logger log = LoggerFactory.getLogger(AutoExportConfigExporter.class);
 
     private ConfigurationModelImpl configurationModel;
     private ExportConfig exportConfig;
@@ -70,7 +70,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
             "hippo:count"
     );
 
-    public JcrConfigDeltaExporter(final ConfigurationModelImpl configurationModel, final ExportConfig exportConfig) {
+    public AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final ExportConfig exportConfig) {
         this.configurationModel = configurationModel;
         this.exportConfig = exportConfig;
     }
@@ -189,7 +189,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         return false;
     }
 
-    private DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
+    protected DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
                                                      final ConfigurationNodeImpl configNode,
                                                      final ConfigSourceImpl configSource,
                                                      final ConfigurationModelImpl model)
@@ -250,7 +250,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         return defNode;
     }
 
-    private DefinitionNodeImpl exportPrimaryTypeDelta(final Node jcrNode,
+    protected DefinitionNodeImpl exportPrimaryTypeDelta(final Node jcrNode,
                                                       final ConfigurationNodeImpl configNode,
                                                       final ConfigSourceImpl configSource) throws RepositoryException {
         final String configPrimaryType = configNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
@@ -266,7 +266,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         }
     }
 
-    private DefinitionNodeImpl exportMixinsDelta(final Node jcrNode, DefinitionNodeImpl definitionNode,
+    protected DefinitionNodeImpl exportMixinsDelta(final Node jcrNode, DefinitionNodeImpl definitionNode,
                                                  final ConfigurationNodeImpl configNode, final ConfigSourceImpl configSource) throws RepositoryException {
         final ConfigurationPropertyImpl mixinsProperty = configNode.getProperty(JCR_MIXINTYPES);
         final NodeType[] mixinNodeTypes = jcrNode.getMixinNodeTypes();
@@ -302,7 +302,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         return definitionNode;
     }
 
-    private DefinitionNodeImpl createDefNodeIfNecessary(final DefinitionNodeImpl definitionNode,
+    protected DefinitionNodeImpl createDefNodeIfNecessary(final DefinitionNodeImpl definitionNode,
                                                         final Node jcrNode,
                                                         final ConfigSourceImpl configSource) throws RepositoryException {
         if (definitionNode == null) {
@@ -313,7 +313,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         }
     }
 
-    private DefinitionNodeImpl exportPropertyDelta(final Property property, final ConfigurationPropertyImpl configProperty,
+    protected DefinitionNodeImpl exportPropertyDelta(final Property property, final ConfigurationPropertyImpl configProperty,
                                                    DefinitionNodeImpl definitionNode, final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
         // export property delta
@@ -335,7 +335,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         return definitionNode;
     }
 
-    private void exportConfigNodeDelta(final Node jcrNode, final ConfigurationNodeImpl configNode,
+    protected void exportConfigNodeDelta(final Node jcrNode, final ConfigurationNodeImpl configNode,
                                        final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
 
@@ -426,7 +426,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
      *
      * When merging these definitions, this should be sufficient information to put the nodes into the correct order.
      */
-    private void updateOrdering(final List<String> indexedJcrChildNodeNames, final ConfigurationNodeImpl configNode,
+    protected void updateOrdering(final List<String> indexedJcrChildNodeNames, final ConfigurationNodeImpl configNode,
                                 final ConfigSourceImpl configSource) throws RepositoryException {
         final List<String> indexedConfigNodeNames = new ArrayList<>();
         for (String indexedConfigChildNodeName : configNode.getNodes().keySet()) {
@@ -462,7 +462,7 @@ public class JcrConfigDeltaExporter extends JcrContentExporter {
         }
     }
 
-    private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
+    protected void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
                                 final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
                 .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childName));

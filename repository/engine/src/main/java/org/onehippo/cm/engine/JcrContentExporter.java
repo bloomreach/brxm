@@ -104,7 +104,7 @@ public class JcrContentExporter {
         return definitionNode;
     }
 
-    DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode, final Set<String> excludedPaths) throws RepositoryException {
+    protected DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode, final Set<String> excludedPaths) throws RepositoryException {
 
         if (!isVirtual(sourceNode) && !shouldExcludeNode(sourceNode.getPath())) {
             final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
@@ -129,7 +129,7 @@ public class JcrContentExporter {
         return ((HippoNode) node).isVirtual();
     }
 
-    private String createNodeName(final Node sourceNode) throws RepositoryException {
+    protected String createNodeName(final Node sourceNode) throws RepositoryException {
         final String name = sourceNode.getName();
         if (sourceNode.getIndex() > 1) {
             return name + "[" + sourceNode.getIndex() + "]";
@@ -165,7 +165,7 @@ public class JcrContentExporter {
         return !propName.equals(JCR_UUID) && property.getDefinition().isProtected();
     }
 
-    DefinitionPropertyImpl exportProperty(final Property property, DefinitionNodeImpl definitionNode) throws RepositoryException {
+    protected DefinitionPropertyImpl exportProperty(final Property property, DefinitionNodeImpl definitionNode) throws RepositoryException {
         if (property.isMultiple()) {
             return definitionNode.addProperty(property.getName(), ValueType.fromJcrType(property.getType()),
                     valuesFrom(property, definitionNode));
@@ -177,7 +177,7 @@ public class JcrContentExporter {
         }
     }
 
-    void exportPrimaryTypeAndMixins(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+    protected void exportPrimaryTypeAndMixins(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
 
         final Property primaryTypeProperty = sourceNode.getProperty(JCR_PRIMARYTYPE);
         final ValueImpl value = valueFrom(primaryTypeProperty, definitionNode);
@@ -193,5 +193,4 @@ public class JcrContentExporter {
             definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
         }
     }
-
 }
