@@ -39,6 +39,10 @@
     <Logger name="org.hippoecm.repository.impl.LockManagerDecorator" level="debug"/>
     <Logger name="org.hippoecm.repository.HippoNodeTypeSanityTest" level="error"/>
     <Logger name="org.hippoecm.repository.quartz.JCRJobStore" level="error"/>
+    <!-- Suppress javax.management.InstanceAlreadyExistsException from:
+           org.hippoecm.repository.jackrabbit.RepositoryImpl.registerJmxRepositoryStatistics()
+    -->
+    <logger name="org.hippoecm.repository.jackrabbit.RepositoryImpl" level="error"/>
 
     <Root level="warn">
       <AppenderRef ref="console"/>
