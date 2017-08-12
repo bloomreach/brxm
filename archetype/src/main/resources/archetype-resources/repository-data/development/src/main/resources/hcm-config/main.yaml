@@ -4,4 +4,4 @@ definitions:
       autoexport:modules:
         operation: add
         type: string
-        value: ['repository-data/content:/content']
+        value: [] # add module mappings to export development data into this module

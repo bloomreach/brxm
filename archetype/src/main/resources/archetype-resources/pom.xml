@@ -71,7 +71,7 @@
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
 
-    <content-module-deploy-dir>shared/lib</content-module-deploy-dir>
+    <development-module-deploy-dir>shared/lib</development-module-deploy-dir>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
     <buildNumber>${maven.build.timestamp}</buildNumber>
@@ -249,7 +249,7 @@
                 <files>
                   <file>
                     <file>${project.basedir}/repository-data/development/target/${rootArtifactId}-repository-data-development-${dollar}{project.version}.jar</file>
-                    <todir>${content-module-deploy-dir}</todir>
+                    <todir>${development-module-deploy-dir}</todir>
                   </file>
                 </files>
               </configuration>
@@ -291,11 +291,11 @@
     </profile>
 
     <profile>
-      <!-- additional profile to combine with cargo:run to *not* bootstrap the local content module:
-           $ mvn -P cargo.run,without-content -->
-      <id>without-content</id>
+      <!-- additional profile to combine with cargo:run to *not* bootstrap the development module:
+           $ mvn -P cargo.run,without-development -->
+      <id>without-development</id>
       <properties>
-        <content-module-deploy-dir>temp</content-module-deploy-dir>
+        <development-module-deploy-dir>temp</development-module-deploy-dir>
       </properties>
     </profile>
 

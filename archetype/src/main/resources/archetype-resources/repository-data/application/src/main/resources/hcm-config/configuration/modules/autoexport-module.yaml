@@ -2,7 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/autoexport:
       /hippo:moduleconfig:
-        autoexport:modules: ['repository-data/config:/']
+        autoexport:modules: ['repository-data/application:/']
         autoexport:injectresidualchildnodecategory: [
             '**/hst:workspace/**[hst:containercomponent]: content',
             '**/hst:workspace/**[hst:sitemenu]: content',
