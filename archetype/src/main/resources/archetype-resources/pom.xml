@@ -248,7 +248,7 @@
                 </configfiles>
                 <files>
                   <file>
-                    <file>${project.basedir}/repository-data/content/target/${rootArtifactId}-repository-data-content-${dollar}{project.version}.jar</file>
+                    <file>${project.basedir}/repository-data/development/target/${rootArtifactId}-repository-data-development-${dollar}{project.version}.jar</file>
                     <todir>${content-module-deploy-dir}</todir>
                   </file>
                 </files>

@@ -8,9 +8,9 @@
     <version>${version}</version>
   </parent>
 
-  <name>${projectName} Repository Data Configuration</name>
-  <description>${projectName} Repository Data Configuration</description>
-  <artifactId>${artifactId}-repository-data-config</artifactId>
+  <name>${projectName} Repository Data Fopr Application</name>
+  <description>${projectName} Repository Data For Application</description>
+  <artifactId>${artifactId}-repository-data-application</artifactId>
 
   <build>
     <defaultGoal>install</defaultGoal>

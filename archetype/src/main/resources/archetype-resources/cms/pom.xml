@@ -38,7 +38,7 @@
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-repository-data-config</artifactId>
+      <artifactId>${rootArtifactId}-repository-data-application</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
     <dependency>
