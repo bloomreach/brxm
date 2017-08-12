@@ -44,13 +44,13 @@ public interface ProjectSettings extends Document {
 
     void setRepositoryDataModule(String repositoryDataFolder);
 
-    String getConfigSubModule();
+    String getApplicationSubModule();
 
-    void setConfigSubModule(String configSubModule);
+    void setApplicationSubModule(String applicationSubModule);
 
-    String getContentSubModule();
+    String getDevelopmentSubModule();
 
-    void setContentSubModule(String contentSubModule);
+    void setDevelopmentSubModule(String developmentSubModule);
 
     String getWebfilesSubModule();
 

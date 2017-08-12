@@ -22,24 +22,14 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
 import com.google.common.base.Strings;
-
-/**
- * @version "$Id$"
- */
 
 @XmlRootElement(name = "project")
 public class ProjectSettingsBean extends BaseDocument implements ProjectSettings {
 
     public static final String DEFAULT_NAME = "project-settings";
-
-    public static final String MODULE_SITE = "site";
-    public static final String MODULE_CMS = "cms";
-    public static final String MODULE_REPOSITORY_DATA = "repository-data";
-    public static final String SUBMODULE_CONFIG = "config";
-    public static final String SUBMODULE_CONTENT = "content";
-    public static final String SUBMODULE_WEBFILES = "webfiles";
 
     private String projectNamespace;
 
@@ -58,8 +48,8 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String siteModule;
     private String cmsModule;
     private String repositoryDataModule;
-    private String configSubModule;
-    private String contentSubModule;
+    private String applicationSubModule;
+    private String developmentSubModule;
     private String webfilesSubModule;
     private String beansFolder;
 
@@ -81,7 +71,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public String getSiteModule() {
         if (Strings.isNullOrEmpty(siteModule)) {
-            return MODULE_SITE;
+            return TargetPom.SITE.getName();
         }
         return siteModule;
     }
@@ -94,7 +84,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public String getCmsModule() {
         if (Strings.isNullOrEmpty(cmsModule)) {
-            return MODULE_CMS;
+            return TargetPom.CMS.getName();
         }
         return cmsModule;
     }
@@ -107,7 +97,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public String getRepositoryDataModule() {
         if (Strings.isNullOrEmpty(repositoryDataModule)) {
-            return MODULE_REPOSITORY_DATA;
+            return TargetPom.REPOSITORY_DATA.getName();
         }
         return repositoryDataModule;
     }
@@ -118,35 +108,35 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     }
 
     @Override
-    public String getConfigSubModule() {
-        if (Strings.isNullOrEmpty(configSubModule)) {
-            return SUBMODULE_CONFIG;
+    public String getApplicationSubModule() {
+        if (Strings.isNullOrEmpty(applicationSubModule)) {
+            return TargetPom.REPOSITORY_DATA_APPLICATION.getName();
         }
-        return configSubModule;
+        return applicationSubModule;
     }
 
     @Override
-    public void setConfigSubModule(final String configSubModule) {
-        this.configSubModule = configSubModule;
+    public void setApplicationSubModule(final String applicationSubModule) {
+        this.applicationSubModule = applicationSubModule;
     }
 
     @Override
-    public String getContentSubModule() {
-        if (Strings.isNullOrEmpty(contentSubModule)) {
-            return SUBMODULE_CONTENT;
+    public String getDevelopmentSubModule() {
+        if (Strings.isNullOrEmpty(developmentSubModule)) {
+            return TargetPom.REPOSITORY_DATA_DEVELOPMENT.getName();
         }
-        return contentSubModule;
+        return developmentSubModule;
     }
 
     @Override
-    public void setContentSubModule(final String contentSubModule) {
-        this.contentSubModule = contentSubModule;
+    public void setDevelopmentSubModule(final String developmentSubModule) {
+        this.developmentSubModule = developmentSubModule;
     }
 
     @Override
     public String getWebfilesSubModule() {
         if (Strings.isNullOrEmpty(webfilesSubModule)) {
-            return SUBMODULE_WEBFILES;
+            return TargetPom.REPOSITORY_DATA_WEB_FILES.getName();
         }
         return webfilesSubModule;
     }

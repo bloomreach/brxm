@@ -18,9 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import com.google.common.base.Strings;
 
-/**
- * @version "$Id$"
- */
 public enum TargetPom {
 
     INVALID(null),
@@ -28,8 +25,8 @@ public enum TargetPom {
     CMS("cms"),
     REPOSITORY_DATA("repository-data"),
     REPOSITORY_DATA_WEB_FILES("webfiles"),
-    REPOSITORY_DATA_CONFIG("config"),
-    REPOSITORY_DATA_CONTENT("content"),
+    REPOSITORY_DATA_APPLICATION("application"),
+    REPOSITORY_DATA_DEVELOPMENT("development"),
     ESSENTIALS("essentials"),
     PROJECT("project");
 
@@ -64,10 +61,10 @@ public enum TargetPom {
             return REPOSITORY_DATA;
         } else if (type.equals(PROJECT.name)) {
             return PROJECT;
-        } else if (type.equals(REPOSITORY_DATA_CONFIG.name)) {
-            return REPOSITORY_DATA_CONFIG;
-        } else if (type.equals(REPOSITORY_DATA_CONTENT.name)) {
-            return REPOSITORY_DATA_CONTENT;
+        } else if (type.equals(REPOSITORY_DATA_APPLICATION.name)) {
+            return REPOSITORY_DATA_APPLICATION;
+        } else if (type.equals(REPOSITORY_DATA_DEVELOPMENT.name)) {
+            return REPOSITORY_DATA_DEVELOPMENT;
         } else if (type.equals(REPOSITORY_DATA_WEB_FILES.name)) {
             return REPOSITORY_DATA_WEB_FILES;
         } else if (type.equals(ESSENTIALS.name)) {

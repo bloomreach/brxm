@@ -39,9 +39,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 public final class ProjectUtils {
 
     public static final String ENT_GROUP_ID = "com.onehippo.cms7";
@@ -146,8 +143,8 @@ public final class ProjectUtils {
      *
      * @return Configuration project folder
      */
-    public static File getRepositoryDataConfigFolder(final PluginContext context) {
-        return getRepositoryDataSubFolder(context, context.getProjectSettings().getConfigSubModule());
+    public static File getRepositoryDataApplicationFolder(final PluginContext context) {
+        return getRepositoryDataSubFolder(context, context.getProjectSettings().getApplicationSubModule());
     }
 
     /**
@@ -155,8 +152,8 @@ public final class ProjectUtils {
      *
      * @return Content project folder
      */
-    public static File getRepositoryDataContentFolder(final PluginContext context) {
-        return getRepositoryDataSubFolder(context, context.getProjectSettings().getContentSubModule());
+    public static File getRepositoryDataDevelopmentFolder(final PluginContext context) {
+        return getRepositoryDataSubFolder(context, context.getProjectSettings().getDevelopmentSubModule());
     }
 
     /**
@@ -229,10 +226,10 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getProjectRootFolder());
             case REPOSITORY_DATA:
                 return getPomForDir(ProjectUtils.getRepositoryDataFolder(context));
-            case REPOSITORY_DATA_CONFIG:
-                return getPomForDir(ProjectUtils.getRepositoryDataConfigFolder(context));
-            case REPOSITORY_DATA_CONTENT:
-                return getPomForDir(ProjectUtils.getRepositoryDataContentFolder(context));
+            case REPOSITORY_DATA_APPLICATION:
+                return getPomForDir(ProjectUtils.getRepositoryDataApplicationFolder(context));
+            case REPOSITORY_DATA_DEVELOPMENT:
+                return getPomForDir(ProjectUtils.getRepositoryDataDevelopmentFolder(context));
             case REPOSITORY_DATA_WEB_FILES:
                 return getPomForDir(ProjectUtils.getRepositoryDataWebfilesFolder(context));
             case ESSENTIALS:

@@ -25,9 +25,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @version "$Id$"
- */
 public class ProjectUtilsTest extends BaseResourceTest {
 
     @Test
@@ -41,8 +38,8 @@ public class ProjectUtilsTest extends BaseResourceTest {
 
         // validate defaults
         assertEquals("repository-data", ProjectUtils.getRepositoryDataFolder(context).getName());
-        assertEquals("config", ProjectUtils.getRepositoryDataConfigFolder(context).getName());
-        assertEquals("content", ProjectUtils.getRepositoryDataContentFolder(context).getName());
+        assertEquals("application", ProjectUtils.getRepositoryDataApplicationFolder(context).getName());
+        assertEquals("development", ProjectUtils.getRepositoryDataDevelopmentFolder(context).getName());
         assertEquals("webfiles", ProjectUtils.getRepositoryDataWebfilesFolder(context).getName());
     }
 }
