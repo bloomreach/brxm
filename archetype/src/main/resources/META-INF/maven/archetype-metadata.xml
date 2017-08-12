@@ -26,13 +26,13 @@
         <include>**/*.xml</include>
       </includes>
       <excludes>
-        <exclude>shared-lib-content-component.xml</exclude>
+        <exclude>shared-lib-development-data-component.xml</exclude>
       </excludes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/assembly</directory>
       <includes>
-        <include>shared-lib-content-component.xml</include>
+        <include>shared-lib-development-data-component.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
@@ -65,7 +65,7 @@
     </fileSet>
     <!-- repository-data-config module -->
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>repository-data/config/src/main/resources</directory>
+      <directory>repository-data/application/src/main/resources</directory>
       <includes>
         <include>**/*.yaml</include>
         <include>**/*.cnd</include>
@@ -73,14 +73,14 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>repository-data/config</directory>
+      <directory>repository-data/application</directory>
       <includes>
         <include>pom.xml</include>
       </includes>
     </fileSet>
     <!-- repository-data-content module -->
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>repository-data/content/src/main/resources</directory>
+      <directory>repository-data/development/src/main/resources</directory>
       <includes>
         <include>**/*.yaml</include>
         <include>**/*.cnd</include>
@@ -88,7 +88,7 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>repository-data/content</directory>
+      <directory>repository-data/development</directory>
       <includes>
         <include>pom.xml</include>
       </includes>

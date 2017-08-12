@@ -348,7 +348,7 @@
     </profile>
 
     <profile>
-      <id>dist-with-content</id>
+      <id>dist-with-development-data</id>
       <dependencies>
         <dependency>
           <groupId>org.apache.logging.log4j</groupId>
@@ -378,14 +378,14 @@
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
               <execution>
-                <id>distro-assembly-with-content</id>
+                <id>distro-assembly-with-development-data</id>
                 <phase>validate</phase>
                 <goals>
                   <goal>single</goal>
                 </goals>
                 <configuration>
                   <descriptors>
-                    <descriptor>${project.basedir}/src/main/assembly/distribution-with-content.xml</descriptor>
+                    <descriptor>${project.basedir}/src/main/assembly/distribution-with-development-data.xml</descriptor>
                   </descriptors>
                 </configuration>
               </execution>

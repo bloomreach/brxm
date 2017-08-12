@@ -11,6 +11,6 @@
     <componentDescriptor>webapps-component.xml</componentDescriptor>
     <componentDescriptor>common-lib-component.xml</componentDescriptor>
     <componentDescriptor>shared-lib-component.xml</componentDescriptor>
-    <componentDescriptor>shared-lib-content-component.xml</componentDescriptor>
+    <componentDescriptor>shared-lib-development-data-component.xml</componentDescriptor>
   </componentDescriptors>
 </assembly>
