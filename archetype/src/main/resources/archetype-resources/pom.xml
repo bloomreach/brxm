@@ -292,8 +292,8 @@
 
     <profile>
       <!-- additional profile to combine with cargo:run to *not* bootstrap the development module:
-           $ mvn -P cargo.run,without-development -->
-      <id>without-development</id>
+           $ mvn -P cargo.run,without-development-data -->
+      <id>without-development-data</id>
       <properties>
         <development-module-deploy-dir>temp</development-module-deploy-dir>
       </properties>

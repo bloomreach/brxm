@@ -61,6 +61,7 @@
       <directory>repository-data</directory>
       <includes>
         <include>pom.xml</include>
+        <include>README.txt</include>
       </includes>
     </fileSet>
     <!-- repository-data-config module -->
