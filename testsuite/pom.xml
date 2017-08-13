@@ -204,6 +204,7 @@
     <module>intranet</module>
     <module>prod-server-config</module>
     <module>solr</module>
+    <module>api-docs</module>
   </modules>
 
   <profiles>
@@ -275,6 +276,13 @@
                   <type>war</type>
                   <properties>
                     <context>/solr</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/api-docs/target/api-docs.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/api-docs</context>
                   </properties>
                 </deployable>
               </deployables>
