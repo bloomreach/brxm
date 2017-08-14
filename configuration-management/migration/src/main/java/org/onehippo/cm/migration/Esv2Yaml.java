@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -530,7 +531,25 @@ public class Esv2Yaml {
             }
         }
 
-        final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(nodeDefinitions.values());
+        orderContentDefinitions(nodeDefinitions.values());
+
+        if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
+            // remove empty resourcebundles translations root definition parents
+            for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
+                if (defIter.next() == resourceBundleParents) {
+                    defIter.remove();
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Initialize order before property for root content definitions so that they could be applied in right order
+     * @param definitions - collection of ordered definition nodes based on esv sequence number
+     */
+    private void orderContentDefinitions(final Collection<DefinitionNodeImpl> definitions) {
+        final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(definitions);
 
         for (int i = 0; i < orderedDefinitions.size(); i++) {
             final DefinitionNodeImpl definition = orderedDefinitions.get(i);
@@ -543,16 +562,6 @@ public class Esv2Yaml {
                         .findFirst();
 
                 nextSibling.ifPresent(x -> definition.setOrderBefore(x.getName()));
-            }
-        }
-
-        if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
-            // remove empty resourcebundles translations root definition parents
-            for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
-                if (defIter.next() == resourceBundleParents) {
-                    defIter.remove();
-                    break;
-                }
             }
         }
     }
