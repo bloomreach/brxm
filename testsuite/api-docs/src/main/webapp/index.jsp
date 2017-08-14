@@ -14,13 +14,44 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-
+<%@ page import="java.io.*,java.util.*" %>
 <%!
 private static final String SWAGGER_API_URI = "/site/restservices/swagger.json";
-private static final String SWAGGER_VERSION = "3.1.4";
-private static final String SWAGGER_UI_PATH = "/webjars/swagger-ui/" + SWAGGER_VERSION + "/index.html?url=" + SWAGGER_API_URI;
+private static final String SWAGGER_POM_PROPS_RESOURCE_PATH = "META-INF/maven/org.webjars/swagger-ui/pom.properties";
+
+private volatile String swaggerVersion;
+
+private String getSwaggerModuleVersion() throws IOException {
+    String version = swaggerVersion;
+    if (version == null) {
+        synchronized (this) {
+            version = swaggerVersion;
+            if (version == null) {
+                InputStream is = null;
+                BufferedInputStream bis = null;
+                try {
+                    is = Thread.currentThread().getContextClassLoader().getResourceAsStream(SWAGGER_POM_PROPS_RESOURCE_PATH);
+                    bis = new BufferedInputStream(is);
+                    Properties props = new Properties();
+                    props.load(bis);
+                    swaggerVersion = version = props.getProperty("version");
+                    props.load(bis);
+                } finally {
+                    if (bis != null) { bis.close(); }
+                    if (is != null) { is.close(); }
+                }
+            }
+        }
+    }
+    return version;
+}
 %>
 
 <%
-response.sendRedirect(request.getContextPath() + SWAGGER_UI_PATH);
+response.setHeader("Cache-Control","no-cache"); 
+response.setHeader("Pragma","no-cache"); 
+response.setDateHeader ("Expires", -1);
+
+final String redirectPath = "/webjars/swagger-ui/" + getSwaggerModuleVersion() + "/index.html?url=" + SWAGGER_API_URI;
+response.sendRedirect(request.getContextPath() + redirectPath);
 %>
