@@ -18,6 +18,8 @@ package org.hippoecm.hst.configuration.components;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -101,4 +103,11 @@ public interface HstComponentsConfiguration {
      *         instance will be returned. Empty map will be returned if no prototypes available
      */
     Map<String, HstComponentConfiguration> getPrototypePages();
+
+    /**
+     * @return a depth-first stream of all {@code childComponents} plus their descendants
+     */
+    default Stream<HstComponentConfiguration> flattened(final List<HstComponentConfiguration> childComponents) {
+        return childComponents.stream().flatMap(HstComponentConfiguration::flattened);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -63,6 +66,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private boolean includeProtectedProperties = true;
 
     private PropertyMapImpl propertyMap = new PropertyMapImpl();
+
+    private static final Set<String> skipProperties = new HashSet<>(Arrays.asList("jcr:baseVersion", "jcr:predecessors", "jcr:versionHistory"));
 
     /**
      * Creates a lazy loading jcr value provider instance without useStringPool and with protected jcr properties included
@@ -605,7 +610,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
                 Property p = allProps.nextProperty();
-                if(this.propertyMap.hasProperty(p.getName())) {
+                if(this.propertyMap.hasProperty(p.getName()) || skipProperties.contains(p.getName())) {
                     // already loaded
                     continue;
                 }
