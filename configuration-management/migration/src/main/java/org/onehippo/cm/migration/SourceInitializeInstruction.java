@@ -342,10 +342,10 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         if (nodePath.equalsIgnoreCase(OLD_HTML_CLEANER_CONFIGURATION)) { //
             moveHtmlCleanerCustomizations(node, source, nodeDefinitions, deltaNodes);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/system/Html/editor:templates/_default_")) {
-            final String processorType = isHtmlCleanerDefined(node) ? "formatted" : "no-filter";
+            final String processorType = isHtmlCleanerNotDefined(node) ? "no-filter" : "formatted";
             updateCleanerToProcessor(node, processorType);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
-            final String processorType = isHtmlCleanerDefined(node) ? "richtext" : "no-filter";
+            final String processorType = isHtmlCleanerNotDefined(node) ? "no-filter" : "richtext";
             updateCleanerToProcessor(node, processorType);
         } else if (nodePath.startsWith(HIPPO_NAMESPACES)) {
             getChild(node, "cluster.options").ifPresent(child -> {
@@ -406,9 +406,9 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         }
     }
 
-    private boolean isHtmlCleanerDefined(final EsvNode node) {
+    private boolean isHtmlCleanerNotDefined(final EsvNode node) {
         final EsvProperty nodeProperty = node.getProperty(HTMLCLEANER_ID);
-        return nodeProperty != null || StringUtils.isBlank(nodeProperty.getValue());
+        return nodeProperty == null || StringUtils.isBlank(nodeProperty.getValue());
     }
 
     private static Optional<EsvNode> getChild(final EsvNode node, final String childName) {
