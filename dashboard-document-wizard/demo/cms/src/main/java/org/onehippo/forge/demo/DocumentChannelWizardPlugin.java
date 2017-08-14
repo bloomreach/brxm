@@ -63,7 +63,7 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
             super(context, config, parent);
 
             // add label
-            add(new Label("channel-dropdown-label", getString("channel.dropdown.label")));
+            add(new Label("channel-dropdown-label", getString("channel-dropdown-label")));
 
             // add root folder dropdown
             rootFolders = "";
