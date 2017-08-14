@@ -334,10 +334,10 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         if (nodePath.equalsIgnoreCase(OLD_HTML_CLEANER_CONFIGURATION)) { //
             moveHtmlCleanerCustomizations(node, source, nodeDefinitions, deltaNodes);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/system/Html/editor:templates/_default_")) {
-            final String processorType = node.getProperty(HTMLCLEANER_ID) != null ? "formatted" : "no-filter";
+            final String processorType = isHtmlCleanerDefined(node) ? "formatted" : "no-filter";
             updateCleanerToProcessor(node, processorType);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
-            final String processorType = node.getProperty(HTMLCLEANER_ID) != null ? "richtext" : "no-filter";
+            final String processorType = isHtmlCleanerDefined(node) ? "richtext" : "no-filter";
             updateCleanerToProcessor(node, processorType);
         } else if (nodePath.startsWith(HIPPO_NAMESPACES)) {
             getChild(node, "cluster.options").ifPresent(child -> {
@@ -368,6 +368,11 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 processNode(child, childPath, source, defNode, nodeDefinitions, deltaNodes);
             }
         }
+    }
+
+    private boolean isHtmlCleanerDefined(final EsvNode node) {
+        final EsvProperty nodeProperty = node.getProperty(HTMLCLEANER_ID);
+        return nodeProperty != null || StringUtils.isBlank(nodeProperty.getValue());
     }
 
     private static Optional<EsvNode> getChild(final EsvNode node, final String childName) {
@@ -404,7 +409,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     private void moveHtmlCleanerCustomizations(final EsvNode node, final SourceImpl source, final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions, final Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final EsvNode richtextNode = new EsvNode("richtext", 0, node.getSourceLocation());
-        updateProperties(node, richtextNode);
+        updateHtmlProcessorProperties(node, richtextNode);
         moveWhiteListedFields(node, richtextNode);
         richtextNode.setMerge(EsvMerge.COMBINE);
 
@@ -417,7 +422,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         getChild(node, "whitelist").ifPresent(child -> richtextNode.getChildren().addAll(child.getChildren()));
     }
 
-    private void updateProperties(final EsvNode node, final EsvNode richtextNode) {
+    private void updateHtmlProcessorProperties(final EsvNode node, final EsvNode richtextNode) {
         final Collection<String> copiedProperties = new HashSet<>();
         copiedProperties.add("charset");
         copiedProperties.add("filter");
