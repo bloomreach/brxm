@@ -258,7 +258,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
         configurationService = initializeConfiguration(rootSession);
-        HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
+        if (configurationService != null) {
+            HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
+        }
     }
 
     protected RepositoryConfig createRepositoryConfig() throws RepositoryException {
@@ -266,6 +268,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     protected ConfigurationServiceImpl initializeConfiguration(final Session rootSession) throws RepositoryException {
+        log.info("Initializing LocalHippoRepository");
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
         final Session configurationServiceSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
         migrateToV12IfNeeded(configurationServiceSession, false);
