@@ -18,10 +18,13 @@ package org.onehippo.cm.migration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
@@ -53,6 +56,10 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     private static final String PATH_REFERENCE_POSTFIX = "___pathreference";
+    private static final String OLD_HTML_CLEANER_CONFIGURATION = "/hippo:configuration/hippo:frontend/cms/cms-services/filteringHtmlCleanerService";
+    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+    private static final String HTMLCLEANER_ID = "htmlcleaner.id";
+    private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
 
     private EsvNode sourceNode;
 
@@ -263,9 +270,9 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             } else {
                 ContentDefinitionImpl def;
                 if (isContent(path)) {
-                    def = ((ContentSourceImpl)source).addContentDefinition();
+                    def = ((ContentSourceImpl) source).addContentDefinition();
                 } else {
-                    def = ((ConfigSourceImpl)source).addConfigDefinition();
+                    def = ((ConfigSourceImpl) source).addConfigDefinition();
                 }
                 defNode = new DefinitionNodeImpl(path, newNodeName, def);
                 def.setNode(defNode);
@@ -316,7 +323,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             }
         }
 
-        if (defNode.getPath().equalsIgnoreCase("/content/urlrewriter")) {
+        final String nodePath = defNode.getPath();
+        if (nodePath.equalsIgnoreCase("/content/urlrewriter")) {
             // Move properties starting with 'urlrewriter:'
             // to /hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig node
             final EsvNode urlrewriterNode = new EsvNode("urlrewriter", 0, node.getSourceLocation());
@@ -331,8 +339,27 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     configSource, null, nodeDefinitions, deltaNodes);
         }
 
+        if (nodePath.equalsIgnoreCase(OLD_HTML_CLEANER_CONFIGURATION)) { //
+            moveHtmlCleanerCustomizations(node, source, nodeDefinitions, deltaNodes);
+        } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/system/Html/editor:templates/_default_")) {
+            final String processorType = isHtmlCleanerNotDefined(node) ? "no-filter" : "formatted";
+            updateCleanerToProcessor(node, processorType);
+        } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
+            final String processorType = isHtmlCleanerNotDefined(node) ? "no-filter" : "richtext";
+            updateCleanerToProcessor(node, processorType);
+        } else if (nodePath.startsWith(HIPPO_NAMESPACES)) {
+            getChild(node, "cluster.options").ifPresent(child -> {
+                getProperty(child, HTMLCLEANER_ID).ifPresent(htmlcleanerId -> {
+                    getProperty(node, "plugin.class").ifPresent(pluginClass -> {
+                        final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId.getValue(), pluginClass.getValue());
+                        updateCleanerToProcessor(child, htmlProcessorId);
+                    });
+                });
+            });
+        }
+
         final boolean deltaNode = deltaNodes.contains(defNode);
-        for (EsvProperty property : node.getProperties()) {
+        for (final EsvProperty property : node.getProperties()) {
             processProperty(node, defNode, property, deltaNode);
         }
 
@@ -379,13 +406,77 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         }
     }
 
+    private boolean isHtmlCleanerNotDefined(final EsvNode node) {
+        final EsvProperty nodeProperty = node.getProperty(HTMLCLEANER_ID);
+        return nodeProperty == null || StringUtils.isBlank(nodeProperty.getValue());
+    }
+
+    private static Optional<EsvNode> getChild(final EsvNode node, final String childName) {
+        for (EsvNode child : node.getChildren()) {
+            if (child.getName().equals(childName)) {
+                return Optional.of(child);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<EsvProperty> getProperty(final EsvNode node, final String name) {
+        return Optional.ofNullable(node.getProperty(name));
+    }
+
+    private static String getHtmlProcessorId(final String htmlCleanerId, final String pluginClass) {
+        if (StringUtils.isBlank(htmlCleanerId)) {
+            return "no-filter";
+        } else if (pluginClass.equals("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
+            return "formatted";
+        }
+        return "richtext";
+    }
+
+    private void updateCleanerToProcessor(final EsvNode node, final String processorType) {
+        final EsvProperty htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
+        node.getProperties().remove(htmlCleanerProperty);
+        final EsvProperty esvProperty = new EsvProperty(HTMLPROCESSOR_ID, PropertyType.STRING, node.getSourceLocation());
+        final EsvValue value = new EsvValue(PropertyType.STRING, false, node.getSourceLocation());
+        value.setString(processorType);
+        esvProperty.getValues().add(value);
+        node.getProperties().add(esvProperty);
+    }
+
+    private void moveHtmlCleanerCustomizations(final EsvNode node, final SourceImpl source, final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions, final Set<DefinitionNode> deltaNodes) throws EsvParseException {
+        final EsvNode richtextNode = new EsvNode("richtext", 0, node.getSourceLocation());
+        updateHtmlProcessorProperties(node, richtextNode);
+        moveWhiteListedFields(node, richtextNode);
+        richtextNode.setMerge(EsvMerge.COMBINE);
+
+        final SourceImpl configSource = source.getModule().addConfigSource("html-processor.yaml");
+        processNode(richtextNode, "/hippo:configuration/hippo:modules/htmlprocessor/hippo:moduleconfig",
+                configSource, null, nodeDefinitions, deltaNodes);
+    }
+
+    private void moveWhiteListedFields(final EsvNode node, final EsvNode richtextNode) {
+        getChild(node, "whitelist").ifPresent(child -> richtextNode.getChildren().addAll(child.getChildren()));
+    }
+
+    private void updateHtmlProcessorProperties(final EsvNode node, final EsvNode richtextNode) {
+        final Collection<String> copiedProperties = new HashSet<>();
+        copiedProperties.add("charset");
+        copiedProperties.add("filter");
+        copiedProperties.add("omitComments");
+        copiedProperties.add("serializer");
+        node.getProperties().stream()
+                .filter(esvProperty -> copiedProperties.contains(esvProperty.getName()))
+                .forEach(esvProperty -> richtextNode.getProperties().add(esvProperty));
+        node.getProperties().removeAll(richtextNode.getProperties());
+    }
+
     private String generateSourceFilename(final String filename, final Set<String> moduleSources) {
         int suffix = 1;
         final String name = StringUtils.substringBeforeLast(filename, ".");
         final String ext = StringUtils.substringAfterLast(filename, ".");
 
         String candidate = filename;
-        while(moduleSources.contains(candidate)) {
+        while (moduleSources.contains(candidate)) {
             candidate = String.format("%s-%s.%s", name, suffix, ext);
             suffix++;
         }
