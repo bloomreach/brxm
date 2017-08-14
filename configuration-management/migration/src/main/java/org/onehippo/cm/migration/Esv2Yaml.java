@@ -1,18 +1,3 @@
-/*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package org.onehippo.cm.migration;
 
 import java.io.File;
@@ -32,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -552,16 +536,15 @@ public class Esv2Yaml {
         final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(definitions);
 
         for (int i = 0; i < orderedDefinitions.size(); i++) {
-            final DefinitionNodeImpl definition = orderedDefinitions.get(i);
-            if (definition.getDefinition().getSource() instanceof ContentSourceImpl
-                    && i != orderedDefinitions.size() - 1 && definition.isRoot()) {
-                final JcrPath currentParentPath = JcrPath.get(definition.getPath()).getParent();
-                final Optional<DefinitionNodeImpl> nextSibling = IntStream.range(i + 1, orderedDefinitions.size())
+            final DefinitionNodeImpl definitionNode = orderedDefinitions.get(i);
+            if (definitionNode.getDefinition().getSource() instanceof ContentSourceImpl
+                    && i != orderedDefinitions.size() - 1 && definitionNode.isRoot()) {
+                final JcrPath currentParentPath = JcrPath.get(definitionNode.getPath()).getParent();
+                IntStream.range(i + 1, orderedDefinitions.size())
                         .mapToObj(orderedDefinitions::get)
                         .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
-                        .findFirst();
-
-                nextSibling.ifPresent(x -> definition.setOrderBefore(x.getName()));
+                        .findFirst()
+                        .ifPresent(x -> definitionNode.setOrderBefore(x.getName()));
             }
         }
     }
