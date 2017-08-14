@@ -1,6 +1,5 @@
 <!--
-
-    Copyright 2001-2017 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -14,20 +13,14 @@
     implied.
     See the License for the specific language governing permissions and
     limitations under the License
-
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
+  <!-- Field added by DocumentChannelWizardPlugin to the parent dialog -->
   <wicket:extend>
-    <div class="hippo-dialog-body">
-      <div class="label" wicket:id="name-label">[name]</div>
-      <div class="input"><input type="text" wicket:id="name" class="hippo-form-input"/></div>
-      <div>
-        <div class="label" wicket:id="list-label">[list]</div>
-        <div><select wicket:id="list"></select></div>
-      </div>
-      <div class="label" wicket:id="date-label">[date]</div>
-      <div wicket:id="date"></div>
-      <wicket:child/>
+    <div style="margin-top: 16px;">
+      <div class="label" wicket:id="channel-dropdown-label">[label]</div>
+      <div><select wicket:id="rootFolders"></select></div>
     </div>
   </wicket:extend>
 </html>
+

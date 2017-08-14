@@ -1,0 +1,7 @@
+/content/documents/another-channel:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippo:named', 'hippotranslation:translated', 'mix:versionable']
+  hippo:name: Another Channel
+  hippostd:foldertype: [new-translated-folder, new-document]
+  hippotranslation:id: 973a1d62-7ead-42c4-a7dd-4455c8fa2b76
+  hippotranslation:locale: en

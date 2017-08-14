@@ -7,7 +7,7 @@ definitions:
       documentType: dashboarddocumentwizarddemo:newsdocument
       plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
       wicket.id: shortcut
-      workaround: 1
+      workaround: 2
       /nl:
         jcr:primaryType: frontend:pluginconfig
         date-label: Jaar/maand-folders
