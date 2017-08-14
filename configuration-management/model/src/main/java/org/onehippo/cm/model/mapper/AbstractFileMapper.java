@@ -51,12 +51,12 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
                 : DEFAULT_EXTENSION;
     }
 
-    protected String constructFilePathFromJcrPath(String path) {
+    public static String constructFilePathFromJcrPath(String path) {
         JcrPath jcrPath = JcrPath.get(path);
-        return jcrPath.stream().map(JcrPathSegment::toString).map(this::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER, "/", ""));
+        return jcrPath.stream().map(JcrPathSegment::toString).map(AbstractFileMapper::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER, "/", ""));
     }
 
-    protected String mapNodeNameToFileName(String name) {
+    protected static String mapNodeNameToFileName(String name) {
         return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
     }
 
