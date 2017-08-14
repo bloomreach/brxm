@@ -100,6 +100,9 @@
     <dependency.solr.version>4.9.0</dependency.solr.version>
     <h2.version>1.3.175</h2.version>
 
+    <swagger-core.version>1.5.15</swagger-core.version>
+    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
+
   </properties>
 
   <!--
@@ -597,13 +600,13 @@
       <dependency>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-core</artifactId>
-        <version>1.5.15</version>
+        <version>${swagger-core.version}</version>
       </dependency>
 
       <dependency>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-jaxrs</artifactId>
-        <version>1.5.15</version>
+        <version>${swagger-jaxrs.version}</version>
       </dependency>
 
       <dependency>
