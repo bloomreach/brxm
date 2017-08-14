@@ -530,20 +530,19 @@ public class Esv2Yaml {
             }
         }
 
-        final List<DefinitionNodeImpl> objects = new ArrayList<>(nodeDefinitions.values());
+        final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(nodeDefinitions.values());
 
-        for (int i = 0; i < objects.size(); i++) {
-            final DefinitionNodeImpl definition = objects.get(i);
-            if (definition.getDefinition().getSource() instanceof ContentSourceImpl) {
+        for (int i = 0; i < orderedDefinitions.size(); i++) {
+            final DefinitionNodeImpl definition = orderedDefinitions.get(i);
+            if (definition.getDefinition().getSource() instanceof ContentSourceImpl
+                    && i != orderedDefinitions.size() - 1 && definition.isRoot()) {
                 final JcrPath currentParentPath = JcrPath.get(definition.getPath()).getParent();
-                if (i != instructions.size() - 1 && definition.isRoot()) {
-                    final Optional<DefinitionNodeImpl> nextSibling = IntStream.range(i + 1, objects.size())
-                            .mapToObj(objects::get)
-                            .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
-                            .findFirst();
+                final Optional<DefinitionNodeImpl> nextSibling = IntStream.range(i + 1, orderedDefinitions.size())
+                        .mapToObj(orderedDefinitions::get)
+                        .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
+                        .findFirst();
 
-                    nextSibling.ifPresent(x -> definition.setOrderBefore(x.getName()));
-                }
+                nextSibling.ifPresent(x -> definition.setOrderBefore(x.getName()));
             }
         }
 
