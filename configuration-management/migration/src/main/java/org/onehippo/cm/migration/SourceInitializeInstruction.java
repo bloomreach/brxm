@@ -402,8 +402,21 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     }
 
     private void moveHtmlCleanerCustomizations(final EsvNode node, final SourceImpl source, final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions, final Set<DefinitionNode> deltaNodes) throws EsvParseException {
-        // Move properties needed for richtext processor
         final EsvNode richtextNode = new EsvNode("richtext", 0, node.getSourceLocation());
+        updateProperties(node, richtextNode);
+        moveWhiteListedFields(node, richtextNode);
+        richtextNode.setMerge(EsvMerge.COMBINE);
+
+        final SourceImpl configSource = source.getModule().addConfigSource("html-processor.yaml");
+        processNode(richtextNode, "/hippo:configuration/hippo:modules/htmlprocessor/hippo:moduleconfig",
+                configSource, null, nodeDefinitions, deltaNodes);
+    }
+
+    private void moveWhiteListedFields(final EsvNode node, final EsvNode richtextNode) {
+        getChild(node, "whitelist").ifPresent(child -> richtextNode.getChildren().addAll(child.getChildren()));
+    }
+
+    private void updateProperties(final EsvNode node, final EsvNode richtextNode) {
         final Collection<String> copiedProperties = new HashSet<>();
         copiedProperties.add("charset");
         copiedProperties.add("filter");
@@ -413,11 +426,6 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 .filter(esvProperty -> copiedProperties.contains(esvProperty.getName()))
                 .forEach(esvProperty -> richtextNode.getProperties().add(esvProperty));
         node.getProperties().removeAll(richtextNode.getProperties());
-        richtextNode.setMerge(EsvMerge.COMBINE);
-
-        final SourceImpl configSource = source.getModule().addConfigSource("html-processor.yaml");
-        processNode(richtextNode, "/hippo:configuration/hippo:modules/htmlprocessor/hippo:moduleconfig",
-                configSource, null, nodeDefinitions, deltaNodes);
     }
 
     private String generateSourceFilename(final String filename, final Set<String> moduleSources) {
