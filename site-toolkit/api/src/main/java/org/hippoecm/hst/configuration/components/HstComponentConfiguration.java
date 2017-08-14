@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -319,4 +320,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted.
      */
     boolean isMarkedDeleted();
+
+    /**
+     * @return a depth-first stream of this {@link HstComponentConfiguration} plus its descendants
+     */
+    default Stream<HstComponentConfiguration> flattened() {
+        return Stream.concat(Stream.of(this), getChildren().values().stream().flatMap(HstComponentConfiguration::flattened));
+    }
 }

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -125,7 +126,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         if (nonPrototypeRootComponents.isEmpty()) {
             canonicalComponentConfigurations = Collections.emptyMap();
         } else {
-            canonicalComponentConfigurations = Collections.unmodifiableMap(getCanonicalComponentConfigurations(nonPrototypeRootComponents));
+            canonicalComponentConfigurations = Collections.unmodifiableMap(
+                    flattened(nonPrototypeRootComponents)
+                            .collect(Collectors
+                                    .toMap(hstComponentConfiguration -> hstComponentConfiguration.getId(),
+                                            hstComponentConfiguration -> hstComponentConfiguration))
+            );
         }
 
         /*
@@ -140,22 +146,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents);
 
-    }
-
-    private Map<String,HstComponentConfiguration> getCanonicalComponentConfigurations(final List<HstComponentConfiguration> childComponents) {
-        Map<String, HstComponentConfiguration> canonicals = new HashMap<>();
-        for (HstComponentConfiguration childComponent : childComponents) {
-            populateCanonicalComponentConfigurations(childComponent, canonicals);
-        }
-        return canonicals;
-    }
-
-    private void populateCanonicalComponentConfigurations(final HstComponentConfiguration componentConfiguration,
-                                                     final Map<String, HstComponentConfiguration> canonicals) {
-        canonicals.put(componentConfiguration.getId(), componentConfiguration);
-        for (HstComponentConfiguration child : componentConfiguration.getChildren().values()) {
-            populateCanonicalComponentConfigurations(child, canonicals);
-        }
     }
 
     private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
