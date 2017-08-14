@@ -70,7 +70,7 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
         serializeNode(outputStream, mappingNode);
     }
 
-    private Node representNode(final OrderableByName orderable) {
+    protected Node representNode(final OrderableByName orderable) {
         final ScalarNode nameScalar = createStrScalar(orderable.getName());
         if (CollectionUtils.isEmpty(orderable.getAfter())) {
             return nameScalar;
@@ -84,7 +84,7 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private Optional<NodeTuple> createAfterTuple(final OrderableByName orderable) {
+    protected Optional<NodeTuple> createAfterTuple(final OrderableByName orderable) {
 
         final Set<String> afters = orderable.getAfter();
         switch (afters.size()) {

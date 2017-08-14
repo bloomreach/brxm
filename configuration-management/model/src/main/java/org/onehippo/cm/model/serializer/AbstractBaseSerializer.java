@@ -43,8 +43,9 @@ public abstract class AbstractBaseSerializer {
     }
 
     public void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
-        final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-        serializeNode(writer, node);
+        try (final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+            serializeNode(writer, node);
+        }
     }
 
     public void serializeNode(final Writer writer, final Node node) throws IOException {

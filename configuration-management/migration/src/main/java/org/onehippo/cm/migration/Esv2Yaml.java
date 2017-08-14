@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.jcr.PropertyType;
 
@@ -53,7 +55,9 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
@@ -64,8 +68,11 @@ import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ValueType;
+import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -82,6 +89,8 @@ public class Esv2Yaml {
     private static final String MODE = "m";
     private static final String ECM_LOCATION = "i";
     private static final String CONTENT_ROOTS = "content";
+    private static final String CUSTOM_INJECT_RESIDUAL_NODES_SHORT = "ir";
+    private static final String CUSTOM_INJECT_RESIDUAL_NODES = "custominjectresidualcategory";
     private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
     private final File src;
@@ -91,6 +100,7 @@ public class Esv2Yaml {
     private final ModuleImpl module;
     private final MigrationMode migrationMode;
     private final String[] contentRoots;
+    private final InjectResidualMatchers injectResidualCategoryMatchers;
     private final ResourceProcessor resourceProcessor = new ResourceProcessor();
     public static boolean translationMode = false;
 
@@ -111,6 +121,8 @@ public class Esv2Yaml {
                 final String src = cmd.getOptionValue(SOURCE_FOLDER);
                 final String target = cmd.getOptionValue(TARGET_FOLDER);
                 final String[] contentRoots = parseContentRoots(cmd.getOptionValue(CONTENT_ROOTS));
+                final InjectResidualMatchers injectResidualCategoryMatchers =
+                        parseInjectResidualCategoryPatterns(cmd.getOptionValue(CUSTOM_INJECT_RESIDUAL_NODES));
 
                 final MigrationMode mode = cmd.hasOption(MODE) ? MigrationMode.valueOf(cmd.getOptionValue(MODE).toUpperCase()) : MigrationMode.COPY;
                 if (mode == MigrationMode.GIT && !Objects.equals(src, target)) {
@@ -118,9 +130,11 @@ public class Esv2Yaml {
                 }
 
                 if (cmd.hasOption(ECM_LOCATION)) {
-                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), mode, contentRoots).convert();
+                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), mode,
+                            contentRoots, injectResidualCategoryMatchers).convert();
                 } else {
-                    new Esv2Yaml(new File(src), new File(target), mode, contentRoots).convert();
+                    new Esv2Yaml(new File(src), new File(target), mode, contentRoots,
+                            injectResidualCategoryMatchers).convert();
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
@@ -147,6 +161,8 @@ public class Esv2Yaml {
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
         options.addOption(MODE, "mode", true, "(optional) File system mode. git/move/copy. Default is copy");
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
+        options.addOption(CUSTOM_INJECT_RESIDUAL_NODES_SHORT, CUSTOM_INJECT_RESIDUAL_NODES, true,
+                "Custom paths to inject .meta:residual-child-node-category. Comma separated.");
         return options;
     }
 
@@ -171,15 +187,38 @@ public class Esv2Yaml {
         return split;
     }
 
-    public Esv2Yaml(final File src, final File target, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
-        this(null, src, target, mode, contentRoots);
+    private static InjectResidualMatchers parseInjectResidualCategoryPatterns(final String optionValue) {
+        if (optionValue == null) {
+            return new InjectResidualMatchers(
+                    "**/hst:workspace/**[hst:containercomponent]: content",
+                    "**/hst:workspace/**[hst:sitemenu]: content",
+                    "**/hst:workspace/hst:abstractpages: content",
+                    "**/hst:workspace/hst:channel: content",
+                    "**/hst:workspace/hst:components: content",
+                    "**/hst:workspace/hst:pages: content",
+                    "**/hst:workspace/hst:sitemap: content",
+                    "**/hst:workspace/hst:templates: content",
+                    "/hst:hst/hst:hosts/**[hst:virtualhostgroup]: content",
+                    "/hst:hst/hst:hosts/**[hst:virtualhost]: content",
+                    "/hst:hst/hst:hosts/**[hst:mount]: content");
+        } else {
+            return new InjectResidualMatchers(optionValue.split(","));
+        }
     }
 
-    public Esv2Yaml(final File init, final File src, final File target, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
+    public Esv2Yaml(final File src, final File target, MigrationMode mode, final String[] contentRoots,
+                    final InjectResidualMatchers injectResidualCategoryMatchers) throws IOException, EsvParseException {
+        this(null, src, target, mode, contentRoots, injectResidualCategoryMatchers);
+    }
+
+    public Esv2Yaml(final File init, final File src, final File target, MigrationMode mode, final String[] contentRoots,
+                    final InjectResidualMatchers injectResidualCategoryMatchers) throws IOException, EsvParseException {
         this.migrationMode = mode;
         this.src = src;
         this.target = target;
         this.contentRoots = contentRoots;
+        this.injectResidualCategoryMatchers = injectResidualCategoryMatchers;
+
         extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
         if (!extensionFile.exists() || !extensionFile.isFile()) {
             throw new IOException("File not found: " + extensionFile.getCanonicalPath());
@@ -225,6 +264,9 @@ public class Esv2Yaml {
                 // keep track of new/custom content roots for declaring their category in main.yaml later
                 final Set<String> newContentRoots = new HashSet<>();
 
+                // keep track where we've injected a custom residual category
+                final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry = new HashMap<>();
+
                 // parse and create list of initializeitem instructions
                 final List<InitializeInstruction> instructions = new ArrayList<>();
                 final Set<String> initializeItemNames = new HashSet<>();
@@ -234,7 +276,8 @@ public class Esv2Yaml {
                         if (!initializeItemNames.add(child.getName())) {
                             throw new EsvParseException("Duplicate hippo:initializeitem name: " + child.getName());
                         }
-                        InitializeInstruction.parse(child, instructions, contentRoots, newContentRoots);
+                        InitializeInstruction.parse(child, instructions, contentRoots, newContentRoots,
+                                injectResidualCategoryMatchers, injectResidualCategoryRegistry);
                     } else {
                         log.warn("Ignored " + HIPPOECM_EXTENSION_FILE + " node: " + child.getName());
                     }
@@ -449,7 +492,7 @@ public class Esv2Yaml {
 
         Set<String> resourceBundles = new HashSet<>();
         Set<DefinitionNode> deltaNodes = new HashSet<>();
-        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
+        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new LinkedHashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
         final ConfigDefinitionImpl resourceBundleParents = mainSource.addConfigDefinition();
@@ -486,6 +529,9 @@ public class Esv2Yaml {
                     break;
             }
         }
+
+        orderContentDefinitions(nodeDefinitions.values());
+
         if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
             // remove empty resourcebundles translations root definition parents
             for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
@@ -493,6 +539,27 @@ public class Esv2Yaml {
                     defIter.remove();
                     break;
                 }
+            }
+        }
+    }
+
+    /**
+     * Initialize order before property for root content definitions so that they could be applied in right order
+     * @param definitions - collection of ordered definition nodes based on esv sequence number
+     */
+    private void orderContentDefinitions(final Collection<DefinitionNodeImpl> definitions) {
+        final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(definitions);
+
+        for (int i = 0; i < orderedDefinitions.size(); i++) {
+            final DefinitionNodeImpl definitionNode = orderedDefinitions.get(i);
+            if (definitionNode.getDefinition().getSource() instanceof ContentSourceImpl
+                    && i != orderedDefinitions.size() - 1 && definitionNode.isRoot()) {
+                final JcrPath currentParentPath = JcrPath.get(definitionNode.getPath()).getParent();
+                IntStream.range(i + 1, orderedDefinitions.size())
+                        .mapToObj(orderedDefinitions::get)
+                        .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
+                        .findFirst()
+                        .ifPresent(x -> definitionNode.setOrderBefore(x.getName()));
             }
         }
     }

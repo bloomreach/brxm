@@ -32,6 +32,7 @@ import javax.jcr.PropertyType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
@@ -39,10 +40,13 @@ import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.mapper.AbstractFileMapper;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
+import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.onehippo.cm.model.util.SnsUtils;
 
 import static java.util.stream.Collectors.toSet;
@@ -60,10 +64,14 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     private EsvNode sourceNode;
 
     public SourceInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                       final InitializeInstruction combinedWith, final String[] contentRoots,
-                                       final Set<String> newContentRoots)
+                                       final InitializeInstruction combinedWith,
+                                       final String[] contentRoots, final Set<String> newContentRoots,
+                                       final InjectResidualMatchers injectResidualCategoryMatchers,
+                                       final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
             throws EsvParseException {
-        super(instructionNode, type, combinedWith, contentRoots, newContentRoots);
+
+        super(instructionNode, type, combinedWith, contentRoots, newContentRoots, injectResidualCategoryMatchers,
+                injectResidualCategoryRegistry);
     }
 
     public EsvNode getSourceNode() {
@@ -354,11 +362,30 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         for (final EsvProperty property : node.getProperties()) {
             processProperty(node, defNode, property, deltaNode);
         }
-        for (final EsvNode child : node.getChildren()) {
+
+        // Check if we need to inject .meta:residual-child-node-category for this node. If so, the call to
+        // "registerInjectResidualCategoryPath" ensures that "isContent" will later return true for its child nodes.
+        if (newNode) {
+            final ConfigurationItemCategory category = getInjectResidualCategoryMatchers().getMatch(
+                defNode.getPath(), getStringPropertyValue(defNode, JCR_PRIMARYTYPE));
+            if (category != null) {
+                log.info("Injecting '.meta:residual-child-node-category: {}' for path '{}'", category, defNode.getPath());
+                defNode.setResidualChildNodeCategory(ConfigurationItemCategory.CONTENT);
+                registerInjectResidualCategoryPath(defNode.getPath(), category);
+            }
+        }
+
+        if (getInjectedResidualCategory(defNode.getPath()) == ConfigurationItemCategory.SYSTEM) {
+            return;
+        }
+
+        for (EsvNode child : node.getChildren()) {
             final String childPath = calculatePath(child, path, nodeDefinitions, node.getChildren());
             if (!isContent(path) && isContent(childPath)) {
+                log.info("Exporting path '{}' as content", path);
+
                 final Set<String> moduleContentSources = source.getModule().getContentSources().stream().map(SourceImpl::getPath).collect(toSet());
-                String contentSource = getSourcePath();
+                String contentSource = AbstractFileMapper.constructFilePathFromJcrPath(childPath) + Constants.YAML_EXT;
                 if (moduleContentSources.contains(contentSource)) {
                     contentSource = generateSourceFilename(contentSource, moduleContentSources);
                 }
@@ -367,6 +394,15 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             } else {
                 processNode(child, childPath, source, defNode, nodeDefinitions, deltaNodes);
             }
+        }
+    }
+
+    private String getStringPropertyValue(final DefinitionNodeImpl definitionNode, final String propertyName) {
+        final DefinitionPropertyImpl property = definitionNode.getProperty(propertyName);
+        if (property == null) {
+            return null;
+        } else {
+            return property.getValue().getString();
         }
     }
 
