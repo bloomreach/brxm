@@ -1,18 +1,3 @@
-/*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package org.onehippo.cm.migration;
 
 import java.io.File;
@@ -24,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.jcr.PropertyType;
 
@@ -53,7 +40,9 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
@@ -67,6 +56,8 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -486,7 +477,7 @@ public class Esv2Yaml {
 
         Set<String> resourceBundles = new HashSet<>();
         Set<DefinitionNode> deltaNodes = new HashSet<>();
-        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
+        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new LinkedHashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
         final ConfigDefinitionImpl resourceBundleParents = mainSource.addConfigDefinition();
@@ -523,6 +514,9 @@ public class Esv2Yaml {
                     break;
             }
         }
+
+        orderContentDefinitions(nodeDefinitions.values());
+
         if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
             // remove empty resourcebundles translations root definition parents
             for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
@@ -530,6 +524,27 @@ public class Esv2Yaml {
                     defIter.remove();
                     break;
                 }
+            }
+        }
+    }
+
+    /**
+     * Initialize order before property for root content definitions so that they could be applied in right order
+     * @param definitions - collection of ordered definition nodes based on esv sequence number
+     */
+    private void orderContentDefinitions(final Collection<DefinitionNodeImpl> definitions) {
+        final List<DefinitionNodeImpl> orderedDefinitions = new ArrayList<>(definitions);
+
+        for (int i = 0; i < orderedDefinitions.size(); i++) {
+            final DefinitionNodeImpl definitionNode = orderedDefinitions.get(i);
+            if (definitionNode.getDefinition().getSource() instanceof ContentSourceImpl
+                    && i != orderedDefinitions.size() - 1 && definitionNode.isRoot()) {
+                final JcrPath currentParentPath = JcrPath.get(definitionNode.getPath()).getParent();
+                IntStream.range(i + 1, orderedDefinitions.size())
+                        .mapToObj(orderedDefinitions::get)
+                        .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
+                        .findFirst()
+                        .ifPresent(x -> definitionNode.setOrderBefore(x.getName()));
             }
         }
     }
