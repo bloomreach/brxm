@@ -35,7 +35,7 @@ public class UriEncodingTest {
     @Test(expected = NullPointerException.class)
     public void encodeNull() {
         uri.encode(null);
-    };
+    }
 
     @Test
     public void encode() {

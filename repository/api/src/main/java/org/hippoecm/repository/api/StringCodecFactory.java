@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -577,6 +577,25 @@ public class StringCodecFactory {
                         case 0xc3bf:
                             sb.append("y");
                             break;
+                        // Polish alphabet characters
+                        case 0x0105: sb.append("a");         break;
+                        case 0x0107: sb.append("c");         break;
+                        case 0x0119: sb.append("e");         break;
+                        case 0x0142: sb.append("l");         break;
+                        case 0x0144: sb.append("n");         break;
+                        case 0x00F3: sb.append("o");         break;
+                        case 0x015B: sb.append("s");         break;
+                        case 0x017A: sb.append("z");         break;
+                        case 0x017C: sb.append("z");         break;
+                        case 0x0104: sb.append("a");         break;
+                        case 0x0106: sb.append("c");         break;
+                        case 0x0118: sb.append("e");         break;
+                        case 0x0141: sb.append("l");         break;
+                        case 0x0143: sb.append("n");         break;
+                        case 0x00D3: sb.append("o");         break;
+                        case 0x015A: sb.append("s");         break;
+                        case 0x0179: sb.append("z");         break;
+                        case 0x017B: sb.append("z");         break;
                         default:
                             sb.append(Character.toLowerCase(chars[i]));
                     }
