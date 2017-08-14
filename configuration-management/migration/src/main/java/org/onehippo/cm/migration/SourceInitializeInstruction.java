@@ -334,9 +334,11 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         if (nodePath.equalsIgnoreCase(OLD_HTML_CLEANER_CONFIGURATION)) { //
             moveHtmlCleanerCustomizations(node, source, nodeDefinitions, deltaNodes);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/system/Html/editor:templates/_default_")) {
-            updateCleanerToProcessor(node, "formatted");
+            final String processorType = node.getProperty(HTMLCLEANER_ID) != null ? "formatted" : "no-filter";
+            updateCleanerToProcessor(node, processorType);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
-            updateCleanerToProcessor(node, "richtext");
+            final String processorType = node.getProperty(HTMLCLEANER_ID) != null ? "richtext" : "no-filter";
+            updateCleanerToProcessor(node, processorType);
         } else if (nodePath.startsWith(HIPPO_NAMESPACES)) {
             getChild(node, "cluster.options").ifPresent(child -> {
                 getProperty(child, HTMLCLEANER_ID).ifPresent(htmlcleanerId -> {
@@ -393,9 +395,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     private void updateCleanerToProcessor(final EsvNode node, final String processorType) {
         final EsvProperty htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
         node.getProperties().remove(htmlCleanerProperty);
-        final EsvProperty esvProperty = new EsvProperty(HTMLPROCESSOR_ID, PropertyType.STRING,
-                htmlCleanerProperty.getSourceLocation());
-        final EsvValue value = new EsvValue(PropertyType.STRING, false, htmlCleanerProperty.getSourceLocation());
+        final EsvProperty esvProperty = new EsvProperty(HTMLPROCESSOR_ID, PropertyType.STRING, node.getSourceLocation());
+        final EsvValue value = new EsvValue(PropertyType.STRING, false, node.getSourceLocation());
         value.setString(processorType);
         esvProperty.getValues().add(value);
         node.getProperties().add(esvProperty);
