@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
@@ -51,14 +52,10 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     private static final String PATH_REFERENCE_POSTFIX = "___pathreference";
-    public static final String OLD_HTML_CLEANER_CONFIGURATION = "/hippo:configuration/hippo:frontend/cms/cms-services/filteringHtmlCleanerService";
-    public static final String HIPPO_NAMESPACES = "/hippo:namespaces";
-    public static final String DEFAULT_EMPTY_CLEANER = "org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService";
-    public static final String DEFAULT_HTML_CLEANER = "org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService";
-    public static final String FORMATTED_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
-    public static final String RICHTEXT_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
-    public static final String HTMLCLEANER_ID = "htmlcleaner.id";
-    public static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
+    private static final String OLD_HTML_CLEANER_CONFIGURATION = "/hippo:configuration/hippo:frontend/cms/cms-services/filteringHtmlCleanerService";
+    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+    private static final String HTMLCLEANER_ID = "htmlcleaner.id";
+    private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
 
     private EsvNode sourceNode;
 
@@ -337,12 +334,18 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         if (nodePath.equalsIgnoreCase(OLD_HTML_CLEANER_CONFIGURATION)) { //
             moveHtmlCleanerCustomizations(node, source, nodeDefinitions, deltaNodes);
         } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/system/Html/editor:templates/_default_")) {
-            updateCleanerToProcessor(node, "richtext");
-        } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
             updateCleanerToProcessor(node, "formatted");
-        } else if (nodePath.startsWith(HIPPO_NAMESPACES) && node.getProperty(HTMLCLEANER_ID) != null) {
-            // should first check what kind of field this is, but for now assume richtext
+        } else if (nodePath.equalsIgnoreCase("/hippo:namespaces/hippostd/html/editor:templates/_default_")) {
             updateCleanerToProcessor(node, "richtext");
+        } else if (nodePath.startsWith(HIPPO_NAMESPACES)) {
+            getChild(node, "cluster.options").ifPresent(child -> {
+                getProperty(child, HTMLCLEANER_ID).ifPresent(htmlcleanerId -> {
+                    getProperty(node, "plugin.class").ifPresent(pluginClass -> {
+                        final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId.getValue(), pluginClass.getValue());
+                        updateCleanerToProcessor(child, htmlProcessorId);
+                    });
+                });
+            });
         }
 
         final boolean deltaNode = deltaNodes.contains(defNode);
@@ -365,11 +368,30 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         }
     }
 
-    private void updateCleanerToProcessor(final EsvNode node, String processorType) {
-        final EsvProperty htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
-        if (htmlCleanerProperty == null || htmlCleanerProperty.getValue().isEmpty()) {
-            processorType = "no-filter";
+    private static Optional<EsvNode> getChild(final EsvNode node, final String childName) {
+        for (EsvNode child : node.getChildren()) {
+            if (child.getName().equals(childName)) {
+                return Optional.of(child);
+            }
         }
+        return Optional.empty();
+    }
+
+    private static Optional<EsvProperty> getProperty(final EsvNode node, final String name) {
+        return Optional.ofNullable(node.getProperty(name));
+    }
+
+    private static String getHtmlProcessorId(final String htmlCleanerId, final String pluginClass) {
+        if (StringUtils.isBlank(htmlCleanerId)) {
+            return "no-filter";
+        } else if (pluginClass.equals("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
+            return "formatted";
+        }
+        return "richtext";
+    }
+
+    private void updateCleanerToProcessor(final EsvNode node, final String processorType) {
+        final EsvProperty htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
         node.getProperties().remove(htmlCleanerProperty);
         final EsvProperty esvProperty = new EsvProperty(HTMLPROCESSOR_ID, PropertyType.STRING,
                 htmlCleanerProperty.getSourceLocation());
