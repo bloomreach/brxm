@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@
  * @module datetime
  * @beta
  */
+
+/*global Event */
 
 YAHOO.namespace('hippo');
 
@@ -153,11 +155,11 @@ if (!YAHOO.hippo.DateTime) {
                         this.hide();
                     }
                     if (this.config.fireChangeEvent) {
-                        var field = Dom.get(this.id);
+                        var field = Dom.get(this.id), changeEvent;
                         if (field.onchange !== null && field.onchange !== undefined) {
                             field.onchange();
                         } else {
-                            var changeEvent = new Event('change');
+                            changeEvent = new Event('change');
                             field.dispatchEvent(changeEvent);
                         }
                     }
