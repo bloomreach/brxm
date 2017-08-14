@@ -25,6 +25,9 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.engine.InternalConfigurationService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,9 +125,9 @@ public class IsolatedRepository {
         classLoader = new RepositoryClassLoader(contextClassLoader.getURLs(), contextClassLoader);
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
-            return Class.forName("org.hippoecm.repository.LocalHippoRepository", true, classLoader).
-                    getMethod("create", String.class, String.class).
-                    invoke(null, repoPath, repoConfig);
+            return Class.forName("org.hippoecm.repository.LocalHippoRepository", true, classLoader)
+                    .getMethod("create", String.class, String.class)
+                    .invoke(null, repoPath, repoConfig);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
@@ -137,6 +140,23 @@ public class IsolatedRepository {
             log.error("Failed to log in session: " + e);
         }
         return null;
+    }
+
+    public void runSingleAutoExportCycle() throws Exception {
+        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        try {
+            final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
+            final Class internalConfigurationServiceClass = Class.forName(InternalConfigurationService.class.getName(), true, classLoader);
+
+            final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
+                    .getMethod("getService", Class.class)
+                    .invoke(null, configurationServiceClass);
+            final Object internalService = internalConfigurationServiceClass.cast(service);
+            internalConfigurationServiceClass.getMethod("runSingleAutoExportCycle").invoke(internalService);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
 
     public void stop() throws Exception {

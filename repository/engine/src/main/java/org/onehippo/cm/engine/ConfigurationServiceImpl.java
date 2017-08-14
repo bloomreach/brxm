@@ -34,6 +34,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.io.Files;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -69,8 +71,6 @@ import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
@@ -327,6 +327,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         } finally {
             lockManager.unlock();
         }
+    }
+
+    @Override
+    public void runSingleAutoExportCycle() throws RepositoryException {
+        autoExportService.runOnce();
     }
 
     /**

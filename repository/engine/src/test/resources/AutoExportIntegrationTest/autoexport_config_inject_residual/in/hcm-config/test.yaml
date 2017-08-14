@@ -5,6 +5,7 @@ definitions:
       cnd: hst-dummy.cnd
   config:
     /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:enabled: false
       autoexport:injectresidualchildnodecategory:
         operation: add
         type: string

@@ -1,4 +1,6 @@
 definitions:
   config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:enabled: false
     /config:
       jcr:primaryType: nt:unstructured

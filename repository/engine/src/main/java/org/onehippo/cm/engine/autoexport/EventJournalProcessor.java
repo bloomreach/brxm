@@ -231,7 +231,7 @@ public class EventJournalProcessor {
         }
     }
 
-    private void runOnce() {
+    public void runOnce() {
         synchronized (executor) {
             if (!taskFailed.get()) {
                 try {

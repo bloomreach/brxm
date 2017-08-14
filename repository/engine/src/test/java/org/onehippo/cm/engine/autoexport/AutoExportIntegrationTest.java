@@ -16,7 +16,6 @@
 
 package org.onehippo.cm.engine.autoexport;
 
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -184,7 +182,6 @@ public class AutoExportIntegrationTest {
 
     private class Fixture extends AbstractBaseTest {
         private final String name;
-        private final boolean debug = false;
         Fixture(final String name) {
             this.name = name;
         }
@@ -201,22 +198,14 @@ public class AutoExportIntegrationTest {
             repository.startRepository();
             final Session session = repository.login(IsolatedRepository.CREDENTIALS);
 
-            try (final LogLineWaiterWrapper waiter = new LogLineWaiterWrapper(repository.getRepositoryClassLoader(),
-                    EventJournalProcessor.class.getName(), Level.INFO)) {
-                jcrRunner.run(session);
-                session.save();
+            // Run AutoExport to set its lastRevision ...
+            repository.runSingleAutoExportCycle();
 
-                final String autoExportDiff = "Computed diff";
-                final String autoExportComplete = "Full auto-export cycle in";
-                waiter.waitFor(new String[]{autoExportDiff, autoExportComplete},
-                        debug ? LogLineWaiter.INFINITE_TIMEOUT : LogLineWaiter.DEFAULT_TIMEOUT);
+            jcrRunner.run(session);
+            session.save();
 
-                if (debug) {
-                    final StringBuilder builder = new StringBuilder();
-                    waiter.serializeAllEvents(builder);
-                    System.out.println(builder.toString());
-                }
-            }
+            // ... and run it again to capture the changes made by jcrRunner
+            repository.runSingleAutoExportCycle();
 
             session.logout();
             repository.stop();
@@ -228,39 +217,6 @@ public class AutoExportIntegrationTest {
     @FunctionalInterface
     private interface JcrRunner {
         void run(final Session session) throws Exception;
-    }
-
-    /**
-     * Wrapper around {@link LogLineWaiter} that loads the {@link LogLineWaiter} object from a different classloader.
-     * For the LogLineWaiter to capture any output, it needs to be loaded from the same classloader as the class that
-     * is generating the log events.
-     */
-    private class LogLineWaiterWrapper implements AutoCloseable {
-        private final Object collector;
-        LogLineWaiterWrapper(final ClassLoader classLoader, final String loggerName, final Level level) throws Exception {
-            final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-            try {
-                final Object levelObject = Class.forName(Level.class.getName(), true, classLoader)
-                        .getMethod("forName", String.class, int.class)
-                        .invoke(null, level.name(), level.intLevel());
-                collector = Class.forName(LogLineWaiter.class.getName(), true, classLoader)
-                        .getConstructor(String.class, levelObject.getClass())
-                        .newInstance(loggerName, levelObject);
-            } finally {
-                Thread.currentThread().setContextClassLoader(contextClassLoader);
-            }
-        }
-        void waitFor(final String[] messages, final int timeout) throws Exception {
-            collector.getClass().getMethod("waitFor", String[].class, int.class).invoke(collector, messages, timeout);
-        }
-        public String serializeAllEvents(final StringBuilder builder) throws Exception {
-            return (String) collector.getClass().getMethod("serializeAllEvents", StringBuilder.class).invoke(collector, builder);
-        }
-        @Override
-        public void close() throws Exception {
-            collector.getClass().getMethod("close").invoke(collector);
-        }
     }
 
     /**

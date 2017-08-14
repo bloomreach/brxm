@@ -29,4 +29,10 @@ public interface InternalConfigurationService extends ConfigurationService {
      * @throws RepositoryException
      */
     boolean verifyConfigurationModel() throws RepositoryException;
+
+    /**
+     * Used for test purposes only: perform a single run of AutoExport
+     * @throws RepositoryException
+     */
+    void runSingleAutoExportCycle() throws RepositoryException;
 }

@@ -27,13 +27,13 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
+import com.google.common.collect.Sets;
+
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
 import static javax.jcr.observation.Event.PROPERTY_CHANGED;
@@ -117,6 +117,11 @@ public final class AutoExportServiceImpl implements EventListener {
                 log.error("Error occurred getting path from event.", e);
             }
         }
+    }
+
+    public void runOnce() {
+        log.info("running single autoexport cycle");
+        eventJournalProcessor.runOnce();
     }
 
     public void close() {
