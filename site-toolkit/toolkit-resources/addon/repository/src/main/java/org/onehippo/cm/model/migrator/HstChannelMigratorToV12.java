@@ -67,7 +67,15 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     @Override
     public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
+        try {
+            return doMigrate(session, configurationModel, autoExportEnabled);
+        } catch (RepositoryException e) {
+            throw  new MigrationException(String.format("Migrator '{}' failed.",
+                    this.getClass().getName()), e);
+        }
+    }
 
+    protected boolean doMigrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
         if (!shouldRun(session, autoExportEnabled)) {
             log.info(hstRoot + "/hst:channels missing or does not have children :HstChannelMigrator doesn 't need to do anything");
             return false;
