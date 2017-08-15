@@ -8,7 +8,7 @@
     <version>${version}</version>
   </parent>
 
-  <name>${projectName} Repository Data Fopr Application</name>
+  <name>${projectName} Repository Data For Application</name>
   <description>${projectName} Repository Data For Application</description>
   <artifactId>${artifactId}-repository-data-application</artifactId>
 
