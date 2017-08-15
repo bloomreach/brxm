@@ -20,18 +20,17 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>12.0.0-SNAPSHOT</version>
+    <version>12.0.1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <groupId>org.onehippo.cms7.dashboard-document-wizard-demo</groupId>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>4.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
-    <essentials.version>4.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
@@ -111,7 +110,7 @@
         </property>
       </activation>
       <modules>
-        <module>bootstrap</module>
+        <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
       </modules>
@@ -179,10 +178,6 @@
                 <!-- 3rd party -->
                 <exclude>site/src/main/webapp/js/*.js</exclude>
                 <exclude>site/src/main/webapp/fonts/*</exclude>
-                <!-- repository content XML -->
-                <exclude>bootstrap/configuration/src/main/resources/**/*.xml</exclude>
-                <exclude>bootstrap/content/src/main/resources/**/*.xml</exclude>
-                <exclude>essentials/src/main/resources/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
