@@ -59,13 +59,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.content-blocks-demo</groupId>
-      <artifactId>hippo-plugin-content-blocks-demo-bootstrap-configuration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.content-blocks-demo</groupId>
-      <artifactId>hippo-plugin-content-blocks-demo-bootstrap-content</artifactId>
+      <artifactId>hippo-plugin-content-blocks-demo-repository-data</artifactId>
       <version>${project.version}</version>
     </dependency>
 

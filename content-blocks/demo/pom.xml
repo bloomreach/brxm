@@ -110,7 +110,7 @@
         </property>
       </activation>
       <modules>
-        <module>bootstrap</module>
+        <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
       </modules>
@@ -178,9 +178,6 @@
                 <!-- 3rd party -->
                 <exclude>site/src/main/webapp/js/html5shiv.js</exclude>
                 <exclude>site/src/main/webapp/css/style.css</exclude>
-                <!-- repository content XML -->
-                <exclude>bootstrap/configuration/src/main/resources/**/*.xml</exclude>
-                <exclude>bootstrap/content/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
