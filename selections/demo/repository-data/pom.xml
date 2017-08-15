@@ -23,9 +23,9 @@
     <version>5.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Plugin Selections Demo Project Content</name>
-  <description>Hippo Plugin Selections Demo Project Content</description>
-  <artifactId>hippo-plugin-selections-demo-content</artifactId>
+  <name>Hippo Plugin Selections Demo Repository Data</name>
+  <description>Hippo Plugin Selections Demo Repository Data</description>
+  <artifactId>hippo-plugin-selections-demo-repository-data</artifactId>
   <packaging>jar</packaging>
 
 </project>

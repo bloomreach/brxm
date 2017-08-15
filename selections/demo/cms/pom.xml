@@ -79,7 +79,7 @@
     <!-- demo content -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-demo-content</artifactId>
+      <artifactId>hippo-plugin-selections-demo-repository-data</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>

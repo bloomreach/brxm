@@ -1,0 +1,5 @@
+group:
+  name: demo
+  after: hippo-cms
+project: demo
+module: repository
