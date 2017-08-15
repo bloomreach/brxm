@@ -2,4 +2,4 @@ group:
   name: ${artifactId}
   after: hippo-cms
 project: ${artifactId}
-module: ${artifactId}-repository-data-config
+module: ${artifactId}-repository-data-application
