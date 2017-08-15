@@ -73,13 +73,13 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
 
     @Test
     public void assert_default_hst_bootstrap_version_12_is_not_changed_by_migrator() throws Exception {
-        assertFalse(new HstChannelMigratorToV12().migrate(session, null));
-        assertFalse(new HstChannelMigratorToV12("/hst:hst", false).migrate(session, null));
+        assertFalse(new HstChannelPreMigratorToV12().migrate(session, null, false));
+        assertFalse(new HstChannelPreMigratorToV12("/hst:hst", false).migrate(session, null, false));
     }
 
     @Test
     public void migrate_common_setup_with_workspace_moves_channel_to_workspace() throws Exception {
-        boolean changed = new HstChannelMigratorToV12("/hst:test", false).migrate(session, null);
+        boolean changed = new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null, false);
         assertTrue("Expected the migrator to have resulted in changes", changed);
         Node hstRoot = session.getNode("/hst:test");
         assertMountsMigrated(hstRoot.getNode("hst:hosts"));
@@ -93,7 +93,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
 
         session.getNode("/hst:test/hst:configurations/myproject/hst:workspace").remove();
 
-        boolean changed = new HstChannelMigratorToV12("/hst:test", false).migrate(session, null);
+        boolean changed = new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false);
         assertTrue("Expected the migrator to have resulted in changes", changed);
         Node hstRoot = session.getNode("/hst:test");
         assertMountsMigrated(hstRoot.getNode("hst:hosts"));
@@ -112,7 +112,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                    "/hst:test/hst:configurations/myproject-preview", "hst:configuration",
                      "/hst:test/hst:configurations/myproject-preview/hst:workspace", "hst:workspace",
         }, session);
-        new HstChannelMigratorToV12("/hst:test", false).migrate(session, null);
+        new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false);
         assertFalse(session.nodeExists("/hst:test/hst:channels/myproject-preview"));
         assertFalse(session.nodeExists("/hst:test/hst:configurations/myproject-preview"));
     }
@@ -127,7 +127,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                 "/hst:test/hst:hosts/dev/localhost/hst:root/restapi", "hst:mount",
                 "hst:ismapped", "false"
         }, session);
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         Node hstRoot = session.getNode("/hst:test");
         assertTrue(hstRoot.hasNode("hst:hosts/dev/localhost/hst:root/restapi"));
@@ -153,7 +153,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                 "/hst:test/hst:hosts/prod/prodhost/hst:root/restapi", "hst:mount",
                   "hst:ismapped", "true"
         }, session);
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         Node hstRoot = session.getNode("/hst:test");
         for (String mountPath : new String[]{
@@ -175,7 +175,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                   "hst:ismapped", "true",
                 "/hst:test/hst:hosts/dev/localhost/hst:root/restapi/child", "hst:mount"
         }, session);
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
         Node hstRoot = session.getNode("/hst:test");
         for (String mountPath : new String[]{"hst:hosts/dev/localhost/hst:root/restapi",
                 "hst:hosts/dev/localhost/hst:root/restapi/child"}) {
@@ -193,7 +193,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                   "/hst:test/hst:hosts/dev/newhost/hst:root", "hst:mount",
                      "/hst:test/hst:hosts/dev/newhost/hst:root/child", "hst:mount",
         }, session);
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
         assertFalse(session.nodeExists("/hst:hst/hst:channels"));
         Node hstRoot = session.getNode("/hst:test");
         for (String mountPath : new String[]{"hst:hosts/dev/newhost/hst:root",
@@ -207,7 +207,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
     @Test
     public void migrate_mount_with_channelpath_that_does_not_exist_removes_channelpath() throws Exception {
         session.getNode("/hst:test/hst:hosts/dev/localhost/hst:root").setProperty("hst:channelpath", "/hst:hst/hst:channels/nonexisting");
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
         assertFalse(session.getNode("/hst:test/hst:hosts/dev/localhost/hst:root").hasProperty("hst:channelpath"));
     }
 
@@ -251,7 +251,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                      "/hst:test/hst:configurations/sub/hst:workspace", "hst:workspace",
         }, session);
 
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         assertMountsMigrated(session.getNode("/hst:test/hst:hosts"));
 
@@ -281,7 +281,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                 "/hst:test/hst:blueprints/website/hst:channel/hst:channelinfo", "hst:channelinfo",
         }, session);
 
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         assertTrue(session.nodeExists("/hst:test/hst:blueprints/website/hst:configuration/hst:channel"));
         assertTrue(session.nodeExists("/hst:test/hst:blueprints/website/hst:configuration/hst:channel/hst:channelinfo"));
@@ -297,7 +297,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                 "/hst:test/hst:blueprints/website/hst:channel/hst:channelinfo", "hst:channelinfo",
         }, session);
 
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         assertTrue(session.nodeExists("/hst:test/hst:blueprints/website/hst:configuration"));
         assertTrue(session.nodeExists("/hst:test/hst:blueprints/website/hst:configuration/hst:channel"));
@@ -313,7 +313,7 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
                       "/hst:test/hst:blueprints/website/hst:configuration", "hst:configuration",
         }, session);
 
-        assertTrue(new HstChannelMigratorToV12("/hst:test", false).migrate(session, null));
+        assertTrue(new HstChannelPreMigratorToV12("/hst:test", false).migrate(session, null,false));
 
         assertFalse(session.nodeExists("/hst:test/hst:blueprints/website/hst:configuration/hst:channel"));
     }

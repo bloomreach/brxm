@@ -33,7 +33,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.migrator.ConfigurationMigrator;
-import org.onehippo.cm.engine.migrator.PreMigrator;
+import org.onehippo.cm.engine.migrator.MigrationException;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.tree.Value;
@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
-@PreMigrator
-public class HstChannelMigratorToV12 implements ConfigurationMigrator {
+public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     private static final Logger log = LoggerFactory.getLogger(HstChannelMigratorToV12.class);
 
@@ -67,9 +66,9 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
     }
 
     @Override
-    public boolean migrate(final Session session, final ConfigurationModel configurationModel) throws RepositoryException {
+    public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
 
-        if (!shouldRun(session)) {
+        if (!shouldRun(session, autoExportEnabled)) {
             log.info(hstRoot + "/hst:channels missing or does not have children :HstChannelMigrator doesn 't need to do anything");
             return false;
         }
@@ -77,9 +76,8 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
         if (configurationModel != null) {
             final boolean success = preemptiveInitializeHstNodeType(session, configurationModel);
             if (!success) {
-                session.refresh(false);
-                log.warn("Could not preemptively reload HST node types for migrator '{}'", this);
-                return false;
+                throw new MigrationException(String.format("Could not preemptively reload HST node types for migrator '{}'",
+                        this.getClass().getName()));
             }
         }
 
@@ -120,7 +118,7 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
         return true;
     }
 
-    private boolean preemptiveInitializeHstNodeType(final Session session, final ConfigurationModel configurationModel) throws RepositoryException {
+    protected boolean preemptiveInitializeHstNodeType(final Session session, final ConfigurationModel configurationModel) throws RepositoryException {
         for (NamespaceDefinition namespaceDefinition : configurationModel.getNamespaceDefinitions()) {
             if ("hst".equals(namespaceDefinition.getPrefix())) {
                 // reload the hst ns
@@ -351,7 +349,7 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
     }
 
 
-    private boolean shouldRun(final Session session) throws RepositoryException {
+    protected boolean shouldRun(final Session session, final boolean autoExportEnabled) throws RepositoryException {
         try {
             final boolean channelsNodeExists = session.nodeExists(hstRoot + "/hst:channels");
             if (channelsNodeExists && session.getNode(hstRoot + "/hst:channels").getNodes().getSize() > 0) {
@@ -439,6 +437,6 @@ public class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     @Override
     public String toString() {
-        return "HstChannelMigrator{}";
+        return this.getClass().getName() + "{}";
     }
 }
