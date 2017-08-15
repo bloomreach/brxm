@@ -31,11 +31,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
@@ -58,7 +59,7 @@ public class ContentResource {
     @POST
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.CREATED,
+        return executeTask(servletRequest, Status.CREATED,
                 (session, locale) -> DocumentsService.get().createDraft(id, session, locale));
     }
 
@@ -66,7 +67,7 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response updateDraftDocument(@PathParam("id") String id, Document document,
                                         @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK,
+        return executeTask(servletRequest, Status.OK,
                 (session, locale) -> DocumentsService.get().updateDraft(id, document, session, locale));
     }
 
@@ -76,18 +77,18 @@ public class ContentResource {
                                      @PathParam("fieldPath") String fieldPath,
                                      List<FieldValue> fieldValues,
                                      @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK, (session, locale) -> {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
             DocumentsService.get().updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
-            return null; // no response data
+            return null;
         });
     }
 
     @DELETE
     @Path("documents/{id}/draft")
     public Response deleteDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK, (session, locale) -> {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
             DocumentsService.get().deleteDraft(id, session, locale);
-            return null; // no response data
+            return null;
         });
     }
 
@@ -95,21 +96,21 @@ public class ContentResource {
     @GET
     @Path("documents/{id}")
     public Response getPublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK,
+        return executeTask(servletRequest, Status.OK,
                 (session, locale) -> DocumentsService.get().getPublished(id, session, locale));
     }
 
     @GET
     @Path("documenttypes/{id}")
     public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK, NO_CACHE,
+        return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,
-                                 final Response.Status successResponse,
+                                 final Status successStatus,
                                  final EndPointTask task) {
-        return executeTask(servletRequest, successResponse, null, task);
+        return executeTask(servletRequest, successStatus, null, task);
     }
 
     /**
@@ -117,20 +118,20 @@ public class ContentResource {
      * (which may be an error, encapsulated in an Exception).
      *
      * @param servletRequest  current HTTP servlet request to derive contextual input
-     * @param successResponse HTTP status code in case of success
+     * @param successStatus   HTTP status code in case of success
      * @param cacheControl    HTTP Cache-Control response header
      * @param task            the EndPointTask to execute
      * @return                a JAX-RS response towards the client
      */
     private Response executeTask(final HttpServletRequest servletRequest,
-                                 final Response.Status successResponse,
+                                 final Status successStatus,
                                  final CacheControl cacheControl,
                                  final EndPointTask task) {
         final Session session = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         try {
             final Object result = task.execute(session, locale);
-            return Response.status(successResponse).cacheControl(cacheControl).entity(result).build();
+            return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
         } catch (ErrorWithPayloadException e) {
             return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
         }
