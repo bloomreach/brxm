@@ -7,9 +7,6 @@ definitions:
     /hippo:configuration/hippo:translations:
       /hippo:types:
         jcr:primaryType: hipposys:resourcebundles
-    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
-      watchedModules:
-        operation: delete
     /hippo:configuration/hippo:groups/author:
       hipposys:members:
         operation: add
