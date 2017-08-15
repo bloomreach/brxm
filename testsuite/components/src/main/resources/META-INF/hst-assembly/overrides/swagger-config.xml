@@ -21,8 +21,6 @@
   <bean id="swaggerConfig" class="io.swagger.jaxrs.config.BeanConfig">
     <property name="resourcePackage" value="org.hippoecm.hst.demo.jaxrs.services" />
     <property name="version" value="1.0" />
-    <!-- TODO: Remove this property and resolve it automatically. -->
-    <property name="basePath" value="/site/restservices" />
     <property name="title" value="TestSuite REST API Examples" />
     <property name="description" value="TestSuite REST API Examples" />
     <property name="contact" value="dev@example.com" />
