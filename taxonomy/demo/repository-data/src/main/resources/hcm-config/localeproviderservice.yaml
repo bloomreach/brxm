@@ -1,12 +1,8 @@
 definitions:
   config:
     /hippo:configuration/hippo:frontend/cms/cms-services/localeProviderService:
-      jcr:primaryType: frontend:plugin
       /en:
-        jcr:primaryType: frontend:pluginconfig
         jcr:mixinTypes: ['hippo:translated']
-        country: us
-        language: en
         /hippo:translation[1]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: en
@@ -28,10 +24,7 @@ definitions:
           hippo:language: de
           hippo:message: Englisch
       /fr:
-        jcr:primaryType: frontend:pluginconfig
         jcr:mixinTypes: ['hippo:translated']
-        country: fr
-        language: fr
         /hippo:translation[1]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: en
@@ -53,10 +46,7 @@ definitions:
           hippo:language: de
           hippo:message: Französisch
       /nl:
-        jcr:primaryType: frontend:pluginconfig
         jcr:mixinTypes: ['hippo:translated']
-        country: nl
-        language: nl
         /hippo:translation[1]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: en
@@ -99,10 +89,7 @@ definitions:
           hippo:language: it
           hippo:message: Italiano
       /de:
-        jcr:primaryType: frontend:pluginconfig
         jcr:mixinTypes: ['hippo:translated']
-        country: de
-        language: de
         /hippo:translation[1]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: en

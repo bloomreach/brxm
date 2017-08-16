@@ -7,8 +7,6 @@ definitions:
     /hippo:configuration/hippo:translations:
       /hippo:types:
         jcr:primaryType: hipposys:resourcebundles
-    /hippo:configuration/hippo:domains/taxonomy/hippo:authrole:
-      .meta:delete: true
     /hippo:configuration/hippo:groups/author:
       hipposys:members:
         operation: add

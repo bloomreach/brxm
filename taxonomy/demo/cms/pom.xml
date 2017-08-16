@@ -58,16 +58,6 @@
       <artifactId>hippo-addon-channel-manager-repository</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-hst-configuration-editor-repository</artifactId>
-    </dependency>
-
     <!--  Gallery picker dependency -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -91,7 +81,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-taxonomy-demo-content</artifactId>
+      <artifactId>hippo-plugin-taxonomy-demo-repository-data</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -2,5 +2,3 @@ definitions:
   config:
     /hippo:namespaces/hippotaxonomy/taxonomy/editor:templates/_default_/root:
       plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyEditorPlugin
-    /hippo:namespaces/taxonomydemo/canontextpage/editor:templates/_default_/taxonomy:
-      plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyPickerPlugin

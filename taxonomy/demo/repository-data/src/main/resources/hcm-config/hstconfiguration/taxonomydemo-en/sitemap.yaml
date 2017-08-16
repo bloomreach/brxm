@@ -2,45 +2,35 @@ definitions:
   config:
     /hst:hst/hst:configurations/taxonomydemo-en/hst:sitemap:
       jcr:primaryType: hst:sitemap
-      jcr:uuid: a5901438-4f0f-4ce7-9a5c-3d1dadd057bb
       /root:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: 1b67d0f8-0337-420c-afcc-9d02fa909856
         hst:componentconfigurationid: hst:pages/home
         hst:relativecontentpath: taxonomydemo/common/homepage
       /about:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: 0ee17e61-1036-4583-9683-3e561002b447
         hst:componentconfigurationid: hst:pages/detailpage
         hst:relativecontentpath: taxonomydemo/common/About Us
       /bulk:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: acc77260-095c-46b3-84fe-d76a2103652e
         hst:componentconfigurationid: hst:pages/overview
         /_any_:
           jcr:primaryType: hst:sitemapitem
-          jcr:uuid: f531b862-9403-48a8-a770-5c885639c2b2
           hst:componentconfigurationid: hst:pages/detailpage
           hst:relativecontentpath: bulk/${1}
         /_any_.html:
           jcr:primaryType: hst:sitemapitem
-          jcr:uuid: ab03d3d2-3e50-4d8e-a97e-ed5a58e3e4a0
           hst:componentconfigurationid: hst:pages/detailpage
           hst:relativecontentpath: bulk/${1}
       /search:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: e86583f9-c515-41f0-a1e7-581c159549fc
         hst:componentconfigurationid: hst:pages/searchpage
       /taxonomies:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: 3b374848-a99d-4db0-aa78-2902c3f1bc66
         hst:componentconfigurationid: hst:pages/detailpage
         hst:relativecontentpath: taxonomydemo/common/Taxonomy
         /_default_:
           jcr:primaryType: hst:sitemapitem
-          jcr:uuid: 62a38645-1d9a-4d3c-88d4-fc378cbab18f
           hst:componentconfigurationid: hst:pages/taxonomypage
           /_any_:
             jcr:primaryType: hst:sitemapitem
-            jcr:uuid: 45dbf8a7-e372-4d55-9cae-cd10b7b64a6b
             hst:componentconfigurationid: hst:pages/taxonomyresultpage

@@ -1,6 +1,4 @@
 definitions:
   config:
     /hippo:configuration/hippo:domains/taxonomy/readwrite:
-      jcr:primaryType: hipposys:authrole
       hipposys:groups: [editor]
-      hipposys:role: readwrite

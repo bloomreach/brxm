@@ -2,6 +2,4 @@ group:
   name: demo
   after: hippo-cms
 project: demo
-module:
-  name: plugin
-  after: repository
+module: repository

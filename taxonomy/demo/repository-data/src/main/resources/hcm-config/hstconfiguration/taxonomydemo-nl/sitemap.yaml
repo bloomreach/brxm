@@ -1,15 +1,15 @@
 definitions:
   config:
-    /hst:hst/hst:configurations/taxonomydemo-fr/hst:sitemap:
+    /hst:hst/hst:configurations/taxonomydemo-nl/hst:sitemap:
       jcr:primaryType: hst:sitemap
       /root:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/home
-        hst:relativecontentpath: taxonomydemo-fr/common/homepage
-      /apropos:
+        hst:relativecontentpath: taxonomydemo-nl/common/homepage
+      /over:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/detailpage
-        hst:relativecontentpath: taxonomydemo-fr/common/About Us
+        hst:relativecontentpath: taxonomydemo-nl/common/About Us
       /bulk:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/overview
@@ -23,12 +23,11 @@ definitions:
           hst:relativecontentpath: bulk/${1}
       /search:
         jcr:primaryType: hst:sitemapitem
-        jcr:uuid: e86583f9-c515-41f0-a1e7-581c159549fc
         hst:componentconfigurationid: hst:pages/searchpage
       /taxonomies:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/detailpage
-        hst:relativecontentpath: taxonomydemo-fr/common/Taxonomy
+        hst:relativecontentpath: taxonomydemo-nl/common/Taxonomy
         /_default_:
           jcr:primaryType: hst:sitemapitem
           hst:componentconfigurationid: hst:pages/taxonomypage
