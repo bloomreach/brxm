@@ -19,15 +19,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.OnParentVersionAction;
 
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.nodetype.NodeTypeDefStore;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QNodeDefinition;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.apache.jackrabbit.spi.commons.QNodeTypeDefinitionImpl;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.nodetype.NodeTypeDefDiff;
+import org.apache.jackrabbit.spi.commons.nodetype.QNodeDefinitionBuilder;
+import org.apache.jackrabbit.spi.commons.nodetype.QNodeTypeDefinitionBuilder;
+import org.apache.jackrabbit.spi.commons.nodetype.QPropertyDefinitionBuilder;
+
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.NT_BASE;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.NT_UNSTRUCTURED;
+import static org.apache.jackrabbit.spi.commons.name.NameConstants.REP_ROOT;
 
 public class HippoNodeTypeRegistry extends NodeTypeRegistry {
 
@@ -35,6 +46,92 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
 
     private static ThreadLocal<Boolean> ignoreNextConflictingContent = new ThreadLocal<>();
     private static ThreadLocal<Boolean> ignoreNextCheckReferencesInContent = new ThreadLocal<>();
+
+    /**
+     * <p>
+     * Modify the Jackrabbit builtin nodetype definition for rep:root to remove SNS and orderable children support
+     * which it inherits from extending nt:unstructured.
+     * As result of the below changes, rep:root will no longer extend nt:unstructured but instead get's the
+     * same residual child node and property definition from it added <em>without</em> the orderable and sns.
+     * </p>
+     * <p>
+     * While technically these changes might be easier to 'implement' or apply by customizing the builtin_nodetypes.cnd
+     * as bundled within the jackrabbit-core module in our hippo version of it, but as Jackrabbit itself has several
+     * unit tests which assume sns and/or orderable children of the root node, those tests then also would need to be
+     * modified (which is too invasive).
+     * </p>
+     * <p>
+     * The <em>Jackrabbit</em> provided rep:root nodetype is based upon the following definitions (from builtin_nodetypes.cnd):
+     * <pre>
+         [rep:root] > nt:unstructured
+         + jcr:system (rep:system) = rep:system mandatory IGNORE
+
+         [nt:unstructured]
+         orderable
+         - * (UNDEFINED) multiple
+         - * (UNDEFINED)
+         + * (nt:base) = nt:unstructured sns VERSION
+     * </pre>
+     * which gets modified dynamically by this method to the following definition:
+     * <pre>
+         [rep:root] > nt:base
+         + jcr:system (rep:system) = rep:system mandatory IGNORE
+         - * (UNDEFINED) multiple
+         - * (UNDEFINED)
+         + * (nt:base) = nt:unstructured VERSION
+     * </pre>
+     * </p>
+     *
+     * <p>
+     * Note: this changes are not (and don't need to be) persisted as the builtin nodetypes as only read and
+     * never written (back).
+     * </p>
+     */
+    protected void loadBuiltInNodeTypeDefs(NodeTypeDefStore store)
+            throws RepositoryException {
+        super.loadBuiltInNodeTypeDefs(store);
+        QNodeTypeDefinitionImpl currentRepRootNodeTypeDef = (QNodeTypeDefinitionImpl)store.get(REP_ROOT);
+
+        // create new rep:root NodeTypeDefinition
+        QNodeTypeDefinitionBuilder repRootNodeTypeDefBuilder = new QNodeTypeDefinitionBuilder();
+        repRootNodeTypeDefBuilder.setName(REP_ROOT);
+        repRootNodeTypeDefBuilder.setSupertypes(new Name[]{NT_BASE});
+
+        // we'll add 2 property and 2 child node definitions
+        QPropertyDefinition[] propDefs = new QPropertyDefinition[2];
+        QNodeDefinition[] childNodeDefs = new QNodeDefinition[2];
+
+        // reuse current (and only child) rep:system child node definition from current rep:root node type definition
+        childNodeDefs[0] = currentRepRootNodeTypeDef.getChildNodeDefs()[0];
+
+        // create new rep:root residiual child node def for nt:base (default nt:unstructured) children
+        QNodeDefinitionBuilder ntBaseResidualNodeDefBuilder = new QNodeDefinitionBuilder();
+        ntBaseResidualNodeDefBuilder.setDeclaringNodeType(REP_ROOT);
+        ntBaseResidualNodeDefBuilder.addRequiredPrimaryType(NT_BASE);
+        ntBaseResidualNodeDefBuilder.setDefaultPrimaryType(NT_UNSTRUCTURED);
+        ntBaseResidualNodeDefBuilder.setOnParentVersion(OnParentVersionAction.VERSION);
+        // add the new nt:base residiual child node definition
+        childNodeDefs[1] = ntBaseResidualNodeDefBuilder.build();
+
+        QPropertyDefinitionBuilder undefinedResidualPropDefBuilder = new QPropertyDefinitionBuilder();
+        undefinedResidualPropDefBuilder.setDeclaringNodeType(REP_ROOT);
+        undefinedResidualPropDefBuilder.setRequiredType(PropertyType.UNDEFINED);
+        // create new single UNDEFINED (type) residual property
+        propDefs[0] = undefinedResidualPropDefBuilder.build();
+
+        undefinedResidualPropDefBuilder.setMultiple(true);
+        // create new multiple UNDEFINED (type) residual property
+        propDefs[1] = undefinedResidualPropDefBuilder.build();
+
+        // add the property and child node definitions to the new rep:root node type definition
+        repRootNodeTypeDefBuilder.setPropertyDefs(propDefs);
+        repRootNodeTypeDefBuilder.setChildNodeDefs(childNodeDefs);
+
+        // now remove the predefined rep:root definition
+        store.remove(REP_ROOT);
+        // and replace it with ours
+        store.add(repRootNodeTypeDefBuilder.build());
+    }
 
     public HippoNodeTypeRegistry(NamespaceRegistry registry, FileSystem fileSystem) throws RepositoryException {
         super(registry, fileSystem);
@@ -142,7 +239,7 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      */
     protected Map<Name, QNodeTypeDefinition> buildSuperTypesMap(Map<Name, QNodeTypeDefinition> superTypesMap, Name[] superTypes) throws RepositoryException {
         for (Name name : superTypes) {
-            if (!(NameConstants.NT_BASE.equals(name) || superTypesMap.containsKey(name))) {
+            if (!(NT_BASE.equals(name) || superTypesMap.containsKey(name))) {
                 QNodeTypeDefinition def = getNodeTypeDef(name);
                 superTypesMap.put(name, def);
                 buildSuperTypesMap(superTypesMap, def.getSupertypes());
