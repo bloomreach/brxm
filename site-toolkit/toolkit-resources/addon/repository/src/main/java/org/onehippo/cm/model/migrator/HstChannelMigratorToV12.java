@@ -39,13 +39,10 @@ import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
-
-    private static final Logger log = LoggerFactory.getLogger(HstChannelMigratorToV12.class);
 
     private final Set<String> migratedChannelPaths = new HashSet<>();
 
@@ -65,6 +62,8 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         this.save = save;
     }
 
+    public abstract Logger getLogger();
+
     @Override
     public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
         try {
@@ -77,7 +76,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     protected boolean doMigrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
         if (!shouldRun(session, autoExportEnabled)) {
-            log.info(hstRoot + "/hst:channels missing or does not have children :HstChannelMigrator doesn 't need to do anything");
+            getLogger().info(hstRoot + "/hst:channels missing or does not have children :HstChannelMigrator doesn 't need to do anything");
             return false;
         }
 
@@ -90,11 +89,11 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         }
 
         if (!basicHstConfigurationNodesPresent(session)) {
-            log.info("Root hst configuration nodes missing implying the model can't be valid. Nothing to migrate");
+            getLogger().info("Root hst configuration nodes missing implying the model can't be valid. Nothing to migrate");
             return false;
         }
 
-        log.info("Start HST Channel migration");
+        getLogger().info("Start HST Channel migration");
         removePreviewChannelsAndConfigurations(session);
 
         denormalizeSiteConfigurations(session, hstRoot);
@@ -110,10 +109,10 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         // to clean up the left over channels (most likely just delete them)
         Node channelsNode = session.getNode(hstRoot + "/hst:channels");
         if (channelsNode.getNodes().getSize() > 0) {
-            log.info("{} could not successfully move all channel nodes because there seem to be some orphaned channel nodes." +
+            getLogger().info("{} could not successfully move all channel nodes because there seem to be some orphaned channel nodes." +
                     "The following nodes will be deleted.", this);
             for (Node channel : new NodeIterable(channelsNode.getNodes())) {
-                log.info("Channel '{}' was orphaned and will be removed.", channel.getPath());
+                getLogger().info("Channel '{}' was orphaned and will be removed.", channel.getPath());
             }
         }
         channelsNode.remove();
@@ -133,7 +132,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                 try {
                     final Value cndPath = namespaceDefinition.getCndPath();
                     if (cndPath == null) {
-                        log.error("Expected non null cnd for hst. Cannot run migrator '{}'", this);
+                        getLogger().error("Expected non null cnd for hst. Cannot run migrator '{}'", this);
                         return false;
                     }
                     final String cndPathOrigin = String.format("'%s' (%s)", cndPath, namespaceDefinition.getOrigin());
@@ -141,7 +140,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                         BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
                     }
                 } catch (IOException | RepositoryException e) {
-                    log.error("Error while trying to re-register the hst cnd. Cannot run migrator '{}'", this);
+                    getLogger().error("Error while trying to re-register the hst cnd. Cannot run migrator '{}'", this);
                     return false;
                 }
             }
@@ -171,7 +170,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
             if (siteNodes.size() > 1) {
                 final String configurationPath = entry.getKey();
                 if (!session.nodeExists(configurationPath)) {
-                    log.warn("Expected '{}' to exist but not found. Cannot denormalize hst:sites nodes. There exist HST " +
+                    getLogger().warn("Expected '{}' to exist but not found. Cannot denormalize hst:sites nodes. There exist HST " +
                             "configuration errors.");
                     continue;
                 }
@@ -255,7 +254,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
             channelPathProperty.remove();
 
             if (mount.hasProperty("hst:ismapped") && !mount.getProperty("hst:ismapped").getBoolean()) {
-                log.warn("Mount {} has a channelpath but also hst:ismapped = false. This was a configuration error. Just " +
+                getLogger().warn("Mount {} has a channelpath but also hst:ismapped = false. This was a configuration error. Just " +
                         "the channelpath will be removed.", mount.getPath());
             } else if (migratedChannelPaths.contains(channelPath)) {
                 // channel path already migrated
@@ -275,18 +274,18 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                             }
                             final String targetPath = workspace.getPath() + "/hst:channel";
                             session.move(channelPath, targetPath);
-                            log.info("Successfully moved '{}' to '{}' ", channelPath, targetPath);
+                            getLogger().info("Successfully moved '{}' to '{}' ", channelPath, targetPath);
                         } else {
-                            log.warn("No configuration found at '{}' which was expected to be there for mount '{}' ",
+                            getLogger().warn("No configuration found at '{}' which was expected to be there for mount '{}' ",
                                     channelTargetConfiguration, mount.getPath());
                         }
                         migratedChannelPaths.add(channelPath);
                     } else {
-                        log.info("Mount {} has an hst:channelpath that does not exist.Removing the hst:channelpath property now. ",
+                        getLogger().info("Mount {} has an hst:channelpath that does not exist.Removing the hst:channelpath property now. ",
                                 mount.getPath(), channelPath);
                     }
                 } catch (RepositoryException e) {
-                    log.warn("Mount {} contains an invalid hst:channelpath {} which is not a valid jcr path.Property will " +
+                    getLogger().warn("Mount {} contains an invalid hst:channelpath {} which is not a valid jcr path.Property will " +
                             "be removed since doens't work in the first place.", mount.getPath(), channelPath);
 
                 }
@@ -335,7 +334,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                 mount.getProperty("hst:mountpoint").getString();
         try {
             if (!session.nodeExists(mountPoint)) {
-                log.warn("Mount {} has an hst:mountpoint {} that does not exist.", mount.getPath(), mountPoint);
+                getLogger().warn("Mount {} has an hst:mountpoint {} that does not exist.", mount.getPath(), mountPoint);
                 return null;
             } else {
                 final Node hstSiteNode = session.getNode(mountPoint);
@@ -350,7 +349,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                 return configurationPath;
             }
         } catch (RepositoryException e) {
-            log.warn("Mount {} contains an invalid hst:mountpoint {} which is not a valid jcr path.Fix this. "
+            getLogger().warn("Mount {} contains an invalid hst:mountpoint {} which is not a valid jcr path.Fix this. "
                     , mount.getPath(), mountPoint);
             return null;
         }
@@ -361,11 +360,11 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         try {
             final boolean channelsNodeExists = session.nodeExists(hstRoot + "/hst:channels");
             if (channelsNodeExists && session.getNode(hstRoot + "/hst:channels").getNodes().getSize() > 0) {
-                log.info("{} will run because /hst:hst/hst:channels node exists and has children.", this);
+                getLogger().info("{} will run because /hst:hst/hst:channels node exists and has children.", this);
                 return true;
             }
         } catch (NamespaceException e) {
-            log.info("hst namespace has not yet been registered before. Nothing to migrate");
+            getLogger().info("hst namespace has not yet been registered before. Nothing to migrate");
             return false;
         }
         return false;
@@ -374,28 +373,28 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     private boolean basicHstConfigurationNodesPresent(final Session session) throws RepositoryException {
         if (!session.nodeExists(hstRoot + "/hst:sites")) {
-            log.info("Missing node /hst:hst/hst:sites.");
+            getLogger().info("Missing node /hst:hst/hst:sites.");
             return false;
         }
         if (session.getNode(hstRoot + "/hst:sites").getNodes().getSize() == 0) {
-            log.info("Missing children for /hst:hst/hst:sites.");
+            getLogger().info("Missing children for /hst:hst/hst:sites.");
             return false;
         }
         if (!session.nodeExists(hstRoot + "/hst:configurations")) {
-            log.info("Missing node /hst:hst/hst:configurations.");
+            getLogger().info("Missing node /hst:hst/hst:configurations.");
             return false;
         }
         if (session.getNode(hstRoot +
                 "/hst:configurations").getNodes().getSize() == 0) {
-            log.info("Missing children for /hst:hst/hst:configurations.");
+            getLogger().info("Missing children for /hst:hst/hst:configurations.");
             return false;
         }
         if (!session.nodeExists(hstRoot + "/hst:hosts")) {
-            log.info("Missing node /hst:hst/hst:hosts.");
+            getLogger().info("Missing node /hst:hst/hst:hosts.");
             return false;
         }
         if (session.getNode(hstRoot + "/hst:hosts").getNodes().getSize() == 0) {
-            log.info("Missing children for /hst:hst/hst:hosts.");
+            getLogger().info("Missing children for /hst:hst/hst:hosts.");
             return false;
         }
 
@@ -405,13 +404,13 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
     private void removePreviewChannelsAndConfigurations(final Session session) throws RepositoryException {
         for (Node channelNode : new NodeIterable(session.getNode(hstRoot + "/hst:channels").getNodes())) {
             if (channelNode.getName().endsWith("-preview")) {
-                log.info("Remove preview channel {} node before migrating the channel nodes.", channelNode.getPath());
+                getLogger().info("Remove preview channel {} node before migrating the channel nodes.", channelNode.getPath());
                 channelNode.remove();
             }
         }
         for (Node configuration : new NodeIterable(session.getNode(hstRoot + "/hst:configurations").getNodes())) {
             if (configuration.getName().endsWith("-preview")) {
-                log.info("Remove configuration {} node before migrating the channel nodes.", configuration.getPath());
+                getLogger().info("Remove configuration {} node before migrating the channel nodes.", configuration.getPath());
                 configuration.remove();
             }
         }
@@ -420,7 +419,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     private void migrateBlueprints(final Session session, final String hstRoot) throws RepositoryException {
         if (!session.nodeExists(hstRoot + "/hst:blueprints")) {
-            log.info("There are no blueprints to migrate");
+            getLogger().info("There are no blueprints to migrate");
             return;
         }
         for (Node blueprintNode : new NodeIterable(session.getNode(hstRoot + "/hst:blueprints").getNodes())) {
@@ -430,7 +429,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
 
     private void migrateBlueprint(final Node blueprintNode) throws RepositoryException {
         if (!blueprintNode.hasNode("hst:channel")) {
-            log.info("No need to migrate blueprint '{}' because does not have an hst:channel node.", blueprintNode.getPath());
+            getLogger().info("No need to migrate blueprint '{}' because does not have an hst:channel node.", blueprintNode.getPath());
             return;
         }
         final Node blueprintConfigurationNode;

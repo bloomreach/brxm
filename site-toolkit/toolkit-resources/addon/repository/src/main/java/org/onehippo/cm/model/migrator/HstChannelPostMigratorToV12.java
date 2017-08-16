@@ -30,6 +30,11 @@ public class HstChannelPostMigratorToV12 extends HstChannelMigratorToV12 {
     private static final Logger log = LoggerFactory.getLogger(HstChannelPostMigratorToV12.class);
 
     @Override
+    public Logger getLogger() {
+        return log;
+    }
+
+    @Override
     protected boolean preemptiveInitializeHstNodeType(final Session session, final ConfigurationModel configurationModel) throws RepositoryException {
         // post migrator never has to reload node types for hst. Just return success
         return true;

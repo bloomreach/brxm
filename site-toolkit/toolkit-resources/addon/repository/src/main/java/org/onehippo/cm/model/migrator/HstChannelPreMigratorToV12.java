@@ -16,10 +16,18 @@
 package org.onehippo.cm.model.migrator;
 
 import org.onehippo.cm.engine.migrator.PreMigrator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @PreMigrator
 public class HstChannelPreMigratorToV12 extends HstChannelMigratorToV12 {
 
+    private static final Logger log = LoggerFactory.getLogger(HstChannelPreMigratorToV12.class);
+
+    @Override
+    public Logger getLogger() {
+        return log;
+    }
 
     public HstChannelPreMigratorToV12() {
         super();
