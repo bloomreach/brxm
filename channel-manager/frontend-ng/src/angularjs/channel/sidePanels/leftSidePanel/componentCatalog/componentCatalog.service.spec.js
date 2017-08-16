@@ -72,14 +72,6 @@ describe('ComponentCatalogService', () => {
       spyOn(ComponentCatalogService, 'addComponentToContainer');
     });
 
-    it('toggle components overlay by itself if it is not already toggled', () => {
-      OverlayService.isComponentsOverlayDisplayed = false;
-      ComponentCatalogService.selectComponent({ id: 'componentId' });
-
-      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
-      expect(OverlayService.toggleOverlayByComponent).toEqual(true);
-    });
-
     it('should forward mask and zindexes handling and setup clickhandlers', () => {
       ComponentCatalogService.selectComponent({ id: 'componentId' });
 

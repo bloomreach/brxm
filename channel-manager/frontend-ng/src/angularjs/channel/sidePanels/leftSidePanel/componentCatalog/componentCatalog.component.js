@@ -20,6 +20,7 @@ import template from './componentCatalog.html';
 const componentCatalogComponent = {
   bindings: {
     components: '<',
+    state: '=',
   },
   template,
   controller: ComponentCatalogController,

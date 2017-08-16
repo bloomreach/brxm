@@ -17,12 +17,14 @@
 describe('$ctrl', () => {
   let $ctrl;
   let MaskService;
+  let OverlayService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_MaskService_, $componentController) => {
+    inject((_MaskService_, $componentController, _OverlayService_) => {
       MaskService = _MaskService_;
+      OverlayService = _OverlayService_;
 
       $ctrl = $componentController('mask', { MaskService });
     });
@@ -37,6 +39,14 @@ describe('$ctrl', () => {
     MaskService.maskClass = 'masked';
 
     expect($ctrl.getMaskClass()).toEqual('masked');
+  });
+
+  it('should change toggle its own state', () => {
+    OverlayService.toggleOverlayByComponent = true;
+    $ctrl.state = true;
+    $ctrl.onClick();
+
+    expect($ctrl.state).toEqual(false);
   });
 
   it('should forward clickHandler', () => {
