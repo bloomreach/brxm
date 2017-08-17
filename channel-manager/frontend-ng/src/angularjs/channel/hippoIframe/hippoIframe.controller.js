@@ -122,7 +122,8 @@ class HippoIframeCtrl {
   _updateChannelIfSwitched() {
     const channelToLoad = this._getChannelToLoad();
     if (channelToLoad !== null) {
-      this.CmsService.publish('load-channel', channelToLoad);
+      const path = this.PageMetaDataService.getPathInfo();
+      this.CmsService.publish('load-channel', channelToLoad, path);
     }
   }
 
