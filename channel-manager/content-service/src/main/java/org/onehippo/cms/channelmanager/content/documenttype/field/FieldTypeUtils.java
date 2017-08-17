@@ -38,6 +38,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 public class FieldTypeUtils {
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
+    private static final String FIELD_TYPE_IMAGELINK = "hippogallerypicker:imagelink";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
@@ -101,6 +103,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
+        FIELD_TYPE_MAP.put(FIELD_TYPE_IMAGELINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
