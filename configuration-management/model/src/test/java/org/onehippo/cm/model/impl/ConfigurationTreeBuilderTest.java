@@ -838,7 +838,11 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(2));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("[test-group/test-project/test-module [string], test-group/test-project/test-module [string]] tries to modify already deleted node '/a/b/c', skipping.")));
+        }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -871,7 +875,12 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(2));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("[test-group/test-project/test-module [string], test-group/test-project/test-module [string]] tries to modify already deleted node '/a/b/c/d', skipping.")));
+        }
+
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2046,9 +2055,9 @@ public class ConfigurationTreeBuilderTest {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
             builder.push((ContentDefinitionImpl)definitions2.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Trying to modify non-configuration node '/a', skipping.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string] tries to modify non-configuration node '/a', skipping.")));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Trying to modify non-configuration node '/b/c', skipping.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string] tries to modify non-configuration node '/b/c', skipping.")));
         }
 
         final String yaml3 = "definitions:\n"

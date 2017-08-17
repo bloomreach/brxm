@@ -229,12 +229,14 @@ public class ConfigurationTreeBuilder {
             if (children.containsKey(indexedName)) {
                 child = children.get(indexedName);
                 if (child.isDeleted()) {
-                    logger.warn("Trying to modify already deleted node '{}', skipping.", child.getJcrPath());
+                    logger.warn("{} tries to modify already deleted node '{}', skipping.",
+                            child.getOrigin(), child.getJcrPath());
                     continue;
                 }
             } else {
                 if (isAndRemainsNonConfigurationNode(node, indexedName, definitionChild.getCategory())) {
-                    logger.warn("Trying to modify non-configuration node '{}', skipping.", definitionChild.getJcrPath());
+                    logger.warn("{} tries to modify non-configuration node '{}', skipping.",
+                            definitionChild.getOrigin(), definitionChild.getJcrPath());
                     continue;
                 }
                 child = createChildNode(node, indexedName, definitionChild);
@@ -361,7 +363,8 @@ public class ConfigurationTreeBuilder {
         if (pathSegments.length > segmentsConsumed) {
             final JcrPathSegment nodeName = pathSegments[segmentsConsumed];
             if (isAndRemainsNonConfigurationNode(rootForDefinition, nodeName.toString(), definition.getNode().getCategory())) {
-                logger.warn("Trying to modify non-configuration node '{}', skipping.", definition.getNode().getJcrPath());
+                logger.warn("{} tries to modify non-configuration node '{}', skipping.",
+                        definition.getOrigin(), definitionRootPath);
                 return null;
             }
             rootForDefinition =
