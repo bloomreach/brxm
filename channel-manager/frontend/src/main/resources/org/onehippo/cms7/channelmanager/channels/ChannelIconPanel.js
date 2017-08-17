@@ -53,10 +53,12 @@
         initComponent: function() {
 
             this.on('refreshDataView', function() {
-                var channelGroupHandles, channelGroups, i, len, channelGroupHandle, channelGroup;
+                var channelGroupHandles, channelGroups, i, len, channelGroupHandle, channelGroup, userPreferences;
 
                 channelGroupHandles = Ext.query('.channel-group-handle');
                 channelGroups = Ext.query('.channel-group');
+                userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
+                userPreferences = userPreferences.expandedViews;
 
                 for (i = 0, len = channelGroupHandles.length; i < len; i++) {
                     channelGroupHandle = Ext.get(channelGroupHandles[i]);
@@ -64,6 +66,11 @@
 
                     channelGroup = Ext.get(channelGroups[i]);
                     channelGroup.setVisibilityMode(Ext.Element.DISPLAY);
+
+                    if (userPreferences.indexOf(channelGroup.id) === -1) {
+                      channelGroup.hide();
+                      channelGroupHandle.replaceClass('expanded', 'collapsed');
+                    }
 
                     this.registerOnClick(channelGroupHandle, channelGroup);
                 }
@@ -73,13 +80,16 @@
         },
 
         registerOnClick: function(channelGroupHandle, channelGroup) {
+            var setExpanded = this.setExpanded;
             channelGroupHandle.on('click', function() {
                 if (channelGroup.isVisible()) {
                     channelGroup.hide();
                     channelGroupHandle.replaceClass('expanded', 'collapsed');
+                  setExpanded(channelGroup.id, 'remove');
                 } else {
                     channelGroup.show();
                     channelGroupHandle.replaceClass('collapsed', 'expanded');
+                  setExpanded(channelGroup.id, 'add');
                 }
             });
         },
@@ -145,6 +155,19 @@
         refresh: function() {
             Hippo.ChannelManager.ChannelIconDataView.superclass.refresh.apply(this, arguments);
             this.fireEvent('refreshDataView');
+        },
+
+        setExpanded: function (id, action) {
+            var userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
+            var expandedViews = userPreferences.expandedViews;
+            var index = expandedViews.indexOf(id);
+
+            if (action === 'add') expandedViews.push(id);
+            else if (action === 'remove' && index > -1) {
+              expandedViews.splice(index, 1);
+            }
+            userPreferences.expandedViews = expandedViews;
+            localStorage.setItem('channelMgrConf', JSON.stringify(userPreferences));
         },
 
     });
@@ -215,15 +238,10 @@
         initUserPreferences() {
             this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
             if(!this.userPreferences) {
-                this.userPreferences = {'sort': 0, 'display': 0, 'channelRegion_even': 1, 'channelRegion_odd': 1, 'channelType_even': 1, 'channelType_odd': 1};
+                this.userPreferences = {'sort': 0, 'display': 0, 'expandedViews': ['ext_gen58']};
                 localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
             }
-        },
-
-        setUserPreferences: function (type, id) {
-            this.userPreferences[type] = id;
-            localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
-        },
+        }
 
     });
 
