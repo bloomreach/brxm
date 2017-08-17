@@ -236,6 +236,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
                     // post migrators need to run after the auto export service has been started because the
                     // changes of the migrators might have to be exported
+                    log.info("Loading postMigrators");
                     final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
                     if (!postMigrators.isEmpty()) {
                         log.info("Running postMigrators: {}", postMigrators);
@@ -733,7 +734,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     migrators.add(migrator);
                 } else {
                     log.error("Skipping incorrect annotated class '{}' as migrator. Only subclasses of '{}' are allowed to " +
-                            "be annotation with '{}'.", migratorClassName, ConfigurationMigrator.class.getName(), PreMigrator.class.getName());
+                            "be annotation with '{}'.", migratorClassName, ConfigurationMigrator.class.getName(), annotationClazz.getName());
                 }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 log.error("Could not instantiate migrator '{}'. Migrator will not run.", migratorClassName, e);
