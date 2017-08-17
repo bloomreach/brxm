@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +44,8 @@ import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.engine.migrator.ConfigurationMigrator;
+import org.onehippo.cm.engine.migrator.MigrationException;
+import org.onehippo.cm.engine.migrator.PostMigrator;
 import org.onehippo.cm.engine.migrator.PreMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
@@ -182,11 +185,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         }
                     }
 
-                    log.info("Loading migrators");
-                    final List<ConfigurationMigrator> migrators = loadMigrators();
-                    if (!migrators.isEmpty()) {
-                        log.info("Running migrators: {}", migrators);
-                        runMigrators(bootstrapModel, migrators);
+                    log.info("Loading preMigrators");
+                    final List<ConfigurationMigrator> preMigrators = loadMigrators(PreMigrator.class);
+                    if (!preMigrators.isEmpty()) {
+                        log.info("Running preMigrators: {}", preMigrators);
+                        runMigrators(bootstrapModel, preMigrators, false);
                     }
 
                     log.info("ConfigurationService: apply bootstrap config");
@@ -224,9 +227,20 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         // we need the bootstrap model here, not the baseline, so we can access the jar content
                         postStartupTasks(bootstrapModel);
                     }
+
+                    boolean autoExportRunning = false;
                     if (startAutoExportService) {
                         log.info("ConfigurationService: start autoexport service");
-                        startAutoExportService();
+                        autoExportRunning = startAutoExportService();
+                    }
+
+                    // post migrators need to run after the auto export service has been started because the
+                    // changes of the migrators might have to be exported
+                    log.info("Loading postMigrators");
+                    final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
+                    if (!postMigrators.isEmpty()) {
+                        log.info("Running postMigrators: {}", postMigrators);
+                        runMigrators(bootstrapModel, postMigrators, autoExportRunning);
                     }
 
                 } finally {
@@ -616,15 +630,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     /**
      * Run all migrators. The session is expected to be clean (no pending changes) when this method is called
-     * and after it returns. Failure of one migrator is not expected to prevent any other from running.
+     * and after it returns. Failure of one migrator is not expected to prevent any other from running unless the
+     * migrator throws a {@link MigrationException} which causes the repository failing to start up.
      * @return {@code true} if all migrators ran without Exception. If one migrator
-     * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel)}, {@code false} is
+     * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel, boolean)}, {@code false} is
      * returned.
      */
-    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationMigrator> migrators) {
+    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationMigrator> migrators,
+                              final boolean autoExportRunning) {
         for (ConfigurationMigrator migrator : migrators) {
             try {
-                migrator.migrate(session, model);
+                migrator.migrate(session, model, autoExportRunning);
+            } catch (MigrationException e) {
+                log.error("Short-circuiting repository startup due to MigrationException in " +
+                        "migrator {}", migrator);
+                throw e;
             } catch (Exception e) {
                 log.error("Failed to migrate '{}'", migrator , e);
             }
@@ -632,6 +652,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 // clean up any changes that haven't been saved by the migrator
                 try {
                     if (session.hasPendingChanges()) {
+                        log.warn("Migrator {} had unsaved changes which will be discarded now.", migrator);
                         session.refresh(false);
                     }
                 }
@@ -652,11 +673,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private void startAutoExportService() {
+    private boolean startAutoExportService() {
         try {
             autoExportService = new AutoExportServiceImpl(session, this);
+            return true;
         } catch (Exception e) {
             log.error("Failed to start autoexport service");
+            return false;
         }
     }
 
@@ -690,9 +713,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      *  If at some point we want to make the mechanism more generally available, we can relax the classpath scanning.
      * </p>
      *
+     * @param annotationClazz
      */
-    private List<ConfigurationMigrator> loadMigrators() {
-        Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(PreMigrator.class,
+    private List<ConfigurationMigrator> loadMigrators(final Class<? extends Annotation> annotationClazz) {
+        Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(annotationClazz,
                 "classpath*:org/hippoecm/**/*.class",
                 "classpath*:org/onehippo/**/*.class",
                 "classpath*:com/onehippo/**/*.class");
@@ -710,7 +734,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     migrators.add(migrator);
                 } else {
                     log.error("Skipping incorrect annotated class '{}' as migrator. Only subclasses of '{}' are allowed to " +
-                            "be annotation with '{}'.", migratorClassName, ConfigurationMigrator.class.getName(), PreMigrator.class.getName());
+                            "be annotation with '{}'.", migratorClassName, ConfigurationMigrator.class.getName(), annotationClazz.getName());
                 }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 log.error("Could not instantiate migrator '{}'. Migrator will not run.", migratorClassName, e);

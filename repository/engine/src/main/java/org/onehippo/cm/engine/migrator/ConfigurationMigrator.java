@@ -22,12 +22,17 @@ import org.onehippo.cm.model.ConfigurationModel;
 
 /**
  * <p>
- *    {@link ConfigurationMigrator}s run <strong>after</strong> the {@link ConfigurationModel} is loaded but before the {@link ConfigurationModel}
- *    is applied to the JCR Nodes (thus before applied to config or content). Be aware that {@link ConfigurationMigrator}s always
- *    run at startup hence should always have a fast initial check whether they have any work to do!
+ *    {@link ConfigurationMigrator} classes annotated with {@link PreMigrator} run <strong>after</strong> the {@link ConfigurationModel}
+ *    is loaded but before the {@link ConfigurationModel} is applied to the JCR Nodes (thus before applied to config or content).
+ *    Be aware that {@link ConfigurationMigrator}s always run at startup hence should always have a fast initial check whether they have any work to do!
  * </p>
  * <p>
- *    For a migrator to run it has to implement this interface and have the {@link PreMigrator} class annotation and be
+ *    {@link ConfigurationMigrator} classes annotated with {@link PostMigrator} run <strong>after</strong> the {@link ConfigurationModel}
+ *    is applied to the JCR Nodes (to config or content).
+ *    Be aware that {@link ConfigurationMigrator}s always run at startup hence should always have a fast initial check whether they have any work to do!
+ * </p>
+ * <p>
+ *    For a migrator to run it has to implement this interface and have the {@link PreMigrator} or {@link PostMigrator} class annotation and be
  *    in one of the hippo internal packages. There is no specific order in which migrators run so a migrator should not
  *    rely on other migrators.
  * </p>
@@ -38,10 +43,22 @@ import org.onehippo.cm.model.ConfigurationModel;
 public interface ConfigurationMigrator {
 
     /**
-     * Run a migration of JCR data that must be executed before applying HCM config changes. This method is expected
-     * to receive a clean Session (with no pending changes) and to save() its own changes, if necessary. Changes that
-     * are not save()d will be discarded by the caller.
+     * <p>
+     *    This method is expected to receive a clean Session (with no pending changes) and to save() its own changes. Changes that
+     *    are not save()d will be discarded by the caller.
+     * </p>
+     * <p>
+     *     Any exception thrown by this {@link ConfigurationMigrator#migrate(Session, ConfigurationModel, boolean)} will be
+     *     caught and logged by the calling {@link org.onehippo.cm.engine.ConfigurationServiceImpl} <strong>except</strong>
+     *     if the {@link ConfigurationMigrator} throws a {@link MigrationException} : This is a short-circuiting exception
+     *     making the further repository bootstrap to directly stop and quit the repository startup.
+     * </p>
+     * @param autoExportRunning {@code true} when auto export is enabled. Note that during the {@link #migrate(Session, ConfigurationModel, boolean)}
+     *                                      of {@link PreMigrator}s the {@code autoExportRunning} is always false, because
+     *                                      auto export is never started before the {@link PreMigrator}s are executed
+     *
      * @return {@code true} if something changed as a result of this migrator (used only as a hint for the caller)
      */
-    boolean migrate(final Session session, final ConfigurationModel configurationModel) throws RepositoryException;
+    boolean migrate(final Session session, final ConfigurationModel configurationModel,
+                    final boolean autoExportRunning) throws RepositoryException;
 }
