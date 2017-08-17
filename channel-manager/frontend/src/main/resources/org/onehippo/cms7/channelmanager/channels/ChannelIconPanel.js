@@ -53,12 +53,12 @@
         initComponent: function() {
 
             this.on('refreshDataView', function() {
-                var channelGroupHandles, channelGroups, i, len, channelGroupHandle, channelGroup, userPreferences;
+                var channelGroupHandles, channelGroups, i, len, channelGroupHandle, channelGroup, userPreferences, hiddenViews;
 
                 channelGroupHandles = Ext.query('.channel-group-handle');
                 channelGroups = Ext.query('.channel-group');
                 userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
-                userPreferences = userPreferences.expandedViews;
+                hiddenViews = userPreferences.hiddenViews;
 
                 for (i = 0, len = channelGroupHandles.length; i < len; i++) {
                     channelGroupHandle = Ext.get(channelGroupHandles[i]);
@@ -67,7 +67,7 @@
                     channelGroup = Ext.get(channelGroups[i]);
                     channelGroup.setVisibilityMode(Ext.Element.DISPLAY);
 
-                    if (userPreferences.indexOf(channelGroup.id) === -1) {
+                    if (hiddenViews.indexOf(channelGroupHandle.dom.textContent) > -1) {
                       channelGroup.hide();
                       channelGroupHandle.replaceClass('expanded', 'collapsed');
                     }
@@ -80,16 +80,16 @@
         },
 
         registerOnClick: function(channelGroupHandle, channelGroup) {
-            var setExpanded = this.setExpanded;
+            var setHiddenView = this.setHiddenView;
             channelGroupHandle.on('click', function() {
                 if (channelGroup.isVisible()) {
                     channelGroup.hide();
                     channelGroupHandle.replaceClass('expanded', 'collapsed');
-                  setExpanded(channelGroup.id, 'remove');
+                  setHiddenView(channelGroup, channelGroupHandle, 'add');
                 } else {
                     channelGroup.show();
                     channelGroupHandle.replaceClass('collapsed', 'expanded');
-                  setExpanded(channelGroup.id, 'add');
+                  setHiddenView(channelGroup, channelGroupHandle, 'remove');
                 }
             });
         },
@@ -157,18 +157,21 @@
             this.fireEvent('refreshDataView');
         },
 
-        setExpanded: function (id, action) {
-            var userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
-            var expandedViews = userPreferences.expandedViews;
-            var index = expandedViews.indexOf(id);
+        setHiddenView: function (channelGroup, channelGroupHandle, action) {
+            var userPreferences, hiddenViews, id, index;
+            userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
+            hiddenViews = userPreferences.hiddenViews;
 
-            if (action === 'add') expandedViews.push(id);
+            id = channelGroupHandle.dom.textContent;
+            index = hiddenViews.indexOf(id);
+
+            if (action === 'add') { hiddenViews.push(id); }
             else if (action === 'remove' && index > -1) {
-              expandedViews.splice(index, 1);
+              hiddenViews.splice(index, 1);
             }
-            userPreferences.expandedViews = expandedViews;
+            userPreferences.hiddenViews = hiddenViews;
             localStorage.setItem('channelMgrConf', JSON.stringify(userPreferences));
-        },
+        }
 
     });
 
@@ -235,10 +238,10 @@
             return dataView;
         },
 
-        initUserPreferences() {
+        initUserPreferences: function() {
             this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
             if(!this.userPreferences) {
-                this.userPreferences = {'sort': 0, 'display': 0, 'expandedViews': ['ext_gen58']};
+                this.userPreferences = {'sort': 0, 'display': 0, 'hiddenViews': []};
                 localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
             }
         }
