@@ -152,7 +152,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -174,21 +174,15 @@
               </filters>
               <finalName>esv2yaml-${project.version}</finalName>
               <transformers>
-                <!-- See https://issues.apache.org/jira/browse/LOG4J2-673 why I added this transformer. TD;DR without this
-                 transformer, logging does not work in the uberjar -->
-                <transformer implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                  <resources>
+                    <resource>log4j-provider.properties</resource>
+                  </resources>
+                </transformer>
               </transformers>
             </configuration>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <!-- See https://issues.apache.org/jira/browse/LOG4J2-673 why I added this dependency which has Apache License -->
-            <groupId>com.github.edwgiz</groupId>
-            <artifactId>maven-shade-plugin.log4j2-cachefile-transformer</artifactId>
-            <version>2.6.1</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>
