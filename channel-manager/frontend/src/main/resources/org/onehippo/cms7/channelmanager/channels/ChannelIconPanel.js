@@ -145,7 +145,7 @@
         refresh: function() {
             Hippo.ChannelManager.ChannelIconDataView.superclass.refresh.apply(this, arguments);
             this.fireEvent('refreshDataView');
-        }
+        },
 
     });
 
@@ -159,7 +159,7 @@
             this.resources = config.resources;
             this.store = config.store;
             this.userId = config.userId;
-
+            this.initUserPreferences();
             channelTypeDataView = this.createDataView('channelType');
             channelRegionDataView = this.createDataView('channelRegion');
 
@@ -167,7 +167,7 @@
                 id: 'channelIconPanel',
                 border: false,
                 layout: 'card',
-                activeItem: 0,
+                activeItem: this.userPreferences.sort,
                 layoutOnCardChange: true,
                 items: [
                     {
@@ -204,13 +204,26 @@
                 autoScroll: true,
                 resources: this.resources
             });
-            dataView.on('click', function(dataView, index, element, eventObject) {
+          dataView.on('click', function(dataView, index, element, eventObject) {
                 this.selectedChannelId = element.getAttribute('channelId');
                 var record = this.store.getById(this.selectedChannelId);
                 this.fireEvent('channel-selected', this.selectedChannelId, record);
             }, this);
             return dataView;
-        }
+        },
+
+        initUserPreferences() {
+            this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
+            if(!this.userPreferences) {
+                this.userPreferences = {'sort': 0, 'display': 0, 'channelRegion_even': 1, 'channelRegion_odd': 1, 'channelType_even': 1, 'channelType_odd': 1};
+                localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
+            }
+        },
+
+        setUserPreferences: function (type, id) {
+            this.userPreferences[type] = id;
+            localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
+        },
 
     });
 
