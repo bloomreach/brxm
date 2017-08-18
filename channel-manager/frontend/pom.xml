@@ -193,6 +193,7 @@
             Hippo,
             HST,
             jQuery,
+            localStorage,
             YAHOO,
             Wicket,
             window

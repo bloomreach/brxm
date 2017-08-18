@@ -95,7 +95,7 @@
                         scope: this,
                         iconCls: 'list-view'
                     }
-                ],
+                ]
             });
 
             if (this.canModifyChannels && this.blueprintsAvailable) {
@@ -141,9 +141,10 @@
         },
 
         setUserPreferences: function (type, id) {
+          this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
           this.userPreferences[type] = id;
           localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
-        },
+        }
 
     });
 
