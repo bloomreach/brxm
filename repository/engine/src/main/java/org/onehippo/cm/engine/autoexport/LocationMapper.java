@@ -46,30 +46,81 @@ final class LocationMapper {
         contextNode = "/hippo:namespaces/$1/$2";
         file = "namespaces/$1/$2.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
         // /hst:hst/hst:sites
-        nodePatterns = new String[] {"/hst:hst/hst:sites" + ANY};
-        propertyPatterns = nodePatterns;
+        nodePatterns = new String[] {"/hst:hst/hst:sites"};
+        propertyPatterns = new String[] {"/hst:hst/hst:sites/" + ANY};
         contextNode = "/hst:hst/hst:sites";
         file = "hst/sites.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        nodePatterns = new String[] {"/hst:hst/hst:sites/" + NAME, "/hst:hst/hst:sites/" + NAME + "/" + ANY};
+        propertyPatterns = new String[] {"/hst:hst/hst:sites/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:sites/$1";
+        file = "hst/sites/$1.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
         // /hst:hst/hst:hosts
-        nodePatterns = new String[] {"/hst:hst/hst:hosts" + ANY};
-        propertyPatterns = nodePatterns;
+        nodePatterns = new String[] {"/hst:hst/hst:hosts"};
+        propertyPatterns = new String[] {"/hst:hst/hst:hosts/" + ANY};
         contextNode = "/hst:hst/hst:hosts";
         file = "hst/hosts.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        nodePatterns = new String[] {"/hst:hst/hst:hosts/"+ NAME};
+        propertyPatterns = new String[] {"/hst:hst/hst:hosts/"+ NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:hosts/$1";
+        file = "hst/hosts/$1.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        nodePatterns = new String[] {"/hst:hst/hst:hosts/"+ NAME + "/" + NAME, "/hst:hst/hst:hosts/"+ NAME + "/" + NAME + "/" + ANY};
+        propertyPatterns = new String[] {"/hst:hst/hst:hosts/"+ NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:hosts/$1/$2";
+        file = "hst/hosts/$1/$2.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
         // /hst:hst/hst:configurations
         nodePatterns = new String[] {"/hst:hst/hst:configurations", "/hst:hst/hst:configurations/" + NAME};
         propertyPatterns = new String[] {"/hst:hst/hst:configurations/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/" + NAME};
         contextNode = "/hst:hst/hst:configurations";
         file = "hst/configurations.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        //workspace/...
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace" + "/(hst:channel|hst:sitemap|hst:pages)"};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace" +"/(hst:channel|hst:sitemap|hst:pages)/" + ANY};
+        contextNode = "/hst:hst/hst:configurations/$1/hst:workspace/$2";
+        file = "hst/configurations/$1/workspace/$2.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        //workspace/pages|sitemap/...
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace" + "/(hst:channel|hst:sitemap|hst:pages)/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/hst:workspace" + "/(hst:channel|hst:components|hst:sitemap|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME + "/" + ANY};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace" +"/(hst:channel|hst:sitemap|hst:pages)/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:configurations/$1/hst:workspace/$2/$3";
+        file = "hst/configurations/$1/workspace/$2/$3.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        //workspace/sitemenus
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:sitemenus/" + NAME + "/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:sitemenus/" + NAME + "/" + NAME + "/" + ANY};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:sitemenus/" + NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:configurations/$1/hst:workspace/hst:sitemenus/$2/$3";
+        file = "hst/configurations/$1/workspace/sitemenus/$2/$3.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
+        //workspace/containers
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:containers/" + NAME + "/" + NAME + "/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:containers/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/hst:workspace/hst:containers/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:configurations/$1/hst:workspace/hst:containers/$2/$3/$4";
+        file = "hst/configurations/$1/workspace/containers/$2/$3/$4.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
         // /hst:hst/hst:configurations/project
         nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME};
         propertyPatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME + "/" + NAME};
         contextNode = "/hst:hst/hst:configurations/$1/$2";
         file = "hst/configurations/$1/$2.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+
         // /hst:hst/hst:configurations/project/hst:components|hst:pages|hst:abstractpages|hst:prototypepages
         nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME + "/" + ANY};
         propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME + "/" + ANY};
