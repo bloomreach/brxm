@@ -92,7 +92,7 @@ public class HstRequestIT extends AbstractSpringTestCase {
         props = new HashMap<String, Object>();
         props.put("body", "body");
         props.put("referenceName", "b");
-        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "b");
+        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "b", null);
         
         HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow, HstRequest.RENDER_PHASE);
         HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow, HstRequest.RENDER_PHASE);
