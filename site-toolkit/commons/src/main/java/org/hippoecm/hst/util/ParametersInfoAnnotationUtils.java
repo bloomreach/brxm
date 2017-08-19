@@ -62,9 +62,8 @@ public class ParametersInfoAnnotationUtils {
      */
     public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz,
             ComponentConfiguration componentConfig) {
-        return getParametersInfoAnnotation(componentClazz, (componentConfig != null)
-                ? componentConfig.getRawLocalParameters().get(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME)
-                : null);
+        return getParametersInfoAnnotation(componentClazz,
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null);
     }
 
     /**

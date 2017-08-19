@@ -124,4 +124,8 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getComponentType();
     }
 
+    public String getParametersInfoClassName() {
+        return componentConfiguration.getParametersInfoClassName();
+    }
+
 }

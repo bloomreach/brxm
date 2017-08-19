@@ -57,7 +57,7 @@ public interface HstComponentInfo {
     String getComponentClassName();
 
     /**
-     * @return the fully-qualified class name of the class implementing the {@link org.hippoecm.hst.core.component.HstComponent} interface
+     * @return the fully-qualified class name of the interface representing <code>ParametersInfo</code> for a component.
      */
     String getParametersInfoClassName();
 

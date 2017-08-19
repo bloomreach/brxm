@@ -40,6 +40,7 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     private String canonicalIdentifier;
     private Type componentType;
     private String xType;
+    private String parametersInfoClassName;
 
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         return parameters.get(name);
@@ -149,5 +150,13 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     public List<String> getParameterNames() {
         return new ArrayList<String>(parameters.values());
     }
-    
+
+    @Override
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
+    public void setParametersInfoClassName(String parametersInfoClassName) {
+        this.parametersInfoClassName = parametersInfoClassName;
+    }
 }

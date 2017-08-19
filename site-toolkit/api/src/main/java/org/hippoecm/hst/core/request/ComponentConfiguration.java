@@ -113,5 +113,9 @@ public interface ComponentConfiguration {
      * @return the {@link Type} of this {@link ComponentConfiguration}
      */
     Type getComponentType();
-    
+
+    /**
+     * @return the fully-qualified class name of the interface representing <code>ParametersInfo</code> for a component.
+     */
+    String getParametersInfoClassName();
 }

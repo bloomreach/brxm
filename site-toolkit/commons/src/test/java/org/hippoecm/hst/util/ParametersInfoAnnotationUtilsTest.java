@@ -19,9 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.Property;
 
@@ -232,11 +229,7 @@ public class ParametersInfoAnnotationUtilsTest {
 
     private ComponentConfiguration createMockComponentConfiguration(String paramsInfoClassName) {
         ComponentConfiguration componentConfig = EasyMock.createNiceMock(ComponentConfiguration.class);
-        Map<String, String> compParams = new HashMap<>();
-        if (paramsInfoClassName != null) {
-            compParams.put(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME, paramsInfoClassName);
-        }
-        EasyMock.expect(componentConfig.getRawLocalParameters()).andReturn(compParams).anyTimes();
+        EasyMock.expect(componentConfig.getParametersInfoClassName()).andReturn(paramsInfoClassName).anyTimes();
         EasyMock.replay(componentConfig);
         return componentConfig;
     }
