@@ -82,12 +82,12 @@ public class HstRequestIT extends AbstractSpringTestCase {
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("name", "news");
         props.put("referenceName", "news");
-        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "");
+        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "", null);
         
         props = new HashMap<String, Object>();
         props.put("name", "head");
         props.put("referenceName", "h");
-        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "h");
+        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "h", null);
         
         props = new HashMap<String, Object>();
         props.put("body", "body");

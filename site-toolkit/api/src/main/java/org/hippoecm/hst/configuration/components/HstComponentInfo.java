@@ -55,7 +55,11 @@ public interface HstComponentInfo {
      * @return the fully-qualified class name of the class implementing the {@link org.hippoecm.hst.core.component.HstComponent} interface
      */
     String getComponentClassName();
-    
+
+    /**
+     * @return the fully-qualified class name of the class implementing the {@link org.hippoecm.hst.core.component.HstComponent} interface
+     */
+    String getParametersInfoClassName();
 
     /**
      * @return <code>true</code> when this {@link HstComponentConfiguration} is configured to be rendered standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}

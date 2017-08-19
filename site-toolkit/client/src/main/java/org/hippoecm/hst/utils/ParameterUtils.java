@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 
 public class ParameterUtils {
 
@@ -113,7 +114,7 @@ public class ParameterUtils {
         }
 
         // first, try the new ParametersInfo annotation
-        ParametersInfo annotation = component.getClass().getAnnotation(ParametersInfo.class);
+        ParametersInfo annotation = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
 
         if (annotation == null) {
             return null; 

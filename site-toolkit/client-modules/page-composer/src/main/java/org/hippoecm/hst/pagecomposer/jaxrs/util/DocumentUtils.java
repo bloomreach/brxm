@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.util;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,12 +43,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.RelativeDocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
 
 public class DocumentUtils {
 
@@ -102,84 +103,80 @@ public class DocumentUtils {
         if (item.getComponentClassName() == null) {
             return;
         }
-        try {
-            Class<?> componentClass = Class.forName(item.getComponentClassName());
-            ParametersInfo info = componentClass.getAnnotation(ParametersInfo.class);
-            if (info != null) {
 
-                // we require a hst config user session that can read everywhere because we need to get the document names
-                // for all component picked documents, and the current webmaster might not have read access everywhere.
+        ParametersInfo info = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(item);
 
-                final String contentPath = pageComposerContextService.getEditingMount().getContentPath();
-                final Class<?> classType = info.type();
-                if (classType == null) {
-                    return;
-                }
-                for (Method method : classType.getMethods()) {
-                    if (method.isAnnotationPresent(Parameter.class)) {
-                        final Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                        final Annotation annotation = ParameterType.getTypeAnnotation(method);
-                        final String propertyName;
-                        boolean absolutePath;
-                        String rootPickerPath = contentPath;
-                        if (annotation instanceof DocumentLink) {
-                            absolutePath = false;
-                            // for DocumentLink we need some extra processing
-                            propertyName = propAnnotation.name();
-                        } else if (annotation instanceof JcrPath) {
-                            // for JcrPath we need some extra processing too
-                            final JcrPath jcrPath = (JcrPath) annotation;
-                            if (StringUtils.isNotEmpty(jcrPath.pickerRootPath())) {
-                                rootPickerPath = jcrPath.pickerRootPath();
-                            }
-                            propertyName = propAnnotation.name();
-                            absolutePath = !jcrPath.isRelative();
-                        } else {
-                            continue;
+        if (info != null) {
+
+            // we require a hst config user session that can read everywhere because we need to get the document names
+            // for all component picked documents, and the current webmaster might not have read access everywhere.
+
+            final String contentPath = pageComposerContextService.getEditingMount().getContentPath();
+            final Class<?> classType = info.type();
+            if (classType == null) {
+                return;
+            }
+            for (Method method : classType.getMethods()) {
+                if (method.isAnnotationPresent(Parameter.class)) {
+                    final Parameter propAnnotation = method.getAnnotation(Parameter.class);
+                    final Annotation annotation = ParameterType.getTypeAnnotation(method);
+                    final String propertyName;
+                    boolean absolutePath;
+                    String rootPickerPath = contentPath;
+                    if (annotation instanceof DocumentLink) {
+                        absolutePath = false;
+                        // for DocumentLink we need some extra processing
+                        propertyName = propAnnotation.name();
+                    } else if (annotation instanceof JcrPath) {
+                        // for JcrPath we need some extra processing too
+                        final JcrPath jcrPath = (JcrPath) annotation;
+                        if (StringUtils.isNotEmpty(jcrPath.pickerRootPath())) {
+                            rootPickerPath = jcrPath.pickerRootPath();
                         }
+                        propertyName = propAnnotation.name();
+                        absolutePath = !jcrPath.isRelative();
+                    } else {
+                        continue;
+                    }
 
-                        if (propertyName != null) {
-                            List<String> propertyNames = new ArrayList<>();
-                            propertyNames.add(propertyName);
-                            for (String prefix : item.getParameterPrefixes()) {
-                                if (StringUtils.isNotEmpty(prefix)) {
-                                    propertyNames.add(createPrefixedParameterName(prefix, propertyName));
-                                }
+                    if (propertyName != null) {
+                        List<String> propertyNames = new ArrayList<>();
+                        propertyNames.add(propertyName);
+                        for (String prefix : item.getParameterPrefixes()) {
+                            if (StringUtils.isNotEmpty(prefix)) {
+                                propertyNames.add(createPrefixedParameterName(prefix, propertyName));
                             }
-                            for (String parameterName : propertyNames) {
-                                String documentLocation = item.getParameter(parameterName);
-                                if (StringUtils.isEmpty(documentLocation) || "/".equals(documentLocation)) {
-                                    continue;
-                                }
+                        }
+                        for (String parameterName : propertyNames) {
+                            String documentLocation = item.getParameter(parameterName);
+                            if (StringUtils.isEmpty(documentLocation) || "/".equals(documentLocation)) {
+                                continue;
+                            }
 
-                                if (!absolutePath) {
-                                    if (documentLocation.startsWith("/")) {
-                                        documentLocation = rootPickerPath + documentLocation;
-                                    } else {
-                                        documentLocation = rootPickerPath + "/" + documentLocation;
-                                    }
-                                }
-                                final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation);
-                                if (documentsOnly) {
-                                    if (presentation.isDocument() && presentation.isExists()) {
-                                        documentRepresentations.add(presentation);
-                                    } else {
-                                        log.debug("Skipping document represention '{}' because is not a document or does not exist.",
-                                                presentation);
-                                    }
+                            if (!absolutePath) {
+                                if (documentLocation.startsWith("/")) {
+                                    documentLocation = rootPickerPath + documentLocation;
                                 } else {
-                                    documentRepresentations.add(presentation);
+                                    documentLocation = rootPickerPath + "/" + documentLocation;
                                 }
                             }
-
+                            final DocumentRepresentation presentation = getDocumentRepresentationHstConfigUser(documentLocation);
+                            if (documentsOnly) {
+                                if (presentation.isDocument() && presentation.isExists()) {
+                                    documentRepresentations.add(presentation);
+                                } else {
+                                    log.debug("Skipping document represention '{}' because is not a document or does not exist.",
+                                            presentation);
+                                }
+                            } else {
+                                documentRepresentations.add(presentation);
+                            }
                         }
+
                     }
                 }
             }
-        } catch (ClassNotFoundException e) {
-            log.info("Cannot load component class '{}' for '{}'", item.getComponentClassName(), item);
         }
-
     }
 
 

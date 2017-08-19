@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,34 +44,20 @@ public class PageComposerUtil {
      * @return the Map of all {@link Parameter} names and their default value
      */
     public static Map<String, String> getAnnotatedDefaultValues(Node node) {
-        try {
-            String componentClassName = null;
-            if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
-                componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
+        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
+        if (parametersInfo != null) {
+            Class<?> classType = parametersInfo.type();
+            if (classType == null) {
+                return Collections.emptyMap();
             }
-
-            if (componentClassName != null) {
-                Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-                if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                    ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-                    Class<?> classType = parametersInfo.type();
-                    if (classType == null) {
-                        return Collections.emptyMap();
-                    }
-                    Map<String, String> result = new HashMap<String, String>();
-                    for (Method method : classType.getMethods()) {
-                        if (method.isAnnotationPresent(Parameter.class)) {
-                            Parameter annotation = method.getAnnotation(Parameter.class);
-                            result.put(annotation.name(), annotation.defaultValue());
-                        }
-                    }
-                    return result;
+            Map<String, String> result = new HashMap<String, String>();
+            for (Method method : classType.getMethods()) {
+                if (method.isAnnotationPresent(Parameter.class)) {
+                    Parameter annotation = method.getAnnotation(Parameter.class);
+                    result.put(annotation.name(), annotation.defaultValue());
                 }
             }
-        } catch (RepositoryException e) {
-            log.error("Failed to load annotated default values", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load annotated default values, class not found", e);
+            return result;
         }
         return Collections.emptyMap();
     }

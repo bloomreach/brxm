@@ -17,6 +17,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -44,11 +47,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientExce
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
 
 public class ContainerItemComponentServiceImpl implements ContainerItemComponentService {
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentServiceImpl.class);
@@ -231,12 +232,10 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
         final String contentPath = getContentPath();
-        //Get the properties via annotation on the component class
-        String componentClassName = null;
-        if (node.hasProperty(PageComposerUtil.HST_COMPONENTCLASSNAME)) {
-            componentClassName = node.getProperty(PageComposerUtil.HST_COMPONENTCLASSNAME).getString();
+        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
+        if (parametersInfo == null) {
+            parametersInfo = defaultMissingParametersInfo;
         }
-        final ParametersInfo parametersInfo = getParametersInfo(componentClassName);
 
         List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
                 containerItemHelper, propertyPresentationFactories);
@@ -252,21 +251,6 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
             return this.pageComposerContextService.getEditingMount().getContentPath();
         }
         return StringUtils.EMPTY;
-    }
-
-    private ParametersInfo getParametersInfo(final String componentClassName) throws ClassNotFoundException {
-        final ParametersInfo parametersInfo;
-        if (componentClassName != null) {
-            Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-            if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-            } else {
-                parametersInfo = defaultMissingParametersInfo;
-            }
-        } else {
-            parametersInfo = defaultMissingParametersInfo;
-        }
-        return parametersInfo;
     }
 
     /**

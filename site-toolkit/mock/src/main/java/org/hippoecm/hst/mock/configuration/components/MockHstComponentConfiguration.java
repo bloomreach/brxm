@@ -46,6 +46,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String renderPath;
     private String serveResourcePath;
     private String componentClassName;
+    private String parametersInfoClassName;
     private String canonicalIdentifier;
     private Type componentType;
     private String namedRenderer;
@@ -165,6 +166,14 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     
     public void setComponentClassName(String componentClassName) {
         this.componentClassName = componentClassName;
+    }
+
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
+    public void setParametersInfoClassName(String parametersInfoClassName) {
+        this.parametersInfoClassName = parametersInfoClassName;
     }
 
     public String getId() {

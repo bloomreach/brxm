@@ -25,6 +25,7 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     
     private HstComponentInfo delegatee;
     private String componentName;
+    private String parametersInfoClassName;
 
     /**
      * HST Component Info constructor with delegatee and component name arguments.
@@ -32,13 +33,19 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
      * @param delegatee
      * @param componentName
      */
-    public DelegatingHstComponentInfo(HstComponentInfo delegatee, String componentName) {
+    public DelegatingHstComponentInfo(HstComponentInfo delegatee, String componentName, String parametersInfoClassName) {
         this.delegatee = delegatee;
         this.componentName = componentName;
+        this.parametersInfoClassName = parametersInfoClassName;
     }
     
     public String getComponentClassName() {
         return (componentName != null ? componentName : delegatee.getComponentClassName());
+    }
+
+    @Override
+    public String getParametersInfoClassName() {
+        return (parametersInfoClassName != null ? parametersInfoClassName : delegatee.getParametersInfoClassName());
     }
 
     public String getId() {
