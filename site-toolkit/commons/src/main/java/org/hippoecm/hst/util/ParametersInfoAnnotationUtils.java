@@ -105,7 +105,7 @@ public class ParametersInfoAnnotationUtils {
                 String componentClassName = componentConfig.getComponentClassName();
                 componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             } catch (Exception e) {
-                log.warn("Failed to find component class: {}", componentClazz, e);
+                log.warn("Component class not loadable: {}", componentClazz);
             }
 
             return getParametersInfoAnnotation(componentClazz, componentConfig.getParametersInfoClassName());
@@ -131,8 +131,8 @@ public class ParametersInfoAnnotationUtils {
                     componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
                 }
             } catch (Exception e) {
-                log.warn("Failed to load class configured by {} property: {}",
-                        HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, componentClassName, e);
+                log.warn("Component class not loadable, configured by {} property: {}",
+                        HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, componentClassName);
             }
 
             String paramsInfoClassName = null;
@@ -168,7 +168,7 @@ public class ParametersInfoAnnotationUtils {
             try {
                 componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClazzName);
             } catch (Exception e) {
-                log.warn("Cannot load component class: {}", componentClazzName, e);
+                log.warn("Component class not loadable: {}", componentClazzName);
             }
         }
 
