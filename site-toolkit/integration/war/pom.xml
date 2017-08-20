@@ -46,6 +46,18 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-api</artifactId>
+      <version>${hippo.hcm.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-model</artifactId>
+      <version>${hippo.hcm.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-workflow</artifactId>
       <version>${hippo.repository.version}</version>
