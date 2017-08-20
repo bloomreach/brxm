@@ -108,9 +108,11 @@
     <Logger name="org.hippoecm.repository.updater" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
-    <Logger name="org.onehippo.cms7.autoexport" additivity="false" level="info">
+
+    <Logger name="org.onehippo.cm.engine.autoexport" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
+
     <Logger name="org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
