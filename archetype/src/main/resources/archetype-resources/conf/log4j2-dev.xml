@@ -109,7 +109,7 @@
       <AppenderRef ref="messages"/>
     </Logger>
 
-    <Logger name="org.onehippo.cm.engine.autoexport" additivity="false" level="info">
+    <Logger name="org.onehippo.cms7.autoexport" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
 
