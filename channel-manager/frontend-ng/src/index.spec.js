@@ -88,6 +88,9 @@ function createMessageBus($window) {
 function mockHost() {
   angular.mock.module(($provide) => {
     const $window = {
+      document: window.document,
+      confirm: window.confirm.bind(window),
+      getComputedStyle: window.getComputedStyle.bind(window),
       navigator: window.navigator,
     };
 
