@@ -23,10 +23,6 @@ describe('CmsService', () => {
   let CmsService;
 
   beforeEach(() => {
-    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
-    spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
-    spyOn(window.CMS_TO_APP, 'subscribeOnce').and.callThrough();
-
     angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$window_, _CmsService_) => {
@@ -34,6 +30,10 @@ describe('CmsService', () => {
       $window = _$window_;
       CmsService = _CmsService_;
     });
+
+    spyOn($window.APP_TO_CMS, 'publish').and.callThrough();
+    spyOn($window.CMS_TO_APP, 'subscribe').and.callThrough();
+    spyOn($window.CMS_TO_APP, 'subscribeOnce').and.callThrough();
   });
 
   it('publishes events to the CMS', () => {
@@ -76,7 +76,7 @@ describe('CmsService', () => {
   });
 
   it('returns the app configuration specified by the CMS', () => {
-    expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
+    expect(CmsService.getConfig()).toEqual($window.APP_CONFIG);
   });
 
   it('throws an error when the CMS does not contain an ExtJs IFramePanel with the given ID', () => {
@@ -96,7 +96,7 @@ describe('CmsService', () => {
   });
 
   it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', () => {
-    window.history.replaceState({}, document.title, '/');
+    $window.location.search = '';
     expect(() => {
       CmsService.getParentIFramePanelId();
     }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
