@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,21 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ExtJsHandlerService', () => {
+  let $window;
   let PageStructureService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.page');
 
-    inject((_PageStructureService_) => {
+    inject((_$window_, _PageStructureService_) => {
+      $window = _$window_;
       PageStructureService = _PageStructureService_;
     });
   });
 
   it('handles the render event from ExtJS', () => {
     spyOn(PageStructureService, 'renderComponent');
-    window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
+    $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
 
     expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1, bar: 'a:b' });
   });
