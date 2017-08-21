@@ -17,13 +17,13 @@
 import 'angular';
 import 'angular-mocks';
 
-function createMessageBus() {
+function createMessageBus($window) {
   const subscriptions = {};
 
   function addCallback(list, callback, scope) {
     list.push({
       callback,
-      scope: scope || window,
+      scope: scope || $window,
     });
   }
 
@@ -31,7 +31,7 @@ function createMessageBus() {
     if (list === undefined) {
       return false;
     }
-    const scopeParameter = scope || window;
+    const scopeParameter = scope || $window;
     for (let i = 0; i < list.length; i += 1) {
       const entry = list[i];
       if (entry.callback === callback && entry.scope === scopeParameter) {
@@ -86,46 +86,52 @@ function createMessageBus() {
 }
 
 function mockHost() {
-  window.APP_CONFIG = {
-    antiCache: '123',
-  };
-  window.APP_TO_CMS = createMessageBus();
-  window.CMS_TO_APP = createMessageBus();
+  angular.mock.module(($provide) => {
+    const $window = {
+      navigator: window.navigator,
+    };
 
-  const parentIFramePanel = {
-    initialConfig: {
-      iframeConfig: window.APP_CONFIG,
-    },
-    iframeToHost: window.APP_TO_CMS,
-    hostToIFrame: window.CMS_TO_APP,
-  };
+    $window.APP_CONFIG = {
+      antiCache: '123',
+    };
+    $window.APP_TO_CMS = createMessageBus($window);
+    $window.CMS_TO_APP = createMessageBus($window);
 
-  window.history.replaceState(
-    {},
-    document.title,
-    `${window.location.href}?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234`,
-  );
+    const parentIFramePanel = {
+      initialConfig: {
+        iframeConfig: $window.APP_CONFIG,
+      },
+      iframeToHost: $window.APP_TO_CMS,
+      hostToIFrame: $window.CMS_TO_APP,
+    };
 
-  window.parent = {
-    document: {
-      documentElement: {
-        hasClass() {
-          return false;
+    $window.location = {
+      search: '?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234',
+    };
+
+    $window.parent = {
+      document: {
+        documentElement: {
+          hasClass() {
+            return false;
+          },
         },
       },
-    },
-    location: {
-      pathname: '/test/',
-    },
-    Ext: {
-      getCmp() {
-        return parentIFramePanel;
+      location: {
+        pathname: '/test/',
       },
-    },
-    Hippo: {
-      Events: createMessageBus(),
-    },
-  };
+      Ext: {
+        getCmp() {
+          return parentIFramePanel;
+        },
+      },
+      Hippo: {
+        Events: createMessageBus($window),
+      },
+    };
+
+    $provide.value('$window', $window);
+  });
 }
 
 function mockFallbackTranslations() {

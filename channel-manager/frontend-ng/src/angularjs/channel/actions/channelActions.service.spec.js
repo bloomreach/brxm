@@ -21,6 +21,7 @@ describe('ChannelActionsService', () => {
   let $rootScope;
   let $q;
   let $translate;
+  let $window;
   let ConfigService;
   let ChannelService;
   let CmsService;
@@ -46,6 +47,7 @@ describe('ChannelActionsService', () => {
       _$rootScope_,
       _$q_,
       _$translate_,
+      _$window_,
       _ChannelActionsService_,
       _ConfigService_,
       _ChannelService_,
@@ -60,6 +62,7 @@ describe('ChannelActionsService', () => {
       $rootScope = _$rootScope_;
       $q = _$q_;
       $translate = _$translate_;
+      $window = _$window_;
       ChannelActionsService = _ChannelActionsService_;
       ConfigService = _ConfigService_;
       ChannelService = _ChannelService_;
@@ -294,7 +297,7 @@ describe('ChannelActionsService', () => {
     spyOn(CmsService, 'publish');
     spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
 
-    window.CMS_TO_APP.publish('close-channel');
+    $window.CMS_TO_APP.publish('close-channel');
     $rootScope.$apply();
 
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
