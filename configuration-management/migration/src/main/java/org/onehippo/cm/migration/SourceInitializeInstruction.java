@@ -365,7 +365,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
         // Check if we need to inject .meta:residual-child-node-category for this node. If so, the call to
         // "registerInjectResidualCategoryPath" ensures that "isContent" will later return true for its child nodes.
-        if (newNode) {
+        if (newNode && !isContent(defNode.getPath())) {
             final ConfigurationItemCategory category = getInjectResidualCategoryMatchers().getMatch(
                 defNode.getPath(), getStringPropertyValue(defNode, JCR_PRIMARYTYPE));
             if (category != null) {
