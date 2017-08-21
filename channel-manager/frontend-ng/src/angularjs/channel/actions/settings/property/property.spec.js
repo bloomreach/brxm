@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('ChannelProperty', () => {
+describe('ChannelProperty', () => {
   let $compile;
   let $element;
   let $log;
