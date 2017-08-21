@@ -46,7 +46,7 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                                                 final InitializeInstruction combinedWith)
             throws EsvParseException
     {
-        super(instructionNode, type, combinedWith, null, null, null, null);
+        super(instructionNode, type, combinedWith, null, null, null, null, null);
     }
 
 

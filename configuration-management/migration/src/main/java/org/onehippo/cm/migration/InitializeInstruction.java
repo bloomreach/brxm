@@ -27,6 +27,7 @@ import javax.jcr.PropertyType;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
+import org.onehippo.cm.model.util.OverrideResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,6 +168,7 @@ public class InitializeInstruction {
 
     private final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry;
     private final InjectResidualMatchers injectResidualCategoryMatchers;
+    private final OverrideResidualMatchers overrideResidualCategoryMatchers;
 
     protected boolean isDownStream(final InitializeInstruction other) {
         if (other.getType() != Type.CONTENTRESOURCE) {
@@ -244,8 +246,15 @@ public class InitializeInstruction {
         }
 
         // check the node is a sibling of a node for which .meta:residual-child-node-category was injected before
-        if (getInjectedResidualCategory(path) == ConfigurationItemCategory.CONTENT) {
-            return true;
+        // and whether there is an explicit override on this path too
+        final ConfigurationItemCategory injected = getInjectedResidualCategory(path);
+        if (injected != null) {
+            final ConfigurationItemCategory override = getOverrideResidualCategory(path);
+            if (override == null) {
+                return injected == ConfigurationItemCategory.CONTENT;
+            } else {
+                return override == ConfigurationItemCategory.CONTENT;
+            }
         }
 
         return false;
@@ -268,14 +277,23 @@ public class InitializeInstruction {
         return null;
     }
 
+    protected ConfigurationItemCategory getOverrideResidualCategory(final String path) {
+        return getOverrideResidualCategoryMatchers().getMatch(path);
+    }
+
     protected InjectResidualMatchers getInjectResidualCategoryMatchers() {
         return injectResidualCategoryMatchers;
+    }
+
+    protected OverrideResidualMatchers getOverrideResidualCategoryMatchers() {
+        return overrideResidualCategoryMatchers;
     }
 
     public static void parse(final EsvNode node, final List<InitializeInstruction> instructions,
                              final String[] contentRoots, final Set<String> newContentRoots,
                              final InjectResidualMatchers injectResidualCategoryMatchers,
-                             final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+                             final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry,
+                             final OverrideResidualMatchers overrideResidualCategoryMatchers)
             throws EsvParseException {
 
         // cater for initializeitems having 2 instructions (namespace+cnd, contentdelete+contentresource)
@@ -293,7 +311,8 @@ public class InitializeInstruction {
                 switch (type) {
                     case CONTENTRESOURCE:
                         instruction = new SourceInitializeInstruction(node, type, first, contentRoots,
-                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry);
+                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry,
+                                overrideResidualCategoryMatchers);
                         break;
                     case RESOURCEBUNDLES:
                         instruction = new ResourceBundlesInitializeInstruction(node, type, first);
@@ -303,13 +322,14 @@ public class InitializeInstruction {
                     case CONTENTPROPSET:
                     case CONTENTPROPADD:
                         instruction = new ContentInitializeInstruction(node, type, first, contentRoots,
-                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry);
+                                newContentRoots, injectResidualCategoryMatchers, injectResidualCategoryRegistry,
+                                overrideResidualCategoryMatchers);
                         break;
                     case WEBFILEBUNDLE:
                         instruction = new WebFileBundleInstruction(node, type, first);
                         break;
                     default:
-                        instruction = new InitializeInstruction(node, type, first, null, null, null, null);
+                        instruction = new InitializeInstruction(node, type, first, null, null, null, null, null);
                 }
                 if (first != null) {
                     second = instruction;
@@ -334,7 +354,8 @@ public class InitializeInstruction {
                                     final InitializeInstruction combinedWith,
                                     final String[] contentRoots, final Set<String> newContentRoots,
                                     final InjectResidualMatchers injectResidualCategoryMatchers,
-                                    final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+                                    final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry,
+                                    final OverrideResidualMatchers overrideResidualCategoryMatchers)
             throws EsvParseException {
 
         this.instructionNode = instructionNode;
@@ -347,6 +368,7 @@ public class InitializeInstruction {
         this.newContentRoots = newContentRoots;
         this.injectResidualCategoryRegistry = injectResidualCategoryRegistry;
         this.injectResidualCategoryMatchers = injectResidualCategoryMatchers;
+        this.overrideResidualCategoryMatchers = overrideResidualCategoryMatchers;
     }
 
     public void setCombinedWith(final InitializeInstruction combinedWith) {

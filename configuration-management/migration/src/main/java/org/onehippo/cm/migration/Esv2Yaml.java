@@ -69,10 +69,9 @@ import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
+import org.onehippo.cm.model.util.OverrideResidualMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -91,6 +90,8 @@ public class Esv2Yaml {
     private static final String CONTENT_ROOTS = "content";
     private static final String CUSTOM_INJECT_RESIDUAL_NODES_SHORT = "ir";
     private static final String CUSTOM_INJECT_RESIDUAL_NODES = "custominjectresidualcategory";
+    private static final String CUSTOM_OVERRIDE_RESIDUAL_NODES_SHORT = "or";
+    private static final String CUSTOM_OVERRIDE_RESIDUAL_NODES = "customoverrideresidualcategory";
     private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
     private final File src;
@@ -101,6 +102,7 @@ public class Esv2Yaml {
     private final MigrationMode migrationMode;
     private final String[] contentRoots;
     private final InjectResidualMatchers injectResidualCategoryMatchers;
+    private final OverrideResidualMatchers overrideResidualCategoryMatchers;
     private final ResourceProcessor resourceProcessor = new ResourceProcessor();
     public static boolean translationMode = false;
 
@@ -123,6 +125,8 @@ public class Esv2Yaml {
                 final String[] contentRoots = parseContentRoots(cmd.getOptionValue(CONTENT_ROOTS));
                 final InjectResidualMatchers injectResidualCategoryMatchers =
                         parseInjectResidualCategoryPatterns(cmd.getOptionValue(CUSTOM_INJECT_RESIDUAL_NODES));
+                final OverrideResidualMatchers overrideResidualCategoryMatchers =
+                        parseOverrideResidualCategoryPatterns(cmd.getOptionValue(CUSTOM_OVERRIDE_RESIDUAL_NODES));
 
                 final MigrationMode mode = cmd.hasOption(MODE) ? MigrationMode.valueOf(cmd.getOptionValue(MODE).toUpperCase()) : MigrationMode.COPY;
                 if (mode == MigrationMode.GIT && !Objects.equals(src, target)) {
@@ -131,10 +135,10 @@ public class Esv2Yaml {
 
                 if (cmd.hasOption(ECM_LOCATION)) {
                     new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), mode,
-                            contentRoots, injectResidualCategoryMatchers).convert();
+                            contentRoots, injectResidualCategoryMatchers, overrideResidualCategoryMatchers).convert();
                 } else {
                     new Esv2Yaml(new File(src), new File(target), mode, contentRoots,
-                            injectResidualCategoryMatchers).convert();
+                            injectResidualCategoryMatchers, overrideResidualCategoryMatchers).convert();
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
@@ -163,6 +167,8 @@ public class Esv2Yaml {
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
         options.addOption(CUSTOM_INJECT_RESIDUAL_NODES_SHORT, CUSTOM_INJECT_RESIDUAL_NODES, true,
                 "Custom paths to inject .meta:residual-child-node-category. Comma separated.");
+        options.addOption(CUSTOM_OVERRIDE_RESIDUAL_NODES_SHORT, CUSTOM_OVERRIDE_RESIDUAL_NODES, true,
+                "Custom paths to override .meta:residual-child-node-category. Comma separated.");
         return options;
     }
 
@@ -198,26 +204,44 @@ public class Esv2Yaml {
                     "**/hst:workspace/hst:pages: content",
                     "**/hst:workspace/hst:sitemap: content",
                     "**/hst:workspace/hst:templates: content",
+                    "/hst:hst/hst:hosts: content",
                     "/hst:hst/hst:hosts/**[hst:virtualhostgroup]: content",
                     "/hst:hst/hst:hosts/**[hst:virtualhost]: content",
                     "/hst:hst/hst:hosts/**[hst:mount]: content");
         } else {
+            if (optionValue.equals("")) {
+                return new InjectResidualMatchers();
+            }
             return new InjectResidualMatchers(optionValue.split(","));
         }
     }
 
+    private static OverrideResidualMatchers parseOverrideResidualCategoryPatterns(final String optionValue) {
+        if (optionValue == null) {
+            return new OverrideResidualMatchers("/hst:hst/hst:hosts: config", "/hst:hst/hst:hosts/**: config");
+        } else {
+            if (optionValue.equals("")) {
+                return new OverrideResidualMatchers();
+            }
+            return new OverrideResidualMatchers(optionValue.split(","));
+        }
+    }
+
     public Esv2Yaml(final File src, final File target, MigrationMode mode, final String[] contentRoots,
-                    final InjectResidualMatchers injectResidualCategoryMatchers) throws IOException, EsvParseException {
-        this(null, src, target, mode, contentRoots, injectResidualCategoryMatchers);
+                    final InjectResidualMatchers injectResidualCategoryMatchers,
+                    final OverrideResidualMatchers overrideResidualCategoryMatchers) throws IOException, EsvParseException {
+        this(null, src, target, mode, contentRoots, injectResidualCategoryMatchers, overrideResidualCategoryMatchers);
     }
 
     public Esv2Yaml(final File init, final File src, final File target, MigrationMode mode, final String[] contentRoots,
-                    final InjectResidualMatchers injectResidualCategoryMatchers) throws IOException, EsvParseException {
+                    final InjectResidualMatchers injectResidualCategoryMatchers,
+                    final OverrideResidualMatchers overrideResidualCategoryMatchers) throws IOException, EsvParseException {
         this.migrationMode = mode;
         this.src = src;
         this.target = target;
         this.contentRoots = contentRoots;
         this.injectResidualCategoryMatchers = injectResidualCategoryMatchers;
+        this.overrideResidualCategoryMatchers = overrideResidualCategoryMatchers;
 
         extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
         if (!extensionFile.exists() || !extensionFile.isFile()) {
@@ -277,7 +301,8 @@ public class Esv2Yaml {
                             throw new EsvParseException("Duplicate hippo:initializeitem name: " + child.getName());
                         }
                         InitializeInstruction.parse(child, instructions, contentRoots, newContentRoots,
-                                injectResidualCategoryMatchers, injectResidualCategoryRegistry);
+                                injectResidualCategoryMatchers, injectResidualCategoryRegistry,
+                                overrideResidualCategoryMatchers);
                     } else {
                         log.warn("Ignored " + HIPPOECM_EXTENSION_FILE + " node: " + child.getName());
                     }

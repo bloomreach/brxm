@@ -39,6 +39,7 @@ import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
+import org.onehippo.cm.model.util.OverrideResidualMatchers;
 
 import static org.onehippo.cm.model.tree.PropertyType.SINGLE;
 
@@ -48,11 +49,12 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                            final InitializeInstruction combinedWith,
                                            final String[] contentRoots, final Set<String> newContentRoots,
                                            final InjectResidualMatchers injectResidualCategoryMatchers,
-                                           final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry)
+                                           final Map<String, ConfigurationItemCategory> injectResidualCategoryRegistry,
+                                           final OverrideResidualMatchers overrideResidualCategoryMatchers)
             throws EsvParseException {
 
         super(instructionNode, type, combinedWith, contentRoots, newContentRoots, injectResidualCategoryMatchers,
-                injectResidualCategoryRegistry);
+                injectResidualCategoryRegistry, overrideResidualCategoryMatchers);
     }
 
     private String getNodePath() {
