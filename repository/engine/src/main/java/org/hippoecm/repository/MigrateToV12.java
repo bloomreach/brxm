@@ -186,17 +186,16 @@ class MigrateToV12 {
     }
 
     private String getHtmlProcessorId(final Property htmlcleanerId, final Property pluginClass) throws RepositoryException {
-        if (htmlcleanerId != null && StringUtils.isBlank(htmlcleanerId.getString())) {
+        if (htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString())) {
             return "no-filter";
-        } else if (pluginClass.equals("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
+        } else if (pluginClass.getString().equalsIgnoreCase("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
             return "formatted";
         }
         return "richtext";
     }
 
     private static void updateCleanerToProcessor(final Node node, final String processorType) throws RepositoryException {
-        final Property htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
-        node.setProperty(HTMLCLEANER_ID, (String)null);
+        node.getProperty(HTMLCLEANER_ID).remove();
         node.setProperty(HTMLPROCESSOR_ID, processorType);
     }
 
