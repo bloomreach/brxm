@@ -49,6 +49,7 @@ public class PlainYamlObjectTest {
         assertTrue(pyo.asObject().isPresent());
         assertTrue(pyo.asObject(null).isPresent());
         assertTrue(pyo.asObject("").isPresent());
+        assertFalse(pyo.asList().isPresent());
         assertTrue(Map.class.isInstance(pyo.asObject().get()));
         assertTrue(pyo.asMap().get().containsKey("foo"));
         assertFalse(pyo.asMap().get().containsKey("bar"));
@@ -60,6 +61,7 @@ public class PlainYamlObjectTest {
         assertEquals(pyo.asObject("foo/two").get(), "two");
         assertFalse(pyo.asMap("foo").get().containsKey("three"));
         assertFalse(pyo.asMap("bar").isPresent());
+        assertFalse(pyo.asObject("foo/one/bar").isPresent());
     }
 
     @Test
@@ -68,12 +70,13 @@ public class PlainYamlObjectTest {
         assertTrue(pyo.asObject().isPresent());
         assertTrue(pyo.asObject(null).isPresent());
         assertTrue(pyo.asObject("").isPresent());
+        assertFalse(pyo.asMap().isPresent());
         assertTrue(List.class.isInstance(pyo.asObject().get()));
-        assertTrue((pyo.asList().get().contains("foo")));
-        assertTrue((pyo.asList().get().contains("bar")));
-        assertTrue((pyo.asList().get().contains(3)));
-        assertFalse((pyo.asList().get().contains("one")));
-        assertFalse((pyo.asList().get().contains(4)));
+        assertTrue(pyo.asList().get().contains("foo"));
+        assertTrue(pyo.asList().get().contains("bar"));
+        assertTrue(pyo.asList().get().contains(3));
+        assertFalse(pyo.asList().get().contains("one"));
+        assertFalse(pyo.asList().get().contains(4));
     }
 
     @Test
@@ -81,14 +84,14 @@ public class PlainYamlObjectTest {
         // sequence mapped to list
         PlainYamlObject pyo = new PlainYamlObject("map:\n  list:\n    - foo\n    - bar\n");
         assertTrue(pyo.asList("map/list").isPresent());
-        assertTrue((pyo.asList("map/list").get().contains("foo")));
-        assertTrue((pyo.asList("map/list").get().contains("bar")));
-        assertFalse((pyo.asList("map/list").get().contains("one")));
+        assertTrue(pyo.asList("map/list").get().contains("foo"));
+        assertTrue(pyo.asList("map/list").get().contains("bar"));
+        assertFalse(pyo.asList("map/list").get().contains("one"));
         // array mapped to list
         pyo = new PlainYamlObject("map:\n  list: [foo, bar]\n");
         assertTrue(pyo.asList("map/list").isPresent());
-        assertTrue((pyo.asList("map/list").get().contains("foo")));
-        assertTrue((pyo.asList("map/list").get().contains("bar")));
-        assertFalse((pyo.asList("map/list").get().contains("one")));
+        assertTrue(pyo.asList("map/list").get().contains("foo"));
+        assertTrue(pyo.asList("map/list").get().contains("bar"));
+        assertFalse(pyo.asList("map/list").get().contains("one"));
     }
 }

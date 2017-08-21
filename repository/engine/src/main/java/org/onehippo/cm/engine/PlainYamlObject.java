@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,9 +27,9 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
- * Simple YAML parser which maps standard Java objects only using SnakeYaml {@link SafeConstructor}
- * Once parsed these objects can (currently) be accessed as {@link #asMap(String)}, {@link #asList(String)} or {@link #asObject(String)}
- * with an optional path parameter for direct navigating into the yaml object tree.
+ * Simple YAML parser which maps standard Java objects only using SnakeYaml {@link SafeConstructor}.
+ * Once parsed these objects can (currently) be accessed as {@link #asMap(String)}, {@link #asList(String)}
+ * or {@link #asObject(String)} with an optional path parameter for direct navigating into the yaml object tree.
  * The path navigation parameter for these methods assume (parent) Yaml keys separated with a / character.
  * <p>
  * Trivial usage example:
@@ -45,6 +46,8 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  */
 public class PlainYamlObject {
 
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
     private final Object yamlObject;
 
     public PlainYamlObject(final String yamlString) {
@@ -60,15 +63,25 @@ public class PlainYamlObject {
     }
 
     private Object mapPath(final String path) {
-        Object current = null;
-        final String[] paths = StringUtils.stripStart(path == null ? "" : path, "/").split("/");
-        current = yamlObject;
-        for (String p : paths) {
+        Object current = yamlObject;
+        final String[] pathKeys = (path != null)
+                ? Arrays.stream(path.split("/")).filter(StringUtils::isNotEmpty).toArray(String[]::new)
+                : EMPTY_STRING_ARRAY;
+
+        // first map pathKeys except the last
+        for (int index = 0; index < pathKeys.length-1; index++ ) {
+            final String p = pathKeys[index];
             if (current == null || !(current instanceof Map)) {
                 break;
             }
-            if (p != null && p.length() > 0) {
-                current = ((Map)current).get(p);
+            current = ((Map)current).get(p);
+        }
+        // if we do have a remaining/last pathKey current must be a Map to return it
+        if (current != null && pathKeys.length > 0) {
+            if (current instanceof Map) {
+                current = ((Map)current).get(pathKeys[pathKeys.length-1]);
+            } else {
+                current = null;
             }
         }
         return current;
