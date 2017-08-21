@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,15 @@ import 'angular-mocks';
 describe('LinkProcessorService', () => {
   let linkProcessorService;
   let $document;
+  let $window;
   const previewUrl = ['http://localhost:8080/site'];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$document_, _linkProcessorService_) => {
+    inject((_$document_, _$window_, _linkProcessorService_) => {
       $document = _$document_;
+      $window = _$window_;
       linkProcessorService = _linkProcessorService_;
     });
   });
@@ -81,7 +83,7 @@ describe('LinkProcessorService', () => {
 
   it('should show a confirm when clicking an external link', () => {
     const nrOfExternalLinks = $j('.qa-external-link', $document).length;
-    const confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+    const confirmSpy = spyOn($window, 'confirm').and.returnValue(true);
 
     linkProcessorService.run($document, previewUrl);
     $j('a', $document).click();
@@ -89,7 +91,7 @@ describe('LinkProcessorService', () => {
   });
 
   it('should prevent opening an external link if confirm is cancelled', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
+    spyOn($window, 'confirm').and.returnValue(false);
 
     linkProcessorService.run($document, previewUrl);
     $j('.qa-external-link', $document).each(function checkClick() {
@@ -101,7 +103,7 @@ describe('LinkProcessorService', () => {
   });
 
   it('should open an external link if confirm is ok', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
+    spyOn($window, 'confirm').and.returnValue(true);
 
     linkProcessorService.run($document, previewUrl);
     $j('.qa-external-link', $document).each(function checkClick() {
