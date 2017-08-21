@@ -20,9 +20,7 @@ import channelActionsService from './channelActions.service';
 import channelSettingsDirective from './settings/settings.directive';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import propertyField from './settings/propertyField/propertyField.component';
-import channelPropertyDirective from './settings/property/property.directive';
-import ChannelPropertyCtrl from './settings/property/property.controller';
-import helpIconDirective from './settings/property/helpIcon/helpIcon.directive';
+import helpIconDirective from './settings/helpIcon/helpIcon.directive';
 import changeManagementDirective from './manageChanges/manageChanges.directive';
 import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 
@@ -33,8 +31,6 @@ const channelActionsModule = angular
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .directive('channelSettings', channelSettingsDirective)
   .component('propertyField', propertyField)
-  .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
-  .directive('channelProperty', channelPropertyDirective)
   .directive('helpIcon', helpIconDirective)
   .controller('ChangeManagementCtrl', ChangeManagementCtrl)
   .directive('changeManagement', changeManagementDirective)
