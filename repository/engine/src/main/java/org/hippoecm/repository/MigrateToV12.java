@@ -15,9 +15,14 @@
  */
 package org.hippoecm.repository;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinition;
@@ -29,6 +34,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -48,6 +54,10 @@ class MigrateToV12 {
     static final Logger log = LoggerFactory.getLogger(MigrateToV12.class);
 
     private static String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
+    private static final String HTMLCLEANER_ID = "htmlcleaner.id";
+    private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
+    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+    private static final String CLUSTER_OPTIONS = "cluster.options";
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -74,6 +84,8 @@ class MigrateToV12 {
         migrateDomains();
         migrateModuleConfig();
         migrateUrlRewriter();
+        migrateHtmlProcessor();
+        migrateHtmlProcessorUsage();
 
         if (!dryRun) {
             ntr.ignoreNextCheckReferencesInContent();
@@ -85,6 +97,136 @@ class MigrateToV12 {
         } else {
             log.info("MigrateToV12 dry-run completed.");
         }
+    }
+
+    private void migrateHtmlProcessor() throws RepositoryException {
+        final String sourceNodePath = "/hippo:configuration/hippo:frontend/cms/cms-services/filteringHtmlCleanerService";
+        final String destinationNodePath = "/hippo:configuration/hippo:modules/htmlprocessor/hippo:moduleconfig/richtext";
+
+        final boolean sourceNodeExists = session.nodeExists(sourceNodePath);
+        final boolean destinationNodeExists = session.nodeExists(destinationNodePath);
+
+        if (sourceNodeExists) {
+            final boolean saveNeeded = migrateHtmlCleanerConfiguration(sourceNodePath, destinationNodePath, destinationNodeExists);
+            if (!dryRun && saveNeeded) {
+                session.save();
+            }
+        } else {
+            log.info("Source node {} does not exist, skipping migrating html cleaner", sourceNodePath);
+        }
+    }
+
+    private boolean migrateHtmlCleanerConfiguration(final String sourceNodePath, final String destinationNodePath, final boolean destinationNodeExists) throws RepositoryException {
+        log.info("Migrating html cleaner");
+        final Node sourceNode = session.getNode(sourceNodePath);
+        final Node destinationNode = destinationNodeExists ? session.getNode(destinationNodePath) : createHtmlCleanerDestinationNode();
+        boolean saveNeeded = false;
+
+        final Collection<String> copiedProperties = getCopiedProperties();
+
+        final PropertyIterator propertyIterator = sourceNode.getProperties();
+        while(propertyIterator.hasNext()) {
+            final Property property = propertyIterator.nextProperty();
+
+            if (copiedProperties.contains(property.getName())) {
+                log.info("Migrating property '{}'", property.getName());
+                movePropertyToNode(property, destinationNode);
+                saveNeeded = true;
+            }
+        }
+        final NodeIterator nodeIterator = sourceNode.getNode("whitelist").getNodes();
+        while(nodeIterator.hasNext()) {
+            final Node node = nodeIterator.nextNode();
+            log.info("Migrating whitelisted node '{}'", node.getName());
+            final String newPath = destinationNodePath + "/" + node.getName();
+            if(!session.nodeExists(newPath)) {
+                session.move(node.getPath(), newPath);
+                saveNeeded = true;
+            }
+        }
+        return saveNeeded;
+    }
+
+    private void migrateHtmlProcessorUsage() throws RepositoryException {
+        migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_", "formatted");
+        migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_", "richtext");
+
+        // migrate all custom usages
+        final Node node = session.getNode(HIPPO_NAMESPACES);
+        migrateAllCustomHtmlProcessorUsages(node);
+    }
+
+    private void migrateAllCustomHtmlProcessorUsages(final Node node) throws RepositoryException {
+        final NodeIterator nodeIterator = node.getNodes();
+        while (nodeIterator.hasNext()) {
+            final Node nextNode = nodeIterator.nextNode();
+            if(nextNode.hasProperty("plugin.class") && nextNode.hasNodes()) {
+                final NodeIterator nextNodeIterator = nextNode.getNodes();
+                while (nextNodeIterator.hasNext()) {
+                    final Node child = nextNodeIterator.nextNode();
+                    if(child.getName().equalsIgnoreCase(CLUSTER_OPTIONS) && child.hasProperty(HTMLCLEANER_ID)) {
+                        final Property htmlcleanerId = child.getProperty("htmlcleaner.id");
+                        final Property pluginClass = nextNode.getProperty("plugin.class");
+                        final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId, pluginClass);
+                        updateCleanerToProcessor(child, htmlProcessorId);
+                    }
+                }
+            } else {
+                migrateAllCustomHtmlProcessorUsages(nextNode);
+            }
+        }
+    }
+
+    private void migrateSingleHtmlProcessorUsage(final String sourceNodePath, final String defaultConfigName) throws RepositoryException {
+        if (session.nodeExists(sourceNodePath)) {
+            final Node sourceNode = session.getNode(sourceNodePath);
+            final String processorType = isHtmlCleanerNotDefined(sourceNode) ? "no-filter" : defaultConfigName;
+            updateCleanerToProcessor(sourceNode, processorType);
+        }
+    }
+
+    private String getHtmlProcessorId(final Property htmlcleanerId, final Property pluginClass) throws RepositoryException {
+        if (htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString())) {
+            return "no-filter";
+        } else if (pluginClass.getString().equalsIgnoreCase("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
+            return "formatted";
+        }
+        return "richtext";
+    }
+
+    private static void updateCleanerToProcessor(final Node node, final String processorType) throws RepositoryException {
+        node.getProperty(HTMLCLEANER_ID).remove();
+        node.setProperty(HTMLPROCESSOR_ID, processorType);
+    }
+
+    private static boolean isHtmlCleanerNotDefined(final Node sourceNode) throws RepositoryException {
+        final Property htmlcleanerId = sourceNode.getProperty(HTMLCLEANER_ID);
+        return htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString());
+    }
+
+    private static Collection<String> getCopiedProperties() {
+        final Collection<String> copiedProperties = new HashSet<>();
+        copiedProperties.add("charset");
+        copiedProperties.add("filter");
+        copiedProperties.add("omitComments");
+        copiedProperties.add("serializer");
+        return copiedProperties;
+    }
+
+    private Node createHtmlCleanerDestinationNode() throws RepositoryException {
+        final Node modulesNode = session.getNode("/hippo:configuration/hippo:modules");
+        final String htmlProcessor = "htmlprocessor";
+        final Node htmlprocessorNode = modulesNode.hasNode(htmlProcessor) ?
+                modulesNode.getNode(htmlProcessor) :
+                modulesNode.addNode(htmlProcessor, NT_MODULE);
+
+        final Node moduleConfigNode = htmlprocessorNode.hasNode(HIPPO_MODULECONFIG) ?
+                htmlprocessorNode.getNode(HIPPO_MODULECONFIG) : htmlprocessorNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+
+        final String richtext = "richtext";
+        return moduleConfigNode.hasNode(richtext) ?
+                htmlprocessorNode.getNode(richtext) : htmlprocessorNode.addNode(richtext, HIPPOSYS_MODULE_CONFIG);
+
     }
 
     void migrateUrlRewriter() throws RepositoryException {
