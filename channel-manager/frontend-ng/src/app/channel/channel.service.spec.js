@@ -19,6 +19,7 @@ describe('ChannelService', () => {
   let $q;
   let $rootScope;
   let $state;
+  let $window;
   let CatalogService;
   let ChannelService;
   let CmsService;
@@ -63,6 +64,7 @@ describe('ChannelService', () => {
       _$q_,
       _$rootScope_,
       _$state_,
+      _$window_,
       _CatalogService_,
       _ChannelService_,
       _CmsService_,
@@ -75,6 +77,7 @@ describe('ChannelService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
+      $window = _$window_;
       CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -100,7 +103,7 @@ describe('ChannelService', () => {
   });
 
   function loadChannel(id = 'testChannelId') {
-    window.CMS_TO_APP.publish('load-channel', { id });
+    $window.CMS_TO_APP.publish('load-channel', { id });
     $rootScope.$digest();
   }
 
@@ -122,7 +125,7 @@ describe('ChannelService', () => {
     ChannelService.initialize();
     expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
 
-    window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
+    $window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
 
     $rootScope.$digest();
 
@@ -171,7 +174,7 @@ describe('ChannelService', () => {
     ChannelService.initialize();
     expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
 
-    window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
+    $window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
 
     $rootScope.$apply();
     expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
@@ -210,7 +213,7 @@ describe('ChannelService', () => {
     ChannelService.initialize();
     expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
 
-    window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
+    $window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
 
     $rootScope.$digest();
 
@@ -467,7 +470,7 @@ describe('ChannelService', () => {
 
     channelMock.changedBySet = ['anotherUser'];
     HstService.getChannel.and.returnValue($q.when(channelMock));
-    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    $window.CMS_TO_APP.publish('channel-changed-in-extjs');
     expect(HstService.getChannel).toHaveBeenCalledWith('channelId');
     $rootScope.$digest();
 
@@ -481,7 +484,7 @@ describe('ChannelService', () => {
     HstService.getChannel.and.returnValue($q.reject());
     spyOn($log, 'error');
 
-    window.CMS_TO_APP.publish('channel-changed-in-extjs');
+    $window.CMS_TO_APP.publish('channel-changed-in-extjs');
     $rootScope.$digest();
 
     expect($log.error).toHaveBeenCalled();

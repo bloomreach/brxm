@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 describe('HippoIframeService', () => {
   let $log;
   let $rootScope;
+  let $window;
   let iframe;
   let HippoIframeService;
   let ChannelService;
@@ -26,9 +27,10 @@ describe('HippoIframeService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_, _ScrollService_) => {
+    inject((_$log_, _$rootScope_, _$window_, _HippoIframeService_, _ChannelService_, _ScrollService_) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
+      $window = _$window_;
       HippoIframeService = _HippoIframeService_;
       ChannelService = _ChannelService_;
       ScrollService = _ScrollService_;
@@ -102,7 +104,7 @@ describe('HippoIframeService', () => {
 
   it('reloads the iframe when a "reload-page" event is received', () => {
     spyOn(HippoIframeService, 'reload');
-    window.CMS_TO_APP.publish('reload-page');
+    $window.CMS_TO_APP.publish('reload-page');
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 

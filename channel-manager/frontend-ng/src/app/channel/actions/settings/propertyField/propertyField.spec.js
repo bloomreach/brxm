@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('Property field component', () => {
-  let $ctrl;
   let $componentController;
+  let $ctrl;
   let $log;
+  let $window;
   let ChannelService;
   let ConfigService;
   let PathService;
@@ -67,12 +68,14 @@ describe('Property field component', () => {
       _$componentController_,
       _$log_,
       _$rootScope_,
+      _$window_,
       _ChannelService_,
       _ConfigService_,
       _PathService_,
     ) => {
       $componentController = _$componentController_;
       $log = _$log_;
+      $window = _$window_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       PathService = _PathService_;
@@ -210,12 +213,12 @@ describe('Property field component', () => {
         }],
       },
     };
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     initComponentController();
 
     $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: 'testIsRelative',
@@ -231,13 +234,13 @@ describe('Property field component', () => {
         annotations: [{ type: 'JcrPath' }],
       },
     };
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
     initComponentController();
 
     $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: undefined,
       initialPath: undefined,
       isRelativePath: undefined,
@@ -255,7 +258,7 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
 
     expect($ctrl.value).toEqual('/picked/path');
   });
@@ -268,7 +271,7 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
+    $window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
 
     expect($ctrl.value).toEqual('testValue');
   });
@@ -281,9 +284,9 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
     $ctrl.$onDestroy();
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
     expect($ctrl.value).toEqual('/picked/path/one');
   });
 
@@ -358,13 +361,13 @@ describe('Property field component', () => {
       },
     };
     ConfigService.cmsLocation = $j('<a href="https://www.example.com/cms?1&path=/content/documents/example"></a>')[0];
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
 
     initComponentController();
 
     $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: undefined,

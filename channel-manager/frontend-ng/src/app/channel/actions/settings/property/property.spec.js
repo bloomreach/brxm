@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,24 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelProperty', () => {
-  let $rootScope;
   let $compile;
+  let $element;
   let $log;
+  let $rootScope;
+  let $scope;
+  let $window;
   let ChannelService;
   let ConfigService;
   let channelInfoDescription;
-  let $element;
-  let $scope;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$log_, _ChannelService_, _ConfigService_) => {
-      $rootScope = _$rootScope_;
+    inject((_$compile_, _$log_, _$rootScope_, _$window_, _ChannelService_, _ConfigService_) => {
       $compile = _$compile_;
       $log = _$log_;
+      $rootScope = _$rootScope_;
+      $window = _$window_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
     });
@@ -222,12 +224,12 @@ describe('ChannelProperty', () => {
         }],
       },
     };
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
     ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: 'testIsRelative',
@@ -243,13 +245,13 @@ describe('ChannelProperty', () => {
         annotations: [{ type: 'JcrPath' }],
       },
     };
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
     ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: undefined,
       initialPath: undefined,
       isRelativePath: undefined,
@@ -267,7 +269,7 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
 
     expect(ChannelPropertyCtrl.value).toEqual('/picked/path');
   });
@@ -280,7 +282,7 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
+    $window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
 
     expect(ChannelPropertyCtrl.value).toEqual('testValue');
   });
@@ -293,9 +295,9 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
     $scope.$destroy();
-    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
+    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
     expect(ChannelPropertyCtrl.value).toEqual('/picked/path/one');
   });
 
@@ -355,12 +357,12 @@ describe('ChannelProperty', () => {
       },
     };
     ConfigService.cmsLocation = $j('<a href="https://www.example.com/cms?1&path=/content/documents/example"></a>')[0];
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
     ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: undefined,

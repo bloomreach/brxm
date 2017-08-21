@@ -1,5 +1,5 @@
  /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ describe('ViewAsCtrl', () => {
   let $q;
   let $controller;
   let $rootScope;
+  let $window;
   let SessionService;
   let HstService;
   let HippoIframeService;
@@ -35,11 +36,12 @@ describe('ViewAsCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$controller_, _$rootScope_, _SessionService_, _HstService_, _HippoIframeService_,
+    inject((_$q_, _$controller_, _$rootScope_, _$window_, _SessionService_, _HstService_, _HippoIframeService_,
             _FeedbackService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
+      $window = _$window_;
       SessionService = _SessionService_;
       HstService = _HstService_;
       HippoIframeService = _HippoIframeService_;
@@ -266,7 +268,7 @@ describe('ViewAsCtrl', () => {
     const mockElement = angular.element('<div></div>');
     mockElement.appendTo(mockToolbar);
 
-    spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
+    spyOn($window.APP_TO_CMS, 'publish').and.callThrough();
 
     ViewAsCtrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
@@ -275,7 +277,7 @@ describe('ViewAsCtrl', () => {
     const alterEgo = { id: 'hippo-alter-ego' };
     ViewAsCtrl.editVariant(alterEgo);
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('edit-alter-ego', 42);
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('edit-alter-ego', 42);
   });
 
   it('reloads the iframe when the alter ego changed', () => {
@@ -284,7 +286,7 @@ describe('ViewAsCtrl', () => {
       $element,
     });
 
-    window.CMS_TO_APP.publish('alter-ego-changed');
+    $window.CMS_TO_APP.publish('alter-ego-changed');
 
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });

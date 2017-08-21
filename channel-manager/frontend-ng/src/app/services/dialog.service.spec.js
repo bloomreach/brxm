@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,15 @@ import 'angular-mocks';
 
 describe('DialogService', () => {
   let $mdDialog;
+  let $window;
   let DialogService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$mdDialog_, _DialogService_) => {
+    inject((_$mdDialog_, _$window_, _DialogService_) => {
       $mdDialog = _$mdDialog_;
+      $window = _$window_;
       DialogService = _DialogService_;
     });
   });
@@ -50,35 +52,35 @@ describe('DialogService', () => {
   });
 
   it('sends a show-mask event to the CMS when a dialog is shown', () => {
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     const confirmationDialog = DialogService.confirm();
     DialogService.show(confirmationDialog);
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-mask');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-mask');
   });
 
   it('sends a remove-mask event to the CMS when a dialog is being removed', () => {
     const confirmationDialog = DialogService.confirm();
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     confirmationDialog._options.onRemoving();
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
   });
 
   it('sends a remove-mask event to the CMS when showing a custom dialog', () => {
     const dialogConfig = {};
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     DialogService.show(dialogConfig);
     expect(dialogConfig.onRemoving).toBeDefined();
     dialogConfig.onRemoving();
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
   });
 
   it('sends a remove-mask event to the CMS when showing a custom dialog with custom onRemoving option', () => {
     const dialogConfig = { onRemoving: () => {} };
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     const onRemovingSpy = spyOn(dialogConfig, 'onRemoving');
     DialogService.show(dialogConfig);
     dialogConfig.onRemoving();
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
     expect(onRemovingSpy).toHaveBeenCalled();
   });
 
