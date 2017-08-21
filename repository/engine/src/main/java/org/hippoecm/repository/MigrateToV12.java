@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinition;
@@ -55,6 +56,8 @@ class MigrateToV12 {
     private static String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
     private static final String HTMLCLEANER_ID = "htmlcleaner.id";
     private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
+    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+    private static final String CLUSTER_OPTIONS = "cluster.options";
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -82,6 +85,7 @@ class MigrateToV12 {
         migrateModuleConfig();
         migrateUrlRewriter();
         migrateHtmlProcessor();
+        migrateHtmlProcessorUsage();
 
         if (!dryRun) {
             ntr.ignoreNextCheckReferencesInContent();
@@ -141,6 +145,64 @@ class MigrateToV12 {
             }
         }
         return saveNeeded;
+    }
+
+    private void migrateHtmlProcessorUsage() throws RepositoryException {
+        migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_", "formatted");
+        migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_", "richtext");
+
+        // migrate all custom usages
+        final Node node = session.getNode(HIPPO_NAMESPACES);
+        migrateAllCustomHtmlProcessorUsages(node);
+    }
+
+    private void migrateAllCustomHtmlProcessorUsages(final Node node) throws RepositoryException {
+        final NodeIterator nodeIterator = node.getNodes();
+        while (nodeIterator.hasNext()) {
+            final Node nextNode = nodeIterator.nextNode();
+            if(nextNode.hasProperty("plugin.class") && nextNode.hasNodes()) {
+                final NodeIterator nextNodeIterator = nextNode.getNodes();
+                while (nextNodeIterator.hasNext()) {
+                    final Node child = nextNodeIterator.nextNode();
+                    if(child.getName().equalsIgnoreCase(CLUSTER_OPTIONS) && child.hasProperty(HTMLCLEANER_ID)) {
+                        final Property htmlcleanerId = child.getProperty("htmlcleaner.id");
+                        final Property pluginClass = nextNode.getProperty("plugin.class");
+                        final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId, pluginClass);
+                        updateCleanerToProcessor(child, htmlProcessorId);
+                    }
+                }
+            } else {
+                migrateAllCustomHtmlProcessorUsages(nextNode);
+            }
+        }
+    }
+
+    private void migrateSingleHtmlProcessorUsage(final String sourceNodePath, final String defaultConfigName) throws RepositoryException {
+        if (session.nodeExists(sourceNodePath)) {
+            final Node sourceNode = session.getNode(sourceNodePath);
+            final String processorType = isHtmlCleanerNotDefined(sourceNode) ? "no-filter" : defaultConfigName;
+            updateCleanerToProcessor(sourceNode, processorType);
+        }
+    }
+
+    private String getHtmlProcessorId(final Property htmlcleanerId, final Property pluginClass) throws RepositoryException {
+        if (htmlcleanerId != null && StringUtils.isBlank(htmlcleanerId.getString())) {
+            return "no-filter";
+        } else if (pluginClass.equals("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
+            return "formatted";
+        }
+        return "richtext";
+    }
+
+    private static void updateCleanerToProcessor(final Node node, final String processorType) throws RepositoryException {
+        final Property htmlCleanerProperty = node.getProperty(HTMLCLEANER_ID);
+        node.setProperty(HTMLCLEANER_ID, (String)null);
+        node.setProperty(HTMLPROCESSOR_ID, processorType);
+    }
+
+    private static boolean isHtmlCleanerNotDefined(final Node sourceNode) throws RepositoryException {
+        final Property htmlcleanerId = sourceNode.getProperty(HTMLCLEANER_ID);
+        return htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString());
     }
 
     private static Collection<String> getCopiedProperties() {
