@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 class ConfigService {
 
-  constructor(CmsService) {
+  constructor($window, CmsService) {
     'ngInject';
+
+    this.$window = $window;
 
     this.locale = 'en';
     this.rootUuid = 'cafebabe-cafe-babe-cafe-babecafebabe';
@@ -37,7 +39,7 @@ class ConfigService {
   }
 
   getCmsContextPath() {
-    return window.parent ? window.parent.location.pathname : '/cms/';
+    return this.$window.parent ? this.$window.parent.location.pathname : '/cms/';
   }
 }
 

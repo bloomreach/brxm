@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,31 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ConfigService', () => {
+  let CmsServiceMock;
+  let $window;
   let ConfigService;
 
   beforeEach(() => {
-    window.APP_CONFIG.locale = 'nl';
-    window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
-    window.APP_CONFIG.contextPaths = ['/one', '/two'];
-
     angular.mock.module('hippo-cm');
 
-    inject((_ConfigService_) => {
+    CmsServiceMock = jasmine.createSpyObj('CmsServiceMock', [
+      'getConfig',
+      'publish',
+      'subscribe',
+    ]);
+
+    CmsServiceMock.getConfig.and.returnValue({
+      locale: 'nl',
+      apiUrlPrefix: 'https://127.0.0.1:9080/web/one/two',
+      contextPaths: ['/one', '/two'],
+    });
+
+    angular.mock.module(($provide) => {
+      $provide.value('CmsService', CmsServiceMock);
+    });
+
+    inject((_$window_, _ConfigService_) => {
+      $window = _$window_;
       ConfigService = _ConfigService_;
     });
   });
@@ -48,7 +63,7 @@ describe('ConfigService', () => {
   });
 
   it('falls back to a default CMS context path', () => {
-    delete window.parent;
+    delete $window.parent;
     expect(ConfigService.getCmsContextPath()).toBe('/cms/');
   });
 });
