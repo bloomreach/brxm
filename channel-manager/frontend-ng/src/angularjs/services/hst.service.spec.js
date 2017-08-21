@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import 'angular-mocks';
 describe('HstService', () => {
   let $q;
   let $httpBackend;
+  let $window;
   let hstService;
   let ConfigServiceMock;
 
@@ -44,9 +45,10 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$httpBackend_, _HstService_) => {
+    inject((_$q_, _$httpBackend_, _$window_, _HstService_) => {
       $q = _$q_;
       $httpBackend = _$httpBackend_;
+      $window = _$window_;
       hstService = _HstService_;
     });
   });
@@ -343,14 +345,14 @@ describe('HstService', () => {
   });
 
   it('reports user activity to the CMS when the backend is called', () => {
-    spyOn(window.APP_TO_CMS, 'publish');
+    spyOn($window.APP_TO_CMS, 'publish');
     $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
       'CMS-User': 'testUser',
       'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
     }).respond(200);
     hstService.doGet('some-uuid', 'one', 'two', 'three');
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
     $httpBackend.flush();
   });
 });
