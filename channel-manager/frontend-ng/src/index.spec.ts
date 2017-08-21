@@ -13,9 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import './vendor';
 
-import 'angular';
+import 'zone.js/dist/zone';
+import 'zone.js/dist/long-stack-trace-zone';
+import 'zone.js/dist/proxy';
+import 'zone.js/dist/sync-test';
+import 'zone.js/dist/jasmine-patch';
+import 'zone.js/dist/async-test';
+import 'zone.js/dist/fake-async-test';
+
+import * as angular from 'angular';
 import 'angular-mocks';
+import './app/hippo-cm';
+
+import { getTestBed } from '@angular/core/testing';
+import {
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting
+} from '@angular/platform-browser-dynamic/testing';
+
+getTestBed().initTestEnvironment(
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting()
+);
 
 function createMessageBus($window) {
   const subscriptions = {};
@@ -87,7 +108,7 @@ function createMessageBus($window) {
 
 function mockHost() {
   angular.mock.module(($provide) => {
-    const $window = {
+    const $window : any = {
       document: window.document,
       confirm: window.confirm.bind(window),
       getComputedStyle: window.getComputedStyle.bind(window),
@@ -154,5 +175,5 @@ beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
 beforeEach(mockMdIcon);
 
-const context = require.context('./app', true, /\.js$/);
-context.keys().forEach(context);
+const testsContext = require.context('./app', true, /.spec$/);
+testsContext.keys().forEach(testsContext);
