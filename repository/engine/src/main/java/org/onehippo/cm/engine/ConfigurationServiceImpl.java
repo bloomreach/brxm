@@ -117,6 +117,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         session = configurationServiceSession;
 
         // set event userData to identify events coming from this HCM session
+        log.debug("ConfigurationService: Setting ObservationManager userData to {} to skip change events from this session for auto-export", Constants.HCM_ROOT);
         session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
         log.info("ConfigurationService: start");
         try {
@@ -243,12 +244,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             if (session.hasPendingChanges()) {
                                 throw new IllegalStateException("Pending changes at this moment not allowed");
                             }
-                            log.info("Setting user data to null to make sure auto-export does not skip the journal events");
+                            log.debug("ConfigurationService: Resetting ObservationManager userData before running postMigrators to enable auto-export of their changes (if any).");
                             session.getWorkspace().getObservationManager().setUserData(null);
-                            log.info("Running postMigrators: {}", postMigrators);
+                            log.info("ConfigurationService: Running postMigrators: {}", postMigrators);
                             runMigrators(bootstrapModel, postMigrators, autoExportRunning);
                         } finally {
-                            log.info("Resetting user data to {} to skip further events from this session for auto-export", Constants.HCM_ROOT);
+                            log.debug("ConfigurationService: Setting ObservationManager userData again to {} to skip further change events from this session for auto-export", Constants.HCM_ROOT);
                             session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
                         }
                     }
