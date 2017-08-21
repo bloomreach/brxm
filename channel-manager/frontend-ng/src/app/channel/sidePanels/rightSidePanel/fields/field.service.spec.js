@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { fakeAsync, tick } from '@angular/core/testing';
+
 describe('field service', () => {
   let $timeout;
   let FieldService;
@@ -129,17 +131,15 @@ describe('field service', () => {
         expect(FieldService._customFocusCallback).not.toHaveBeenCalled();
       });
 
-      it('should call the element native focus method if there is no custom focus callback', () => {
+      it('should call the element native focus method if there is no custom focus callback', fakeAsync(() => {
         const mockInputElement = $('<input type="text">');
         FieldService.setFocusedInput(mockInputElement);
         spyOn(FieldService._focusedInput, 'focus');
 
-        jasmine.clock().install();
         FieldService.triggerInputFocus();
-        jasmine.clock().tick(10);
+        tick(10);
         expect(FieldService._focusedInput.focus).toHaveBeenCalled();
-        jasmine.clock().uninstall();
-      });
+      }));
 
       it('should call the custom focus callback if one was specified', () => {
         const mockInputElement = $('<input type="text">');
