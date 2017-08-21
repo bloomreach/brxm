@@ -239,8 +239,18 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.info("Loading postMigrators");
                     final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
                     if (!postMigrators.isEmpty()) {
-                        log.info("Running postMigrators: {}", postMigrators);
-                        runMigrators(bootstrapModel, postMigrators, autoExportRunning);
+                        try {
+                            if (session.hasPendingChanges()) {
+                                throw new IllegalStateException("Pending changes at this moment not allowed");
+                            }
+                            log.info("Setting user data to null to make sure auto-export does not skip the journal events");
+                            session.getWorkspace().getObservationManager().setUserData(null);
+                            log.info("Running postMigrators: {}", postMigrators);
+                            runMigrators(bootstrapModel, postMigrators, autoExportRunning);
+                        } finally {
+                            log.info("Resetting user data to {} to skip further events from this session for auto-export", Constants.HCM_ROOT);
+                            session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
+                        }
                     }
 
                 } finally {

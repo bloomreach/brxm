@@ -102,20 +102,24 @@ public class LocationMapperTest {
         assertEquals("/hst:hst/hst:sites", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:sites/prop", false);
         assertEquals("/hst:hst/hst:sites", contextNode);
-        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:sites/subnode", true);
-        assertEquals("/hst:hst/hst:sites", contextNode);
+        file = LocationMapper.fileForPath("/hst:hst/hst:sites/newsite", true);
+        assertEquals("hst/sites/newsite.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:sites/subnode/prop", false);
         assertEquals("/hst:hst/hst:sites", contextNode);
 
         // /hst:hst/hst:hosts
         file = LocationMapper.fileForPath("/hst:hst/hst:hosts", true);
         assertEquals("hst/hosts.xml", file);
+        file = LocationMapper.fileForPath("/hst:hst/hst:hosts/newhost", true);
+        assertEquals("hst/hosts/newhost.xml", file);
+        file = LocationMapper.fileForPath("/hst:hst/hst:hosts/newhost/subhost", true);
+        assertEquals("hst/hosts/newhost/subhost.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:hosts", true);
         assertEquals("/hst:hst/hst:hosts", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:hosts/prop", false);
         assertEquals("/hst:hst/hst:hosts", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:hosts/subnode", true);
-        assertEquals("/hst:hst/hst:hosts", contextNode);
+        assertEquals("/hst:hst/hst:hosts/subnode", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:hosts/subnode/prop", false);
         assertEquals("/hst:hst/hst:hosts", contextNode);
 
@@ -131,13 +135,24 @@ public class LocationMapperTest {
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:configurations/project/prop", false);
         assertEquals("/hst:hst/hst:configurations", contextNode);
 
+        //workspace
+        file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:workspace", true);
+        assertEquals("hst/configurations/project/workspace.xml", file);
+        file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:workspace/prop", false);
+        assertEquals("hst/configurations/project/workspace.xml", file);
+
+        file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:workspace/hst:pages", true);
+        assertEquals("hst/configurations/project/workspace/pages.xml", file);
+        file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:workspace/hst:pages/homepage", true);
+        assertEquals("hst/configurations/project/workspace/pages/homepage.xml", file);
+
         file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:pages", true);
         assertEquals("hst/configurations/project/pages.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:configurations/project/hst:pages", true);
         assertEquals("/hst:hst/hst:configurations/project/hst:pages", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:configurations/project/hst:pages/prop", false);
         assertEquals("/hst:hst/hst:configurations/project/hst:pages", contextNode);
-        
+
         file = LocationMapper.fileForPath("/hst:hst/hst:configurations/project/hst:pages/home", true);
         assertEquals("hst/configurations/project/pages/home.xml", file);
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:configurations/project/hst:pages/home", true);

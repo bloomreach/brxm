@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +70,7 @@ public abstract class ClusterTest {
 
     private final static Logger log = LoggerFactory.getLogger(ClusterTest.class);
 
-    private static final Boolean cleanup = Boolean.getBoolean(ClusterTest.class.getName() + ".cleanup");
+    private static final Boolean cleanup = true;
     private static final String dbtype = System.getProperty(ClusterTest.class.getName() + ".dbtype", "h2");
     private static final String dbport = System.getProperty(ClusterTest.class.getName() + ".dbport", "9001");
     private static final String repo1Config = "/org/onehippo/repository/clustering/node1-repository-" + dbtype + ".xml";
@@ -77,6 +78,7 @@ public abstract class ClusterTest {
 
     protected static final Credentials CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
 
+    private static File tmpdir;
     private static String repo1Path;
     private static String repo2Path;
 
@@ -95,7 +97,7 @@ public abstract class ClusterTest {
     }
 
     protected static void startRepositories(boolean cleanup) throws Exception {
-        final File tmpdir = new File(System.getProperty("java.io.tmpdir"), ClusterTest.class.getSimpleName());
+        tmpdir = Files.createTempDirectory(ClusterTest.class.getSimpleName()).toFile();
         final File repo1Dir = new File(tmpdir, "repository-node1");
         if (!repo1Dir.exists()) {
             repo1Dir.mkdir();
@@ -170,6 +172,8 @@ public abstract class ClusterTest {
         if (h2Dir.exists()) {
             FileUtils.cleanDirectory(h2Dir);
         }
+
+        FileUtils.deleteDirectory(tmpdir);
     }
 
     @Before
