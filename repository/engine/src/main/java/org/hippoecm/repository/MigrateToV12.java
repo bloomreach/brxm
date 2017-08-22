@@ -148,15 +148,19 @@ class MigrateToV12 {
     }
 
     private void migrateHtmlProcessorUsage() throws RepositoryException {
-        migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_", "formatted");
-        migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_", "richtext");
+        boolean saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_", "formatted");
+        saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_", "richtext") || saveNeeded;
 
         // migrate all custom usages
         final Node node = session.getNode(HIPPO_NAMESPACES);
-        migrateAllCustomHtmlProcessorUsages(node);
+        saveNeeded = migrateAllCustomHtmlProcessorUsages(node) || saveNeeded;
+
+        if (!dryRun && saveNeeded) {
+            session.save();
+        }
     }
 
-    private void migrateAllCustomHtmlProcessorUsages(final Node node) throws RepositoryException {
+    private boolean migrateAllCustomHtmlProcessorUsages(final Node node) throws RepositoryException {
         final NodeIterator nodeIterator = node.getNodes();
         while (nodeIterator.hasNext()) {
             final Node nextNode = nodeIterator.nextNode();
@@ -169,20 +173,24 @@ class MigrateToV12 {
                         final Property pluginClass = nextNode.getProperty("plugin.class");
                         final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId, pluginClass);
                         updateCleanerToProcessor(child, htmlProcessorId);
+                        return true;
                     }
                 }
             } else {
-                migrateAllCustomHtmlProcessorUsages(nextNode);
+                return migrateAllCustomHtmlProcessorUsages(nextNode);
             }
         }
+        return false;
     }
 
-    private void migrateSingleHtmlProcessorUsage(final String sourceNodePath, final String defaultConfigName) throws RepositoryException {
+    private boolean migrateSingleHtmlProcessorUsage(final String sourceNodePath, final String defaultConfigName) throws RepositoryException {
         if (session.nodeExists(sourceNodePath)) {
             final Node sourceNode = session.getNode(sourceNodePath);
             final String processorType = isHtmlCleanerNotDefined(sourceNode) ? "no-filter" : defaultConfigName;
             updateCleanerToProcessor(sourceNode, processorType);
+            return true;
         }
+        return false;
     }
 
     private String getHtmlProcessorId(final Property htmlcleanerId, final Property pluginClass) throws RepositoryException {
