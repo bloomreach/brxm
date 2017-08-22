@@ -91,9 +91,6 @@ class MigrateToV12 {
             ntr.ignoreNextCheckReferencesInContent();
             ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
             log.info("Migrated");
-            if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
-                throw new RuntimeException("Migrated to V12.0.0, please restart again.");
-            }
         } else {
             log.info("MigrateToV12 dry-run completed.");
         }
