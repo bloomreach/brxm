@@ -225,8 +225,7 @@ class MigrateToV12 {
 
         final String richtext = "richtext";
         return moduleConfigNode.hasNode(richtext) ?
-                htmlprocessorNode.getNode(richtext) : htmlprocessorNode.addNode(richtext, HIPPOSYS_MODULE_CONFIG);
-
+                moduleConfigNode.getNode(richtext) : moduleConfigNode.addNode(richtext, HIPPOSYS_MODULE_CONFIG);
     }
 
     void migrateUrlRewriter() throws RepositoryException {
