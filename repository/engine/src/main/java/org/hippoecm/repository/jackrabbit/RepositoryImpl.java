@@ -56,9 +56,9 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.jmx.RepositoryStat;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
+import org.hippoecm.repository.security.HippoSecurityManager;
 import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
-import org.hippoecm.repository.security.SecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,8 +235,8 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     }
 
     @Override
-    public SecurityManager getHippoSecurityManager() {
-        return (SecurityManager) context.getSecurityManager();
+    public HippoSecurityManager getHippoSecurityManager() {
+        return (HippoSecurityManager) context.getSecurityManager();
     }
 
     @Override
