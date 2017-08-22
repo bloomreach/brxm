@@ -140,7 +140,11 @@ class MigrateToV12 {
             log.info("Migrating whitelisted node '{}'", node.getName());
             final String newPath = destinationNodePath + "/" + node.getName();
             if(!session.nodeExists(newPath)) {
-                session.move(node.getPath(), newPath);
+                final Node whitelistedNode = destinationNode.addNode(node.getName(), HIPPOSYS_MODULE_CONFIG);
+                final String attributes = "attributes";
+                if(node.hasProperty(attributes)) {
+                    whitelistedNode.setProperty(attributes, node.getProperty(attributes).getValues());
+                }
                 saveNeeded = true;
             }
         }
