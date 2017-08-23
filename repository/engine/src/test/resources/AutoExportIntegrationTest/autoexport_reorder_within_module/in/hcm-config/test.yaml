@@ -1,0 +1,47 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:enabled: false
+    /across:
+      jcr:primaryType: nt:unstructured
+    /across/a1-initial:
+      jcr:primaryType: nt:unstructured
+    /across/a2-last:
+      jcr:primaryType: nt:unstructured
+    /across/a3-first:
+      jcr:primaryType: nt:unstructured
+    /across/a4-middle:
+      jcr:primaryType: nt:unstructured
+    /within:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
+        /w1-initial:
+          jcr:primaryType: nt:unstructured
+        /w2-last:
+          jcr:primaryType: nt:unstructured
+        /w3-first:
+          jcr:primaryType: nt:unstructured
+        /w4-middle:
+          jcr:primaryType: nt:unstructured
+    /mix:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured
+      /m1-initial:
+        jcr:primaryType: nt:unstructured
+      /m2-last:
+        jcr:primaryType: nt:unstructured
+    /reorder-on-config-delete:
+      jcr:primaryType: nt:unstructured
+      /delete:
+        jcr:primaryType: nt:unstructured
+      /first:
+        jcr:primaryType: nt:unstructured
+    /reorder-on-config-delete/middle:
+      .meta:order-before: delete
+      jcr:primaryType: nt:unstructured
+    /reorder-on-content-delete:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured
+    /content:
+      .meta:category: content

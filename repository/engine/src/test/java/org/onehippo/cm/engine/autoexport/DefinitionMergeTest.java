@@ -22,6 +22,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+
+import org.easymock.EasyMock;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,6 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class DefinitionMergeTest {
@@ -138,10 +146,18 @@ public class DefinitionMergeTest {
                 // load diff module
                 final ModuleImpl diff = loadModule(in(testName, "diff"));
 
+                final Session session = EasyMock.createNiceMock(Session.class);
+                final Node node = EasyMock.createNiceMock(Node.class);
+                final NodeType primaryNodeType = EasyMock.createNiceMock(NodeType.class);
+                expect(session.getNode(anyObject())).andReturn(node).anyTimes();
+                expect(node.getPrimaryNodeType()).andReturn(primaryNodeType).anyTimes();
+                expect(primaryNodeType.hasOrderableChildNodes()).andReturn(false).anyTimes();
+                replay(session, node, primaryNodeType);
+
                 // merge diff
                 DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig);
                 Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model, null);
+                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model, session);
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +33,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -42,6 +46,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
@@ -52,7 +57,9 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationItemImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
@@ -78,7 +85,9 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.model.tree.PropertyOperation.REPLACE;
 
 public class DefinitionMergeService {
 
@@ -171,20 +180,401 @@ public class DefinitionMergeService {
 
         // TODO does it make sense to auto-export webfilebundle definitions?
 
+        // Registry for paths of nodes for which the child nodes need to be reordered
+        final Set<JcrPath> reorderRegistry = new HashSet<>();
+
         // merge config changes
         // ConfigDefinitions are already sorted by root path
         for (final ConfigDefinitionImpl change : changes.getConfigDefinitions()) {
             // run the full and complex merge logic, recursively
-            mergeConfigDefinitionNode(change.getNode(), toExport, baseline);
+            mergeConfigDefinitionNode(change.getNode(), toExport, reorderRegistry, baseline);
         }
 
         // merge content changes
-        mergeContentDefinitions(changes, contentChanges, toExport, jcrSession);
+        mergeContentDefinitions(contentChanges, toExport, reorderRegistry, jcrSession);
+
+        final Map<JcrPath, String> contentOrderBefores = new HashMap<>();
+        reorder(reorderRegistry, baseline, toExport, contentOrderBefores, jcrSession);
+
+        exportChangedContentSources(toExport, contentOrderBefores, jcrSession);
+
+        for (ModuleImpl module : toExport.values()) {
+            module.build();
+        }
 
         stopWatch.stop();
         log.info("Completed full auto-export merge in {}", stopWatch.toString());
 
         return toExport.values();
+    }
+
+    private void reorder(final Set<JcrPath> reorderRegistry,
+                         final ConfigurationModelImpl currentModel,
+                         final HashMap<String, ModuleImpl> toExport,
+                         final Map<JcrPath, String> contentOrderBefores,
+                         final Session session) {
+
+        final List<String> sortedModules = new ArrayList<>();
+        currentModel.getModulesStream().forEach((module) -> sortedModules.add(module.getName()));
+
+        for (final JcrPath path : reorderRegistry) {
+            try {
+                final Node jcrNode = session.getNode(path.toString());
+                boolean orderingIsRelevant = jcrNode.getPrimaryNodeType().hasOrderableChildNodes();
+
+                final ConfigurationNodeImpl configurationNode = currentModel.resolveNode(path);
+                if (configurationNode != null) {
+                    orderingIsRelevant &= (configurationNode.getIgnoreReorderedChildren() == null
+                            || !configurationNode.getIgnoreReorderedChildren());
+                }
+
+                if (orderingIsRelevant) {
+                    reorder(path, jcrNode, configurationNode, toExport, contentOrderBefores, sortedModules);
+                }
+            } catch (PathNotFoundException ignore) {
+                log.warn("Could not find path '{}', skipping", path.toString());
+                return;
+            } catch (RepositoryException e) {
+                throw new IllegalStateException("Unexpected RepositoryException while reordering node " + path, e);
+            }
+        }
+    }
+
+    private void reorder(final JcrPath path,
+                         final Node jcrNode,
+                         final ConfigurationNodeImpl configurationNode,
+                         final HashMap<String, ModuleImpl> toExport,
+                         final Map<JcrPath, String> contentOrderBefores,
+                         final List<String> sortedModules) throws RepositoryException {
+
+        log.debug("Reordering node {}", path.toString());
+
+        final List<JcrPathSegment> expected = getExpectedOrder(jcrNode, configurationNode);
+        final List<JcrPathSegment> intermediate = new LinkedList<>();
+
+        final List<OrderBeforeHolder> holders =
+                createOrderBeforeHolders(path, configurationNode, expected, toExport, contentOrderBefores, sortedModules);
+
+        holders.forEach((holder) -> holder.apply(expected, intermediate));
+
+        holders.forEach(OrderBeforeHolder::cleanUp);
+    }
+
+    private List<JcrPathSegment> getExpectedOrder(final Node jcrNode, final ConfigurationNodeImpl configurationNode)
+            throws RepositoryException {
+
+        final List<JcrPathSegment> expectedOrder = new ArrayList<>();
+
+        for (final Node child : new NodeIterable(jcrNode.getNodes())) {
+            final JcrPathSegment segment = JcrPathSegment.get(child);
+            if (configurationNode != null) {
+                if (configurationNode.getChildNodeCategory(segment.forceIndex().toString()) == SYSTEM) {
+                    log.info("Not including node '{}' while reordering '{}'; the node is category 'system'",
+                            segment.toString(), jcrNode.getPath());
+                    continue;
+                }
+            }
+            expectedOrder.add(segment);
+        }
+
+        return expectedOrder;
+    }
+
+    abstract class OrderBeforeHolder implements Comparable {
+        public void apply(final List<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
+            final JcrPathSegment myName = getName();
+
+            if (intermediate.size() == 0) {
+                intermediate.add(myName);
+                return;
+            }
+
+            int position = intermediate.size();
+            String orderBefore = null;
+
+            while (position > 0) {
+                final JcrPathSegment prior = intermediate.get(position - 1);
+                if (expected.indexOf(prior) < expected.indexOf(myName)) {
+                    break;
+                }
+                position--;
+                orderBefore = prior.toString();
+            }
+
+            intermediate.add(position, myName);
+            setOrderBefore(orderBefore);
+        }
+        abstract JcrPathSegment getName();
+        abstract void setOrderBefore(final String orderBefore);
+        abstract void cleanUp();
+    }
+
+    final class ConfigOrderBeforeHolder extends OrderBeforeHolder {
+        private final HashMap<String, ModuleImpl> toExport;
+        private final int moduleIndex;
+        private final DefinitionNodeImpl definitionNode;
+        private int siblingIndex;
+        private final String originalOrderBefore;
+        ConfigOrderBeforeHolder(final int moduleIndex, final DefinitionNodeImpl definitionNode,
+                                final HashMap<String, ModuleImpl> toExport) {
+            this.toExport = toExport;
+            this.moduleIndex = moduleIndex;
+            this.definitionNode = definitionNode;
+            this.siblingIndex = -1;
+            this.originalOrderBefore = definitionNode.getOrderBefore();
+            definitionNode.setOrderBefore(null);
+        }
+        @Override
+        public int compareTo(final Object object) {
+            if (object == null) {
+                return -1;
+            }
+            if (object == this) {
+                return 0;
+            }
+            if (object instanceof ConfigOrderBeforeHolder) {
+                final ConfigOrderBeforeHolder other = (ConfigOrderBeforeHolder) object;
+
+                int result = Integer.compare(this.getModuleIndex(), other.getModuleIndex());
+                if (result != 0) {
+                    return result;
+                }
+
+                result = this.getRootPath().compareTo(other.getRootPath());
+                if (result != 0) {
+                    return result;
+                }
+
+                return Integer.compare(this.getSiblingIndex(), other.getSiblingIndex());
+            }
+            return -1;
+        }
+        int getModuleIndex() {
+            return moduleIndex;
+        }
+        JcrPath getRootPath() {
+            return JcrPath.get(definitionNode.getDefinition().getRootPath());
+        }
+        int getSiblingIndex() {
+            if (siblingIndex == -1 && !definitionNode.isRoot()) {
+                int index = -1;
+                for (final String name : definitionNode.getParent().getNodes().keySet()) {
+                    index++;
+                    if (definitionNode.getJcrName().equals(JcrPathSegment.get(name))) {
+                        break;
+                    }
+                }
+                siblingIndex = index;
+            }
+            return siblingIndex;
+        }
+        @Override
+        JcrPathSegment getName() {
+            return definitionNode.getJcrName();
+        }
+        @Override
+        void setOrderBefore(final String orderBefore) {
+            definitionNode.setOrderBefore(orderBefore);
+        }
+        @Override
+        void cleanUp() {
+            if (!StringUtils.equals(definitionNode.getOrderBefore(), originalOrderBefore)) {
+                definitionNode.getDefinition().getSource().markChanged();
+            }
+            if (definitionNode.isEmpty()) {
+                removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
+            }
+        }
+    }
+
+    final class ContentOrderBeforeHolder extends OrderBeforeHolder {
+        private final ContentDefinitionImpl contentDefinition;
+        private final Map<JcrPath, String> contentOrderBefores;
+        ContentOrderBeforeHolder(final ContentDefinitionImpl contentDefinition, final Map<JcrPath, String> contentOrderBefores) {
+            this.contentDefinition = contentDefinition;
+            this.contentOrderBefores = contentOrderBefores;
+        }
+        @Override
+        public int compareTo(final Object object) {
+            if (object == null) {
+                return -1;
+            }
+            if (object == this) {
+                return 0;
+            }
+            if (object instanceof ContentOrderBeforeHolder) {
+                final ContentOrderBeforeHolder other = (ContentOrderBeforeHolder) object;
+                return this.getContentRoot().compareTo(other.getContentRoot());
+            }
+            return 1;
+        }
+        JcrPath getContentRoot() {
+            return JcrPath.get(contentDefinition.getRootPath());
+        }
+        @Override
+        JcrPathSegment getName() {
+            return getContentRoot().getLastSegment();
+        }
+        @Override
+        void setOrderBefore(final String orderBefore) {
+            contentOrderBefores.put(getContentRoot(), orderBefore);
+        }
+        @Override
+        void cleanUp() {
+            // Unfortunately, it is not yet possible to detect a changed order-before. Always mark the source as
+            // changed, triggering a re-export.
+            contentDefinition.getSource().markChanged();
+        }
+    }
+
+    /**
+     * Registry of definition nodes for which the parent must have its child definitions reordered.
+     */
+    final class ReorderParentRegistry {
+        final Map<DefinitionNodeImpl, List<DefinitionNodeImpl>> registry = new HashMap<>();
+        public void add(final DefinitionNodeImpl node) {
+            if (node.isRoot()) {
+                return; // definition root does not have a parent
+            }
+            registry.computeIfAbsent(node.getParent(), def -> new ArrayList<>())
+                    .add(node);
+        }
+        public void reorder() {
+            registry.forEach((parent, children) -> {
+                log.debug("Reordering nodes within definition at path '{}' rooted at '{}' in file '{}'",
+                        parent.getPath(), parent.getDefinition().getRootPath(), parent.getSourceLocation());
+                // Reorder by ordering the children in reverse order; note that there might be more definitions in
+                // parent than just the reorder children (deletes, nodes with only .meta:category, etc.)
+                for (int i = children.size(); i > 1; i--) {
+                    parent.orderBefore(children.get(i - 2), children.get(i - 1));
+                }
+                parent.getDefinition().getSource().markChanged();
+            });
+        }
+    }
+
+    private List<OrderBeforeHolder> createOrderBeforeHolders(
+            final JcrPath path,
+            final ConfigurationNodeImpl configurationNode,
+            final List<JcrPathSegment> expected,
+            final HashMap<String, ModuleImpl> toExport,
+            final Map<JcrPath, String> contentOrderBefores,
+            final List<String> sortedModules) {
+
+        final List<OrderBeforeHolder> holders = new ArrayList<>();
+        final List<JcrPathSegment> unknownChildren = new ArrayList<>();
+        final ReorderParentRegistry directReorderRegistry = new ReorderParentRegistry();
+        final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
+                collectContentSourcesByNodePath(toExport);
+
+        // add holders for definitions from AutoExport modules
+        for (final JcrPathSegment childName : expected) {
+            if (addHoldersForConfig(configurationNode, childName, directReorderRegistry, holders, toExport, sortedModules)) {
+                continue;
+            }
+
+            // Handle child is content
+            if (addHoldersForContent(path, contentOrderBefores, holders, existingSourcesByNodePath, childName)) {
+                continue;
+            }
+
+            // Fail-safe -- should not happen when using AutoExport correctly, may happen when manually forwarding
+            // the last revision.
+            log.warn("Not including node '{}' while reordering '{}'; cannot find the node in config or content",
+                    childName.toString(), path.toString());
+            unknownChildren.add(childName);
+        }
+
+        expected.removeAll(unknownChildren);
+
+        directReorderRegistry.reorder();
+
+        holders.sort(Comparator.naturalOrder());
+
+        return holders;
+    }
+
+    private boolean addHoldersForConfig(final ConfigurationNodeImpl configurationNode,
+                                        final JcrPathSegment childName,
+                                        final ReorderParentRegistry directReorderRegistry,
+                                        final List<OrderBeforeHolder> holders,
+                                        final HashMap<String, ModuleImpl> toExport,
+                                        final List<String> sortedModules) {
+        if (configurationNode == null) {
+            return false;
+        }
+
+        final ConfigurationNodeImpl childNode = configurationNode.getNode(childName);
+        if (childNode == null) {
+            return false;
+        }
+
+        for (final DefinitionNodeImpl childDefNode : childNode.getDefinitions()) {
+            // todo: handle upstream holders
+            boolean influencesOrdering = false;
+            final DefinitionPropertyImpl primaryTypeProperty = childDefNode.getProperty(JCR_PRIMARYTYPE);
+            if (primaryTypeProperty != null) {
+                influencesOrdering = primaryTypeProperty.getOperation() == REPLACE; // ignore OVERRIDE for ordering
+            }
+            if (childDefNode.getOrderBefore() != null) {
+                childDefNode.setOrderBefore(null);
+                if (childDefNode.isEmpty()) {
+                    removeOneDefinitionItem(childDefNode, new ArrayList<>(), toExport);
+                }
+            }
+
+            // Always reorder definitions within their parent, even if they don't contribute to the ordering
+            directReorderRegistry.add(childDefNode);
+
+            if (influencesOrdering) {
+                holders.add(new ConfigOrderBeforeHolder(
+                        sortedModules.indexOf(childDefNode.getDefinition().getSource().getModule().getFullName()),
+                        childDefNode,
+                        toExport));
+            }
+        }
+
+        return true;
+    }
+
+    private boolean addHoldersForContent(final JcrPath path,
+                                         final Map<JcrPath, String> contentOrderBefores,
+                                         final List<OrderBeforeHolder> holders,
+                                         final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath,
+                                         final JcrPathSegment childName) {
+        final JcrPath childPath = path.resolve(childName);
+        final ContentDefinitionImpl contentDefinition = existingSourcesByNodePath.get(childPath);
+        if (contentDefinition != null) {
+            holders.add(new DefinitionMergeService.ContentOrderBeforeHolder(contentDefinition, contentOrderBefores));
+            return true;
+        }
+        return false;
+    }
+
+    private void exportChangedContentSources(final HashMap<String, ModuleImpl> toExport,
+                                             final Map<JcrPath, String> contentOrderBefores,
+                                             final Session jcrSession) {
+
+        final Set<JcrPath> allContentPaths = collectContentSourcesByNodePath(toExport).keySet();
+
+        getChangedContentSourcesStream(toExport).forEach(source -> {
+            final ContentDefinitionImpl def = source.getDefinition();
+            final JcrPath defPath = def.getNode().getJcrPath();
+
+            // exclude all paths that have their own sources
+            final Set<String> excludedPaths = allContentPaths.stream()
+                    // (but don't exclude what we're exporting!)
+                    .filter(isEqual(defPath).negate())
+                    .map(JcrPath::toString).collect(toImmutableSet());
+
+            try {
+                new JcrContentExporter().exportNode(
+                        jcrSession.getNode(defPath.toString()), def, true, contentOrderBefores.get(defPath), excludedPaths);
+            }
+            catch (RepositoryException e) {
+                throw new RuntimeException("Exception while regenerating changed content source file for " + defPath, e);
+            }
+        });
     }
 
     /**
@@ -271,6 +661,7 @@ public class DefinitionMergeService {
      * @param baseline the existing model upon which we'll base the new one
      * @return the new ConfigurationModel, which references Sources from the old Modules in baseline and toExport
      */
+    // TODO: not used??
     protected static ConfigurationModelImpl rebuild(final HashMap<String, ModuleImpl> toExport,
                                                     final ConfigurationModelImpl baseline) {
         final StopWatch stopWatch = new StopWatch();
@@ -289,8 +680,9 @@ public class DefinitionMergeService {
     }
 
     protected void mergeConfigDefinitionNode(final DefinitionNodeImpl incomingDefNode,
-                                                               final HashMap<String, ModuleImpl> toExport,
-                                                               ConfigurationModelImpl model) {
+                                             final HashMap<String, ModuleImpl> toExport,
+                                             final Set<JcrPath> reorderRegistry,
+                                             final ConfigurationModelImpl model) {
         log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
 
         final boolean nodeIsNew = isNewNodeDefinition(incomingDefNode);
@@ -317,11 +709,15 @@ public class DefinitionMergeService {
                 new ConfigurationTreeBuilder(model.getConfigurationRootNode())
                         .markNodeAsDeletedBy(incomingConfigNode, deleteDef).pruneDeletedItems(incomingConfigNode);
 
+                reorderRegistry.add(incomingDefPath.getParent());
+
                 // don't bother checking any other properties or children -- they're gone
                 return;
             }
 
-            // todo: handle new order-before!
+            if (incomingDefNode.getOrderBefore() != null) {
+                reorderRegistry.add(incomingDefNode.getJcrPath().getParent());
+            }
 
             // handle properties, then child nodes
             for (final DefinitionPropertyImpl defProperty : incomingDefNode.getProperties().values()) {
@@ -331,7 +727,7 @@ public class DefinitionMergeService {
 
             // any child node here may or may not be new -- do full recursion
             for (DefinitionNodeImpl childNodeDef : incomingDefNode.getNodes().values()) {
-                mergeConfigDefinitionNode(childNodeDef, toExport, model);
+                mergeConfigDefinitionNode(childNodeDef, toExport, reorderRegistry, model);
             }
         }
     }
@@ -528,6 +924,7 @@ public class DefinitionMergeService {
         // mark source changed
         toParent.getDefinition().getSource().markChanged();
 
+        // TODO: discuss whether this code needs to be updated too, it's called from a variety of places ...
         // if order-before is set, we need to do an insert, not an add-at-end
         final DefinitionNodeImpl to;
         if (from.getOrderBefore() != null) {
@@ -878,16 +1275,16 @@ public class DefinitionMergeService {
 
                 // cases:
                 // 1. local is replace and only def, diff is override => replace
-                if (localPropDef.getOperation() == PropertyOperation.REPLACE
+                if (localPropDef.getOperation() == REPLACE
                         && defProperty.getOperation() == PropertyOperation.OVERRIDE
                         && defsForConfigProperty.size() == 1) {
-                    defProperty.setOperation(PropertyOperation.REPLACE);
+                    defProperty.setOperation(REPLACE);
                 }
                 // 2. local is replace and not only def, diff is override => override (do nothing)
 
                 if (localPropDef.getOperation() == PropertyOperation.OVERRIDE) {
                     // 3. local is override, diff is replace => override
-                    if (defProperty.getOperation() == PropertyOperation.REPLACE) {
+                    if (defProperty.getOperation() == REPLACE) {
                         defProperty.setOperation(PropertyOperation.OVERRIDE);
                     }
 
@@ -899,7 +1296,7 @@ public class DefinitionMergeService {
                                         && defProperty.getValueType() == nextUpDefProperty.getValueType();
                         if (diffMatchesNextUp) {
                             // 4. local is override, diff is override, upstream is same as diff => replace
-                            defProperty.setOperation(PropertyOperation.REPLACE);
+                            defProperty.setOperation(REPLACE);
                         }
                         // 5. local is override, diff is override, upstream is still different => override (do nothing)
                     }
@@ -1059,9 +1456,10 @@ public class DefinitionMergeService {
         return ((ModuleImpl)item.getDefinition().getSource().getModule()).getMvnPath();
     }
 
-    protected void mergeContentDefinitions(final ModuleImpl changes,
-                                           final EventJournalProcessor.Changes contentChanges,
-                                           final HashMap<String, ModuleImpl> toExport, final Session jcrSession) {
+    protected void mergeContentDefinitions(final EventJournalProcessor.Changes contentChanges,
+                                           final HashMap<String, ModuleImpl> toExport,
+                                           final Set<JcrPath> reorderRegistry,
+                                           final Session jcrSession) {
 
         // set of content change paths in lexical order, so that shorter common sub-paths come first
         // use a PATRICIA Trie, which stores strings efficiently when there are common prefixes
@@ -1091,6 +1489,9 @@ public class DefinitionMergeService {
                     module.getModifiableSources().remove(source);
                     module.addContentResourceToRemove("/" + source.getPath());
                     toRemoveByNodePath.add(contentDef.getNode().getJcrPath());
+
+                    // mark the parent as needing reordering
+                    reorderRegistry.add(sourceNodePath.getParent());
                 }
             }
             // if a delete path is -below- one of the sources that remains, treat it as a change
@@ -1151,30 +1552,15 @@ public class DefinitionMergeService {
             module.build();
         }
 
-        // for all changed content sources, regenerate definitions from JCR
-        // todo: move this to serialization stage instead of merge stage
-        final Set<JcrPath> newSourcePaths = collectContentSourcesByNodePath(toExport).keySet();
-        toExport.values().stream().flatMap(m -> m.getContentSources().stream())
-                .filter(SourceImpl::hasChangedSinceLoad)
-                .forEach(source -> {
-                    final ContentDefinitionImpl def = source.getDefinition();
-                    final JcrPath defPath = def.getNode().getJcrPath();
+        getChangedContentSourcesStream(toExport).forEach(source ->
+                reorderRegistry.add(source.getDefinition().getNode().getJcrPath().getParent())
+        );
+    }
 
-                    // exclude all paths that have their own sources
-                    final Set<String> excludedPaths = newSourcePaths.stream()
-                            // (but don't exclude what we're exporting!)
-                            .filter(isEqual(defPath).negate())
-                            .map(JcrPath::toString).collect(toImmutableSet());
-
-                    try {
-                        new JcrContentExporter().exportNode(jcrSession.getNode(defPath.toString()), def,
-                                true, excludedPaths);
-                    }
-                    catch (RepositoryException e) {
-                        throw new RuntimeException(
-                                "Exception while regenerating changed content source file for " + defPath, e);
-                    }
-                });
+    private Stream<ContentSourceImpl> getChangedContentSourcesStream(final Map<String, ModuleImpl> toExport) {
+        return toExport.values().stream()
+                .flatMap(m -> m.getContentSources().stream())
+                .filter(SourceImpl::hasChangedSinceLoad);
     }
 
     /**

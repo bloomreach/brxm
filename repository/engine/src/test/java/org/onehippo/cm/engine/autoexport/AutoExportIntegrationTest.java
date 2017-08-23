@@ -29,6 +29,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.ConfigurationModel;
+
+import static org.junit.Assert.assertEquals;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 
 public class AutoExportIntegrationTest {
 
@@ -177,15 +181,85 @@ public class AutoExportIntegrationTest {
         });
     }
 
+    @Test
+    public void autoexport_reorder_within_module() throws Exception {
+        new Fixture("autoexport_reorder_within_module").test(
+            (session, configurationModel) -> {
+                assertOrder("[a1-initial, a2-last, a3-first, a4-middle]", "/across", session, configurationModel);
+
+                assertOrder("[w1-initial, w2-last, w3-first, w4-middle]", "/within/sub", session, configurationModel);
+
+                assertOrderInJcr("[m1-initial, m2-last, m3-content1, m4-content2]", "/mix", session);
+                assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
+
+                assertOrder("[first, middle, delete]", "/reorder-on-config-delete", session, configurationModel);
+
+                assertOrderInJcr("[n3, n2, n1]", "/reorder-on-content-delete", session);
+                assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+            },
+            (session) -> {
+                final Node across = session.getNode("/across");
+                across.orderBefore("a3-first", "a1-initial");
+                across.orderBefore("a4-middle", "a2-last");
+
+                final Node within = session.getNode("/within/sub");
+                within.orderBefore("w3-first", "w1-initial");
+                within.orderBefore("w4-middle", "w2-last");
+
+                final Node mix = session.getNode("/mix");
+                mix.orderBefore("m3-content1", "m2-last");
+                mix.orderBefore("m4-content2", "m3-content1");
+
+                // Note that this test also demonstrates cleaning the no-longer-necessary order-before of 'middle'
+                // and the entire (superfluous) source superfluous-middle.yaml
+                session.getNode("/reorder-on-config-delete/delete").remove();
+
+                session.getNode("/reorder-on-content-delete/n2").remove();
+            },
+            (session, configurationModel) -> {
+                assertOrder("[a3-first, a1-initial, a4-middle, a2-last]", "/across", session, configurationModel);
+
+                assertOrder("[w3-first, w1-initial, w4-middle, w2-last]", "/within/sub", session, configurationModel);
+
+                assertOrderInJcr("[m1-initial, m4-content2, m3-content1, m2-last]", "/mix", session);
+                assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
+
+                assertOrder("[first, middle]", "/reorder-on-config-delete", session, configurationModel);
+
+                assertOrderInJcr("[n3, n1]", "/reorder-on-content-delete", session);
+                assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+            });
+    }
+
+    private void assertOrder(final String order, final String path, final Session session,
+                             final ConfigurationModel model) throws Exception {
+        assertOrderInJcr(order, path, session);
+        assertOrderModel(order, path, model);
+    }
+
+    private void assertOrderInJcr(final String order, final String path, final Session session) throws Exception {
+        assertEquals(order, createChildNodesString(session.getNode(path)));
+    }
+
+    private void assertOrderModel(final String order, final String path, final ConfigurationModel model) throws Exception {
+        assertEquals(order, model.resolveNode(path).getNodes().keySet().toString().replaceAll("\\[1]", ""));
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     private class Fixture extends AbstractBaseTest {
+        private final Validator ignore = (session, configurationModel) -> {};
         private final String name;
         Fixture(final String name) {
             this.name = name;
         }
         void test(final JcrRunner jcrRunner) throws Exception {
+            test(ignore, jcrRunner, ignore);
+        }
+        void test(final Validator preConditionValidator,
+                  final JcrRunner jcrRunner,
+                  final Validator postConditionValidator) throws Exception {
             final Path projectPath = folder.newFolder("project").toPath();
             final Path resourcePath = projectPath.resolve(Paths.get("TestModuleFileSource", "src", "main", "resources"));
             Files.createDirectories(resourcePath);
@@ -198,6 +272,8 @@ public class AutoExportIntegrationTest {
             repository.startRepository();
             final Session session = repository.login(IsolatedRepository.CREDENTIALS);
 
+            preConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
+
             // Run AutoExport to set its lastRevision ...
             repository.runSingleAutoExportCycle();
 
@@ -206,6 +282,9 @@ public class AutoExportIntegrationTest {
 
             // ... and run it again to capture the changes made by jcrRunner
             repository.runSingleAutoExportCycle();
+
+            session.refresh(false);
+            postConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
 
             session.logout();
             repository.stop();
@@ -217,6 +296,11 @@ public class AutoExportIntegrationTest {
     @FunctionalInterface
     private interface JcrRunner {
         void run(final Session session) throws Exception;
+    }
+
+    @FunctionalInterface
+    private interface Validator {
+        void validate(final Session session, final ConfigurationModel configurationModel) throws Exception;
     }
 
     /**

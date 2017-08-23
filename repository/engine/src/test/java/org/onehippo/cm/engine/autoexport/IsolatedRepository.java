@@ -27,6 +27,7 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.InternalConfigurationService;
+import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,6 +160,21 @@ public class IsolatedRepository {
         }
     }
 
+    public ConfigurationModel getRuntimeConfigurationModel() throws Exception {
+        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        try {
+            final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
+
+            final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
+                    .getMethod("getService", Class.class)
+                    .invoke(null, configurationServiceClass);
+            return (ConfigurationModel) configurationServiceClass.getMethod("getRuntimeConfigurationModel").invoke(service);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
     public void stop() throws Exception {
         if (repository != null) {
             close(repository);
@@ -185,7 +201,7 @@ public class IsolatedRepository {
 
         @Override
         public Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
-            if (name.startsWith("javax.jcr")) {
+            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model")) {
                 return shared.loadClass(name);
             }
             return super.loadClass(name, resolve);

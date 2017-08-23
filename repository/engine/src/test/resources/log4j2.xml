@@ -44,6 +44,8 @@
     -->
     <logger name="org.hippoecm.repository.jackrabbit.RepositoryImpl" level="error"/>
 
+    <Logger name="org.onehippo.cm.engine.autoexport.DefinitionMergeService" level="debug"/>
+
     <Root level="warn">
       <AppenderRef ref="console"/>
       <AppenderRef ref="root"/>
