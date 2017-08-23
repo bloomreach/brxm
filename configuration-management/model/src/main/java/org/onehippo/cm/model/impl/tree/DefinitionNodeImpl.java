@@ -202,8 +202,11 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         // copy the existing child nodes, inserting at the right place
         LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
         for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
+            if (entry.getValue() == childNode) {
+                continue;
+            }
             if (entry.getValue() == beforeThis) {
-                newView.put(getName(), childNode);
+                newView.put(childNode.getName(), childNode);
             }
             newView.put(entry.getKey(), entry.getValue());
         }
