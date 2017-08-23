@@ -40,6 +40,7 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public abstract JcrPath getJcrPath();
+    public abstract JcrPathSegment getJcrName();
 
     public String toString() {
         return getClass().getSimpleName()+"{path='"+ getPath()+"'}";

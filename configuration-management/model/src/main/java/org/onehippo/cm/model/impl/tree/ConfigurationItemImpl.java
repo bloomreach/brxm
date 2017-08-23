@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
@@ -49,6 +50,11 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
                 return parent.getJcrPath().resolve(name.withIndex(0));
             }
         }
+    }
+
+    @Override
+    public JcrPathSegment getJcrName() {
+        return name;
     }
 
     @Override
