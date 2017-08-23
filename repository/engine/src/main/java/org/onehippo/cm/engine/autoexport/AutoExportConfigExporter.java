@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +32,9 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cm.engine.ExportConfig;
+import org.onehippo.cm.engine.JcrContentExporter;
+import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
