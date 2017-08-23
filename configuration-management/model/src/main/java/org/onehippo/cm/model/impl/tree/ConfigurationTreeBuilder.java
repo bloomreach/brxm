@@ -204,6 +204,7 @@ public class ConfigurationTreeBuilder {
                 }
             }
             applyNodeOrdering(node, definitionNode, parent, orderBefore, orderFirst, orderBeforeIndexedName);
+            node.addDefinition(definitionNode);
         }
 
         final JcrPath indexedPath = definitionNode.getJcrPath().toFullyIndexedPath();

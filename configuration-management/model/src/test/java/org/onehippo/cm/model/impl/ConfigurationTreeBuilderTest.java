@@ -483,7 +483,39 @@ public class ConfigurationTreeBuilderTest {
                 1, b.getDefinitions().size());
 
         assertEquals("a definition reordering a node SHOULD be listed as a definition for the node",
-                1, d.getDefinitions().size());
+                2, d.getDefinitions().size());
+    }
+
+    @Test
+    public void reorder_override() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /e:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /d:\n"
+                + "        .meta:order-before: c\n"
+                + "    /a/b/d:\n"
+                + "      .meta:order-before: e";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        final ConfigurationNodeImpl b = a.getNode("b[1]");
+        assertEquals("[c[1], d[1], e[1]]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test
