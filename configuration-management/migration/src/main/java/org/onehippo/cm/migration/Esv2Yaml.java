@@ -161,8 +161,8 @@ public class Esv2Yaml {
     private static Options createCmdOptions() {
         Options options = new Options();
         options.addOption(ECM_LOCATION, "init", true, "(optional) location of hippoecm-extension.xml file, if not within <src> folder");
-        options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
-        options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
+        options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder (must be an absolute path)");
+        options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (must be an absolute path, and will be emptied first)");
         options.addOption(MODE, "mode", true, "(optional) File system mode. git/move/copy. Default is copy");
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
         options.addOption(CUSTOM_INJECT_RESIDUAL_NODES_SHORT, CUSTOM_INJECT_RESIDUAL_NODES, true,
