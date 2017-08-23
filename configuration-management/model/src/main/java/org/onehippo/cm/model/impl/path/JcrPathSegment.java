@@ -20,6 +20,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -75,6 +78,25 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         }
         else {
             return new JcrPathSegment(name, index);
+        }
+    }
+
+    /**
+     * Static factory for NodePathSegment instances from JCR node. Sets an explicit index iff the node has SNS.
+     */
+    public static JcrPathSegment get(final Node node) throws RepositoryException {
+        if (node == null) {
+            throw new IllegalArgumentException("Node must not be null!");
+        }
+
+        if (node.getDepth() == 0) {
+            return ROOT_NAME;
+        } else {
+            int index = node.getIndex();
+            if (index == 1 && node.getParent().getNodes(node.getName()).getSize() == 1) {
+                index = 0;
+            }
+            return new JcrPathSegment(node.getName(), index);
         }
     }
 
