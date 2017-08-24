@@ -1,5 +1,5 @@
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,19 +24,23 @@
     <p>When translating a document name to a url path segment the following
        rules are used:</p>
     <ul>
-      <li>Control characters (ASCII / UTF-8 / ISO/IEC 8859-1 codes below 0x1f and
+      <li>Control characters (ASCII / Unicode / ISO/IEC 8859-1 codes below 0x1f and
           between 0x80 and 0x9f such as tabs, carriage return, line feeds,
           end-of-text, bell, etcetera) are removed;</li>
       <li>A non brakable space is converted into a regular space;</li>
       <li>Multiple spaces are merged into a single space;</li>
       <li>Spaces are converted to hyphens;</li>
-      <li>All common printable characters (ASCII / UTF-8 / ISO/IEC 8859-1
+      <li>All common printable characters (ASCII / Unicode / ISO/IEC 8859-1
           codes in the range 0x21 and 0x7f) are are used as-is, unless there
           is a replacement as specified in table 1.
-      <li>Other special characters (ASCII / UTF-8 / ISO/IEC 8859-1 codes not
+      <li>All letters from the Unicode Latin-1 Supplement block are converted to their lowercase base letter,
+        e.g. 0x00c0 Latin Capital Letter A with grave, is converted to "a".</li>
+      <li>All letters from the Unicode Latin Extended-A block are converted to their lowercase base letter,
+        e.g. 0x0100 Latin Capital Letter A with macron, is converted to "a".</li>
+      <li>Other special characters (ASCII / Unicode / ISO/IEC 8859-1 codes not
           in the range 0x21 and 0x7f) that are not listed in table 2 or table 3
           are converted to lowercase;</li>
-      <li>leading spaces and ending spaces are removed.</li>
+      <li>Leading spaces and ending spaces are removed.</li>
     </ul>
     <p>All rules and translation tables are applied, not just the first
        matching rule.  So if a rule indicates that a character is converted
@@ -145,104 +149,106 @@
     <tr><td>&#xFD;</td><td>u</td></tr>
     <tr><td>&#xFE;</td><td>y</td></tr>
     <tr><td>&#xFF;</td><td>y</td></tr>
-    </table></blockquote>
-    <blockquote><table border="1" width="80%">
-    <caption>table 3: translation of UTF-8 Latin 1 characters above 0xc200</caption>
-    <tr><td>UTF-8 c2a1</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2a2</td><td>ct</td></tr>
-    <tr><td>UTF-8 c2a3</td><td>gbp</td></tr>
-    <tr><td>UTF-8 c2a4</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2a5</td><td>yen</td></tr>
-    <tr><td>UTF-8 c2a6</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2a7</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2a8</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2a9</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2aa</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2ab</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2ac</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2ad</td><td>-</td></tr>
-    <tr><td>UTF-8 c2ae</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2af</td><td>-</td></tr>
-    <tr><td>UTF-8 c2b0</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b1</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b2</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b3</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b4</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b5</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b6</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b7</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b8</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2b9</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2ba</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2bb</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2bc</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2bd</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2be</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c2bf</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c380</td><td>a</td></tr>
-    <tr><td>UTF-8 c381</td><td>a</td></tr>
-    <tr><td>UTF-8 c382</td><td>a</td></tr>
-    <tr><td>UTF-8 c383</td><td>a</td></tr>
-    <tr><td>UTF-8 c384</td><td>a</td></tr>
-    <tr><td>UTF-8 c385</td><td>a</td></tr>
-    <tr><td>UTF-8 c386</td><td>ae</td></tr>
-    <tr><td>UTF-8 c387</td><td>c</td></tr>
-    <tr><td>UTF-8 c388</td><td>e</td></tr>
-    <tr><td>UTF-8 c389</td><td>e</td></tr>
-    <tr><td>UTF-8 c38a</td><td>e</td></tr>
-    <tr><td>UTF-8 c38b</td><td>e</td></tr>
-    <tr><td>UTF-8 c38c</td><td>i</td></tr>
-    <tr><td>UTF-8 c38d</td><td>i</td></tr>
-    <tr><td>UTF-8 c38e</td><td>i</td></tr>
-    <tr><td>UTF-8 c38f</td><td>i</td></tr>
-    <tr><td>UTF-8 c390</td><td>d</td></tr>
-    <tr><td>UTF-8 c391</td><td>n</td></tr>
-    <tr><td>UTF-8 c392</td><td>o</td></tr>
-    <tr><td>UTF-8 c393</td><td>o</td></tr>
-    <tr><td>UTF-8 c394</td><td>o</td></tr>
-    <tr><td>UTF-8 c395</td><td>o</td></tr>
-    <tr><td>UTF-8 c396</td><td>o</td></tr>
-    <tr><td>UTF-8 c397</td><td>x</td></tr>
-    <tr><td>UTF-8 c398</td><td>o</td></tr>
-    <tr><td>UTF-8 c399</td><td>u</td></tr>
-    <tr><td>UTF-8 c39a</td><td>u</td></tr>
-    <tr><td>UTF-8 c39b</td><td>u</td></tr>
-    <tr><td>UTF-8 c39c</td><td>u</td></tr>
-    <tr><td>UTF-8 c39d</td><td>y</td></tr>
-    <tr><td>UTF-8 c39e</td><td>y</td></tr>
-    <tr><td>UTF-8 c39f</td><td>ss</td></tr>
-    <tr><td>UTF-8 c3a0</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a1</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a2</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a3</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a4</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a5</td><td>a</td></tr>
-    <tr><td>UTF-8 c3a6</td><td>ae</td></tr>
-    <tr><td>UTF-8 c3a7</td><td>c</td></tr>
-    <tr><td>UTF-8 c3a8</td><td>e</td></tr>
-    <tr><td>UTF-8 c3a9</td><td>e</td></tr>
-    <tr><td>UTF-8 c3aa</td><td>e</td></tr>
-    <tr><td>UTF-8 c3ab</td><td>e</td></tr>
-    <tr><td>UTF-8 c3ac</td><td>i</td></tr>
-    <tr><td>UTF-8 c3ad</td><td>i</td></tr>
-    <tr><td>UTF-8 c3ae</td><td>i</td></tr>
-    <tr><td>UTF-8 c3af</td><td>i</td></tr>
-    <tr><td>UTF-8 c3b0</td><td>d</td></tr>
-    <tr><td>UTF-8 c3b1</td><td>n</td></tr>
-    <tr><td>UTF-8 c3b2</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b3</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b4</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b5</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b6</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b7</td><td><i>removed</i></td></tr>
-    <tr><td>UTF-8 c3b8</td><td>o</td></tr>
-    <tr><td>UTF-8 c3b9</td><td>u</td></tr>
-    <tr><td>UTF-8 c3ba</td><td>u</td></tr>
-    <tr><td>UTF-8 c3bb</td><td>u</td></tr>
-    <tr><td>UTF-8 c3bc</td><td>u</td></tr>
-    <tr><td>UTF-8 c3bd</td><td>y</td></tr>
-    <tr><td>UTF-8 c3be</td><td>y</td></tr>
-    <tr><td>UTF-8 c3bf</td><td>y</td></tr>
+    </table>
+    </blockquote>
+    <blockquote>
+      <table border="1" width="80%">
+    <caption>table 3: translation of Unicode characters above 0xc200</caption>
+    <tr><td>c2a1</td><td><i>removed</i></td></tr>
+    <tr><td>c2a2</td><td>ct</td></tr>
+    <tr><td>c2a3</td><td>gbp</td></tr>
+    <tr><td>c2a4</td><td><i>removed</i></td></tr>
+    <tr><td>c2a5</td><td>yen</td></tr>
+    <tr><td>c2a6</td><td><i>removed</i></td></tr>
+    <tr><td>c2a7</td><td><i>removed</i></td></tr>
+    <tr><td>c2a8</td><td><i>removed</i></td></tr>
+    <tr><td>c2a9</td><td><i>removed</i></td></tr>
+    <tr><td>c2aa</td><td><i>removed</i></td></tr>
+    <tr><td>c2ab</td><td><i>removed</i></td></tr>
+    <tr><td>c2ac</td><td><i>removed</i></td></tr>
+    <tr><td>c2ad</td><td>-</td></tr>
+    <tr><td>c2ae</td><td><i>removed</i></td></tr>
+    <tr><td>c2af</td><td>-</td></tr>
+    <tr><td>c2b0</td><td><i>removed</i></td></tr>
+    <tr><td>c2b1</td><td><i>removed</i></td></tr>
+    <tr><td>c2b2</td><td><i>removed</i></td></tr>
+    <tr><td>c2b3</td><td><i>removed</i></td></tr>
+    <tr><td>c2b4</td><td><i>removed</i></td></tr>
+    <tr><td>c2b5</td><td><i>removed</i></td></tr>
+    <tr><td>c2b6</td><td><i>removed</i></td></tr>
+    <tr><td>c2b7</td><td><i>removed</i></td></tr>
+    <tr><td>c2b8</td><td><i>removed</i></td></tr>
+    <tr><td>c2b9</td><td><i>removed</i></td></tr>
+    <tr><td>c2ba</td><td><i>removed</i></td></tr>
+    <tr><td>c2bb</td><td><i>removed</i></td></tr>
+    <tr><td>c2bc</td><td><i>removed</i></td></tr>
+    <tr><td>c2bd</td><td><i>removed</i></td></tr>
+    <tr><td>c2be</td><td><i>removed</i></td></tr>
+    <tr><td>c2bf</td><td><i>removed</i></td></tr>
+    <tr><td>c380</td><td>a</td></tr>
+    <tr><td>c381</td><td>a</td></tr>
+    <tr><td>c382</td><td>a</td></tr>
+    <tr><td>c383</td><td>a</td></tr>
+    <tr><td>c384</td><td>a</td></tr>
+    <tr><td>c385</td><td>a</td></tr>
+    <tr><td>c386</td><td>ae</td></tr>
+    <tr><td>c387</td><td>c</td></tr>
+    <tr><td>c388</td><td>e</td></tr>
+    <tr><td>c389</td><td>e</td></tr>
+    <tr><td>c38a</td><td>e</td></tr>
+    <tr><td>c38b</td><td>e</td></tr>
+    <tr><td>c38c</td><td>i</td></tr>
+    <tr><td>c38d</td><td>i</td></tr>
+    <tr><td>c38e</td><td>i</td></tr>
+    <tr><td>c38f</td><td>i</td></tr>
+    <tr><td>c390</td><td>d</td></tr>
+    <tr><td>c391</td><td>n</td></tr>
+    <tr><td>c392</td><td>o</td></tr>
+    <tr><td>c393</td><td>o</td></tr>
+    <tr><td>c394</td><td>o</td></tr>
+    <tr><td>c395</td><td>o</td></tr>
+    <tr><td>c396</td><td>o</td></tr>
+    <tr><td>c397</td><td>x</td></tr>
+    <tr><td>c398</td><td>o</td></tr>
+    <tr><td>c399</td><td>u</td></tr>
+    <tr><td>c39a</td><td>u</td></tr>
+    <tr><td>c39b</td><td>u</td></tr>
+    <tr><td>c39c</td><td>u</td></tr>
+    <tr><td>c39d</td><td>y</td></tr>
+    <tr><td>c39e</td><td>y</td></tr>
+    <tr><td>c39f</td><td>ss</td></tr>
+    <tr><td>c3a0</td><td>a</td></tr>
+    <tr><td>c3a1</td><td>a</td></tr>
+    <tr><td>c3a2</td><td>a</td></tr>
+    <tr><td>c3a3</td><td>a</td></tr>
+    <tr><td>c3a4</td><td>a</td></tr>
+    <tr><td>c3a5</td><td>a</td></tr>
+    <tr><td>c3a6</td><td>ae</td></tr>
+    <tr><td>c3a7</td><td>c</td></tr>
+    <tr><td>c3a8</td><td>e</td></tr>
+    <tr><td>c3a9</td><td>e</td></tr>
+    <tr><td>c3aa</td><td>e</td></tr>
+    <tr><td>c3ab</td><td>e</td></tr>
+    <tr><td>c3ac</td><td>i</td></tr>
+    <tr><td>c3ad</td><td>i</td></tr>
+    <tr><td>c3ae</td><td>i</td></tr>
+    <tr><td>c3af</td><td>i</td></tr>
+    <tr><td>c3b0</td><td>d</td></tr>
+    <tr><td>c3b1</td><td>n</td></tr>
+    <tr><td>c3b2</td><td>o</td></tr>
+    <tr><td>c3b3</td><td>o</td></tr>
+    <tr><td>c3b4</td><td>o</td></tr>
+    <tr><td>c3b5</td><td>o</td></tr>
+    <tr><td>c3b6</td><td>o</td></tr>
+    <tr><td>c3b7</td><td><i>removed</i></td></tr>
+    <tr><td>c3b8</td><td>o</td></tr>
+    <tr><td>c3b9</td><td>u</td></tr>
+    <tr><td>c3ba</td><td>u</td></tr>
+    <tr><td>c3bb</td><td>u</td></tr>
+    <tr><td>c3bc</td><td>u</td></tr>
+    <tr><td>c3bd</td><td>y</td></tr>
+    <tr><td>c3be</td><td>y</td></tr>
+    <tr><td>c3bf</td><td>y</td></tr>
     </table></blockquote>
   </body>
 </html>

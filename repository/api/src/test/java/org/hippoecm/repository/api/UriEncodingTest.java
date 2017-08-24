@@ -68,7 +68,14 @@ public class UriEncodingTest {
         // foreign characters
         assertEquals("хиппо-устойчивости", uri.encode("Хиппо устойчивости"));
         assertEquals("hippo-可持续性", uri.encode("Hippo 可持续性"));
-        assertEquals("acelnoszzacelnoszz", uri.encode("ąćęłńóśżźĄĆĘŁŃÓŚŻŹ"));
+
+        // letters from Unicode Latin-1 Supplement
+        assertEquals("aaaaaaaeceeeeiiiidnoooooouuuuyyssaaaaaaaeceeeeiiiidnoooooouuuuuyy",
+              uri.encode("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ"));
+
+        // complete Unicode Latin Extended-A
+        assertEquals("aaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiiijijjjkkkllllllllllnnnnnnnnnoooooooeoerrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzs",
+              uri.encode("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"));
 
         // trailing dots
         assertEquals("abc", uri.encode("abc."));
