@@ -98,13 +98,13 @@
     <dependency>
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-api</artifactId>
-      <version>${hippo.hcm.version}</version>
+      <version>${hippo.configuration-management.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-model</artifactId>
-      <version>${hippo.hcm.version}</version>
+      <version>${hippo.configuration-management.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

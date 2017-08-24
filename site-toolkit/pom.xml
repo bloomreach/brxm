@@ -83,7 +83,7 @@
     <hippo.jackrabbit.version>2.14.0-h1</hippo.jackrabbit.version>
     <hippo.commons.version>4.0.0</hippo.commons.version>
     <hippo.repository.version>5.0.1-SNAPSHOT</hippo.repository.version>
-    <hippo.hcm.version>1.0.1-SNAPSHOT</hippo.hcm.version>
+    <hippo.configuration-management.version>1.0.1-SNAPSHOT</hippo.configuration-management.version>
     <hippo.cms.version>5.0.0</hippo.cms.version>
     <hippo.utilities.version>4.0.0</hippo.utilities.version>
     <hippo.services.version>4.0.0</hippo.services.version>
@@ -166,14 +166,14 @@
       <dependency>
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-configuration-management-api</artifactId>
-        <version>${hippo.hcm.version}</version>
+        <version>${hippo.configuration-management.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-configuration-management-model</artifactId>
-        <version>${hippo.hcm.version}</version>
+        <version>${hippo.configuration-management.version}</version>
         <scope>provided</scope>
       </dependency>
 
