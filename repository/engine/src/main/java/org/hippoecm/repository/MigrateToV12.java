@@ -377,7 +377,7 @@ class MigrateToV12 {
         if (session.nodeExists("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig")) {
             log.info("Migrating eforms");
             Node node = session.getNode("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig");
-            if (!dryRun && fixEformsModuleConfigPrimaryType(node)) {
+            if (fixEformsModuleConfigPrimaryType(node) && !dryRun) {
                 session.save();
             }
         }
