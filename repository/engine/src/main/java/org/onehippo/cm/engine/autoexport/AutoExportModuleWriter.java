@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -69,9 +70,15 @@ public class AutoExportModuleWriter extends ModuleWriter {
     }
 
     private void removeEmptyFolders(Path folder, Path rootFolder) throws IOException {
-        if (!folder.equals(rootFolder) && !Files.list(folder).findAny().isPresent()) {
+            if (!folder.equals(rootFolder) && isDirectoryEmpty(folder)) {
             Files.delete(folder);
             removeEmptyFolders(folder.getParent(), rootFolder);
+        }
+    }
+
+    private boolean isDirectoryEmpty(final Path folder) throws IOException {
+        try(Stream<Path> list = Files.list(folder)) {
+            return !list.findAny().isPresent();
         }
     }
 
