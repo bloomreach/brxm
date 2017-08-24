@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>12.0.1-SNAPSHOT</version>
+    <version>12.1.0-SNAPSHOT</version>
   </parent>
 
 
@@ -58,7 +58,7 @@
 
     <dependency.solr.version>4.9.0</dependency.solr.version>
 
-    <json-lib.version>2.2.2</json-lib.version>
+    <json-lib.version>2.4</json-lib.version>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
