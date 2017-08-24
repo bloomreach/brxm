@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -34,13 +34,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>5.0.1-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.0.0</hippo.cms.version>
-    <hippo.hst.version>5.0.0</hippo.hst.version>
+    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>5.1.0-SNAPSHOT</hippo.hst.version>
     <hippo.ckeditor.version>4.7.1-h1-SNAPSHOT</hippo.ckeditor.version>
-    <hippo.commons.version>4.0.0</hippo.commons.version>
-    <hippo.services.version>4.0.0</hippo.services.version>
-    <hippo.services.htmlprocessor.version>1.0.0</hippo.services.htmlprocessor.version>
+    <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -53,7 +53,7 @@
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
-    <hippo.testutils.version>1.0.0</hippo.testutils.version>
+    <hippo.testutils.version>1.1.0-SNAPSHOT</hippo.testutils.version>
   </properties>
 
   <repositories>
