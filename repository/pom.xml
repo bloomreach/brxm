@@ -94,7 +94,7 @@
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.8.8</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
-    <json-lib.version>2.2.2</json-lib.version>
+    <json-lib.version>2.4</json-lib.version>
     <easymock.version>3.4</easymock.version>
     <powermock.version>1.7.0</powermock.version>
     <restassured.version>2.5.0</restassured.version>
