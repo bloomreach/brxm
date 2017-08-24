@@ -118,7 +118,7 @@
     <httpclient.version>4.5.2</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
-    <json-lib.version>2.2.2</json-lib.version>
+    <json-lib.version>2.4</json-lib.version>
 
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
