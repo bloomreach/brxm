@@ -49,7 +49,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
-import org.onehippo.cm.engine.AutoExportConfigExporter;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
