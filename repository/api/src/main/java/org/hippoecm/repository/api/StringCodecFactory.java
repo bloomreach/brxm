@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -116,13 +116,17 @@ public class StringCodecFactory {
     /**
      * Direct usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
      * <p/>
-     * Performs a one-way encoding (no decoding possible) for translating any UTF-8 String to a suitable set of characters that can be used in URIs.
+     * Performs a one-way encoding (no decoding possible) for translating any string to a suitable set of characters
+     * that can be used in URIs.
+     *
      * @see <a href="doc-files/encoding.html">Encoding of node names</a>
      */
     public static class UriEncoding implements StringCodec {
-        public String encode(String utf8) {
+
+
+        public String encode(String input) {
             StringBuffer sb = new StringBuffer();
-            char[] chars = utf8.toCharArray();
+            char[] chars = input.toCharArray();
             boolean lastSpace = true;
             for (int i = 0; i < chars.length; i++) {
                 boolean appendSpace = false;
@@ -313,6 +317,203 @@ public class StringCodecFactory {
                     }
                 } else {
                     switch (chars[i]) {
+                        // The letters from Unicode Latin-1 Supplement, see https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)
+                        case 0x00c0: sb.append("a");   	break; // À
+                        case 0x00c1: sb.append("a");    break; // Á
+                        case 0x00c2: sb.append("a");    break; // Â
+                        case 0x00c3: sb.append("a");    break; // Ã
+                        case 0x00c4: sb.append("a");    break; // Ä
+                        case 0x00c5: sb.append("a");    break; // Å
+                        case 0x00c6: sb.append("ae");   break; // Æ
+                        case 0x00c7: sb.append("c");    break; // Ç
+                        case 0x00c8: sb.append("e");    break; // È
+                        case 0x00c9: sb.append("e");    break; // É
+                        case 0x00ca: sb.append("e");    break; // Ê
+                        case 0x00cb: sb.append("e");    break; // Ë
+                        case 0x00cc: sb.append("i");    break; // Ì
+                        case 0x00cd: sb.append("i");    break; // Í
+                        case 0x00ce: sb.append("i");    break; // Î
+                        case 0x00cf: sb.append("i");    break; // Ï
+                        case 0x00d0: sb.append("d");    break; // Ð
+                        case 0x00d1: sb.append("n");    break; // Ñ
+                        case 0x00d2: sb.append("o");    break; // Ò
+                        case 0x00d3: sb.append("o");    break; // Ó
+                        case 0x00d4: sb.append("o");    break; // Ô
+                        case 0x00d5: sb.append("o");    break; // Õ
+                        case 0x00d6: sb.append("o");    break; // Ö
+
+                        case 0x00d8: sb.append("o");    break; // Ø
+                        case 0x00d9: sb.append("u");    break; // Ù
+                        case 0x00da: sb.append("u");    break; // Ú
+                        case 0x00db: sb.append("u");    break; // Û
+                        case 0x00dc: sb.append("u");    break; // Ü
+                        case 0x00dd: sb.append("y");    break; // Ý
+                        case 0x00de: sb.append("th");   break; // Þ
+                        case 0x00df: sb.append("ss");   break; // ß
+                        case 0x00e0: sb.append("a");    break; // à
+                        case 0x00e1: sb.append("a");    break; // á
+                        case 0x00e2: sb.append("a");    break; // â
+                        case 0x00e3: sb.append("a");    break; // ã
+                        case 0x00e4: sb.append("a");    break; // ä
+                        case 0x00e5: sb.append("a");    break; // å
+                        case 0x00e6: sb.append("ae");   break; // æ
+                        case 0x00e7: sb.append("c");    break; // ç
+                        case 0x00e8: sb.append("e");    break; // è
+                        case 0x00e9: sb.append("e");    break; // é
+                        case 0x00ea: sb.append("e");    break; // ê
+                        case 0x00eb: sb.append("e");    break; // ë
+                        case 0x00ec: sb.append("i");    break; // ì
+                        case 0x00ed: sb.append("i");    break; // í
+                        case 0x00ee: sb.append("i");    break; // î
+                        case 0x00ef: sb.append("i");    break; // ï
+                        case 0x00f0: sb.append("d");    break; // ð
+                        case 0x00f1: sb.append("n");    break; // ñ
+                        case 0x00f2: sb.append("o");    break; // ò
+                        case 0x00f3: sb.append("o");    break; // ó
+                        case 0x00f4: sb.append("o");    break; // ô
+                        case 0x00f5: sb.append("o");    break; // õ
+                        case 0x00f6: sb.append("o");    break; // ö
+
+                        case 0x00f8: sb.append("o");    break; // ø
+                        case 0x00f9: sb.append("u");    break; // ù
+                        case 0x00fa: sb.append("u");    break; // ú
+                        case 0x00fb: sb.append("u");    break; // û
+                        case 0x00fc: sb.append("u");    break; // ü
+                        case 0x00fd: sb.append("y");    break; // ý
+                        case 0x00fe: sb.append("th");   break; // þ
+                        case 0x00ff: sb.append("y");    break; // ÿ
+
+                        // Complete Unicode Latin Extended-A, see https://en.wikipedia.org/wiki/Latin_Extended-A
+                        case 0x0100: sb.append("a");    break; // Ā
+                        case 0x0101: sb.append("a");    break; // ā
+                        case 0x0102: sb.append("a");    break; // Ă
+                        case 0x0103: sb.append("a");    break; // ă
+                        case 0x0104: sb.append("a");    break; // Ą
+                        case 0x0105: sb.append("a");    break; // ą
+                        case 0x0106: sb.append("c");    break; // Ć
+                        case 0x0107: sb.append("c");    break; // ć
+                        case 0x0108: sb.append("c");    break; // Ĉ
+                        case 0x0109: sb.append("c");    break; // ĉ
+                        case 0x010a: sb.append("c");    break; // Ċ
+                        case 0x010b: sb.append("c");    break; // ċ
+                        case 0x010c: sb.append("c");    break; // Č
+                        case 0x010d: sb.append("c");    break; // č
+                        case 0x010e: sb.append("d");    break; // Ď
+                        case 0x010f: sb.append("d");    break; // ď
+                        case 0x0110: sb.append("d");    break; // Đ
+                        case 0x0111: sb.append("d");    break; // đ
+                        case 0x0112: sb.append("e");    break; // Ē
+                        case 0x0113: sb.append("e");    break; // ē
+                        case 0x0114: sb.append("e");    break; // Ĕ
+                        case 0x0115: sb.append("e");    break; // ĕ
+                        case 0x0116: sb.append("e");    break; // Ė
+                        case 0x0117: sb.append("e");    break; // ė
+                        case 0x0118: sb.append("e");    break; // Ę
+                        case 0x0119: sb.append("e");    break; // ę
+                        case 0x011a: sb.append("e");    break; // Ě
+                        case 0x011b: sb.append("e");    break; // ě
+                        case 0x011c: sb.append("g");    break; // Ĝ
+                        case 0x011d: sb.append("g");    break; // ĝ
+                        case 0x011e: sb.append("g");    break; // Ğ
+                        case 0x011f: sb.append("g");    break; // ğ
+                        case 0x0120: sb.append("g");    break; // Ġ
+                        case 0x0121: sb.append("g");    break; // ġ
+                        case 0x0122: sb.append("g");    break; // Ģ
+                        case 0x0123: sb.append("g");    break; // ģ
+                        case 0x0124: sb.append("h");    break; // Ĥ
+                        case 0x0125: sb.append("h");    break; // ĥ
+                        case 0x0126: sb.append("h");    break; // Ħ
+                        case 0x0127: sb.append("h");    break; // ħ
+                        case 0x0128: sb.append("i");    break; // Ĩ
+                        case 0x0129: sb.append("i");    break; // ĩ
+                        case 0x012a: sb.append("i");    break; // Ī
+                        case 0x012b: sb.append("i");    break; // ī
+                        case 0x012c: sb.append("i");    break; // Ĭ
+                        case 0x012d: sb.append("i");    break; // ĭ
+                        case 0x012e: sb.append("i");    break; // Į
+                        case 0x012f: sb.append("i");    break; // į
+                        case 0x0130: sb.append("i");    break; // İ
+                        case 0x0131: sb.append("i");    break; // ı
+                        case 0x0132: sb.append("ij");   break; // Ĳ
+                        case 0x0133: sb.append("ij");   break; // ĳ
+                        case 0x0134: sb.append("j");    break; // Ĵ
+                        case 0x0135: sb.append("j");    break; // ĵ
+                        case 0x0136: sb.append("k");    break; // Ķ
+                        case 0x0137: sb.append("k");    break; // ķ
+                        case 0x0138: sb.append("k");    break; // ĸ
+                        case 0x0139: sb.append("l");    break; // Ĺ
+                        case 0x013a: sb.append("l");    break; // ĺ
+                        case 0x013b: sb.append("l");    break; // Ļ
+                        case 0x013c: sb.append("l");    break; // ļ
+                        case 0x013d: sb.append("l");    break; // Ľ
+                        case 0x013e: sb.append("l");    break; // ľ
+                        case 0x013f: sb.append("l");    break; // Ŀ
+                        case 0x0140: sb.append("l");    break; // ŀ
+                        case 0x0141: sb.append("l");    break; // Ł
+                        case 0x0142: sb.append("l");    break; // ł
+                        case 0x0143: sb.append("n");    break; // Ń
+                        case 0x0144: sb.append("n");    break; // ń
+                        case 0x0145: sb.append("n");    break; // Ņ
+                        case 0x0146: sb.append("n");    break; // ņ
+                        case 0x0147: sb.append("n");    break; // Ň
+                        case 0x0148: sb.append("n");    break; // ň
+                        case 0x0149: sb.append("n");    break; // ŉ
+                        case 0x014a: sb.append("n");    break; // Ŋ
+                        case 0x014b: sb.append("n");    break; // ŋ
+                        case 0x014c: sb.append("o");    break; // Ō
+                        case 0x014d: sb.append("o");    break; // ō
+                        case 0x014e: sb.append("o");    break; // Ŏ
+                        case 0x014f: sb.append("o");    break; // ŏ
+                        case 0x0150: sb.append("o");    break; // Ő
+                        case 0x0151: sb.append("o");    break; // ő
+                        case 0x0152: sb.append("oe");   break; // Œ
+                        case 0x0153: sb.append("oe");   break; // œ
+                        case 0x0154: sb.append("r");    break; // Ŕ
+                        case 0x0155: sb.append("r");    break; // ŕ
+                        case 0x0156: sb.append("r");    break; // Ŗ
+                        case 0x0157: sb.append("r");    break; // ŗ
+                        case 0x0158: sb.append("r");    break; // Ř
+                        case 0x0159: sb.append("r");    break; // ř
+                        case 0x015a: sb.append("s");    break; // Ś
+                        case 0x015b: sb.append("s");    break; // ś
+                        case 0x015c: sb.append("s");    break; // Ŝ
+                        case 0x015d: sb.append("s");    break; // ŝ
+                        case 0x015e: sb.append("s");    break; // Ş
+                        case 0x015f: sb.append("s");    break; // ş
+                        case 0x0160: sb.append("s");    break; // Š
+                        case 0x0161: sb.append("s");    break; // š
+                        case 0x0162: sb.append("t");    break; // Ţ
+                        case 0x0163: sb.append("t");    break; // ţ
+                        case 0x0164: sb.append("t");    break; // Ť
+                        case 0x0165: sb.append("t");    break; // ť
+                        case 0x0166: sb.append("t");    break; // Ŧ
+                        case 0x0167: sb.append("t");    break; // ŧ
+                        case 0x0168: sb.append("u");    break; // Ũ
+                        case 0x0169: sb.append("u");    break; // ũ
+                        case 0x016a: sb.append("u");    break; // Ū
+                        case 0x016b: sb.append("u");    break; // ū
+                        case 0x016c: sb.append("u");    break; // Ŭ
+                        case 0x016d: sb.append("u");    break; // ŭ
+                        case 0x016e: sb.append("u");    break; // Ů
+                        case 0x016f: sb.append("u");    break; // ů
+                        case 0x0170: sb.append("u");    break; // Ű
+                        case 0x0171: sb.append("u");    break; // ű
+                        case 0x0172: sb.append("u");    break; // Ų
+                        case 0x0173: sb.append("u");    break; // ų
+                        case 0x0174: sb.append("w");    break; // Ŵ
+                        case 0x0175: sb.append("w");    break; // ŵ
+                        case 0x0176: sb.append("y");    break; // Ŷ
+                        case 0x0177: sb.append("y");    break; // ŷ
+                        case 0x0178: sb.append("y");    break; // Ÿ
+                        case 0x0179: sb.append("z");    break; // Ź
+                        case 0x017a: sb.append("z");    break; // ź
+                        case 0x017b: sb.append("z");    break; // Ż
+                        case 0x017c: sb.append("z");    break; // ż
+                        case 0x017d: sb.append("z");    break; // Ž
+                        case 0x017e: sb.append("z");    break; // ž
+                        case 0x017f: sb.append("s");    break; // ſ
+
+                        // 0xac00 - 0xd7a3 : Hangul Syllables (only some of them are encoded)
                         case 0xc2a0:
                             appendSpace = true;
                             break;

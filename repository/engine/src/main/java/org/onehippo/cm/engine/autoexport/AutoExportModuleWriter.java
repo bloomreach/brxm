@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -51,16 +52,33 @@ public class AutoExportModuleWriter extends ModuleWriter {
 
     protected void removeDeletedResources(final ModuleContext moduleContext) throws IOException {
         final ModuleImpl module = moduleContext.getModule();
-        removeResources(module.getRemovedConfigResources(), moduleContext.getConfigOutputProvider());
-        removeResources(module.getRemovedContentResources(), moduleContext.getContentOutputProvider());
+        removeResources(module.getRemovedConfigResources(), moduleContext.getConfigOutputProvider(), moduleContext.getConfigRoot());
+        removeResources(module.getRemovedContentResources(), moduleContext.getContentOutputProvider(), moduleContext.getContentRoot());
     }
 
-    protected void removeResources(final Set<String> removedResources, final ResourceOutputProvider resourceOutputProvider)
+    /**
+     * Remove file resources and parent folders in case if they're empty
+     */
+    protected void removeResources(final Set<String> removedResources, final ResourceOutputProvider resourceOutputProvider, final Path rootFolder)
             throws IOException {
         for (final String removed : removedResources) {
             final Path removedPath = resourceOutputProvider.getResourcePath(null, removed);
-            boolean wasDeleted = Files.deleteIfExists(removedPath);
+            final boolean wasDeleted = Files.deleteIfExists(removedPath);
             log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
+            removeEmptyFolders(removedPath.getParent(), rootFolder);
+        }
+    }
+
+    private void removeEmptyFolders(Path folder, Path rootFolder) throws IOException {
+            if (!folder.equals(rootFolder) && isDirectoryEmpty(folder)) {
+            Files.delete(folder);
+            removeEmptyFolders(folder.getParent(), rootFolder);
+        }
+    }
+
+    private boolean isDirectoryEmpty(final Path folder) throws IOException {
+        try(Stream<Path> list = Files.list(folder)) {
+            return !list.findAny().isPresent();
         }
     }
 

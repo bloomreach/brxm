@@ -33,6 +33,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
+import org.onehippo.cm.model.util.OverrideResidualMatchers;
 import org.onehippo.cm.model.util.PatternSet;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_EXCLUDED_PROPERTY_NAME;
