@@ -402,6 +402,9 @@ public class EventJournalProcessor {
                     try {
                         exportChangesModule(changesModule);
                         pendingChanges = null;
+                        if (exceptionLoopPreventionEnabled) {
+                            exceptionLoopDetector.purge();
+                        }
                     } catch (Exception ex) {
                         //stop autoexport
                         if (exceptionLoopPreventionEnabled && exceptionLoopDetector.loopDetected(ex)) {
