@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -67,11 +68,14 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ValueType;
+import org.onehippo.cms7.utilities.exceptions.ExceptionLoopDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SERVICE_CONFIG_PATH;
 import static org.onehippo.cm.model.definition.DefinitionType.CONFIG;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
@@ -95,6 +99,8 @@ public class EventJournalProcessor {
     };
 
     private static final int MAX_REPEAT_PROCESS_EVENTS = 3;
+    private static final long TIME_TO_LIVE = 2000L;
+    private static final int EXCEPTION_THRESHOLD = 3;
 
     /**
      * Track changed jcr paths of *parent* nodes of jcr events
@@ -152,6 +158,8 @@ public class EventJournalProcessor {
         }
     }
 
+    private final ExceptionLoopDetector exceptionLoopDetector;
+    private final boolean exceptionLoopPreventionEnabled;
     private final AutoExportConfig autoExportConfig;
     private final ConfigurationServiceImpl configurationService;
     private final Session eventProcessorSession;
@@ -185,6 +193,9 @@ public class EventJournalProcessor {
     public EventJournalProcessor(final ConfigurationServiceImpl configurationService,
                                  final AutoExportConfig autoExportConfig, final Set<String> extraIgnoredEventPaths)
             throws RepositoryException {
+
+        exceptionLoopPreventionEnabled = Boolean.getBoolean(SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION);
+        this.exceptionLoopDetector = new ExceptionLoopDetector(TIME_TO_LIVE, EXCEPTION_THRESHOLD);
         this.configurationService = configurationService;
         this.autoExportConfig = autoExportConfig;
         nodeTypeRegistryLastModifiedPropertyPath = autoExportConfig.getModuleConfigPath()
@@ -214,6 +225,11 @@ public class EventJournalProcessor {
     public void stop() {
         stop(false);
         runOnce();
+        reset();
+    }
+
+    public void abort() {
+        stop(false);
         reset();
     }
 
@@ -383,8 +399,18 @@ public class EventJournalProcessor {
                     // rewind and let tryProcessEvents() repeat until success
                     return false;
                 } else {
-                    exportChangesModule(changesModule);
-                    pendingChanges = null;
+                    try {
+                        exportChangesModule(changesModule);
+                        pendingChanges = null;
+                    } catch (Exception ex) {
+                        //stop autoexport
+                        if (exceptionLoopPreventionEnabled && exceptionLoopDetector.loopDetected(ex)) {
+                            log.info("Looping detected, disabling autoexport");
+                            abort();
+                            disableAutoExportJcrProperty();
+                        }
+                        throw ex;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -395,6 +421,13 @@ public class EventJournalProcessor {
             AutoExportServiceImpl.log.error("Processing events failed: ", e);
         }
         return true;
+    }
+
+    private void disableAutoExportJcrProperty() throws RepositoryException {
+        final Node autoExportConfigNode = autoExportConfig.getModuleSession().getNode(SERVICE_CONFIG_PATH);
+        final Property autoExportEnableProperty = autoExportConfigNode.getProperty(AutoExportConstants.CONFIG_ENABLED_PROPERTY_NAME);
+        autoExportEnableProperty.setValue(false);
+        autoExportConfig.getModuleSession().save();
     }
 
     private boolean isReadyForProcessing(final Changes changedNodes) {
