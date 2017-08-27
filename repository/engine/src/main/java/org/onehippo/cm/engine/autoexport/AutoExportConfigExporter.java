@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -37,6 +38,7 @@ import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
@@ -147,7 +149,16 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             return;
         }
 
-        final ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
+
+        ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
+
+        if (configNode == null) {
+            //Check if requested node is deleted so that we could restore it
+            ConfigurationNodeImpl deletedNode = configurationModel.resolveDeletedNode(JcrPath.get(jcrPath));
+            //if not present, check if it is descendant of any deleted nodes, if found it means that there are no changes in parent node(s)
+            configNode = deletedNode != null ? deletedNode : findTopDeletedNode(jcrPath);
+        }
+
         if (configNode == null) {
             // this is a brand new node, so we can skip the delta comparisons and just dump the JCR tree into one def
 
@@ -174,6 +185,12 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             // otherwise, we need to do a detailed comparison
             exportConfigNodeDelta(jcrNode, configNode, configSource);
         }
+    }
+
+    private ConfigurationNodeImpl findTopDeletedNode(final String jcrPath) {
+        return configurationModel.getDeletedConfigNodes().stream()
+                .filter(deletedRootNode -> JcrPath.get(jcrPath).startsWith(deletedRootNode.getJcrPath()))
+                .findFirst().orElse(null);
     }
 
     protected boolean shouldExcludeNode(final String jcrPath) {
@@ -373,8 +390,10 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
 
             final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
-            if (childConfigNode == null) {
-                // the config doesn't know about this child, so do a full export without delta comparisons
+            final ConfigurationNodeImpl deletedNode =
+                    configurationModel.resolveDeletedNode(JcrPath.get(configNode.getJcrPath() + "/" + indexedJcrChildNodeName));
+            if (childConfigNode == null && deletedNode == null) {
+                // the config doesn't know about this child, or wasnt deleted so do a full export without delta comparisons
                 // yes, defNode is indeed supposed to be the _parent's_ defNode
                 defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
                 exportNode(childNode, defNode, Collections.emptySet());

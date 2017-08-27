@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
@@ -83,6 +84,9 @@ import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
@@ -652,6 +656,35 @@ public class DefinitionMergeService {
                                              final ConfigurationModelImpl model) {
         log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
 
+        //is it a root deleted node?
+        Optional<ConfigurationNodeImpl> topDeletedConfigNode =
+                model.getDeletedConfigNodes().stream()
+                        .filter(dn -> incomingDefNode.getJcrPath().equals(dn.getJcrPath())).findFirst();
+
+        boolean isChildNodeDeleted = false;
+        boolean nodeRestore = topDeletedConfigNode.isPresent();
+        if (!nodeRestore) {
+            //maybe it is a (sub)child node of deleted node
+            isChildNodeDeleted = model.getDeletedConfigNodes().stream()
+                    .anyMatch(dn -> !incomingDefNode.getJcrPath().equals(dn.getJcrPath())
+                    && incomingDefNode.getJcrPath().startsWith(dn.getJcrPath()));
+            if (isChildNodeDeleted) {
+                //Find the top deleted node of the deletion tree
+                topDeletedConfigNode = model.getDeletedConfigNodes().stream()
+                        .filter(dn -> incomingDefNode.getJcrPath().startsWith(dn.getJcrPath())).findFirst();
+                nodeRestore = true;
+            }
+        }
+
+        if (nodeRestore && !topDeletedConfigNode.isPresent()) {
+            throw new IllegalStateException(String.format("Deleted node '%s' is not found", incomingDefNode.getJcrPath()));
+        } else if (nodeRestore && model.resolveNode(incomingDefNode.getJcrPath()) == null) {
+            //restore config model subtree
+            final JcrPath parentNodePath = topDeletedConfigNode.get().getJcrPath().getParent();
+            final ConfigurationNodeImpl parentNode = model.resolveNode(parentNodePath);
+            parentNode.addNode(topDeletedConfigNode.get().getName(), topDeletedConfigNode.get());
+        }
+
         // this is a tripwire for testing error handling via AutoExportIntegrationTest.merge_error_handling()
         // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
 //        if (incomingDefNode.getJcrPath().equals("/config/TestNodeThatShouldCauseAnExceptionOnlyInTesting")) {
@@ -672,6 +705,10 @@ public class DefinitionMergeService {
             }
 
             log.debug("Changed path has existing definition: {}", incomingDefPath);
+
+            if (nodeRestore) {
+                removeDeletedNodeFromSource(toExport, topDeletedConfigNode.get(), isChildNodeDeleted);
+            }
 
             // is this a delete?
             if (incomingDefNode.isDelete()) {
@@ -701,6 +738,45 @@ public class DefinitionMergeService {
                 mergeConfigDefinitionNode(childNodeDef, toExport, reorderRegistry, model);
             }
         }
+    }
+
+    /**
+     * Removes node delete definition from the source as it will be superseded with recreated node
+     * @param deletedConfigNode root of the deleted node
+     * @param isChildNodeDeleted this is child of the deleted node
+     */
+    private void removeDeletedNodeFromSource(final HashMap<String, ModuleImpl> toExport,
+                                             final ConfigurationNodeImpl deletedConfigNode, final boolean isChildNodeDeleted) {
+        DefinitionNodeImpl definitionNode = null;
+        for (ModuleImpl exportModule : toExport.values()) {
+
+            definitionNode = resolveConfigNode(deletedConfigNode.getJcrPath(), exportModule);
+            if (definitionNode != null) {
+                break;
+            }
+        }
+
+        //check if definition is in autoexport modules
+        if (definitionNode == null && !isChildNodeDeleted) {
+            throw new RuntimeException(String.format("Could not find node '%s' in autoexport modules, " +
+                            "is it part of upstream modules?",
+                    deletedConfigNode.getJcrPath()));
+        }
+
+        if (definitionNode != null && isChildNodeDeleted && definitionNode.isDelete()) {
+            removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
+        } else if (definitionNode != null) {
+            definitionNode.setDelete(false);
+        }
+    }
+
+    private DefinitionNodeImpl resolveConfigNode(JcrPath nodePath, ModuleImpl module) {
+        for (ConfigDefinitionImpl configDefinition : module.getConfigDefinitions()) {
+            if (configDefinition.getNode().getJcrPath().equals(nodePath)) {
+                return configDefinition.getNode();
+            }
+        }
+        return null;
     }
 
     /**
@@ -1108,6 +1184,24 @@ public class DefinitionMergeService {
                 }
             }
             removeDescendantDefinitions(childConfigNode, alreadyRemoved, toExport);
+        }
+
+        purgeDeletedNodesInSource(configNode, toExport);
+    }
+
+    /**
+     * Delete all deleted child nodes from a source
+     * @param configNode
+     * @param toExport
+     */
+    private void purgeDeletedNodesInSource(final ConfigurationNodeImpl configNode, final HashMap<String, ModuleImpl> toExport) {
+        final List<AbstractDefinitionImpl> removed = new ArrayList<>();
+        for (ModuleImpl module : toExport.values()) {
+            final List<ConfigDefinitionImpl> configDefinitions = module.getConfigDefinitions();
+            final List<ConfigDefinitionImpl> itemsToClean = configDefinitions.stream().filter(d ->
+                    d.getNode().isDelete() && !Objects.equals(d.getNode().getJcrPath(), configNode.getJcrPath())
+                            && d.getNode().getJcrPath().startsWith(configNode.getJcrPath())).collect(Collectors.toList());
+            itemsToClean.forEach(item -> removeOneDefinitionItem(item.getNode(), removed, toExport));
         }
     }
 
