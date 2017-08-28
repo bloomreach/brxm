@@ -49,7 +49,9 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, DefinitionPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
 
-    // Note: when adding additional meta properties, be sure to update #delete and #isEmptyExceptDelete
+    // Note: when adding additional meta properties, be sure to update:
+    // - #delete and #isEmptyExceptDelete
+    // - org.onehippo.cm.engine.autoexport.DefinitionMergeService#recursiveCopy
     private boolean delete = false;
     private String orderBefore = null;
     private Boolean ignoreReorderedChildren;
