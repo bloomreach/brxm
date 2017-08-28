@@ -55,6 +55,8 @@ public class ConfigurationTreeBuilder {
 
     private final Map<JcrPath, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
 
+    private final List<ConfigurationNodeImpl> deletedNodes = new ArrayList<>();
+
     public ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
         root.setName(JcrPathSegment.ROOT_NAME);
@@ -132,17 +134,38 @@ public class ConfigurationTreeBuilder {
         return this;
     }
 
+
+    public List<ConfigurationNodeImpl> getDeletedNodes() {
+        return deletedNodes;
+    }
+
     /**
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDeletedAndEmpty()) {
+
+            if (node.getParent() == null || !node.getParent().isDeleted()) {
+                deletedNodes.add(node);
+            }
+
             final String indexedName = createIndexedName(definitionNode.getName());
             if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
+                node.addDefinition(definitionNode);
                 node.getParent().removeNode(indexedName, true);
             } else {
-                markNodeAsDeletedBy(node, definitionNode);
+                final ConfigurationNodeImpl parentNode = node.getParent();
+                parentNode.removeNode(definitionNode.getName(), false);
+                //create fake delete node here, it will be pruned at the end
+                final ConfigurationNodeImpl deleteNode = new ConfigurationNodeImpl();
+
+                node.getDefinitions().forEach(deleteNode::addDefinition);
+                deleteNode.addDefinition(definitionNode);
+                deleteNode.setName(definitionNode.getName());
+                parentNode.addNode(definitionNode.getName(), deleteNode);
+                deleteNode.setParent(parentNode);
+                markNodeAsDeletedBy(deleteNode, definitionNode);
             }
             return;
         } else if (definitionNode.isDelete() && !node.hasNoJcrNodesOrProperties()) {

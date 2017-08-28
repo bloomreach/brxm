@@ -67,6 +67,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     private final List<ContentDefinitionImpl> contentDefinitions = Collections.unmodifiableList(modifiableContentDefinitions);
     private final List<ConfigDefinitionImpl> modifiableConfigDefinitions = new ArrayList<>();
     private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
+    private final List<ConfigurationNodeImpl> modifiableDeletedConfigNodes = new ArrayList<>();
+    private final List<ConfigurationNodeImpl> deletedConfigNodes = Collections.unmodifiableList(modifiableDeletedConfigNodes);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -210,6 +212,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableConfigDefinitions.clear();
         modifiableContentDefinitions.clear();
         modifiableWebFileBundleDefinitions.clear();
+        modifiableDeletedConfigNodes.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
         for (GroupImpl g : groups) {
@@ -226,9 +229,20 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             }
         }
         setConfigurationRootNode(configurationTreeBuilder.build());
+
+        modifiableDeletedConfigNodes.addAll(configurationTreeBuilder.getDeletedNodes());
+
         return this;
     }
-    
+
+    public ConfigurationNodeImpl resolveDeletedNode(final JcrPath path) {
+        return deletedConfigNodes.stream().filter(node -> node.getJcrPath().equals(path)).findFirst().orElse(null);
+    }
+
+    public List<ConfigurationNodeImpl> getDeletedConfigNodes() {
+        return deletedConfigNodes;
+    }
+
     /**
      * Compile a manifest of contents. Format will be a YAML document as follows.
      * <pre>
