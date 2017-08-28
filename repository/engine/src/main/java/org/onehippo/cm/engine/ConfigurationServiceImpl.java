@@ -156,8 +156,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
             // also, check params for auto-export state
             final boolean isProjectBaseDirSet = StringUtils.isNotBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
-            final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
-            boolean startAutoExportService = configure && autoExportAllowed;
+            boolean startAutoExportService = configure && isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -183,7 +182,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                                 log.error(errorMsg, e);
                             }
                             startAutoExportService = false;
+                            log.error("autoexport service disallowed");
                         }
+                    }
+                    else {
+                        // if starting auto-export was disallowed to begin with, notify devs via the log
+                        log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
                     }
 
                     log.info("Loading preMigrators");
@@ -214,7 +218,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         baselineModel = loadBaselineModel();
 
                         // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
-                        if (autoExportAllowed) {
+                        if (startAutoExportService) {
                             this.baselineModel = baselineModel;
                         }
 
@@ -687,9 +691,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private boolean startAutoExportService() {
         try {
             autoExportService = new AutoExportServiceImpl(session, this);
-            return true;
+            return autoExportService.isRunning();
         } catch (Exception e) {
-            log.error("Failed to start autoexport service");
+            log.error("ConfigurationService: Failed to start autoexport service");
             return false;
         }
     }

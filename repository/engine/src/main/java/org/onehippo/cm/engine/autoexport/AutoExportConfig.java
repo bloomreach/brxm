@@ -177,8 +177,6 @@ public class AutoExportConfig extends ExportConfig {
                 for (Value value : values) {
                     moduleStrings.add(value.getString());
                 }
-            } else {
-                addRepositoryPath("content", "/", modules, isEnabled());
             }
         } catch (RepositoryException e) {
             log.error("Failed to get modules configuration from repository", e);
@@ -190,47 +188,55 @@ public class AutoExportConfig extends ExportConfig {
                                             final Map<String, Collection<String>> modules, final boolean logChanges) {
         boolean rootRepositoryPathIsConfigured = false;
         Collection<String> allRepositoryPaths = new HashSet<>();
-        for (String module : moduleStrings) {
-            int offset = module.indexOf(":/");
+
+        // for each entry of form "{module}:{path}" or possibly just "{module}"
+        for (String moduleEntry : moduleStrings) {
+            // split {module} from {path}
+            int offset = moduleEntry.indexOf(":/");
+
+            // if there is no path, this is the special case of registering a module to update existing definitions only
             if (offset == -1) {
                 if (logChanges) {
-                    log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: expected ':/'");
+                    log.info("Module {} registered to update existing definitions via auto-export without mapping to a repository path", moduleEntry);
                 }
-                continue;
+                addRepositoryPath(moduleEntry, null, modules, logChanges);
             }
-            String modulePath = module.substring(0, offset);
-            String repositoryPath = module.substring(offset+1);
-            if (!allRepositoryPaths.contains(repositoryPath)) {
-                addRepositoryPath(modulePath, repositoryPath, modules, logChanges);
-                allRepositoryPaths.add(repositoryPath);
-                if (repositoryPath.equals("/")) {
-                    rootRepositoryPathIsConfigured = true;
-                }
-            } else {
-                if (logChanges) {
-                    log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: the same repository path may not be mapped to multiple modules");
+            // otherwise, this is the normal "{module}:{path}" pair
+            else {
+                String modulePath = moduleEntry.substring(0, offset);
+                String repositoryPath = moduleEntry.substring(offset + 1);
+                if (!allRepositoryPaths.contains(repositoryPath)) {
+                    addRepositoryPath(modulePath, repositoryPath, modules, logChanges);
+                    allRepositoryPaths.add(repositoryPath);
+                    if (repositoryPath.equals("/")) {
+                        rootRepositoryPathIsConfigured = true;
+                    }
+                } else {
+                    if (logChanges) {
+                        log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: the same repository path {} may not be mapped to multiple modules", repositoryPath);
+                    }
                 }
             }
         }
         if (!rootRepositoryPathIsConfigured) {
             if (logChanges) {
-                log.warn("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: there must be a module that maps to /");
+                log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: there must be a module that maps to /");
+
+                // in this condition, we should disable auto-export entirely
+                modules.clear();
             }
-            addRepositoryPath("content", "/", modules, logChanges);
         }
     }
 
     private static void addRepositoryPath(final String modulePath, final String repositoryPath,
                                           final Map<String, Collection<String>> modules, final boolean logChanges) {
-        Collection<String> repositoryPaths = modules.get(modulePath);
-        if (repositoryPaths == null) {
-            repositoryPaths = new ArrayList<>();
-            modules.put(modulePath, repositoryPaths);
-        }
-        if (logChanges) {
+        Collection<String> repositoryPaths = modules.computeIfAbsent(modulePath, k -> new ArrayList<>());
+        if (logChanges && repositoryPath != null) {
             log.info("Changes to repository path '{}' will be exported to directory '{}'", repositoryPath, modulePath);
         }
-        repositoryPaths.add(repositoryPath);
+        if (repositoryPath != null) {
+            repositoryPaths.add(repositoryPath);
+        }
     }
 
     /**

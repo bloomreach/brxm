@@ -16,8 +16,7 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,8 +25,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
-
-import com.google.common.collect.Sets;
 
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -52,7 +49,9 @@ public final class AutoExportServiceImpl implements EventListener {
 
     private NodeTypeChangesMonitor nodeTypeChangesMonitor;
     private AutoExportConfig autoExportConfig;
+    private boolean configIsValid;
     private EventJournalProcessor eventJournalProcessor;
+    private AtomicBoolean running = new AtomicBoolean(false);
 
 
     public AutoExportServiceImpl(final Session configurationSession, final ConfigurationServiceImpl configurationService)
@@ -64,38 +63,49 @@ public final class AutoExportServiceImpl implements EventListener {
         nodeTypeChangesMonitor = new NodeTypeChangesMonitor(autoExportConfig);
         eventJournalProcessor = new EventJournalProcessor(configurationService, autoExportConfig, Collections.emptySet());
         manager.addEventListener(this, EVENT_TYPES, SERVICE_CONFIG_PATH, false, null, null, false);
+
+        configIsValid = checkModules(configurationService.getRuntimeConfigurationModel());
+
+        if (!configIsValid) {
+            log.error("autoexport config is invalid -- see previous error log messages");
+            throw new IllegalStateException("autoexport config is invalid");
+        }
+
         if (autoExportConfig.isEnabled()) {
-            checkModules(autoExportConfig, configurationService.getRuntimeConfigurationModel());
             log.info("autoexport service enabled");
             eventJournalProcessor.start();
+            running.set(true);
         } else {
             log.info("autoexport service disabled");
         }
     }
 
     /**
-     * Confirm that all modules that are configured for auto-export have a corresponding source path in
-     * repo.bootstrap.modules.
-     * @param autoExportConfig
+     * Confirm that at least one module is configured for auto-export, and that exported modules are at the end of the
+     * sequence of applied modules.
      * @param baseline
      */
-    private void checkModules(final AutoExportConfig autoExportConfig, final ConfigurationModelImpl baseline) {
-        final Set<String> configuredMvnPaths = autoExportConfig.getModules().keySet();
-        final Set<String> exportable = new HashSet<>();
-        for (final ModuleImpl m : baseline.getModules()) {
-            if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
-                exportable.add(m.getMvnPath());
+    private boolean checkModules(final ConfigurationModelImpl baseline) {
+        if (autoExportConfig.getModules().keySet().isEmpty()) {
+            log.error("autoexport is configured with zero modules to export!");
+            return false;
+        }
+
+        // confirm that auto-export modules have no modules following them that are not also being exported
+        boolean startedAutoExport = false;
+        for (final ModuleImpl module : baseline.getModules()) {
+            // once we encounter an exported module, make sure all following modules are auto-exported
+            if (!startedAutoExport && module.getMvnPath() != null) {
+                startedAutoExport = true;
+            }
+            if (startedAutoExport && module.getMvnPath() == null) {
+                // cannot have a sequence from exported to not-exported!
+                log.error("autoexport modules must be the last modules applied to configuration, but found additional module: {}", module.getFullName());
+                return false;
             }
         }
 
-        if (!exportable.containsAll(configuredMvnPaths)) {
-            // interrupt auto-export startup with an exception
-            final Sets.SetView<String> missing = Sets.difference(configuredMvnPaths, exportable);
-            log.error("Configured auto-export modules do not all have a source path!");
-            log.error("auto-export: {}, configured sources: {}, missing: {}", configuredMvnPaths, exportable, missing);
-            throw new IllegalStateException(
-                    "Cannot auto-export modules without a source path: " + missing);
-        }
+        return true;
     }
 
     public void onEvent(EventIterator iter) {
@@ -104,27 +114,45 @@ public final class AutoExportServiceImpl implements EventListener {
             try {
                 if ((SERVICE_CONFIG_PATH+"/"+CONFIG_ENABLED_PROPERTY_NAME).equals(event.getPath())) {
                     if (autoExportConfig.isEnabled() != autoExportConfig.checkEnabled()) {
-                        if (autoExportConfig.isEnabled()) {
-                            log.info("autoexport service enabled");
-                            eventJournalProcessor.start();
-                        } else {
-                            log.info("autoexport service disabled, processing remaining changes");
-                            eventJournalProcessor.stop();
+                        if (configIsValid) {
+                            if (autoExportConfig.isEnabled()) {
+                                log.info("autoexport service enabled");
+                                eventJournalProcessor.start();
+                                running.set(true);
+                            } else {
+                                log.info("autoexport service disabled, processing remaining changes");
+                                running.set(false);
+                                eventJournalProcessor.stop();
+                            }
+                        }
+                        else {
+                            log.error("autoexport config is invalid -- see error log messages at repository startup");
                         }
                     }
                 }
+                // todo: should we reload auto-export config on config changes other than enablement?
             } catch (RepositoryException e) {
                 log.error("Error occurred getting path from event.", e);
             }
         }
     }
 
+    public boolean isRunning() {
+        return running.get();
+    }
+
     public void runOnce() {
-        log.info("running single autoexport cycle");
-        eventJournalProcessor.runOnce();
+        if (configIsValid) {
+            log.info("running single autoexport cycle");
+            eventJournalProcessor.runOnce();
+        }
+        else {
+            log.error("autoexport has invalid config and cannot run -- see error log messages at repository startup");
+        }
     }
 
     public void close() {
+        running.set(false);
         if (manager != null) {
             try {
                 manager.removeEventListener(this);
