@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest/reorder-upstream-module/no-local-defs/second:
+      .meta:order-before: first
+    /AutoExportIntegrationTest/reorder-upstream-module/no-local-defs/third:
+      .meta:order-before: second

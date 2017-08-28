@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest/reorder-upstream-module:
+      jcr:primaryType: nt:unstructured
+      /no-local-defs:
+        jcr:primaryType: nt:unstructured
+        /first:
+          jcr:primaryType: nt:unstructured
+        /second:
+          jcr:primaryType: nt:unstructured
+        /third:
+          jcr:primaryType: nt:unstructured
+      /local-defs:
+        jcr:primaryType: nt:unstructured
+        /first:
+          jcr:primaryType: nt:unstructured
+        /second:
+          jcr:primaryType: nt:unstructured
+        /third:
+          jcr:primaryType: nt:unstructured

@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs:
+      /first-local:
+        .meta:order-before: first
+        jcr:primaryType: nt:unstructured
+      /last-local:
+        jcr:primaryType: nt:unstructured

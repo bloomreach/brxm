@@ -231,6 +231,30 @@ public class AutoExportIntegrationTest {
             });
     }
 
+    @Test
+    public void autoexport_reorder_upstream_module() throws Exception {
+        final String noLocalDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/no-local-defs";
+        final String localDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/local-defs";
+        new Fixture("reorder_upstream_module").test(
+            (session, configurationModel) -> {
+                assertOrder("[first, second, third]", noLocalDefsPath, session, configurationModel);
+                assertOrder("[first-local, first, second, third, last-local]", localDefsPath, session, configurationModel);
+            },
+            (session) -> {
+                final Node noLocalDefNode = session.getNode(noLocalDefsPath);
+                noLocalDefNode.orderBefore("third", "first");
+                noLocalDefNode.orderBefore("second", "first");
+
+                final Node localDefNode = session.getNode(localDefsPath);
+                localDefNode.orderBefore("third", "first");
+                localDefNode.orderBefore("second", "first");
+            },
+            (session, configurationModel) -> {
+                assertOrder("[third, second, first]", noLocalDefsPath, session, configurationModel);
+                assertOrder("[first-local, third, second, first, last-local]", localDefsPath, session, configurationModel);
+            });
+    }
+
     private void assertOrder(final String order, final String path, final Session session,
                              final ConfigurationModel model) throws Exception {
         assertOrderInJcr(order, path, session);

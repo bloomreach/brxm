@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs:
+      /first-local:
+        .meta:order-before: first
+        jcr:primaryType: nt:unstructured
+      /last-local:
+        jcr:primaryType: nt:unstructured
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs/second:
+      .meta:order-before: first
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs/third:
+      .meta:order-before: second
