@@ -41,8 +41,8 @@ class PagePropertiesCtrl {
     this.title = this.item.pageTitle;
     this.availableDocuments = this.item.availableDocumentRepresentations || [];
     this.availableDocuments.unshift(documentNone);
-    const currentPrimaryDocumentPath = this.item.primaryDocumentRepresentation
-                                     ? this.item.primaryDocumentRepresentation.path : '';
+    const primaryDocument = this.item.primaryDocumentRepresentation;
+    const currentPrimaryDocumentPath = primaryDocument ? primaryDocument.path : '';
     this.primaryDocument = this.availableDocuments.find(dr => dr.path === currentPrimaryDocumentPath) || documentNone;
     this.prototypes = [];
     this.errorMap = {

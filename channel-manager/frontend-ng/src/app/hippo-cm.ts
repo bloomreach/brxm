@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ import startWithSlashFilter from './filters/startWithSlash.filter';
 import getByPropertyFilter from './filters/getByProperty.filter';
 import incrementPropertyFilter from './filters/incrementProperty.filter';
 import HippoGlobal from './services/hippoGlobal.service';
-
 
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';

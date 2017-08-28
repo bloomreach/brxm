@@ -139,8 +139,7 @@ function config(
     .backgroundPalette('hippo-grey');
 
   const HippoGlobal = window.parent.Hippo || {};
-  const antiCache = HippoGlobal.antiCache ?
-        `?antiCache=${window.top.Hippo.antiCache}` : '';
+  const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
 
   $mdIconProvider
     .icon('any-device', `images/any-device.svg${antiCache}`)

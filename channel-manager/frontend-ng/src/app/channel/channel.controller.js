@@ -15,7 +15,6 @@
  */
 
 class ChannelCtrl {
-
   constructor(
     $log,
     $rootScope,
@@ -31,7 +30,7 @@ class ChannelCtrl {
     PageActionsService,
     PageMetaDataService,
     SidePanelService,
-    ) {
+  ) {
     'ngInject';
 
     this.$log = $log;

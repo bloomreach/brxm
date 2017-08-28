@@ -15,7 +15,6 @@
  */
 
 class CKEditorService {
-
   constructor($log, $q, $timeout, $window, ConfigService, DomService, PathService) {
     'ngInject';
 

@@ -17,7 +17,6 @@
 const REST_API_PATH = 'ws/content';
 
 class ContentService {
-
   constructor($http, $q, ConfigService, PathService) {
     'ngInject';
 
@@ -65,10 +64,10 @@ class ContentService {
 
     this._queue.push(() => {
       this.$http(opts)
-      .then(
-        result => defer.resolve(result),
-        result => defer.reject(result))
-      .finally(() => this._next());
+        .then(
+          result => defer.resolve(result),
+          result => defer.reject(result))
+        .finally(() => this._next());
     });
 
     if (!this._running) {

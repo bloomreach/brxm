@@ -15,7 +15,6 @@
  */
 
 class CmsService {
-
   constructor($q, $window, $log) {
     'ngInject';
 

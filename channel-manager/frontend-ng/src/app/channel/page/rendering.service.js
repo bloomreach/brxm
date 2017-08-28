@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 
 class RenderingService {
-
   constructor($http, $log) {
     'ngInject';
 
@@ -38,8 +37,8 @@ class RenderingService {
   fetchComponentMarkup(component, propertiesMap) {
     function toUrlEncodedFormData(json) {
       return Object.keys(json)
-                   .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(json[key])}`)
-                   .join('&');
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(json[key])}`)
+        .join('&');
     }
 
     return this.$http({
@@ -53,7 +52,6 @@ class RenderingService {
       transformRequest: toUrlEncodedFormData,
     });
   }
-
 }
 
 export default RenderingService;

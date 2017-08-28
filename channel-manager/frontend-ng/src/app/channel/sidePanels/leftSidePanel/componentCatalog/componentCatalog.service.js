@@ -23,7 +23,7 @@ class ComponentCatalogService {
     OverlayService,
     PageStructureService,
     FeedbackService,
-    ) {
+  ) {
     'ngInject';
 
     this.$log = $log;

@@ -15,7 +15,6 @@
  */
 
 class CollapseCtrl {
-
   constructor($element, $animate) {
     'ngInject';
 
@@ -57,7 +56,6 @@ class CollapseCtrl {
       this.toggledElement.height('');
     });
   }
-
 }
 
 export default CollapseCtrl;

@@ -71,7 +71,7 @@ class RightSidePanelCtrl {
     FeedbackService,
     localStorageService,
     FieldService,
-    ) {
+  ) {
     'ngInject';
 
     this.$scope = $scope;
@@ -166,14 +166,14 @@ class RightSidePanelCtrl {
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)
-          .then((doc) => {
-            if (this._hasFields(doc)) {
-              return this.ContentService.getDocumentType(doc.info.type.id)
-                .then(docType => this._onLoadSuccess(doc, docType));
-            }
-            return this.$q.reject(this._noContentResponse(doc));
-          })
-          .catch(response => this._onLoadFailure(response)))
+        .then((doc) => {
+          if (this._hasFields(doc)) {
+            return this.ContentService.getDocumentType(doc.info.type.id)
+              .then(docType => this._onLoadSuccess(doc, docType));
+          }
+          return this.$q.reject(this._noContentResponse(doc));
+        })
+        .catch(response => this._onLoadFailure(response)))
       .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
   }

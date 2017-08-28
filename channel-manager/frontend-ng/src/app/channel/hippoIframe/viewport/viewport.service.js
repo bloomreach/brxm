@@ -15,7 +15,6 @@
  */
 
 class ViewportService {
-
   constructor() {
     'ngInject';
 

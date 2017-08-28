@@ -101,7 +101,8 @@ class PropertyFieldCtrl {
   }
 
   getSetPath(...args) {
-    return args.length ? (this.value = args[0]) : this.PathService.baseName(this.value);
+    const path = args.length ? (this.value = args[0]) : this.PathService.baseName(this.value);
+    return path;
   }
 
   _getType() {

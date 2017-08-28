@@ -15,7 +15,6 @@
  */
 
 class DocumentFieldsCtrl {
-
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
     this.onFieldBlur = this.onFieldBlur || angular.noop;

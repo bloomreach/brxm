@@ -30,7 +30,7 @@ class ChannelService {
     ProjectService,
     SessionService,
     SiteMapService,
-    ) {
+  ) {
     'ngInject';
 
     this.$http = $http;

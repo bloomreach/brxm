@@ -48,33 +48,33 @@ class PageActionsService extends MenuService {
       isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
     })
-    .addAction('properties', {
-      translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
-      isEnabled: () => this._canEditPage(),
-      onClick: () => this._pageProperties(),
-    })
-    .addDivider()
-    .addAction('copy', {
-      translationKey: 'TOOLBAR_MENU_PAGE_COPY',
-      isEnabled: () => this._canCopyPage(),
-      onClick: () => this._copyPage(),
-    })
-    .addAction('move', {
-      translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
-      isEnabled: () => this._canEditPage(),
-      onClick: () => this._movePage(),
-    })
-    .addAction('delete', {
-      translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
-      isEnabled: () => this._canEditPage(),
-      onClick: () => this._deletePage(),
-    })
-    .addDivider()
-    .addAction('new', {
-      translationKey: 'TOOLBAR_MENU_PAGE_NEW',
-      isEnabled: () => this._canAddNewPage(),
-      onClick: () => this._newPage(),
-    });
+      .addAction('properties', {
+        translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
+        isEnabled: () => this._canEditPage(),
+        onClick: () => this._pageProperties(),
+      })
+      .addDivider()
+      .addAction('copy', {
+        translationKey: 'TOOLBAR_MENU_PAGE_COPY',
+        isEnabled: () => this._canCopyPage(),
+        onClick: () => this._copyPage(),
+      })
+      .addAction('move', {
+        translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
+        isEnabled: () => this._canEditPage(),
+        onClick: () => this._movePage(),
+      })
+      .addAction('delete', {
+        translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
+        isEnabled: () => this._canEditPage(),
+        onClick: () => this._deletePage(),
+      })
+      .addDivider()
+      .addAction('new', {
+        translationKey: 'TOOLBAR_MENU_PAGE_NEW',
+        isEnabled: () => this._canAddNewPage(),
+        onClick: () => this._newPage(),
+      });
   }
 
   onOpenMenu() {
@@ -139,16 +139,16 @@ class PageActionsService extends MenuService {
             this.HippoIframeService.load(homePage);
 
             const siteMapId = this.ChannelService.getSiteMapId();
-            this.SiteMapService.load(siteMapId);   // reload sitemap (left side panel)
+            this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
 
-            this.SiteMapItemService.clear();       // wipe meta-data of current page
+            this.SiteMapItemService.clear(); // wipe meta-data of current page
             this.ChannelService.recordOwnChange(); // mark the channel changed
           })
           .catch(() => {
             this.FeedbackService.showError('ERROR_DELETE_PAGE');
           });
       });
-      // do nothing on cancel
+    // do nothing on cancel
   }
 
   _confirmDelete(page) {

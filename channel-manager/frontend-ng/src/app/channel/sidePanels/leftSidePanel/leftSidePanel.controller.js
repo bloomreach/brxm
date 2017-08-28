@@ -22,7 +22,7 @@ class LeftSidePanelCtrl {
     CatalogService,
     SiteMapService,
     HippoIframeService,
-    ) {
+  ) {
     'ngInject';
 
     this.$scope = $scope;

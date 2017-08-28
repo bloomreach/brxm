@@ -28,7 +28,6 @@ function isInternalLink(link, internalLinks) {
 }
 
 class LinkProcessorService {
-
   constructor($translate, $window) {
     'ngInject';
 

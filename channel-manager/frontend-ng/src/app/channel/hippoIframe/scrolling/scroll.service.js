@@ -19,7 +19,6 @@ const DURATION_MIN = 500;
 const DURATION_MAX = 1500;
 
 class ScrollService {
-
   constructor(BrowserService, DomService) {
     'ngInject';
 
@@ -75,7 +74,7 @@ class ScrollService {
     this.iframe
       .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
       .on(`mouseleave${EVENT_NAMESPACE}`, event => this._startScrolling(event.pageX, event.pageY),
-    );
+      );
   }
 
   _unbindMouseEnterMouseLeave() {

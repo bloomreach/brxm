@@ -15,7 +15,6 @@
  */
 
 class MenuItem {
-
   constructor(name, config = {}) {
     this.name = name;
     this.translationKey = config.translationKey || name;

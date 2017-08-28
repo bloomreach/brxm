@@ -54,48 +54,48 @@ class ChannelActionsService extends MenuService {
       isIconVisible: () => this.hasAnyChanges(),
       iconSvg: 'attention',
     })
-    .addAction('settings', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
-      iconName: 'settings',
-      isEnabled: () => this._isChannelSettingsAvailable(),
-      onClick: () => this._showChannelSettings(),
-    })
-    .addDivider()
-    .addAction('publish', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
-      iconName: 'publish',
-      isVisible: () => !this._isBranch(),
-      isEnabled: () => this._hasOwnChanges(),
-      onClick: () => this._publish(),
-    })
-     .addAction('confirm', {
-       translationKey: 'TOOLBAR_MENU_CHANNEL_CONFIRM',
-       iconName: 'publish',
-       isVisible: () => this._isBranch(),
-       isEnabled: () => this._hasOwnChanges(),
-       onClick: () => this._publish(),
-     })
-    .addAction('discard-changes', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
-      isEnabled: () => this._hasOwnChanges(),
-      onClick: () => this._discardChanges(),
-    })
-    .addAction('manage-changes', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
-      isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
-      onClick: () => this._showManageChanges(),
-    })
-    .addDivider()
-    .addAction('delete', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
-      iconName: 'delete',
-      isEnabled: () => this._isChannelDeletionAvailable(),
-      onClick: () => this._deleteChannel(),
-    })
-    .addAction('close', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
-      onClick: () => this._closeChannel(),
-    });
+      .addAction('settings', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
+        iconName: 'settings',
+        isEnabled: () => this._isChannelSettingsAvailable(),
+        onClick: () => this._showChannelSettings(),
+      })
+      .addDivider()
+      .addAction('publish', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
+        iconName: 'publish',
+        isVisible: () => !this._isBranch(),
+        isEnabled: () => this._hasOwnChanges(),
+        onClick: () => this._publish(),
+      })
+      .addAction('confirm', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_CONFIRM',
+        iconName: 'publish',
+        isVisible: () => this._isBranch(),
+        isEnabled: () => this._hasOwnChanges(),
+        onClick: () => this._publish(),
+      })
+      .addAction('discard-changes', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
+        isEnabled: () => this._hasOwnChanges(),
+        onClick: () => this._discardChanges(),
+      })
+      .addAction('manage-changes', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
+        isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
+        onClick: () => this._showManageChanges(),
+      })
+      .addDivider()
+      .addAction('delete', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
+        iconName: 'delete',
+        isEnabled: () => this._isChannelDeletionAvailable(),
+        onClick: () => this._deleteChannel(),
+      })
+      .addAction('close', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
+        onClick: () => this._closeChannel(),
+      });
 
     this.CmsService.subscribe('close-channel', () => this._closeChannel());
   }

@@ -111,7 +111,7 @@ class HippoIframeCtrl {
         this.HippoIframeService.signalPageLoadCompleted();
       }
     }, () => {
-        // stop progress indicator
+      // stop progress indicator
       this.HippoIframeService.signalPageLoadCompleted();
     });
     // TODO: handle error.

@@ -20,7 +20,6 @@ const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 class DragDropService {
-
   constructor(
     $q,
     $rootScope,
@@ -33,7 +32,7 @@ class DragDropService {
     PageStructureService,
     ScrollService,
     HippoIframeService,
-    ) {
+  ) {
     'ngInject';
 
     this.$q = $q;
@@ -158,8 +157,8 @@ class DragDropService {
 
   _getContainerBoxElements() {
     return this.PageStructureService.getContainers()
-        .filter(container => !container.isDisabled())
-        .map(container => container.getBoxElement()[0]);
+      .filter(container => !container.isDisabled())
+      .map(container => container.getBoxElement()[0]);
   }
 
   replaceContainer(oldContainer, newContainer) {

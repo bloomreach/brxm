@@ -18,7 +18,6 @@
 import MenuItem from './menuItem.model';
 
 class Menu extends MenuItem {
-
   constructor(name, config = {}) {
     super(name, config);
     this.items = [];
@@ -31,8 +30,8 @@ class Menu extends MenuItem {
 
   hasIcons() {
     return this.items
-        .filter(item => item.type === 'action')
-        .some(item => item.hasIconSvg() || item.hasIconName());
+      .filter(item => item.type === 'action')
+      .some(item => item.hasIconSvg() || item.hasIconName());
   }
 }
 

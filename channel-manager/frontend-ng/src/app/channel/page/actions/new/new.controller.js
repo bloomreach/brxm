@@ -31,7 +31,7 @@ class PageNewCtrl {
     this.siteMapId = ChannelService.getSiteMapId();
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
-            { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+      { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
     this.errorMap = {
       ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
       ITEM_NOT_IN_PREVIEW: 'ERROR_PAGE_PARENT_MISSING',

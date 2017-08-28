@@ -20,7 +20,6 @@ import ContentLink from './element/contentLink';
 import MenuLink from './element/menuLink';
 
 class PageStructureService {
-
   constructor(
     $log,
     $q,

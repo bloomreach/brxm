@@ -15,7 +15,6 @@
  */
 
 class DomService {
-
   constructor($q, $rootScope, $document, BrowserService) {
     'ngInject';
 
