@@ -657,12 +657,10 @@ public class DefinitionMergeService {
         log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
 
         //is it a root deleted node?
-        Optional<ConfigurationNodeImpl> topDeletedConfigNode =
-                model.getDeletedConfigNodes().stream()
-                        .filter(dn -> incomingDefNode.getJcrPath().equals(dn.getJcrPath())).findFirst();
+        ConfigurationNodeImpl topDeletedConfigNode = model.resolveDeletedNode(incomingDefNode.getJcrPath());
 
         boolean isChildNodeDeleted = false;
-        boolean nodeRestore = topDeletedConfigNode.isPresent();
+        boolean nodeRestore = topDeletedConfigNode != null;
         if (!nodeRestore) {
             //maybe it is a (sub)child node of deleted node
             isChildNodeDeleted = model.getDeletedConfigNodes().stream()
@@ -671,18 +669,16 @@ public class DefinitionMergeService {
             if (isChildNodeDeleted) {
                 //Find the top deleted node of the deletion tree
                 topDeletedConfigNode = model.getDeletedConfigNodes().stream()
-                        .filter(dn -> incomingDefNode.getJcrPath().startsWith(dn.getJcrPath())).findFirst();
+                        .filter(dn -> incomingDefNode.getJcrPath().startsWith(dn.getJcrPath())).findFirst().get();
                 nodeRestore = true;
             }
         }
 
-        if (nodeRestore && !topDeletedConfigNode.isPresent()) {
-            throw new IllegalStateException(String.format("Deleted node '%s' is not found", incomingDefNode.getJcrPath()));
-        } else if (nodeRestore && model.resolveNode(incomingDefNode.getJcrPath()) == null) {
+        if (nodeRestore && model.resolveNode(incomingDefNode.getJcrPath()) == null) {
             //restore config model subtree
-            final JcrPath parentNodePath = topDeletedConfigNode.get().getJcrPath().getParent();
+            final JcrPath parentNodePath = topDeletedConfigNode.getJcrPath().getParent();
             final ConfigurationNodeImpl parentNode = model.resolveNode(parentNodePath);
-            parentNode.addNode(topDeletedConfigNode.get().getName(), topDeletedConfigNode.get());
+            parentNode.addNode(topDeletedConfigNode.getName(), topDeletedConfigNode);
         }
 
         // this is a tripwire for testing error handling via AutoExportIntegrationTest.merge_error_handling()
@@ -707,7 +703,7 @@ public class DefinitionMergeService {
             log.debug("Changed path has existing definition: {}", incomingDefPath);
 
             if (nodeRestore) {
-                removeDeletedNodeFromSource(toExport, topDeletedConfigNode.get(), isChildNodeDeleted);
+                removeDeletedNodeFromSource(toExport, topDeletedConfigNode, isChildNodeDeleted);
             }
 
             // is this a delete?
@@ -763,20 +759,21 @@ public class DefinitionMergeService {
                     deletedConfigNode.getJcrPath()));
         }
 
-        if (definitionNode != null && isChildNodeDeleted && definitionNode.isDelete()) {
-            removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
-        } else if (definitionNode != null) {
-            definitionNode.setDelete(false);
+        if (definitionNode != null) {
+            //we change the source, so mark it as changed
+            definitionNode.getDefinition().getSource().markChanged();
+            if (isChildNodeDeleted && definitionNode.isDelete()) {
+                removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
+            } else {
+                definitionNode.setDelete(false);
+            }
         }
     }
 
     private DefinitionNodeImpl resolveConfigNode(JcrPath nodePath, ModuleImpl module) {
-        for (ConfigDefinitionImpl configDefinition : module.getConfigDefinitions()) {
-            if (configDefinition.getNode().getJcrPath().equals(nodePath)) {
-                return configDefinition.getNode();
-            }
-        }
-        return null;
+        return module.getConfigDefinitions().stream()
+                .filter(configDefinition -> configDefinition.getNode().getJcrPath().equals(nodePath)).findFirst()
+                .map(ContentDefinitionImpl::getNode).orElse(null);
     }
 
     /**
