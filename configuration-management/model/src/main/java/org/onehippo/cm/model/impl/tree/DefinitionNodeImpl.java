@@ -17,8 +17,11 @@ package org.onehippo.cm.model.impl.tree;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -209,6 +212,46 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
                 newView.put(childNode.getName(), childNode);
             }
             newView.put(entry.getKey(), entry.getValue());
+        }
+
+        // clear and copy back into the existing child nodes map
+        modifiableNodes.clear();
+        modifiableNodes.putAll(newView);
+    }
+
+    /**
+     * Reorder existing child nodes of this parent node. The given expected list does not have to match the current
+     * children exactly. Names in given expected list that do not exist in this parent are skipped, any child nodes
+     * not named in given expected list are ordered last in their original order. For example:
+     * <ul>
+     *     <li>current: [1,2] - expected: [2,1] - result: [2,1]</li>
+     *     <li>current: [1,2,3,4] - expected: [4,3] - result: [4,3,1,2]</li>
+     *     <li>current: [1,2] - expected: [2,1,3,4] - result: [2,1]</li>
+     * </ul>
+     * @param expected expected order of child items
+     */
+    public void reorder(final List<JcrPathSegment> expected) {
+        // copy the existing child nodes, inserting at the right place
+        final Set<String> remainder = new HashSet<>(modifiableNodes.keySet());
+        LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
+
+        for (final JcrPathSegment name : expected) {
+            // Check if the node is there, with or without index -- it's important to re-add it in the original form
+            name.suppressIndex();
+            DefinitionNodeImpl node = getNode(name.toString());
+            if (node == null) {
+                name.forceIndex();
+                node = getNode(name.toString());
+            }
+
+            if (node != null) {
+                newView.put(name.toString(), node);
+                remainder.remove(name.toString());
+            }
+        }
+
+        for (final String name : remainder) {
+            newView.put(name, modifiableNodes.get(name));
         }
 
         // clear and copy back into the existing child nodes map
