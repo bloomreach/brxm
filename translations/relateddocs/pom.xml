@@ -25,10 +25,10 @@
   
   <name>Hippo Plugin Related Documents Translations</name>
   <artifactId>hippo-plugin-relateddocs-l10n</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.relateddocs.version>5.0.1-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.relateddocs.version>5.1.0-SNAPSHOT</hippo.plugin.relateddocs.version>
   </properties>
   
   <dependencies>

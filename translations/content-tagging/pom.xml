@@ -25,10 +25,10 @@
   
   <name>Hippo Plugin Content Tagging Translations</name>
   <artifactId>hippo-plugin-content-tagging-l10n</artifactId>
-  <version>7.0.1-SNAPSHOT</version>
+  <version>7.1.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.content-tagging.version>7.0.1-SNAPSHOT</hippo.plugin.content-tagging.version>
+    <hippo.plugin.content-tagging.version>7.1.0-SNAPSHOT</hippo.plugin.content-tagging.version>
   </properties>
   
   <dependencies>

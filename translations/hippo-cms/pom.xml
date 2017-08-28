@@ -25,10 +25,10 @@
   
   <name>Hippo CMS Translations</name>
   <artifactId>hippo-cms-l10n</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.cms.version>5.0.1-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
   </properties>
   
   <dependencies>

@@ -25,10 +25,10 @@
   
   <name>Hippo Plugin Taxonomy Translations</name>
   <artifactId>hippo-plugin-taxonomy-l10n</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.1.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.taxonomy.version>4.0.1-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>4.1.0-SNAPSHOT</hippo.plugin.taxonomy.version>
   </properties>
   
   <dependencies>
