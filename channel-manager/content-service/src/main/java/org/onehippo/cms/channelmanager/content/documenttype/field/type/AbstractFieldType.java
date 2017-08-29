@@ -66,10 +66,7 @@ public abstract class AbstractFieldType implements FieldType {
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
-    private Set<Validator> validators = new HashSet<>();
-
-    public AbstractFieldType() {
-    }
+    private final Set<Validator> validators = new HashSet<>();
 
     @Override
     public String getId() {
@@ -160,23 +157,13 @@ public abstract class AbstractFieldType implements FieldType {
         return getValidators().contains(Validator.UNSUPPORTED);
     }
 
-    /**
-     * Check if an initialized field is "valid", i.e. should be present in a document type.
-     *
-     * @return true or false
-     */
     @Override
     public boolean isValid() {
         return !hasUnsupportedValidator();
     }
 
-    /**
-     * Initialize a {@link AbstractFieldType}, given a field context.
-     *
-     * @param fieldContext  information about the field (as part of a parent content type)
-     */
     @Override
-    public void init(FieldTypeContext fieldContext) {
+    public void init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
         final ContentTypeItem item = fieldContext.getContentTypeItem();
         final String fieldId = item.getName();
@@ -225,7 +212,6 @@ public abstract class AbstractFieldType implements FieldType {
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
 
-    @SuppressWarnings("unchecked")
     protected void checkCardinality(final List<FieldValue> values)
             throws ErrorWithPayloadException {
         if (values.size() < getMinValues()) {
@@ -243,7 +229,7 @@ public abstract class AbstractFieldType implements FieldType {
     protected boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
         boolean isValid = true;
 
-        for (FieldValue value : valueList) {
+        for (final FieldValue value : valueList) {
             if (!validator.test(value)) {
                 isValid = false;
             }
