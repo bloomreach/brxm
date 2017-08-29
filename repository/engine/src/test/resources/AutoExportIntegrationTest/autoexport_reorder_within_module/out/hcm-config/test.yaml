@@ -42,5 +42,9 @@ definitions:
     /reorder-on-content-delete:
       .meta:residual-child-node-category: content
       jcr:primaryType: nt:unstructured
+    /create-new-files:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
     /content:
       .meta:category: content

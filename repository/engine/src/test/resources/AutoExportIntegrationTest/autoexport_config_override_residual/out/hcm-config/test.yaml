@@ -27,10 +27,10 @@ definitions:
             jcr:primaryType: nt:unstructured
             /hst:containers:
               jcr:primaryType: nt:unstructured
-        /ignored:
-          .meta:category: system
         /mychannel:
           jcr:primaryType: nt:unstructured
+        /ignored:
+          .meta:category: system
     /test:
       jcr:primaryType: nt:unstructured
       /children-ignored-by-config:

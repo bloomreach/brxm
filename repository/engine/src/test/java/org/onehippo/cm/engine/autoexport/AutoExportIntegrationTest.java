@@ -215,6 +215,10 @@ public class AutoExportIntegrationTest {
                 session.getNode("/reorder-on-config-delete/delete").remove();
 
                 session.getNode("/reorder-on-content-delete/n2").remove();
+
+                final Node createNewFiles = session.getNode("/create-new-files/sub");
+                createNewFiles.addNode("zzz-first", "nt:unstructured");
+                createNewFiles.addNode("abc-last", "nt:unstructured");
             },
             (session, configurationModel) -> {
                 assertOrder("[a3-first, a1-initial, a4-middle, a2-last]", "/across", session, configurationModel);
@@ -228,6 +232,8 @@ public class AutoExportIntegrationTest {
 
                 assertOrderInJcr("[n3, n1]", "/reorder-on-content-delete", session);
                 assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+
+                assertOrder("[zzz-first, abc-last]", "/create-new-files/sub", session, configurationModel);
             });
     }
 

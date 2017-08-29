@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /create-new-files/sub/abc-last:
+      jcr:primaryType: nt:unstructured

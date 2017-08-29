@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /create-new-files/sub/zzz-first:
+      .meta:order-before: abc-last
+      jcr:primaryType: nt:unstructured
