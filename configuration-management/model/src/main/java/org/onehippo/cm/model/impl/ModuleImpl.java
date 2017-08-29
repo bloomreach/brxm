@@ -123,16 +123,22 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         this.project = project;
     }
 
+    /**
+     * Special case clone constructor to be used only by {@link ProjectImpl#addModule(ModuleImpl)}.
+     */
     ModuleImpl(final ModuleImpl module, final ProjectImpl project) {
         this(module.getName(), project);
         modifiableAfter.addAll(module.getAfter());
         configResourceInputProvider = module.getConfigResourceInputProvider();
         contentResourceInputProvider = module.getContentResourceInputProvider();
+        sequenceNumber = module.sequenceNumber;
         actionsMap.putAll(module.getActionsMap());
+
         // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
         sortedSources.addAll(module.getSources());
         // update the back-reference, since this new module will now "own" these Sources
         sortedSources.forEach(source -> source.setModule(this));
+
         mvnPath = module.getMvnPath();
         archiveFile = module.getArchiveFile();
         build();
@@ -658,8 +664,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 
+            newModule.sequenceNumber = sequenceNumber;
+            newModule.getActionsMap().putAll(actionsMap);
+
             // reload sources from raw YAML instead of attempting to copy the full parsed structure
-            // TODO is this good enough? for auto-export, it should be, since baseline will not change during export
+            // TODO is this good enough? for auto-export, there is a potential failure mode if files are changed on disk
             final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider);
             final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider);
 
@@ -673,7 +682,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                         source.getPath(), getFullSourcePath(source, contentResourceInputProvider), newModule);
             }
 
-            return newModule;
+            return newModule.build();
         } catch (ParserException | IOException e) {
             throw new RuntimeException("Unable to clone Module: "+getFullName(), e);
         }
