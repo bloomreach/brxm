@@ -44,7 +44,7 @@ public final class AutoExportServiceImpl implements EventListener {
 
     private static final int EVENT_TYPES = PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED;
 
-    private final Session autoExportSession;
+    private final Session autoExportConfigSession;
     private final ObservationManager manager;
 
     private NodeTypeChangesMonitor nodeTypeChangesMonitor;
@@ -57,9 +57,9 @@ public final class AutoExportServiceImpl implements EventListener {
     public AutoExportServiceImpl(final Session configurationSession, final ConfigurationServiceImpl configurationService)
             throws RepositoryException {
         final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
-        autoExportSession = configurationSession.impersonate(credentials);
-        autoExportConfig = new AutoExportConfig(configurationSession.getNode(SERVICE_CONFIG_PATH));
-        manager = autoExportSession.getWorkspace().getObservationManager();
+        autoExportConfigSession = configurationSession.impersonate(credentials);
+        autoExportConfig = new AutoExportConfig(autoExportConfigSession.getNode(SERVICE_CONFIG_PATH));
+        manager = autoExportConfigSession.getWorkspace().getObservationManager();
         nodeTypeChangesMonitor = new NodeTypeChangesMonitor(autoExportConfig);
         eventJournalProcessor = new EventJournalProcessor(configurationService, autoExportConfig, Collections.emptySet());
         manager.addEventListener(this, EVENT_TYPES, SERVICE_CONFIG_PATH, false, null, null, false);
@@ -165,8 +165,8 @@ public final class AutoExportServiceImpl implements EventListener {
         if (nodeTypeChangesMonitor != null) {
             nodeTypeChangesMonitor.shutdown();
         }
-        if (autoExportSession != null && autoExportSession.isLive()) {
-            autoExportSession.logout();
+        if (autoExportConfigSession != null && autoExportConfigSession.isLive()) {
+            autoExportConfigSession.logout();
         }
     }
 }

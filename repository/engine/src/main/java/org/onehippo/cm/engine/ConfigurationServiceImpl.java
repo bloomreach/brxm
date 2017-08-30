@@ -133,7 +133,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
         lockManager = new ConfigurationLockManager(session);
-        baselineService = new ConfigurationBaselineService(session, lockManager);
+        baselineService = new ConfigurationBaselineService(lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
 

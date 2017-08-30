@@ -40,7 +40,6 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
@@ -48,8 +47,10 @@ import javax.jcr.util.TraversingItemVisitor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -167,6 +168,8 @@ public class EventJournalProcessor {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final long minChangeLogAge = 250;
     private long lastRevision = -1;
+    private Node autoExportConfigNode = null;
+    private Long lastRevisionPropertyValue = null;
     private Changes pendingChanges;
     private Changes currentChanges;
     private RevisionEventJournal eventJournal;
@@ -197,9 +200,9 @@ public class EventJournalProcessor {
         this.exceptionLoopDetector = new ExceptionLoopDetector(TIME_TO_LIVE, EXCEPTION_THRESHOLD);
         this.configurationService = configurationService;
         this.autoExportConfig = autoExportConfig;
-        nodeTypeRegistryLastModifiedPropertyPath = autoExportConfig.getModuleConfigPath()
+        nodeTypeRegistryLastModifiedPropertyPath = autoExportConfig.getConfigPath()
                 + "/" + AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
-        lastRevisionPropertyPath = autoExportConfig.getModuleConfigPath()
+        lastRevisionPropertyPath = autoExportConfig.getConfigPath()
                 + "/" + AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME;
         PathsMap ignoredEventPaths = new PathsMap(builtinIgnoredEventPaths);
         ignoredEventPaths.addAll(extraIgnoredEventPaths);
@@ -207,9 +210,9 @@ public class EventJournalProcessor {
         ignoredEventPaths.add(lastRevisionPropertyPath);
         autoExportConfig.addIgnoredPaths(ignoredEventPaths);
 
-        final Session moduleSession = autoExportConfig.getModuleSession();
-        eventProcessorSession =
-                moduleSession.impersonate(new SimpleCredentials(moduleSession.getUserID(), "".toCharArray()));
+        eventProcessorSession = autoExportConfig.createImpersonatedSession();
+        autoExportConfigNode = eventProcessorSession.getNode(autoExportConfig.getConfigPath());
+        prepareEventJournalAndLastRevision();
     }
 
     public void start() {
@@ -272,9 +275,9 @@ public class EventJournalProcessor {
             currentChanges = null;
             pendingChanges = null;
             currentModel = null;
-            // force reset lastRevision as well, allowing a actual 'reset' to -1 (or delete) of the property
+            // reset lastRevisionPropertyValue as well, allowing an actual 'reset' to -1 (or delete) of the property
             // by a developer, thereby 'skipping' next autoexport when enabled to the then current 'head' revision
-            autoExportConfig.resetLastRevision();
+            lastRevisionPropertyValue = null;
         }
     }
 
@@ -303,18 +306,31 @@ public class EventJournalProcessor {
         }
     }
 
-    private long skipToHeadRevision(RevisionEventJournal eventJournal) throws RepositoryException {
-        RevisionEvent lastEvent = null;
-        while (eventJournal.hasNext()) {
-            lastEvent = eventJournal.nextEvent();
+    private void prepareEventJournalAndLastRevision() throws RepositoryException {
+        // ensure eventJournal will be 'up-to-date' and that there are no pending session changes
+        eventProcessorSession.refresh(false);
+
+        if (eventJournal == null) {
+            final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
+            eventJournal = (RevisionEventJournal) observationManager.getEventJournal();
+            lastRevision = getLastRevision();
         }
-        if (lastEvent != null) {
-            log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
-            autoExportConfig.setLastRevision(lastEvent.getRevision());
-            autoExportConfig.getModuleSession().save();
-            return lastEvent.getRevision();
+        if (lastRevision == -1) {
+            // first skip to almost now (minus 1 minute), so we likely can capture the current last revision fast
+            // this is useful when enabling autoexport on an existing (production copy?) repository with a large journal
+            eventJournal.skipTo(System.currentTimeMillis()-1000*60);
+            RevisionEvent lastEvent = null;
+            while (eventJournal.hasNext()) {
+                lastEvent = eventJournal.nextEvent();
+            }
+            if (lastEvent != null) {
+                log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
+                lastRevision = lastEvent.getRevision();
+                setLastRevision(lastRevision, true);
+            }
+        } else {
+            eventJournal.skipToRevision(lastRevision);
         }
-        return -1;
     }
 
     private boolean processEvents() throws RepositoryException {
@@ -324,20 +340,8 @@ public class EventJournalProcessor {
         // update our local reference to the runtime model immediately before using it
         this.currentModel = configurationService.getRuntimeConfigurationModel();
 
-        if (eventJournal == null) {
-            final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
-            eventJournal = (RevisionEventJournal) observationManager.getEventJournal();
-            lastRevision = autoExportConfig.getLastRevision();
-        }
         try {
-            if (lastRevision == -1) {
-                // first skip to only almost now, so we likely can capture the current last revision fast
-                // this is useful when enabling autoexport on an existing (production copy?) repository with a last journal
-                eventJournal.skipTo(System.currentTimeMillis()-1000);
-                skipToHeadRevision(eventJournal);
-            } else {
-                eventJournal.skipToRevision(lastRevision);
-            }
+            prepareEventJournalAndLastRevision();
             int count = 0;
             while (eventJournal.hasNext()) {
                 RevisionEvent event = eventJournal.nextEvent();
@@ -345,8 +349,7 @@ public class EventJournalProcessor {
                 lastRevision = event.getRevision();
                 if (storeLastRevision) {
                     // still haven't yet stored the current last revision: do so now
-                    autoExportConfig.setLastRevision(lastRevision);
-                    autoExportConfig.getModuleSession().save();
+                    setLastRevision(lastRevision, true);
                 }
                 if (event.getType() == Event.PERSIST) {
                     continue;
@@ -378,8 +381,7 @@ public class EventJournalProcessor {
                 } else {
                     // all events are skipped, bump lastRevision to skip these in the future
                     currentChanges = null;
-                    autoExportConfig.setLastRevision(lastRevision);
-                    autoExportConfig.getModuleSession().save();
+                    setLastRevision(lastRevision, true);
                 }
             }
             if (count > 0) {
@@ -426,10 +428,9 @@ public class EventJournalProcessor {
     }
 
     private void disableAutoExportJcrProperty() throws RepositoryException {
-        final Node autoExportConfigNode = autoExportConfig.getModuleSession().getNode(SERVICE_CONFIG_PATH);
         final Property autoExportEnableProperty = autoExportConfigNode.getProperty(AutoExportConstants.CONFIG_ENABLED_PROPERTY_NAME);
         autoExportEnableProperty.setValue(false);
-        autoExportConfig.getModuleSession().save();
+        eventProcessorSession.save();
     }
 
     private boolean isReadyForProcessing(final Changes changedNodes) {
@@ -698,8 +699,7 @@ public class EventJournalProcessor {
             stopWatch.start();
 
             // save this fact immediately and do nothing else
-            autoExportConfig.setLastRevision(lastRevision);
-            autoExportConfig.getModuleSession().save();
+            setLastRevision(lastRevision, true);
 
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
@@ -759,15 +759,38 @@ public class EventJournalProcessor {
                 reloadedModules.add(loadedModule);
             }
 
-            // 2) configuration.setLastRevision(lastRevision) (should NOT save the JCR session!)
-            autoExportConfig.setLastRevision(lastRevision);
+            // 2) configuration.setLastRevision(lastRevision) (NOT saving the JCR session, yet!)
+            setLastRevision(lastRevision, false);
 
             stopWatch.stop();
             log.info("Diff export (writing modules) in {}", stopWatch.toString());
 
-            // 3) save result to baseline (which should do Session.save() thereby also saving the lastRevision update
+            // 3) save result to baseline (which should do Session.save()
             // 4) update or reload ConfigurationService.currentRuntimeModel
             configurationService.updateBaselineForAutoExport(reloadedModules);
+            // 5) now also save the lastRevision update
+            eventProcessorSession.save();
         }
+    }
+
+    private long getLastRevision() throws RepositoryException {
+        if (lastRevisionPropertyValue == null) {
+            lastRevisionPropertyValue = JcrUtils.getLongProperty(autoExportConfigNode, AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, -1l);
+        }
+        return lastRevisionPropertyValue;
+    }
+
+    /**
+     * Sets the lastRevision property
+     * @param lastRevision the new value of the lastRevision property
+     * @paramm save optionally save the value using the internal {@link #eventProcessorSession}
+     * @throws RepositoryException
+     */
+    private void setLastRevision(final long lastRevision, final boolean save) throws RepositoryException {
+        autoExportConfigNode.setProperty(AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
+        if (save) {
+            eventProcessorSession.save();
+        }
+        this.lastRevisionPropertyValue = lastRevision;
     }
 }

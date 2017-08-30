@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
@@ -48,7 +49,6 @@ public class AutoExportConfig extends ExportConfig {
     private final Node node;
     private final String nodePath;
     private Boolean enabled;
-    private Long lastRevision;
     private Map<String, Collection<String>> modules;
     private OverrideResidualMatchers overrideResidualContext;
     private InjectResidualMatchers injectResidualMatchers;
@@ -115,12 +115,13 @@ public class AutoExportConfig extends ExportConfig {
         return ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
     }
 
-    public String getModuleConfigPath() {
+    public String getConfigPath() {
         return nodePath;
     }
 
-    public Session getModuleSession() throws RepositoryException {
-        return node.getSession();
+    public Session createImpersonatedSession() throws RepositoryException {
+        final Session session = node.getSession();
+        return session.impersonate(new SimpleCredentials(session.getUserID(), new char[]{}));
     }
 
     public OverrideResidualMatchers getOverrideResidualMatchers() {
@@ -277,26 +278,5 @@ public class AutoExportConfig extends ExportConfig {
             }
         }
         return enabled;
-    }
-
-    long getLastRevision() throws RepositoryException {
-        if (lastRevision == null) {
-            lastRevision = JcrUtils.getLongProperty(node, AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, -1l);
-        }
-        return lastRevision;
-    }
-
-    /**
-     * Sets the lastRevision property, but DOES NOT save the JCR session.
-     * @param lastRevision the new value of the lastRevision property
-     * @throws RepositoryException
-     */
-    void setLastRevision(final long lastRevision) throws RepositoryException {
-        node.setProperty(AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
-        this.lastRevision = lastRevision;
-    }
-
-    synchronized void resetLastRevision() {
-        lastRevision = null;
     }
 }
