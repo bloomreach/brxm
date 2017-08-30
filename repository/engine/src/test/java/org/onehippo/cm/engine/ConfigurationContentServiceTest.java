@@ -109,7 +109,7 @@ public class ConfigurationContentServiceTest {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationContentService.class).build()) {
             configurationContentService.apply(model, session);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Processing 'APPEND' action for node failed: '/some/path'")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Processing 'APPEND' action for content node '/some/path' failed.")));
         }
 
         verify(baselineService);

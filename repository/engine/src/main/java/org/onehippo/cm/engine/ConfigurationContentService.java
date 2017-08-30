@@ -149,7 +149,7 @@ public class ConfigurationContentService {
 
                 try {
                     if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
-                        log.debug("Processing {} action for node: {}", action, baseNodePath);
+                        log.debug("Processing {} action for content node: {}", action, baseNodePath);
                         contentProcessingService.apply(contentNode, action, session, isUpgradeTo12);
 
                         if (!nodeAlreadyProcessed) {
@@ -159,11 +159,17 @@ public class ConfigurationContentService {
                             session.save();
                         }
                     } else {
-                        log.error(String.format("Base node '%s' in '%s' is not categorized as content, skipping action '%s'.",
+                        log.error(String.format("Content node '%s' in '%s' is not categorized as content, skipping action '%s'.",
                                 baseNodePath, contentDefinition.getOrigin(), action));
                     }
-                } catch (RepositoryException ex) {
-                    log.error(String.format("Processing '%s' action for node failed: '%s'", action, baseNodePath), ex);
+                } catch (Exception ex) {
+                    final String errorMsg = String.format("Processing '%s' action for content node '%s' failed.", action, baseNodePath);
+                    if (ex instanceof ConfigurationRuntimeException) {
+                        // no stacktrace needed, the exception message should be informative enough
+                        log.error(errorMsg + "\n" + ex.getMessage());
+                    } else {
+                        log.error(errorMsg, ex);
+                    }
                     failedPaths.add(baseNodePath);
 
                     // we need to clear changes in progress, since they apparently cause the session save to fail

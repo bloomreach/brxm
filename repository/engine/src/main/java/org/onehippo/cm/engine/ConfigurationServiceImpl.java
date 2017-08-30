@@ -685,6 +685,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         } catch (Exception e) {
             log.error("Failed to apply all content", e);
             return false;
+        } finally {
+            try {
+                // make sure to flush remaining pending changes as we need to assure a 'clean' session state at the end
+                if (session.hasPendingChanges()) {
+                    session.refresh(false);
+                }
+            } catch (RepositoryException ignore) {
+            }
         }
     }
 
