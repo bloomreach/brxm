@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.util.ISO8601;
 
@@ -43,10 +44,14 @@ public class MockProperty extends MockItem implements Property {
     private List<MockValue> values;
     private MockPropertyDefinition propertyDefinition;
 
-    MockProperty(String name, int type) {
-        super(name);
+    MockProperty(String name, int type, QueryManager queryManager) {
+        super(name, queryManager);
         this.type = type;
         this.values = new ArrayList<MockValue>();
+    }
+
+    MockProperty(String name, int type) {
+        this(name, type, null);
     }
 
     MockProperty(MockProperty original) throws RepositoryException {
@@ -83,7 +88,7 @@ public class MockProperty extends MockItem implements Property {
     @Override
     public void setValue(final String[] values) {
         this.values.clear();
-        for (String value: values) {
+        for (String value : values) {
             this.values.add(new MockValue(PropertyType.STRING, value));
         }
         multiple = true;
