@@ -124,7 +124,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
             applyDefinitions(source2, configurationModel);
             fail("Should have thrown a RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals("Failed to process namespace definition defined in test-group/test-project/test-module-0 [string]: " +
+            assertEquals("Failed to process namespace definition defined in test-group/test-project/test-module-0 [config: string]: " +
                     "namespace with prefix 'test4' already exists in repository with different URI. " +
                     "Existing: 'http://www.onehippo.org/test/nt/4.0', target: 'http://www.onehippo.org/test/nt/4.0-changed'. " +
                     "Changing existing namespaces is not supported. Aborting.", e.getMessage());
@@ -200,7 +200,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         } catch (Exception e) {
             assertEquals(
                     "Failed to process property '/test/node/test2:property' defined in"
-                            + " [test-group/test-project/test-module-0 [string]]: no matching property definition"
+                            + " [test-group/test-project/test-module-0 [config: string]]: no matching property definition"
                             + " found for {http://www.onehippo.org/test/nt/2.0}property",
                     e.getMessage());
         }
@@ -229,7 +229,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         // step 4
         try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(reregisterConfiguration, baseline);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("skipping CND already loaded in baseline: 'test2b.cnd' defined in test-group/test-project/test-module-0 [string].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("skipping CND already loaded in baseline: 'test2b.cnd' defined in test-group/test-project/test-module-0 [config: string].")));
         }
     }
 
@@ -244,13 +244,13 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(source);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [string].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [config: string].")));
         }
 
         // as well as on reloading...
         try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(source);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [string].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [config: string].")));
         }
     }
 
@@ -273,7 +273,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
             applyDefinitions(source);
             fail("an exception should have occurred");
         } catch (RepositoryException e) {
-            assertTrue(e.getMessage().contains("Failed to parse cnd 'unknown.cnd' (test-group/test-project/test-module-0 [string])"));
+            assertTrue(e.getMessage().contains("Failed to parse cnd 'unknown.cnd' (test-group/test-project/test-module-0 [config: string])"));
         }
     }
 
