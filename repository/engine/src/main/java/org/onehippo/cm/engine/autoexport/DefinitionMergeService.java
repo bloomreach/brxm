@@ -273,7 +273,8 @@ public class DefinitionMergeService {
 
         configHolders.upstream.forEach((holder) -> holder.apply(expected, intermediate));
 
-        updateStateForUnorderedUpstream(path, expected, toExport, sortedModules, intermediate, configHolders.local);
+        updateStateForIncorrectlyOrderedUpstream(path, configurationNode, expected, toExport, sortedModules,
+                intermediate, configHolders.local);
 
         configHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
 
@@ -295,17 +296,38 @@ public class DefinitionMergeService {
      * @param intermediate  (in & out) the intermediate order of the sub nodes of the given path
      * @param holders       (in & out) the set of holders for the given path
      */
-    private void updateStateForUnorderedUpstream(final JcrPath path,
-                                                 final List<JcrPathSegment> expected,
-                                                 final HashMap<String, ModuleImpl> toExport,
-                                                 final List<String> sortedModules,
-                                                 final List<JcrPathSegment> intermediate,
-                                                 final List<OrderBeforeHolder> holders) {
+    private void updateStateForIncorrectlyOrderedUpstream(final JcrPath path,
+                                                          final ConfigurationNodeImpl configurationNode,
+                                                          final List<JcrPathSegment> expected,
+                                                          final HashMap<String, ModuleImpl> toExport,
+                                                          final List<String> sortedModules,
+                                                          final List<JcrPathSegment> intermediate,
+                                                          final List<OrderBeforeHolder> holders) {
 
         // if there are 0 or just 1 upstream items in intermediate, they are in the correct order
         if (intermediate.size() < 2) {
             return;
         }
+
+        final List<JcrPathSegment> incorrectlyOrdered = getIncorrectlyOrdered(expected, intermediate);
+
+        intermediate.removeAll(incorrectlyOrdered);
+
+        for (final JcrPathSegment childName : incorrectlyOrdered) {
+            final ConfigurationNodeImpl childCfgNode = configurationNode.getNode(childName);
+            final Optional<DefinitionNodeImpl> maybeChildDefNode = getLastLocalDef(childCfgNode, toExport);
+            final DefinitionNodeImpl childDefNode =
+                    maybeChildDefNode.orElseGet(() -> getOrCreateLocalDef(path.resolve(childName), toExport));
+            final int moduleIndex =
+                    sortedModules.indexOf(childDefNode.getDefinition().getSource().getModule().getFullName());
+            holders.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode, toExport));
+        }
+
+        holders.sort(Comparator.naturalOrder());
+    }
+
+    static List<JcrPathSegment> getIncorrectlyOrdered(final List<JcrPathSegment> expected,
+                                                      final List<JcrPathSegment> intermediate) {
 
         final List<JcrPathSegment> incorrectlyOrdered = new ArrayList<>();
         int lastCorrectIndex = expected.indexOf(intermediate.get(0));
@@ -319,15 +341,7 @@ public class DefinitionMergeService {
             }
         }
 
-        intermediate.removeAll(incorrectlyOrdered);
-
-        for (final JcrPathSegment name : incorrectlyOrdered) {
-            final DefinitionNodeImpl node = getOrCreateLocalDef(path.resolve(name), toExport);
-            final int moduleIndex = sortedModules.indexOf(node.getDefinition().getSource().getModule().getFullName());
-            holders.add(new LocalConfigOrderBeforeHolder(moduleIndex, node, toExport));
-        }
-
-        holders.sort(Comparator.naturalOrder());
+        return incorrectlyOrdered;
     }
 
     private List<JcrPathSegment> getExpectedOrder(final Node jcrNode, final ConfigurationNodeImpl configurationNode)
@@ -602,6 +616,7 @@ public class DefinitionMergeService {
             if (childNode == null) {
                 continue;
             }
+            boolean primaryTypeSeen = false;
             for (final DefinitionNodeImpl childDefNode : childNode.getDefinitions()) {
                 final boolean isLocal = isLocalDef(toExport).test(childDefNode);
 
@@ -610,9 +625,12 @@ public class DefinitionMergeService {
                 }
 
                 boolean influencesOrdering = false;
-                final DefinitionPropertyImpl primaryTypeProperty = childDefNode.getProperty(JCR_PRIMARYTYPE);
-                if (primaryTypeProperty != null) {
-                    influencesOrdering = primaryTypeProperty.getOperation() == REPLACE; // ignore OVERRIDE for ordering
+                if (!primaryTypeSeen) {
+                    final DefinitionPropertyImpl primaryTypeProperty = childDefNode.getProperty(JCR_PRIMARYTYPE);
+                    if (primaryTypeProperty != null && primaryTypeProperty.getOperation() == REPLACE) {
+                        influencesOrdering = true;
+                        primaryTypeSeen = true;
+                    }
                 }
                 if (childDefNode.getOrderBefore() != null) {
                     if (isLocal) {

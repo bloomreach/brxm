@@ -2,7 +2,11 @@ definitions:
   config:
     /AutoExportIntegrationTest/reorder-upstream-module/local-defs:
       /first-local:
-        .meta:order-before: first
+        .meta:order-before: 1-first
         jcr:primaryType: nt:unstructured
+      /3-third:
+        .meta:order-before: 2-second
+        jcr:primaryType: nt:unstructured # deliberate repeat, test this node is not be added as holder
+        property: value
       /last-local:
         jcr:primaryType: nt:unstructured

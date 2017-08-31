@@ -244,7 +244,7 @@ public class AutoExportIntegrationTest {
         new Fixture("reorder_upstream_module").test(
             (session, configurationModel) -> {
                 assertOrder("[first, second, third]", noLocalDefsPath, session, configurationModel);
-                assertOrder("[first-local, first, second, third, last-local]", localDefsPath, session, configurationModel);
+                assertOrder("[first-local, 1-first, 3-third, 2-second, 4-fourth, last-local]", localDefsPath, session, configurationModel);
             },
             (session) -> {
                 final Node noLocalDefNode = session.getNode(noLocalDefsPath);
@@ -252,12 +252,12 @@ public class AutoExportIntegrationTest {
                 noLocalDefNode.orderBefore("second", "first");
 
                 final Node localDefNode = session.getNode(localDefsPath);
-                localDefNode.orderBefore("third", "first");
-                localDefNode.orderBefore("second", "first");
+                localDefNode.orderBefore("4-fourth", "3-third");
+                localDefNode.orderBefore("1-first", null);
             },
             (session, configurationModel) -> {
                 assertOrder("[third, second, first]", noLocalDefsPath, session, configurationModel);
-                assertOrder("[first-local, third, second, first, last-local]", localDefsPath, session, configurationModel);
+                assertOrder("[first-local, 4-fourth, 3-third, 2-second, last-local, 1-first]", localDefsPath, session, configurationModel);
             });
     }
 

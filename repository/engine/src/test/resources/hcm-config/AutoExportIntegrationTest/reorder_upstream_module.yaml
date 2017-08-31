@@ -12,9 +12,11 @@ definitions:
           jcr:primaryType: nt:unstructured
       /local-defs:
         jcr:primaryType: nt:unstructured
-        /first:
+        /1-first:
           jcr:primaryType: nt:unstructured
-        /second:
+        /2-second:
           jcr:primaryType: nt:unstructured
-        /third:
+        /3-third:
+          jcr:primaryType: nt:unstructured
+        /4-fourth:
           jcr:primaryType: nt:unstructured
