@@ -50,6 +50,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.JcrContentExporter;
+import org.onehippo.cm.engine.ValueProcessor;
+import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.ContentOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.LocalConfigOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeHolder;
@@ -79,6 +81,7 @@ import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionItem;
 import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
@@ -663,22 +666,31 @@ public class DefinitionMergeService {
         boolean nodeRestore = topDeletedConfigNode != null;
         if (!nodeRestore) {
             //maybe it is a (sub)child node of deleted node
-            isChildNodeDeleted = model.getDeletedConfigNodes().stream()
-                    .anyMatch(dn -> !incomingDefNode.getJcrPath().equals(dn.getJcrPath())
-                    && incomingDefNode.getJcrPath().startsWith(dn.getJcrPath()));
+            isChildNodeDeleted = model.getDeletedConfigNodes().keySet().stream()
+                    .anyMatch(dn -> !incomingDefNode.getJcrPath().equals(dn)
+                    && incomingDefNode.getJcrPath().startsWith(dn));
             if (isChildNodeDeleted) {
                 //Find the top deleted node of the deletion tree
-                topDeletedConfigNode = model.getDeletedConfigNodes().stream()
+                topDeletedConfigNode = model.getDeletedConfigNodes().values().stream()
                         .filter(dn -> incomingDefNode.getJcrPath().startsWith(dn.getJcrPath())).findFirst().get();
                 nodeRestore = true;
             }
         }
 
-        if (nodeRestore && model.resolveNode(incomingDefNode.getJcrPath()) == null) {
-            //restore config model subtree
-            final JcrPath parentNodePath = topDeletedConfigNode.getJcrPath().getParent();
-            final ConfigurationNodeImpl parentNode = model.resolveNode(parentNodePath);
-            parentNode.addNode(topDeletedConfigNode.getName(), topDeletedConfigNode);
+        if (nodeRestore) {
+
+             if (model.resolveNode(incomingDefNode.getJcrPath()) == null) {
+                 //this is root deleted node, restore config model subtree
+                 restoreDeletedTree(model, topDeletedConfigNode);
+             }
+
+             //delete parent and child delete definitions if exists
+            removeDeleteDefinition(toExport, incomingDefNode.getJcrPath(), isChildNodeDeleted);
+
+            if (incomingDefNode.getNodes().isEmpty() && incomingDefNode.getProperties().isEmpty() && !incomingDefNode.isDelete()) {
+                //Nothing to do here, so return
+                return;
+            }
         }
 
         // this is a tripwire for testing error handling via AutoExportIntegrationTest.merge_error_handling()
@@ -701,10 +713,6 @@ public class DefinitionMergeService {
             }
 
             log.debug("Changed path has existing definition: {}", incomingDefPath);
-
-            if (nodeRestore) {
-                removeDeletedNodeFromSource(toExport, topDeletedConfigNode, isChildNodeDeleted);
-            }
 
             // is this a delete?
             if (incomingDefNode.isDelete()) {
@@ -736,44 +744,69 @@ public class DefinitionMergeService {
         }
     }
 
+    private void restoreDeletedTree(final ConfigurationModelImpl model, final ConfigurationNodeImpl topDeletedConfigNode) {
+        final JcrPath parentNodePath = topDeletedConfigNode.getJcrPath().getParent();
+        final ConfigurationNodeImpl parentNode = model.resolveNode(parentNodePath);
+        parentNode.addNode(topDeletedConfigNode.getName(), topDeletedConfigNode);
+    }
+
     /**
      * Removes node delete definition from the source as it will be superseded with recreated node
-     * @param deletedConfigNode root of the deleted node
-     * @param isChildNodeDeleted this is child of the deleted node
+     * @param path root of the deleted node
+     * @param isChildNode this is child of the deleted node
      */
-    private void removeDeletedNodeFromSource(final HashMap<String, ModuleImpl> toExport,
-                                             final ConfigurationNodeImpl deletedConfigNode, final boolean isChildNodeDeleted) {
+    private void removeDeleteDefinition(final HashMap<String, ModuleImpl> toExport, final JcrPath path, final boolean isChildNode) {
         DefinitionNodeImpl definitionNode = null;
         for (ModuleImpl exportModule : toExport.values()) {
-
-            definitionNode = resolveConfigNode(deletedConfigNode.getJcrPath(), exportModule);
+            definitionNode = findDefinitionNode(path, exportModule);
             if (definitionNode != null) {
                 break;
             }
         }
 
         //check if definition is in autoexport modules
-        if (definitionNode == null && !isChildNodeDeleted) {
+        if (definitionNode == null && !isChildNode) {
             throw new RuntimeException(String.format("Could not find node '%s' in autoexport modules, " +
-                            "is it part of upstream modules?",
-                    deletedConfigNode.getJcrPath()));
+                            "is it part of upstream modules?", path));
+        } else if (definitionNode == null) {
+            //This is a deleted child node, it may not exist
+            return;
         }
 
-        if (definitionNode != null) {
-            //we change the source, so mark it as changed
-            definitionNode.getDefinition().getSource().markChanged();
-            if (isChildNodeDeleted && definitionNode.isDelete()) {
-                removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
-            } else {
-                definitionNode.setDelete(false);
-            }
+        //we change the source, so mark it as changed
+        definitionNode.getDefinition().getSource().markChanged();
+        if (definitionNode.isDelete()) {
+            removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
         }
     }
 
-    private DefinitionNodeImpl resolveConfigNode(JcrPath nodePath, ModuleImpl module) {
-        return module.getConfigDefinitions().stream()
-                .filter(configDefinition -> configDefinition.getNode().getJcrPath().equals(nodePath)).findFirst()
-                .map(ContentDefinitionImpl::getNode).orElse(null);
+    /**
+     * Find DefinitonNode in module
+     * @param path path of definition node
+     * @param module module to search definition in
+     */
+    private DefinitionNodeImpl findDefinitionNode(final JcrPath path, final ModuleImpl module) {
+        for (ConfigDefinition configDefinition : module.getConfigDefinitions()) {
+            final DefinitionNodeImpl definitionNode = (DefinitionNodeImpl) configDefinition.getNode();
+            if (path.equals(definitionNode.getJcrPath())) {
+                return definitionNode;
+            } else if (path.startsWith(definitionNode.getJcrPath())) {
+                final String commonPrefix = StringUtils.getCommonPrefix(path.toString(), definitionNode.getJcrPath().toString());
+                final int commonSegmentsCount = commonPrefix.split("/").length - 1;
+                final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
+
+                DefinitionNodeImpl currentNode = (DefinitionNodeImpl) configDefinition.getNode();
+                for (final JcrPathSegment jcrPathSegment : subpath) {
+                    currentNode = currentNode.getNode(jcrPathSegment.toString());
+                    if (currentNode == null) {
+                        break; //wrong path
+                    } else if (currentNode.getJcrPath().equals(path)) {
+                        return currentNode;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1338,6 +1371,20 @@ public class DefinitionMergeService {
 
         final ConfigurationPropertyImpl configProperty = configNode.getProperty(defProperty.getName());
 
+        if (configProperty == null) {
+            ConfigurationPropertyImpl deletedProperty = model.resolveDeletedProperty(defProperty.getJcrPath());
+            if (deletedProperty != null && propertyIsIdentical(defProperty, deletedProperty)) {
+                //we're in property restore mode and diff is null, just remove the delete operation
+                final Optional<DefinitionPropertyImpl> maybeLocalPropertyDef = getLastLocalDef(deletedProperty, toExport);
+                if (maybeLocalPropertyDef.isPresent()) {
+                    removeFromParentDefinitionItem(maybeLocalPropertyDef.get(), new ArrayList<>(), toExport);
+                } else {
+                    log.error("Delete definition for property {} is not found", defProperty.getJcrPath());
+                }
+                return;
+            }
+        }
+        //If defProperty is undefined, just delete definition
         switch (defProperty.getOperation()) {
             case REPLACE:
             case ADD:
@@ -1350,6 +1397,15 @@ public class DefinitionMergeService {
                 break;
         }
     }
+
+    public boolean propertyIsIdentical(ModelProperty p1, ModelProperty p2) {
+        try {
+            return ValueProcessor.propertyIsIdentical(p1, p2);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     protected void mergePropertyThatShouldExist(final DefinitionPropertyImpl defProperty,
                                                 final ConfigurationNodeImpl configNode,

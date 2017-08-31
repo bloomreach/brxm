@@ -666,9 +666,6 @@ public class EventJournalProcessor {
 
         injectResidualCategoryOverrides(configSource);
 
-        // empty defs rarely happen when a new node ends up having only excluded properties -- clean them up
-        configSource.cleanEmptyDefinitions();
-
         if (log.isInfoEnabled()) {
             final SourceSerializer sourceSerializer = new SourceSerializer(null, configSource, false);
             final StringWriter writer = new StringWriter();

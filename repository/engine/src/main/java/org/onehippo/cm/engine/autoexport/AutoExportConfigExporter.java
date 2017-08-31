@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -150,18 +149,18 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         }
 
 
-        ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
-
+        final ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
         if (configNode == null) {
-            //Check if requested node is deleted so that we could restore it
+            //is it a deleted node or subnode?
             ConfigurationNodeImpl deletedNode = configurationModel.resolveDeletedNode(JcrPath.get(jcrPath));
-            //if not present, check if it is descendant of any deleted nodes, if found it means that there are no changes in parent node(s)
-            configNode = deletedNode != null ? deletedNode : findTopDeletedNode(jcrPath);
-        }
+            deletedNode = deletedNode != null ? deletedNode : configurationModel.resolveDeletedSubNode(JcrPath.get(jcrPath));
+            if (deletedNode != null) {
+                //run export delta against deleted node
+                exportConfigNodeDelta(jcrNode, deletedNode, configSource);
+                return;
+            }
 
-        if (configNode == null) {
             // this is a brand new node, so we can skip the delta comparisons and just dump the JCR tree into one def
-
             String newPath = jcrPath;
             Node newNode = jcrNode;
             // determine the actual 'root' of the new node, ensuring we're not skipping intermediate missing parents
@@ -188,7 +187,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     private ConfigurationNodeImpl findTopDeletedNode(final String jcrPath) {
-        return configurationModel.getDeletedConfigNodes().stream()
+        return configurationModel.getDeletedConfigNodes().values().stream()
                 .filter(deletedRootNode -> JcrPath.get(jcrPath).startsWith(deletedRootNode.getJcrPath()))
                 .findFirst().orElse(null);
     }
@@ -251,9 +250,16 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
             ConfigurationPropertyImpl configProperty = configNode.getProperty(propName);
             if (configProperty == null) {
-                // full export
-                defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                exportProperty(jcrProperty, defNode);
+                final ConfigurationPropertyImpl deletedProperty =
+                        configurationModel.resolveDeletedProperty(configNode.getJcrPath().resolve(propName));
+                if (deletedProperty != null) {
+                    //It is a deleted property, so do delta export
+                    defNode = exportPropertyDelta(jcrProperty, deletedProperty, defNode, configSource);
+                } else {
+                    // full export
+                    defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
+                    exportProperty(jcrProperty, defNode);
+                }
             } else {
                 // delta export
                 defNode = exportPropertyDelta(jcrProperty, configProperty, defNode, configSource);
@@ -351,6 +357,10 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                     || (ValueType.fromJcrType(property.getType()) != configProperty.getValueType())) {
                 defProp.setOperation(PropertyOperation.OVERRIDE);
             }
+        } else if (configurationModel.resolveDeletedProperty(configProperty.getJcrPath()) != null) {
+            //Create restore property with empty value
+            definitionNode = createDefNodeIfNecessary(definitionNode, property.getParent(), configSource);
+            exportProperty(property, definitionNode);
         }
         return definitionNode;
     }
@@ -363,6 +373,9 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
         // first look at properties, since that's the simple case
         DefinitionNodeImpl defNode = exportPropertiesDelta(jcrNode, configNode, configSource, configurationModel);
+        if (defNode == null && configurationModel.resolveNode(configNode.getJcrPath()) == null) {
+            defNode = configSource.getOrCreateDefinitionFor(jcrNode.getPath());
+        }
 
         // Early check if we will need to care for node ordering (at the end)
         final boolean orderingIsRelevant = jcrNode.getPrimaryNodeType().hasOrderableChildNodes()
@@ -390,13 +403,18 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
 
             final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
-            final ConfigurationNodeImpl deletedNode =
-                    configurationModel.resolveDeletedNode(JcrPath.get(configNode.getJcrPath() + "/" + indexedJcrChildNodeName));
-            if (childConfigNode == null && deletedNode == null) {
-                // the config doesn't know about this child, or wasnt deleted so do a full export without delta comparisons
-                // yes, defNode is indeed supposed to be the _parent's_ defNode
-                defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                exportNode(childNode, defNode, Collections.emptySet());
+            if (childConfigNode == null) {
+                final ConfigurationNodeImpl deletedNode =
+                        findTopDeletedNode(JcrPath.get(configNode.getJcrPath() + "/" + indexedJcrChildNodeName).toString());
+                if (deletedNode != null) {
+                    // call top-level recursion, not this delta method
+                    exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);
+                } else {
+                    // the config doesn't know about this child, or wasnt deleted so do a full export without delta comparisons
+                    // yes, defNode is indeed supposed to be the _parent's_ defNode
+                    defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
+                    exportNode(childNode, defNode, Collections.emptySet());
+                }
             } else {
                 // call top-level recursion, not this delta method
                 exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);
