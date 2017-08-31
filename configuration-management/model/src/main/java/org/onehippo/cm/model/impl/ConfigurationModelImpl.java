@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
@@ -67,8 +68,11 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     private final List<ContentDefinitionImpl> contentDefinitions = Collections.unmodifiableList(modifiableContentDefinitions);
     private final List<ConfigDefinitionImpl> modifiableConfigDefinitions = new ArrayList<>();
     private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
-    private final List<ConfigurationNodeImpl> modifiableDeletedConfigNodes = new ArrayList<>();
-    private final List<ConfigurationNodeImpl> deletedConfigNodes = Collections.unmodifiableList(modifiableDeletedConfigNodes);
+    private final Map<JcrPath, ConfigurationNodeImpl> modifiableDeletedConfigNodes = new HashMap<>();
+    private final Map<JcrPath, ConfigurationNodeImpl> deletedConfigNodes = Collections.unmodifiableMap(modifiableDeletedConfigNodes);
+
+    private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
+    private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -115,6 +119,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     @Override
     public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
+    }
+
+    public Map<JcrPath, ConfigurationNodeImpl> getDeletedConfigNodes() {
+        return deletedConfigNodes;
     }
 
     private void addContentDefinitions(final Collection<ContentDefinitionImpl> definitions) {
@@ -213,6 +221,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableContentDefinitions.clear();
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
+        modifiableDeletedConfigProperties.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
         for (GroupImpl g : groups) {
@@ -230,17 +239,48 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         }
         setConfigurationRootNode(configurationTreeBuilder.build());
 
-        modifiableDeletedConfigNodes.addAll(configurationTreeBuilder.getDeletedNodes());
+        modifiableDeletedConfigNodes.putAll(configurationTreeBuilder.getDeletedNodes());
+        modifiableDeletedConfigProperties.putAll(configurationTreeBuilder.getDeletedProperties());
 
         return this;
     }
 
+    /**
+     * Resolve top deleted node
+     */
     public ConfigurationNodeImpl resolveDeletedNode(final JcrPath path) {
-        return deletedConfigNodes.stream().filter(node -> node.getJcrPath().equals(path)).findFirst().orElse(null);
+        return deletedConfigNodes.get(path);
     }
 
-    public List<ConfigurationNodeImpl> getDeletedConfigNodes() {
-        return deletedConfigNodes;
+    /**
+     * Resolve child in deleted node
+     */
+    public ConfigurationNodeImpl resolveDeletedSubNode(final JcrPath path) {
+        for (ConfigurationNodeImpl deletedConfigNode : deletedConfigNodes.values()) {
+            if (path.startsWith(deletedConfigNode.getJcrPath())) {
+                String commonPrefix = StringUtils.getCommonPrefix(path.toString(), deletedConfigNode.getJcrPath().toString());
+                if (StringUtils.isNotEmpty(commonPrefix)) {
+                    int commonSegmentsCount = commonPrefix.split("/").length - 1;
+                    final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
+                    ConfigurationNodeImpl currentNode = deletedConfigNode;
+                    for (final JcrPathSegment jcrPathSegment : subpath) {
+                        currentNode = currentNode.getNode(jcrPathSegment);
+                        if (currentNode == null) {
+                            break; //wrong path
+                        } else if (currentNode.getJcrPath().equals(path)) {
+                            return currentNode;
+                        }
+                    }
+                } else {
+                    // This is root node
+                }
+            }
+        }
+        return null;
+    }
+
+    public ConfigurationPropertyImpl resolveDeletedProperty(final JcrPath path) {
+        return deletedConfigProperties.get(path);
     }
 
     /**

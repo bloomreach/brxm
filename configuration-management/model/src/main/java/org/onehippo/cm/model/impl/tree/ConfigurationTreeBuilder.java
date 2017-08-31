@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,8 @@ public class ConfigurationTreeBuilder {
 
     private final Map<JcrPath, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
 
-    private final List<ConfigurationNodeImpl> deletedNodes = new ArrayList<>();
+    private final Map<JcrPath, ConfigurationNodeImpl> deletedNodes = new HashMap<>();
+    private final Map<JcrPath, ConfigurationPropertyImpl> deletedProperties = new HashMap<>();
 
     public ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
@@ -135,10 +137,13 @@ public class ConfigurationTreeBuilder {
     }
 
 
-    public List<ConfigurationNodeImpl> getDeletedNodes() {
+    public Map<JcrPath, ConfigurationNodeImpl> getDeletedNodes() {
         return deletedNodes;
     }
 
+    public Map<JcrPath, ConfigurationPropertyImpl> getDeletedProperties() {
+        return deletedProperties;
+    }
     /**
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
@@ -147,7 +152,7 @@ public class ConfigurationTreeBuilder {
         if (definitionNode.isDeletedAndEmpty()) {
 
             if (node.getParent() == null || !node.getParent().isDeleted()) {
-                deletedNodes.add(node);
+                deletedNodes.put(node.getJcrPath(), node);
             }
 
             final String indexedName = createIndexedName(definitionNode.getName());
@@ -474,8 +479,24 @@ public class ConfigurationTreeBuilder {
             }
 
             if (op == DELETE) {
-                property.setDeleted(true);
+                deletedProperties.put(property.getJcrPath(), property);
                 property.addDefinition(definitionProperty);
+
+                final ConfigurationNodeImpl parentNode = property.getParent();
+
+                //Create placeholder property
+                final ConfigurationPropertyImpl deleteProperty = new ConfigurationPropertyImpl();
+                deleteProperty.setParent(parentNode);
+                deleteProperty.setName(property.getName());
+                deleteProperty.setDeleted(true);
+                deleteProperty.setType(property.getType());
+                deleteProperty.setValueType(property.getValueType());
+                property.getDefinitions().forEach(deleteProperty::addDefinition);
+
+                //swap real one property with a placeholder one
+                parentNode.removeProperty(property.getName());
+                parentNode.addProperty(property.getName(), deleteProperty);
+
                 // no need to clear category on parent
                 return this;
             }
