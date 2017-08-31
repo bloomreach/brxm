@@ -35,6 +35,7 @@ public interface FieldType {
 
     enum Type {
         STRING,
+        LONG,
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
@@ -117,17 +118,17 @@ public interface FieldType {
     void writeTo(final Node node, final Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
 
     /**
-     * Write a value to the field indicated by the field path. Can be this field, or a child field in case of
+     * Write value(s) to the field indicated by the field path. Can be this field, or a child field in case of
      * compound or compound-like types.
      *
      * @param node the node for this field in the document field hierarchy
      * @param fieldPath the path to the field to write
-     * @param value the value to write
-     * @return true if the value has been written, false otherwise.
+     * @param values the values to write
+     * @return true if the values have been written, false otherwise.
      * @throws ErrorWithPayloadException
-     *                      indicates that writing the provided value ran into an unrecoverable error
+     *                      indicates that writing the provided values ran into an unrecoverable error
      */
-    boolean writeField(final Node node, FieldPath fieldPath, final List<FieldValue> value) throws ErrorWithPayloadException;
+    boolean writeField(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException;
 
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
