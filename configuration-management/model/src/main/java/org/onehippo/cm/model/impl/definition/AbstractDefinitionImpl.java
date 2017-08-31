@@ -33,10 +33,6 @@ public abstract class AbstractDefinitionImpl implements Definition {
 
     @Override
     public String getOrigin() {
-        return new StringBuilder(source.getModule().getFullName())
-                .append(" [")
-                .append(source.getPath())
-                .append(']')
-                .toString();
+        return source.getOrigin();
     }
 }

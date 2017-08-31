@@ -400,7 +400,7 @@ public class ConfigurationModelImplTest {
             new ConfigurationModelImpl().addGroup(c1).build();
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]' and 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]' and 'c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
         }
     }
 
@@ -423,7 +423,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [config: string]' and 'c1/p1/m1 [config: builder/definition-sorter.yaml]'.", e.getMessage());
         }
     }
 
@@ -446,7 +446,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Namespaces are specified in multiple sources of a module: 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'. To ensure proper ordering, they must be specified in a single source.", e.getMessage());
+            assertEquals("Namespaces are specified in multiple sources of a module: 'c1/p1/m1 [config: string]' and 'c1/p1/m1 [config: builder/definition-sorter.yaml]'. To ensure proper ordering, they must be specified in a single source.", e.getMessage());
         }
     }
 
@@ -537,7 +537,7 @@ public class ConfigurationModelImplTest {
             model.build();
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate web file bundle with name 'name' found in source files 'c1/p1/m1 [string]' and 'c2/p2/m2 [string]'.",
+            assertEquals("Duplicate web file bundle with name 'name' found in source files 'c1/p1/m1 [config: string]' and 'c2/p2/m2 [config: string]'.",
                     e.getMessage());
         }
     }
