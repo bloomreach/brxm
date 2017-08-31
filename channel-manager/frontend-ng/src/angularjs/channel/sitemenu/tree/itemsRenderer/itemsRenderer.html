@@ -13,19 +13,17 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-<div ui-tree="hippoTree.options"
-     ng-class="{
-       'drag-enabled': hippoTree.draggable,
-       'drag-disabled': !hippoTree.draggable,
-     }"
-     data-drag-enabled="hippoTree.draggable"
-     data-drag-delay="250">
-  <ol ui-tree-nodes ng-model="hippoTree.items">
-    <li ng-repeat="item in hippoTree.items"
-        ui-tree-node
-        items-renderer
-        ng-class="{active: hippoTree.selectedItem.id === item.id}"
-        data-collapsed="item.collapsed">
-    </li>
-  </ol>
+<div ng-click="hippoTree.selectItem(item)">
+  <div hippo-tree-template></div>
 </div>
+<ol ui-tree-nodes
+    ng-model="item.items"
+    ng-if="item.items && !collapsed">
+  <li ng-repeat="item in item.items"
+      ui-tree-node
+      items-renderer
+      ng-if="hippoTree.displayItem(item)"
+      ng-class="{active: hippoTree.selectedItem.id === item.id}"
+      data-collapsed="item.collapsed">
+  </li>
+</ol>

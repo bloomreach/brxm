@@ -35,6 +35,10 @@ class PageMetaDataService {
     return this.data;
   }
 
+  getPathInfo() {
+    return this.data[this.HST.PATH_INFO];
+  }
+
   getChannelId() {
     return this.data[this.HST.CHANNEL_ID];
   }
