@@ -23,9 +23,11 @@ describe('Sharedspace toolbar component controller', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_,
-            _$componentController_,
-            _SharedSpaceToolbarService_) => {
+    inject((
+      _$rootScope_,
+      _$componentController_,
+      _SharedSpaceToolbarService_,
+    ) => {
       $rootScope = _$rootScope_;
       $componentController = _$componentController_;
       SharedSpaceToolbarService = _SharedSpaceToolbarService_;

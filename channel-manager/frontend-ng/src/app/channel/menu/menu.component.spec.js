@@ -23,9 +23,11 @@ describe('Menu Component', () => {
       $translateProvider.translations('fr', {});
     });
 
-    inject((_$componentController_,
-            $compile,
-            $rootScope) => {
+    inject((
+      _$componentController_,
+      $compile,
+      $rootScope,
+    ) => {
       $scope = $rootScope.$new();
       $element = angular.element('<dropdown-menu items="items"></dropdown-menu>');
       $element = $compile($element)($scope);

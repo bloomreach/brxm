@@ -50,8 +50,17 @@ describe('PageActionMove', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _$translate_, _ChannelService_, _FeedbackService_,
-            _HippoIframeService_, _SiteMapService_, _SiteMapItemService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$compile_,
+      _$translate_,
+      _ChannelService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _SiteMapService_,
+      _SiteMapItemService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;

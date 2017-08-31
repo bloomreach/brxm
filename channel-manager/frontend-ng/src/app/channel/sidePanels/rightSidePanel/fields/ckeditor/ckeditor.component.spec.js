@@ -38,14 +38,16 @@ describe('CKEditor Component', () => {
       $translateProvider.translations('fr', {});
     });
 
-    inject((_$componentController_,
-            $rootScope,
-            _CKEditorService_,
-            _ConfigService_,
-            _DomService_,
-            _SharedSpaceToolbarService_,
-            _CmsService_,
-            _$q_) => {
+    inject((
+      _$componentController_,
+      $rootScope,
+      _CKEditorService_,
+      _ConfigService_,
+      _DomService_,
+      _SharedSpaceToolbarService_,
+      _CmsService_,
+      _$q_,
+    ) => {
       $componentController = _$componentController_;
       $scope = $rootScope.$new();
       CKEditorService = _CKEditorService_;

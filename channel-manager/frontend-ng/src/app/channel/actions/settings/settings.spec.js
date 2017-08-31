@@ -40,8 +40,16 @@ describe('ChannelSettings', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
-            _ConfigService_) => {
+    inject((
+      _$rootScope_,
+      _$compile_,
+      _$q_,
+      _$translate_,
+      _ChannelService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _ConfigService_,
+    ) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;

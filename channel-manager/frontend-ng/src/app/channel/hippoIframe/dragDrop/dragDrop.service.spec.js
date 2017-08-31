@@ -39,14 +39,16 @@ describe('DragDropService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_,
-            _DragDropService_,
-            _PageStructureService_,
-            _HstService_,
-            _ChannelService_,
-            _FeedbackService_,
-            _DomService_,
-            _ConfigService_) => {
+    inject((
+      _$q_,
+      _DragDropService_,
+      _PageStructureService_,
+      _HstService_,
+      _ChannelService_,
+      _FeedbackService_,
+      _DomService_,
+      _ConfigService_,
+    ) => {
       $q = _$q_;
       DragDropService = _DragDropService_;
       PageStructureService = _PageStructureService_;

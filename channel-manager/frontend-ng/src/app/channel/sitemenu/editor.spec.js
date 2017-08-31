@@ -41,8 +41,17 @@ describe('MenuEditor', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_,
-            _ChannelService_, _ConfigService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$compile_,
+      _SiteMenuService_,
+      _DialogService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _ChannelService_,
+      _ConfigService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;

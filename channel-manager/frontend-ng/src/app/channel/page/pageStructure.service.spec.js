@@ -35,8 +35,21 @@ describe('PageStructureService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.page');
 
-    inject((_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_,
-            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_, _MaskService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$log_,
+      _$document_,
+      _$window_,
+      _PageStructureService_,
+      _PageMetaDataService_,
+      _ChannelService_,
+      _HstService_,
+      _RenderingService_,
+      _HippoIframeService_,
+      _FeedbackService_,
+      _MaskService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $log = _$log_;

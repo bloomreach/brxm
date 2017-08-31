@@ -31,14 +31,16 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_,
-            _$rootScope_,
-            _DomService_,
-            _ExperimentStateService_,
-            _hstCommentsProcessorService_,
-            _OverlayService_,
-            _PageStructureService_,
-            _RenderingService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _DomService_,
+      _ExperimentStateService_,
+      _hstCommentsProcessorService_,
+      _OverlayService_,
+      _PageStructureService_,
+      _RenderingService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       DomService = _DomService_;
@@ -430,7 +432,7 @@ describe('OverlayService', () => {
       expect(emptyContainer.css('top')).toBe(`${400 + 40 + 4}px`);
       expect(emptyContainer.css('left')).toBe('0px');
       expect(emptyContainer.css('width')).toBe('200px');
-      expect(emptyContainer.css('height')).toBe('40px');  // minimum height of empty container
+      expect(emptyContainer.css('height')).toBe('40px'); // minimum height of empty container
 
       done();
     });

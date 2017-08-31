@@ -28,8 +28,8 @@ describe('incrementProperty filter', () => {
   const items = [{ name: 'Test' }];
   const items1 = [{ name: 'Untitled' }];
   const items2 = [
-      { name: 'Untitled' },
-      { name: 'Untitled (1)' },
+    { name: 'Untitled' },
+    { name: 'Untitled (1)' },
   ];
 
   const items3 = [
