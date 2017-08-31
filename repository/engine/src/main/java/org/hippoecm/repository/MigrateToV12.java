@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinition;
@@ -53,11 +52,19 @@ class MigrateToV12 {
 
     static final Logger log = LoggerFactory.getLogger(MigrateToV12.class);
 
-    private static String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
+    private static final String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
+    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+
+    // properties
     private static final String HTMLCLEANER_ID = "htmlcleaner.id";
     private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
-    private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+    private static final String PLUGIN_CLASS = "plugin.class";
     private static final String CLUSTER_OPTIONS = "cluster.options";
+
+    // builtin htmlprocessor's
+    private static final String NO_FILTER_PROCESSOR = "no-filter";
+    private static final String FORMATTED_PROCESSOR = "formatted";
+    private static final String RICHTEXT_PROCESSOR = "richtext";
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -104,7 +111,8 @@ class MigrateToV12 {
         final boolean destinationNodeExists = session.nodeExists(destinationNodePath);
 
         if (sourceNodeExists) {
-            final boolean saveNeeded = migrateHtmlCleanerConfiguration(sourceNodePath, destinationNodePath, destinationNodeExists);
+            final boolean saveNeeded = migrateHtmlCleanerConfiguration(sourceNodePath, destinationNodePath,
+                    destinationNodeExists);
             if (!dryRun && saveNeeded) {
                 session.save();
             }
@@ -113,16 +121,18 @@ class MigrateToV12 {
         }
     }
 
-    private boolean migrateHtmlCleanerConfiguration(final String sourceNodePath, final String destinationNodePath, final boolean destinationNodeExists) throws RepositoryException {
+    private boolean migrateHtmlCleanerConfiguration(final String sourceNodePath, final String destinationNodePath,
+            final boolean destinationNodeExists) throws RepositoryException {
         log.info("Migrating html cleaner");
         final Node sourceNode = session.getNode(sourceNodePath);
-        final Node destinationNode = destinationNodeExists ? session.getNode(destinationNodePath) : createHtmlCleanerDestinationNode();
+        final Node destinationNode = destinationNodeExists ? session.getNode(
+                destinationNodePath) : createHtmlCleanerDestinationNode();
         boolean saveNeeded = false;
 
         final Collection<String> copiedProperties = getCopiedProperties();
 
         final PropertyIterator propertyIterator = sourceNode.getProperties();
-        while(propertyIterator.hasNext()) {
+        while (propertyIterator.hasNext()) {
             final Property property = propertyIterator.nextProperty();
 
             if (copiedProperties.contains(property.getName())) {
@@ -132,14 +142,14 @@ class MigrateToV12 {
             }
         }
         final NodeIterator nodeIterator = sourceNode.getNode("whitelist").getNodes();
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             final Node node = nodeIterator.nextNode();
             log.info("Migrating whitelisted node '{}'", node.getName());
             final String newPath = destinationNodePath + "/" + node.getName();
-            if(!session.nodeExists(newPath)) {
+            if (!session.nodeExists(newPath)) {
                 final Node whitelistedNode = destinationNode.addNode(node.getName(), HIPPOSYS_MODULE_CONFIG);
                 final String attributes = "attributes";
-                if(node.hasProperty(attributes)) {
+                if (node.hasProperty(attributes)) {
                     whitelistedNode.setProperty(attributes, node.getProperty(attributes).getValues());
                 }
                 saveNeeded = true;
@@ -149,8 +159,10 @@ class MigrateToV12 {
     }
 
     private void migrateHtmlProcessorUsage() throws RepositoryException {
-        boolean saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_", "formatted");
-        saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_", "richtext") || saveNeeded;
+        boolean saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/system/Html/editor:templates/_default_",
+                FORMATTED_PROCESSOR);
+        saveNeeded = migrateSingleHtmlProcessorUsage("/hippo:namespaces/hippostd/html/editor:templates/_default_",
+                RICHTEXT_PROCESSOR) || saveNeeded;
 
         // migrate all custom usages
         final Node node = session.getNode(HIPPO_NAMESPACES);
@@ -165,13 +177,13 @@ class MigrateToV12 {
         final NodeIterator nodeIterator = node.getNodes();
         while (nodeIterator.hasNext()) {
             final Node nextNode = nodeIterator.nextNode();
-            if(nextNode.hasProperty("plugin.class") && nextNode.hasNodes()) {
+            if (nextNode.hasProperty(PLUGIN_CLASS) && nextNode.hasNodes()) {
                 final NodeIterator nextNodeIterator = nextNode.getNodes();
                 while (nextNodeIterator.hasNext()) {
                     final Node child = nextNodeIterator.nextNode();
-                    if(child.getName().equalsIgnoreCase(CLUSTER_OPTIONS) && child.hasProperty(HTMLCLEANER_ID)) {
-                        final Property htmlcleanerId = child.getProperty("htmlcleaner.id");
-                        final Property pluginClass = nextNode.getProperty("plugin.class");
+                    if (child.getName().equalsIgnoreCase(CLUSTER_OPTIONS) && child.hasProperty(HTMLCLEANER_ID)) {
+                        final Property htmlcleanerId = child.getProperty(HTMLCLEANER_ID);
+                        final Property pluginClass = nextNode.getProperty(PLUGIN_CLASS);
                         final String htmlProcessorId = getHtmlProcessorId(htmlcleanerId, pluginClass);
                         updateCleanerToProcessor(child, htmlProcessorId);
                         return true;
@@ -187,7 +199,7 @@ class MigrateToV12 {
     private boolean migrateSingleHtmlProcessorUsage(final String sourceNodePath, final String defaultConfigName) throws RepositoryException {
         if (session.nodeExists(sourceNodePath)) {
             final Node sourceNode = session.getNode(sourceNodePath);
-            final String processorType = isHtmlCleanerNotDefined(sourceNode) ? "no-filter" : defaultConfigName;
+            final String processorType = isHtmlCleanerNotDefined(sourceNode) ? NO_FILTER_PROCESSOR : defaultConfigName;
             updateCleanerToProcessor(sourceNode, processorType);
             return true;
         }
@@ -196,11 +208,11 @@ class MigrateToV12 {
 
     private String getHtmlProcessorId(final Property htmlcleanerId, final Property pluginClass) throws RepositoryException {
         if (htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString())) {
-            return "no-filter";
+            return NO_FILTER_PROCESSOR;
         } else if (pluginClass.getString().equalsIgnoreCase("org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin")) {
-            return "formatted";
+            return FORMATTED_PROCESSOR;
         }
-        return "richtext";
+        return RICHTEXT_PROCESSOR;
     }
 
     private static void updateCleanerToProcessor(final Node node, final String processorType) throws RepositoryException {
@@ -230,9 +242,10 @@ class MigrateToV12 {
                 modulesNode.addNode(htmlProcessor, NT_MODULE);
 
         final Node moduleConfigNode = htmlprocessorNode.hasNode(HIPPO_MODULECONFIG) ?
-                htmlprocessorNode.getNode(HIPPO_MODULECONFIG) : htmlprocessorNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+                htmlprocessorNode.getNode(HIPPO_MODULECONFIG) : htmlprocessorNode.addNode(HIPPO_MODULECONFIG,
+                HIPPOSYS_MODULE_CONFIG);
 
-        final String richtext = "richtext";
+        final String richtext = RICHTEXT_PROCESSOR;
         return moduleConfigNode.hasNode(richtext) ?
                 moduleConfigNode.getNode(richtext) : moduleConfigNode.addNode(richtext, HIPPOSYS_MODULE_CONFIG);
     }
@@ -250,9 +263,10 @@ class MigrateToV12 {
             log.info("Migrating urlrewriter");
             final Node sourceNode = session.getNode(sourceNodePath);
             Node destinationNode = null;
-            for(PropertyIterator iterator = sourceNode.getProperties(); iterator.hasNext();) {
+            for (final PropertyIterator iterator = sourceNode.getProperties(); iterator.hasNext(); ) {
                 if (destinationNode == null) {
-                    destinationNode = destinationNodeExists ? session.getNode(destinationNodePath) : createUrlRewriterDestinationNode();
+                    destinationNode = destinationNodeExists ? session.getNode(
+                            destinationNodePath) : createUrlRewriterDestinationNode();
                 }
                 final Property property = iterator.nextProperty();
                 if (property.getName().startsWith("urlrewriter:")) {
@@ -273,13 +287,14 @@ class MigrateToV12 {
 
     private Node createUrlRewriterDestinationNode() throws RepositoryException {
         final Node modulesNode = session.getNode("/hippo:configuration/hippo:modules");
-        String urlrewriter = "urlrewriter";
+        final String urlrewriter = "urlrewriter";
         final Node urlrewriterNode = modulesNode.hasNode(urlrewriter) ?
                 modulesNode.getNode(urlrewriter) :
                 modulesNode.addNode(urlrewriter, NT_MODULE);
 
         return urlrewriterNode.hasNode(HIPPO_MODULECONFIG) ?
-                urlrewriterNode.getNode(HIPPO_MODULECONFIG) : urlrewriterNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+                urlrewriterNode.getNode(HIPPO_MODULECONFIG) : urlrewriterNode.addNode(HIPPO_MODULECONFIG,
+                HIPPOSYS_MODULE_CONFIG);
     }
 
     private void movePropertyToNode(final Property sourceProperty, final Node destinationNode) throws RepositoryException {
@@ -289,7 +304,8 @@ class MigrateToV12 {
             destinationNode.getProperty(propertyName).remove();
         }
 
-        log.info(String.format("Setting property '%s' to destination node '%s'", propertyName, destinationNode.getPath()));
+        log.info(String.format("Setting property '%s' to destination node '%s'", propertyName,
+                destinationNode.getPath()));
         if (sourceProperty.isMultiple()) {
             destinationNode.setProperty(propertyName, sourceProperty.getValues());
         } else {
@@ -301,23 +317,24 @@ class MigrateToV12 {
     }
 
     private void checkDeprecatedTypeNotInUse(final String nodeType) throws RepositoryException {
-        Query query = qm.createQuery("//element(*, " + nodeType + ")", Query.XPATH);
-        QueryResult queryResult = query.execute();
+        final Query query = qm.createQuery("//element(*, " + nodeType + ")", Query.XPATH);
+        final QueryResult queryResult = query.execute();
         if (queryResult.getNodes().hasNext()) {
-            Node node = queryResult.getNodes().nextNode();
-            throw new RepositoryException("Deprecated node type "+nodeType+" still in use at '"+node.getPath()+"'. " +
-                    "Remove all usage of this node type before upgrading to v12");
+            final Node node = queryResult.getNodes().nextNode();
+            throw new RepositoryException(String.format(
+                    "Deprecated node type %s still in use at '%s'. Remove all usage of this node type before upgrading to v12",
+                    nodeType, node.getPath()));
         }
     }
 
     private void migrateDomains() throws RepositoryException {
         if (allowsSNS(NT_DOMAINRULE)) {
-            log.info("Migrating "+NT_DOMAINRULE);
+            log.info("Migrating " + NT_DOMAINRULE);
             checkOrFixSNS(NT_FACETRULE, true);
             removeAllSNSFromNTD(NT_DOMAINRULE);
         }
         if (allowsSNS(NT_DOMAIN)) {
-            log.info("Migrating "+NT_DOMAIN);
+            log.info("Migrating " + NT_DOMAIN);
             migrateDomainAuthRoles();
             checkOrFixSNS(NT_DOMAINRULE, true);
             removeAllSNSFromNTD(NT_DOMAIN);
@@ -326,7 +343,7 @@ class MigrateToV12 {
 
     private void migrateModuleConfig() throws RepositoryException {
         if (allowsSNS(HIPPOSYS_MODULE_CONFIG)) {
-            log.info("Migrating "+HIPPOSYS_MODULE_CONFIG);
+            log.info("Migrating " + HIPPOSYS_MODULE_CONFIG);
             migrateEformsConfig();
             checkOrFixSNS(HIPPOSYS_MODULE_CONFIG, false);
             removeAllSNSFromNTD(HIPPOSYS_MODULE_CONFIG);
@@ -335,10 +352,10 @@ class MigrateToV12 {
 
     private void migrateDomainAuthRoles() throws RepositoryException {
         boolean saveNeeded = false;
-        log.info("Migrating "+NT_AUTHROLE);
-        Query query = qm.createQuery("//element(*, hipposys:authrole)", Query.XPATH);
-        QueryResult queryResult = query.execute();
-        for (Node node : new NodeIterable(queryResult.getNodes())) {
+        log.info("Migrating " + NT_AUTHROLE);
+        final Query query = qm.createQuery("//element(*, hipposys:authrole)", Query.XPATH);
+        final QueryResult queryResult = query.execute();
+        for (final Node node : new NodeIterable(queryResult.getNodes())) {
             final String roleName = node.getProperty(NT_ROLE).getString();
             if (!roleName.equals(node.getName())) {
                 moveToUniqueName(node, roleName);
@@ -355,16 +372,15 @@ class MigrateToV12 {
 
     private void checkOrFixSNS(final String nodeTypeName, final boolean fixSNS) throws RepositoryException {
         boolean saveNeeded = false;
-        Query query = qm.createQuery("//element(*, "+nodeTypeName+")", Query.XPATH);
-        QueryResult queryResult = query.execute();
-        for (Node node : new NodeIterable(queryResult.getNodes())) {
+        final Query query = qm.createQuery("//element(*, " + nodeTypeName + ")", Query.XPATH);
+        final QueryResult queryResult = query.execute();
+        for (final Node node : new NodeIterable(queryResult.getNodes())) {
             if (node.getIndex() > 1) {
                 if (fixSNS) {
                     moveToUniqueName(node, node.getName());
                     saveNeeded = true;
-                }
-                else {
-                    throw new RepositoryException("Encountered "+nodeTypeName+" SNS at: "+ node.getPath());
+                } else {
+                    throw new RepositoryException("Encountered " + nodeTypeName + " SNS at: " + node.getPath());
                 }
             }
         }
@@ -374,18 +390,19 @@ class MigrateToV12 {
     }
 
     private void migrateEformsConfig() throws RepositoryException {
-        if (session.nodeExists("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig")) {
+        final String eformsConfigPath = "/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig";
+        if (session.nodeExists(eformsConfigPath)) {
             log.info("Migrating eforms");
-            Node node = session.getNode("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig");
+            final Node node = session.getNode(eformsConfigPath);
             if (fixEformsModuleConfigPrimaryType(node) && !dryRun) {
                 session.save();
             }
         }
     }
 
-    private boolean fixEformsModuleConfigPrimaryType(Node node) throws RepositoryException {
+    private boolean fixEformsModuleConfigPrimaryType(final Node node) throws RepositoryException {
         boolean saveNeeded = false;
-        for (Node child : new NodeIterable(node.getNodes())) {
+        for (final Node child : new NodeIterable(node.getNodes())) {
             if (fixEformsModuleConfigPrimaryType(child)) {
                 saveNeeded = true;
             }
@@ -395,14 +412,16 @@ class MigrateToV12 {
             node.setPrimaryType(HIPPOSYS_MODULE_CONFIG);
             if ("eforms:validationrule".equals(node.getName())) {
                 final Property ruleIdProperty = node.getProperty("eforms:validationruleid");
-                String ruleId = ruleIdProperty.getString();
+                final String ruleId = ruleIdProperty.getString();
                 final String newPath = node.getParent().getPath() + "/" + ruleId;
-                log.info("checking new path ["+newPath+"]");
+                log.info("checking new path [" + newPath + "]");
                 if (session.nodeExists(newPath)) {
-                    throw new RepositoryException("Cannot fix eforms:validationrule SNS for node with eforms:validationruleid '"+ruleId+"'. Another SNS found: "+ newPath);
+                    throw new RepositoryException(String.format(
+                            "Cannot fix eforms:validationrule SNS for node with eforms:validationruleid '%s'. Another SNS found: %s",
+                            ruleId, newPath));
                 }
                 ruleIdProperty.remove();
-                log.info("Renaming "+node.getPath() + " to "+ ruleId);
+                log.info("Renaming " + node.getPath() + " to " + ruleId);
                 session.move(node.getPath(), newPath);
             }
             if ("eforms:daterule".equals(node.getName())) {
@@ -410,10 +429,12 @@ class MigrateToV12 {
                 final String ruleId = ruleIdProperty.getString();
                 final String newPath = node.getParent().getPath() + "/" + ruleId;
                 if (session.nodeExists(newPath)) {
-                    throw new RepositoryException("Cannot fix eforms:daterule SNS for node with eforms:dateruleid '"+ruleId+"'. Another SNS found: "+ newPath);
+                    throw new RepositoryException(String.format(
+                                    "Cannot fix eforms:daterule SNS for node with eforms:dateruleid '%s'. Another SNS found: %s",
+                                    ruleId, newPath));
                 }
                 ruleIdProperty.remove();
-                log.info("Renaming "+node.getPath() + " to "+ ruleId);
+                log.info("Renaming " + node.getPath() + " to " + ruleId);
                 session.move(node.getPath(), newPath);
             }
         }
@@ -421,8 +442,8 @@ class MigrateToV12 {
     }
 
     private boolean allowsSNS(final String nodeType) throws RepositoryException {
-        NodeType nt = ntm.getNodeType(nodeType);
-        for (NodeDefinition nd : nt.getDeclaredChildNodeDefinitions()) {
+        final NodeType nt = ntm.getNodeType(nodeType);
+        for (final NodeDefinition nd : nt.getDeclaredChildNodeDefinitions()) {
             if (nd.allowsSameNameSiblings()) {
                 return true;
             }
@@ -432,14 +453,14 @@ class MigrateToV12 {
 
     private void removeAllSNSFromNTD(final String nodeTypeName) throws RepositoryException {
         if (!dryRun) {
-            log.info("Removing SNS from "+nodeTypeName);
-            NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeTypeName));
-            for (Object nd: ntt.getNodeDefinitionTemplates()) {
-                NodeDefinitionTemplate ndt = (NodeDefinitionTemplate)nd;
+            log.info("Removing SNS from " + nodeTypeName);
+            final NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeTypeName));
+            for (final Object nd : ntt.getNodeDefinitionTemplates()) {
+                final NodeDefinitionTemplate ndt = (NodeDefinitionTemplate) nd;
                 ndt.setSameNameSiblings(false);
             }
             ntr.ignoreNextConflictingContent();
-            ntm.registerNodeType(ntt,true);
+            ntm.registerNodeType(ntt, true);
         }
     }
 
@@ -451,7 +472,7 @@ class MigrateToV12 {
             postFix++;
             newPath = parentPath + "/" + nameCandidate + postFix;
         }
-        log.info("Renaming "+node.getPath() + " to " + nameCandidate + (postFix==0 ? "" : postFix));
+        log.info("Renaming " + node.getPath() + " to " + nameCandidate + (postFix == 0 ? "" : postFix));
         session.move(node.getPath(), newPath);
     }
 }
