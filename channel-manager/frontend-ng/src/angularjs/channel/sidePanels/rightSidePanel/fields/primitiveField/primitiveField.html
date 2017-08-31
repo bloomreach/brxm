@@ -53,6 +53,16 @@
            ng-focus="$ctrl.focusPrimitive($event)"
            ng-blur="$ctrl.blurPrimitive($event)">
 
+    <input ng-switch-when="LONG"
+           ng-model="fieldValue.value"
+           ng-change="$ctrl.valueChanged()"
+           name="{{::$ctrl.getFieldName($index)}}"
+           placeholder=""
+           aria-label="{{::$ctrl.fieldType.displayName}}"
+           ng-required="::$ctrl.fieldType.required"
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)">
+
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
