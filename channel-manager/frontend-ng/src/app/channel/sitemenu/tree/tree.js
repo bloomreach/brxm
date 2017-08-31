@@ -15,8 +15,8 @@
  */
 
 import uiTree from 'angular-ui-tree';
-import itemsRendererDirective from './itemsRenderer/itemsRenderer.directive';
 import hippoTreeDirective from './tree.directive';
+import itemsRendererDirective from './itemsRenderer/itemsRenderer.directive';
 import hippoTreeTemplateDirective from './tree.template.directive';
 import HippoTreeCtrl from './tree.controller';
 
