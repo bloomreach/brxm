@@ -21,7 +21,7 @@
     ng-if="item.items && !collapsed">
   <li ng-repeat="item in item.items"
       ui-tree-node
-      ng-include="'items.renderer.html'"
+      items-renderer
       ng-if="hippoTree.displayItem(item)"
       ng-class="{active: hippoTree.selectedItem.id === item.id}"
       data-collapsed="item.collapsed">

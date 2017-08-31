@@ -23,7 +23,7 @@
   <ol ui-tree-nodes ng-model="hippoTree.items">
     <li ng-repeat="item in hippoTree.items"
         ui-tree-node
-        ng-include="'items.renderer.html'"
+        items-renderer
         ng-class="{active: hippoTree.selectedItem.id === item.id}"
         data-collapsed="item.collapsed">
     </li>
