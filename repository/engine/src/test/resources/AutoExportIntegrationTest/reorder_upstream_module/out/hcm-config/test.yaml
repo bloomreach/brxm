@@ -1,6 +1,4 @@
 definitions:
   config:
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:enabled: false
     /content:
       .meta:category: content

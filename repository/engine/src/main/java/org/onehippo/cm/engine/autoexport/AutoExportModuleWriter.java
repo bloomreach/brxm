@@ -83,6 +83,12 @@ public class AutoExportModuleWriter extends ModuleWriter {
     }
 
     protected boolean sourceShouldBeSkipped(final Source source) {
+        // this is a tripwire for testing error handling via AutoExportIntegrationTest.write_error_handling()
+        // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
+//        if (source.getPath().equals("TestSourceThatShouldCauseAnExceptionOnlyInTesting.yaml")) {
+//            throw new RuntimeException("this is a simulated failure!");
+//        }
+
         // short-circuit processing of unchanged sources
         return !source.hasChangedSinceLoad();
     }

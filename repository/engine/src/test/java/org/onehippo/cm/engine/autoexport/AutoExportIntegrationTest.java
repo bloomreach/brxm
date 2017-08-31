@@ -34,6 +34,9 @@ import org.onehippo.cm.model.ConfigurationModel;
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+
 public class AutoExportIntegrationTest {
 
     /* These tests work as follows: the Fixture class loads a named fixture from the resource/AutoExportIntegrationTest
@@ -290,17 +293,52 @@ public class AutoExportIntegrationTest {
         assertEquals(order, model.resolveNode(path).getNodes().keySet().toString().replaceAll("\\[1]", ""));
     }
 
+    // this test can only be run if a failure tripwire is enabled in DefinitionMergeService.mergeConfigDefinitionNode()
+    // by un-commenting lines at the beginning of that method
+    @Test @Ignore
+    public void merge_error_handling() throws Exception {
+        new Fixture("merge_error_handling").test(
+            NOOP,
+            session -> {
+                session.getNode("/config").addNode("TestNodeThatShouldNotBeInTheModel");
+                session.getNode("/config").addNode("TestNodeThatShouldCauseAnExceptionOnlyInTesting");
+            },
+            (session, configurationModel) -> {
+                assertFalse(configurationModel.resolveNode("/config").getNodes()
+                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+            }
+        );
+    }
+
+    // this test can only be run if a failure tripwire is enabled in AutoExportModuleWriter.sourceShouldBeSkipped()
+    // by un-commenting lines at the beginning of that method
+    @Test @Ignore
+    public void write_error_handling() throws Exception {
+        new Fixture("write_error_handling").test(
+            NOOP,
+            session -> {
+                session.getNode("/config").addNode("TestNodeThatShouldNotBeInTheModel");
+            },
+            (session, configurationModel) -> {
+                assertFalse(configurationModel.resolveNode("/config").getNodes()
+                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+            }
+        );
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
+    private static final Validator NOOP = (session, configurationModel) -> {};
+
     private class Fixture extends AbstractBaseTest {
-        private final Validator ignore = (session, configurationModel) -> {};
         private final String name;
         Fixture(final String name) {
             this.name = name;
         }
         void test(final JcrRunner jcrRunner) throws Exception {
-            test(ignore, jcrRunner, ignore);
+            test(NOOP, jcrRunner, NOOP);
         }
         void test(final Validator preConditionValidator,
                   final JcrRunner jcrRunner,
@@ -316,6 +354,11 @@ public class AutoExportIntegrationTest {
 
             repository.startRepository();
             final Session session = repository.login(IsolatedRepository.CREDENTIALS);
+
+            // verify that auto-export is disabled, since we want to control when it runs
+            assertTrue(session.nodeExists("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig"));
+            assertFalse(session.getNode("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig")
+                    .getProperty("autoexport:enabled").getBoolean());
 
             preConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
 

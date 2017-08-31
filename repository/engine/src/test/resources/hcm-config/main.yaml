@@ -7,6 +7,8 @@ definitions:
     # the following is necessary to setup FilesystemModuleTest and AutoExportIntegrationTest
     /hippo:configuration/hippo:modules/autoexport:
       /hippo:moduleconfig:
+        # this disables auto-export so that AutoExportIntegrationTest can run it once explicitly
+        autoexport:enabled: false
         autoexport:modules:
           operation: override
           type: string

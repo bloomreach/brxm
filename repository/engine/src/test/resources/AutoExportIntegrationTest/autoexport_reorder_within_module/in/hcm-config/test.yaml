@@ -1,7 +1,5 @@
 definitions:
   config:
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:enabled: false
     /across:
       jcr:primaryType: nt:unstructured
     /across/a1-initial:

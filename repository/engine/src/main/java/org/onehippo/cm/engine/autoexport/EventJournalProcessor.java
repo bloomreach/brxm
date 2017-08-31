@@ -47,7 +47,6 @@ import javax.jcr.util.TraversingItemVisitor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
 import org.hippoecm.repository.util.JcrUtils;
@@ -175,9 +174,12 @@ public class EventJournalProcessor {
     private RevisionEventJournal eventJournal;
     private ConfigurationModelImpl currentModel;
 
+    // critical segment flag -- if this is true, a simple rollback recovery cannot be performed safely
+    private boolean fileWritesInProgress = false;
+
     private ScheduledFuture<?> future;
-    private AtomicBoolean taskFailed = new AtomicBoolean();
-    private boolean runningOnce;
+    private final AtomicBoolean taskFailed = new AtomicBoolean(false);
+    private final AtomicBoolean runningOnce = new AtomicBoolean(false);
     private final Runnable task = () -> {
         if (!taskFailed.get()) {
             try {
@@ -248,19 +250,35 @@ public class EventJournalProcessor {
         }
     }
 
+    /**
+     * Executes the core auto-export loop exactly once in synchronous blocking fashion, which is useful mainly for
+     * tests. Note: this method also serializes calls from different threads, such that only a single runOnce() call can
+     * be active simultaneously.
+     */
     public void runOnce() {
-        synchronized (executor) {
-            if (!taskFailed.get()) {
-                try {
-                    runningOnce = true;
-                    future = executor.schedule(task, 0, TimeUnit.MILLISECONDS);
+        // only a single thread can call runOnce simultaneously!
+        synchronized (runningOnce) {
+            // only a single thread can manipulate the executor simultaneously!
+            synchronized (executor) {
+                if (!taskFailed.get()) {
                     try {
-                        future.get();
-                    } catch (InterruptedException|ExecutionException|CancellationException ignore) {
+                        runningOnce.set(true);
+                        future = executor.schedule(task, 0, TimeUnit.MILLISECONDS);
+                    } catch(final Exception ignore) {
                     }
-                } finally {
-                    runningOnce = false;
                 }
+            }
+
+            // don't attempt the future.get() inside the synchronized block for executor, because that will deadlock
+            // calls to stop() from within processEvents(); yet, we want to protect the value of runningOnce, so it must
+            // be within the synchronized block for runningOnce!
+            try {
+                if (runningOnce.get() && future != null) {
+                    future.get();
+                }
+            } catch (InterruptedException|ExecutionException|CancellationException ignore) {
+            } finally {
+                runningOnce.set(false);
             }
         }
     }
@@ -375,7 +393,7 @@ public class EventJournalProcessor {
                     if (pendingChanges != null) {
                         pendingChanges.addCurrentChanges(currentChanges);
                         AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
-                    } else if (runningOnce || isReadyForProcessing(currentChanges)) {
+                    } else if (runningOnce.get() || isReadyForProcessing(currentChanges)) {
                         pendingChanges = currentChanges;
                     }
                 } else {
@@ -408,6 +426,12 @@ public class EventJournalProcessor {
                         }
                     } catch (Exception ex) {
                         //stop autoexport
+                        if (fileWritesInProgress) {
+                            log.error("Failure writing files during auto-export -- files on disk may not be valid!");
+                            abort();
+                            disableAutoExportJcrProperty();
+                        }
+
                         if (exceptionLoopPreventionEnabled && exceptionLoopDetector.loopDetected(ex)) {
                             log.info("Looping detected, disabling autoexport");
                             abort();
@@ -427,7 +451,16 @@ public class EventJournalProcessor {
         return true;
     }
 
+    /**
+     * Set the autoexport:enabled property to false in the repository. This method should only be called in an exception
+     * handler, as it assumes the current session state is garbage and aggressively clears it.
+     * @throws RepositoryException
+     */
     private void disableAutoExportJcrProperty() throws RepositoryException {
+        // this method is almost certainly being called while current session state is somehow unreliable
+        // therefore, before attempting to work with the repo, we should attempt to reset to a good state
+        eventProcessorSession.refresh(false);
+
         final Property autoExportEnableProperty = autoExportConfigNode.getProperty(AutoExportConstants.CONFIG_ENABLED_PROPERTY_NAME);
         autoExportEnableProperty.setValue(false);
         eventProcessorSession.save();
@@ -720,10 +753,14 @@ public class EventJournalProcessor {
             // write each module to the file system
             final AutoExportModuleWriter writer = new AutoExportModuleWriter(new JcrResourceInputProvider(eventProcessorSession));
             for (ModuleImpl module : mergedModules) {
-                final Path moduleDescriptorPath = projectPath.resolve(nativePath(module.getMvnPath()+org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR));
+                final Path moduleDescriptorPath = projectPath.resolve(nativePath(
+                        module.getMvnPath() + org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR));
                 final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath);
                 ctx.createOutputProviders(moduleDescriptorPath);
 
+                // set a critical segment flag -- if we pass this point but don't reach the full successful completion,
+                // we cannot perform an automated recovery to the previous safe state
+                fileWritesInProgress = true;
                 writer.writeModule(module, ctx);
 
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
@@ -736,7 +773,17 @@ public class EventJournalProcessor {
                 // store mvnPath again for later use
                 loadedModule.setMvnPath(module.getMvnPath());
 
-                // temporary hacks to enable more efficient update of baseline
+                // pass along change indicators for sources and resources, so baseline can perform incremental update
+                // TODO: use this simpler code when we have time to test it thoroughly
+//                module.getRemovedConfigResources().forEach(loadedModule::addConfigResourceToRemove);
+//                module.getRemovedContentResources().forEach(loadedModule::addContentResourceToRemove);
+//                module.getConfigSources().stream().filter(SourceImpl::hasChangedSinceLoad).forEach(source -> {
+//                    loadedModule.getConfigSource(source.getPath()).ifPresent(SourceImpl::markChanged);
+//                });
+//                module.getContentSources().stream().filter(SourceImpl::hasChangedSinceLoad).forEach(source -> {
+//                    loadedModule.getContentSource(source.getPath()).ifPresent(SourceImpl::markChanged);
+//                });
+
                 module.getRemovedConfigResources().forEach(loadedModule::addConfigResourceToRemove);
                 module.getRemovedContentResources().forEach(loadedModule::addContentResourceToRemove);
                 module.getConfigSources().forEach(source -> {
@@ -768,8 +815,12 @@ public class EventJournalProcessor {
             // 3) save result to baseline (which should do Session.save()
             // 4) update or reload ConfigurationService.currentRuntimeModel
             configurationService.updateBaselineForAutoExport(reloadedModules);
+
             // 5) now also save the lastRevision update
             eventProcessorSession.save();
+
+            // we've reached a new safe state, so a rollback recovery to this state is again possible
+            fileWritesInProgress = false;
         }
     }
 

@@ -5,8 +5,6 @@ definitions:
 #    /content:
 #      .meta:category: content
 
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:enabled: false
     /config:
       jcr:primaryType: nt:unstructured
       /deep:

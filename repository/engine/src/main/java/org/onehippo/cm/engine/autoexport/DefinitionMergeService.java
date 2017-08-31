@@ -147,7 +147,7 @@ public class DefinitionMergeService {
      * ModuleImpl, and a set of destination modules Sm, produce a new version of the destination modules Sm' such that
      * B-Sm+Sm' = B+R∆B. Also, make a best effort for Sources and Definitions in Sm' to be as minimally changed compared
      * to the corresponding Sources and Definitions in Sm as possible (for stable output), and for any new Sources and
-     * Definitions to follow the sorting schemes encoded in org.onehippo.cms7.autoexport.LocationMapper.
+     * Definitions to follow the sorting schemes encoded in {@link LocationMapper}.
      * @param changes R∆B expressed as a Module with one ConfigSource with zero-or-more Definitions and zero-or-more ContentSources
      * @param baseline the currently stored configuration baseline B
      * @param jcrSession JCR session to be used for regenerating changed content sources
@@ -165,12 +165,17 @@ public class DefinitionMergeService {
         configuredMvnPaths.addAll(moduleMappings.keySet());
         configuredMvnPaths.add(defaultModuleMapping.mvnPath);
 
+        // collect and clone the modules to be exported, then build a copy of the baseline using the clones
+        // this clone will be modified in-place to keep an internally consistent view of the new definitions, but the
+        // given baseline model will be kept unchanged to avoid unintended side-effects in case of errors
         final HashMap<String, ModuleImpl> toExport = new HashMap<>();
-        for (final ModuleImpl m : baseline.getModules()) {
-            if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
-                toExport.put(m.getMvnPath(), m);
-            }
-        }
+        extractExportModules(baseline, configuredMvnPaths, true, toExport);
+        final ConfigurationModelImpl baselineClone = rebuild(toExport, baseline);
+
+        // rebuilding the baselineClone weirdly moves all of the sources to new ModuleImpl instances, so we need to
+        // throw away the references in toExport and grab them again
+        toExport.clear();
+        extractExportModules(baselineClone, configuredMvnPaths, false, toExport);
 
         log.debug("Merging changes to modules: {}", toExport.values());
         log.debug("Content added: {} changed: {}", contentChanges.getAddedContent(), contentChanges.getChangedContent());
@@ -178,12 +183,12 @@ public class DefinitionMergeService {
         // make sure the changes module has all the definitions nicely sorted
         changes.build();
 
-        // handle namespaces before rebuilding, since we want any validation to happen after this
+        // merge namespace definitions first
         for (final NamespaceDefinitionImpl nsd : changes.getNamespaceDefinitions()) {
-            mergeNamespace(nsd, toExport, baseline);
+            mergeNamespace(nsd, toExport, baselineClone);
         }
 
-        // TODO does it make sense to auto-export webfilebundle definitions?
+        // note: it doesn't make sense to auto-export webfilebundle definitions, so that definition type isn't handled
 
         // Registry for paths of nodes for which the child nodes need to be reordered
         final Set<JcrPath> reorderRegistry = new HashSet<>();
@@ -192,14 +197,14 @@ public class DefinitionMergeService {
         // ConfigDefinitions are already sorted by root path
         for (final ConfigDefinitionImpl change : changes.getConfigDefinitions()) {
             // run the full and complex merge logic, recursively
-            mergeConfigDefinitionNode(change.getNode(), toExport, reorderRegistry, baseline);
+            mergeConfigDefinitionNode(change.getNode(), toExport, reorderRegistry, baselineClone);
         }
 
         // merge content changes
         mergeContentDefinitions(contentChanges, toExport, reorderRegistry, jcrSession);
 
         final Map<JcrPath, String> contentOrderBefores = new HashMap<>();
-        reorder(reorderRegistry, baseline, toExport, contentOrderBefores, jcrSession);
+        reorder(reorderRegistry, baselineClone, toExport, contentOrderBefores, jcrSession);
 
         exportChangedContentSources(toExport, contentOrderBefores, jcrSession);
 
@@ -211,6 +216,22 @@ public class DefinitionMergeService {
         log.info("Completed full auto-export merge in {}", stopWatch.toString());
 
         return toExport.values();
+    }
+
+    /**
+     * Build a convenient map of exported modules by mvnPath, optionally cloning the exported modules.
+     * @param baseline the full model out of which to pull the exported modules
+     * @param configuredMvnPaths mvnPath values that match with exported modules
+     * @param clone should the extracted module be cloned?
+     * @param toExport accumulator Map from mvnPath to exported module
+     */
+    protected void extractExportModules(final ConfigurationModelImpl baseline, final Set<String> configuredMvnPaths,
+                                        final boolean clone, final HashMap<String, ModuleImpl> toExport) {
+        for (final ModuleImpl m : baseline.getModules()) {
+            if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
+                toExport.put(m.getMvnPath(), clone ? m.clone() : m);
+            }
+        }
     }
 
     /**
@@ -630,6 +651,12 @@ public class DefinitionMergeService {
                                              final Set<JcrPath> reorderRegistry,
                                              final ConfigurationModelImpl model) {
         log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
+
+        // this is a tripwire for testing error handling via AutoExportIntegrationTest.merge_error_handling()
+        // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
+//        if (incomingDefNode.getJcrPath().equals("/config/TestNodeThatShouldCauseAnExceptionOnlyInTesting")) {
+//            throw new RuntimeException("this is a simulated failure!");
+//        }
 
         final boolean nodeIsNew = isNewNodeDefinition(incomingDefNode);
         if (nodeIsNew) {
