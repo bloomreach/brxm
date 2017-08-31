@@ -15,20 +15,17 @@
  */
 
 import uiTree from 'angular-ui-tree';
+import itemsRendererDirective from './itemsRenderer/itemsRenderer.directive';
 import hippoTreeDirective from './tree.directive';
 import hippoTreeTemplateDirective from './tree.template.directive';
 import HippoTreeCtrl from './tree.controller';
-
-// TODO: Find better solution than a 1 time use of webpack ng-cache loader
-/* eslint-disable */
-require('ng-cache-loader!./items.renderer.html');
-/* eslint-enable */
 
 const uiTreeModule = angular
   .module('hippo-cm.ui.tree', [
     uiTree,
   ])
   .directive('hippoTree', hippoTreeDirective)
+  .directive('itemsRenderer', itemsRendererDirective)
   .directive('hippoTreeTemplate', hippoTreeTemplateDirective)
   .controller('HippoTreeCtrl', HippoTreeCtrl);
 
