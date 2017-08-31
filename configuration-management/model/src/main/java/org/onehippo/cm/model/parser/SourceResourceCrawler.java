@@ -28,6 +28,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyType;
 
 /**
@@ -69,6 +70,11 @@ public class SourceResourceCrawler {
     }
 
     protected void collectResourcesForProperty(final DefinitionPropertyImpl property, final List<Pair<ValueImpl, String>> resources) {
+
+        if (property.getOperation() == PropertyOperation.DELETE) {
+            return;
+        }
+
         if (property.getType() == PropertyType.SINGLE) {
             final ValueImpl value = property.getValue();
             if (value.isResource()) {
