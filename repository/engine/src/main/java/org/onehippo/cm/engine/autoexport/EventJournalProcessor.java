@@ -740,6 +740,8 @@ public class EventJournalProcessor {
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
         } else {
+            AutoExportServiceImpl.log.info("autoexport is processing changes...");
+
             final DefinitionMergeService mergeService = new DefinitionMergeService(autoExportConfig);
             final Collection<ModuleImpl> mergedModules =
                     mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
@@ -824,6 +826,8 @@ public class EventJournalProcessor {
 
             // we've reached a new safe state, so a rollback recovery to this state is again possible
             fileWritesInProgress = false;
+
+            AutoExportServiceImpl.log.info("autoexport update complete");
         }
     }
 
