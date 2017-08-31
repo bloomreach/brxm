@@ -75,7 +75,6 @@ import org.slf4j.LoggerFactory;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
-import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SERVICE_CONFIG_PATH;
 import static org.onehippo.cm.model.definition.DefinitionType.CONFIG;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
@@ -519,6 +518,7 @@ public class EventJournalProcessor {
             else if (category == ConfigurationItemCategory.CONTENT && !currentChanges.getAddedContent().matches(eventPath)) {
                 if (addedNode) {
                     currentChanges.getAddedContent().add(eventPath);
+                    currentChanges.getChangedContent().add(eventPath);
 
                     // we must scan down the JCR tree and record an add for each descendant node path
                     // protect against race conditions with add and then immediate delete

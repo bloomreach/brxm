@@ -238,6 +238,21 @@ public class AutoExportIntegrationTest {
     }
 
     @Test
+    public void autoexport_reorder_content_only() throws Exception {
+        new Fixture("reorder_content_only").test(
+            (session, configurationModel) -> {
+                assertOrderInJcr("[c1, c2]", "/content", session);
+            },
+            (session) -> {
+                final Node content = session.getNode("/content");
+                content.orderBefore("c2", "c1");
+            },
+            (session, configurationModel) -> {
+                assertOrderInJcr("[c2, c1]", "/content", session);
+            });
+    }
+
+    @Test
     public void autoexport_reorder_upstream_module() throws Exception {
         final String noLocalDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/no-local-defs";
         final String localDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/local-defs";
