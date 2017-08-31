@@ -19,6 +19,8 @@ package org.onehippo.cm.engine.autoexport;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Test;
 import org.onehippo.cm.model.impl.path.JcrPathSegment;
 
@@ -49,16 +51,16 @@ public class DefinitionMergeServiceTest {
     }
 
     private void expect(final String expectedOrder, final String intermediateOrder, final String incorrect) {
-        final List<JcrPathSegment> expectedOrderList = parse(expectedOrder);
+        final ImmutableList<JcrPathSegment> expectedOrderList = parse(expectedOrder);
         final List<JcrPathSegment> intermediateOrderList = parse(intermediateOrder);
         assertEquals(incorrect, getIncorrectlyOrdered(expectedOrderList, intermediateOrderList).toString());
     }
 
-    private List<JcrPathSegment> parse(final String string) {
+    private ImmutableList<JcrPathSegment> parse(final String string) {
         final List<JcrPathSegment> result = new ArrayList<>();
         for (final String segment : string.substring(1, string.length() - 1).split(",")) {
             result.add(JcrPathSegment.get(segment.trim()));
         }
-        return result;
+        return ImmutableList.copyOf(result);
     }
 }

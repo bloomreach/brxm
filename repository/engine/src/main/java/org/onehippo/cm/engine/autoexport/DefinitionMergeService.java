@@ -40,6 +40,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -48,6 +49,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.JcrContentExporter;
+import org.onehippo.cm.engine.autoexport.orderbeforeholder.ContentOrderBeforeHolder;
+import org.onehippo.cm.engine.autoexport.orderbeforeholder.LocalConfigOrderBeforeHolder;
+import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeHolder;
+import org.onehippo.cm.engine.autoexport.orderbeforeholder.UpstreamConfigOrderBeforeHolder;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -208,6 +213,13 @@ public class DefinitionMergeService {
         return toExport.values();
     }
 
+    /**
+     * Reorder all paths in reorderRegistry.
+     *
+     * Creates and/or updates local config definitions in the AutoExport modules, and flags the relevant sources
+     * as modified. Populates the list contentOrderBefores for local content definitions and flags the relevant
+     * sources as modified.
+     */
     private void reorder(final Set<JcrPath> reorderRegistry,
                          final ConfigurationModelImpl currentModel,
                          final HashMap<String, ModuleImpl> toExport,
@@ -240,6 +252,13 @@ public class DefinitionMergeService {
         }
     }
 
+    /**
+     * Reorders the children of the node at the given path.
+     *
+     * Creates and/or updates local config definitions in the AutoExport modules, and flags the relevant sources
+     * as modified. Populates the list contentOrderBefores for local content definitions and flags the relevant
+     * sources as modified.
+     */
     private void reorder(final JcrPath path,
                          final Node jcrNode,
                          final ConfigurationNodeImpl configurationNode,
@@ -247,29 +266,28 @@ public class DefinitionMergeService {
                          final Map<JcrPath, String> contentOrderBefores,
                          final List<String> sortedModules) throws RepositoryException {
 
+        /* The algorithm works essentially in these steps:
+         *  1) determine the expected ordering from JCR
+         *  2) collect all upstream and local definitions that contribute to the ordering of these nodes
+         *     each definition is captured in a OrderBeforeHolder object, which, depending on the type, keeps some state
+         *  3) apply all definitions in the same order as if they would be applied to JCR and if the result is not what
+         *     is expected, add additional order before instructions:
+         *      a) apply all upstream config definitions, build up the result in intermediate
+         *      b) determine if there any names in intermediate that are incorrectly ordered, if so, remove those from
+         *        intermediate and add an additional _local_ config holders to adjust their order
+         *      c) apply all local config definitions, add those to intermediate and record order before if needed
+         *      d) apply upstream content definitions (TODO)
+         *      e) apply local content definitions, add those to intermediate and record order before if needed
+         *      f) 'finish' each holder to write its state and/or do cleanup
+         */
+
         log.debug("Reordering node {}", path.toString());
 
-        final List<JcrPathSegment> expected = getExpectedOrder(jcrNode, configurationNode);
+        final ImmutableList<JcrPathSegment> expected = getExpectedOrder(jcrNode, configurationNode);
         final List<JcrPathSegment> intermediate = new LinkedList<>();
 
         final Holders configHolders = createConfigHolders(configurationNode, expected, toExport, sortedModules);
         final Holders contentHolders = createContentHolders(path, expected, contentOrderBefores, toExport);
-
-        /* if parent == config
-         *   if there are upstream content items
-         *     atm, it is not 100% guaranteed in which order those are applied, assume ordering from jcr is
-         *       correct (upstream cannot be reordered anyway)
-         *   if there are only local content items
-         *     we know everything that contributes to the parent
-         *     any node names that are present other than that, give a warning and remove from expected
-         * if parent == content
-         *   if there are upstream content items
-         *     atm, it is not 100% guaranteed in which order those are applied, assume ordering from jcr is
-         *       correct (upstream cannot be reordered anyway)
-         *   if there are only local content items
-         *     we know everything that contributes to the parent
-         *     any node names that are present other than that, give a warning and remove from expected
-         */
 
         configHolders.upstream.forEach((holder) -> holder.apply(expected, intermediate));
 
@@ -278,27 +296,26 @@ public class DefinitionMergeService {
 
         configHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
 
-        configHolders.cleanUp();
-
         contentHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
 
-        contentHolders.cleanUp();
+        configHolders.finish();
+        contentHolders.finish();
     }
 
     /**
      * Inspects the names in intermediate to validate they are in the correct order. Any names that are not in the
      * correct order are removed from intermediate and a new holder is created for it. As the last step, the list of
-     * holders is sorted.
+     * holders is sorted again to ensure they are in their processing order.
      * @param path          the path to the node being sorted
      * @param expected      the expected ordering
      * @param toExport      the set of Modules being merged and eventually exported
-     * @param sortedModules the list of all modeuls, sorted according to their processing order
+     * @param sortedModules the list of all modules, sorted according to their processing order
      * @param intermediate  (in & out) the intermediate order of the sub nodes of the given path
      * @param holders       (in & out) the set of holders for the given path
      */
     private void updateStateForIncorrectlyOrderedUpstream(final JcrPath path,
                                                           final ConfigurationNodeImpl configurationNode,
-                                                          final List<JcrPathSegment> expected,
+                                                          final ImmutableList<JcrPathSegment> expected,
                                                           final HashMap<String, ModuleImpl> toExport,
                                                           final List<String> sortedModules,
                                                           final List<JcrPathSegment> intermediate,
@@ -320,13 +337,14 @@ public class DefinitionMergeService {
                     maybeChildDefNode.orElseGet(() -> getOrCreateLocalDef(path.resolve(childName), toExport));
             final int moduleIndex =
                     sortedModules.indexOf(childDefNode.getDefinition().getSource().getModule().getFullName());
-            holders.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode, toExport));
+            holders.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode,
+                    (deleteDefItem) -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>(), toExport)));
         }
 
         holders.sort(Comparator.naturalOrder());
     }
 
-    static List<JcrPathSegment> getIncorrectlyOrdered(final List<JcrPathSegment> expected,
+    static List<JcrPathSegment> getIncorrectlyOrdered(final ImmutableList<JcrPathSegment> expected,
                                                       final List<JcrPathSegment> intermediate) {
 
         final List<JcrPathSegment> incorrectlyOrdered = new ArrayList<>();
@@ -344,7 +362,7 @@ public class DefinitionMergeService {
         return incorrectlyOrdered;
     }
 
-    private List<JcrPathSegment> getExpectedOrder(final Node jcrNode, final ConfigurationNodeImpl configurationNode)
+    private ImmutableList<JcrPathSegment> getExpectedOrder(final Node jcrNode, final ConfigurationNodeImpl configurationNode)
             throws RepositoryException {
 
         final List<JcrPathSegment> expectedOrder = new ArrayList<>();
@@ -361,247 +379,22 @@ public class DefinitionMergeService {
             expectedOrder.add(segment);
         }
 
-        return expectedOrder;
+        return ImmutableList.copyOf(expectedOrder);
     }
 
-    abstract class OrderBeforeHolder implements Comparable {
-        public void apply(final List<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
-            final JcrPathSegment myName = getDefinitionNode().getJcrName();
-
-            if (intermediate.size() == 0) {
-                intermediate.add(myName);
-                return;
-            }
-
-            // start by assuming myName must be added at the end of the list
-            int position = intermediate.size();
-            String orderBefore = null;
-
-            // iterate through the elements in expected from the last to the first
-            while (position > 0) {
-                final JcrPathSegment candidate = intermediate.get(position - 1);
-
-                // if myName needs to be sorted after candidate, we've found the right place for myName
-                if (expected.indexOf(candidate) < expected.indexOf(myName)) {
-                    break;
-                }
-
-                // myName needs to be added at least before candidate
-                position--;
-                orderBefore = candidate.toString();
-            }
-
-            intermediate.add(position, myName);
-            setOrderBefore(orderBefore);
-        }
-        abstract DefinitionNodeImpl getDefinitionNode();
-        abstract void setOrderBefore(final String orderBefore);
-        abstract void cleanUp();
-    }
-
-    class LocalConfigOrderBeforeHolder extends OrderBeforeHolder {
-        protected final int moduleIndex;
-        protected final DefinitionNodeImpl definitionNode;
-        protected final HashMap<String, ModuleImpl> toExport;
-        protected int siblingIndex;
-        protected final String originalOrderBefore;
-        LocalConfigOrderBeforeHolder(final int moduleIndex, final DefinitionNodeImpl definitionNode,
-                                     final HashMap<String, ModuleImpl> toExport) {
-            this(moduleIndex, definitionNode, toExport, true);
-        }
-        LocalConfigOrderBeforeHolder(final int moduleIndex, final DefinitionNodeImpl definitionNode,
-                                     final HashMap<String, ModuleImpl> toExport, final boolean isLocal) {
-            this.moduleIndex = moduleIndex;
-            this.definitionNode = definitionNode;
-            this.toExport = toExport;
-            this.siblingIndex = -1;
-            this.originalOrderBefore = definitionNode.getOrderBefore();
-
-            if (isLocal) {
-                definitionNode.setOrderBefore(null);
-            }
-        }
-        @Override
-        public int compareTo(final Object object) {
-            if (object == null) {
-                return -1;
-            }
-            if (object == this) {
-                return 0;
-            }
-            if (object instanceof LocalConfigOrderBeforeHolder) {
-                final LocalConfigOrderBeforeHolder other = (LocalConfigOrderBeforeHolder) object;
-
-                int result = Integer.compare(this.getModuleIndex(), other.getModuleIndex());
-                if (result != 0) {
-                    return result;
-                }
-
-                result = this.getRootPath().compareTo(other.getRootPath());
-                if (result != 0) {
-                    return result;
-                }
-
-                return Integer.compare(this.getSiblingIndex(), other.getSiblingIndex());
-            }
-            return -1;
-        }
-        int getModuleIndex() {
-            return moduleIndex;
-        }
-        JcrPath getRootPath() {
-            return JcrPath.get(definitionNode.getDefinition().getRootPath());
-        }
-        int getSiblingIndex() {
-            if (siblingIndex == -1 && !definitionNode.isRoot()) {
-                int index = -1;
-                for (final String name : definitionNode.getParent().getNodes().keySet()) {
-                    index++;
-                    if (definitionNode.getJcrName().equals(JcrPathSegment.get(name))) {
-                        break;
-                    }
-                }
-                siblingIndex = index;
-            }
-            return siblingIndex;
-        }
-        @Override
-        DefinitionNodeImpl getDefinitionNode() {
-            return definitionNode;
-        }
-        @Override
-        void setOrderBefore(final String orderBefore) {
-            definitionNode.setOrderBefore(orderBefore);
-        }
-        @Override
-        void cleanUp() {
-            if (!StringUtils.equals(definitionNode.getOrderBefore(), originalOrderBefore)) {
-                definitionNode.getDefinition().getSource().markChanged();
-            }
-            if (definitionNode.isEmpty()) {
-                removeOneDefinitionItem(definitionNode, new ArrayList<>(), toExport);
-            }
-        }
-    }
-    class UpstreamConfigOrderBeforeHolder extends LocalConfigOrderBeforeHolder {
-        UpstreamConfigOrderBeforeHolder(final int moduleIndex, final DefinitionNodeImpl definitionNode,
-                                        final HashMap<String, ModuleImpl> toExport) {
-            super(moduleIndex, definitionNode, toExport, false);
-        }
-        @Override
-        public void apply(final List<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
-            // todo: add logic for delayed ordering mechanism or decide to remove it
-            if (intermediate.size() == 0 || "".equals(definitionNode.getOrderBefore())) {
-                intermediate.add(0, definitionNode.getJcrName());
-                return;
-            }
-            if (definitionNode.getOrderBefore() == null) {
-                intermediate.add(definitionNode.getJcrName());
-                return;
-            }
-            final int position = intermediate.indexOf(JcrPathSegment.get(definitionNode.getOrderBefore()));
-            if (position == -1) {
-                // if the target cannot be found, we are in a weird situation as the model should not have loaded in
-                // the first place, log an error but continue
-                log.error("Cannot find order-before target '{}' for node '{}' from '{}', ordering node as last",
-                        definitionNode.getOrderBefore(), definitionNode.getPath(), definitionNode.getSourceLocation());
-                intermediate.add(definitionNode.getJcrName());
-            } else {
-                intermediate.add(position, definitionNode.getJcrName());
-            }
-        }
-        @Override
-        void setOrderBefore(final String orderBefore) {
-            log.error("Unexpected call to setOrderBefore with value '{}' for node '{}' from '{}'", orderBefore,
-                    definitionNode.getPath(), definitionNode.getSourceLocation());
-        }
-        @Override
-        void cleanUp() {
-            // intentionally empty
-        }
-
-    }
-
-    final class ContentOrderBeforeHolder extends OrderBeforeHolder {
-        private final ContentDefinitionImpl contentDefinition;
-        private final Map<JcrPath, String> contentOrderBefores;
-        ContentOrderBeforeHolder(final ContentDefinitionImpl contentDefinition, final Map<JcrPath, String> contentOrderBefores) {
-            this.contentDefinition = contentDefinition;
-            this.contentOrderBefores = contentOrderBefores;
-        }
-        @Override
-        public int compareTo(final Object object) {
-            if (object == null) {
-                return -1;
-            }
-            if (object == this) {
-                return 0;
-            }
-            if (object instanceof ContentOrderBeforeHolder) {
-                final ContentOrderBeforeHolder other = (ContentOrderBeforeHolder) object;
-                return this.getContentRoot().compareTo(other.getContentRoot());
-            }
-            return 1;
-        }
-        JcrPath getContentRoot() {
-            return JcrPath.get(contentDefinition.getRootPath());
-        }
-        @Override
-        DefinitionNodeImpl getDefinitionNode() {
-            return contentDefinition.getNode();
-        }
-        @Override
-        void setOrderBefore(final String orderBefore) {
-            contentOrderBefores.put(getContentRoot(), orderBefore);
-        }
-        @Override
-        void cleanUp() {
-            // Unfortunately, it is not yet possible to detect a changed order-before. Always mark the source as
-            // changed, triggering a re-export.
-            contentDefinition.getSource().markChanged();
-        }
-    }
-
-    /**
-     * Registry of definition nodes for which the parent must have its child definitions reordered.
-     */
-    final class ReorderParentRegistry {
-        final Map<DefinitionNodeImpl, List<DefinitionNodeImpl>> registry = new HashMap<>();
-        public void add(final DefinitionNodeImpl node) {
-            if (node.isRoot()) {
-                return; // definition root does not have a parent
-            }
-            registry.computeIfAbsent(node.getParent(), def -> new ArrayList<>())
-                    .add(node);
-        }
-        public void reorder() {
-            registry.forEach((parent, children) -> {
-                log.debug("Reordering nodes within definition at path '{}' rooted at '{}' in file '{}'",
-                        parent.getPath(), parent.getDefinition().getRootPath(), parent.getSourceLocation());
-                // Reorder by ordering the children in reverse order; note that there might be more definitions in
-                // parent than just the reorder children (deletes, nodes with only .meta:category, etc.)
-                for (int i = children.size(); i > 1; i--) {
-                    parent.orderBefore(children.get(i - 2), children.get(i - 1));
-                }
-                parent.getDefinition().getSource().markChanged();
-            });
-        }
-    }
-
-    static class Holders {
+    private static class Holders {
         final List<OrderBeforeHolder> upstream = new ArrayList<>();
         final List<OrderBeforeHolder> local = new ArrayList<>();
-        public void cleanUp() {
-            upstream.forEach(OrderBeforeHolder::cleanUp);
-            local.forEach(OrderBeforeHolder::cleanUp);
+        void finish() {
+            upstream.forEach(OrderBeforeHolder::finish);
+            local.forEach(OrderBeforeHolder::finish);
         }
     }
 
-    private Holders createConfigHolders(
-            final ConfigurationNodeImpl configurationNode,
-            final List<JcrPathSegment> expected,
-            final HashMap<String, ModuleImpl> toExport,
-            final List<String> sortedModules) {
+    private Holders createConfigHolders(final ConfigurationNodeImpl configurationNode,
+                                        final ImmutableList<JcrPathSegment> expected,
+                                        final HashMap<String, ModuleImpl> toExport,
+                                        final List<String> sortedModules) {
 
         final Holders holders = new Holders();
 
@@ -609,7 +402,7 @@ public class DefinitionMergeService {
             return holders;
         }
 
-        final Set<DefinitionNodeImpl> reorderParents = new HashSet<>();
+        final Set<DefinitionNodeImpl> reorderChildDefinitions = new HashSet<>();
 
         for (final JcrPathSegment childName : expected) {
             final ConfigurationNodeImpl childNode = configurationNode.getNode(childName);
@@ -621,7 +414,7 @@ public class DefinitionMergeService {
                 final boolean isLocal = isLocalDef(toExport).test(childDefNode);
 
                 if (isLocal && !childDefNode.isRoot()) {
-                    reorderParents.add(childDefNode.getParent());
+                    reorderChildDefinitions.add(childDefNode.getParent());
                 }
 
                 boolean influencesOrdering = false;
@@ -648,15 +441,16 @@ public class DefinitionMergeService {
                     final String moduleName = childDefNode.getDefinition().getSource().getModule().getFullName();
                     final int moduleIndex = sortedModules.indexOf(moduleName);
                     if (isLocal) {
-                        holders.local.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode, toExport));
+                        holders.local.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode,
+                                (deleteDefItem) -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>(), toExport)));
                     } else {
-                        holders.upstream.add(new UpstreamConfigOrderBeforeHolder(moduleIndex, childDefNode, toExport));
+                        holders.upstream.add(new UpstreamConfigOrderBeforeHolder(moduleIndex, childDefNode));
                     }
                 }
             }
         }
 
-        reorderWithinParent(reorderParents, expected);
+        reorderChildDefinitions(reorderChildDefinitions, expected);
 
         holders.local.sort(Comparator.naturalOrder());
         holders.upstream.sort(Comparator.naturalOrder());
@@ -664,7 +458,8 @@ public class DefinitionMergeService {
         return holders;
     }
 
-    private void reorderWithinParent(final Set<DefinitionNodeImpl> parents, final List<JcrPathSegment> expected) {
+    private void reorderChildDefinitions(final Set<DefinitionNodeImpl> parents,
+                                         final ImmutableList<JcrPathSegment> expected) {
         for (final DefinitionNodeImpl parent : parents) {
             log.debug("Reordering nodes within definition at path '{}' rooted at '{}' in file '{}'",
                     parent.getPath(), parent.getDefinition().getRootPath(), parent.getSourceLocation());
@@ -673,11 +468,10 @@ public class DefinitionMergeService {
         }
     }
 
-    private Holders createContentHolders(
-            final JcrPath path,
-            final List<JcrPathSegment> expected,
-            final Map<JcrPath, String> contentOrderBefores,
-            final HashMap<String, ModuleImpl> toExport) {
+    private Holders createContentHolders(final JcrPath path,
+                                         final ImmutableList<JcrPathSegment> expected,
+                                         final Map<JcrPath, String> contentOrderBefores,
+                                         final HashMap<String, ModuleImpl> toExport) {
 
         final Holders holders = new Holders();
         final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
