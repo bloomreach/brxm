@@ -358,8 +358,8 @@ public abstract class AbstractBaseTest {
                 actual.stream().map(Path::toString).collect(toList()));
         for (int i = 0; i < expected.size(); i++) {
             assertEquals("comparing "+expected.get(i),
-                    new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))),
-                    new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))));
+                    new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))).trim(),
+                    new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))).trim());
         }
     }
 
