@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyNewlyAdded:
+        operation: delete
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured

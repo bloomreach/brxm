@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /childNode2:
+      jcr:primaryType: nt:unstructured

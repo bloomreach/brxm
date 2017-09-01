@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /topmost/upstream:
+      jcr:primaryType: nt:unstructured
+      existingPropertyNewlyAdded: Existing property

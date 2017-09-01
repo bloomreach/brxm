@@ -93,6 +93,25 @@ public class DefinitionMergeTest {
         new MergeFixture("override-property").test();
     }
 
+    @Test
+    public void node_restore() throws Exception {
+        new MergeFixture("node-restore").test();
+    }
+
+    @Test
+    public void node_restore_identical() throws Exception {
+        new MergeFixture("node-restore-identical").test();
+    }
+
+    @Test
+    public void restore_property_identical() throws Exception {
+        new MergeFixture("restore-property-identical").test();
+    }
+
+    @Test
+    public void restore_property() throws Exception {
+        new MergeFixture("restore-property").test();
+    }
 
     public class MergeFixture extends AbstractBaseTest {
         String testName;

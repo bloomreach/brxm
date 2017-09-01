@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyNewlyAdded: Existing property new value
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured
+      someproperty: newproperty
