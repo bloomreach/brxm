@@ -17,9 +17,11 @@ package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,8 @@ import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.impl.exceptions.MissingDependencyException;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.util.SnsUtils;
 
 /**
  * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link OrderableByName}s.
@@ -74,7 +78,8 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
     public <U extends T> void sort(final List<U> orderables)
             throws DuplicateNameException, CircularDependencyException, MissingDependencyException {
         // using TreeMap ensures the orderables are processed in alphabetically sorted order
-        final Map<String, U> map = new TreeMap<>();
+        final Map<String, U> map = new TreeMap<>(getComparator());
+
         for (U o : orderables) {
             if (map.put(o.getName(), o) != null) {
                 throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o.getName()));
@@ -88,6 +93,10 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
 
         orderables.clear();
         orderables.addAll(sorted.values());
+    }
+
+    protected Comparator<String> getComparator() {
+        return Comparator.naturalOrder();
     }
 
     private <U extends T> void sortDepthFirst(final U orderable, final List<String> dependencyChain,
