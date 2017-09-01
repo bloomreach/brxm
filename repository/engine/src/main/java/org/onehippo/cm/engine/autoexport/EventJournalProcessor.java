@@ -251,8 +251,10 @@ public class EventJournalProcessor {
     }
 
     /**
-     * Executes the core auto-export loop exactly once in synchronous blocking fashion, which is useful mainly for
-     * tests. Note: this method also serializes calls from different threads, such that only a single runOnce() call can
+     * Executes the core auto-export loop exactly once in synchronous blocking fashion, which is primarily used to
+     * flush any pending changes after autoexport is {@link #stop() stopped}.
+     * It is also used for tests.
+     * Note: this method also serializes calls from different threads, such that only a single runOnce() call can
      * be active simultaneously.
      */
     public void runOnce() {
@@ -427,9 +429,13 @@ public class EventJournalProcessor {
                     } catch (Exception ex) {
                         //stop autoexport
                         if (fileWritesInProgress) {
-                            log.error("Failure writing files during auto-export -- files on disk may not be valid!");
-                            abort();
-                            disableAutoExportJcrProperty();
+                            try {
+                                log.error("Failure writing files during auto-export -- files on disk may not be valid!");
+                                abort();
+                                disableAutoExportJcrProperty();
+                            } finally {
+                                fileWritesInProgress = false;
+                            }
                         }
 
                         if (exceptionLoopPreventionEnabled && exceptionLoopDetector.loopDetected(ex)) {
