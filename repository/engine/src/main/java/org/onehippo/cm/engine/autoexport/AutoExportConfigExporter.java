@@ -186,12 +186,6 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         }
     }
 
-    private ConfigurationNodeImpl findTopDeletedNode(final String jcrPath) {
-        return configurationModel.getDeletedConfigNodes().values().stream()
-                .filter(deletedRootNode -> JcrPath.get(jcrPath).startsWith(deletedRootNode.getJcrPath()))
-                .findFirst().orElse(null);
-    }
-
     protected boolean shouldExcludeNode(final String jcrPath) {
         if (configurationModel != null) {
             // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
@@ -405,7 +399,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
             if (childConfigNode == null) {
                 final ConfigurationNodeImpl deletedNode =
-                        findTopDeletedNode(JcrPath.get(configNode.getJcrPath() + "/" + indexedJcrChildNodeName).toString());
+                        configurationModel.resolveDeletedSubNodeRoot(configNode.getJcrPath().resolve(indexedJcrChildNodeName));
                 if (deletedNode != null) {
                     // call top-level recursion, not this delta method
                     exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);

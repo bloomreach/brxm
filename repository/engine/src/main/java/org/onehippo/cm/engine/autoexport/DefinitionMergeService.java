@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,21 +42,17 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
-import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.ContentOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.LocalConfigOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.UpstreamConfigOrderBeforeHolder;
+import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -81,13 +78,13 @@ import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionItem;
 import org.onehippo.cm.model.tree.DefinitionNode;
-import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -666,15 +663,8 @@ public class DefinitionMergeService {
         boolean nodeRestore = topDeletedConfigNode != null;
         if (!nodeRestore) {
             //maybe it is a (sub)child node of deleted node
-            isChildNodeDeleted = model.getDeletedConfigNodes().keySet().stream()
-                    .anyMatch(dn -> !incomingDefNode.getJcrPath().equals(dn)
-                    && incomingDefNode.getJcrPath().startsWith(dn));
-            if (isChildNodeDeleted) {
-                //Find the top deleted node of the deletion tree
-                topDeletedConfigNode = model.getDeletedConfigNodes().values().stream()
-                        .filter(dn -> incomingDefNode.getJcrPath().startsWith(dn.getJcrPath())).findFirst().get();
-                nodeRestore = true;
-            }
+            topDeletedConfigNode = model.resolveDeletedSubNodeRoot(incomingDefNode.getJcrPath());
+            nodeRestore = isChildNodeDeleted = topDeletedConfigNode != null;
         }
 
         if (nodeRestore) {
@@ -1372,16 +1362,20 @@ public class DefinitionMergeService {
         final ConfigurationPropertyImpl configProperty = configNode.getProperty(defProperty.getName());
 
         if (configProperty == null) {
-            ConfigurationPropertyImpl deletedProperty = model.resolveDeletedProperty(defProperty.getJcrPath());
-            if (deletedProperty != null && propertyIsIdentical(defProperty, deletedProperty)) {
-                //we're in property restore mode and diff is null, just remove the delete operation
-                final Optional<DefinitionPropertyImpl> maybeLocalPropertyDef = getLastLocalDef(deletedProperty, toExport);
-                if (maybeLocalPropertyDef.isPresent()) {
-                    removeFromParentDefinitionItem(maybeLocalPropertyDef.get(), new ArrayList<>(), toExport);
-                } else {
-                    log.error("Delete definition for property {} is not found", defProperty.getJcrPath());
+            final ConfigurationPropertyImpl deletedProperty = model.resolveDeletedProperty(defProperty.getJcrPath());
+            try {
+                if (deletedProperty != null && ValueProcessor.propertyIsIdentical(defProperty, deletedProperty)) {
+                    //we're in property restore mode and diff is null, just remove the delete operation
+                    final Optional<DefinitionPropertyImpl> maybeLocalPropertyDef = getLastLocalDef(deletedProperty, toExport);
+                    if (maybeLocalPropertyDef.isPresent()) {
+                        removeFromParentDefinitionItem(maybeLocalPropertyDef.get(), new ArrayList<>(), toExport);
+                    } else {
+                        log.error("Delete definition for property {} is not found", defProperty.getJcrPath());
+                    }
+                    return;
                 }
-                return;
+            } catch (IOException ignored) {
+                //Should not happen
             }
         }
         //If defProperty is undefined, just delete definition
@@ -1397,15 +1391,6 @@ public class DefinitionMergeService {
                 break;
         }
     }
-
-    public boolean propertyIsIdentical(ModelProperty p1, ModelProperty p2) {
-        try {
-            return ValueProcessor.propertyIsIdentical(p1, p2);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     protected void mergePropertyThatShouldExist(final DefinitionPropertyImpl defProperty,
                                                 final ConfigurationNodeImpl configNode,
