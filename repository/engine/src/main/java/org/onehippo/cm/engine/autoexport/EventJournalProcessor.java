@@ -742,9 +742,10 @@ public class EventJournalProcessor {
         } else {
             AutoExportServiceImpl.log.info("autoexport is processing changes...");
 
-            final DefinitionMergeService mergeService = new DefinitionMergeService(autoExportConfig);
+            final DefinitionMergeService mergeService =
+                    new DefinitionMergeService(autoExportConfig, currentModel, eventProcessorSession);
             final Collection<ModuleImpl> mergedModules =
-                    mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
+                    mergeService.mergeChangesToModules(changesModule, pendingChanges);
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
 
             StopWatch stopWatch = new StopWatch();

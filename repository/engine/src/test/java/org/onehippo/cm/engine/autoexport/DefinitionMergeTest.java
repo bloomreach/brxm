@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -40,7 +42,6 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.singletonList;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -66,6 +67,11 @@ public class DefinitionMergeTest {
     @Test
     public void new_node() throws Exception {
         new MergeFixture("new-node").test();
+    }
+
+    @Test
+    public void new_node_empty_dev() throws Exception {
+        new MergeFixture("new-node-empty-dev", "/", "").test();
     }
 
     @Test
@@ -120,12 +126,23 @@ public class DefinitionMergeTest {
         AutoExportConfig autoExportConfig;
 
         public MergeFixture(final String testName) {
+            this(testName, "/topmost,/exportFirstExistingRoot,/hippo:namespaces", "/");
+        }
+
+        public MergeFixture(final String testName, final String firstModulePaths, final String secondModulePaths) {
             this.testName = testName;
 
             Map<String, Collection<String>> modules = new HashMap<>();
-            modules.put("exportFirst", Arrays.asList("/topmost", "/exportFirstExistingRoot", "/hippo:namespaces"));
-            modules.put("exportSecond", singletonList("/"));
+            modules.put("exportFirst", parsePathString(firstModulePaths));
+            modules.put("exportSecond", parsePathString(secondModulePaths));
             autoExportConfig = new AutoExportConfig(true, modules, null, null);
+        }
+
+        private List<String> parsePathString(final String string) {
+            if (string == null || string.equals("")) {
+                return Collections.emptyList();
+            }
+            return Arrays.asList(string.split(","));
         }
 
         public MergeFixture base(final String... base) {
@@ -174,9 +191,9 @@ public class DefinitionMergeTest {
                 replay(session, node, primaryNodeType);
 
                 // merge diff
-                DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig);
+                DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig, model, session);
                 Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model, session);
+                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes());
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);
