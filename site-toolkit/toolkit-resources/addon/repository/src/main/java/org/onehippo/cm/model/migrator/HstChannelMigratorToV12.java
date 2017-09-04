@@ -239,9 +239,10 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
     private void migrateHostOrMount(final Node hostOrMount) throws RepositoryException {
         if (hostOrMount.isNodeType("hst:mount")) {
             migrateMount(hostOrMount);
-        }
-        for (Node child : new NodeIterable(hostOrMount.getNodes())) {
-            migrateHostOrMount(child);
+        } else {
+            for (Node child : new NodeIterable(hostOrMount.getNodes())) {
+                migrateHostOrMount(child);
+            }
         }
     }
 
