@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
+import java.util.Arrays;
+
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -220,5 +222,12 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
             // final disambiguation via hashCode
             return Integer.compare(hashCode(), o.hashCode());
         }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"{path='"+ getPath()+"', "
+                + ( getType().isMultiple()? ("values=" + Arrays.toString(getValues())): ("value=" + getValue().toString()) )
+                + "}";
     }
 }

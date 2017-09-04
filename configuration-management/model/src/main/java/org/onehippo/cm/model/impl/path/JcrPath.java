@@ -373,6 +373,10 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         return segments.iterator();
     }
 
+    public JcrPathSegment[] toArray() {
+        return segments.toArray(new JcrPathSegment[segments.size()]);
+    }
+
     /**
      * Compare paths by name segment, with unindexed segments considered to be identical to name with index 1.
      */

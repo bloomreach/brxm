@@ -448,8 +448,8 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[e[1], c[1], d[1]]", sortedCollectionToString(b.getNodes()));
 
-        assertEquals("a definition adding only child nodes should NOT be listed as a definition for the containing node",
-                1, b.getDefinitions().size());
+        assertEquals("a definition adding only child nodes should be listed as a definition for the containing node",
+                2, b.getDefinitions().size());
     }
 
     @Test
@@ -479,8 +479,8 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl d = b.getNode("d[1]");
         assertEquals("[d[1], c[1]]", sortedCollectionToString(b.getNodes()));
 
-        assertEquals("a definition only reordering child nodes should NOT be listed as a definition for the containing node",
-                1, b.getDefinitions().size());
+        assertEquals("a definition only reordering child nodes should be listed as a definition for the containing node",
+                2, b.getDefinitions().size());
 
         assertEquals("a definition reordering a node SHOULD be listed as a definition for the node",
                 2, d.getDefinitions().size());
@@ -846,7 +846,8 @@ public class ConfigurationTreeBuilderTest {
             builder.push((ContentDefinitionImpl) definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string]].", e.getMessage());
+            // TODO: exclude def currently being processed from getOrigin() output
+            assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string], test-group/test-project/test-module [config: string]].", e.getMessage());
         }
     }
 

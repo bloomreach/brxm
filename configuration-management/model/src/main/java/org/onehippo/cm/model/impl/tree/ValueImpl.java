@@ -102,6 +102,19 @@ public class ValueImpl implements Value, Cloneable {
         return value.toString();
     }
 
+    /**
+     * @return a String-ified value suitable for debugging -- for a value suitable for storage, use {@link #getString()}
+     */
+    public String toString() {
+        if (isResource) {
+            return "resource:" + value.toString();
+        }
+        if (valueType == ValueType.BINARY) {
+            return "(binary)";
+        }
+        return value.toString();
+    }
+
     @Override
     public ValueType getType() {
         return valueType;

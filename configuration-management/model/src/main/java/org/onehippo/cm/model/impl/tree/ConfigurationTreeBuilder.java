@@ -364,7 +364,7 @@ public class ConfigurationTreeBuilder {
     private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getNode();
         final JcrPath definitionRootPath = definitionNode.getJcrPath();
-        final JcrPathSegment[] pathSegments = definitionRootPath.stream().toArray(JcrPathSegment[]::new);
+        final JcrPathSegment[] pathSegments = definitionRootPath.toArray();
         int segmentsConsumed = 0;
 
         ConfigurationNodeImpl rootForDefinition = root;
@@ -404,6 +404,10 @@ public class ConfigurationTreeBuilder {
             }
         }
 
+        // REPO-1805: track definitions that mention a node as a root path, but don't change any properties
+        if (rootForDefinition != null) {
+            rootForDefinition.addDefinition(definitionNode);
+        }
         return rootForDefinition;
     }
 
