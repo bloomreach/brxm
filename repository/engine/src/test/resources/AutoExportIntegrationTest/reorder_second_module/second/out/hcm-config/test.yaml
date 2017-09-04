@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport:
+      /hippo:moduleconfig:
+        autoexport:modules:
+          operation: add
+          type: string
+          value: [second]
+    /reorder-second-mix:
+      /from-second:
+        .meta:order-before: from-first
+        jcr:primaryType: nt:unstructured
+    /reorder-second-within:
+      jcr:primaryType: nt:unstructured
+      /two:
+        jcr:primaryType: nt:unstructured
+      /one:
+        jcr:primaryType: nt:unstructured

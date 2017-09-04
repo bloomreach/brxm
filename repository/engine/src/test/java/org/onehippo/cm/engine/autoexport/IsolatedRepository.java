@@ -19,12 +19,14 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 import javax.jcr.Credentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cm.model.ConfigurationModel;
@@ -53,6 +55,7 @@ public class IsolatedRepository {
 
     private final File folder;
     private final File projectFolder;
+    private final URL[] additionalClasspathURLs;
     private final boolean autoExportEnabled;
 
     private URLClassLoader classLoader;
@@ -70,6 +73,7 @@ public class IsolatedRepository {
     public IsolatedRepository(final File folder) {
         this.folder = folder;
         this.projectFolder = null;
+        this.additionalClasspathURLs = new URL[0];
         this.autoExportEnabled = false;
     }
 
@@ -77,9 +81,10 @@ public class IsolatedRepository {
      * Constructor that will start a repository in given folder AutoExport enabled, reading its data from the given
      * project folder.
      */
-    public IsolatedRepository(final File folder, final File projectFolder) {
+    public IsolatedRepository(final File folder, final File projectFolder, final List<URL> additionalClasspathURLs) {
         this.folder = folder;
         this.projectFolder = projectFolder;
+        this.additionalClasspathURLs = additionalClasspathURLs.toArray(new URL[additionalClasspathURLs.size()]);
         this.autoExportEnabled = true;
     }
 
@@ -123,7 +128,9 @@ public class IsolatedRepository {
 
     private Object create(final String repoPath, final String repoConfig) throws Exception {
         final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        classLoader = new RepositoryClassLoader(contextClassLoader.getURLs(), contextClassLoader);
+        classLoader = new RepositoryClassLoader(
+                (URL[]) ArrayUtils.addAll(contextClassLoader.getURLs(), additionalClasspathURLs),
+                contextClassLoader);
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             return Class.forName("org.hippoecm.repository.LocalHippoRepository", true, classLoader)

@@ -280,7 +280,7 @@ public class DefinitionMergeService {
     private void reorder(final Map<JcrPath, String> contentOrderBefores) {
 
         final List<String> sortedModules = new ArrayList<>();
-        model.getModulesStream().forEach((module) -> sortedModules.add(module.getName()));
+        model.getModulesStream().forEach((module) -> sortedModules.add(module.getFullName()));
 
         for (final JcrPath path : reorderRegistry) {
             try {
@@ -451,6 +451,7 @@ public class DefinitionMergeService {
             return holders;
         }
 
+        // Maintain a set of local nodes definitions who's children must be sorted according to the expected ordering
         final Set<DefinitionNodeImpl> reorderChildDefinitions = new HashSet<>();
 
         for (final JcrPathSegment childName : expected) {

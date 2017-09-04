@@ -16,9 +16,12 @@
 
 package org.onehippo.cm.engine.autoexport;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -285,6 +288,32 @@ public class AutoExportIntegrationTest {
             });
     }
 
+    @Test
+    public void autoexport_reorder_second_module() throws Exception {
+        final String reorderWithin = "/reorder-second-within";
+        final String reorderMix = "/reorder-second-mix";
+
+        final ModuleInfo first = new ModuleInfo("reorder_second_module", "first");
+        final ModuleInfo second = new ModuleInfo("reorder_second_module", "second");
+
+        new Fixture(first, second).test(
+                (session, configurationModel) -> {
+                    assertOrder("[one, two]", reorderWithin, session, configurationModel);
+                    assertOrder("[from-first, from-second]", reorderMix, session, configurationModel);
+                },
+                (session) -> {
+                    final Node reorderWithinNode = session.getNode(reorderWithin);
+                    reorderWithinNode.orderBefore("two", "one");
+
+                    final Node reorderMixNode = session.getNode(reorderMix);
+                    reorderMixNode.orderBefore("from-second", "from-first");
+                },
+                (session, configurationModel) -> {
+                    assertOrder("[two, one]", reorderWithin, session, configurationModel);
+                    assertOrder("[from-second, from-first]", reorderMix, session, configurationModel);
+                });
+    }
+
     private void assertOrder(final String order, final String path, final Session session,
                              final ConfigurationModel model) throws Exception {
         assertOrderInJcr(order, path, session);
@@ -335,14 +364,65 @@ public class AutoExportIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    public static class ModuleInfo {
+        private final String fixtureName;
+        private final String moduleName;
+        private final String inSegment;
+        private final String outSegment;
+        private Path workingDirectory = null;
+        public ModuleInfo(final String fixtureName) {
+            this(fixtureName, null, "in", "out");
+        }
+        public ModuleInfo(final String fixtureName, final String moduleName) {
+            this(fixtureName, moduleName, "in", "out");
+        }
+        public ModuleInfo(final String fixtureName, final String moduleName, final String inSegment, final String outSegment) {
+            this.fixtureName = fixtureName;
+            this.moduleName = moduleName;
+            this.inSegment = inSegment;
+            this.outSegment = outSegment;
+        }
+        public String getFixtureName() {
+            return fixtureName;
+        }
+        public String getEffectiveModuleName() {
+            return moduleName == null ? "TestModuleFileSource" : moduleName;
+        }
+        public Path getInPath() {
+            return getPath(inSegment);
+        }
+        public Path getOutPath() {
+            return getPath(outSegment);
+        }
+        public Path getWorkingDirectory() {
+            return workingDirectory;
+        }
+        public void setWorkingDirectory(final Path workingDirectory) {
+            this.workingDirectory = workingDirectory;
+        }
+        private Path getPath(final String lastSegment) {
+            final Path subPath = Paths.get("src", "test", "resources", "AutoExportIntegrationTest", fixtureName);
+            final Path intermediate = calculateBasePath().resolve(subPath);
+            return moduleName == null
+                    ? intermediate.resolve(lastSegment)
+                    : intermediate.resolve(moduleName).resolve(lastSegment);
+        }
+    }
+
     // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
     private static final Validator NOOP = (session, configurationModel) -> {};
 
     private class Fixture extends AbstractBaseTest {
-        private final String name;
-        Fixture(final String name) {
-            this.name = name;
+
+        private final ModuleInfo[] modules;
+        Fixture(final String fixtureName) {
+            this(new ModuleInfo(fixtureName));
         }
+
+        Fixture(final ModuleInfo... modules) {
+            this.modules = modules;
+        }
+
         void test(final JcrRunner jcrRunner) throws Exception {
             test(NOOP, jcrRunner, NOOP);
         }
@@ -350,13 +430,19 @@ public class AutoExportIntegrationTest {
                   final JcrRunner jcrRunner,
                   final Validator postConditionValidator) throws Exception {
             final Path projectPath = folder.newFolder("project").toPath();
-            final Path resourcePath = projectPath.resolve(Paths.get("TestModuleFileSource", "src", "main", "resources"));
-            Files.createDirectories(resourcePath);
 
-            final Path fixturePath = calculateBasePath().resolve(Paths.get("src", "test", "resources", "AutoExportIntegrationTest", name));
-            FileUtils.copyDirectory(fixturePath.resolve("in").toFile(), resourcePath.toFile());
+            final List<URL> additionalClasspathURLs = new ArrayList<>(modules.length);
+            for (final ModuleInfo module : modules) {
+                final Path workingDirectory =
+                        projectPath.resolve(Paths.get(module.getEffectiveModuleName(), "src", "main", "resources"));
+                module.setWorkingDirectory(workingDirectory);
+                Files.createDirectories(workingDirectory);
+                FileUtils.copyDirectory(module.getInPath().toFile(), workingDirectory.toFile());
+                additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
+            }
 
-            final IsolatedRepository repository = new IsolatedRepository(folder.getRoot(), projectPath.toFile());
+            final IsolatedRepository repository =
+                    new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
 
             repository.startRepository();
             final Session session = repository.login(IsolatedRepository.CREDENTIALS);
@@ -374,7 +460,7 @@ public class AutoExportIntegrationTest {
             jcrRunner.run(session);
             session.save();
 
-            // ... and run it again to capture the changes made by jcrRunner
+            // ... and run it again to export the changes made by jcrRunner
             repository.runSingleAutoExportCycle();
 
             session.refresh(false);
@@ -383,7 +469,13 @@ public class AutoExportIntegrationTest {
             session.logout();
             repository.stop();
 
-            assertNoFileDiff("test " + name + " failed", fixturePath.resolve("out"), resourcePath);
+            for (final ModuleInfo module : modules) {
+                assertNoFileDiff(
+                        "In fixture '" + module.getFixtureName() + "', the module '" + module.getEffectiveModuleName()
+                                + "' is not as expected",
+                        module.getOutPath(),
+                        module.getWorkingDirectory());
+            }
         }
     }
 

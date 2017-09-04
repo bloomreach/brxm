@@ -4,4 +4,4 @@ group:
 project:
   name: autoexport-integration-test-project
   after: hippo-repository
-module: autoexport-integration-test-module
+module: autoexport-integration-test-module-first
