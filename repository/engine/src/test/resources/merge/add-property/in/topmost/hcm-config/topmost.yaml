@@ -2,3 +2,7 @@ definitions:
   config:
     /topmost:
       jcr:primaryType: nt:unstructured
+    /otherTopmost:
+      jcr:primaryType: nt:unstructured
+      /otherChild:
+        jcr:primaryType: nt:unstructured

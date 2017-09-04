@@ -81,7 +81,7 @@ public class DefinitionMergeTest {
 
     @Test
     public void add_property() throws Exception {
-        new MergeFixture("add-property").test();
+        new MergeFixture("add-property", "/topmost,/otherTopmost,/exportFirstExistingRoot,/hippo:namespaces", "/").test();
     }
 
     @Test

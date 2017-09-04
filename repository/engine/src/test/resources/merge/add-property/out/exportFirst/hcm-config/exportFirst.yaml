@@ -1,5 +1,9 @@
 definitions:
   config:
+    /otherTopmost:
+      newProperty: value
+      /otherChild:
+        property: value
     /topmost/upstream:
       existingPropertyAddedInExport: '... but now I have a new value'
       existingPropertyNewlyModified: I'm still a string!
