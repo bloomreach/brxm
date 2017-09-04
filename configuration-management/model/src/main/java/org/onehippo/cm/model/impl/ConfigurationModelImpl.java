@@ -252,27 +252,29 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return deletedConfigNodes.get(path);
     }
 
+    public ConfigurationNodeImpl resolveDeletedSubNodeRoot(final JcrPath path) {
+        return deletedConfigNodes.values().stream()
+                .filter(deletedRootNode -> !path.equals(deletedRootNode.getJcrPath()) && path.startsWith(deletedRootNode.getJcrPath()))
+                .findFirst().orElse(null);
+    }
+
     /**
      * Resolve child in deleted node
      */
     public ConfigurationNodeImpl resolveDeletedSubNode(final JcrPath path) {
-        for (ConfigurationNodeImpl deletedConfigNode : deletedConfigNodes.values()) {
-            if (path.startsWith(deletedConfigNode.getJcrPath())) {
-                String commonPrefix = StringUtils.getCommonPrefix(path.toString(), deletedConfigNode.getJcrPath().toString());
-                if (StringUtils.isNotEmpty(commonPrefix)) {
-                    int commonSegmentsCount = commonPrefix.split("/").length - 1;
-                    final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
-                    ConfigurationNodeImpl currentNode = deletedConfigNode;
-                    for (final JcrPathSegment jcrPathSegment : subpath) {
-                        currentNode = currentNode.getNode(jcrPathSegment);
-                        if (currentNode == null) {
-                            break; //wrong path
-                        } else if (currentNode.getJcrPath().equals(path)) {
-                            return currentNode;
-                        }
-                    }
-                } else {
-                    // This is root node
+
+        final ConfigurationNodeImpl deletedRootNode = resolveDeletedSubNodeRoot(path);
+        if (deletedRootNode != null) {
+            String commonPrefix = StringUtils.getCommonPrefix(path.toString(), deletedRootNode.getJcrPath().toString());
+            int commonSegmentsCount = commonPrefix.split("/").length - 1;
+            final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
+            ConfigurationNodeImpl currentNode = deletedRootNode;
+            for (final JcrPathSegment jcrPathSegment : subpath) {
+                currentNode = currentNode.getNode(jcrPathSegment);
+                if (currentNode == null) {
+                    break; //wrong path
+                } else if (currentNode.getJcrPath().equals(path)) {
+                    return currentNode;
                 }
             }
         }
