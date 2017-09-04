@@ -67,7 +67,10 @@ public class ContentSourceParser extends SourceParser {
 
     @Override
     protected void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException {
-        final List<NodeTuple> tuples = asTuples(node);
+        populateDefinitionNode(definitionNode, node, asTuples(node));
+    }
+
+    protected void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node, final List<NodeTuple> tuples) throws ParserException {
         for (NodeTuple tuple : tuples) {
             final String key = asStringScalar(tuple.getKeyNode());
             final Node tupleValue = tuple.getValueNode();

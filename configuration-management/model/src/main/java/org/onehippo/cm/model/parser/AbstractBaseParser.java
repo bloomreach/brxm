@@ -53,6 +53,10 @@ public abstract class AbstractBaseParser {
         this.explicitSequencing = explicitSequencing;
     }
 
+    protected boolean isExplicitSequencing() {
+        return explicitSequencing;
+    }
+
     protected Node composeYamlNode(final InputStream inputStream, final String location) throws ParserException {
         log.debug("Parsing YAML source '{}'", location);
         final Yaml yamlParser = new Yaml();
