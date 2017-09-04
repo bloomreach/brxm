@@ -18,7 +18,11 @@ class SubpageToolbarCtrl {
   constructor($translate) {
     'ngInject';
 
-    this.ariaLabel = $translate.instant(this.mode === 'cancel' ? 'TOOLBAR_BUTTON_CLOSE' : 'TOOLBAR_BUTTON_BACK');
+    this.$translate = $translate;
+  }
+
+  $onInit() {
+    this.ariaLabel = this.$translate.instant(this.mode === 'cancel' ? 'TOOLBAR_BUTTON_CLOSE' : 'TOOLBAR_BUTTON_BACK');
     this.icon = (this.mode === 'cancel') ? 'close' : 'back';
   }
 }
