@@ -19,13 +19,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>12.0.1-SNAPSHOT</version>
+    <version>12.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -36,7 +36,7 @@
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.2</jsp-api.version>
-    <taglibs.version>1.2.1</taglibs.version>
+    <taglibs.version>1.2.5</taglibs.version>
     <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
@@ -57,7 +57,7 @@
 
     <dependency.solr.version>4.9.0</dependency.solr.version>
 
-    <json-lib.version>2.2.2</json-lib.version>
+    <json-lib.version>2.4</json-lib.version>
 
     <webjars-servlet-2.x.version>1.5</webjars-servlet-2.x.version>
     <webjars-swagger-ui.version>2.2.8</webjars-swagger-ui.version>
