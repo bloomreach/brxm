@@ -65,7 +65,7 @@ public class PollInstruction implements Instruction {
                 return InstructionStatus.SKIPPED;
             }
         } catch (FileNotFoundException | JAXBException e) {
-            log.error("Error executing robots plugin instruction", e);
+            log.error("Error executing poll plugin instruction", e);
         }
         return InstructionStatus.FAILED;
     }
