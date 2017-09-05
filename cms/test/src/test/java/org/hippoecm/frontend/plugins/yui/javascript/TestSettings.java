@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import junit.framework.TestCase;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
+import net.sf.json.JSONNull;
 
 public class TestSettings extends TestCase {
 
@@ -138,7 +139,7 @@ public class TestSettings extends TestCase {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
         JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
-        assertTrue(((JSONObject) wfObject.get("rootId")).isNullObject());
+        assertEquals(JSONNull.getInstance(), wfObject.get("rootId"));
 
         JSONArray units = wfObject.getJSONArray("units");
         Map<String, JSONObject> unitMap = new TreeMap<String, JSONObject>();
@@ -171,7 +172,7 @@ public class TestSettings extends TestCase {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
         JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
-        assertTrue(((JSONObject) wfObject.get("rootId")).isNullObject());
+        assertEquals(JSONNull.getInstance(), wfObject.get("rootId"));
 
         JSONArray units = wfObject.getJSONArray("units");
         JSONObject centerObject = null;
