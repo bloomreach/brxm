@@ -32,7 +32,6 @@ class PickerService {
       template,
       controller: 'PickerCtrl',
       controllerAs: 'picker',
-      bindToController: true,
     }));
   }
 

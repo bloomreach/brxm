@@ -15,18 +15,20 @@
  */
 
 class PickerCtrl {
-  constructor($mdDialog, $filter, PickerService) {
+  constructor($mdDialog, $filter, PickerService, locals) {
     'ngInject';
+
+    this.$mdDialog = $mdDialog;
+    this.$filter = $filter;
+    this.PickerService = PickerService;
+    this.pickerTypes = locals.pickerTypes;
+    this.initialLink = locals.initialLink;
 
     if (!this.pickerTypes || this.pickerTypes.length === 0) {
       throw new Error('No types defined for picker');
     }
 
-    this.$mdDialog = $mdDialog;
-    this.$filter = $filter;
-    this.PickerService = PickerService;
-
-    this.items = PickerService.getTree();
+    this.items = this.PickerService.getTree();
     this.selectedItem = null;
     this.selectedDocument = null;
 
@@ -40,11 +42,11 @@ class PickerCtrl {
     this.treeOptions = {
       displayItem: item => item.type === 'folder' || item.type === 'page',
       selectItem: (item) => {
-        PickerService.getData(item);
+        this.PickerService.getData(item);
         this.selectedDocument = item.selectable ? item : null;
       },
       toggleItem: (item) => {
-        PickerService.getData(item);
+        this.PickerService.getData(item);
       },
     };
   }

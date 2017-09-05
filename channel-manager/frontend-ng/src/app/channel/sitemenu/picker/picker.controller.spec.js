@@ -62,9 +62,7 @@ describe('PickerCtrl', () => {
         const ctrl = $controller('PickerCtrl', {
           $scope: $rootScope.$new(),
           PickerService,
-        }, {
-          pickerTypes,
-          initialLink,
+          locals: { pickerTypes, initialLink }
         });
         $rootScope.$digest();
         return ctrl;

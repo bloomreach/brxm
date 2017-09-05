@@ -19,6 +19,7 @@ class MenuEditorCtrl {
     FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.$translate = $translate;
     this.SiteMenuService = SiteMenuService;
     this.HippoIframeService = HippoIframeService;
@@ -35,29 +36,6 @@ class MenuEditorCtrl {
       ITEM_NAME_NOT_UNIQUE: 'ERROR_MENU_SAME_NAME_SIBLING',
       ITEM_NAME_NOT_UNIQUE_IN_ROOT: 'ERROR_MENU_SAME_NAME_SIBLING',
     };
-
-    this._loadMenu()
-      .then((menu) => {
-        if (this.isLockedByOther()) {
-          this.FeedbackService.showError('ERROR_MENU_LOCKED_BY', { lockedBy: this.lockedBy });
-        }
-        // Currently, the SiteMenuService is loading and maintaining the menu structure.
-        // Creation or deletion of a menu item trigger a full reload of the menu, and the
-        // $watch below makes sure the MenuEditorCtrl becomes aware of these reloads.
-        // TODO: this is ugly, inefficient and hard to maintain. We should improve this.
-        $scope.$watch(
-          () => menu.items,
-          () => {
-            this.items = menu.items;
-          },
-        );
-      })
-      .catch((response) => {
-        response = response || {};
-
-        HippoIframeService.reload(); // Make sure EditMenu buttons are up-to-date.
-        this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
-      });
 
     this.treeOptions = {
       dragStart: () => {
@@ -81,6 +59,31 @@ class MenuEditorCtrl {
         }
       },
     };
+  }
+
+  $onInit() {
+    this._loadMenu()
+      .then((menu) => {
+        if (this.isLockedByOther()) {
+          this.FeedbackService.showError('ERROR_MENU_LOCKED_BY', { lockedBy: this.lockedBy });
+        }
+        // Currently, the SiteMenuService is loading and maintaining the menu structure.
+        // Creation or deletion of a menu item trigger a full reload of the menu, and the
+        // $watch below makes sure the MenuEditorCtrl becomes aware of these reloads.
+        // TODO: this is ugly, inefficient and hard to maintain. We should improve this.
+        this.$scope.$watch(
+          () => menu.items,
+          () => {
+            this.items = menu.items;
+          },
+        );
+      })
+      .catch((response) => {
+        response = response || {};
+
+        this.HippoIframeService.reload(); // Make sure EditMenu buttons are up-to-date.
+        this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
+      });
   }
 
   _loadMenu() {
