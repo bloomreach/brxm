@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -56,7 +56,7 @@
     <product_abr>HST</product_abr>
 
     <jsp-api.version>2.2</jsp-api.version>
-    <taglibs.version>1.2.1</taglibs.version>
+    <taglibs.version>1.2.5</taglibs.version>
 
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
@@ -80,17 +80,17 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.jackrabbit.version>2.14.0-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>4.0.0</hippo.commons.version>
-    <hippo.repository.version>5.0.1-SNAPSHOT</hippo.repository.version>
-    <hippo.hcm.version>1.0.1-SNAPSHOT</hippo.hcm.version>
-    <hippo.cms.version>5.0.0</hippo.cms.version>
-    <hippo.utilities.version>4.0.0</hippo.utilities.version>
-    <hippo.services.version>4.0.0</hippo.services.version>
-    <hippo.services.eventbus.version>4.0.0</hippo.services.eventbus.version>
-    <hippo.services.search.version>4.0.0</hippo.services.search.version>
-    <hippo.services.contenttype.version>4.0.0</hippo.services.contenttype.version>
-    <hippo.testutils.version>1.0.0</hippo.testutils.version>
+    <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
+    <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>1.0.1-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.1.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.search.version>4.1.0-SNAPSHOT</hippo.services.search.version>
+    <hippo.services.contenttype.version>4.1.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.1.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
 
@@ -166,14 +166,14 @@
       <dependency>
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-configuration-management-api</artifactId>
-        <version>${hippo.hcm.version}</version>
+        <version>${hippo.configuration-management.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-configuration-management-model</artifactId>
-        <version>${hippo.hcm.version}</version>
+        <version>${hippo.configuration-management.version}</version>
         <scope>provided</scope>
       </dependency>
 

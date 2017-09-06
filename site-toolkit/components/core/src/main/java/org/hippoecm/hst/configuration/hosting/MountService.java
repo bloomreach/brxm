@@ -453,8 +453,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_NOCHANNELINFO)) {
             noChannelInfo = mount.getValueProvider().getBoolean(MOUNT_PROPERTY_NOCHANNELINFO);
-        } else if(parent != null) {
-            noChannelInfo = ((MountService)parent).noChannelInfo;
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
