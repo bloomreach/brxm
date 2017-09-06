@@ -62,6 +62,7 @@
     "@types/node": "8.0.9",
     "@types/webpack-env": "1.13.0",
     "angular-mocks": "1.5.11",
+    "codelyzer": "3.1.2",
     "gulp": "github:gulpjs/gulp#38246c3f8b6dbb8d4ef657183e92d90c8299e22f",
     "gulp-hub": "github:frankwallis/gulp-hub#292f8ab005165c3267accb01a51f31719970d443"
   }
