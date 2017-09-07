@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -285,7 +284,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         };
         ok.setKeyType(KeyType.Enter);
-        buttons.add(ok);
 
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
 
@@ -316,7 +314,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         };
         cancel.setKeyType(KeyType.Escape);
+
         buttons.add(cancel);
+        buttons.add(ok);
 
         if (isFullscreenEnabled()) {
             final AjaxButton goFullscreen = new AjaxButton(DialogConstants.BUTTON,
