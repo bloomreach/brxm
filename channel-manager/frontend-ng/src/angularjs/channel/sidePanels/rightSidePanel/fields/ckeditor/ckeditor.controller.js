@@ -126,7 +126,7 @@ class CKEditorController {
     });
 
     this.SharedSpaceToolbarService.showToolbar({
-      hasBottomToolbar: this.config.hasBottomToolbar,
+      hasBottomToolbar: this.config.hippo && this.config.hippo.hasBottomToolbar,
     });
     this._validate();
   }
