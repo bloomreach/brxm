@@ -51,6 +51,8 @@
               [${product.valueMap['SKU']!}] ${extendedData.valueMap['title']!}
             </a>
             (${product.getValue('extendedData/description')!})
+            <a href="<@hst.resourceURL resourceId='downloadImage'><@hst.param name='sku' value='${product.valueMap["SKU"]!}'/></@hst.resourceURL>"
+               target="_blank">Download Product Image</a>
           </li>
         </#list>
       </ul>

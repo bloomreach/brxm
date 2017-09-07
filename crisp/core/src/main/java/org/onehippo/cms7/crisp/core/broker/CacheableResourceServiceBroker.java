@@ -23,6 +23,7 @@ import javax.servlet.ServletRequest;
 import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -218,6 +219,14 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         }
 
         return resource;
+    }
+
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
+        return resourceResolver.resolveBinary(absPath, pathVariables);
     }
 
     /**

@@ -21,6 +21,9 @@ import org.onehippo.cms7.crisp.demo.example.commerce.model.Product;
 import org.onehippo.cms7.crisp.demo.example.commerce.model.ProductDataResult;
 import org.onehippo.cms7.crisp.demo.example.commerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +52,14 @@ public class ProductsController {
         ProductDataResult result = new ProductDataResult();
         result.setProducts(productRepository.findProducts(query));
         return result;
+    }
+
+    @RequestMapping(value="/products/{sku}/image/download",
+            method = RequestMethod.GET,
+            produces = { "image/jpeg" }
+    )
+    public Resource downloadProductImage(@PathVariable(value="sku") String sku) {
+        return new ClassPathResource("META-INF/example/commerce/data/windpower.jpg");
     }
 
 }

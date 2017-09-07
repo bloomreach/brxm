@@ -17,10 +17,12 @@ package org.onehippo.cms7.crisp.api.broker;
 
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
+import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 /**
  * Abstract delegating Resource Service Broker adaptor class.
@@ -42,6 +44,17 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     public Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables)
             throws ResourceException {
         return delegated.resolve(resourceSpace, absPath, pathVariables);
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath) throws ResourceException {
+        return delegated.resolveBinary(resourceSpace, absPath);
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        return delegated.resolveBinary(resourceSpace, absPath, pathVariables);
     }
 
     @Override

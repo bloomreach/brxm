@@ -15,11 +15,22 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.onehippo.cms7.crisp.api.resource.Binary;
+import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -85,6 +96,44 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
      */
     public void setRestTemplate(RestTemplate defaultRestTemplate) {
         this.restTemplate = defaultRestTemplate;
+    }
+
+    @Override
+    public Binary resolveBinary(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        Binary binary = null;
+
+        try {
+            RestTemplate restTemplate = getRestTemplate();
+            binary = restTemplate.execute(getBaseResourceURI(absPath), HttpMethod.GET, null,
+                    new ResponseExtractor<FileBinary>() {
+                        @Override
+                        public FileBinary extractData(ClientHttpResponse response) throws IOException {
+                            FileBinary fileBinary = null;
+                            InputStream input = null;
+
+                            if (response.getStatusCode().is2xxSuccessful()) {
+                                try {
+                                    fileBinary = new FileBinary();
+                                    File file = File.createTempFile("crispbin-", ".tmp");
+                                    input = response.getBody();
+                                    fileBinary.save(file, input);
+                                } finally {
+                                    IOUtils.closeQuietly(input);
+                                }
+                            } else {
+                                throw new ResourceException("Unexpected response status: " + response.getStatusCode());
+                            }
+
+                            return fileBinary;
+                        }
+                    }, pathVariables);
+        } catch (RestClientException e) {
+            throw new ResourceException("REST client invocation error.", e);
+        } catch (Exception e) {
+            throw new ResourceException("Unknown error.", e);
+        }
+
+        return binary;
     }
 
     /**
