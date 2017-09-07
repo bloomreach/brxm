@@ -674,12 +674,16 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
             for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
-                configSourceParser.parse(configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), getFullSourcePath(source, configResourceInputProvider), newModule);
+                try(InputStream resourceInputStream = configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath())) {
+                    configSourceParser.parse(resourceInputStream,
+                            source.getPath(), getFullSourcePath(source, configResourceInputProvider), newModule);
+                }
             }
             for (ContentSourceImpl source : getContentSources()) {
-                contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), getFullSourcePath(source, contentResourceInputProvider), newModule);
+                try(InputStream resourceInputStream = contentResourceInputProvider.getResourceInputStream(null, "/" + source.getPath())) {
+                    contentSourceParser.parse(resourceInputStream,
+                            source.getPath(), getFullSourcePath(source, contentResourceInputProvider), newModule);
+                }
             }
 
             return newModule.build();

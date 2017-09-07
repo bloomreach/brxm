@@ -24,6 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
@@ -151,7 +152,9 @@ public class PathConfigurationReader {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
                 (filePath, fileAttr) -> fileAttr.isRegularFile() && filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT);
-        Files.find(basePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
+        try(Stream<Path> pathStream = Files.find(basePath, Integer.MAX_VALUE, matcher)) {
+            pathStream.forEachOrdered(paths::add);
+        }
         final int modulePathSize = basePath.getNameCount();
 
         final List<Pair<Path, String>> result = new ArrayList<>();
