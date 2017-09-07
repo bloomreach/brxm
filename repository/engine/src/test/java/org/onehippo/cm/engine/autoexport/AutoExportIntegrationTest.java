@@ -195,10 +195,12 @@ public class AutoExportIntegrationTest {
                 assertOrderInJcr("[m1-initial, m2-last, m3-content1, m4-content2]", "/mix", session);
                 assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
 
-                assertOrder("[first, middle, delete]", "/reorder-on-config-delete", session, configurationModel);
+                assertOrder("[1-first, 2-second, 3-third, delete]", "/reorder-on-config-delete", session, configurationModel);
 
                 assertOrderInJcr("[n3, n2, n1]", "/reorder-on-content-delete", session);
                 assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+
+                assertOrder("[a, c, b]", "/existing-files/sub", session, configurationModel);
             },
             (session) -> {
                 final Node across = session.getNode("/across");
@@ -213,11 +215,13 @@ public class AutoExportIntegrationTest {
                 mix.orderBefore("m3-content1", "m2-last");
                 mix.orderBefore("m4-content2", "m3-content1");
 
-                // Note that this test also demonstrates cleaning the no-longer-necessary order-before of 'middle'
-                // and the entire (superfluous) source superfluous-middle.yaml
+                // Note that this test also demonstrates cleaning the no-longer-necessary order-before of '2-second',
+                // '3-third' and the entire (superfluous) source reorder-on-config-delete-1-first.yaml
                 session.getNode("/reorder-on-config-delete/delete").remove();
 
                 session.getNode("/reorder-on-content-delete/n2").remove();
+
+                session.getNode("/existing-files/sub").orderBefore("b", "c");
 
                 final Node createNewFiles = session.getNode("/create-new-files/sub");
                 createNewFiles.addNode("zzz-first", "nt:unstructured");
@@ -231,10 +235,12 @@ public class AutoExportIntegrationTest {
                 assertOrderInJcr("[m1-initial, m4-content2, m3-content1, m2-last]", "/mix", session);
                 assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
 
-                assertOrder("[first, middle]", "/reorder-on-config-delete", session, configurationModel);
+                assertOrder("[1-first, 2-second, 3-third]", "/reorder-on-config-delete", session, configurationModel);
 
                 assertOrderInJcr("[n3, n1]", "/reorder-on-content-delete", session);
                 assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+
+                assertOrder("[a, b, c]", "/existing-files/sub", session, configurationModel);
 
                 assertOrder("[zzz-first, abc-last]", "/create-new-files/sub", session, configurationModel);
             });

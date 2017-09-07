@@ -33,15 +33,21 @@ definitions:
       jcr:primaryType: nt:unstructured
       /delete:
         jcr:primaryType: nt:unstructured
-      /first:
+      /1-first:
         jcr:primaryType: nt:unstructured
-    /reorder-on-config-delete/middle:
+      /2-second:
+        jcr:primaryType: nt:unstructured
+    /reorder-on-config-delete/3-third:
       .meta:order-before: delete
       jcr:primaryType: nt:unstructured
     /reorder-on-content-delete:
       .meta:residual-child-node-category: content
       jcr:primaryType: nt:unstructured
     /create-new-files:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
+    /existing-files:
       jcr:primaryType: nt:unstructured
       /sub:
         jcr:primaryType: nt:unstructured

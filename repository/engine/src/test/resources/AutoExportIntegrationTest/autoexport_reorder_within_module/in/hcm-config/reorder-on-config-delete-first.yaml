@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /reorder-on-config-delete/first:
-      .meta:order-before: delete

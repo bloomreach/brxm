@@ -44,6 +44,10 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -85,10 +89,6 @@ import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
@@ -466,27 +466,16 @@ public class DefinitionMergeService {
                     reorderChildDefinitions.add(childDefNode.getParent());
                 }
 
-                boolean influencesOrdering = false;
-                if (!primaryTypeSeen) {
-                    final DefinitionPropertyImpl primaryTypeProperty = childDefNode.getProperty(JCR_PRIMARYTYPE);
-                    if (primaryTypeProperty != null && primaryTypeProperty.getOperation() == REPLACE) {
-                        influencesOrdering = true;
-                        primaryTypeSeen = true;
-                    }
+                boolean createHolder = false;
+                if (isNewNodeDefinition(childDefNode) && !primaryTypeSeen) {
+                    createHolder = true;
+                    primaryTypeSeen = true;
                 }
-                if (childDefNode.getOrderBefore() != null) {
-                    if (isLocal) {
-                        // Remove all local order-before definitions, if needed, they will be recreated in a later step
-                        childDefNode.setOrderBefore(null);
-                        if (childDefNode.isEmpty()) {
-                            removeOneDefinitionItem(childDefNode, new ArrayList<>());
-                        }
-                    } else {
-                        influencesOrdering = true;
-                    }
+                if (childDefNode.getOrderBefore() != null && !isLocal) {
+                    createHolder = true;
                 }
 
-                if (influencesOrdering) {
+                if (createHolder) {
                     final String moduleName = childDefNode.getDefinition().getSource().getModule().getFullName();
                     final int moduleIndex = sortedModules.indexOf(moduleName);
                     if (isLocal) {
@@ -494,6 +483,16 @@ public class DefinitionMergeService {
                                 (deleteDefItem) -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>())));
                     } else {
                         holders.upstream.add(new UpstreamConfigOrderBeforeHolder(moduleIndex, childDefNode));
+                    }
+                } else {
+                    // Remove any other local order-before definitions, if they turned out to be needed to reorder
+                    // an upstream node, they will be recreated in a later step
+                    if (isLocal && childDefNode.getOrderBefore() != null) {
+                        childDefNode.setOrderBefore(null);
+                        childDefNode.getDefinition().getSource().markChanged();
+                        if (childDefNode.isEmpty()) {
+                            removeOneDefinitionItem(childDefNode, new ArrayList<>());
+                        }
                     }
                 }
             }

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /reorder-on-config-delete/2-second:
+      # only the .meta:order-before is expected to be cleaned up
+      .meta:order-before: delete
+      property: value

@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /reorder-on-config-delete/2-second:
+      property: value
