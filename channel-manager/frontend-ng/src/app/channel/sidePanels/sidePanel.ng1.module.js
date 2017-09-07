@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import menuEditorDirective from './editor.directive';
-import selectAllOnFocusDirective from './selectAllOnFocus.directive';
-import MenuEditorCtrl from './editor.controller';
-import uiTreeModule from './tree/tree';
-import pickerModule from './picker/picker';
+import SidePanelService from './sidePanel.service';
+import leftSidePanelModule from './leftSidePanel/leftSidePanel.ng1.module';
+import rightSidePanelModule from './rightSidePanel/rightSidePanel.ng1.module';
 
-const channelSitemenuModule = angular
-  .module('hippo-cm.channel.sitemenu', [
-    uiTreeModule.name,
-    pickerModule.name,
-    'focus-if',
+const channelSidePanelModule = angular
+  .module('hippo-cm.channel.sidePanel', [
+    leftSidePanelModule,
+    rightSidePanelModule,
   ])
-  .directive('menuEditor', menuEditorDirective)
-  .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  .service('SidePanelService', SidePanelService);
 
-export default channelSitemenuModule;
+export default channelSidePanelModule;

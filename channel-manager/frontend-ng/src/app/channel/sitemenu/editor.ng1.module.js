@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import leftSidePanelComponent from './leftSidePanel.component';
-import leftSidePanelToggleComponent from './leftSidePanelToggle/leftSidePanelToggle.component';
-import componentCatalogModule from './componentCatalog/componentCatalog.module';
+import menuEditorDirective from './editor.directive';
+import selectAllOnFocusDirective from './selectAllOnFocus.directive';
+import MenuEditorCtrl from './editor.controller';
+import uiTreeModule from './tree/tree.ng1.module';
+import pickerModule from './picker/picker.ng1.module';
 
-const leftSidePanelModule = angular
-  .module('hippo-cm.channel.leftSidePanelModule', [
-    componentCatalogModule.name,
+const channelSitemenuModule = angular
+  .module('hippo-cm.channel.sitemenu', [
+    uiTreeModule.name,
+    pickerModule.name,
+    'focus-if',
   ])
-  .component('leftSidePanel', leftSidePanelComponent)
-  .component('leftSidePanelToggle', leftSidePanelToggleComponent);
+  .directive('menuEditor', menuEditorDirective)
+  .directive('selectAllOnFocus', selectAllOnFocusDirective)
+  .controller('MenuEditorCtrl', MenuEditorCtrl);
 
-export default leftSidePanelModule.name;
-
+export default channelSitemenuModule;

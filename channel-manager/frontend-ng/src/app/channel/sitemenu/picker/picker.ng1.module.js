@@ -19,7 +19,7 @@ import ListingCtrl from './listing.controller';
 import listingDirective from './listing.directive';
 import PickerService from './picker.service';
 import PickerCtrl from './picker.controller';
-import uiTreeModule from '../tree/tree';
+import uiTreeModule from '../tree/tree.ng1.module';
 
 const pickerModule = angular
   .module('hippo-cm.channel.sitemenu.picker', [

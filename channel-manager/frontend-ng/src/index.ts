@@ -15,9 +15,9 @@
  */
 
 import './vendor';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import './index.scss';
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/hippo-cm';
 
 platformBrowserDynamic().bootstrapModule(AppModule);

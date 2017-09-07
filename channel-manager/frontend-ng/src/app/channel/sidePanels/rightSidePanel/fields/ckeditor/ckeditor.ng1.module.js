@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import rightSidePanelComponent from './rightSidePanel.component';
-import fieldsModule from './fields/fields.module';
-import resizeHandleModule from './resizeHandle/resizeHandle.module';
+import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.ng1.module';
+import ckeditorComponent from './ckeditor.component';
+import ckeditorService from './ckeditor.service';
 
-const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [
-    fieldsModule,
-    resizeHandleModule,
+const ckeditorModule = angular
+  .module('hippo-cm.channel.fieldsModule.ckeditor', [
+    SharedSpaceToolbarModule,
   ])
-  .component('rightSidePanel', rightSidePanelComponent);
+  .component('ckeditor', ckeditorComponent)
+  .service('CKEditorService', ckeditorService);
 
-export default rightSidePanelModule.name;
-
+export default ckeditorModule.name;

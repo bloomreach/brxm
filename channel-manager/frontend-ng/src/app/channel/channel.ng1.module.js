@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import channelSubpageModule from './subpage/subpage';
-import channelPageModule from './page/page';
-import channelPageActionsModule from './page/actions/actions';
-import channelActionsModule from './actions/actions';
-import channelMenuModule from './menu/menu';
-import channelSidePanelModule from './sidePanels/sidePanel';
-import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import channelSitemenuModule from './sitemenu/editor';
-import maskModule from './mask/mask.module';
-import channelRelevanceModule from './relevance/relevance';
-import projectToggleModule from './projectToggle/projectToggle.module';
-import viewportsModule from './viewportToggle/viewportToggle.module';
+import channelSubpageModule from './subpage/subpage.ng1.module';
+import channelPageModule from './page/page.ng1.module';
+import channelPageActionsModule from './page/actions/pageActions.ng1.module';
+import channelActionsModule from './actions/channelActions.ng1.module';
+import channelMenuModule from './menu/menu.ng1.module';
+import channelSidePanelModule from './sidePanels/sidePanel.ng1.module';
+import channelHippoIframeModule from './hippoIframe/hippoIframe.ng1.module';
+import channelSitemenuModule from './sitemenu/editor.ng1.module';
+import maskModule from './mask/mask.ng1.module';
+import channelRelevanceModule from './relevance/relevance.ng1.module';
+import projectToggleModule from './projectToggle/projectToggle.ng1.module';
+import viewportsModule from './viewportToggle/viewportToggle.ng1.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';

@@ -17,7 +17,7 @@ import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
-import ckeditorModule from './ckeditor/ckeditor.module';
+import ckeditorModule from './ckeditor/ckeditor.ng1.module';
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
 
