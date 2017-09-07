@@ -18,6 +18,7 @@ package org.onehippo.cms7.crisp.api.broker;
 import java.util.Collections;
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -64,6 +65,14 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
     @Override
     public Resource resolve(String resourceSpace, String absResourcePath) throws ResourceException {
         return resolve(resourceSpace, absResourcePath, Collections.emptyMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absResourcePath) throws ResourceException {
+        return resolveBinary(resourceSpace, absResourcePath, Collections.emptyMap());
     }
 
     /**

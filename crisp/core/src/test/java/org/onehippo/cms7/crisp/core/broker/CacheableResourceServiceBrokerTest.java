@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceResolver;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
@@ -75,6 +76,11 @@ public class CacheableResourceServiceBrokerTest {
                 ObjectNode node = objectMapper.createObjectNode();
                 node.put("absPath", absPath);
                 return new JacksonResource(node);
+            }
+
+            @Override
+            public Binary resolveBinary(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+                return null;
             }
 
             @Override

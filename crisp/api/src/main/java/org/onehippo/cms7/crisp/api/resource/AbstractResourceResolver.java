@@ -39,6 +39,14 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
      * {@inheritDoc}
      */
     @Override
+    public Binary resolveBinary(String absPath) throws ResourceException {
+        return resolveBinary(absPath, Collections.emptyMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Resource findResources(String baseAbsPath) throws ResourceException {
         return findResources(baseAbsPath, Collections.emptyMap());
     }

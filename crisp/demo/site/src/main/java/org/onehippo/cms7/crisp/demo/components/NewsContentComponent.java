@@ -24,6 +24,7 @@ import java.util.Map;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
 import org.onehippo.cms7.crisp.hst.module.CrispHstServices;
@@ -77,6 +78,27 @@ public class NewsContentComponent extends EssentialsContentComponent {
         }
 
         return productCatalogs;
+    }
+
+    @Override
+    public void doBeforeServeResource(final HstRequest request, final HstResponse response) {
+        final String resourceId = request.getResourceID();
+        final String sku = request.getParameter("sku");
+
+        if ("downloadImage".equals(resourceId)) {
+            try {
+                ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+                final Map<String, Object> pathVars = new HashMap<>();
+                pathVars.put("sku", sku);
+                Binary binary = resourceServiceBroker.resolveBinary(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
+                        "/products/{sku}/image/download", pathVars);
+                request.setAttribute("binary", binary);
+            } catch (Exception e) {
+                log.warn("Failed to find binary.", e);
+            }
+        }
+
+        response.setServeResourcePath("/WEB-INF/jsp/downloadjpeg.jsp");
     }
 
     private Resource findProductCatalogsXml(final NewsDocument document) {

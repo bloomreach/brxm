@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.crisp.api.broker.AbstractDelegatingResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
@@ -51,6 +52,27 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
         try {
             resolveResourceServiceBrokerRequestContext();
             return super.resolve(resourceSpace, absPath, pathVariables);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinary(resourceSpace, absPath);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinary(resourceSpace, absPath, pathVariables);
         } finally {
             clearResourceServiceBrokerRequestContext();
         }
