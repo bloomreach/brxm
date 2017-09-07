@@ -398,9 +398,9 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
             final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
             if (childConfigNode == null) {
-                final ConfigurationNodeImpl deletedNode =
-                        configurationModel.resolveDeletedSubNodeRoot(configNode.getJcrPath().resolve(indexedJcrChildNodeName));
-                if (deletedNode != null) {
+                boolean nodeIsDeleted = configurationModel.getDeletedConfigNodes().keySet().stream()
+                        .anyMatch(configNode.getJcrPath().resolve(indexedJcrChildNodeName)::startsWith);
+                if (nodeIsDeleted) {
                     // call top-level recursion, not this delta method
                     exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);
                 } else {
