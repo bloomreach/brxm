@@ -35,20 +35,23 @@ public class UpstreamConfigOrderBeforeHolder extends ConfigOrderBeforeHolder {
 
     @Override
     public void apply(final ImmutableList<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
-        // todo: add logic for delayed ordering mechanism
         final DefinitionNodeImpl definitionNode = getDefinitionNode();
-        if (intermediate.size() == 0 || "".equals(definitionNode.getOrderBefore())) {
-            intermediate.add(0, definitionNode.getJcrName());
-            return;
-        }
+
+        intermediate.remove(definitionNode.getJcrName());
+
         if (definitionNode.getOrderBefore() == null) {
             intermediate.add(definitionNode.getJcrName());
             return;
         }
+
+        if ("".equals(definitionNode.getOrderBefore())) {
+            intermediate.add(0, definitionNode.getJcrName());
+            return;
+        }
+
         final int position = intermediate.indexOf(JcrPathSegment.get(definitionNode.getOrderBefore()));
         if (position == -1) {
-            // if the target cannot be found, we are in a weird situation as the model should not have loaded in
-            // the first place, log an error but continue
+            // todo: add logic for delayed ordering mechanism
             log.error("Cannot find order-before target '{}' for node '{}' from '{}', ordering node as last",
                     definitionNode.getOrderBefore(), definitionNode.getPath(), definitionNode.getSourceLocation());
             intermediate.add(definitionNode.getJcrName());
