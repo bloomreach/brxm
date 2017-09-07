@@ -75,7 +75,7 @@ public class ContentSourceHeadParser extends ContentSourceParser {
     public Pair<Node, List<NodeTuple>> composeYamlHead(final InputStream inputStream, final String location) throws ParserException {
         log.debug("Parsing YAML source head '{}'", location);
         final Resolver resolver = new Resolver();
-        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        final InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         final Parser parser = new ParserImpl(new StreamReader(reader));
         try {
             // Drop the STREAM-START event.
@@ -85,7 +85,6 @@ public class ContentSourceHeadParser extends ContentSourceParser {
                 // Drop the DOCUMENT-START event.
                 parser.getEvent();
                 NodeEvent event = nextNodeEvent(parser);
-                ScalarNode definitionKey = null;
                 if (isExplicitSequencing()) {
                     if (event.is(Event.ID.SequenceStart)) {
                         // skip: next should be mappingStart
@@ -95,13 +94,16 @@ public class ContentSourceHeadParser extends ContentSourceParser {
                 if (event.is(Event.ID.MappingStart)) {
                     event = nextNodeEvent(parser);
                     if (event.is(Event.ID.Scalar)) {
-                        definitionKey = composeScalarNode(resolver, (ScalarEvent)event);
-                        List<NodeTuple> tuples = asScalarTuples(parser, resolver);
+                        final ScalarNode definitionKey = composeScalarNode(resolver, (ScalarEvent)event);
+                        final List<NodeTuple> tuples = asScalarTuples(parser, resolver);
                         return Pair.of(definitionKey, tuples);
                     }
                 }
             }
-            return null;
+
+            final String message = String.format("Failed to parse YAML source head '%s'", location);
+            throw new ParserException(message);
+
         } catch (RuntimeException e) {
             final String message = String.format("Failed to parse YAML source head '%s'", location);
             throw new ParserException(message, e);
@@ -109,7 +111,7 @@ public class ContentSourceHeadParser extends ContentSourceParser {
     }
 
     private List<NodeTuple> asScalarTuples(final Parser parser, final Resolver resolver) throws ParserException {
-        List<NodeTuple> tuples = new ArrayList<>();
+        final List<NodeTuple> tuples = new ArrayList<>();
         NodeEvent event = nextNodeEvent(parser);
         if (isExplicitSequencing()) {
             if (event.is(Event.ID.SequenceStart)) {
@@ -119,7 +121,7 @@ public class ContentSourceHeadParser extends ContentSourceParser {
         }
         if (event.is(Event.ID.MappingStart)) {
             while (true) {
-                NodeTuple tuple = asScalarMappingTuple(parser, resolver);
+                final NodeTuple tuple = asScalarMappingTuple(parser, resolver);
                 if (tuple != null) {
                     tuples.add(tuple);
                     if (parser.checkEvent(Event.ID.MappingEnd)) {
@@ -137,11 +139,11 @@ public class ContentSourceHeadParser extends ContentSourceParser {
     private NodeTuple asScalarMappingTuple(final Parser parser, final Resolver resolver) throws ParserException {
         NodeEvent event = nextNodeEvent(parser);
         if (event.is(Event.ID.Scalar)) {
-            ScalarNode keyNode = composeScalarNode(resolver, (ScalarEvent)event);
+            final ScalarNode keyNode = composeScalarNode(resolver, (ScalarEvent)event);
             event = nextNodeEvent(parser);
             if (event.is(Event.ID.Scalar)) {
-                ScalarNode valueNode = composeScalarNode(resolver, (ScalarEvent)event);
-                String key = asStringScalar(keyNode);
+                final ScalarNode valueNode = composeScalarNode(resolver, (ScalarEvent)event);
+                final String key = asStringScalar(keyNode);
                 if (key.startsWith(META_KEY_PREFIX)) {
                     return new NodeTuple(keyNode, valueNode);
                 }
@@ -152,13 +154,13 @@ public class ContentSourceHeadParser extends ContentSourceParser {
 
     private NodeEvent nextNodeEvent(final Parser parser) throws ParserException {
         if (parser.checkEvent(Event.ID.Alias)) {
-            AliasEvent event = (AliasEvent) parser.getEvent();
-            String anchor = event.getAnchor();
+            final AliasEvent event = (AliasEvent) parser.getEvent();
+            final String anchor = event.getAnchor();
             throw new ParserException("Encounter node alias '" + anchor +
                     "' which is not supported when parsing a document head only, " + event.getStartMark().toString());
         } else {
-            NodeEvent event = (NodeEvent) parser.getEvent();
-            String anchor = event.getAnchor();
+            final NodeEvent event = (NodeEvent) parser.getEvent();
+            final String anchor = event.getAnchor();
             if (anchor != null) {
                 throw new ParserException("Encountered node anchor '" + anchor +
                         "' which is not supported when parsing a document head only, " + event.getStartMark().toString());
@@ -168,9 +170,9 @@ public class ContentSourceHeadParser extends ContentSourceParser {
     }
 
     private ScalarNode composeScalarNode(final Resolver resolver, final ScalarEvent ev) {
-        String tag = ev.getTag();
+        final String tag = ev.getTag();
         boolean resolved = false;
-        Tag nodeTag;
+        final Tag nodeTag;
         if (tag == null || tag.equals("!")) {
             nodeTag = resolver.resolve(NodeId.scalar, ev.getValue(),
                     ev.getImplicit().canOmitTagInPlainScalar());

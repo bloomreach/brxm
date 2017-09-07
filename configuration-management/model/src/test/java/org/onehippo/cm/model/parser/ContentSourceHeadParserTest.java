@@ -47,8 +47,8 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
                 + "  - /foo: \n"
                 + "      bar: asd\n";
 
-        ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, true);
-        Pair<Node, List<NodeTuple>> result = parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
+        final ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, true);
+        final Pair<Node, List<NodeTuple>> result = parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
         assertEquals("/content/documents/myhippoproject", ((ScalarNode)result.getKey()).getValue());
         assertEquals(1, result.getValue().size());
         assertEquals(".meta:order-before", ((ScalarNode)result.getValue().get(0).getKeyNode()).getValue());
@@ -64,8 +64,8 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
                         + "  /foo: \n"
                         + "    bar: asd\n";
 
-        ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
-        Pair<Node, List<NodeTuple>> result = parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
+        final ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final Pair<Node, List<NodeTuple>> result = parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
         assertEquals("/content/documents/myhippoproject", ((ScalarNode)result.getKey()).getValue());
         assertEquals(1, result.getValue().size());
         assertEquals(".meta:order-before", ((ScalarNode)result.getValue().get(0).getKeyNode()).getValue());
@@ -81,7 +81,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
                         + "  /foo: \n"
                         + "    bar: asd\n";
 
-        ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         try {
         parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
             fail("parsing should have failed on encountered node alias");
@@ -99,7 +99,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
                         + "  /foo: \n"
                         + "    bar: asd\n";
 
-        ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final ContentSourceHeadParser parser = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         try {
             parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
             fail("parsing should have failed on encountered anchor");
@@ -121,23 +121,23 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         final ModuleImpl m1 = p1.addModule("m1");
         final ModuleImpl m2 = p1.addModule("m2");
 
-        ContentSourceHeadParser parser1 = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final ContentSourceHeadParser parser1 = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         parser1.parse(IOUtils.toInputStream(yaml, "UTF-8"), "location", "location", m1);
         m1.build();
 
-        ContentSourceParser parser2 = new ContentSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final ContentSourceParser parser2 = new ContentSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         parser2.parse(IOUtils.toInputStream(yaml, "UTF-8"), "location", "location", m2);
         m2.build();
 
         assertEquals(1, m1.getContentDefinitions().size());
-        ContentDefinition d1 = m1.getContentDefinitions().get(0);
+        final ContentDefinition d1 = m1.getContentDefinitions().get(0);
         assertEquals("/content/documents/myhippoproject", d1.getRootPath());
         assertEquals("test", d1.getNode().getOrderBefore());
         assertTrue(d1.getNode().getProperties().isEmpty());
         assertTrue(d1.getNode().getNodes().isEmpty());
 
         assertEquals(1, m2.getContentDefinitions().size());
-        ContentDefinition d2 = m2.getContentDefinitions().get(0);
+        final ContentDefinition d2 = m2.getContentDefinitions().get(0);
         assertEquals("/content/documents/myhippoproject", d2.getRootPath());
         assertEquals("test", d2.getNode().getOrderBefore());
         assertFalse(d2.getNode().getProperties().isEmpty());
@@ -155,22 +155,22 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         final ModuleImpl m1 = p1.addModule("m1");
         final ModuleImpl m2 = p1.addModule("m2");
 
-        StopWatch stopWatch = new StopWatch();
-        ContentSourceHeadParser parser1 = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final StopWatch stopWatch = new StopWatch();
+        final ContentSourceHeadParser parser1 = new ContentSourceHeadParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         stopWatch.start();
         parser1.parse(this.getClass().getResourceAsStream("/library.yaml"), "location", "location", m1);
         m1.build();
-        ContentDefinition d1 = m1.getContentDefinitions().get(0);
+        final ContentDefinition d1 = m1.getContentDefinitions().get(0);
         assertEquals("trails", d1.getNode().getOrderBefore());
         stopWatch.stop();
         System.out.println("loading huge content head only: "+stopWatch.toString());
 
-        ContentSourceParser parser2 = new ContentSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
+        final ContentSourceParser parser2 = new ContentSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false);
         stopWatch.reset();
         stopWatch.start();
         parser2.parse(this.getClass().getResourceAsStream("/library.yaml"), "location", "location", m2);
         m2.build();
-        ContentDefinition d2 = m2.getContentDefinitions().get(0);
+        final ContentDefinition d2 = m2.getContentDefinitions().get(0);
         assertEquals("trails", d2.getNode().getOrderBefore());
         stopWatch.stop();
         System.out.println("loading huge content: "+stopWatch.toString());
