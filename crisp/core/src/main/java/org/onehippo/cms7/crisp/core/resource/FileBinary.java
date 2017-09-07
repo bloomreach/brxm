@@ -24,6 +24,13 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 
+/**
+ * {@link File} based {@link Binary} implementation.
+ * <P>
+ * This stores binary input stream into a file. When {@link #dispose()} is called, it closes the input stream and
+ * internal file if any.
+ * </P>
+ */
 public class FileBinary implements Binary {
 
     private static final long serialVersionUID = 1L;

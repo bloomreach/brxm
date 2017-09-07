@@ -59,6 +59,7 @@ public class ProductsController {
             produces = { "image/jpeg" }
     )
     public Resource downloadProductImage(@PathVariable(value="sku") String sku) {
+        // Simply return a classpath resource to write a binary (only for demonstration purpose).
         return new ClassPathResource("META-INF/example/commerce/data/windpower.jpg");
     }
 

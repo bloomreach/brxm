@@ -21,11 +21,22 @@ import java.io.Serializable;
 
 /**
  * Common Binary representation interface, reflecting any binary content.
+ * <P>
+ * After use, {@link #dispose()} must be invoked.
+ * </P>
  */
 public interface Binary extends Serializable {
 
+    /**
+     * Return input stream of this binary.
+     * @return input stream of this binary
+     * @throws IOException if IO exception occurs
+     */
     InputStream getInputStream() throws IOException;
 
+    /**
+     * Clean up any resources opened in this binary.
+     */
     void dispose();
 
 }
