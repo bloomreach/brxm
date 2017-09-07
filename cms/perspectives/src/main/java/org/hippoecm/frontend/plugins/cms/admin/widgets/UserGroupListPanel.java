@@ -47,7 +47,7 @@ public class UserGroupListPanel extends Panel {
             protected void populateItem(final ListItem<User> userListItem) {
                 final User user = userListItem.getModelObject();
                 final ViewUserLinkLabel action =
-                        new ViewUserLinkLabel("link", new DetachableUser(user), findParent(PermissionsPanel.class), null);
+                        new ViewUserLinkLabel("link", new DetachableUser(user), findParent(PermissionsPanel.class), pluginContext);
                 userListItem.add(action);
                 userListItem.setRenderBodyOnly(true);
             }
