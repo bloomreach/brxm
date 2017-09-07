@@ -1,0 +1,108 @@
+@import 'variables';
+@import '~@angular/material/theming';
+@include mat-core;
+
+$hippo-blue: (
+  50: $blue-50,
+  100: $blue-100,
+  200: $blue-200,
+  300: $blue-300,
+  400: $blue-400,
+  500: $blue-500,
+  600: $blue-600,
+  700: $blue-700,
+  800: $blue-800,
+  900: $blue-900,
+  A100: $blue-a100,
+  A200: $blue-a200,
+  A400: $blue-a400,
+  A700: $blue-a700,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: $white,
+    600: $white,
+    700: $white,
+    800: $white,
+    900: $white,
+    A100: $black-87-opacity,
+    A200: $white,
+    A400: $white,
+    A700: $white,
+  )
+);
+
+$hippo-orange: (
+  50: $orange-50,
+  100: $orange-100,
+  200: $orange-200,
+  300: $orange-300,
+  400: $orange-400,
+  500: $orange-500,
+  600: $orange-600,
+  700: $orange-700,
+  800: $orange-800,
+  900: $orange-900,
+  A100: $orange-a100,
+  A200: $orange-a200,
+  A400: $orange-a400,
+  A700: $orange-a700,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: $white,
+    600: $white,
+    700: $white,
+    800: $white,
+    900: $white,
+    A100: $black-87-opacity,
+    A200: $white,
+    A400: $white,
+    A700: $white,
+  )
+);
+
+$hippo-red: (
+  50: $red-50,
+  100: $red-100,
+  200: $red-200,
+  300: $red-300,
+  400: $red-400,
+  500: $red-500,
+  600: $red-600,
+  700: $red-700,
+  800: $red-800,
+  900: $red-900,
+  A100: $red-a100,
+  A200: $red-a200,
+  A400: $red-a400,
+  A700: $red-a700,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: $white,
+    600: $white,
+    700: $white,
+    800: $white,
+    900: $white,
+    A100: $black-87-opacity,
+    A200: $white,
+    A400: $white,
+    A700: $white,
+  )
+);
+
+$hippo-primary: mat-palette($hippo-blue);
+$hippo-accent:  mat-palette($hippo-orange);
+$hippo-warn:    mat-palette($hippo-red);
+$hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
+@include angular-material-theme($hippo-theme);

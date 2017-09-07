@@ -19,6 +19,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UpgradeModule  } from '@angular/upgrade/static';
 
+import { MaterialModule } from './material/material.module';
 import ng1Module from './hippo-cm.ng1.module.js';
 
 @NgModule({
@@ -26,6 +27,7 @@ import ng1Module from './hippo-cm.ng1.module.js';
     BrowserModule,
     BrowserAnimationsModule,
     UpgradeModule,
+    MaterialModule,
   ],
 })
 export class AppModule {

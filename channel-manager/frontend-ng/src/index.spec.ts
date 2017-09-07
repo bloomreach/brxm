@@ -23,9 +23,8 @@ import 'zone.js/dist/jasmine-patch';
 import 'zone.js/dist/async-test';
 import 'zone.js/dist/fake-async-test';
 
-import * as angular from 'angular';
+import './app/hippo-cm.ng1.module.js';
 import 'angular-mocks';
-import './app/hippo-cm';
 
 import { getTestBed } from '@angular/core/testing';
 import {
@@ -37,6 +36,8 @@ getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting()
 );
+
+import * as angular from 'angular';
 
 function createMessageBus($window) {
   const subscriptions = {};
@@ -108,7 +109,7 @@ function createMessageBus($window) {
 
 function mockHost() {
   angular.mock.module(($provide) => {
-    const $window : any = {
+    const $window: any = {
       document: window.document,
       confirm: window.confirm.bind(window),
       getComputedStyle: window.getComputedStyle.bind(window),
