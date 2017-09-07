@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPanel;
@@ -31,7 +32,8 @@ import org.hippoecm.frontend.plugins.cms.admin.users.ViewUserLinkLabel;
 
 public class UserGroupListPanel extends Panel {
 
-    public UserGroupListPanel(final String id, final List<User> users, final List<Group> groups) {
+    public UserGroupListPanel(final String id, final List<User> users, final List<Group> groups,
+                              final IPluginContext pluginContext) {
         super(id);
 
         final WebMarkupContainer usersLabel = new WebMarkupContainer("usersLabel");
@@ -63,7 +65,7 @@ public class UserGroupListPanel extends Panel {
             protected void populateItem(final ListItem<Group> groupListItem) {
                 final Group group = groupListItem.getModelObject();
                 final ViewGroupActionLink action =
-                        new ViewGroupActionLink("link", new PropertyModel<>(group, "groupname"), group, null,
+                        new ViewGroupActionLink("link", new PropertyModel<>(group, "groupname"), group, pluginContext,
                                 findParent(PermissionsPanel.class));
                 groupListItem.add(action);
                 groupListItem.setRenderBodyOnly(true);

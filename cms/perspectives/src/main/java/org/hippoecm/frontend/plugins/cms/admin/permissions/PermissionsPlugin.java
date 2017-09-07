@@ -48,6 +48,6 @@ public class PermissionsPlugin extends AdminPanelPlugin {
 
     @Override
     public PanelPluginBreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
-        return new PermissionsPanel(componentId, breadCrumbModel);
+        return new PermissionsPanel(componentId, breadCrumbModel, getPluginContext());
     }
 }

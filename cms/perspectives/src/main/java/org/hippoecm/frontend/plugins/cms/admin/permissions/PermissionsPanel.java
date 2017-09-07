@@ -31,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
@@ -47,7 +48,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
      */
     private boolean formVisible = false;
 
-    public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+    public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext pluginContext) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
@@ -98,7 +99,8 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
                         }
                     }
 
-                    final UserGroupListPanel listContainer = new UserGroupListPanel(componentId, userList, groupList);
+                    final UserGroupListPanel listContainer = new UserGroupListPanel(componentId, userList, groupList,
+                            pluginContext);
                     cellItem.add(listContainer);
                 }
             });
