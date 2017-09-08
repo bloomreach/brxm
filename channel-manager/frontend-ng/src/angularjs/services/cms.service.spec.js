@@ -79,11 +79,11 @@ describe('CmsService', () => {
     expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
   });
 
-  it('throws an error when the CMS does not contain an ExtJs IFramePanel with the given ID', () => {
+  it('throws an error when the CMS does not contain an ExtJs IFramePanel for the Channel Editor', () => {
     spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
     expect(() => {
       CmsService.getConfig();
-    }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
+    }).toThrow(new Error("Unknown iframe panel id: 'Hippo.ChannelManager.ChannelEditor.Instance'"));
   });
 
   it('throws an error when the CMS\'s IFramePanel does not contain any configuration for the app', () => {
@@ -93,13 +93,6 @@ describe('CmsService', () => {
     expect(() => {
       CmsService.getConfig();
     }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
-  });
-
-  it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', () => {
-    window.history.replaceState({}, document.title, '/');
-    expect(() => {
-      CmsService.getParentIFramePanelId();
-    }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
   });
 
   it('closes a valid document', (done) => {

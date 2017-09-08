@@ -100,12 +100,6 @@ function mockHost() {
     hostToIFrame: window.CMS_TO_APP,
   };
 
-  window.history.replaceState(
-    {},
-    document.title,
-    `${window.location.href}?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234`,
-  );
-
   window.parent = {
     document: {
       documentElement: {
