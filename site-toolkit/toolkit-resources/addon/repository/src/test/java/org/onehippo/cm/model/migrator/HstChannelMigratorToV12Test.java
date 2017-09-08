@@ -273,7 +273,6 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
     @Test
     public void migrate_blueprint_that_has_a_channel_node() throws Exception {
         RepositoryTestCase.build(new String[]{
-                "/hst:test", "hst:hst",
                 "/hst:test/hst:blueprints", "hst:blueprints",
                 "/hst:test/hst:blueprints/website", "hst:blueprint",
                 "/hst:test/hst:blueprints/website/hst:configuration", "hst:configuration",
@@ -290,7 +289,6 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
     @Test
     public void migrate_blueprint_that_has_a_channel_node_but_no_configuration_creates_configuration() throws Exception {
         RepositoryTestCase.build(new String[]{
-                "/hst:test", "hst:hst",
                 "/hst:test/hst:blueprints", "hst:blueprints",
                 "/hst:test/hst:blueprints/website", "hst:blueprint",
                 "/hst:test/hst:blueprints/website/hst:channel", "hst:channel",
@@ -307,7 +305,6 @@ public class HstChannelMigratorToV12Test extends RepositoryTestCase {
     @Test
     public void migrate_blueprints_that_do_not_have_a_channel_node() throws Exception {
         RepositoryTestCase.build(new String[]{
-                "/hst:test", "hst:hst",
                   "/hst:test/hst:blueprints", "hst:blueprints",
                     "/hst:test/hst:blueprints/website", "hst:blueprint",
                       "/hst:test/hst:blueprints/website/hst:configuration", "hst:configuration",
