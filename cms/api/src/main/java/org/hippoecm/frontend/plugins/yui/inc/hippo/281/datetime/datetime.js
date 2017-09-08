@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@
  * @module datetime
  * @beta
  */
+
+/*global Event */
 
 YAHOO.namespace('hippo');
 
@@ -95,7 +97,7 @@ if (!YAHOO.hippo.DateTime) {
                 var render, date, firstDate;
 
                 YAHOO.hippo.DateTime.setCurrent(this);
-              
+
                 render = false;
                 if (this.picker === null || this.picker === undefined) {
                     this.picker = new YAHOO.widget.Calendar(this.config.dpJs, this.config.dp, this.config);
@@ -130,7 +132,7 @@ if (!YAHOO.hippo.DateTime) {
                     this.picker.hide();
                 }
             },
-            
+
             destroy : function() {
                 YAHOO.util.Event.removeListener(this.config.icon, "click", this.show);
                 if (this.picker !== null && this.picker !== undefined) {
@@ -144,24 +146,27 @@ if (!YAHOO.hippo.DateTime) {
                 this.config = null;
                 this.id = null;
             },
-            
+
             selectHandler : function(type, args, cal) {
                 Dom.get(this.id).value = this._substituteDate(this.config.datePattern, args[0][0]);
-                
+
                 if (this.isVisible()) {
                     if (this.config.hideOnSelect) {
                         this.hide();
                     }
                     if (this.config.fireChangeEvent) {
-                        var field = Dom.get(this.id);
+                        var field = Dom.get(this.id), changeEvent;
                         if (field.onchange !== null && field.onchange !== undefined) {
                             field.onchange();
+                        } else {
+                            changeEvent = new Event('change');
+                            field.dispatchEvent(changeEvent);
                         }
                     }
                 }
             },
-            
-            /** 
+
+            /**
              * Position subject relative to target top-left by default.
              * If there is too little space on the right side/bottom,
              * the datepicker's position is corrected so that the right side/bottom
@@ -175,14 +180,14 @@ if (!YAHOO.hippo.DateTime) {
                 targetPos = Dom.getXY(target);
                 targetHeight = Dom.get(target).offsetHeight;
                 subjectHeight = Dom.get(subject).offsetHeight;
-                subjectWidth = Dom.get(subject).offsetWidth;     
-                
+                subjectWidth = Dom.get(subject).offsetWidth;
+
                 viewportHeight =  Dom.getViewportHeight();
                 viewportWidth = Dom.getViewportWidth();
-                
+
                 // also take scroll position into account
                 scrollPos = [Dom.getDocumentScrollLeft(), Dom.getDocumentScrollTop()];
-                
+
                 // correct datepicker's position so that it isn't rendered off screen on the right side or bottom
                 if (targetPos[0] + subjectWidth > scrollPos[0] + viewportWidth) {
                     // correct horizontal position
@@ -197,14 +202,14 @@ if (!YAHOO.hippo.DateTime) {
                     Dom.setY(subject, targetPos[1] + targetHeight + 1);
                 }
             },
-            
+
             isVisible : function() {
                 return this.picker !== null && this.picker !== undefined && this.picker.visible;
             },
-            
+
             /**
-             * Parses date from simple date pattern. Only parses dates with yy, MM and dd like patterns, though 
-             * it is safe to have time as long as it comes after the pattern (which should be the case 
+             * Parses date from simple date pattern. Only parses dates with yy, MM and dd like patterns, though
+             * it is safe to have time as long as it comes after the pattern (which should be the case
              * anyway 99.9% of the time).
              */
             _parseDate : function(pattern, value) {
@@ -244,7 +249,7 @@ if (!YAHOO.hippo.DateTime) {
                 date.setFullYear(year, (month - 1), day);
                 return date;
             },
-            
+
             /**
              * Return the result of interpolating the value (date) argument with the date pattern.
              * The dateValue has to be an array, where year is in the first, month in the second
@@ -268,14 +273,14 @@ if (!YAHOO.hippo.DateTime) {
                 // replace pattern with real values
                 return datePattern.replace(/d+/, day).replace(/M+/, month).replace(/y+/, year);
             },
-            
-            /** 
+
+            /**
              * Returns a string containing the value, with a leading zero if the value is < 10.
              */
             _padDateFragment : function(value) {
                 return (value < 10 ? "0" : "") + value;
             },
-            
+
             update : function() {
             },
 
@@ -340,7 +345,7 @@ if (!YAHOO.hippo.DateTime) {
     }());
 
     YAHOO.hippo.DateTime = new YAHOO.hippo.DateTimeImpl();
-    
+
     YAHOO.register("DateTime", YAHOO.hippo.DateTime, {
         version: "2.8.1", build: "19"
     });
