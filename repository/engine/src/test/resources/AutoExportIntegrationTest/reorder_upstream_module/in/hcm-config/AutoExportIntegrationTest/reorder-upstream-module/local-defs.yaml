@@ -6,7 +6,9 @@ definitions:
         jcr:primaryType: nt:unstructured
       /3-third:
         .meta:order-before: 2-second
-        jcr:primaryType: nt:unstructured # deliberate repeat, test this node is not be added as holder
+        jcr:primaryType:
+          operation: override
+          value: nt:unstructured # deliberate repeat, test this node is not be added as holder
         property: value
       /last-local:
         jcr:primaryType: nt:unstructured

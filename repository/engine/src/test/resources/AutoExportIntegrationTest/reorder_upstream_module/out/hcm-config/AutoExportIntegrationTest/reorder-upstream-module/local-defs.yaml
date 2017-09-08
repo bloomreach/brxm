@@ -6,7 +6,9 @@ definitions:
         jcr:primaryType: nt:unstructured
       /3-third:
         .meta:order-before: 1-first
-        jcr:primaryType: nt:unstructured
+        jcr:primaryType:
+          operation: override
+          value: nt:unstructured
         property: value
       /last-local:
         .meta:order-before: 1-first
