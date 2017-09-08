@@ -186,7 +186,7 @@ public final class RepositoryJaxrsService {
                     }
                 };
             }
-            JAXRSServerFactoryBean endpointFactory = ResourceUtils.createApplication(app, true, false);
+            JAXRSServerFactoryBean endpointFactory = ResourceUtils.createApplication(app, true, false, false, bus);
             endpointFactory.setAddress(address);
             endpointFactory.setDestinationFactory(destinationFactory);
 
