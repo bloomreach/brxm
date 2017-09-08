@@ -846,8 +846,7 @@ public class ConfigurationTreeBuilderTest {
             builder.push((ContentDefinitionImpl) definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            // TODO: exclude def currently being processed from getOrigin() output
-            assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string], test-group/test-project/test-module [config: string]].", e.getMessage());
+            assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string]].", e.getMessage());
         }
     }
 

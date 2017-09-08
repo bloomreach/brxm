@@ -175,7 +175,9 @@ public class ConfigurationTreeBuilder {
             return;
         } else if (definitionNode.isDelete() && !node.hasNoJcrNodesOrProperties()) {
             String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
-                    definitionNode.getOrigin(), definitionNode.getJcrPath(), node.getOrigin());
+                    definitionNode.getOrigin(), definitionNode.getJcrPath(),
+                    // exclude def currently being processed from origin
+                    node.getOrigin(definitionNode));
             throw new IllegalArgumentException(msg);
         }
 
@@ -404,7 +406,7 @@ public class ConfigurationTreeBuilder {
             }
         }
 
-        // REPO-1805: track definitions that mention a node as a root path, but don't change any properties
+        // track definitions that mention a node as a root path, but don't change any properties
         if (rootForDefinition != null) {
             rootForDefinition.addDefinition(definitionNode);
         }

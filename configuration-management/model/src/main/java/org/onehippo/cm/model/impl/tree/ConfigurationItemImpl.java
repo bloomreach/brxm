@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.impl.path.JcrPath;
@@ -100,6 +101,21 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
     public String getOrigin() {
         return getDefinitions()
                 .stream()
+                .map(d -> d.getDefinition().getOrigin())
+                .collect(Collectors.toList())
+                .toString();
+    }
+
+    /**
+     * Produce an output equivalent to {@link #getOrigin()}, but excluding one definition -- most likely because that
+     * definition is currently being processed and being contrasted with preceding definitions.
+     * @param except the definition to exclude
+     * @return a String representation of definitions other than "except"
+     */
+    public String getOrigin(D except) {
+        return getDefinitions()
+                .stream()
+                .filter(Predicate.isEqual(except).negate())
                 .map(d -> d.getDefinition().getOrigin())
                 .collect(Collectors.toList())
                 .toString();
