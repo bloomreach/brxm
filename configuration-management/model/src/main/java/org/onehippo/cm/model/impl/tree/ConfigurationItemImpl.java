@@ -72,16 +72,26 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
         return definitions;
     }
 
-    public void addDefinition(final D definition) {
+    void addDefinition(final D definition) {
         if (modifiableDefinitions.isEmpty()) {
             modifiableDefinitions.add(definition);
         }
         else {
+            // suppress duplicate entries
             DefinitionItemImpl lastDef = modifiableDefinitions.get(modifiableDefinitions.size() - 1);
             if (!lastDef.equals(definition)) {
                 modifiableDefinitions.add(definition);
             }
         }
+    }
+
+    /**
+     * Remove a single definition from the list of definition back-references for this item. This is intended to be used
+     * only in the special-case situation of restoring a deleted item during auto-export.
+     * @param definition the definition to remove from the back-references
+     */
+    public void removeDefinition(final D definition) {
+        modifiableDefinitions.remove(definition);
     }
 
     public boolean isDeleted() {
