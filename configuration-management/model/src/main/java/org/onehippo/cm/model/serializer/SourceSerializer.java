@@ -193,7 +193,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
             if (property.getOperation() != PropertyOperation.REPLACE) {
                 valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
             }
-            valueMapTuples.add(createStrStrTuple(TYPE_KEY, property.getValueType().name().toLowerCase()));
+            if (ValueType.NAME != property.getValueType() ||
+                    !(JCR_PRIMARYTYPE.equals(property.getName()) || JCR_MIXINTYPES.equals(property.getName()))) {
+                valueMapTuples.add(createStrStrTuple(TYPE_KEY, property.getValueType().name().toLowerCase()));
+            }
 
             final boolean exposeAsResource = hasResourceValues(property) || isBinaryProperty(property);
             final String key;

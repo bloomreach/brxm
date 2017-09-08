@@ -45,15 +45,12 @@ definitions:
       /node-with-new-type:
         jcr:primaryType:
           operation: override
-          type: name
           value: some:type
         jcr:mixinTypes:
           operation: override
-          type: name
           value: ['some:mixin']
       /node-with-mixin-add:
         jcr:mixinTypes:
           operation: add
-          type: name
           value: ['some:mixin']
   webfilebundle: site
