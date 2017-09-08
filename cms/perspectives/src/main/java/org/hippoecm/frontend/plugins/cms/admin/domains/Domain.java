@@ -145,7 +145,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     //-------------------- persistence helpers ----------//
     public AuthRole createAuthRole(String role) throws RepositoryException {
-        final Node roleNode = node.addNode(HippoNodeType.NT_AUTHROLE, HippoNodeType.NT_AUTHROLE);
+        final Node roleNode = node.addNode(role, HippoNodeType.NT_AUTHROLE);
         roleNode.setProperty(HippoNodeType.HIPPO_ROLE, role);
         node.getSession().save();
         final AuthRole authRole = new AuthRole(roleNode);

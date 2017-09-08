@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.1-SNAPSHOT</version>
+    <version>29.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -84,12 +84,12 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.jackrabbit.version>2.14.0-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>4.0.0</hippo.commons.version>
-    <hippo.utilities.version>4.0.0</hippo.utilities.version>
-    <hippo.services.version>4.0.1-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>1.0.0</hippo.services.htmlprocessor.version>
-    <hippo.repository.version>5.0.1-SNAPSHOT</hippo.repository.version>
+    <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
+    <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
+    <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>1.0.1-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
@@ -115,10 +115,10 @@
     <wicket.version>6.26.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <httpclient.version>4.5.2</httpclient.version>
+    <httpclient.version>4.5.3</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
-    <json-lib.version>2.2.2</json-lib.version>
+    <json-lib.version>2.4</json-lib.version>
 
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
