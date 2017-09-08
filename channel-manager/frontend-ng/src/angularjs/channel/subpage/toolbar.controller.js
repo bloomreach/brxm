@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+class SubpageToolbarCtrl {
+  constructor($translate) {
+    'ngInject';
+
+    this.ariaLabel = $translate.instant(this.mode === 'cancel' ? 'TOOLBAR_BUTTON_CLOSE' : 'TOOLBAR_BUTTON_BACK');
+    this.icon = (this.mode === 'cancel') ? 'close' : 'back';
+  }
+}
+
+export default SubpageToolbarCtrl;

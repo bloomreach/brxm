@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+import EmbeddedLink from './embeddedLink';
+
+class ContentLink extends EmbeddedLink {
+
+  constructor(commentElement, metaData) {
+    super('content-link', commentElement, metaData);
+  }
+}
+
+export default ContentLink;

@@ -14,7 +14,23 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+import template from './property.html';
+
+function channelPropertyDirective() {
+  'ngInject';
+
+  return {
+    restrict: 'A',
+    bindToController: {
+      field: '@channelProperty',
+      value: '=channelPropertyValue',
+      error: '=channelPropertiesError',
+      data: '=channelPropertiesData',
+    },
+    template,
+    controller: 'ChannelPropertyCtrl',
+    controllerAs: 'channelProperty',
+  };
+}
+
+export default channelPropertyDirective;

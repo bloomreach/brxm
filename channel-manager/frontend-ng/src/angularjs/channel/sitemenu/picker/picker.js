@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+
+import ListingCtrl from './listing.controller';
+import listingDirective from './listing.directive';
+import PickerService from './picker.service';
+import PickerCtrl from './picker.controller';
+import uiTreeModule from '../tree/tree';
+
+const pickerModule = angular
+  .module('hippo-cm.channel.sitemenu.picker', [
+    uiTreeModule.name,
+  ])
+  .controller('PickerCtrl', PickerCtrl)
+  .controller('ListingCtrl', ListingCtrl)
+  .service('PickerService', PickerService)
+  .directive('listing', listingDirective);
+
+export default pickerModule;

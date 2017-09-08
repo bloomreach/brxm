@@ -1,5 +1,6 @@
+
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +15,25 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+import MenuItem from './menuItem.model';
+
+class Menu extends MenuItem {
+
+  constructor(name, config = {}) {
+    super(name, config);
+    this.items = [];
+    this.width = config.width || 3;
+  }
+
+  add(item) {
+    this.items.push(item);
+  }
+
+  hasIcons() {
+    return this.items
+        .filter(item => item.type === 'action')
+        .some(item => item.hasIconSvg() || item.hasIconName());
+  }
+}
+
+export default Menu;

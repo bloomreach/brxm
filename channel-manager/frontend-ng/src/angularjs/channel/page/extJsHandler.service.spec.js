@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+import angular from 'angular';
+import 'angular-mocks';
+
+describe('ExtJsHandlerService', () => {
+  let PageStructureService;
+
+  beforeEach(() => {
+    angular.mock.module('hippo-cm.channel.page');
+
+    inject((_PageStructureService_) => {
+      PageStructureService = _PageStructureService_;
+    });
+  });
+
+  it('handles the render event from ExtJS', () => {
+    spyOn(PageStructureService, 'renderComponent');
+    window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
+
+    expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1, bar: 'a:b' });
+  });
+});

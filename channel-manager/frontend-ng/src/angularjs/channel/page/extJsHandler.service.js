@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+class ExtJsHandlerService {
+
+  constructor(CmsService, PageStructureService) {
+    'ngInject';
+
+    this.CmsService = CmsService;
+    this.PageStructureService = PageStructureService;
+  }
+
+  initialize() {
+    this.CmsService.subscribe('render-component', (componentId, propertiesMap) => this.PageStructureService.renderComponent(componentId, propertiesMap));
+    this.CmsService.subscribe('reload-channel', errorResponse => this.PageStructureService.reloadChannel(errorResponse));
+  }
+}
+
+export default ExtJsHandlerService;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.module';
+import ckeditorComponent from './ckeditor.component';
+import ckeditorService from './ckeditor.service';
 
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const hub = new HubRegistry(['node_modules/frontend-build/index.js']);
-gulp.registry(hub);
+const ckeditorModule = angular
+  .module('hippo-cm.channel.fieldsModule.ckeditor', [
+    SharedSpaceToolbarModule,
+  ])
+  .component('ckeditor', ckeditorComponent)
+  .service('CKEditorService', ckeditorService);
+
+export default ckeditorModule.name;
