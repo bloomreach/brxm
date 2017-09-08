@@ -645,35 +645,20 @@ public class DefinitionMergeService {
         }
     }
 
+    /**
+     * Recursively and incrementally merge an incoming "diff" definition into existing toExport modules. Note: this
+     * method typically expects to operate on one and only one DefinitionNodeImpl per recursive step, and for the
+     * model's configurationNode tree to be updated to match the new state of definitions before the recursive call
+     * is made as the final step of this method. The only exception to these expectations is that createNewNode()
+     * will fully handle all child nodes of the new "diff" definition in a single recursive step, performing the
+     * relevant recursion itself via recursiveAdd()+recursiveCopy() as needed. Note also that there is a known bug
+     * whereby recursiveCopy() fails to update the model's configNode tree correctly when a new source is created due to
+     * LocationMapper rules. So far, this bug has not resulted in damaged output because {@link EventJournalProcessor}
+     * fully reloads the toExport modules from source files after each execution of mergeChangesToModules().
+     * @param incomingDefNode a "diff" definition that should be merged into the toExport modules
+     */
     protected void mergeConfigDefinitionNode(final DefinitionNodeImpl incomingDefNode) {
         log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
-
-        //is it a root deleted node?
-        ConfigurationNodeImpl topDeletedConfigNode = model.resolveDeletedNode(incomingDefNode.getJcrPath());
-
-        boolean isChildNodeDeleted = false;
-        boolean nodeRestore = topDeletedConfigNode != null;
-        if (!nodeRestore) {
-            //maybe it is a (sub)child node of deleted node
-            topDeletedConfigNode = model.resolveDeletedSubNodeRoot(incomingDefNode.getJcrPath());
-            nodeRestore = isChildNodeDeleted = topDeletedConfigNode != null;
-        }
-
-        if (nodeRestore) {
-
-             if (model.resolveNode(incomingDefNode.getJcrPath()) == null) {
-                 //this is root deleted node, restore config model subtree
-                 restoreDeletedTree(topDeletedConfigNode);
-             }
-
-             //delete parent and child delete definitions if exists
-            removeDeleteDefinition(incomingDefNode.getJcrPath(), isChildNodeDeleted);
-
-            if (incomingDefNode.getNodes().isEmpty() && incomingDefNode.getProperties().isEmpty() && !incomingDefNode.isDelete()) {
-                //Nothing to do here, so return
-                return;
-            }
-        }
 
         // this is a tripwire for testing error handling via AutoExportIntegrationTest.merge_error_handling()
         // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
@@ -681,6 +666,12 @@ public class DefinitionMergeService {
 //            throw new RuntimeException("this is a simulated failure!");
 //        }
 
+        // check whether the incoming def represents a restore of a previously-deleted node, and if so, restore it
+        if (restoreDeletedNodesIfNecessary(incomingDefNode)) {
+            return;
+        }
+
+        // TODO: could a restored-deleted node incorrectly fall into the createNewNode() case?
         final boolean nodeIsNew = isNewNodeDefinition(incomingDefNode);
         if (nodeIsNew) {
             createNewNode(incomingDefNode);
@@ -726,6 +717,51 @@ public class DefinitionMergeService {
         }
     }
 
+    /**
+     * Check the incomingDefNode to see if it represents the re-creation (restore) of a node that was defined in an
+     * upstream (not-exported) module, but then explicitly deleted, and restore it if necessary. This check should be
+     * performed as a first step (and possibly only step) in processing each "diff" definition.
+     * @param incomingDefNode a "diff" definition that may or may not represent a restore of a previously-deleted node
+     * @return true if this method has performed all necessary processing of incomingDefNode, false if further work is
+     *              still required
+     */
+    private boolean restoreDeletedNodesIfNecessary(final DefinitionNodeImpl incomingDefNode) {
+        // TODO: should a restore also trigger a reorder?
+        // is it a root deleted node?
+        ConfigurationNodeImpl topDeletedConfigNode = model.resolveDeletedNode(incomingDefNode.getJcrPath());
+
+        boolean isChildNodeDeleted = false;
+        boolean nodeRestore = topDeletedConfigNode != null;
+        if (!nodeRestore) {
+            // maybe it is a (sub)child node of deleted node
+            topDeletedConfigNode = model.resolveDeletedSubNodeRoot(incomingDefNode.getJcrPath());
+            nodeRestore = isChildNodeDeleted = topDeletedConfigNode != null;
+        }
+
+        if (nodeRestore) {
+            if (model.resolveNode(incomingDefNode.getJcrPath()) == null) {
+                // this is root deleted node, restore config model subtree
+                log.debug("Previously-deleted node detected; restoring: {}", topDeletedConfigNode.getPath());
+                restoreDeletedTree(topDeletedConfigNode);
+            }
+
+            // delete parent and child delete definitions if exists
+            removeDeleteDefinition(incomingDefNode.getJcrPath(), isChildNodeDeleted);
+
+            if (incomingDefNode.getNodes().isEmpty() && incomingDefNode.getProperties().isEmpty() && !incomingDefNode.isDelete()) {
+                // Nothing to do here, so return
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Given a previously-retrieved "shadow node", representing the merged state of a previously-deleted config node,
+     * restore it to its previous position in the configNode tree, so that it can be used as a baseline for further
+     * diff processing.
+     * @param topDeletedConfigNode a previously-retrieved (via model.resolveDeletedNode()) configuration node
+     */
     private void restoreDeletedTree(final ConfigurationNodeImpl topDeletedConfigNode) {
         final JcrPath parentNodePath = topDeletedConfigNode.getJcrPath().getParent();
         final ConfigurationNodeImpl parentNode = model.resolveNode(parentNodePath);
@@ -733,12 +769,14 @@ public class DefinitionMergeService {
     }
 
     /**
-     * Removes node delete definition from the source as it will be superseded with recreated node
+     * Removes node delete definition from the source as it will be superseded with a recreated node.
      * @param path root of the deleted node
      * @param isChildNode this is child of the deleted node
      */
     private void removeDeleteDefinition(final JcrPath path, final boolean isChildNode) {
         DefinitionNodeImpl definitionNode = null;
+
+        // TODO: why scan definitions when we already have a back-reference from configNode.getDefinitions()?
         for (ModuleImpl exportModule : toExport.values()) {
             definitionNode = findDefinitionNode(path, exportModule);
             if (definitionNode != null) {
@@ -755,10 +793,15 @@ public class DefinitionMergeService {
             return;
         }
 
-        //we change the source, so mark it as changed
+        // we change the source, so mark it as changed
+        // TODO: why is this outside the "if" block?
         definitionNode.getDefinition().getSource().markChanged();
         if (definitionNode.isDelete()) {
+            log.debug("Removing obsolete delete def for restored node: {}", definitionNode.getPath());
             removeOneDefinitionItem(definitionNode, new ArrayList<>());
+
+            // update the configNode to erase the back-reference to the removed definition
+            model.resolveNode(path).removeDefinition(definitionNode);
         }
     }
 
@@ -773,6 +816,7 @@ public class DefinitionMergeService {
             if (path.equals(definitionNode.getJcrPath())) {
                 return definitionNode;
             } else if (path.startsWith(definitionNode.getJcrPath())) {
+                // TODO: this should use JcrPath methods, not String manipulation
                 final String commonPrefix = StringUtils.getCommonPrefix(path.toString(), definitionNode.getJcrPath().toString());
                 final int commonSegmentsCount = commonPrefix.split("/").length - 1;
                 final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
