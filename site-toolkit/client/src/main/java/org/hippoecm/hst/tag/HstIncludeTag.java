@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.component.HstResponse;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Supporting class for including the content of a child component window.
+ *
  * @version $Id$
  */
 public class HstIncludeTag extends TagSupport {
@@ -42,15 +46,22 @@ public class HstIncludeTag extends TagSupport {
     protected String ref = null;
     protected String var;
     protected String scope;
-    
+    private JspWriter enclosingWriter = null;
+
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
     @Override
-    public int doStartTag() throws JspException{
+    public int doStartTag() throws JspException {
         if (var != null) {
             TagUtils.removeVar(var, pageContext, scope);
         }
+
+        final Tag parentTag = this.getParent();
+        if (parentTag instanceof BodyTagSupport) {
+            enclosingWriter = ((BodyTagSupport) parentTag).getBodyContent();
+        }
+
         return EVAL_BODY_INCLUDE;
     }
     
@@ -59,7 +70,7 @@ public class HstIncludeTag extends TagSupport {
      * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
      */
     @Override
-    public int doEndTag() throws JspException{
+    public int doEndTag() throws JspException {
         try {
             HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
             HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
@@ -72,7 +83,11 @@ public class HstIncludeTag extends TagSupport {
             try {
                 pageContext.getOut().flush();
                 if (var == null) {
-                    hstResponse.flushChildContent(ref);
+                    if (enclosingWriter == null) {
+                        hstResponse.flushChildContent(ref);
+                    } else  {
+                        hstResponse.flushChildContent(ref, enclosingWriter);
+                    }
                 } else {
                     StringWriter writer = new StringWriter();
                     hstResponse.flushChildContent(ref, writer);
@@ -80,9 +95,9 @@ public class HstIncludeTag extends TagSupport {
                 }
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Exception happened while including child content for '"+ref+"'.", e);
+                    log.warn("Exception happened while including child content for '" + ref + "'.", e);
                 } else {
-                    log.warn("Exception happened while including child content for '{}' : {}",ref, e.toString());
+                    log.warn("Exception happened while including child content for '{}' : {}", ref, e.toString());
                 }
             }
 
@@ -96,10 +111,12 @@ public class HstIncludeTag extends TagSupport {
         ref = null;
         var = null;
         scope = null;
+        enclosingWriter = null;
     }
 
     /**
      * Returns the referenced name of the child window content to include
+     *
      * @return String
      */
     public String getRef() {
@@ -112,8 +129,8 @@ public class HstIncludeTag extends TagSupport {
 
     /**
      * Sets the ref property.
+     *
      * @param ref The referenced name of the child window content to include
-     * @return void
      */
     public void setRef(String ref) {
         this.ref = ref;
