@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeroen Reijn
  */
 public class ImageItem implements IClusterable {
-    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(ImageItem.class);
 
     public static final String BASE_PATH_BINARIES = "binaries";
@@ -74,7 +74,7 @@ public class ImageItem implements IClusterable {
             Item item;
             String path = "";
             try {
-                handle = obtainJcrSession().getNodeByUUID(uuid);
+                handle = obtainJcrSession().getNodeByIdentifier(uuid);
                 path = handle.getName();
                 if (!"".equals(path) && !"/".equals(path) && !BASE_IMAGES_PATH.equals(path)) {
                     Node document = handle.getNode(path);

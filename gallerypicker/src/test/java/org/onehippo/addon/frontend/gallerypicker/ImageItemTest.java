@@ -15,20 +15,25 @@
  */
 package org.onehippo.addon.frontend.gallerypicker;
 
-import org.easymock.classextension.ConstructorArgs;
-import org.junit.Test;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.easymock.classextension.ConstructorArgs;
+import org.junit.Test;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jettro Coenradie
@@ -133,7 +138,7 @@ public class ImageItemTest {
 
 
         expect(imageItem.obtainJcrSession()).andReturn(mockSession);
-        expect(mockSession.getNodeByUUID(EXISTING_UUID)).andReturn(mockHandleForUUID);
+        expect(mockSession.getNodeByIdentifier(EXISTING_UUID)).andReturn(mockHandleForUUID);
         expect(mockHandleForUUID.getName()).andReturn(EXISTING_NODE_NAME);
         expect(mockHandleForUUID.getNode(EXISTING_NODE_NAME)).andReturn(mockActualNode);
         expect(mockActualNode.getPrimaryItem()).andReturn(mockPrimaryItem);
@@ -155,7 +160,7 @@ public class ImageItemTest {
         Node mockHandleForUUID = createMock(Node.class);
 
         expect(imageItem.obtainJcrSession()).andReturn(mockSession);
-        expect(mockSession.getNodeByUUID(EXISTING_UUID)).andReturn(mockHandleForUUID);
+        expect(mockSession.getNodeByIdentifier(EXISTING_UUID)).andReturn(mockHandleForUUID);
         expect(mockHandleForUUID.getName()).andReturn("/");
 
         Object[] mocks = new Object[]{imageItem, mockSession, mockHandleForUUID};
