@@ -15,15 +15,13 @@
 */
 package org.hippoecm.hst.rest;
 
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hippoecm.hst.rest.beans.ChannelDocument;
+import org.hippoecm.hst.rest.beans.ChannelDocumentDataset;
 
 /**
  * JaxRS service that returns information about documents.
@@ -45,7 +43,7 @@ public interface DocumentService {
     @GET
     @Path("/{uuid}/channels/")
     @Produces(MediaType.APPLICATION_JSON)
-    List<ChannelDocument> getChannels(@PathParam("uuid") String uuid);
+    ChannelDocumentDataset getChannels(@PathParam("uuid") String uuid);
 
     /**
      * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
