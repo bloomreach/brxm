@@ -26,6 +26,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -37,16 +40,23 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 public class ImageLinkFieldType extends AbstractFieldType {
 
     public static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
 
-    private static final String[] IMAGEPICKER_STRING_PROPERTIES = {
-        "nodetypes",
-        "cluster.name",
-        "enable.upload"
+    private static final String[] IMAGE_PICKER_STRING_PROPERTIES = {
+            "base.uuid",
+            "cluster.name",
+            "enable.upload",
+            "last.visited.enabled",
+            "last.visited.key",
+            "nodetypes",
+            "preview.width"
+    };
+
+    private static final String IMAGE_PICKER_PROPERTY_PREFIX = "image.";
+    private static final String[] IMAGE_PICKER_PREFIXED_STRING_PROPERTIES = {
+            IMAGE_PICKER_PROPERTY_PREFIX + "validator.id"
     };
 
     private ObjectNode config;
@@ -70,12 +80,23 @@ public class ImageLinkFieldType extends AbstractFieldType {
         }
 
         final ObjectNode imagePickerConfig = getConfig().with("imagepicker");
-        readStringConfig(imagePickerConfig, IMAGEPICKER_STRING_PROPERTIES, fieldContext);
+        readStringConfig(imagePickerConfig, IMAGE_PICKER_STRING_PROPERTIES, fieldContext);
+        readPrefixedStringConfig(imagePickerConfig, IMAGE_PICKER_PREFIXED_STRING_PROPERTIES, IMAGE_PICKER_PROPERTY_PREFIX, fieldContext);
     }
 
     private void readStringConfig(final ObjectNode config, final String[] propertyNames, final FieldTypeContext fieldContext) {
         for (final String propertyName : propertyNames) {
             fieldContext.getStringConfig(propertyName).ifPresent((value) -> config.put(propertyName, value));
+        }
+    }
+
+    private void readPrefixedStringConfig(final ObjectNode config, final String[] propertyNames,
+                                          final String removePrefix, final FieldTypeContext fieldContext) {
+        for (final String propertyName : propertyNames) {
+            fieldContext.getStringConfig(propertyName).ifPresent((value) -> {
+                final String key = StringUtils.removeStart(propertyName, removePrefix);
+                config.put(key, value);
+            });
         }
     }
 
@@ -108,7 +129,7 @@ public class ImageLinkFieldType extends AbstractFieldType {
 
         try {
             final NodeIterator children = node.getNodes(nodeName);
-            final List<FieldValue> values = new ArrayList<>((int)children.getSize());
+            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
             for (final Node child : new NodeIterable(children)) {
                 final FieldValue value = readValue(child);
                 if (value.hasValue()) {
