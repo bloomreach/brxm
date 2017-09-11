@@ -1657,7 +1657,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         applyDefinitions(source, expectedEvents);
 
-        expectNode("/test", "[sns, sns]", "[jcr:primaryType]");
+        expectNode("/test", "[sns[1], sns[2]]", "[jcr:primaryType]");
         expectNode("/test/sns[1]", "[]", "[jcr:primaryType, property1]");
         expectNode("/test/sns[2]", "[]", "[jcr:primaryType, property2]");
     }
@@ -1698,7 +1698,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         applyDefinitions(source, baseline, expectedEvents);
 
-        expectNode("/test", "[sns, sns]", "[jcr:primaryType]");
+        expectNode("/test", "[sns[1], sns[2]]", "[jcr:primaryType]");
         expectNode("/test/sns[1]", "[]", "[jcr:primaryType, property1, property2]");
         expectNode("/test/sns[2]", "[]", "[jcr:primaryType, property1, property2]");
     }
