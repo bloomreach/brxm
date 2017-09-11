@@ -42,6 +42,7 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptySet;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -193,7 +194,7 @@ public class DefinitionMergeTest {
                 // merge diff
                 DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig, model, session);
                 Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes());
+                        merger.mergeChangesToModules(diff, emptySet(), emptySet(), emptySet());
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);

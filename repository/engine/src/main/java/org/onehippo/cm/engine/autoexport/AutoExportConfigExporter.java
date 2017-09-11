@@ -18,7 +18,6 @@ package org.onehippo.cm.engine.autoexport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,11 +31,11 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.engine.ExportConfig;
 import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
@@ -57,6 +56,8 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 /**
@@ -67,16 +68,22 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     private static final Logger log = LoggerFactory.getLogger(AutoExportConfigExporter.class);
 
     private ConfigurationModelImpl configurationModel;
-    private ExportConfig exportConfig;
+    private AutoExportConfig exportConfig;
+    private PathsMap addedContent;
+    private PathsMap deletedContent;
+
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
             // facet-related generated property
             "hippo:count"
     );
 
-    public AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final ExportConfig exportConfig) {
+    public AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig exportConfig,
+                                    final PathsMap addedContent, final PathsMap deletedContent) {
         this.configurationModel = configurationModel;
         this.exportConfig = exportConfig;
+        this.addedContent = addedContent;
+        this.deletedContent = deletedContent;
     }
 
     protected void exportProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
@@ -134,6 +141,15 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
         }
 
+        /* TODO: AutoExportConfigExporter is *currently* only invoked with *changed* paths, not *deleted* paths
+                 This is non-optimal, as it requires adding the parent path as 'changed', which therefore also
+                 causes all other siblings to be 'evaluated' for changes where there (at least likely) are none.
+                 If/when that is improved the following section needs to be re-enabled, but *then* handling of
+                 possible child *content* paths also need to be recorded as well, see checkDeletedContentChildren(JcrPath)
+
+                 In the meantime, because the following section now is commented out, passing in a path for a
+                 deleted node *will* cause a RepositoryException (ItemNotFoundException) to be thrown!
+
         // if the jcrPath doesn't exist, we need a delete definition, and that's all
         if (!session.nodeExists(jcrPath)) {
             log.debug("Deleting node: \n\t{}", jcrPath);
@@ -141,6 +157,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             definitionNode.delete();
             return;
         }
+         */
 
         final Node jcrNode = session.getNode(jcrPath);
         if (isVirtual(jcrNode)) {
@@ -173,16 +190,64 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
             log.debug("Creating new node def without delta: \n\t{}", newPath);
 
-            final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(newPath);
-
-            exportProperties(newNode, definitionNode);
-            for (final Node childNode : new NodeIterable(newNode.getNodes())) {
-                exportNode(childNode, definitionNode, Collections.emptySet());
-            }
+            exportNode(newNode, null, configSource, true);
         }
         else {
             // otherwise, we need to do a detailed comparison
             exportConfigNodeDelta(jcrNode, configNode, configSource);
+        }
+    }
+
+    /**
+     * Full export of a new node, which is a replacement implementation of {@link JcrContentExporter#exportNode(Node, DefinitionNodeImpl, Set)}
+     * to also inject .meta:residual-child-node-category properties in definitions matching the patterns from the
+     * auto-export configuration (REPO-1730).
+     * <p>In case the category "content" is injected, skip exporting child nodes and instead record these child nodes paths
+     * as added content paths to be handled by the DefinitionMergeService later.</p>
+     * <p>In case the category "system" is injected, skip exporting child nodes altogether.</p>
+     * @throws RepositoryException
+     */
+    protected void exportNode(final Node jcrNode, final DefinitionNodeImpl parentDefinition,
+                              final ConfigSourceImpl configSource, final boolean checked) throws RepositoryException {
+        if (checked || (isVirtual(jcrNode) && !shouldExcludeNode(jcrNode.getPath()))) {
+
+            final DefinitionNodeImpl definitionNode =
+                    parentDefinition != null
+                            ? parentDefinition.addNode(createNodeName(jcrNode))
+                            : configSource.getOrCreateDefinitionFor(jcrNode.getPath());
+
+            exportProperties(jcrNode, definitionNode);
+
+            final String jcrPath = jcrNode.getPath();
+
+            final ConfigurationItemCategory inject =
+                    exportConfig.getInjectResidualMatchers().getMatch(jcrPath, jcrNode.getPrimaryNodeType().getName());
+
+            if (inject == CONTENT || inject == SYSTEM) {
+                // for hst:hosts, we need to support both injecting and overriding at the same time
+                final ConfigurationItemCategory override = exportConfig.getOverrideResidualMatchers().getMatch(jcrPath);
+                final ConfigurationItemCategory effective = override != null ? override : inject;
+                if (effective == CONTENT) {
+                    for (final Node child : new NodeIterable(jcrNode.getNodes())) {
+                        final String childPath = child.getPath();
+                        // make sure child node is not virtual nor pre-excluded
+                        if (!(isVirtual(child) || exportConfig.isExcludedPath(childPath))) {
+                            // found a new content root node: record it (if not already recorded)
+                            if (!addedContent.matches(childPath)) {
+                                addedContent.add(childPath);
+                            }
+                        }
+                    }
+                }
+                definitionNode.setResidualChildNodeCategory(inject);
+                if (effective != ConfigurationItemCategory.CONFIG) {
+                    // skip config export of !CONFIG children
+                    return;
+                }
+            }
+            for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+                exportNode(childNode, definitionNode, configSource, true);
+            }
         }
     }
 
@@ -203,9 +268,9 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
-                                                     final ConfigurationNodeImpl configNode,
-                                                     final ConfigSourceImpl configSource,
-                                                     final ConfigurationModelImpl model)
+                                                       final ConfigurationNodeImpl configNode,
+                                                       final ConfigSourceImpl configSource,
+                                                       final ConfigurationModelImpl model)
             throws RepositoryException, IOException {
 
         DefinitionNodeImpl defNode = exportPrimaryTypeDelta(jcrNode, configNode, configSource);
@@ -271,8 +336,8 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected DefinitionNodeImpl exportPrimaryTypeDelta(final Node jcrNode,
-                                                      final ConfigurationNodeImpl configNode,
-                                                      final ConfigSourceImpl configSource) throws RepositoryException {
+                                                        final ConfigurationNodeImpl configNode,
+                                                        final ConfigSourceImpl configSource) throws RepositoryException {
         final String configPrimaryType = configNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
         if (!jcrNode.getPrimaryNodeType().getName().equals(configPrimaryType)) {
             final DefinitionNodeImpl defNode = configSource.getOrCreateDefinitionFor(jcrNode.getPath());
@@ -287,7 +352,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected DefinitionNodeImpl exportMixinsDelta(final Node jcrNode, DefinitionNodeImpl definitionNode,
-                                                 final ConfigurationNodeImpl configNode, final ConfigSourceImpl configSource) throws RepositoryException {
+                                                   final ConfigurationNodeImpl configNode, final ConfigSourceImpl configSource) throws RepositoryException {
         final ConfigurationPropertyImpl mixinsProperty = configNode.getProperty(JCR_MIXINTYPES);
         final NodeType[] mixinNodeTypes = jcrNode.getMixinNodeTypes();
         if (mixinNodeTypes.length > 0) {
@@ -323,8 +388,8 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected DefinitionNodeImpl createDefNodeIfNecessary(final DefinitionNodeImpl definitionNode,
-                                                        final Node jcrNode,
-                                                        final ConfigSourceImpl configSource) throws RepositoryException {
+                                                          final Node jcrNode,
+                                                          final ConfigSourceImpl configSource) throws RepositoryException {
         if (definitionNode == null) {
             return configSource.getOrCreateDefinitionFor(jcrNode.getPath());
         }
@@ -334,7 +399,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected DefinitionNodeImpl exportPropertyDelta(final Property property, final ConfigurationPropertyImpl configProperty,
-                                                   DefinitionNodeImpl definitionNode, final ConfigSourceImpl configSource)
+                                                     DefinitionNodeImpl definitionNode, final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
         // export property delta
         if (!ValueProcessor.propertyIsIdentical(property, configProperty)) {
@@ -360,7 +425,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected void exportConfigNodeDelta(final Node jcrNode, final ConfigurationNodeImpl configNode,
-                                       final ConfigSourceImpl configSource)
+                                         final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
 
         log.debug("Building delta for node: \n\t{}", jcrNode.getPath());
@@ -379,6 +444,9 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         //   and already build an indexed list of non-skipped/ignored jcrChildNodeNames if we need to check node ordering
         final List<String> indexedJcrChildNodeNames = new ArrayList<>();
         for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+            if (isVirtual(childNode)) {
+                continue;
+            }
             if (exportConfig.isExcludedPath(childNode.getPath())) {
                 log.debug("Ignoring node because of export exclusion:\n\t{}", childNode.getPath());
                 continue;
@@ -407,7 +475,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                     // the config doesn't know about this child, or wasnt deleted so do a full export without delta comparisons
                     // yes, defNode is indeed supposed to be the _parent's_ defNode
                     defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                    exportNode(childNode, defNode, Collections.emptySet());
+                    exportNode(childNode, defNode, null, true);
                 }
             } else {
                 // call top-level recursion, not this delta method
@@ -426,6 +494,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                             new IllegalStateException());
                 }
                 else {
+                    checkDeletedContentChildren(childNode.getJcrPath());
                     childNode.delete();
                 }
             }
@@ -433,6 +502,22 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
         if (orderingIsRelevant) {
             updateOrdering(indexedJcrChildNodeNames, configNode, configSource);
+        }
+    }
+
+    /*
+     * When a config node is deleted (in jcr), check if there were child nodes which mapped to *content* definitions,
+     * and if so record these as 'to be deleted' content paths for the DefinitionMergeService to handle later.
+     */
+    protected void checkDeletedContentChildren(final JcrPath deletedConfig) throws RepositoryException {
+        for (final ContentDefinitionImpl contentDefinition : configurationModel.getContentDefinitions()) {
+            final JcrPath contentRootPath = contentDefinition.getNode().getJcrPath();
+            final String contentRoot = contentRootPath.toMinimallyIndexedPath().toString();
+            if (contentRootPath.startsWith(deletedConfig) && !deletedContent.matches(contentRoot)) {
+                // content root found as child of a deleted config path, which itself, or a parent path, hasn't been recorded as deleted yet
+                deletedContent.removeChildren(contentRoot);
+                deletedContent.add(contentRoot);
+            }
         }
     }
 
@@ -461,7 +546,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
      * When merging these definitions, this should be sufficient information to put the nodes into the correct order.
      */
     protected void updateOrdering(final List<String> indexedJcrChildNodeNames, final ConfigurationNodeImpl configNode,
-                                final ConfigSourceImpl configSource) throws RepositoryException {
+                                  final ConfigSourceImpl configSource) throws RepositoryException {
         final List<String> indexedConfigNodeNames = new ArrayList<>();
         for (String indexedConfigChildNodeName : configNode.getNodes().keySet()) {
             if (indexedJcrChildNodeNames.contains(indexedConfigChildNodeName)) {
@@ -497,7 +582,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     }
 
     protected void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
-                                final ConfigSourceImpl configSource) {
+                                  final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
                 .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childName));
         childNode.setOrderBefore(beforeName);

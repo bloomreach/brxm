@@ -227,12 +227,14 @@ public class DefinitionMergeService {
      * @return a new version of each toMerge module, if revisions are necessary
      */
     public Collection<ModuleImpl> mergeChangesToModules(final ModuleImpl changes,
-                                                        final EventJournalProcessor.Changes contentChanges) {
+                                                        final Set<String> contentAdded,
+                                                        final Set<String> contentChanged,
+                                                        final Set<String> contentDeleted) {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         log.debug("Merging changes to modules: {}", toExport.values());
-        log.debug("Content added: {} changed: {}", contentChanges.getAddedContent(), contentChanges.getChangedContent());
+        log.debug("Content added: {} changed: {} deleted: {}", contentAdded, contentChanged, contentDeleted);
 
         // make sure the changes module has all the definitions nicely sorted
         changes.build();
@@ -255,7 +257,7 @@ public class DefinitionMergeService {
         }
 
         // merge content changes
-        mergeContentDefinitions(contentChanges);
+        mergeContentDefinitions(contentAdded, contentChanged, contentDeleted);
 
         final Map<JcrPath, String> contentOrderBefores = new HashMap<>();
         reorder(contentOrderBefores);
@@ -1630,13 +1632,15 @@ public class DefinitionMergeService {
         return ((ModuleImpl)item.getDefinition().getSource().getModule()).getMvnPath();
     }
 
-    protected void mergeContentDefinitions(final EventJournalProcessor.Changes contentChanges) {
+    protected void mergeContentDefinitions(final Set<String> contentAdded,
+                                           final Set<String> contentChanged,
+                                           final Set<String> contentDeleted) {
 
         // set of content change paths in lexical order, so that shorter common sub-paths come first
         // use a PATRICIA Trie, which stores strings efficiently when there are common prefixes
         final Set<String> contentChangesByPath = Collections.newSetFromMap(new PatriciaTrie<>());
-        contentChangesByPath.addAll(contentChanges.getAddedContent().getPaths());
-        contentChangesByPath.addAll(contentChanges.getChangedContent().getPaths());
+        contentChangesByPath.addAll(contentAdded);
+        contentChangesByPath.addAll(contentChanged);
 
         // set of existing sources in reverse lexical order, so that longer paths come first
         // note: we can use an ordinary TreeMap here, because we don't expect as many sources as raw paths
@@ -1644,7 +1648,7 @@ public class DefinitionMergeService {
                 collectContentSourcesByNodePath();
 
         // process deletes, including resource removal
-        for (final String deletePath : contentChanges.getDeletedContent()) {
+        for (final String deletePath : contentDeleted) {
             // if a delete path is -above- a content root path, we need to delete one or more entire sources
             final Set<JcrPath> toRemoveByNodePath = new HashSet<>();
             for (final JcrPath sourceNodePath : existingSourcesByNodePath.keySet()) {
