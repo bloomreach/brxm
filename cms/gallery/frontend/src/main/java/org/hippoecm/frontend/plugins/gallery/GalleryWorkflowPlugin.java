@@ -141,7 +141,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
                 String nodeName = getNodeNameCodec(workflowDescriptorModel.getNode()).encode(fileName);
                 String localName = getLocalizeCodec().encode(fileName);
-                Document document = workflow.createGalleryItem(nodeName, type);
+                Document document = workflow.createGalleryItem(nodeName, type, fileName);
                 node = (HippoNode) UserSession.get().getJcrSession()
                         .getNodeByIdentifier(document.getIdentity());
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);

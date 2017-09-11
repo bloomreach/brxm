@@ -200,7 +200,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 String nodeName = CodecUtils.getNodeNameCodec(context, folderNode).encode(filename);
                 localName = CodecUtils.getDisplayNameCodec(context).encode(filename);
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
-                Document document = workflow.createGalleryItem(nodeName, galleryType);
+                Document document = workflow.createGalleryItem(nodeName, galleryType, filename);
                 node = (HippoNode) UserSession.get().getJcrSession().getNodeByIdentifier(document.getIdentity());
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!node.getDisplayName().equals(localName)) {
