@@ -1,2 +1,2 @@
 options:
-  config-file: node_modules/frontend-build/.sass-lint.yml
+  config-file: node_modules/@bloomreach/frontend-build/.sass-lint.yml
