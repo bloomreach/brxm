@@ -95,13 +95,6 @@ describe('CmsService', () => {
     }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
   });
 
-  it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', () => {
-    $window.location.search = '';
-    expect(() => {
-      CmsService.getParentIFramePanelId();
-    }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
-  });
-
   it('closes a valid document', (done) => {
     CmsService.closeDocumentWhenValid('test').then(done);
 
