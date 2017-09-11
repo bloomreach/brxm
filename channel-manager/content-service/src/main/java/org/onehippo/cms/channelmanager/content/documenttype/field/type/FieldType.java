@@ -22,8 +22,8 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -35,6 +35,7 @@ public interface FieldType {
 
     enum Type {
         STRING,
+        LONG,
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
@@ -53,41 +54,45 @@ public interface FieldType {
 
     String getId();
 
-    void setId(String id);
+    void setId(final String id);
 
-    AbstractFieldType.Type getType();
+    Type getType();
 
     String getDisplayName();
 
-    void setDisplayName(String displayName);
+    void setDisplayName(final String displayName);
 
     String getHint();
 
-    void setHint(String hint);
+    void setHint(final String hint);
 
     int getMinValues();
 
-    void setMinValues(int minValues);
+    void setMinValues(final int minValues);
 
     int getMaxValues();
 
-    void setMaxValues(int maxValues);
+    void setMaxValues(final int maxValues);
 
     boolean isMultiple();
 
-    void setMultiple(boolean isMultiple);
-
-    Set<AbstractFieldType.Validator> getValidators();
-
-    void addValidator(AbstractFieldType.Validator validator);
+    void setMultiple(final boolean isMultiple);
 
     boolean isRequired();
 
-    boolean hasUnsupportedValidator();
-
+    /**
+     * Check if an initialized field is "valid", i.e. should be present in a document type.
+     *
+     * @return true or false
+     */
     boolean isValid();
 
-    void init(FieldTypeContext fieldContext);
+    /**
+     * Initialize a {@link FieldType}, given a field context.
+     *
+     * @param fieldContext  information about the field (as part of a parent content type)
+     */
+    void init(final FieldTypeContext fieldContext);
 
     /**
      * Read a document field instance from a document variant node
@@ -95,7 +100,7 @@ public interface FieldType {
      * @param node JCR node to read the value from
      * @return     Object representing the values, or nothing, wrapped in an Optional
      */
-    Optional<List<FieldValue>> readFrom(Node node);
+    Optional<List<FieldValue>> readFrom(final Node node);
 
     /**
      * Write the optional value of this field to the provided JCR node.
@@ -110,20 +115,20 @@ public interface FieldType {
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    void writeTo(Node node, Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
+    void writeTo(final Node node, final Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
 
     /**
-     * Write a value to the field indicated by the field path. Can be this field, or a child field in case of
+     * Write value(s) to the field indicated by the field path. Can be this field, or a child field in case of
      * compound or compound-like types.
      *
      * @param node the node for this field in the document field hierarchy
      * @param fieldPath the path to the field to write
-     * @param value the value to write
-     * @return true if the value has been written, false otherwise.
+     * @param values the values to write
+     * @return true if the values have been written, false otherwise.
      * @throws ErrorWithPayloadException
-     *                      indicates that writing the provided value ran into an unrecoverable error
+     *                      indicates that writing the provided values ran into an unrecoverable error
      */
-    boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) throws ErrorWithPayloadException;
+    boolean writeField(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException;
 
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
@@ -131,5 +136,12 @@ public interface FieldType {
      * @param valueList list of field value(s) to validate
      * @return          true upon success, false if at least one validation error was encountered.
      */
-    boolean validate(List<FieldValue> valueList);
+    boolean validate(final List<FieldValue> valueList);
+
+    void addValidator(final Validator validator);
+
+    Set<Validator> getValidators();
+
+    boolean hasUnsupportedValidator();
+
 }
