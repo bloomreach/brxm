@@ -18,6 +18,8 @@ import EmbeddedLink from './embeddedLink';
 
 class ContentLink extends EmbeddedLink {
   constructor(commentElement, metaData) {
+    'ngInject';
+
     super('content-link', commentElement, metaData);
   }
 }

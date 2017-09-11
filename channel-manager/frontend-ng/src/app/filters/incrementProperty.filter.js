@@ -15,6 +15,8 @@
  */
 
 function incrementPropertyFilter() {
+  'ngInject';
+
   return (collection, propertyName, propertyValue, subCollection) => {
     const itemsWithProperty = [];
 

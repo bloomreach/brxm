@@ -19,6 +19,8 @@ import PageStructureElement from './pageStructureElement';
 
 class ContainerElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, commentProcessor) {
+    'ngInject';
+
     const elements = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
     const endCommentDomElement = elements[1];
     let boxDomElement = elements[0];

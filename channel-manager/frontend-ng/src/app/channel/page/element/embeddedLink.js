@@ -18,6 +18,8 @@ import PageStructureElement from './pageStructureElement';
 
 class EmbeddedLink extends PageStructureElement {
   constructor(type, commentElement, metaData) {
+    'ngInject';
+
     super(type, metaData, commentElement, commentElement, null);
   }
 

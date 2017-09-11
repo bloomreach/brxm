@@ -17,6 +17,8 @@
 import template from './listing.html';
 
 function listingDirective() {
+  'ngInject';
+
   return {
     restrict: 'A',
     bindToController: {

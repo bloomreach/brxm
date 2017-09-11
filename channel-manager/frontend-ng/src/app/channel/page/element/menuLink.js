@@ -18,6 +18,8 @@ import EmbeddedLink from './embeddedLink';
 
 class MenuLink extends EmbeddedLink {
   constructor(commentElement, metaData) {
+    'ngInject';
+
     super('menu-link', commentElement, metaData);
   }
 }

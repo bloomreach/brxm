@@ -18,6 +18,8 @@ import MenuItem from './menuItem.model';
 
 class MenuAction extends MenuItem {
   constructor(name, config) {
+    'ngInject';
+
     super(name, config);
     this.type = 'action';
   }

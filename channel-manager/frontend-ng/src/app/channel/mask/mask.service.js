@@ -16,6 +16,8 @@
 
 class MaskService {
   constructor() {
+    'ngInject';
+
     this.defaultMaskClass = 'masked';
     this.clickHandler = angular.noop;
   }

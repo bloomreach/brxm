@@ -18,6 +18,8 @@ import HstConstants from '../../../constants/hst.constants';
 
 class PageStructureElement {
   constructor(type, metaData, startCommentDomElement, endCommentDomElement, boxDomElement) {
+    'ngInject';
+
     this.type = type;
     this.metaData = metaData;
     this.jQueryElements = {};

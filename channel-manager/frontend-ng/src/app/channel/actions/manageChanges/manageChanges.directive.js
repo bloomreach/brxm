@@ -17,6 +17,8 @@
 import template from './manageChanges.html';
 
 function changeManagementDirective() {
+  'ngInject';
+
   return {
     restrict: 'E',
     template,

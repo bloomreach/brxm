@@ -18,6 +18,8 @@ import './collapse.scss';
 import CollapseCtrl from './collapse.controller';
 
 function collapse() {
+  'ngInject';
+
   return {
     restrict: 'A',
     controller: CollapseCtrl,
