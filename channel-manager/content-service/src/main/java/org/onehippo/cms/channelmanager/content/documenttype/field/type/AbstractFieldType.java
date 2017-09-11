@@ -28,8 +28,11 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -42,12 +45,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentType}. It can be serialized into JSON to
@@ -55,9 +52,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractFieldType implements FieldType {
-
-    @JsonIgnore
-    private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
 
     protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
             = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
@@ -207,15 +201,6 @@ public abstract class AbstractFieldType implements FieldType {
     public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
             throws ErrorWithPayloadException {
         writeValues(node, optionalValues, true);
-    }
-
-    @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (!fieldPath.is(getId())) {
-            return false;
-        }
-        writeValues(node, Optional.of(values), false);
-        return true;
     }
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class LongFieldType extends SingleNodeFieldType {
+public class LongFieldType extends PrimitiveFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LongFieldType.class);
     private static final String DEFAULT_VALUE = "0";

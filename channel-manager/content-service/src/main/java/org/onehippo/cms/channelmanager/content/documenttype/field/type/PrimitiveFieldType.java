@@ -26,30 +26,30 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * This bean represents a single node field type, used for the fields of a {@link DocumentType}. It can be serialized
+ * This bean represents a primitive field type, used for the fields of a {@link DocumentType}. It can be serialized
  * into JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class SingleNodeFieldType extends AbstractFieldType {
+public abstract class PrimitiveFieldType extends AbstractFieldType {
 
     @JsonIgnore
-    private static final Logger log = LoggerFactory.getLogger(SingleNodeFieldType.class);
-
-    @JsonIgnore
-    private static final String EMPTY_STRING = "";
+    private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
 
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {
@@ -67,12 +67,21 @@ public abstract class SingleNodeFieldType extends AbstractFieldType {
         boolean isValid = true;
 
         if (isRequired()) {
-            if (!validateValues(valueList, SingleNodeFieldType::validateSingleRequired)) {
+            if (!validateValues(valueList, PrimitiveFieldType::validateSingleRequired)) {
                 isValid = false;
             }
         }
 
         return isValid;
+    }
+
+    @Override
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        if (!fieldPath.is(getId())) {
+            return false;
+        }
+        writeValues(node, Optional.of(values), false);
+        return true;
     }
 
     protected abstract String getDefault();
@@ -94,7 +103,7 @@ public abstract class SingleNodeFieldType extends AbstractFieldType {
     }
 
     protected static boolean validateSingleRequired(final FieldValue value) {
-        if (value.findValue().orElse(EMPTY_STRING).isEmpty()) {
+        if (value.findValue().orElse(StringUtils.EMPTY).isEmpty()) {
             value.setErrorInfo(new ValidationErrorInfo(Code.REQUIRED_FIELD_EMPTY));
             return false;
         }
@@ -122,5 +131,4 @@ public abstract class SingleNodeFieldType extends AbstractFieldType {
             values.add(new FieldValue(getDefault()));
         }
     }
-
 }
