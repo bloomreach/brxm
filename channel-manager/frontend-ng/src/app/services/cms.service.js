@@ -50,6 +50,23 @@ class CmsService {
     return this.closeContentPromises[documentId].promise;
   }
 
+  getParentIFramePanelId() {
+    const search = this.$window.location.search;
+
+    if (search.length > 0) {
+      const parameters = search.substring(1).split('&');
+
+      for (let i = 0, length = parameters.length; i < length; i += 1) {
+        const keyValue = parameters[i].split('=');
+        if (keyValue[0] === 'parentExtIFramePanelId') {
+          return keyValue[1];
+        }
+      }
+    }
+
+    throw new Error('Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
+  }
+
   getParentIFramePanel() {
     const iframePanel = this.$window.parent.Ext.getCmp(IFRAME_PANEL_ID);
 
