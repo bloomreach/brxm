@@ -39,6 +39,9 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -69,9 +72,6 @@ import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -310,7 +310,7 @@ public class ConfigurationConfigService {
             throws RepositoryException, IOException {
 
         if (targetNode.isLocked()) {
-            log.warn("Target node {} is locked, skipping it's processing", targetNode.getPath());
+            log.warn("Target node {} is locked, skipping its processing", targetNode.getPath());
             final LockManager lockManager = targetNode.getSession().getWorkspace().getLockManager();
             try {
                 final Lock lock = lockManager.getLock(targetNode.getPath());
