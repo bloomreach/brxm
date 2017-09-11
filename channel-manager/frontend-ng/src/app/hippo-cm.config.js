@@ -34,6 +34,8 @@ function config(
     template,
     resolve: {
       translations: ($translate, ConfigService) => {
+        'ngInject';
+
         $translateProvider.useStaticFilesLoader({
           prefix: 'i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
