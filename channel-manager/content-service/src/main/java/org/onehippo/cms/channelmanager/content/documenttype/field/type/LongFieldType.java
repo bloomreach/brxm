@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,59 +22,29 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LongFieldType extends AbstractFieldType {
+/**
+ * LongFieldType controls the reading and writing of a Long type field from and to a node's property.
+ * <p>
+ * The code diligently deals with the situation that the field type definition may be out of sync with the actual
+ * property value, and exposes and validates a value as consistent as possible with the field type definition. As such,
+ * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
+ * with the field type definition.
+ */
+public class LongFieldType extends SingleNodeFieldType {
 
-    public static final Logger log = LoggerFactory.getLogger(LongFieldType.class);
-
+    private static final Logger log = LoggerFactory.getLogger(LongFieldType.class);
     private static final String DEFAULT_VALUE = "0";
 
     public LongFieldType() {
         setType(Type.LONG);
-    }
-
-    @Override
-    public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readValues(node);
-
-        trimToMaxValues(values);
-        fillToMinValues(values);
-        fillMissingRequiredValues(values);
-
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
-    }
-
-    protected List<FieldValue> readValues(final Node node) {
-        final String propertyName = getId();
-        final List<FieldValue> values = new ArrayList<>();
-
-        try {
-            if (node.hasProperty(propertyName)) {
-                final Property property = node.getProperty(propertyName);
-                if (property.isMultiple()) {
-                    for (final Value v : property.getValues()) {
-                        values.add(new FieldValue(v.getString()));
-                    }
-                } else {
-                    values.add(new FieldValue(property.getString()));
-                }
-            }
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read long field '{}' from '{}'", propertyName, JcrUtils.getNodePathQuietly(node), e);
-        }
-
-        return values;
     }
 
     @Override
@@ -125,60 +93,8 @@ public class LongFieldType extends AbstractFieldType {
     }
 
     @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (!fieldPath.is(getId())) {
-            return false;
-        }
-        writeValues(node, Optional.of(values), false);
-        return true;
+    protected String getDefault() {
+        return DEFAULT_VALUE;
     }
 
-    @Override
-    public boolean validate(final List<FieldValue> valueList) {
-        boolean isValid = true;
-
-        if (isRequired()) {
-            if (!validateValues(valueList, this::validateSingleRequired)) {
-                isValid = false;
-            }
-        }
-
-        return isValid;
-    }
-
-    protected boolean validateSingleRequired(final FieldValue value) {
-        if (value.findValue().orElse("").isEmpty()) {
-            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-            return false;
-        }
-        return true;
-    }
-
-    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
-        return optionalValues.orElse(Collections.emptyList());
-    }
-
-    private void fillMissingRequiredValues(final List<FieldValue> values) {
-        if (isRequired() && values.isEmpty()) {
-            values.add(new FieldValue(DEFAULT_VALUE));
-        }
-    }
-
-    private void fillToMinValues(final List<FieldValue> values) {
-        while (values.size() < getMinValues()) {
-            values.add(new FieldValue(DEFAULT_VALUE));
-        }
-    }
-
-    private static boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
-        if (!node.hasProperty(propertyName)) {
-            return false;
-        }
-        final Property property = node.getProperty(propertyName);
-        if (!property.isMultiple()) {
-            return true;
-        }
-        // empty multiple property is equivalent to no property.
-        return property.getValues().length > 0;
-    }
 }

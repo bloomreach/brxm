@@ -16,23 +16,15 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -40,21 +32,21 @@ import org.slf4j.LoggerFactory;
 
 /**
  * StringFieldType controls the reading and writing of a String type field from and to a node's property.
- *
- * The code diligently deals with the situation that the field type definition may be out of sync with the
- * actual property value, and exposes and validates a value as consistent as possible with the field type
- * definition. As such, a "no-change" read-and-write operation may have the effect that the document is
- * adjusted towards better consistency with the field type definition.
+ * <p>
+ * The code diligently deals with the situation that the field type definition may be out of sync with the actual
+ * property value, and exposes and validates a value as consistent as possible with the field type definition. As such,
+ * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
+ * with the field type definition.
  */
-public class StringFieldType extends AbstractFieldType {
+public class StringFieldType extends SingleNodeFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
     private static final String DEFAULT_VALUE = "";
 
     private Long maxLength;
 
     public StringFieldType() {
-        this.setType(Type.STRING);
+        setType(Type.STRING);
     }
 
     @Override
@@ -79,60 +71,8 @@ public class StringFieldType extends AbstractFieldType {
         return maxLength;
     }
 
-    /**
-     * Read an optional value (singular or multiple) from a node's property.
-     *
-     * If the node's property does not match the field type, we convert the property
-     * to a value that's consistent with the field type. In case of a REQUIRED field,
-     * we cannot determine a sensible value, so we use an empty string, which will be
-     * rejected upon write.
-     */
     @Override
-    public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readValues(node);
-
-        // Adjust values towards valid cardinality
-        trimToMaxValues(values);
-        while (values.size() < getMinValues()) {
-            values.add(new FieldValue(""));
-        }
-
-        // Fix missing required
-        if (isRequired() && values.isEmpty()) {
-            values.add(new FieldValue(""));
-        }
-
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
-    }
-
-    protected List<FieldValue> readValues(final Node node) {
-        final String propertyName = getId();
-        final List<FieldValue> values = new ArrayList<>();
-
-        try {
-            if (node.hasProperty(propertyName)) {
-                final Property property = node.getProperty(propertyName);
-                storeProperty(values, property);
-            }
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read string field '{}' from '{}'", propertyName, JcrUtils.getNodePathQuietly(node), e);
-        }
-
-        return values;
-    }
-
-    protected static void storeProperty(final Collection<FieldValue> values, final Property property) throws RepositoryException {
-        if (property.isMultiple()) {
-            for (final Value v : property.getValues()) {
-                values.add(new FieldValue(v.getString()));
-            }
-        } else {
-            values.add(new FieldValue(property.getString()));
-        }
-    }
-
-    @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException {
+    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
         final List<FieldValue> processedValues = processValues(optionalValues);
 
         if (validateValues) {
@@ -150,7 +90,7 @@ public class StringFieldType extends AbstractFieldType {
                 for (int i = 0; i < strings.length; i++) {
                     final Optional<String> value = processedValues.get(i).findValue();
 
-                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(StringUtils.EMPTY);
+                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(DEFAULT_VALUE);
 
                     if (validateValues && maxLength != null && strings[i].length() > maxLength) {
                         throw INVALID_DATA.get();
@@ -177,55 +117,9 @@ public class StringFieldType extends AbstractFieldType {
         }
     }
 
-    /**
-     * Hook for sub-classes to process values before writing them. The default implementation does nothing.
-     * @param optionalValues the values to process
-     * @return the processed values
-     */
-    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
-        return optionalValues.orElse(Collections.emptyList());
-    }
-
     @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (!fieldPath.is(getId())) {
-            return false;
-        }
-        writeValues(node, Optional.of(values), false);
-        return true;
+    protected String getDefault() {
+        return DEFAULT_VALUE;
     }
 
-    private boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
-        if (!node.hasProperty(propertyName)) {
-            return false;
-        }
-        final Property property = node.getProperty(propertyName);
-        if (!property.isMultiple()) {
-            return true;
-        }
-        // empty multiple property is equivalent to no property.
-        return property.getValues().length > 0;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean validate(final List<FieldValue> valueList) {
-        boolean isValid = true;
-
-        if (isRequired()) {
-            if (!validateValues(valueList, this::validateSingleRequired)) {
-                isValid = false;
-            }
-        }
-
-        return isValid;
-    }
-
-    protected boolean validateSingleRequired(final FieldValue value) {
-        if (value.findValue().orElse(DEFAULT_VALUE).isEmpty()) {
-            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-            return false;
-        }
-        return true;
-    }
 }

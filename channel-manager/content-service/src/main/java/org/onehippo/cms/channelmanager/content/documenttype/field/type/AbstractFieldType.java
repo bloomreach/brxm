@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -34,22 +38,29 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a field type, used for the fields of a {@link DocumentType}.
- * It can be serialized into JSON to expose it through a REST API.
+ * This bean represents a field type, used for the fields of a {@link DocumentType}. It can be serialized into JSON to
+ * expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractFieldType implements FieldType {
 
+    @JsonIgnore
+    private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
+
     protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
-            = () -> new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -192,25 +203,28 @@ public abstract class AbstractFieldType implements FieldType {
         setMultiple(item.isMultiple());
     }
 
-    protected void setLocalizedLabels(final Optional<ResourceBundle> resourceBundle, final Optional<Node> editorFieldConfig) {
-        final String fieldId = getId();
-        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
-        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
-    }
-
-    protected void trimToMaxValues(final List list) {
-        while (list.size() > maxValues) {
-            list.remove(list.size() - 1);
-        }
-    }
-
     @Override
     public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
             throws ErrorWithPayloadException {
         writeValues(node, optionalValues, true);
     }
 
+    @Override
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        if (!fieldPath.is(getId())) {
+            return false;
+        }
+        writeValues(node, Optional.of(values), false);
+        return true;
+    }
+
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
+
+    protected void trimToMaxValues(final List list) {
+        while (list.size() > maxValues) {
+            list.remove(list.size() - 1);
+        }
+    }
 
     protected void checkCardinality(final List<FieldValue> values)
             throws ErrorWithPayloadException {
@@ -226,7 +240,7 @@ public abstract class AbstractFieldType implements FieldType {
         }
     }
 
-    protected boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
+    protected static boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
         boolean isValid = true;
 
         for (final FieldValue value : valueList) {
@@ -237,4 +251,33 @@ public abstract class AbstractFieldType implements FieldType {
 
         return isValid;
     }
+
+    /**
+     * Hook for sub-classes to process values before writing them. The default implementation does nothing.
+     *
+     * @param optionalValues the values to process
+     * @return the processed values
+     */
+    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
+        return optionalValues.orElse(Collections.emptyList());
+    }
+
+    protected static boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
+        if (!node.hasProperty(propertyName)) {
+            return false;
+        }
+        final Property property = node.getProperty(propertyName);
+        if (!property.isMultiple()) {
+            return true;
+        }
+        // empty multiple property is equivalent to no property.
+        return property.getValues().length > 0;
+    }
+
+    private void setLocalizedLabels(final Optional<ResourceBundle> resourceBundle, final Optional<Node> editorFieldConfig) {
+        final String fieldId = getId();
+        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+    }
+
 }
