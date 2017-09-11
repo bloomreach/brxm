@@ -1,6 +1,0 @@
-{
-  "rulesDirectory": [
-    "./node_modules/codelyzer"
-  ],
-  "extends": "./node_modules/@bloomreach/frontend-build/tslint.json"
-}
