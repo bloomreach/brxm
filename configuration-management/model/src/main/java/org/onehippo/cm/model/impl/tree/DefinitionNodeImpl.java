@@ -226,9 +226,9 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
      * children exactly. Names in given expected list that do not exist in this parent are skipped, any child nodes
      * not named in given expected list are ordered last in their original order. For example:
      * <ul>
-     *     <li>current: [1,2] - expected: [2,1] - result: [2,1]</li>
-     *     <li>current: [1,2,3,4] - expected: [4,3] - result: [4,3,1,2]</li>
-     *     <li>current: [1,2] - expected: [2,1,3,4] - result: [2,1]</li>
+     *     <li>current: [a,b] - expected: [b,a] - result: [b,a]</li>
+     *     <li>current: [a,b,c,d] - expected: [d,c] - result: [d,c,a,b]</li>
+     *     <li>current: [a,b] - expected: [b,a,c,d] - result: [b,a]</li>
      * </ul>
      * @param expected expected order of child items
      */
@@ -238,17 +238,18 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
 
         for (final JcrPathSegment name : expected) {
-            // Check if the node is there, with or without index -- it's important to re-add it in the original form
-            name.suppressIndex();
-            DefinitionNodeImpl node = getNode(name.toString());
+            // Check if a node with this name exists, with or without index -- if so, add it with its original name.
+            // The little dance with the SNS index is actually only needed for index 1 (which may be omitted).
+            JcrPathSegment originalName = name.forceIndex();
+            DefinitionNodeImpl node = getNode(originalName.toString());
             if (node == null) {
-                name.forceIndex();
-                node = getNode(name.toString());
+                originalName = name.suppressIndex();
+                node = getNode(originalName.toString());
             }
 
             if (node != null) {
-                newView.put(name.toString(), node);
-                remainder.remove(name.toString());
+                newView.put(originalName.toString(), node);
+                remainder.remove(originalName.toString());
             }
         }
 
