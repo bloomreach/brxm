@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,12 @@ import org.junit.Before;
 import org.onehippo.repository.mock.MockNode;
 
 abstract class AbstractWicketDialogTest {
+
+    private static final String WICKET_PATH_DIALOG_FORM = "dialog:content:form";
+    private static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:1:button";
+
     protected HippoTester tester;
+    protected FormTester formTester;
     protected PluginPage home;
     protected PluginContext context;
     protected MockNode root;
@@ -49,7 +54,8 @@ abstract class AbstractWicketDialogTest {
         tester.getSession().setLocale(Locale.ENGLISH);
 
         home = (PluginPage) tester.startPluginPage();
-        JavaPluginConfig config = new JavaPluginConfig("dummy");
+
+        final JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);
     }
@@ -70,10 +76,16 @@ abstract class AbstractWicketDialogTest {
     }
 
     protected FormTester executeDialog(final IDialogService.Dialog dialog) {
-        tester.runInAjax(home, () -> {
-            IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(dialog);
-        });
-        return tester.newFormTester("dialog:content:form");
+        tester.runInAjax(home, () -> getDialogService().show(dialog));
+        formTester = tester.newFormTester(WICKET_PATH_DIALOG_FORM);
+        return formTester;
+    }
+
+    protected void clickOkButton() {
+        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+    }
+
+    private IDialogService getDialogService() {
+        return context.getService(IDialogService.class.getName(), IDialogService.class);
     }
 }
