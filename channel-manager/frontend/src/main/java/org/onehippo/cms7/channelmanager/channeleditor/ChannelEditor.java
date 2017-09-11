@@ -59,7 +59,6 @@ public class ChannelEditor extends ExtPanel {
 
     private static final String OPEN_DOCUMENT_EVENT = "open-document";
     private static final String CLOSE_DOCUMENT_EVENT = "close-document";
-    private static final String OPEN_LINK_PICKER_EVENT = "open-link-picker";
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -184,8 +183,6 @@ public class ChannelEditor extends ExtPanel {
                 return OpenDocumentEditorEventListener.getExtEventBehavior();
             case CLOSE_DOCUMENT_EVENT:
                 return CloseDocumentEditorEventListener.getExtEventBehavior();
-            case OPEN_LINK_PICKER_EVENT:
-                return OpenLinkPickerEventListener.getExtEventBehavior();
             default:
                 return super.newExtEventBehavior(event);
         }
