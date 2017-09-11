@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,11 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.tester.FormTester;
 import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -40,24 +39,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class RenameDocumentDialogTest extends AbstractWicketDialogTest {
+public class RenameDocumentDialogTest extends AbstractDocumentDialogTest {
 
-    public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
-    public static final String URL_INPUT = "name-url:url";
-    public static final String NAME_INPUT = "name-url:name";
-
-    private FormTester createDialog(boolean workflowError) throws Exception {
+    private void createDialog(final boolean workflowError) throws Exception {
         final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
-
         final IWorkflowInvoker invoker = mockWorkflowInvoker();
-
         final StringCodec stringCodec = new StringCodecFactory.UriEncoding();
-        IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
-            @Override
-            protected StringCodec load() {
-                return stringCodec;
-            }
-        };
+        final IModel<StringCodec> stringCodecModel = ReadOnlyModel.of(() -> stringCodec);
 
         // rename the 'news' folder
         final RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);
@@ -70,7 +58,7 @@ public class RenameDocumentDialogTest extends AbstractWicketDialogTest {
                 workflowDescriptorModel
         );
 
-        return executeDialog(dialog);
+        executeDialog(dialog);
     }
 
     private WorkflowDescriptorModel createNormalWorkflow() throws IOException, RepositoryException {
@@ -94,12 +82,13 @@ public class RenameDocumentDialogTest extends AbstractWicketDialogTest {
 
     @Test
     public void dialogCreatedContainingExpectedInputValues() throws Exception {
-        final FormTester formTester = createDialog(false);
-        FormComponent<String> nameComponent = (FormComponent<String>) formTester.getForm().get(NAME_INPUT);
+        createDialog(false);
+
+        final FormComponent<String> nameComponent = getNameField();
         assertNotNull(nameComponent);
         assertEquals("News", nameComponent.getValue());
 
-        FormComponent<String> urlField = (FormComponent<String>) formTester.getForm().get(URL_INPUT);
+        final FormComponent<String> urlField = getUrlField();
         assertNotNull(urlField);
         assertEquals("news", urlField.getValue());
 
@@ -107,102 +96,106 @@ public class RenameDocumentDialogTest extends AbstractWicketDialogTest {
         assertTrue(urlField.isEnabled());
 
         // the urlAction must be 'Reset'
-        Label urlActionLabel = (Label) formTester.getForm().get("name-url:uriAction:uriActionLabel");
+        final Label urlActionLabel = getUrlActionLabel();
         assertNotNull(urlActionLabel);
         assertEquals("Reset", urlActionLabel.getDefaultModelObject());
     }
 
     @Test
     public void clickOKWithSameNames() throws Exception {
-        final FormTester formTester = createDialog(false);
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        clickOkButton();
+
         tester.assertErrorMessages("No name is changed. Please enter different names.");
     }
 
     @Test
     public void renameFolderWithSameUriNameExistedLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "news");
-        formTester.setValue(NAME_INPUT, "Common");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("news");
+        setName("Common");
+        clickOkButton();
 
         tester.assertErrorMessages("The name \'Common\' is already used in this folder. Please use a different name.");
     }
 
     @Test
     public void renameFolderWithSameUriNameNonExistentLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "news");
-        formTester.setValue(NAME_INPUT, "Different News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("news");
+        setName("Different News");
+        clickOkButton();
 
         tester.assertNoErrorMessage();
     }
 
     @Test
     public void renameFolderWithExistedUriNameSameLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "common");
-        formTester.setValue(NAME_INPUT, "News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("common");
+        setName("News");
+        clickOkButton();
+
         tester.assertErrorMessages("The URL name \'common\' is already used in this folder. Please use a different name.");
     }
 
     @Test
     public void renameFolderWithExistedUriNameNonExistentLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "common");
-        formTester.setValue(NAME_INPUT, "Different News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("common");
+        setName("Different News");
+        clickOkButton();
+
         tester.assertErrorMessages("The URL name \'common\' is already used in this folder. Please use a different name.");
     }
 
     @Test
     public void renameFolderWithExistedUriNameAndExistedLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "common");
-        formTester.setValue(NAME_INPUT, "Common");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("common");
+        setName("Common");
+        clickOkButton();
+
         tester.assertErrorMessages("The URL name \'common\' and name \'Common\' are already used in this folder. Please use different names.");
     }
 
     @Test
     public void renameFolderWithNonExistentUriNameSameLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "different-news");
-        formTester.setValue(NAME_INPUT, "News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("different-news");
+        setName("News");
+        clickOkButton();
 
         tester.assertNoErrorMessage();
     }
 
     @Test
     public void renameFolderWithNonExistentUriNameNonExistentLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "different-news");
-        formTester.setValue(NAME_INPUT, "Different-News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("different-news");
+        setName("Different-News");
+        clickOkButton();
 
         tester.assertNoErrorMessage();
     }
 
     @Test
     public void renameFolderWithNonExistentUriNameExistedLocalizedName() throws Exception {
-        final FormTester formTester = createDialog(false);
-        formTester.setValue(URL_INPUT, "different-news");
-        formTester.setValue(NAME_INPUT, "Common");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        createDialog(false);
+        setUrl("different-news");
+        setName("Common");
+        clickOkButton();
 
         tester.assertErrorMessages("The name \'Common\' is already used in this folder. Please use a different name.");
     }
 
     @Test
     public void renameFolderWithWorkflowException() throws Exception {
-        final FormTester formTester = createDialog(true);
+        createDialog(true);
+        setUrl("another-news");
+        setName("Another News");
+        clickOkButton();
 
-        formTester.setValue(URL_INPUT, "another-news");
-        formTester.setValue(NAME_INPUT, "Another News");
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
         tester.assertErrorMessages("Failed to validate input names");
     }
 }
