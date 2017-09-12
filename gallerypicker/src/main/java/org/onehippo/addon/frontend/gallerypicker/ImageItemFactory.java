@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,26 +15,12 @@
  */
 package org.onehippo.addon.frontend.gallerypicker;
 
-import org.apache.wicket.util.io.IClusterable;
+import java.io.Serializable;
 
 /**
- * Factory class for ImageItem objects
- *
- * @author Jeroen Reijn
+ * Factory class for {@link ImageItem} objects.
  */
-public class ImageItemFactory implements IClusterable {
-    private static final long serialVersionUID = 1L;
-
-    public ImageItemFactory() {
-    }
-
-    /**
-     * @param prefix String not being used anymore
-     * @deprecated
-     */
-    public ImageItemFactory(String prefix) {
-        this();
-    }
+public class ImageItemFactory implements Serializable {
 
     public ImageItem createImageItem() {
         return new ImageItem();
@@ -43,5 +29,4 @@ public class ImageItemFactory implements IClusterable {
     public ImageItem createImageItem(String uuid) {
         return new ImageItem(uuid);
     }
-
 }
