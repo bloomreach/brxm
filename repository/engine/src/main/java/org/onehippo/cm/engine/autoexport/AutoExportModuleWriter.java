@@ -90,7 +90,7 @@ public class AutoExportModuleWriter extends ModuleWriter {
 //        }
 
         if (source.hasChangedSinceLoad()) {
-            log.debug("writing updated source: {}", source.getOrigin());
+            log.info("autoexporting source: {}", source.getOrigin());
         }
 
         // short-circuit processing of unchanged sources
