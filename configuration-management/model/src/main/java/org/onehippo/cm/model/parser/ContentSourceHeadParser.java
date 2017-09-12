@@ -56,8 +56,16 @@ import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
  */
 public class ContentSourceHeadParser extends ContentSourceParser {
 
+    public ContentSourceHeadParser(final ResourceInputProvider resourceInputProvider) {
+        super(resourceInputProvider);
+    }
+
     public ContentSourceHeadParser(final ResourceInputProvider resourceInputProvider, final boolean explicitSequencing) {
         super(resourceInputProvider, false, explicitSequencing);
+    }
+
+    public ContentSourceHeadParser(final ResourceInputProvider resourceInputProvider, final boolean verifyOnly, final boolean explicitSequencing) {
+        super(resourceInputProvider, verifyOnly, explicitSequencing);
     }
 
     public void parse(final InputStream inputStream, final String relativePath, final String location, final ModuleImpl parent) throws ParserException {

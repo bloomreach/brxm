@@ -40,6 +40,7 @@ public class PathConfigurationReader {
     private static final Logger log = LoggerFactory.getLogger(PathConfigurationReader.class);
 
     private final boolean explicitSequencing;
+    private final boolean contentSourceHeadOnly;
 
     public static class ReadResult {
 
@@ -59,7 +60,12 @@ public class PathConfigurationReader {
     }
 
     public PathConfigurationReader(final boolean explicitSequencing) {
+        this(explicitSequencing, false);
+    }
+
+    public PathConfigurationReader(final boolean explicitSequencing, final boolean contentSourceHeadOnly) {
         this.explicitSequencing = explicitSequencing;
+        this.contentSourceHeadOnly = contentSourceHeadOnly;
     }
 
     public ReadResult read(final Path moduleDescriptorPath) throws IOException, ParserException {
@@ -119,7 +125,9 @@ public class PathConfigurationReader {
     protected void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
         final Path contentBasePath = moduleContext.getContentRoot();
         if (Files.exists(contentBasePath)) {
-            final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
+            final SourceParser contentSourceParser = contentSourceHeadOnly
+                    ? new ContentSourceHeadParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing)
+                    : new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
             parseSources(module, contentBasePath, contentSourceParser);
         }
     }

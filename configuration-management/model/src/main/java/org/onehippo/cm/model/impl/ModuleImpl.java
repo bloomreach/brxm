@@ -55,7 +55,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
-import org.onehippo.cm.model.parser.ContentSourceParser;
+import org.onehippo.cm.model.parser.ContentSourceHeadParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
@@ -670,7 +670,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             // reload sources from raw YAML instead of attempting to copy the full parsed structure
             // TODO is this good enough? for auto-export, there is a potential failure mode if files are changed on disk
             final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider);
-            final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider);
+            final SourceParser contentSourceParser = new ContentSourceHeadParser(contentResourceInputProvider);
 
             for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
