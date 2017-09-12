@@ -36,6 +36,7 @@ import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
@@ -45,6 +46,7 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.modules.ModuleManager;
+import org.onehippo.services.lock.LockManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +82,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private String repoConfig;
 
     private ConfigurationServiceImpl configurationService;
+    private LockManager lockManager;
 
     private ModuleManager moduleManager;
 
@@ -254,6 +257,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
         jackrabbitRepository = new LocalRepositoryImpl(createRepositoryConfig());
+
+        lockManager = new LockManagerFactory(jackrabbitRepository).create();
+        HippoServiceRegistry.registerService(lockManager, LockManager.class);
+
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
@@ -302,6 +309,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (nodeTypesChangeTracker != null) {
             nodeTypesChangeTracker.stop();
             nodeTypesChangeTracker = null;
+        }
+        if (lockManager != null) {
+            HippoServiceRegistry.unregisterService(lockManager, LockManager.class);
+            lockManager.destroy();
         }
         if (configurationService != null) {
             HippoServiceRegistry.unregisterService(configurationService, ConfigurationService.class);
