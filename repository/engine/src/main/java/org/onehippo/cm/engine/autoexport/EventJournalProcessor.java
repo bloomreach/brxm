@@ -623,7 +623,7 @@ public class EventJournalProcessor {
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
                 final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath);
+                        new PathConfigurationReader(false, true).read(moduleDescriptorPath);
 
                 final ModuleImpl loadedModule = result.getModuleContext().getModule();
                 // store mvnPath again for later use
