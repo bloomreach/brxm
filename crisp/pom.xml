@@ -401,30 +401,23 @@
     </plugins>
   </reporting>
 
+  <modules>
+    <module>api</module>
+    <module>core</module>
+    <module>repository</module>
+    <module>hst</module>
+  </modules>
+
   <profiles>
 
     <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>api</module>
-        <module>core</module>
-        <module>repository</module>
-        <module>hst</module>
-      </modules>
-    </profile>
-
-    <profile>
       <id>pedantic</id>
-      <modules />
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <inherited>false</inherited>
+            <inherited>true</inherited>
             <configuration>
               <excludes combine.children="append">
                 <exclude>**/rat.txt</exclude>
@@ -433,9 +426,8 @@
                 <exclude>**/.project</exclude>
                 <exclude>**/.settings/**/*</exclude>
                 <exclude>*.md</exclude>
+                <exclude>src/test/resources/**/*.json</exclude>
                 <exclude>demo/**/*</exclude>
-                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/broker/products.json</exclude>
-                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/resource/jackson/widget.json</exclude>
               </excludes>
             </configuration>
           </plugin>
