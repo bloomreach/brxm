@@ -43,11 +43,11 @@ public class MemoryLockManagerTest {
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
         assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockOwner());
 
-        assertEquals(2, ((MemoryLockManager.MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
+        assertEquals(2, ((MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
 
         memoryLockManager.unlock("123");
         assertEquals(1, memoryLockManager.getLocks().size());
-        assertEquals(1, ((MemoryLockManager.MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
+        assertEquals(1, ((MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
 
 
         memoryLockManager.unlock("123");

@@ -15,22 +15,29 @@
  */
 package org.onehippo.services.lock;
 
-import org.onehippo.cms7.services.lock.LockException;
-import org.onehippo.cms7.services.lock.LockManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MemoryLockManager extends AbstractLockManager implements LockManager {
+class DbLock extends AbstractLock {
 
-    private static final Logger log = LoggerFactory.getLogger(MemoryLockManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DbLock.class);
 
-    @Override
-    Logger getLogger() {
-        return log;
+    ResultSet dbLockResult;
+
+    DbLock(final String lockKey, final ResultSet dbLockSet) {
+        super(lockKey, Thread.currentThread().getName(), System.currentTimeMillis());
+        this.dbLockResult = dbLockSet;
     }
 
     @Override
-    AbstractLock createLock(final String key) throws LockException {
-        return new MemoryLock(key);
+    void destroy() {
+        try {
+            dbLockResult.close();
+        } catch (SQLException e) {
+            log.error("Error while destroying DbLock", e);
+        }
     }
 }

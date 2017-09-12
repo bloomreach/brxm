@@ -15,22 +15,14 @@
  */
 package org.onehippo.services.lock;
 
-import org.onehippo.cms7.services.lock.LockException;
-import org.onehippo.cms7.services.lock.LockManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+class MemoryLock  extends AbstractLock {
 
-public class MemoryLockManager extends AbstractLockManager implements LockManager {
-
-    private static final Logger log = LoggerFactory.getLogger(MemoryLockManager.class);
-
-    @Override
-    Logger getLogger() {
-        return log;
+    public MemoryLock(final String lockKey) {
+        super(lockKey, Thread.currentThread().getName(), System.currentTimeMillis());
     }
 
     @Override
-    AbstractLock createLock(final String key) throws LockException {
-        return new MemoryLock(key);
+    public void destroy() {
+
     }
 }
