@@ -15,10 +15,14 @@
  */
 
 class MultiActionDialogCtrl {
-  constructor($mdDialog) {
+  constructor($mdDialog, locals) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
+
+    this.title = locals.title;
+    this.message = locals.message;
+    this.actions = locals.actions;
   }
 
   action(action) {
