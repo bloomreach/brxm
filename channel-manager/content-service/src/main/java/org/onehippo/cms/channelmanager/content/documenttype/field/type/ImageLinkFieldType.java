@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.addon.frontend.gallerypicker.ImageItem;
+import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.ckeditor.Json;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -40,7 +41,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageLinkFieldType extends AbstractFieldType {
+public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldType {
 
     public static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
 
@@ -59,6 +60,9 @@ public class ImageLinkFieldType extends AbstractFieldType {
             IMAGE_PICKER_PROPERTY_PREFIX + "validator.id"
     };
 
+    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
+    private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
+
     private ObjectNode config;
 
     public ImageLinkFieldType() {
@@ -73,11 +77,7 @@ public class ImageLinkFieldType extends AbstractFieldType {
     public void init(final FieldTypeContext fieldContext) {
         super.init(fieldContext);
 
-        try {
-            config = Json.object("{}");
-        } catch (IOException e) {
-            log.warn("Error while reading config of image link field '{}'", getId(), e);
-        }
+        config = Json.object();
 
         final ObjectNode imagePickerConfig = getConfig().with("imagepicker");
         readStringConfig(imagePickerConfig, IMAGE_PICKER_STRING_PROPERTIES, fieldContext);
@@ -101,12 +101,8 @@ public class ImageLinkFieldType extends AbstractFieldType {
     }
 
     @Override
-    public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readValues(node);
-
-        trimToMaxValues(values);
-
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+    protected String getDefault() {
+        return DEFAULT_VALUE;
     }
 
     @Override
@@ -124,7 +120,8 @@ public class ImageLinkFieldType extends AbstractFieldType {
         return false;
     }
 
-    private List<FieldValue> readValues(final Node node) {
+    @Override
+    protected List<FieldValue> readValues(final Node node) {
         final String nodeName = getId();
 
         try {
@@ -143,18 +140,39 @@ public class ImageLinkFieldType extends AbstractFieldType {
         return Collections.emptyList();
     }
 
-    private FieldValue readValue(final Node node) {
+    @Override
+    public FieldValue readValue(final Node node) {
         final FieldValue value = new FieldValue();
         try {
-            final String docBase = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, null);
-            if (docBase != null) {
-                final Session session = node.getSession();
-                value.setValue(session.getNodeByIdentifier(docBase).getPath());
-            }
+            final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, null);
+            value.setValue(uuid);
             value.setId(node.getIdentifier());
+            value.setUrl(createImageUrl(uuid, node.getSession()));
         } catch (final RepositoryException e) {
             log.warn("Failed to read image link '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
         }
         return value;
+    }
+
+    private String createImageUrl(final String uuid, final Session session) {
+        final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(uuid);
+        return imageItem.getPrimaryUrl(() -> session);
+    }
+
+    @Override
+    public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
+        // TODO
+    }
+
+    @Override
+    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        // TODO
+        return false;
+    }
+
+    @Override
+    public boolean validateValue(final FieldValue value) {
+        // TODO
+        return false;
     }
 }
