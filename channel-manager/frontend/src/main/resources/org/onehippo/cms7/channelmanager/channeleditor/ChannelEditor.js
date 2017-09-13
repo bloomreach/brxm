@@ -51,6 +51,7 @@
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
       this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-image-variant-picker', this._showImageVariantPicker, this);
       this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
@@ -239,10 +240,10 @@
       this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
     },
 
-    _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this.imagePickerSuccessCallback = successCallback;
-      this.imagePickerCancelCallback = cancelCallback;
-      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imagePickerWicketUrl);
+    _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this.imageVariantPickerSuccessCallback = successCallback;
+      this.imageVariantPickerCancelCallback = cancelCallback;
+      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imageVariantPickerWicketUrl);
     },
 
     _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
@@ -263,9 +264,9 @@
       }
     },
 
-    onImagePicked: function(image) {
-      if (this.imagePickerSuccessCallback) {
-        this.imagePickerSuccessCallback(image);
+    onImageVariantPicked: function(image) {
+      if (this.imageVariantPickerSuccessCallback) {
+        this.imageVariantPickerSuccessCallback(image);
       }
     },
 
@@ -275,9 +276,9 @@
       }
     },
 
-    onImagePickCancelled: function () {
-      if(this.imagePickerCancelCallback) {
-        this.imagePickerCancelCallback();
+    onImageVariantPickCancelled: function () {
+      if(this.imageVariantPickerCancelCallback) {
+        this.imageVariantPickerCancelCallback();
       }
     },
 

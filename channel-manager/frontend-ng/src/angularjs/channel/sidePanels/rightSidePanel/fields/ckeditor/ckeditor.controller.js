@@ -64,7 +64,7 @@ class CKEditorController {
 
       this.editor.on('focus', $event => this.onEditorFocus($event));
       this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
-      this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
+      this.editor.on('openImagePicker', event => this._openImageVariantPicker(event.data));
 
       // CKEditor has been replaced and instance is ready
       this.editor.on('instanceReady', () => {
@@ -155,10 +155,10 @@ class CKEditorController {
     });
   }
 
-  _openImagePicker(selectedImage) {
+  _openImageVariantPicker(selectedImage) {
     const imagePickerConfig = this.config.hippopicker.image;
     this.SharedSpaceToolbarService.isToolbarPinned = true;
-    this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
+    this.CmsService.publish('show-image-variant-picker', this.id, imagePickerConfig, selectedImage, (image) => {
       // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
       // runs at the same level; two directories up from the angular app. Because of this we need to prepend
       // all internal images with a prefix as shown below.

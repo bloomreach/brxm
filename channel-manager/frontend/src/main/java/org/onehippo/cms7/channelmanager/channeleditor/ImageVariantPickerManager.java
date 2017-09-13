@@ -33,14 +33,16 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFact
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactoryImpl;
 
 /**
- * Manages the picker dialog for images in rich text fields. The behavior can be called by the frontend to
- * open the image picker. When done the method 'ChannelEditor#onImagePicked' is called.
+ * Manages the picker dialog for images in rich text fields. The dialog is used to select an image and its variant.
+ * The behavior can be called by the frontend to open the dialog.
+ * When done the method 'ChannelEditor#onImageVariantPicked' is called.
+ * Cancelling the dialog calls 'ChannelEditor#onImageVariantPickCancelled'.
  */
-class ImagePickerManager extends PickerManager {
+class ImageVariantPickerManager extends PickerManager {
 
     private final ImagePickerBehavior behavior;
 
-    ImagePickerManager(final IPluginContext context, final String channelEditorId) {
+    ImageVariantPickerManager(final IPluginContext context, final String channelEditorId) {
         super(CKEditorNodePlugin.DEFAULT_IMAGE_PICKER_CONFIG);
 
         final Model<Node> fieldNodeModel = getFieldNodeModel();
@@ -48,9 +50,9 @@ class ImagePickerManager extends PickerManager {
                 WicketNodeFactory.INSTANCE, WicketURLEncoder.INSTANCE);
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
         behavior = new StatelessImagePickerBehavior(context, getPickerConfig(), imageService);
-        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onImagePicked", fieldNodeModel));
+        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onImageVariantPicked", fieldNodeModel));
         behavior.setCancelAction((RichTextEditorAction<RichTextEditorImageLink>) richTextEditorImageLink ->
-                String.format("Ext.getCmp('%s').%s();", channelEditorId, "onImagePickCancelled"));
+                String.format("Ext.getCmp('%s').%s();", channelEditorId, "onImageVariantPickCancelled"));
     }
 
     ImagePickerBehavior getBehavior() {
