@@ -748,6 +748,16 @@
     "RESTORE_WIDTH" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "ERROR_FIELD_LONG_PATTERN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

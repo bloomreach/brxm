@@ -32,6 +32,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
   "ERROR_PAGE_PATH_EXISTS": "Failed to save page, the specified URL is already in use",
   "SUBPAGE_CHANGEMANAGEMENT_TITLE": "Manage Changes",
+  "ERROR_FIELD_LONG_PATTERN": "Use numbers only",
   "SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU": " (you)",
   "SUBPAGE_PAGE_LABEL_URL_STEM": "URL",
   "ERROR_CARDINALITY_CHANGE": "Unable to save. The document contains invalid content",
