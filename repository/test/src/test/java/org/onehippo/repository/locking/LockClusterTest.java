@@ -36,8 +36,7 @@ public class LockClusterTest extends ClusterTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        final Node test = session1.getRootNode().addNode("test");
-        session1.getRootNode().addNode("test");
+        final Node test = session1.getRootNode().getNode("test");
         test.addMixin(JcrConstants.MIX_LOCKABLE);
         session1.save();
     }
