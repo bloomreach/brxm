@@ -21,10 +21,10 @@ describe('hippoIframeCtrl', () => {
   let $ctrl;
 
   beforeEach(() => {
-    $ctrl = new MultiActionDialogCtrl($mdDialog);
+    $ctrl = new MultiActionDialogCtrl($mdDialog, { title: 'title', message: 'message', actions: [] });
   });
 
-  it('hides the dialog with the given action', () => {
+  it('mvn hides the dialog with the given action', () => {
     $ctrl.action('transparent');
 
     expect($mdDialog.hide).toHaveBeenCalledWith('transparent');
