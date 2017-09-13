@@ -45,6 +45,7 @@
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot delete '{{component}}': the container is locked by '{{lockedBy}}'",
   "ERROR_DELETE_PAGE": "Failed to delete page",
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode",
+  "ERROR_FIELD_LONG_PATTERN": "Use numbers only",
   "ERROR_FIELD_REQUIRED": "{{displayName}} is a required field",
   "ERROR_MENU_LOAD_FAILED": "Failed to load menu",
   "ERROR_MENU_LOCKED_BY": "Menu locked by '{{lockedBy}}'",
