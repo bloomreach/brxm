@@ -19,6 +19,7 @@ import {
   NoConflictStyleCompatibilityMode,
   MdListModule,
   MdButtonModule,
+  MATERIAL_SANITY_CHECKS,
 } from '@angular/material';
 import './material.scss';
 
@@ -27,6 +28,9 @@ import './material.scss';
     NoConflictStyleCompatibilityMode,
     MdListModule,
     MdButtonModule,
+  ],
+  providers: [
+    {provide: MATERIAL_SANITY_CHECKS, useValue: false},
   ]
 })
 export class MaterialModule { }
