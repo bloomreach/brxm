@@ -28,8 +28,8 @@
       <md-menu-item ng-class="{'md-indent': menu.hasIcons()}"
                     ng-repeat-start="item in menu.items track by item.name"
                     ng-if="item.type === 'action' && item.isVisible()">
-        <md-icon ng-if="item.hasIconName() && item.isIconVisible()">{{::item.iconName}}</md-icon>
-        <md-icon ng-if="item.hasIconSvg() && item.isIconVisible()" md-svg-icon="{{ ::item.iconSvg}}"></md-icon>
+        <md-icon ng-if="item.hasIconName() && item.isIconVisible()" ng-class="{ disabled: !item.isEnabled() }">{{::item.iconName}}</md-icon>
+        <md-icon ng-if="item.hasIconSvg() && item.isIconVisible()" md-svg-icon="{{ ::item.iconSvg}}" ng-class="{ disabled: !item.isEnabled() }"></md-icon>
         <md-button class="qa-{{ ::menu.name }}-menu-{{ ::item.name }}-action"
                    aria-label="{{ ::item.translationKey | translate }}"
                    ng-disabled="!item.isEnabled() || !menu.isEnabled()"
