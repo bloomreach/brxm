@@ -1111,13 +1111,12 @@ public class DefinitionMergeService {
      * {@link #shouldPathCreateNewSource(JcrPath)}.
      * @param from the definition we want to copy as a child of toParent
      * @param toParent the parent of the desired new definition node
-     * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent)
-     * @return the newly created child nodes (including separate defs by recursive descent), already populated with
-     *      properties and descendants
+     * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent),
+     *               already populated with properties and descendants
      */
-    protected List<DefinitionNodeImpl> recursiveAdd(final DefinitionNodeImpl from,
-                                                    final DefinitionNodeImpl toParent,
-                                                    final List<DefinitionNodeImpl> newDefs) {
+    protected void recursiveAdd(final DefinitionNodeImpl from,
+                                final DefinitionNodeImpl toParent,
+                                final List<DefinitionNodeImpl> newDefs) {
 
         log.debug("Adding new node definition to existing definition: {}", from.getJcrPath());
 
@@ -1145,7 +1144,6 @@ public class DefinitionMergeService {
 
         newDefs.add(to);
         recursiveCopy(from, to, newDefs);
-        return newDefs;
     }
 
     /**
@@ -1154,10 +1152,9 @@ public class DefinitionMergeService {
      * @param from the definition we want to copy
      * @param to the definition we are copying into
      * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent)
-     * @return a list of new DefinitionNodes created here (or by recursive descent)
      */
-    protected List<DefinitionNodeImpl> recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to,
-                                                     final List<DefinitionNodeImpl> newDefs) {
+    protected void recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to,
+                                 final List<DefinitionNodeImpl> newDefs) {
 
         // Add the 'to' path to the reorder registry, whether it is a delete, or if new content gets copied in here
         reorderRegistry.add(to.getJcrPath().getParent());
@@ -1165,7 +1162,7 @@ public class DefinitionMergeService {
         if (from.isDelete()) {
             // delete clears everything, so there's no point continuing with other properties or recursion
             to.delete();
-            return newDefs;
+            return;
         }
 
         to.setOrderBefore(from.getOrderBefore());
@@ -1190,7 +1187,6 @@ public class DefinitionMergeService {
                 recursiveAdd(childNode, to, newDefs);
             }
         }
-        return newDefs;
     }
 
     /**
