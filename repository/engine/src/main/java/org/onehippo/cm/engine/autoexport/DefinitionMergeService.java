@@ -1165,7 +1165,7 @@ public class DefinitionMergeService {
         if (from.isDelete()) {
             // delete clears everything, so there's no point continuing with other properties or recursion
             to.delete();
-            return emptyList();
+            return newDefs;
         }
 
         to.setOrderBefore(from.getOrderBefore());
