@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.RandomAccess;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -91,6 +92,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.function.Predicate.isEqual;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
@@ -654,10 +657,7 @@ public class DefinitionMergeService {
      * model's configurationNode tree to be updated to match the new state of definitions before the recursive call
      * is made as the final step of this method. The only exception to these expectations is that createNewNode()
      * will fully handle all child nodes of the new "diff" definition in a single recursive step, performing the
-     * relevant recursion itself via recursiveAdd()+recursiveCopy() as needed. Note also that there is a known bug
-     * whereby recursiveCopy() fails to update the model's configNode tree correctly when a new source is created due to
-     * LocationMapper rules. So far, this bug has not resulted in damaged output because {@link EventJournalProcessor}
-     * fully reloads the toExport modules from source files after each execution of mergeChangesToModules().
+     * relevant recursion itself via recursiveAdd()+recursiveCopy() as needed.
      * @param incomingDefNode a "diff" definition that should be merged into the toExport modules
      */
     protected void mergeConfigDefinitionNode(final DefinitionNodeImpl incomingDefNode) {
@@ -871,11 +871,7 @@ public class DefinitionMergeService {
         // if so, create a new ConfigDefinition rather than attempting to add to an existing one
         if (shouldPathCreateNewSource(incomingPath)) {
             // we don't care if there's an existing def -- LocationMapper is making us split to a new file
-            final DefinitionNodeImpl newDef = createNewDef(incomingDefNode, true, null);
-
-            // update model
-            new ConfigurationTreeBuilder(model.getConfigurationRootNode())
-                    .push(newDef.getDefinition());
+            createNewDefAndUpdateModel(incomingDefNode);
         }
         else {
             // where was the parent node mentioned?
@@ -888,22 +884,40 @@ public class DefinitionMergeService {
 
                 // we know that this is the only place that mentions this node, because it's new
                 // -- put all descendent properties and nodes in this def
-                final DefinitionNodeImpl newDefNode =
-                        recursiveAdd(incomingDefNode, parentDefNode);
+                final List<DefinitionNodeImpl> newDefs = new ArrayList<>();
+                recursiveAdd(incomingDefNode, parentDefNode, newDefs);
 
-                // update model
+                // update model -- the first def was already merged to the configNode tree, so it needs special handling
+                final DefinitionNodeImpl newChildOfExistingDef = newDefs.get(0);
                 final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder(model.getConfigurationRootNode());
-                final ConfigurationNodeImpl newConfigNode = builder.createChildNode(existingParent, newDefNode.getName(), newDefNode);
-                builder.mergeNode(newConfigNode, newDefNode);
+                final ConfigurationNodeImpl newConfigNode =
+                        builder.createChildNode(existingParent, newChildOfExistingDef.getName(), newChildOfExistingDef);
+                builder.mergeNode(newConfigNode, newChildOfExistingDef);
+
+                // now update all the other (possible) defs that were split off into new source files
+                for (final DefinitionNodeImpl newDef : newDefs.subList(1, newDefs.size())) {
+                    builder.push(newDef.getDefinition());
+                }
             }
             else {
                 // there's no existing parent defNode that we can reuse, so we need a new definition
-                final DefinitionNodeImpl newDef = createNewDef(incomingDefNode, true, null);
-
-                // update model
-                new ConfigurationTreeBuilder(model.getConfigurationRootNode())
-                        .push(newDef.getDefinition());
+                createNewDefAndUpdateModel(incomingDefNode);
             }
+        }
+    }
+
+    /**
+     * Helper for {@link #createNewNode(DefinitionNodeImpl)}.
+     * @param incomingDefNode diff node to be copied into a new def (or defs)
+     */
+    protected void createNewDefAndUpdateModel(final DefinitionNodeImpl incomingDefNode) {
+        final List<DefinitionNodeImpl> newDefs =
+                createNewDef(incomingDefNode, true, null, new ArrayList<>());
+
+        // update model
+        final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder(model.getConfigurationRootNode());
+        for (final DefinitionNodeImpl newDef : newDefs) {
+            builder.push(newDef.getDefinition());
         }
     }
 
@@ -980,10 +994,12 @@ public class DefinitionMergeService {
      * @param incomingDefNode a DefinitionNode that will be copied to form the content of the new ConfigDefinition
      * @param copyContents should the contents of the incomingDefNode be recursively copied into the new def?
      * @param parentNodeModule the module where the parent node def is located, if it hasn't been merged to configNodes yet
+     * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent)
      */
-    protected DefinitionNodeImpl createNewDef(final DefinitionNodeImpl incomingDefNode,
-                                              final boolean copyContents,
-                                              final ModuleImpl parentNodeModule) {
+    protected List<DefinitionNodeImpl> createNewDef(final DefinitionNodeImpl incomingDefNode,
+                                                    final boolean copyContents,
+                                                    final ModuleImpl parentNodeModule,
+                                                    final List<DefinitionNodeImpl> newDefs) {
 
         final JcrPath incomingPath = incomingDefNode.getJcrPath();
 
@@ -999,69 +1015,94 @@ public class DefinitionMergeService {
         final Source source = newRootNode.getDefinition().getSource();
         log.debug("... stored in {}/hcm-config/{}", source.getModule().getName(), source.getPath());
 
+        newDefs.add(newRootNode);
         if (copyContents) {
-            recursiveCopy(incomingDefNode, newRootNode);
+            recursiveCopy(incomingDefNode, newRootNode, newDefs);
         }
-
-        return newRootNode;
+        return newDefs;
     }
 
     /**
-     * Get or create a definition in the local modules to contain data for jcrPath
+     * Get or create a definition in the local modules to contain data for jcrPath.
+     * Note: this method performs a three-step check for what module to use similar to
+     * {@link #createNewContentSource(JcrPath, SortedMap)}.
      * @param path the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root and may or not may be
      * empty
      * @param parentNodeModule the module where the parent node def is located, if it hasn't been merged to configNodes yet
      */
-    protected DefinitionNodeImpl getOrCreateLocalDef(final JcrPath path, final ModuleImpl parentNodeModule) {
-        // what module should we put it in?
-        ModuleImpl destModule = getModuleByAutoExportConfig(path);
+    protected DefinitionNodeImpl getOrCreateLocalDef(final JcrPath path, ModuleImpl parentNodeModule) {
+        // what module should we put it in, according to normal auto-export config rules?
+        final ModuleImpl defaultModule = getModuleByAutoExportConfig(path);
 
         // where is the parent of this path initially defined?
-        final ModuleImpl nodeDefModule;
-        if (parentNodeModule != null) {
-            // if the caller already handed us a value, use it
-            // this might be a spin-off of a recursiveCopy that hasn't been merged to the configNode tree yet!
-            nodeDefModule = parentNodeModule;
-        }
-        else {
-            // search the parent node's defs in reverse order
-            final List<DefinitionNodeImpl> defs = model.resolveNode(path.getParent()).getDefinitions();
-            final Optional<DefinitionNodeImpl> initialDef = reverseStream(defs).filter(this::isNewNodeDefinition).findFirst();
-
-            if (initialDef.isPresent()) {
-                nodeDefModule = initialDef.get().getDefinition().getSource().getModule();
-            } else {
-                // this should be impossible, but we'll default to the old behavior, just in case
-                nodeDefModule = destModule;
-            }
+        // if the caller already handed us a value, use it
+        // this might be a spin-off of a recursiveCopy that hasn't been merged to the configNode tree yet!
+        if (parentNodeModule == null) {
+            parentNodeModule = findModuleOfParent(path, defaultModule);
         }
 
         // is the parent of this path downstream from the proposed destModule?
         // if so, use the module where the parent is defined
-        for (ModuleImpl module : model.getModules()) {
-            if (module == nodeDefModule) {
-                // found nodeDefModule first, which means destModule is either the same or after and therefore safe
-                break;
-            }
-            if (module == destModule) {
-                // found destModule first, which means proposed dest is too early -- use nodeDefModule instead
-                // since destModule is being exported, and nodeDefModule is after it, we know that nodeDefModule is being exported
-                log.debug("Redirecting new def to module where parent node is defined: {} => {}", destModule, nodeDefModule);
-                destModule = nodeDefModule;
-                break;
-            }
-        }
+        final ModuleImpl destModule = chooseMostDownstream(defaultModule, parentNodeModule);
 
         // what source should we put it in?
         final ConfigSourceImpl destSource = getSourceForNewConfig(path, destModule);
 
+        // get an appropriate definition on that source
         return destSource.getOrCreateDefinitionFor(path);
     }
 
+    /**
+     * Utility to search for the Module where the parent node of path is first defined in the config definitions.
+     * @param path the path whose parent's source module we want to find
+     * @param defaultModule a default module to use if the parent cannot be found
+     * @return the ModuleImpl where the parent node of the given path is first defined, or defaultModule
+     */
+    protected ModuleImpl findModuleOfParent(final JcrPath path, final ModuleImpl defaultModule) {
+        final ModuleImpl parentNodeModule;// search the parent node's defs in reverse order
+        final List<DefinitionNodeImpl> defs = model.resolveNode(path.getParent()).getDefinitions();
+        parentNodeModule = reverseStream(defs).filter(this::isNewNodeDefinition).findFirst()
+            .map(defNode -> defNode.getDefinition().getSource().getModule())
+                // this should be impossible, but we'll default to the old behavior, just in case
+                .orElse(defaultModule);
+        return parentNodeModule;
+    }
+
+    /**
+     * Tiny utility method to stream the elements of a list in reverse order.
+     * @param list the list to stream in reverse -- ideally should be {@link RandomAccess} (or small) for performance
+     * @param <T> the element type of list
+     * @return a Stream of list's contents in reverse index order
+     */
     protected static <T> Stream<T> reverseStream(List<T> list) {
         final int limit=list.size()-1;
         return IntStream.rangeClosed(0, limit).mapToObj(i -> list.get(limit - i));
+    }
+
+    /**
+     * Pick the most-downstream module according to module dependencies (and default module sorting).
+     * @param modA one module within the model, which must also be in toExport
+     * @param modB another module within the model
+     * @return the most-downstream module according to module dependencies (and default module sorting)
+     */
+    protected ModuleImpl chooseMostDownstream(ModuleImpl modA, final ModuleImpl modB) {
+        // short-circuit in case where both reference the same Module, which must be okay
+        if (modA != modB) {
+            for (ModuleImpl module : model.getModules()) {
+                if (module == modB) {
+                    // found modB first, which means modA is after and therefore best
+                    return modA;
+                }
+                if (module == modA) {
+                    // found modA first, which means modA is too early -- use modB instead
+                    // since modA is being exported, and modB is after it, we know that modB is being exported
+                    log.debug("Redirecting new def to module where parent node is defined: {} => {}", modA, modB);
+                    return modB;
+                }
+            }
+        }
+        return modA;
     }
 
     /**
@@ -1070,10 +1111,13 @@ public class DefinitionMergeService {
      * {@link #shouldPathCreateNewSource(JcrPath)}.
      * @param from the definition we want to copy as a child of toParent
      * @param toParent the parent of the desired new definition node
-     * @return the newly created child node, already populated with properties and descendants
+     * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent)
+     * @return the newly created child nodes (including separate defs by recursive descent), already populated with
+     *      properties and descendants
      */
-    protected DefinitionNodeImpl recursiveAdd(final DefinitionNodeImpl from,
-                                              final DefinitionNodeImpl toParent) {
+    protected List<DefinitionNodeImpl> recursiveAdd(final DefinitionNodeImpl from,
+                                                    final DefinitionNodeImpl toParent,
+                                                    final List<DefinitionNodeImpl> newDefs) {
 
         log.debug("Adding new node definition to existing definition: {}", from.getJcrPath());
 
@@ -1098,8 +1142,10 @@ public class DefinitionMergeService {
         else {
             to = toParent.addNode(from.getName());
         }
-        recursiveCopy(from, to);
-        return to;
+
+        newDefs.add(to);
+        recursiveCopy(from, to, newDefs);
+        return newDefs;
     }
 
     /**
@@ -1107,8 +1153,11 @@ public class DefinitionMergeService {
      * Creates new definitions as required by LocationMapper.
      * @param from the definition we want to copy
      * @param to the definition we are copying into
+     * @param newDefs accumulator List for root definition nodes of definitions created here (or by recursive descent)
+     * @return a list of new DefinitionNodes created here (or by recursive descent)
      */
-    protected void recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to) {
+    protected List<DefinitionNodeImpl> recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to,
+                                                     final List<DefinitionNodeImpl> newDefs) {
 
         // Add the 'to' path to the reorder registry, whether it is a delete, or if new content gets copied in here
         reorderRegistry.add(to.getJcrPath().getParent());
@@ -1116,7 +1165,7 @@ public class DefinitionMergeService {
         if (from.isDelete()) {
             // delete clears everything, so there's no point continuing with other properties or recursion
             to.delete();
-            return;
+            return emptyList();
         }
 
         to.setOrderBefore(from.getOrderBefore());
@@ -1134,14 +1183,14 @@ public class DefinitionMergeService {
             final JcrPath incomingPath = childNode.getJcrPath();
             if (shouldPathCreateNewSource(incomingPath)) {
                 // yes, we need a new definition in a new source file
-                // TODO: merge this new def into the configNode tree!
-                // TODO: we need to know what module the parent node's def is in to place the new one properly!
-                createNewDef(childNode, true, to.getDefinition().getSource().getModule());
+                // we need to know what module the parent node's def is in to place the new one properly!
+                createNewDef(childNode, true, to.getDefinition().getSource().getModule(), newDefs);
             } else {
                 // no, just keep adding to the current destination defNode
-                recursiveAdd(childNode, to);
+                recursiveAdd(childNode, to, newDefs);
             }
         }
+        return newDefs;
     }
 
     /**
@@ -1164,7 +1213,9 @@ public class DefinitionMergeService {
             log.debug("Last def for node is upstream of export: {}", defNode.getJcrPath());
 
             // create new defnode w/ delete
-            final DefinitionNodeImpl newDef = createNewDef(defNode, true, null);
+            final DefinitionNodeImpl newDef = createNewDef(defNode, true, null,
+                    // there should be only a single def in this case, since deletes do not have recursive children
+                    new ArrayList<>(1)).get(0);
 
             // we know that there was no local def for the node we're deleting, but there may be defs for its children
             // so for all descendants, remove all definitions and possibly sources
@@ -1594,7 +1645,9 @@ public class DefinitionMergeService {
             // no, there's no local def for parent node
             // create a new local definition with this property
             final DefinitionNodeImpl newDefNode =
-                    createNewDef(defProperty.getParent(), false, null);
+                    createNewDef(defProperty.getParent(), false, null,
+                            // there will be only a single def in this case, since we're explicitly not recursing
+                            new ArrayList<>(1)).get(0);
 
             log.debug("Adding new local def for property: {} in source: {}", defProperty.getJcrPath(),
                     newDefNode.getDefinition().getSource().getPath());
@@ -1690,7 +1743,8 @@ public class DefinitionMergeService {
             // if LocationMapper tells us we should have a new source file...
             if (shouldPathCreateNewSource(changeNodePath)) {
                 // create a new source file
-                existingSourcesByNodePath.put(changeNodePath, createNewContentSource(changeNodePath));
+                existingSourcesByNodePath.put(changeNodePath,
+                        createNewContentSource(changeNodePath, existingSourcesByNodePath));
 
                 // REPO-1715 We have a potential for a race condition where child nodes can be accidentally
                 //           exported to source files for an ancestor node before we process the add events
@@ -1717,7 +1771,8 @@ public class DefinitionMergeService {
                     // otherwise, create a new source file
                     // REPO-1715 We don't have to walk up the tree in this case, since we know there's
                     //           no source on an ancestor path that might have picked up these changes.
-                    existingSourcesByNodePath.put(changeNodePath, createNewContentSource(changeNodePath));
+                    existingSourcesByNodePath.put(changeNodePath,
+                            createNewContentSource(changeNodePath, existingSourcesByNodePath));
                 }
             }
         }
@@ -1805,28 +1860,47 @@ public class DefinitionMergeService {
 
     /**
      * Create a new ContentSourceImpl within one of the toExport modules to store content for the provided contentPath.
+     * Note: this method performs a three-step check for what module to use similar to
+     * {@link #getOrCreateLocalDef(JcrPath, ModuleImpl)}.
      * @param changePath the path whose content we want to store in the new source
-     *
+     * @param existingSourcesByNodePath (in reverse lexical order of node path, so deeper paths are before ancestor paths)
      */
-    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath) {
-        // there's no existing source, so we need to create one
-        final ModuleImpl module = getModuleByAutoExportConfig(changePath);
+    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath,
+                                                           final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath) {
+
+        // what module does the auto-export config tell us to use?
+        final ModuleImpl defaultModule = getModuleByAutoExportConfig(changePath);
+
+        // where is the nearest ancestor node defined?
+        // we should scan existingSourcesByNodePath first, and then possibly the config model
+        final Optional<ModuleImpl> maybeAncestorModule = existingSourcesByNodePath.entrySet().stream()
+                .filter(entry -> changePath.startsWith(entry.getKey())).findFirst()
+                .map(entry -> entry.getValue().getSource().getModule());
+
+        // if there's no ancestor content source, the parent of the changePath must be a config node
+        final ModuleImpl ancestorModule =
+                maybeAncestorModule.orElseGet(()-> findModuleOfParent(changePath, defaultModule));
+
+        // is the nearest ancestor defined downstream of the suggested module? if so, use the ancestor's module
+        final ModuleImpl destModule = chooseMostDownstream(defaultModule, ancestorModule);
+
+        // there's no existing source, so we need to create one -- on what path within the module?
         final String sourcePath = getFilePathByLocationMapper(changePath);
 
         // TODO should we export the changePath into this new source, or the LocationMapper contextPath?
         // TODO ... we want the source root def to match the node expected from the source file name, right?
 
+        // if there's already a source with this path, generate a unique name
         final Predicate<String> sourceExists = s ->
-            module.getModifiableSources().stream()
+            destModule.getModifiableSources().stream()
                 .filter(SourceType.CONTENT::isOfType)
                 .anyMatch(source -> source.getPath().equals(s));
 
-        // if there's already a source with this path, generate a unique name
         final String uniqueSourcePath =
                 FilePathUtils.generateUniquePath(sourcePath, sourceExists, 0);
 
         // create a new source and content definition with change path
-        return module.addContentSource(uniqueSourcePath).addContentDefinition(changePath);
+        return destModule.addContentSource(uniqueSourcePath).addContentDefinition(changePath);
     }
 
 }
