@@ -59,9 +59,9 @@ describe('Sharedspace toolbar component controller', () => {
       hasBottomToolbar: false,
     });
 
-    expect($ctrl.isToolbarVisible).toEqual(true);
+    expect($ctrl.isVisible).toEqual(true);
     expect($ctrl.showBottomToolbar).toEqual(false);
-    expect(SharedSpaceToolbarService.isVisible).toEqual(true);
+    expect(SharedSpaceToolbarService.isToolbarVisible).toEqual(true);
   });
 
   describe('fix scrolling position', () => {
