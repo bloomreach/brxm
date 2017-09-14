@@ -16,7 +16,7 @@
 --%>
 <%@ page import="java.io.*,java.util.*" %>
 <%!
-private static final String SWAGGER_API_URI = "/site/restservices/swagger.json";
+private static final String DEFAULT_SWAGGER_API_URI = "/site/restservices/swagger.json";
 private static final String SWAGGER_POM_PROPS_RESOURCE_PATH = "META-INF/maven/org.webjars/swagger-ui/pom.properties";
 
 private volatile String swaggerVersion;
@@ -52,6 +52,10 @@ response.setHeader("Cache-Control","no-cache");
 response.setHeader("Pragma","no-cache"); 
 response.setDateHeader ("Expires", -1);
 
-final String redirectPath = "/webjars/swagger-ui/" + getSwaggerModuleVersion() + "/index.html?url=" + SWAGGER_API_URI;
+String swaggerUrl = request.getParameter("url");
+if (swaggerUrl == null) {
+    swaggerUrl = DEFAULT_SWAGGER_API_URI;
+}
+final String redirectPath = "/webjars/swagger-ui/" + getSwaggerModuleVersion() + "/index.html?url=" + swaggerUrl;
 response.sendRedirect(request.getContextPath() + redirectPath);
 %>
