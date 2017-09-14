@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -89,6 +90,7 @@ public class SetMembershipsPanel extends Panel {
         hippoForm.add(externalMembershipsContainer);
 
         final AjaxButton submit = new AjaxButton("submit", hippoForm) {
+
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 hippoForm.clearFeedbackMessages();
@@ -109,6 +111,11 @@ public class SetMembershipsPanel extends Panel {
                 }
                 target.add(localMembershipContainer);
             }
+
+            @Override
+            public boolean isEnabled() {
+                return selectedGroup != null;
+            }
         };
         hippoForm.add(submit);
 
@@ -116,7 +123,12 @@ public class SetMembershipsPanel extends Panel {
         final DropDownChoice<Group> ddc = new DropDownChoice<>("local-groups", PropertyModel.of(this, "selectedGroup"),
                 localGroups, new ChoiceRenderer<>("groupname"));
         ddc.setNullValid(false);
-        ddc.setRequired(true);
+        ddc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                target.add(submit);
+            }
+        });
 
         hippoForm.add(ddc);
         add(hippoForm);
