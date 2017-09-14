@@ -15,15 +15,24 @@
  */
 
 class ComponentCatalogController {
-  constructor($translate, ComponentCatalogService, MaskService) {
+  constructor($translate, ComponentCatalogService, MaskService, OverlayService) {
     'ngInject';
 
     this.$translate = $translate;
     this.MaskService = MaskService;
+    this.OverlayService = OverlayService;
     this.ComponentCatalogService = ComponentCatalogService;
   }
 
+  _toggleState() {
+    if (!this.state) {
+      this.OverlayService.toggleOverlayByComponent = true;
+      this.state = true;
+    }
+  }
+
   onSelect(component) {
+    this._toggleState();
     this.ComponentCatalogService.selectComponent(component);
   }
 

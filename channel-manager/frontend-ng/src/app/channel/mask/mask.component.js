@@ -18,6 +18,9 @@ import template from './mask.html';
 import MaskCtrl from './mask.controller';
 
 const maskComponent = {
+  bindings: {
+    state: '=',
+  },
   template,
   controller: MaskCtrl,
 };
