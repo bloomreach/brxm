@@ -2,12 +2,12 @@
   "@type": "plugin",
   "id": "listPlugin",
   "name": "List",
-  "icon": "/essentials/images/icons/list.png",
+  "icon": "/essentials/feature/images/list-plugin-icon.png",
   "introduction": "This feature installs a new drag-and-drop component in the component library in the Channel Manager: 'Generic List'. With this component, you can add paginated lists to your project. You will need to edit the page rendering templates (JSP or FreeMarker) to use this feature.",
   "imageUrls": [
-    "/essentials/images/screenshots/genericlist01.png"
+    "/essentials/feature/images/screenshots/genericlist01.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/list-component.html",
+  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/list-component.html",
   "packageFile": "/META-INF/list_instructions.xml",
   "restClasses": [],
   "type": "feature",

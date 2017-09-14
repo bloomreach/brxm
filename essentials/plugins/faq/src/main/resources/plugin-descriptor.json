@@ -2,14 +2,14 @@
   "@type": "plugin",
   "id": "faqPlugin",
   "name": "FAQ",
-  "icon": "/essentials/images/icons/faq.png",
+  "icon": "/essentials/feature/images/faq-plugin-icon.png",
   "introduction": "With FAQ, you add a FAQ section to your project. This feature will be installed as a drag-and-drop component in the component library of the Channel manager.",
   "description": "<ul><li>This feature installs two new document types: 'FAQ Item' and 'FAQ List' in the CMS.</li><li>A structured document tree is created in the project: faq/&lt;faqlist&gt;</li><li>A drag-and-drop component 'FAQ' is added to the component library of the Channel Manager.</li><li>Some sample FAQ entries are installed and a page (with corresponding menu entry) with an example FAQ is created.</li></ul>",
   "imageUrls": [
-    "/essentials/images/screenshots/faq01.png",
-    "/essentials/images/screenshots/faq02.png",
-    "/essentials/images/screenshots/faq03.png",
-    "/essentials/images/screenshots/faq04.png"
+    "/essentials/feature/images/screenshots/faq01.png",
+    "/essentials/feature/images/screenshots/faq02.png",
+    "/essentials/feature/images/screenshots/faq03.png",
+    "/essentials/feature/images/screenshots/faq04.png"
   ],
   "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
   "restClasses": [],

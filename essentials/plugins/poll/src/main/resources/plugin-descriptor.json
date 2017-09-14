@@ -2,15 +2,15 @@
   "@type": "plugin",
   "id": "pollPlugin",
   "name": "Polls",
-  "icon": "/essentials/images/icons/polls.png",
+  "icon": "/essentials/feature/images/polls-plugin-icon.png",
   "introduction": "With Polls, you add functionality for creating and showing polls and storing and accessing the acquired poll data.",
   "description": "The poll feature wraps the 'Poll' Standard Plugin. It provides poll functionality in the site part by means of a HST component and a reusable provider (delegate) class that contains the following functionality:<ul><li>Search the current active poll document in a parameterized repository location</li><li>Provide a bean for this active poll upon request from the view layer</li><li>Vote on a poll, storing the votes in repository outside the document tree in /polldata</li><li>Cookies are used to prevent voting multiple times</li></ul>",
   "imageUrls": [
-    "/essentials/images/screenshots/poll01.png",
-    "/essentials/images/screenshots/poll02.png",
-    "/essentials/images/screenshots/poll03.png"
+    "/essentials/feature/images/screenshots/poll01.png",
+    "/essentials/feature/images/screenshots/poll02.png",
+    "/essentials/feature/images/screenshots/poll03.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/poll/about.html",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/poll/about.html",
   "restClasses": [],
   "packageFile": "/META-INF/poll_plugin_instructions.xml",
   "type": "feature",

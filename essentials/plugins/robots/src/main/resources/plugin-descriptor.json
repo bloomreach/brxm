@@ -2,14 +2,14 @@
   "@type": "plugin",
   "id": "robotsPlugin",
   "name": "Robots.txt",
-  "icon": "/essentials/images/icons/robotstxt.png",
+  "icon": "/essentials/feature/images/robots-plugin-icon.png",
   "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
   "description": "This feature adds the 'Robots.txt' Standard Plugin. Also the robots.txt sitemap item is added and an example document.",
   "imageUrls": [
-    "/essentials/images/screenshots/robots01.png",
-    "/essentials/images/screenshots/robots02.png"
+    "/essentials/feature/images/screenshots/robots01.png",
+    "/essentials/feature/images/screenshots/robots02.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/robots.txt/about.html",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/robots.txt/about.html",
   "restClasses": [],
   "packageFile": "/META-INF/robots_plugin_instructions.xml",
   "type": "feature",

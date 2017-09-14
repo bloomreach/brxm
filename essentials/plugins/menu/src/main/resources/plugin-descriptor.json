@@ -2,12 +2,12 @@
   "@type": "plugin",
   "id": "menuPlugin",
   "name": "Menus",
-  "icon": "/essentials/images/icons/menu.png",
+  "icon": "/essentials/feature/images/menu-plugin-icon.png",
   "introduction": "With Menus, you add a customisable menu component to the component library of the Channel Manager. It will be available as drag-and-drop component for you to drag into your project.",
   "imageUrls": [
-    "/essentials/images/screenshots/menu01.png"
+    "/essentials/feature/images/screenshots/menu01.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/menu-component.html",
+  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/menu-component.html",
   "packageFile": "/META-INF/menu_instructions.xml",
   "restClasses": [],
   "type": "feature",

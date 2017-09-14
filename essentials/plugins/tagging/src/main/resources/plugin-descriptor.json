@@ -2,14 +2,14 @@
   "@type": "plugin",
   "id": "taggingPlugin",
   "name": "Tagging",
-  "icon": "/essentials/images/icons/tagging.png",
+  "icon": "/essentials/feature/images/tagging-plugin-icon.png",
   "introduction": "With the Tagging feature, you can assign tags to your content.",
   "description": "This feature wraps the 'Content Tagging' Standard Plugin.",
   "imageUrls": [
-    "/essentials/images/screenshots/tagging01.png",
-    "/essentials/images/screenshots/tagging02.png"
+    "/essentials/feature/images/screenshots/tagging01.png",
+    "/essentials/feature/images/screenshots/tagging02.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/tagging/about.html",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/tagging/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"
