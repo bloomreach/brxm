@@ -23,11 +23,14 @@ public class Lock {
 
     String lockOwner;
 
+    String lockThread;
+
     long lockTime;
 
-    public Lock(final String lockKey, final String lockOwner, final long lockTime) {
+    public Lock(final String lockKey, final String lockOwner, final String lockThread, final long lockTime) {
         this.lockKey = lockKey;
         this.lockOwner = lockOwner;
+        this.lockThread = lockThread;
         this.lockTime = lockTime;
     }
 
@@ -35,8 +38,18 @@ public class Lock {
         return lockKey;
     }
 
+    /**
+     * @return the cluster node id and in case of no clustering, it will be 'default'
+     */
     public String getLockOwner() {
         return lockOwner;
+    }
+
+    /**
+     * @return the name of the thread that holds the lock
+     */
+    public String getLockThread() {
+        return lockThread;
     }
 
     public long getLockTime() {

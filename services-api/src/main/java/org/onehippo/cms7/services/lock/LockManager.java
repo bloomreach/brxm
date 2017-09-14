@@ -62,7 +62,7 @@ public interface LockManager {
     List<Lock> getLocks();
 
     /**
-     * Releases all locks and destroys this {@link LockManager}
+     * Releases all locks and destroys this {@link LockManager}.
      */
     void destroy();
 }
