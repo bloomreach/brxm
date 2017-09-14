@@ -118,7 +118,7 @@
         if (this.layout.activeItem === Hippo.ChannelManager.ChannelEditor.Instance) {
           return;
         }
-        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId);
+        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId, null, 'master');
         self._showChannelEditor();
       };
 
