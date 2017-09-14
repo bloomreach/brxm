@@ -72,7 +72,10 @@ class CKEditorController {
         this.editableElement.on('blur', ($event) => { this.blurEvent = $event; });
         this.editor.on('blur', () => this.onEditorBlur(this.blurEvent));
 
-        this.editor.on('dialogShow', () => { this.SharedSpaceToolbarService.isToolbarPinned = true; });
+        this.editor.on('dialogShow', () => {
+          console.log('test');
+          this.SharedSpaceToolbarService.isToolbarPinned = true;
+        });
         this.editor.on('dialogHide', () => { this.SharedSpaceToolbarService.isToolbarPinned = false; });
       });
       this._validate();
@@ -125,9 +128,11 @@ class CKEditorController {
       },
     });
 
-    this.SharedSpaceToolbarService.showToolbar({
-      hasBottomToolbar: this.config.hippo && this.config.hippo.hasBottomToolbar,
-    });
+    if (!this.SharedSpaceToolbarService.isVisible) {
+      this.SharedSpaceToolbarService.showToolbar({
+        hasBottomToolbar: this.config.hippo && this.config.hippo.hasBottomToolbar,
+      });
+    }
     this._validate();
   }
 
@@ -150,8 +155,8 @@ class CKEditorController {
       this.SharedSpaceToolbarService.isToolbarPinned = false;
     }, () => {
       // Cancel callback
-      this.SharedSpaceToolbarService.isToolbarPinned = false;
       this.editor.focus();
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
     });
   }
 
@@ -167,8 +172,8 @@ class CKEditorController {
       this.SharedSpaceToolbarService.isToolbarPinned = false;
     }, () => {
       // Cancel callback
-      this.SharedSpaceToolbarService.isToolbarPinned = false;
       this.editor.focus();
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
     });
   }
 

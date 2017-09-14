@@ -40,6 +40,7 @@ class SharedSpaceToolbar {
 
   setToolbarVisible(state, options = {}) {
     this.isVisible = state;
+    this.SharedSpaceToolbarService.isVisible = this.isVisible;
     this.showBottomToolbar = options.hasBottomToolbar || false;
     this.$rootScope.$apply();
     this._fixScrollingPosition(state);
