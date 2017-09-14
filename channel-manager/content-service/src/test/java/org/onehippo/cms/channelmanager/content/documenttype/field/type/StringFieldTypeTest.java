@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
@@ -494,7 +495,7 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         expect(node.hasProperty(PROPERTY)).andReturn(false);
-        expect(node.setProperty(PROPERTY, "New Value")).andThrow(new RepositoryException());
+        expect(node.setProperty(PROPERTY, "New Value", PropertyType.STRING)).andThrow(new RepositoryException());
         replay(node);
 
         try {
