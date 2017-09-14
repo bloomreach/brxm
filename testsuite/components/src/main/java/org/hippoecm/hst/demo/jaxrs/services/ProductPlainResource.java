@@ -66,7 +66,7 @@ import io.swagger.annotations.ApiOperation;
  * @version $Id$
  */
 @Path("/products/")
-@Api(value = "/products/")
+@Api(value = "Products")
 public class ProductPlainResource extends AbstractResource {
     
     private static Logger log = LoggerFactory.getLogger(ProductPlainResource.class);
