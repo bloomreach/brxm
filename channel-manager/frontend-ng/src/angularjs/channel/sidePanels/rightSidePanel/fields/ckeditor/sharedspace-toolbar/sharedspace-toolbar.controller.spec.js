@@ -59,7 +59,7 @@ describe('Sharedspace toolbar component controller', () => {
       hasBottomToolbar: false,
     });
 
-    expect($ctrl.isVisible).toEqual(true);
+    expect($ctrl.isToolbarVisible).toEqual(true);
     expect($ctrl.showBottomToolbar).toEqual(false);
     expect(SharedSpaceToolbarService.isVisible).toEqual(true);
   });
