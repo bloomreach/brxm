@@ -73,7 +73,6 @@ class CKEditorController {
         this.editor.on('blur', () => this.onEditorBlur(this.blurEvent));
 
         this.editor.on('dialogShow', () => {
-          console.log('test');
           this.SharedSpaceToolbarService.isToolbarPinned = true;
         });
         this.editor.on('dialogHide', () => { this.SharedSpaceToolbarService.isToolbarPinned = false; });
@@ -128,7 +127,7 @@ class CKEditorController {
       },
     });
 
-    if (!this.SharedSpaceToolbarService.isVisible) {
+    if (!this.SharedSpaceToolbarService.isToolbarVisible) {
       this.SharedSpaceToolbarService.showToolbar({
         hasBottomToolbar: this.config.hippo && this.config.hippo.hasBottomToolbar,
       });
