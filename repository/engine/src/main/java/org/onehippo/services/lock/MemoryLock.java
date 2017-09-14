@@ -18,7 +18,7 @@ package org.onehippo.services.lock;
 class MemoryLock  extends AbstractLock {
 
     public MemoryLock(final String lockKey) {
-        super(lockKey, Thread.currentThread().getName(), System.currentTimeMillis());
+        super(lockKey, "default", Thread.currentThread().getName(), System.currentTimeMillis());
     }
 
     @Override

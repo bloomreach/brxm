@@ -156,6 +156,7 @@
             <exclude>**/SchedulerTest.java</exclude>
             <exclude>**/MonkeyTest.java</exclude>
             <exclude>**/LockTest.java</exclude>
+            <exclude>**/LockManagerTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -196,6 +197,7 @@
                     <include>**/SchedulerTest.java</include>
                     <include>**/MonkeyTest.java</include>
                     <include>**/LockTest.java</include>
+                    <include>**/LockManagerTest.java</include>
                   </includes>
                 </configuration>
               </execution>

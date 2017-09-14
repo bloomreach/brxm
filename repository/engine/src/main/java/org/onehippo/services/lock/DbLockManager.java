@@ -19,8 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -34,27 +32,25 @@ public class DbLockManager extends AbstractLockManager implements LockManager {
 
     private static final Logger log = LoggerFactory.getLogger(DbLockManager.class);
 
-    final static String TABLE_NAME_LOCK = "hippolock";
-    final static String TABLE_NAME_LOCK_OVERVIEW = "hippolockoverview";
+    public final static String TABLE_NAME_LOCK = "hippolock";
+    public final static String TABLE_NAME_LOCK_OVERVIEW = "hippolockoverview";
 
     final static String CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (lockKey VARCHAR(256) NOT NULL)";
     // TODO for oracle it must be NUMBER instead of BIGINT
     final static String CREATE_LOCK_OVERVIEW_TABLE_STATEMENT = "CREATE TABLE %s (lockKey VARCHAR(256) NOT NULL, lockTime BIGINT NOT NULL)";
 
+    public static final String LOCK_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=? FOR UPDATE NOWAIT";
+    public static final String INSERT_STATEMENT = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?)";
+    public static final String DELETE_STATEMENT = "DELETE " + TABLE_NAME_LOCK + " WHERE lockKey=?";
+
     private DataSource dataSource;
-    private final Map<String, DbLock> locks = new HashMap();
+    private String clusterNodeId;
 
-
-
-    public DbLockManager(final DataSource dataSource) {
+    public DbLockManager(final DataSource dataSource, final String clusterNodeId) {
         this.dataSource = dataSource;
+        this.clusterNodeId = clusterNodeId;
         DbHelper.createTableIfNeeded(dataSource, CREATE_LOCK_TABLE_STATEMENT, TABLE_NAME_LOCK);
         DbHelper.createTableIfNeeded(dataSource, CREATE_LOCK_OVERVIEW_TABLE_STATEMENT, TABLE_NAME_LOCK_OVERVIEW);
-        try {
-            lock("foo");
-        } catch (LockException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -64,10 +60,14 @@ public class DbLockManager extends AbstractLockManager implements LockManager {
 
     @Override
     AbstractLock createLock(final String key) throws LockException {
-        final String lockStatement = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=? FOR UPDATE NOWAIT";
-        final String insertStatement = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?)";
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement preparedLockStatement = connection.prepareStatement(lockStatement);
+        Connection connection = null;
+        boolean originalAutoCommit = false;
+        try {
+            connection = dataSource.getConnection();
+            originalAutoCommit = connection.getAutoCommit();
+
+            connection.setAutoCommit(false);
+            final PreparedStatement preparedLockStatement = connection.prepareStatement(LOCK_STATEMENT);
             preparedLockStatement.setString(1, key);
             preparedLockStatement.setQueryTimeout(10);
 
@@ -76,32 +76,43 @@ public class DbLockManager extends AbstractLockManager implements LockManager {
             if (!lockResultSet.next()) {
                 // entry did not yet exist, we need to add an entry first
                 lockResultSet.close();
-                final PreparedStatement preparedInsertstatement = connection.prepareStatement(insertStatement);
+                final PreparedStatement preparedInsertstatement = connection.prepareStatement(INSERT_STATEMENT);
                 preparedInsertstatement.setString(1, key);
 
                 try {
                     preparedInsertstatement.execute();
                     connection.commit();
                 } catch (SQLException e) {
-                    // entry can already be created concurrently by other cluster node. We can still try to get the lock
-                    // now
-                    System.out.println(e);
+                    log.debug("'{}' : Cannot created new row for key '{}' because most likely concurrently created by another " +
+                            "cluster node. Can try to lock the row now{} ", e.toString(), key);
                 }
                 lockResultSet = preparedLockStatement.executeQuery();
                 if (!lockResultSet.next()) {
-                    String msg = String.format("Unexpected : A row for '%s' was expected and if it could not be locked, an SQL Exception was " +
-                            "expected.", key);
+                    String msg = String.format("Illegal state : A row for '%s' was expected and if it could not be locked, " +
+                            "an SQL Exception was expected instead of empty result set.", key);
                     log.error(msg);
                     throw new LockException(msg);
                 }
             }
 
-            // push the lockResultSet in a cache such that it cannot be GC-ed and thus not closed as a result of being GC-ed
-            return new DbLock(key, lockResultSet);
+            // push the connection and lockResultSet in a lock object such that it cannot be GC-ed and thus not closed as a result of being GC-ed
+            return new DbLock(key, clusterNodeId, connection, originalAutoCommit, lockResultSet);
 
         } catch (SQLException e) {
-            // TODO
-            log.error(e.toString());
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(originalAutoCommit);
+                    connection.close();
+                } catch (SQLException e1) {
+                    log.error("Failed to close connection.", e);
+                    throw new LockException(e);
+                }
+            }
+            if (log.isDebugEnabled()) {
+                log.info("Cannot lock '{}'. Most likely already locked by another cluster node.", e);
+            } else {
+                log.info("Cannot lock '{}'. Most likely already locked by another cluster node : {}", e.toString());
+            }
             throw new LockException(e);
         }
     }

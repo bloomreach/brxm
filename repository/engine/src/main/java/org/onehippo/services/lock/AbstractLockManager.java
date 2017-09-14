@@ -70,6 +70,7 @@ public abstract class AbstractLockManager implements LockManager {
         if (lockThread == null) {
             getLogger().warn("Thread '{}' that created lock for '{}' has stopped without releasing the lock. Removing lock now",
                     abstractLock.getLockOwner(), key, Thread.currentThread().getName());
+            abstractLock.destroy();
             locks.remove(key);
         }
         if (lockThread != Thread.currentThread()) {
@@ -81,9 +82,11 @@ public abstract class AbstractLockManager implements LockManager {
             getLogger().error("Hold count of lock should never be able to be less than 0. Core implementation issue in {}. Remove " +
                             "lock for {} nonetheless.",
                     this.getClass().getName(), key);
+            abstractLock.destroy();
             locks.remove(key);
         } else if (abstractLock.holdCount == 0) {
             getLogger().debug("Remove lock '{}'", key);
+            abstractLock.destroy();
             locks.remove(key);
         } else {
             getLogger().debug("Lock '{}' will not be removed since hold count is '{}'", key, abstractLock.holdCount);

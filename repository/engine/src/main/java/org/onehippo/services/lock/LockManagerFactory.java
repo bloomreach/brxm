@@ -42,7 +42,8 @@ public class LockManagerFactory {
         final ConnectionHelper journalConnectionHelper = repositoryImpl.getJournalConnectionHelperAccessor().getConnectionHelper();
         if (journalConnectionHelper != null) {
             final DataSource dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelper);
-            return new AssertingLockManager(new DbLockManager(dataSource));
+            String clusterNodeId = repositoryImpl.getDescriptor("jackrabbit.cluster.id");
+            return new AssertingLockManager(new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId));
         } else {
             return new AssertingLockManager(new MemoryLockManager());
         }

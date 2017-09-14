@@ -41,7 +41,7 @@ public class MemoryLockManagerTest {
         memoryLockManager.lock("123");
         assertEquals(1, memoryLockManager.getLocks().size());
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
-        assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockOwner());
+        assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
 
         assertEquals(2, ((MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
 
@@ -135,7 +135,7 @@ public class MemoryLockManagerTest {
         }
 
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
-        assertEquals(lockThread.getName(), memoryLockManager.getLocks().iterator().next().getLockOwner());
+        assertEquals(lockThread.getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
 
         // set the lock thread to null and make it eligible for GC ....however since the lock has not been unlocked, we
         // do expect a warning
@@ -153,7 +153,7 @@ public class MemoryLockManagerTest {
         // main thread can lock again
         memoryLockManager.lock("123");
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
-        assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockOwner());
+        assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
     }
 
     private boolean tryFor10Seconds(final long l) {

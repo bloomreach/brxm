@@ -16,3 +16,4 @@
 
 Updating /test/foo/bar failed
 Failed to acquire next trigger
+Removing the lock now

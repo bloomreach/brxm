@@ -19,14 +19,14 @@ import java.lang.ref.WeakReference;
 
 import org.onehippo.cms7.services.lock.Lock;
 
-abstract class AbstractLock extends Lock {
+public abstract class AbstractLock extends Lock {
 
     private WeakReference<Thread> thread;
 
     int holdCount;
 
-    public AbstractLock(final String lockKey, final String name, final long creationTime) {
-        super(lockKey, name, creationTime);
+    public AbstractLock(final String lockKey, final String lockOwner, final String lockThread, final long creationTime) {
+        super(lockKey, lockOwner, lockThread, creationTime);
         thread = new WeakReference<>(Thread.currentThread());
         holdCount = 1;
     }
@@ -45,6 +45,10 @@ abstract class AbstractLock extends Lock {
 
     public void decrement() {
         holdCount--;
+    }
+
+    public int getHoldCount() {
+        return holdCount;
     }
 
     abstract void destroy();
