@@ -39,9 +39,6 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -72,6 +69,9 @@ import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -743,7 +743,8 @@ public class ConfigurationConfigService {
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session));
+                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session),
+                        updateProperty.getValueType().ordinal());
             } else {
                 if (verifiedUpdateValues.size() > 0) {
                     jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));

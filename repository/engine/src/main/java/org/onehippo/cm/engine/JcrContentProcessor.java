@@ -329,7 +329,8 @@ public class JcrContentProcessor {
                     jcrNode.setProperty(modelProperty.getName(), valueFrom(modelValues.get(0), jcrNode.getSession()));
                 }
             } else {
-                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()));
+                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()),
+                        modelProperty.getValueType().ordinal());
             }
         } catch (RepositoryException e) {
             String msg = String.format(
