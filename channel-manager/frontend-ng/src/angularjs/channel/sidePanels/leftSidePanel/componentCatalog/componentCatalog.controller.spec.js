@@ -18,6 +18,7 @@ describe('componentCatalogController', () => {
   let $translate;
   let MaskService;
   let ComponentCatalogService;
+  let OverlayService;
   let $ctrl;
 
   const component = {
@@ -28,10 +29,11 @@ describe('componentCatalogController', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($componentController, _$translate_, _MaskService_, _ComponentCatalogService_) => {
+    inject(($componentController, _$translate_, _MaskService_, _ComponentCatalogService_, _OverlayService_) => {
       $translate = _$translate_;
       MaskService = _MaskService_;
       ComponentCatalogService = _ComponentCatalogService_;
+      OverlayService = _OverlayService_;
 
       $ctrl = $componentController('componentCatalog');
     });
@@ -39,11 +41,20 @@ describe('componentCatalogController', () => {
     spyOn(ComponentCatalogService, 'getSelectedComponent').and.returnValue(component);
   });
 
+  it('toggleState should toggle the state of the overlay toggle if it is falsy', () => {
+    $ctrl._toggleState();
+
+    expect($ctrl.state).toEqual(true);
+    expect(OverlayService.toggleOverlayByComponent).toEqual(true);
+  });
+
   it('sets the selected component', () => {
     spyOn(ComponentCatalogService, 'selectComponent');
+    spyOn($ctrl, '_toggleState');
 
     $ctrl.onSelect(component);
 
+    expect($ctrl._toggleState).toHaveBeenCalled();
     expect(ComponentCatalogService.selectComponent).toHaveBeenCalledWith(component);
   });
 

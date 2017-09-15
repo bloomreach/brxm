@@ -113,11 +113,6 @@ class OverlayService {
     this.overlay.addClass('hippo-overlay-add-mode');
     this.overlay.on('click', () => {
       this.$rootScope.$apply(() => {
-        if (this.toggleOverlayByComponent) {
-          this.showComponentsOverlay(false);
-          this.toggleOverlayByComponent = false;
-        }
-
         this._resetMask();
       });
     });

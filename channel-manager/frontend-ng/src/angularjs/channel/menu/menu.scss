@@ -16,6 +16,10 @@
 
   > md-icon {
     left: 16px;
+
+    &.disabled {
+      opacity: .38;
+    }
   }
 
   > .md-button {

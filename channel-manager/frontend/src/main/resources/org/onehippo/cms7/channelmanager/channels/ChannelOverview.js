@@ -31,6 +31,7 @@
             this.resources = config.resources;
             this.canModifyChannels = config.canModifyChannels;
             this.blueprintsAvailable = config.blueprintsAvailable;
+            this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
 
             toolbar = new Ext.Toolbar({
                 height: 40,
@@ -41,19 +42,26 @@
                         text: config.resources.type,
                         id: 'type-button',
                         enableToggle: true,
-                        pressed: true,
+                        pressed: this.userPreferences.sort === 0,
+                        hidden: this.userPreferences.display === 1,
                         toggleGroup: 'channelPropertyGrouping',
+                        scope: this,
                         handler: function () {
                             iconPanel.layout.setActiveItem(0);
+                            this.setUserPreferences('sort', 0);
                         }
                     },
                     {
                         text: config.resources.region,
                         id: 'region-button',
                         enableToggle: true,
+                        pressed: this.userPreferences.sort === 1,
+                        hidden: this.userPreferences.display === 1,
                         toggleGroup: 'channelPropertyGrouping',
+                        scope: this,
                         handler: function () {
                             iconPanel.layout.setActiveItem(1);
+                            this.setUserPreferences('sort', 1);
                         }
                     },
                     ' ',
@@ -68,7 +76,7 @@
                         },
                         toggleGroup: 'channelViewGrouping',
                         enableToggle: true,
-                        pressed: true,
+                        pressed: this.userPreferences.display === 0,
                         scope: this,
                         iconCls: 'icon-view'
                     },
@@ -82,6 +90,7 @@
                             this.selectCard(1);
                         },
                         toggleGroup: 'channelViewGrouping',
+                        pressed: this.userPreferences.display === 1,
                         enableToggle: true,
                         scope: this,
                         iconCls: 'list-view'
@@ -104,7 +113,7 @@
             Ext.apply(config, {
                 id: 'channelOverview',
                 layout: 'card',
-                activeItem: 0,
+                activeItem: this.userPreferences.display,
                 layoutOnCardChange: true,
                 deferredRender: true,
                 viewConfig: {
@@ -120,17 +129,24 @@
         selectCard: function (itemId) {
             if (itemId) {
                 this.layout.setActiveItem(itemId);
+                this.setUserPreferences('display', itemId);
             } else {
                 this.layout.setActiveItem(0);
+                this.setUserPreferences('display', 0);
             }
         },
 
         update: function (config) {
             this.selectCard(config.activeItem);
+        },
+
+        setUserPreferences: function (type, id) {
+          this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
+          this.userPreferences[type] = id;
+          localStorage.setItem('channelMgrConf', JSON.stringify(this.userPreferences));
         }
 
     });
 
     Ext.reg('Hippo.ChannelManager.ChannelOverview', Hippo.ChannelManager.ChannelOverview);
-
 }());

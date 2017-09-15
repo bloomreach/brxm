@@ -58,10 +58,6 @@ class ComponentCatalogService {
   }
 
   selectComponent(component) {
-    if (!this.OverlayService.isComponentsOverlayDisplayed) {
-      this.OverlayService.toggleOverlayByComponent = true;
-      this.OverlayService.showComponentsOverlay(true);
-    }
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();

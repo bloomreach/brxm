@@ -15,9 +15,10 @@
  */
 
 class MaskCtrl {
-  constructor(MaskService) {
+  constructor(MaskService, OverlayService) {
     'ngInject';
 
+    this.OverlayService = OverlayService;
     this.MaskService = MaskService;
   }
 
@@ -26,6 +27,7 @@ class MaskCtrl {
   }
 
   onClick() {
+    if (this.state && this.OverlayService.toggleOverlayByComponent) this.state = false;
     this.MaskService.clickHandler();
   }
 }
