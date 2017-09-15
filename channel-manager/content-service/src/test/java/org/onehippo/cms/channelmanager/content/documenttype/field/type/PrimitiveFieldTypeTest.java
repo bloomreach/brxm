@@ -32,10 +32,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
@@ -58,203 +61,177 @@ import static org.junit.Assert.fail;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({JcrUtils.class, NamespaceUtils.class})
-public class LongFieldTypeTest {
+public class PrimitiveFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
+    private PrimitiveFieldType fieldType;
+    private Node node;
 
     @Before
     public void setup() {
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(NamespaceUtils.class);
+        fieldType = new PrimitiveFieldType() {
+
+            @Override
+            protected int getPropertyType() {
+                return PropertyType.STRING;
+            }
+
+            @Override
+            protected String getDefault() {
+                return "";
+            }
+        };
+        fieldType.setType(Type.STRING);
+        node = MockNode.root();
     }
 
     @Test
-    public void readFromSingleLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromSingleField() throws Exception {
         fieldType.setId(PROPERTY);
-        node.setProperty(PROPERTY, 10);
+        node.setProperty(PROPERTY, "Value");
 
         final List<FieldValue> list = fieldType.readFrom(node).get();
         assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0).getValue(), equalTo("10"));
+        assertThat(list.get(0).getValue(), equalTo("Value"));
     }
 
     @Test
-    public void readFromSingleIncorrectLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromSingleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
 
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[]{"Value", "Ignore"});
         List<FieldValue> list = fieldType.readFrom(node).get();
         assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0).getValue(), equalTo("10"));
+        assertThat(list.get(0).getValue(), equalTo("Value"));
 
-        node.setProperty(PROPERTY, new String[0], PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[0]);
         list = fieldType.readFrom(node).get();
         assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0).getValue(), equalTo("0"));
+        assertThat(list.get(0).getValue(), equalTo(""));
 
         node.getProperty(PROPERTY).remove();
         list = fieldType.readFrom(node).get();
         assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0).getValue(), equalTo("0"));
+        assertThat(list.get(0).getValue(), equalTo(""));
     }
 
     @Test
-    public void readFromOptionalLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromOptionalField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
 
         assertFalse(fieldType.readFrom(node).isPresent());
 
-        node.setProperty(PROPERTY, 10);
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("10"));
+        node.setProperty(PROPERTY, "Value");
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
     }
 
     @Test
-    public void readFromOptionalIncorrectLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromOptionalIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
 
-        node.setProperty(PROPERTY, new String[0], PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[0]);
         assertFalse(fieldType.readFrom(node).isPresent());
 
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("10"));
+        node.setProperty(PROPERTY, new String[]{"Value", "Ignore"});
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
     }
 
     @Test
-    public void readFromMultipleLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromMultipleField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
 
         assertFalse(fieldType.readFrom(node).isPresent());
 
-        node.setProperty(PROPERTY, new String[0], PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[0]);
         assertFalse(fieldType.readFrom(node).isPresent());
 
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("10"));
-        assertThat(fieldType.readFrom(node).get().get(1).getValue(), equalTo("20"));
+        node.setProperty(PROPERTY, new String[]{"Value 1", "Value 2"});
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value 1"));
+        assertThat(fieldType.readFrom(node).get().get(1).getValue(), equalTo("Value 2"));
     }
 
     @Test
-    public void readFromMultipleIncorrectLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void readFromMultipleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
 
-        node.setProperty(PROPERTY, "10",PropertyType.LONG);
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("10"));
+        node.setProperty(PROPERTY, "Value");
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
 
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.addValidator(Validator.REQUIRED);
         node.getProperty(PROPERTY).remove();
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("0"));
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
 
-        node.setProperty(PROPERTY, new String[0], PropertyType.LONG);
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("0"));
+        node.setProperty(PROPERTY, new String[0]);
+        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
     }
 
     @Test
-    public void readFromException() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = createMock(Node.class);
-
+    public void writeToSingleField() throws Exception {
         fieldType.setId(PROPERTY);
-        fieldType.setId(PROPERTY);
-        expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
-        expect(JcrUtils.getNodePathQuietly(node)).andReturn("bla");
-        PowerMock.replayAll(node);
-
-        assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("0"));
-    }
-
-
-    @Test
-    public void writeToSingleLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        node.setProperty(PROPERTY, "10", PropertyType.LONG);
+        node.setProperty(PROPERTY, "Old Value");
 
         try {
             fieldType.writeTo(node, Optional.empty());
             fail("Must not be missing");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("10"));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
         try {
             fieldType.writeTo(node, Optional.of(Collections.emptyList()));
             fail("Must have 1 entry");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("10"), valueOf("20"))));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("One"), valueOf("Two"))));
             fail("Must have 1 entry");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("20"))));
-        assertThat(node.getProperty(PROPERTY).getLong(), equalTo(20L));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
     @Test
-    public void writeToOptionalPresentLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToOptionalPresentField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
-        node.setProperty(PROPERTY, 10);
+        node.setProperty(PROPERTY, "Old Value");
 
         fieldType.writeTo(node, Optional.empty());
         assertFalse(node.hasProperty(PROPERTY));
-        node.setProperty(PROPERTY, 10);
+        node.setProperty(PROPERTY, "Old Value");
 
         fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertFalse(node.hasProperty(PROPERTY));
-        node.setProperty(PROPERTY, 10);
+        node.setProperty(PROPERTY, "Old Value");
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("20"))));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("one"), valueOf("two"))));
             fail("Must have length 1");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("10"));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("20"))));
-        assertThat(node.getProperty(PROPERTY).getLong(), equalTo(20L));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
     @Test
-    public void writeToOptionalAbsentLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToOptionalAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
 
@@ -265,49 +242,48 @@ public class LongFieldTypeTest {
         assertFalse(node.hasProperty(PROPERTY));
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("10"))));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("one"), valueOf("two"))));
             fail("Must have length 1");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
         assertFalse(node.hasProperty(PROPERTY));
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("10"))));
-        assertThat(node.getProperty(PROPERTY).getLong(), equalTo(10L));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
     @Test
-    public void writeToMultiplePresentLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToMultiplePresentField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
         fieldType.writeTo(node, Optional.empty());
         assertFalse(node.hasProperty(PROPERTY));
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
         fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertFalse(node.hasProperty(PROPERTY));
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("5"))));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("Single Value"))));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(1));
-        node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("10"), valueOf("20"))));
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("One"), valueOf("Two"), valueOf("Three"))));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(3));
+        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
+
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New 1"), valueOf(""))));
+        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("New 1"));
+        assertThat(node.getProperty(PROPERTY).getValues()[1].getString(), equalTo(""));
     }
 
     @Test
-    public void writeToMultipleAbsentLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToMultipleAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
@@ -319,59 +295,47 @@ public class LongFieldTypeTest {
         fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertFalse(node.hasProperty(PROPERTY));
 
-        // TODO: the MockValue impl does not throw a ValueFormatExceptoin when writing an empty string into a
-        // long property but the actual Value impl does. In production we get the expected behavior (value is not set)
-        // but in the test code the value is set to en empty string, which in turn throws when calling MockValue#getLong
         fieldType.writeTo(node, Optional.of(listOf(valueOf(""))));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
         node.getProperty(PROPERTY).remove();
 
-        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("10"), valueOf("20"))));
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("One"), valueOf("Two"), valueOf("Three"))));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(3));
     }
 
     @Test
-    public void writeToMultipleIncorrectLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToMultipleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
 
-        node.setProperty(PROPERTY, 10); // singular property in spite of multiple type
+        node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
         fieldType.writeTo(node, Optional.empty());
         assertFalse(node.hasProperty(PROPERTY));
-        node.setProperty(PROPERTY, 10); // singular property in spite of multiple type
+        node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
-        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("20"))));
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("One"), valueOf("Two"))));
         assertTrue(node.getProperty(PROPERTY).isMultiple());
-        node.setProperty(PROPERTY, 10); // singular property in spite of multiple type
+        node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
     }
 
     @Test
-    public void writeToSingleIncorrectLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToSingleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
-        node.setProperty(PROPERTY, new String[]{"10"}, PropertyType.LONG); // multiple property in spite of singular type
+        node.setProperty(PROPERTY, new String[]{"Old Value"}); // multiple property in spite of singular type
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("20"))));
-        assertThat(node.getProperty(PROPERTY).getLong(), equalTo(20L));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
     @Test
-    public void writeToMultipleEmptyLong() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-
+    public void writeToMultipleEmptyField() throws Exception {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
-        node.setProperty(PROPERTY, new String[0], PropertyType.LONG); // multiple, empty property
+        node.setProperty(PROPERTY, new String[0]); // multiple, empty property
 
         fieldType.writeTo(node, Optional.empty());
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(0)); // multiple property still there
@@ -381,107 +345,109 @@ public class LongFieldTypeTest {
     }
 
     @Test
-    public void writeToSingleException() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = createMock(Node.class);
+    public void readFromException() throws Exception {
+        final Node mockedNode = createMock(Node.class);
 
         fieldType.setId(PROPERTY);
-        expect(node.hasProperty(PROPERTY)).andReturn(false);
-        expect(node.setProperty(PROPERTY, "10", PropertyType.LONG)).andThrow(new RepositoryException());
-        replay(node);
+        fieldType.setId(PROPERTY);
+        expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(mockedNode)).andReturn("bla");
+        PowerMock.replayAll(mockedNode);
+
+        assertThat(fieldType.readFrom(mockedNode).get().get(0).getValue(), equalTo(""));
+    }
+
+    @Test
+    public void writeToSingleException() throws Exception {
+        final Node mockedNode = createMock(Node.class);
+
+        fieldType.setId(PROPERTY);
+        expect(mockedNode.hasProperty(PROPERTY)).andReturn(false);
+        expect(mockedNode.setProperty(PROPERTY, "New Value", PropertyType.STRING)).andThrow(new RepositoryException());
+        replay(mockedNode);
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf("10"))));
+            fieldType.writeTo(mockedNode, Optional.of(listOf(valueOf("New Value"))));
             fail("Exception not thrown");
         } catch (InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(node);
+        verify(mockedNode);
     }
 
     @Test
     public void writeToMultipleException() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = createMock(Node.class);
+        final Node mockedNode = createMock(Node.class);
 
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
-        expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
-        replay(node);
+        expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
+        replay(mockedNode);
 
         try {
-            fieldType.writeTo(node, Optional.empty());
+            fieldType.writeTo(mockedNode, Optional.empty());
             fail("Exception not thrown");
-        } catch (InternalServerErrorException e) {
+        } catch (final InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(node);
+        verify(mockedNode);
     }
 
     @Test
     public void writeSingleOnExistingMultipleProperty() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-        final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, new String[]{"10", "20"}, PropertyType.LONG);
+        final Property replacedProperty = node.setProperty(PROPERTY, new String[]{"Value1", "Value2"});
 
         fieldType.setMultiple(false);
         fieldType.setId(PROPERTY);
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("5"))));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
 
-        assertFalse(node.getProperty(PROPERTY).isSame(propertyThatWillBeReplaced));
+        assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
         assertFalse(node.getProperty(PROPERTY).isMultiple());
     }
 
     @Test
     public void writeMultipleOnExistingSingleProperty() throws Exception {
-        final LongFieldType fieldType = new LongFieldType();
-        final Node node = MockNode.root();
-        final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, 10);
+        final Property replacedProperty = node.setProperty(PROPERTY, "Value");
 
         fieldType.setMaxValues(2);
         fieldType.setMultiple(true);
         fieldType.setId(PROPERTY);
-        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("5"), valueOf("20"))));
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value1"), valueOf("New Value2"))));
 
-        assertFalse(node.getProperty(PROPERTY).isSame(propertyThatWillBeReplaced));
+        assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
         assertTrue(node.getProperty(PROPERTY).isMultiple());
     }
 
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
-        final LongFieldType fieldType = new LongFieldType();
+        final Node mockedNode = createMock(Node.class);
         fieldType.setId(PROPERTY);
 
-        final Node node = createMock(Node.class);
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
-        replay(node);
+        replay(mockedNode);
 
-        assertFalse(fieldType.writeField(node, fieldPath, fieldValues));
-        verify(node);
+        assertFalse(fieldType.writeField(mockedNode, fieldPath, fieldValues));
+        verify(mockedNode);
     }
 
     @Test
     public void writeFieldSuccess() throws ErrorWithPayloadException, RepositoryException {
-        final LongFieldType fieldType = new LongFieldType();
         fieldType.setId(PROPERTY);
 
-        final Node node = MockNode.root();
         final FieldPath fieldPath = new FieldPath(PROPERTY);
-        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("10"));
+        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("value"));
 
         assertTrue(fieldType.writeField(node, fieldPath, fieldValues));
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("10"));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("value"));
     }
 
     @Test
     public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
-        final LongFieldType fieldType = new LongFieldType();
         fieldType.setId(PROPERTY);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.addValidator(Validator.REQUIRED);
 
-        final Node node = MockNode.root();
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final FieldValue emptyValue = new FieldValue("");
 
@@ -489,36 +455,17 @@ public class LongFieldTypeTest {
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
     }
 
-    // @Test
-    // TODO: this code works in production, but not in the test; the MockValueFactory never throws a ValueFormatException
-    // when calling MockValueFactory#createValue(String value, int type) as it uses the 'stringified' constructor of
-    // MockValue, which then throws a ValueFormatException when calling getLong()...
-    public void writeNumbersOnly() throws ErrorWithPayloadException, RepositoryException {
-        final LongFieldType fieldType = new LongFieldType();
-        fieldType.setId(PROPERTY);
-
-        final Node node = MockNode.root();
-        node.setProperty(PROPERTY, 10);
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("abc"))));
-        assertThat(node.getProperty(PROPERTY).getLong(), equalTo(10L));
-    }
-
-
     @Test
     public void validateNonRequired() {
-        final LongFieldType fieldType = new LongFieldType();
-
         assertTrue(fieldType.validate(Collections.emptyList()));
         assertTrue(fieldType.validate(listOf(valueOf(""))));
-        assertTrue(fieldType.validate(listOf(valueOf("5"))));
-        assertTrue(fieldType.validate(Arrays.asList(valueOf("10"), valueOf("20"))));
+        assertTrue(fieldType.validate(listOf(valueOf("blabla"))));
+        assertTrue(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
     }
 
     @Test
     public void validateRequired() {
-        final LongFieldType fieldType = new LongFieldType();
-
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.addValidator(Validator.REQUIRED);
 
         // valid values
         assertTrue(fieldType.validate(listOf(valueOf("5"))));
@@ -527,41 +474,41 @@ public class LongFieldTypeTest {
         // invalid values
         FieldValue v = valueOf("");
         assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
 
         v = valueOf(null);
         assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
 
         List<FieldValue> l = Arrays.asList(valueOf("10"), valueOf(""));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
 
         l = Arrays.asList(valueOf("10"), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
 
         l = Arrays.asList(valueOf(""), valueOf("10"));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
         assertFalse(l.get(1).hasErrorInfo());
 
         l = Arrays.asList(valueOf(null), valueOf("10"));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
         assertFalse(l.get(1).hasErrorInfo());
 
         l = Arrays.asList(valueOf(""), valueOf(""));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
 
         l = Arrays.asList(valueOf(null), valueOf(null));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
     }
 
     private List<FieldValue> listOf(final FieldValue value) {
