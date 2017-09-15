@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content.documenttype;
+package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.Optional;
 
@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;

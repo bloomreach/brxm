@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content.documenttype;
+package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.ckeditor.Json;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
 /**
  * Reads configuration properties of a field type into a JSON object using the 'builder' pattern with a fluid syntax.
