@@ -245,7 +245,7 @@
     },
 
     _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      // TODO
+      this._showPicker(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
     },
 
     _showPicker: function(fieldId, dialogConfig, selection, successCallback, cancelCallback, wicketUrl) {
