@@ -18,12 +18,14 @@ import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
+import imageLinkModule from './imageLink/imageLink.module';
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
     ckeditorModule,
+    imageLinkModule,
   ])
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
