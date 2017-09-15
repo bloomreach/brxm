@@ -36,6 +36,7 @@ import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.ckeditor.Json;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
@@ -51,8 +52,10 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             "enable.upload",
             "last.visited.enabled",
             "last.visited.key",
-            "nodetypes",
             "preview.width"
+    };
+    private static final String[] IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES = {
+            "nodetypes",
     };
 
     private static final String IMAGE_PICKER_PROPERTY_PREFIX = "image.";
@@ -79,25 +82,13 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
 
         config = Json.object();
 
-        final ObjectNode imagePickerConfig = getConfig().with("imagepicker");
-        readStringConfig(imagePickerConfig, IMAGE_PICKER_STRING_PROPERTIES, fieldContext);
-        readPrefixedStringConfig(imagePickerConfig, IMAGE_PICKER_PREFIXED_STRING_PROPERTIES, IMAGE_PICKER_PROPERTY_PREFIX, fieldContext);
-    }
-
-    private void readStringConfig(final ObjectNode config, final String[] propertyNames, final FieldTypeContext fieldContext) {
-        for (final String propertyName : propertyNames) {
-            fieldContext.getStringConfig(propertyName).ifPresent((value) -> config.put(propertyName, value));
-        }
-    }
-
-    private void readPrefixedStringConfig(final ObjectNode config, final String[] propertyNames,
-                                          final String removePrefix, final FieldTypeContext fieldContext) {
-        for (final String propertyName : propertyNames) {
-            fieldContext.getStringConfig(propertyName).ifPresent((value) -> {
-                final String key = StringUtils.removeStart(propertyName, removePrefix);
-                config.put(key, value);
-            });
-        }
+        final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
+                .strings(IMAGE_PICKER_STRING_PROPERTIES)
+                .multipleStrings(IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES)
+                .removePrefix(IMAGE_PICKER_PROPERTY_PREFIX)
+                .strings(IMAGE_PICKER_PREFIXED_STRING_PROPERTIES)
+                .build();
+        config.set("imagepicker", imagePickerConfig);
     }
 
     @Override
