@@ -248,9 +248,6 @@ public class EventJournalProcessor {
     }
 
     private void tryProcessEvents() throws RepositoryException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
         // try processEvents max MAX_REPEAT_PROCESS_EVENTS in a row until success (for one task run)
         for (int i = 0; i < MAX_REPEAT_PROCESS_EVENTS; i++) {
             if (processEvents()) {
@@ -259,11 +256,6 @@ public class EventJournalProcessor {
                 // processEvents unsuccessful: new events arrived before it could export already collected changes
                 log.debug("Incoming events during processEvents() -- retrying!");
             }
-        }
-
-        stopWatch.stop();
-        if (stopWatch.getTime(TimeUnit.MILLISECONDS) > 0) {
-            log.info("Full auto-export cycle in {}", stopWatch.toString());
         }
     }
 
