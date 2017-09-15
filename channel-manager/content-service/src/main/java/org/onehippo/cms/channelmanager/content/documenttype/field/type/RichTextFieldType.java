@@ -25,7 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +35,7 @@ import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.ckeditor.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -92,7 +92,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
             "imagepicker.preferred.image.variant"
     };
 
-    private static final String[] IMAGEPICKER_MULTIPLE_PROPERTIES = {
+    private static final String[] IMAGEPICKER_MULTIPLE_STRING_PROPERTIES = {
             "excluded.image.variants",
             "imagepicker.last.visited.nodetypes",
             "imagepicker.nodetypes",
@@ -125,47 +125,23 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        final ObjectNode internalLinkConfig = hippoPickerConfig.with(HippoPicker.InternalLink.CONFIG_KEY);
-        readBooleanConfig(internalLinkConfig, LINKPICKER_BOOLEAN_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
-        readStringConfig(internalLinkConfig, LINKPICKER_STRING_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
-        readMultipleStringConfig(internalLinkConfig, LINKPICKER_MULTIPLE_STRING_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
+        final ObjectNode internalLinkConfig = new FieldTypeConfig(fieldContext)
+                .removePrefix(LINKPICKER_REMOVED_PREFIX)
+                .booleans(LINKPICKER_BOOLEAN_PROPERTIES)
+                .strings(LINKPICKER_STRING_PROPERTIES)
+                .multipleStrings(LINKPICKER_MULTIPLE_STRING_PROPERTIES)
+                .build();
+        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, internalLinkConfig);
     }
 
     private void initImagePicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        final ObjectNode imagePickerConfig = hippoPickerConfig.with(HippoPicker.Image.CONFIG_KEY);
-        readBooleanConfig(imagePickerConfig, IMAGEPICKER_BOOLEAN_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
-        readStringConfig(imagePickerConfig, IMAGEPICKER_STRING_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
-        readMultipleStringConfig(imagePickerConfig, IMAGEPICKER_MULTIPLE_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
-    }
-
-    private void readBooleanConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
-        for (String propertyName : propertyNames) {
-            fieldContext.getBooleanConfig(propertyName).ifPresent((value) -> {
-                final String key = StringUtils.removeStart(propertyName, removePrefix);
-                config.put(key, value);
-            });
-        }
-    }
-
-    private void readStringConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
-        for (String propertyName : propertyNames) {
-            fieldContext.getStringConfig(propertyName).ifPresent((value) -> {
-                final String key = StringUtils.removeStart(propertyName, removePrefix);
-                config.put(key, value);
-            });
-        }
-    }
-
-    private void readMultipleStringConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
-        for (String propertyName : propertyNames) {
-            fieldContext.getMultipleStringConfig(propertyName).ifPresent((values -> {
-                final String key = StringUtils.removeStart(propertyName, removePrefix);
-                final ArrayNode array = config.putArray(key);
-                for (String value : values) {
-                    array.add(value);
-                }
-            }));
-        }
+        final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
+                .removePrefix(IMAGEPICKER_REMOVED_PREFIX)
+                .booleans(IMAGEPICKER_BOOLEAN_PROPERTIES)
+                .strings(IMAGEPICKER_STRING_PROPERTIES)
+                .multipleStrings(IMAGEPICKER_MULTIPLE_STRING_PROPERTIES)
+                .build();
+        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, imagePickerConfig);
     }
 
     @Override
