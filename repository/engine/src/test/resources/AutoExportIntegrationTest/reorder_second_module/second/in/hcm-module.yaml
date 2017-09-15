@@ -1,0 +1,9 @@
+group:
+  name: hippo-cms-test
+  after: [hippo-cms, test-group]
+project:
+  name: autoexport-integration-test-project
+  after: hippo-repository
+module:
+  name: autoexport-integration-test-module-second
+  after: autoexport-integration-test-module-first

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.query.QueryManager;
 import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
@@ -58,9 +59,15 @@ import org.xml.sax.SAXException;
 public class MockSession implements HippoSession {
 
     private final MockNode root;
+    private final MockWorkspace workspace;
+
+    protected MockSession(MockNode root, QueryManager queryManager) {
+        this.root = root;
+        this.workspace = new MockWorkspace(this, queryManager);
+    }
 
     protected MockSession(MockNode root) {
-        this.root = root;
+        this(root, null);
     }
 
     @Override
@@ -245,7 +252,7 @@ public class MockSession implements HippoSession {
 
     @Override
     public MockWorkspace getWorkspace() {
-        return new MockWorkspace(this);
+        return workspace;
     }
 
     // REMAINING METHODS ARE NOT IMPLEMENTED

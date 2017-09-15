@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /topmost:
+      /upstream:
+        /exportFirst:
+          jcr:primaryType: nt:unstructured
+          /childNode1:
+            jcr:primaryType: nt:unstructured
+    /topmost/upstream/restore/node:
+      .meta:delete: true

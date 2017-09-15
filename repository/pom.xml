@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.1-SNAPSHOT</version>
+    <version>29.2-SNAPSHOT</version>
   </parent>
 
   <name>Repository</name>
@@ -72,7 +72,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.jackrabbit.version>2.14.0-h2-SNAPSHOT</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
     <hippo.configuration-management.version>1.1.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
@@ -89,6 +89,7 @@
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-collections4.version>4.1</commons-collections4.version>
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
@@ -238,6 +239,11 @@
         <groupId>org.apache.xmlbeans</groupId>
         <artifactId>xmlbeans-java6</artifactId>
         <version>${xmlbeans-java6.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>

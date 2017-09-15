@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs:
+      /first-local:
+        .meta:order-before: 1-first
+        jcr:primaryType: nt:unstructured
+      /3-third:
+        .meta:order-before: 1-first
+        jcr:primaryType:
+          operation: override
+          value: nt:unstructured
+        property: value
+      /last-local:
+        .meta:order-before: 1-first
+        jcr:primaryType: nt:unstructured
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs/2-second:
+      .meta:order-before: last-local
+    /AutoExportIntegrationTest/reorder-upstream-module/local-defs/4-fourth:
+      .meta:order-before: 3-third

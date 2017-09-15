@@ -16,19 +16,29 @@
 
 package org.onehippo.cm.engine.autoexport;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.ConfigurationModel;
+
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 
 public class AutoExportIntegrationTest {
 
@@ -177,26 +187,303 @@ public class AutoExportIntegrationTest {
         });
     }
 
+    @Test
+    public void autoexport_reorder_within_module() throws Exception {
+        new Fixture("autoexport_reorder_within_module").test(
+            (session, configurationModel) -> {
+                assertOrder("[a1-initial, a2-last, a3-first, a4-middle]", "/across", session, configurationModel);
+
+                assertOrder("[w1-initial, w2-last, w3-first, w4-middle]", "/within/sub", session, configurationModel);
+
+                assertOrderInJcr("[m1-initial, m2-last, m3-content1, m4-content2]", "/mix", session);
+                assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
+
+                assertOrder("[1-first, 2-second, 3-third, delete]", "/reorder-on-config-delete", session, configurationModel);
+
+                assertOrderInJcr("[n3, n2, n1]", "/reorder-on-content-delete", session);
+                assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+
+                assertOrder("[a, c, b]", "/existing-files/sub", session, configurationModel);
+            },
+            (session) -> {
+                final Node across = session.getNode("/across");
+                across.orderBefore("a3-first", "a1-initial");
+                across.orderBefore("a4-middle", "a2-last");
+
+                final Node within = session.getNode("/within/sub");
+                within.orderBefore("w3-first", "w1-initial");
+                within.orderBefore("w4-middle", "w2-last");
+
+                final Node mix = session.getNode("/mix");
+                mix.orderBefore("m3-content1", "m2-last");
+                mix.orderBefore("m4-content2", "m3-content1");
+
+                // Note that this test also demonstrates cleaning the no-longer-necessary order-before of '2-second',
+                // '3-third' and the entire (superfluous) source reorder-on-config-delete-1-first.yaml
+                session.getNode("/reorder-on-config-delete/delete").remove();
+
+                session.getNode("/reorder-on-content-delete/n2").remove();
+
+                session.getNode("/existing-files/sub").orderBefore("b", "c");
+
+                final Node createNewFiles = session.getNode("/create-new-files/sub");
+                createNewFiles.addNode("zzz-first", "nt:unstructured");
+                createNewFiles.addNode("abc-last", "nt:unstructured");
+            },
+            (session, configurationModel) -> {
+                assertOrder("[a3-first, a1-initial, a4-middle, a2-last]", "/across", session, configurationModel);
+
+                assertOrder("[w3-first, w1-initial, w4-middle, w2-last]", "/within/sub", session, configurationModel);
+
+                assertOrderInJcr("[m1-initial, m4-content2, m3-content1, m2-last]", "/mix", session);
+                assertOrderModel("[m1-initial, m2-last]", "/mix", configurationModel);
+
+                assertOrder("[1-first, 2-second, 3-third]", "/reorder-on-config-delete", session, configurationModel);
+
+                assertOrderInJcr("[n3, n1]", "/reorder-on-content-delete", session);
+                assertOrderModel("[]", "/reorder-on-content-delete", configurationModel);
+
+                assertOrder("[a, b, c]", "/existing-files/sub", session, configurationModel);
+
+                assertOrder("[zzz-first, abc-last]", "/create-new-files/sub", session, configurationModel);
+            });
+    }
+
+    @Test
+    public void autoexport_reorder_content_only() throws Exception {
+        new Fixture("reorder_content_only").test(
+            (session, configurationModel) -> {
+                assertOrderInJcr("[c1, c2]", "/content", session);
+            },
+            (session) -> {
+                final Node content = session.getNode("/content");
+                content.orderBefore("c2", "c1");
+            },
+            (session, configurationModel) -> {
+                assertOrderInJcr("[c2, c1]", "/content", session);
+            });
+    }
+
+    @Test
+    public void autoexport_reorder_sns() throws Exception {
+        new Fixture("reorder_sns").test(
+            (session, configurationModel) -> {
+                // intentionally empty
+            },
+            (session) -> {
+                final Node configWithSns = session.getNode("/config-with-sns");
+                final Node snsInSameSource = configWithSns.addNode("sns", "nt:unstructured");
+                snsInSameSource.setProperty("property", "value2");
+                configWithSns.orderBefore("sns[2]", "sns[1]");
+
+                final Node subWithSns = session.getNode("/config-with-sub/sub-with-sns");
+                final Node snsInNewSource = subWithSns.addNode("sns", "nt:unstructured");
+                snsInNewSource.setProperty("property", "value3");
+                subWithSns.orderBefore("sns[3]", "sns[1]");
+            },
+            (session, configurationModel) -> {
+                assertOrderInJcr("[sns[1], sns[2]]", "/config-with-sns", session);
+                assertOrderModel("[sns, sns[2]]", "/config-with-sns", configurationModel);
+                assertEquals("value2", JcrUtils.getStringProperty(session.getNode("/config-with-sns/sns[1]"), "property", ""));
+                assertEquals("value1", JcrUtils.getStringProperty(session.getNode("/config-with-sns/sns[2]"), "property", ""));
+
+                assertOrderInJcr("[sns[1], sns[2], sns[3]]", "/config-with-sub/sub-with-sns", session);
+                assertOrderModel("[sns, sns[2], sns[3]]", "/config-with-sub/sub-with-sns", configurationModel);
+                assertEquals("value3", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[1]"), "property", ""));
+                assertEquals("value1", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[2]"), "property", ""));
+                assertEquals("value2", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[3]"), "property", ""));
+            });
+    }
+
+    @Test
+    public void autoexport_reorder_upstream_module() throws Exception {
+        final String noLocalDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/no-local-defs";
+        final String localDefsPath = "/AutoExportIntegrationTest/reorder-upstream-module/local-defs";
+        new Fixture("reorder_upstream_module").test(
+            (session, configurationModel) -> {
+                assertOrder("[first, second, third]", noLocalDefsPath, session, configurationModel);
+                assertOrder("[first-local, 1-first, 3-third, 2-second, 4-fourth, last-local]", localDefsPath, session, configurationModel);
+            },
+            (session) -> {
+                final Node noLocalDefNode = session.getNode(noLocalDefsPath);
+                noLocalDefNode.orderBefore("third", "first");
+                noLocalDefNode.orderBefore("second", "first");
+
+                final Node localDefNode = session.getNode(localDefsPath);
+                localDefNode.orderBefore("4-fourth", "3-third");
+                localDefNode.orderBefore("1-first", null);
+            },
+            (session, configurationModel) -> {
+                assertOrder("[third, second, first]", noLocalDefsPath, session, configurationModel);
+                assertOrder("[first-local, 4-fourth, 3-third, 2-second, last-local, 1-first]", localDefsPath, session, configurationModel);
+            });
+    }
+
+    @Test
+    public void autoexport_reorder_second_module() throws Exception {
+        final String reorderWithin = "/reorder-second-within";
+        final String reorderMix = "/reorder-second-mix";
+
+        final ModuleInfo first = new ModuleInfo("reorder_second_module", "first");
+        final ModuleInfo second = new ModuleInfo("reorder_second_module", "second");
+
+        new Fixture(first, second).test(
+                (session, configurationModel) -> {
+                    assertOrder("[one, two]", reorderWithin, session, configurationModel);
+                    assertOrder("[from-first, from-second]", reorderMix, session, configurationModel);
+                },
+                (session) -> {
+                    final Node reorderWithinNode = session.getNode(reorderWithin);
+                    reorderWithinNode.orderBefore("two", "one");
+
+                    final Node reorderMixNode = session.getNode(reorderMix);
+                    reorderMixNode.orderBefore("from-second", "from-first");
+                },
+                (session, configurationModel) -> {
+                    assertOrder("[two, one]", reorderWithin, session, configurationModel);
+                    assertOrder("[from-second, from-first]", reorderMix, session, configurationModel);
+                });
+    }
+
+    private void assertOrder(final String order, final String path, final Session session,
+                             final ConfigurationModel model) throws Exception {
+        assertOrderInJcr(order, path, session);
+        assertOrderModel(order, path, model);
+    }
+
+    private void assertOrderInJcr(final String order, final String path, final Session session) throws Exception {
+        assertEquals(order, createChildNodesString(session.getNode(path)));
+    }
+
+    private void assertOrderModel(final String order, final String path, final ConfigurationModel model) throws Exception {
+        assertEquals(order, model.resolveNode(path).getNodes().keySet().toString().replaceAll("\\[1]", ""));
+    }
+
+    // this test can only be run if a failure tripwire is enabled in DefinitionMergeService.mergeConfigDefinitionNode()
+    // by un-commenting lines at the beginning of that method
+    @Test @Ignore
+    public void merge_error_handling() throws Exception {
+        new Fixture("merge_error_handling").test(
+            NOOP,
+            session -> {
+                session.getNode("/config").addNode("TestNodeThatShouldNotBeInTheModel");
+                session.getNode("/config").addNode("TestNodeThatShouldCauseAnExceptionOnlyInTesting");
+            },
+            (session, configurationModel) -> {
+                assertFalse(configurationModel.resolveNode("/config").getNodes()
+                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+            }
+        );
+    }
+
+    // this test can only be run if a failure tripwire is enabled in AutoExportModuleWriter.sourceShouldBeSkipped()
+    // by un-commenting lines at the beginning of that method
+    @Test @Ignore
+    public void write_error_handling() throws Exception {
+        new Fixture("write_error_handling").test(
+            NOOP,
+            session -> {
+                session.getNode("/config").addNode("TestNodeThatShouldNotBeInTheModel");
+            },
+            (session, configurationModel) -> {
+                assertFalse(configurationModel.resolveNode("/config").getNodes()
+                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+            }
+        );
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    private class Fixture extends AbstractBaseTest {
-        private final String name;
-        Fixture(final String name) {
-            this.name = name;
+    public static class ModuleInfo {
+        private final String fixtureName;
+        private final String moduleName;
+        private final String inSegment;
+        private final String outSegment;
+        private Path workingDirectory = null;
+        public ModuleInfo(final String fixtureName) {
+            this(fixtureName, null, "in", "out");
         }
+        public ModuleInfo(final String fixtureName, final String moduleName) {
+            this(fixtureName, moduleName, "in", "out");
+        }
+        public ModuleInfo(final String fixtureName, final String moduleName, final String inSegment, final String outSegment) {
+            this.fixtureName = fixtureName;
+            this.moduleName = moduleName;
+            this.inSegment = inSegment;
+            this.outSegment = outSegment;
+        }
+        public String getFixtureName() {
+            return fixtureName;
+        }
+        public String getEffectiveModuleName() {
+            return moduleName == null ? "TestModuleFileSource" : moduleName;
+        }
+        public Path getInPath() {
+            return getPath(inSegment);
+        }
+        public Path getOutPath() {
+            return getPath(outSegment);
+        }
+        public Path getWorkingDirectory() {
+            return workingDirectory;
+        }
+        public void setWorkingDirectory(final Path workingDirectory) {
+            this.workingDirectory = workingDirectory;
+        }
+        private Path getPath(final String lastSegment) {
+            final Path subPath = Paths.get("src", "test", "resources", "AutoExportIntegrationTest", fixtureName);
+            final Path intermediate = calculateBasePath().resolve(subPath);
+            return moduleName == null
+                    ? intermediate.resolve(lastSegment)
+                    : intermediate.resolve(moduleName).resolve(lastSegment);
+        }
+    }
+
+    // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
+    private static final Validator NOOP = (session, configurationModel) -> {};
+
+    private class Fixture extends AbstractBaseTest {
+
+        private final ModuleInfo[] modules;
+        Fixture(final String fixtureName) {
+            this(new ModuleInfo(fixtureName));
+        }
+
+        Fixture(final ModuleInfo... modules) {
+            this.modules = modules;
+        }
+
         void test(final JcrRunner jcrRunner) throws Exception {
+            test(NOOP, jcrRunner, NOOP);
+        }
+        void test(final Validator preConditionValidator,
+                  final JcrRunner jcrRunner,
+                  final Validator postConditionValidator) throws Exception {
             final Path projectPath = folder.newFolder("project").toPath();
-            final Path resourcePath = projectPath.resolve(Paths.get("TestModuleFileSource", "src", "main", "resources"));
-            Files.createDirectories(resourcePath);
 
-            final Path fixturePath = calculateBasePath().resolve(Paths.get("src", "test", "resources", "AutoExportIntegrationTest", name));
-            FileUtils.copyDirectory(fixturePath.resolve("in").toFile(), resourcePath.toFile());
+            final List<URL> additionalClasspathURLs = new ArrayList<>(modules.length);
+            for (final ModuleInfo module : modules) {
+                final Path workingDirectory =
+                        projectPath.resolve(Paths.get(module.getEffectiveModuleName(), "src", "main", "resources"));
+                module.setWorkingDirectory(workingDirectory);
+                Files.createDirectories(workingDirectory);
+                FileUtils.copyDirectory(module.getInPath().toFile(), workingDirectory.toFile());
+                additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
+            }
 
-            final IsolatedRepository repository = new IsolatedRepository(folder.getRoot(), projectPath.toFile());
+            final IsolatedRepository repository =
+                    new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
 
             repository.startRepository();
             final Session session = repository.login(IsolatedRepository.CREDENTIALS);
+
+            // verify that auto-export is disabled, since we want to control when it runs
+            assertTrue(session.nodeExists("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig"));
+            assertFalse(session.getNode("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig")
+                    .getProperty("autoexport:enabled").getBoolean());
+
+            preConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
 
             // Run AutoExport to set its lastRevision ...
             repository.runSingleAutoExportCycle();
@@ -204,19 +491,33 @@ public class AutoExportIntegrationTest {
             jcrRunner.run(session);
             session.save();
 
-            // ... and run it again to capture the changes made by jcrRunner
+            // ... and run it again to export the changes made by jcrRunner
             repository.runSingleAutoExportCycle();
+
+            session.refresh(false);
+            postConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
 
             session.logout();
             repository.stop();
 
-            assertNoFileDiff("test " + name + " failed", fixturePath.resolve("out"), resourcePath);
+            for (final ModuleInfo module : modules) {
+                assertNoFileDiff(
+                        "In fixture '" + module.getFixtureName() + "', the module '" + module.getEffectiveModuleName()
+                                + "' is not as expected",
+                        module.getOutPath(),
+                        module.getWorkingDirectory());
+            }
         }
     }
 
     @FunctionalInterface
     private interface JcrRunner {
         void run(final Session session) throws Exception;
+    }
+
+    @FunctionalInterface
+    private interface Validator {
+        void validate(final Session session, final ConfigurationModel configurationModel) throws Exception;
     }
 
     /**

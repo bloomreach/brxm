@@ -104,11 +104,9 @@ public class ConfigurationBaselineService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBaselineService.class);
 
-    //    private final Session configurationServiceSession;
     private final ConfigurationLockManager configurationLockManager;
 
-    public ConfigurationBaselineService(final Session configurationServiceSession, final ConfigurationLockManager configurationLockManager) {
-//        this.configurationServiceSession = configurationServiceSession;
+    public ConfigurationBaselineService(final ConfigurationLockManager configurationLockManager) {
         this.configurationLockManager = configurationLockManager;
     }
 

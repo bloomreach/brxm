@@ -31,6 +31,8 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
+import com.google.common.io.Files;
+
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -50,8 +52,6 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -383,7 +383,7 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         applyAndSaveDefinitions(new String[]{yaml});
 
         Node snsNode = session.getNode("/test/sns");
-        assertEquals("[a, sns, b, sns, c]", createChildNodesString(snsNode));
+        assertEquals("[a, sns[1], b, sns[2], c]", createChildNodesString(snsNode));
         assertEquals("value1", session.getNode("/test/sns/sns[1]").getProperty("property").getValue().getString());
         assertEquals("value2", session.getNode("/test/sns/sns[2]").getProperty("property").getValue().getString());
     }

@@ -15,8 +15,11 @@
  */
 package org.onehippo.cm.engine;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.jcr.ItemExistsException;
@@ -32,6 +35,7 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -109,7 +113,7 @@ public class ConfigurationContentServiceTest {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationContentService.class).build()) {
             configurationContentService.apply(model, session);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Processing 'APPEND' action for node failed: '/some/path'")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Processing 'APPEND' action for content node '/some/path' failed.")));
         }
 
         verify(baselineService);
@@ -267,6 +271,17 @@ public class ConfigurationContentServiceTest {
             assertEquals("[ca3, ca1, ca2, ca4, ca5]", sortedNames(sortedDefinitions));
         }
 
+    }
+
+    @Test
+    public void test_natural_ordering_indexed_names() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final ContentDefinitionImpl ca3 = addContentDefinition(module, "s3", "/banner2");
+        final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/banner1");
+        final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/banner");
+
+        List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        assertEquals("[banner, banner1, banner2]", sortedNames(sortedDefinitions));
     }
 
     private static String sortedNames(List<ContentDefinitionImpl> definitions) {

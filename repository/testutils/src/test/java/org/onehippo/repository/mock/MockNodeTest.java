@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,16 +14,6 @@
  *  limitations under the License.
  */
 package org.onehippo.repository.mock;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,6 +39,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
@@ -58,8 +49,22 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
+import org.easymock.EasyMock;
+import org.easymock.MockType;
 import org.junit.Test;
 import org.onehippo.repository.util.JcrConstants;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class MockNodeTest {
 
@@ -539,7 +544,7 @@ public class MockNodeTest {
 
         variantPaths.clear();
 
-        nodeIt = handle.getNodes(new String [] { "document*", "hippo:*", "doc*" });
+        nodeIt = handle.getNodes(new String[]{"document*", "hippo:*", "doc*"});
         assertEquals(4, nodeIt.getSize());
 
         while (nodeIt.hasNext()) {
@@ -586,7 +591,7 @@ public class MockNodeTest {
 
         propPaths.clear();
 
-        propIt = node.getProperties(new String [] { "prop*", "hippo:*", "pro*" });
+        propIt = node.getProperties(new String[]{"prop*", "hippo:*", "pro*"});
         assertEquals(3, propIt.getSize());
 
         while (propIt.hasNext()) {
@@ -622,16 +627,16 @@ public class MockNodeTest {
         assertEquals("stringvalue1", node.getProperty("string1").getString());
         assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(binaryData), node.getProperty("binary").getBinary().getStream()));
 
-        node.setProperty("stringarray1", new String [] { "stringvalue1", "stringvalue2" });
-        node.setProperty("booleanarray1", new MockValue[] { new MockValue(PropertyType.BOOLEAN, "true"), new MockValue(PropertyType.BOOLEAN, "false") });
-        node.setProperty("longarray1", new MockValue[] { new MockValue(PropertyType.LONG, "123"), new MockValue(PropertyType.LONG, "456") });
-        node.setProperty("datearray1", new MockValue[] { new MockValue(PropertyType.DATE, "2013-10-30T00:00:00.000Z"), new MockValue(PropertyType.DATE, "2013-10-31T00:00:00.000Z") });
-        node.setProperty("doublearray1", new MockValue[] { new MockValue(PropertyType.DOUBLE, "1.23"), new MockValue(PropertyType.DOUBLE, "4.56") });
-        node.setProperty("bigdecimalarray1", new MockValue[] { new MockValue(PropertyType.DECIMAL, "1.23E3"), new MockValue(PropertyType.DECIMAL, "4.56E3") });
+        node.setProperty("stringarray1", new String[]{"stringvalue1", "stringvalue2"});
+        node.setProperty("booleanarray1", new MockValue[]{new MockValue(PropertyType.BOOLEAN, "true"), new MockValue(PropertyType.BOOLEAN, "false")});
+        node.setProperty("longarray1", new MockValue[]{new MockValue(PropertyType.LONG, "123"), new MockValue(PropertyType.LONG, "456")});
+        node.setProperty("datearray1", new MockValue[]{new MockValue(PropertyType.DATE, "2013-10-30T00:00:00.000Z"), new MockValue(PropertyType.DATE, "2013-10-31T00:00:00.000Z")});
+        node.setProperty("doublearray1", new MockValue[]{new MockValue(PropertyType.DOUBLE, "1.23"), new MockValue(PropertyType.DOUBLE, "4.56")});
+        node.setProperty("bigdecimalarray1", new MockValue[]{new MockValue(PropertyType.DECIMAL, "1.23E3"), new MockValue(PropertyType.DECIMAL, "4.56E3")});
         node.setProperty("emtpystringarray1", new MockValue[0], PropertyType.STRING);
         node.setProperty("emtpystringarray2", new MockValue[0]);
 
-        Value [] values = node.getProperty("stringarray1").getValues();
+        Value[] values = node.getProperty("stringarray1").getValues();
         assertEquals(2, values.length);
         assertEquals("stringvalue1", values[0].getString());
         assertEquals("stringvalue2", values[1].getString());
@@ -783,7 +788,7 @@ public class MockNodeTest {
         final Node frozenNode = versioned.getFrozenNode();
         assertEquals(node.getIdentifier(), frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
         assertEquals("nt:unstructured", frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString());
-        assertFalse("mix:versionable should be skipped from frozen node",frozenNode.hasProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES));
+        assertFalse("mix:versionable should be skipped from frozen node", frozenNode.hasProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES));
 
     }
 
@@ -963,6 +968,29 @@ public class MockNodeTest {
         TestItemVisitor testVisitor = new TestItemVisitor();
         root.accept(testVisitor);
         assertTrue(testVisitor.visited);
+    }
+
+    @Test
+    public void queryManager_injected() throws RepositoryException {
+        final QueryManager queryManager = EasyMock.createMock(MockType.NICE, QueryManager.class);
+        final Node root = MockNode.root(queryManager);
+        assertThat(root.getSession().getWorkspace().getQueryManager(), is(queryManager));
+    }
+
+    @Test
+    public void child_node_inherits_injected_queryManager() throws RepositoryException {
+        final QueryManager queryManager = EasyMock.createMock(MockType.NICE, QueryManager.class);
+        final Node root = MockNode.root(queryManager);
+        final Node node = root.addNode("TEST", root.getPrimaryNodeType().getName());
+        assertThat(node.getSession().getWorkspace().getQueryManager(), is(queryManager));
+    }
+
+    @Test
+    public void property_inherits_injected_queryManager() throws RepositoryException {
+        final QueryManager queryManager = EasyMock.createMock(MockType.NICE, QueryManager.class);
+        final MockNode root = MockNode.root(queryManager);
+        final Property property = root.setProperty("TEST", 1L);
+        assertThat(property.getSession().getWorkspace().getQueryManager(), is(queryManager));
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {

@@ -1,0 +1,3 @@
+/reorder-on-content-delete/n2:
+  .meta:order-before: n1
+  jcr:primaryType: nt:unstructured

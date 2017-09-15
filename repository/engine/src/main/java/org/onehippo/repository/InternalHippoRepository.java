@@ -20,6 +20,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.hippoecm.repository.security.HippoSecurityManager;
 import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
 
 /**
@@ -39,4 +40,10 @@ public interface InternalHippoRepository extends Repository {
      * @return the NodeTypeRegistry
      */
     NodeTypeRegistry getNodeTypeRegistry();
+
+    /**
+     * Provides access to the HippoSecurityManager
+     * @return the HippoSecurityManager
+     */
+    HippoSecurityManager getHippoSecurityManager();
 }

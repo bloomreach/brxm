@@ -30,11 +30,11 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
@@ -67,7 +67,7 @@ public class JcrContentExporter {
         final ContentSourceImpl contentSource = module.addContentSource(sourceFilename + YAML_EXT);
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
 
-        exportNode(node, contentDefinition, false, Collections.emptySet());
+        exportNode(node, contentDefinition, false, null, Collections.emptySet());
 
         return module;
     }
@@ -76,8 +76,10 @@ public class JcrContentExporter {
         return part.contains(":") ? part.replace(":", "-") : part;
     }
 
-    public DefinitionNodeImpl exportNode(final Node node, final ContentDefinitionImpl contentDefinition,
+    public DefinitionNodeImpl exportNode(final Node node,
+                                         final ContentDefinitionImpl contentDefinition,
                                          final boolean fullPath,
+                                         final String orderBefore,
                                          final Set<String> excludedPaths) throws RepositoryException {
         if (isVirtual(node)) {
             throw new ConfigurationRuntimeException("Virtual node cannot be exported: " + node.getPath());
@@ -90,6 +92,7 @@ public class JcrContentExporter {
             // Creating a definition with path 'rooted' at the node itself, without possible SNS index: we're not supporting indexed path elements
             definitionNode = new DefinitionNodeImpl("/" + node.getName(), node.getName(), contentDefinition);
         }
+        definitionNode.setOrderBefore(orderBefore);
         contentDefinition.setNode(definitionNode);
         contentDefinition.setRootPath(node.getPath());
 

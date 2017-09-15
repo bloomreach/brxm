@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /within/sub:
+      /w3-first:
+        property: w3
+      /w1-initial:
+        property: w1
+      /w4-middle:
+        property: w4
+      /w2-last:
+        property: w2

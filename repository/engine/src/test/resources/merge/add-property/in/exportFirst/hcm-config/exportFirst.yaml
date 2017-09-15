@@ -1,5 +1,8 @@
 definitions:
   config:
+    /otherTopmost:
+      /otherChild:
+        property: value
     /topmost/upstream:
       existingPropertyAddedInExport: "I already existed in exportFirst"
     /topmost/upstream/exportFirst:

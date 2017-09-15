@@ -1,5 +1,7 @@
 definitions:
   config:
+    /otherTopmost:
+      newProperty: value  # REPO-1805 reproduction case: should reuse existing definition
     /topmost:
       newPropertyWithNewLocalDef: Coming out of the blue
     /topmost/upstream:

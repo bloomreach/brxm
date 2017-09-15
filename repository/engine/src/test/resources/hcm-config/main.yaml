@@ -4,9 +4,11 @@ definitions:
       uri: http://www.onehippo.org/jcr/hippo/test/nt/1.0
       cnd: repository-test.cnd
   config:
-    # the following is necessary to setup FilesystemModuleTest
+    # the following is necessary to setup FilesystemModuleTest and AutoExportIntegrationTest
     /hippo:configuration/hippo:modules/autoexport:
       /hippo:moduleconfig:
+        # this disables auto-export so that AutoExportIntegrationTest can run it once explicitly
+        autoexport:enabled: false
         autoexport:modules:
           operation: override
           type: string

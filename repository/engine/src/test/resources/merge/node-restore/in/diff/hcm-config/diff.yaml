@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /childNode2:
+      .meta:delete: true
+    /topmost/upstream/restore/node:
+      otherproperty: overridden value

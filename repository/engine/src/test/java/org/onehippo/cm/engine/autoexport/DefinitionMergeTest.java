@@ -19,9 +19,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+
+import org.easymock.EasyMock;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,7 +42,10 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptySet;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class DefinitionMergeTest {
@@ -61,13 +71,18 @@ public class DefinitionMergeTest {
     }
 
     @Test
+    public void new_node_empty_dev() throws Exception {
+        new MergeFixture("new-node-empty-dev", "/", "").test();
+    }
+
+    @Test
     public void delete_node() throws Exception {
         new MergeFixture("delete-node").test();
     }
 
     @Test
     public void add_property() throws Exception {
-        new MergeFixture("add-property").test();
+        new MergeFixture("add-property", "/topmost,/otherTopmost,/exportFirstExistingRoot,/hippo:namespaces", "/").test();
     }
 
     @Test
@@ -85,6 +100,25 @@ public class DefinitionMergeTest {
         new MergeFixture("override-property").test();
     }
 
+    @Test
+    public void node_restore() throws Exception {
+        new MergeFixture("node-restore").test();
+    }
+
+    @Test
+    public void node_restore_identical() throws Exception {
+        new MergeFixture("node-restore-identical").test();
+    }
+
+    @Test
+    public void restore_property_identical() throws Exception {
+        new MergeFixture("restore-property-identical").test();
+    }
+
+    @Test
+    public void restore_property() throws Exception {
+        new MergeFixture("restore-property").test();
+    }
 
     public class MergeFixture extends AbstractBaseTest {
         String testName;
@@ -93,12 +127,23 @@ public class DefinitionMergeTest {
         AutoExportConfig autoExportConfig;
 
         public MergeFixture(final String testName) {
+            this(testName, "/topmost,/exportFirstExistingRoot,/hippo:namespaces", "/");
+        }
+
+        public MergeFixture(final String testName, final String firstModulePaths, final String secondModulePaths) {
             this.testName = testName;
 
             Map<String, Collection<String>> modules = new HashMap<>();
-            modules.put("exportFirst", Arrays.asList("/topmost", "/exportFirstExistingRoot", "/hippo:namespaces"));
-            modules.put("exportSecond", singletonList("/"));
+            modules.put("exportFirst", parsePathString(firstModulePaths));
+            modules.put("exportSecond", parsePathString(secondModulePaths));
             autoExportConfig = new AutoExportConfig(true, modules, null, null);
+        }
+
+        private List<String> parsePathString(final String string) {
+            if (string == null || string.equals("")) {
+                return Collections.emptyList();
+            }
+            return Arrays.asList(string.split(","));
         }
 
         public MergeFixture base(final String... base) {
@@ -138,10 +183,18 @@ public class DefinitionMergeTest {
                 // load diff module
                 final ModuleImpl diff = loadModule(in(testName, "diff"));
 
+                final Session session = EasyMock.createNiceMock(Session.class);
+                final Node node = EasyMock.createNiceMock(Node.class);
+                final NodeType primaryNodeType = EasyMock.createNiceMock(NodeType.class);
+                expect(session.getNode(anyObject())).andReturn(node).anyTimes();
+                expect(node.getPrimaryNodeType()).andReturn(primaryNodeType).anyTimes();
+                expect(primaryNodeType.hasOrderableChildNodes()).andReturn(false).anyTimes();
+                replay(session, node, primaryNodeType);
+
                 // merge diff
-                DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig);
+                DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig, model, session);
                 Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model, null);
+                        merger.mergeChangesToModules(diff, emptySet(), emptySet(), emptySet());
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);

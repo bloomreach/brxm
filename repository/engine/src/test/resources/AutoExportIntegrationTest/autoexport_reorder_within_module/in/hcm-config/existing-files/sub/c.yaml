@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /existing-files/sub/c:
+      .meta:order-before: b
+      jcr:primaryType: nt:unstructured

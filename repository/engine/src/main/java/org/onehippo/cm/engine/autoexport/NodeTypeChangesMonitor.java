@@ -37,7 +37,7 @@ import static com.google.common.collect.Sets.newHashSet;
 class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
 
     private final NodeTypeRegistry ntRegistry;
-    private final AutoExportConfig moduleConfig;
+    private final AutoExportConfig autoExportConfig;
     private final Session monitorSession;
     // TODO: derive 'protected' namsepacePrefixed from none-sourced ConfigurationModel modules
     private static final Set<String> hippoNamespacePrefixed = newHashSet(
@@ -46,11 +46,9 @@ class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
             "hipposysedit",
             "hippofacnav");
 
-    public NodeTypeChangesMonitor(final AutoExportConfig moduleConfig) throws RepositoryException {
-        this.moduleConfig = moduleConfig;
-        final Session moduleSession = moduleConfig.getModuleSession();
-        monitorSession =
-                moduleSession.impersonate(new SimpleCredentials(moduleSession.getUserID(), "".toCharArray()));
+    public NodeTypeChangesMonitor(final AutoExportConfig autoExportConfig) throws RepositoryException {
+        this.autoExportConfig = autoExportConfig;
+        monitorSession = autoExportConfig.createImpersonatedSession();
         InternalHippoRepository internalHippoRepository =
                 (InternalHippoRepository) RepositoryDecorator.unwrap(monitorSession.getRepository());
         ntRegistry = internalHippoRepository.getNodeTypeRegistry();
@@ -71,15 +69,15 @@ class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
 
     public void logNodeTypeRegistryLastModifiedEvent(final String userData) {
         try {
-            final Node moduleConfigNode = monitorSession.getNode(moduleConfig.getModuleConfigPath());
+            final Node autoExportConfigNode = monitorSession.getNode(autoExportConfig.getConfigPath());
             monitorSession.refresh(false);
             ObservationManager observationManager = monitorSession.getWorkspace().getObservationManager();
             observationManager.setUserData(userData);
             try {
-                if (moduleConfigNode.hasProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME)) {
-                    moduleConfigNode.getProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME).remove();
+                if (autoExportConfigNode.hasProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME)) {
+                    autoExportConfigNode.getProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME).remove();
                 }
-                moduleConfigNode.setProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME, System.currentTimeMillis());
+                autoExportConfigNode.setProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME, System.currentTimeMillis());
                 monitorSession.save();
                 AutoExportServiceImpl.log.debug("journal logging changed nodetype prefix(es): [{}]",userData);
             } finally {

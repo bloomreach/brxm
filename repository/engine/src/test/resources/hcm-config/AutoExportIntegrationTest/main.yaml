@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /AutoExportIntegrationTest:
+      jcr:primaryType: nt:unstructured

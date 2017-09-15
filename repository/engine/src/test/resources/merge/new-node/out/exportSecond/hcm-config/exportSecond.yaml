@@ -8,3 +8,7 @@ definitions:
         /newAsChild2:
           .meta:residual-child-node-category: content
           jcr:primaryType: nt:unstructured
+    /export-second:
+      jcr:primaryType: nt:unstructured
+      /parent:
+        jcr:primaryType: nt:unstructured

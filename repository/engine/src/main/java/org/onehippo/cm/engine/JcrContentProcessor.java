@@ -142,9 +142,11 @@ public class JcrContentProcessor {
             applyNode(definitionNode, parentNode, actionType, unprocessedReferences);
             applyUnprocessedReferences(unprocessedReferences);
         } catch (Exception e) {
-            log.warn(String.format("Content definition processing failed: %s", definitionNode.getPath()), e);
+            log.warn(String.format("Content definition processing failed: %s", definitionNode.getPath()));
             if (e instanceof RepositoryException) {
                 throw (RepositoryException) e;
+            } else if (e instanceof RuntimeException){
+                throw (RuntimeException)e;
             } else {
                 throw new RuntimeException(e);
             }
@@ -185,12 +187,19 @@ public class JcrContentProcessor {
         final Node jcrNode = addNode(parentNode, definitionNode);
         if (definitionNode.getOrderBefore() != null) {
             if (parentNode.hasNode(definitionNode.getOrderBefore())) {
-                parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(definitionNode.getOrderBefore()));
+                if (parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
+                    parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(definitionNode.getOrderBefore()));
+                } else {
+                    final String msg = String.format(
+                            "Ignoring order-before meta property for node '%s' defined in %s: parent node does not allow child node ordering.",
+                            definitionNode.getPath(), definitionNode.getOrigin());
+                    log.warn(msg);
+                }
             } else {
                 final String msg = String.format(
                         "Failed to process order before property of node '%s' defined in %s: '%s': does not exist.",
                         definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore());
-                throw new IllegalArgumentException(msg);
+                throw new ConfigurationRuntimeException(msg);
             }
         }
         applyProperties(definitionNode, jcrNode, unprocessedReferences);
@@ -320,7 +329,8 @@ public class JcrContentProcessor {
                     jcrNode.setProperty(modelProperty.getName(), valueFrom(modelValues.get(0), jcrNode.getSession()));
                 }
             } else {
-                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()));
+                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()),
+                        modelProperty.getValueType().ordinal());
             }
         } catch (RepositoryException e) {
             String msg = String.format(

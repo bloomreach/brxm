@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.repository.mock;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -46,9 +47,11 @@ import org.xml.sax.ContentHandler;
 public class MockWorkspace implements Workspace {
 
     private final MockSession session;
+    private final QueryManager queryManager;
 
-    MockWorkspace(MockSession session) {
+    MockWorkspace(MockSession session, QueryManager queryManager) {
         this.session = session;
+        this.queryManager = queryManager;
     }
 
     @Override
@@ -100,7 +103,7 @@ public class MockWorkspace implements Workspace {
 
     @Override
     public QueryManager getQueryManager() throws RepositoryException {
-        throw new UnsupportedOperationException();
+        return Optional.ofNullable(queryManager).orElseThrow(UnsupportedOperationException::new);
     }
 
     @Override

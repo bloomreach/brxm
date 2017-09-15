@@ -30,12 +30,10 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.serializer.ResourceOutputProvider;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 
 public class AutoExportModuleWriter extends ModuleWriter {
-
-    private static final Logger log = LoggerFactory.getLogger(AutoExportModuleWriter.class);
 
     private ResourceInputProvider inputProvider;
 
@@ -44,6 +42,8 @@ public class AutoExportModuleWriter extends ModuleWriter {
     }
 
     public void writeModule(final Module module, final boolean explicitSequencing, final ModuleContext moduleContext) throws IOException {
+        log.debug("exporting module: {}", module.getFullName());
+
         // remove deleted resources before processing new resource names
         removeDeletedResources(moduleContext);
         super.writeModule(module, explicitSequencing, moduleContext);
@@ -64,7 +64,7 @@ public class AutoExportModuleWriter extends ModuleWriter {
         for (final String removed : removedResources) {
             final Path removedPath = resourceOutputProvider.getResourcePath(null, removed);
             final boolean wasDeleted = Files.deleteIfExists(removedPath);
-            log.debug("File to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
+            log.debug("file to be deleted: {}, was deleted: {}", removedPath, wasDeleted);
             removeEmptyFolders(removedPath.getParent(), rootFolder);
         }
     }
@@ -83,6 +83,16 @@ public class AutoExportModuleWriter extends ModuleWriter {
     }
 
     protected boolean sourceShouldBeSkipped(final Source source) {
+        // this is a tripwire for testing error handling via AutoExportIntegrationTest.write_error_handling()
+        // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
+//        if (source.getPath().equals("TestSourceThatShouldCauseAnExceptionOnlyInTesting.yaml")) {
+//            throw new RuntimeException("this is a simulated failure!");
+//        }
+
+        if (source.hasChangedSinceLoad()) {
+            log.info("autoexporting source: {}", source.getOrigin());
+        }
+
         // short-circuit processing of unchanged sources
         return !source.hasChangedSinceLoad();
     }

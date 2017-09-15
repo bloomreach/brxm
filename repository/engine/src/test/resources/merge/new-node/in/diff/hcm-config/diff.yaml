@@ -28,3 +28,5 @@ definitions:
       /newAsChild2:
         jcr:primaryType: nt:unstructured
         .meta:residual-child-node-category: content
+    /export-second/parent/node1:
+      jcr:primaryType: nt:unstructured

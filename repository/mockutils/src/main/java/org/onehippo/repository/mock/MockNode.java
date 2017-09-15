@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import javax.jcr.lock.Lock;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
@@ -59,8 +60,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
 
 /**
  * Mock version of a {@link Node}.
@@ -99,11 +98,27 @@ public class MockNode extends MockItem implements HippoNode {
     private boolean checkedOut = true;
 
     public MockNode(String name) {
-        this(name, null);
+        this(name, (String)null);
     }
 
     public MockNode(String name, String primaryTypeName) {
-        super(name);
+        this(name, primaryTypeName, (QueryManager)null);
+    }
+
+    public MockNode(String name, QueryManager queryManager) {
+        this(name, null, queryManager);
+    }
+
+    public MockNode(String name, String primaryTypeName, final MockNode original) throws RepositoryException {
+        this(name, primaryTypeName, original, null);
+    }
+
+    public MockNode(MockNode original) throws RepositoryException {
+        this(original, null);
+    }
+
+    MockNode(String name, String primaryTypeName, QueryManager queryManager) {
+        super(name, queryManager);
 
         this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<>();
@@ -120,16 +135,17 @@ public class MockNode extends MockItem implements HippoNode {
         }
     }
 
-    public MockNode(String name, String primaryTypeName, final MockNode original) throws RepositoryException {
-        this(name, primaryTypeName);
+    MockNode(String name, String primaryTypeName, final MockNode original, QueryManager queryManager) throws RepositoryException {
+        this(name, primaryTypeName, queryManager);
         copyProperties(original);
         copyChildren(original);
         copyMixins(original);
     }
 
-    public MockNode(MockNode original) throws RepositoryException {
-        this(original.getName(), original.primaryItemName, original);
+    MockNode(MockNode original, QueryManager queryManager) throws RepositoryException {
+        this(original.getName(), original.primaryItemName, original, queryManager);
     }
+
 
     private void copyProperties(MockNode original) throws RepositoryException {
         for (Map.Entry<String, MockProperty> propEntry : original.properties.entrySet()) {
@@ -142,7 +158,7 @@ public class MockNode extends MockItem implements HippoNode {
     private void copyChildren(final MockNode original) throws RepositoryException {
         for (List<MockNode> sameNameSiblings : original.children.values()) {
             for (MockNode child : sameNameSiblings) {
-                addNode(new MockNode(child));
+                addNode(new MockNode(child, queryManager));
             }
         }
     }
@@ -152,7 +168,11 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     public static MockNode root() {
-        return new MockNode("", "rep:root");
+        return root(null);
+    }
+
+    public static MockNode root(QueryManager queryManager) {
+        return new MockNode("", "rep:root", queryManager);
     }
 
     public static boolean isDefaultSameNameSiblingSupported() {
@@ -206,7 +226,7 @@ public class MockNode extends MockItem implements HippoNode {
             parent = parent.getNode(pathElements[i]);
         }
 
-        final MockNode child = new MockNode(pathElements[pathElements.length - 1]);
+        final MockNode child = new MockNode(pathElements[pathElements.length - 1], queryManager);
         child.setPrimaryType(primaryNodeTypeName);
         parent.addNode(child);
 
@@ -354,7 +374,7 @@ public class MockNode extends MockItem implements HippoNode {
         validateCheckedOut();
         MockProperty property = properties.get(name);
         if (property == null) {
-            property = new MockProperty(name, type);
+            property = new MockProperty(name, type, queryManager);
             property.setParent(this);
             properties.put(name, property);
         }

@@ -310,7 +310,7 @@ public class ConfigurationConfigService {
             throws RepositoryException, IOException {
 
         if (targetNode.isLocked()) {
-            log.warn("Target node {} is locked, skipping it's processing", targetNode.getPath());
+            log.warn("Target node {} is locked, skipping its processing", targetNode.getPath());
             final LockManager lockManager = targetNode.getSession().getWorkspace().getLockManager();
             try {
                 final Lock lock = lockManager.getLock(targetNode.getPath());
@@ -743,7 +743,8 @@ public class ConfigurationConfigService {
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session));
+                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session),
+                        updateProperty.getValueType().ordinal());
             } else {
                 if (verifiedUpdateValues.size() > 0) {
                     jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));

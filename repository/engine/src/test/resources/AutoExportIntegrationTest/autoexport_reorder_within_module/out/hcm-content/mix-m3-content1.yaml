@@ -1,0 +1,3 @@
+/mix/m3-content1:
+  .meta:order-before: m2-last
+  jcr:primaryType: nt:unstructured
