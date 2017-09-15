@@ -237,18 +237,21 @@
     },
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      this.linkPickerSuccessCallback = successCallback;
-      this.linkPickerCancelCallback = cancelCallback;
-      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
+      this._showPicker(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
     _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this.imageVariantPickerSuccessCallback = successCallback;
-      this.imageVariantPickerCancelCallback = cancelCallback;
-      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imageVariantPickerWicketUrl);
+      this._showPicker(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
     },
 
-    _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
+    _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      // TODO
+    },
+
+    _showPicker: function(fieldId, dialogConfig, selection, successCallback, cancelCallback, wicketUrl) {
+      this.pickerSuccessCallback = successCallback;
+      this.pickerCancelCallback = cancelCallback;
+
       Ext.apply(selection, {
         'fieldId': fieldId,
         'dialogConfig': JSON.stringify(dialogConfig)
@@ -260,27 +263,15 @@
       });
     },
 
-    onLinkPicked: function(link) {
-      if (this.linkPickerSuccessCallback) {
-        this.linkPickerSuccessCallback(link);
+    onPicked: function(selected) {
+      if (this.pickerSuccessCallback) {
+        this.pickerSuccessCallback(selected);
       }
     },
 
-    onImageVariantPicked: function(image) {
-      if (this.imageVariantPickerSuccessCallback) {
-        this.imageVariantPickerSuccessCallback(image);
-      }
-    },
-
-    onLinkPickCancelled: function () {
-      if(this.linkPickerCancelCallback) {
-        this.linkPickerCancelCallback();
-      }
-    },
-
-    onImageVariantPickCancelled: function () {
-      if(this.imageVariantPickerCancelCallback) {
-        this.imageVariantPickerCancelCallback();
+    onPickCancelled: function () {
+      if(this.pickerCancelCallback) {
+        this.pickerCancelCallback();
       }
     },
 

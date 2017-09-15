@@ -23,6 +23,10 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -31,10 +35,6 @@ import org.onehippo.ckeditor.Json;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Base class for the manager of a picker for rich text fields. Contains the generic code for parsing AJAX parameters:
@@ -54,6 +54,10 @@ class PickerManager implements IClusterable {
     PickerManager(final IPluginConfig defaultPickerConfig) {
         this.defaultPickerConfig = defaultPickerConfig;
         pickerConfig = new JavaPluginConfig();
+    }
+
+    static String getCancelScript(final String channelEditorId) {
+        return String.format("Ext.getCmp('%s').%s();", channelEditorId, "onPickCancelled");
     }
 
     JavaPluginConfig getPickerConfig() {
