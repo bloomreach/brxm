@@ -26,7 +26,7 @@ definitions:
           enable.upload: 'true'
           image.validator.id: service.gallery.image.validation
           jcr:primaryType: frontend:plugincluster
-          frontend:properties: [base.uuid, cluster.name, enable.upload, mode, last.visited.enabled, last.visited.key, nodetypes, preview.width, image.validator.id]
+          frontend:properties: [base.uuid, cluster.name, enable.upload, image.validator.id, last.visited.enabled, last.visited.key, mode, nodetypes, preview.width]
           frontend:references: [model.compareTo, wicket.model]
           frontend:services: [wicket.id]
           last.visited.enabled: 'true'
