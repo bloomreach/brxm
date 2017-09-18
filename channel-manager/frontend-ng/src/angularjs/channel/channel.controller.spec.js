@@ -87,14 +87,32 @@ describe('ChannelCtrl', () => {
     spyOn(FeedbackService, 'showError');
   });
 
-  it('initially, content overlay is toggled on, component overlay is toggled off', () => {
-    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
-  });
+  describe('initialise overlays', () => {
+    it('initially, content overlay is toggled on, component overlay is toggled off', () => {
+      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+    });
 
-  it('content overlay and component overlay values are aligned with OverlayService', () => {
-    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
+    it('content overlay and component overlay values are aligned with OverlayService', () => {
+      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
+    });
+
+    it('returns false if componentOverlay was triggered by component click', () => {
+      OverlayService.toggleOverlayByComponent = true;
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+    });
+
+    it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed should call overlayService functions', () => {
+      spyOn(OverlayService, 'showContentOverlay');
+      spyOn(OverlayService, 'showComponentsOverlay');
+      const arg = false;
+      ChannelCtrl.isContentOverlayDisplayed = arg;
+      ChannelCtrl.isComponentsOverlayDisplayed = arg;
+
+      expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(arg);
+      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(arg);
+    });
   });
 
   it('loads the initial page', () => {
