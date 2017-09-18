@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -362,53 +363,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         response.render(CssHeaderItem.forReference(CSS));
     }
 
-    /*
-         * Copying from org.apache.commons.lang.LocaleUtils#toLocale(String str)
-         * because this utility has been added since commons-lang-2.4, but
-         * hippo-cms-engine:jar:2.22.02 is pulling commons-lang-2.1 transitively.
-         * So, instead of touching the transitive dependency, copy this utility method
-         * as deprecated. We will remove this later as soon as hippo-cms modules upgrade
-         * the dependency on commons-lang.
-         * @deprecated
-         */
-    private static Locale toLocale(String str) {
-        if (str == null) {
-            return null;
-        }
-        int len = str.length();
-        if (len != 2 && len != 5 && len < 7) {
-            throw new IllegalArgumentException("Invalid locale format: " + str);
-        }
-        char ch0 = str.charAt(0);
-        char ch1 = str.charAt(1);
-        if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
-            throw new IllegalArgumentException("Invalid locale format: " + str);
-        }
-        if (len == 2) {
-            return new Locale(str, "");
-        } else {
-            if (str.charAt(2) != '_') {
-                throw new IllegalArgumentException("Invalid locale format: " + str);
-            }
-            char ch3 = str.charAt(3);
-            if (ch3 == '_') {
-                return new Locale(str.substring(0, 2), "", str.substring(4));
-            }
-            char ch4 = str.charAt(4);
-            if (ch3 < 'A' || ch3 > 'Z' || ch4 < 'A' || ch4 > 'Z') {
-                throw new IllegalArgumentException("Invalid locale format: " + str);
-            }
-            if (len == 5) {
-                return new Locale(str.substring(0, 2), str.substring(3, 5));
-            } else {
-                if (str.charAt(5) != '_') {
-                    throw new IllegalArgumentException("Invalid locale format: " + str);
-                }
-                return new Locale(str.substring(0, 2), str.substring(3, 5), str.substring(6));
-            }
-        }
-    }
-
     /**
      * Factory method for wrapping a JCR node in a JcrTaxonomy object.  Override to customize the taxonomy repository
      * structure.
@@ -484,7 +438,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         for (String locale : taxonomy.getLocales()) {
             try {
-                Locale localeObj = toLocale(locale);
+                Locale localeObj = LocaleUtils.toLocale(locale);
                 languageSelections.add(new LanguageSelection(localeObj, getLocale()));
             } catch (Exception e) {
                 log.warn("Invalid locale for the taxonomy: {}", locale);
