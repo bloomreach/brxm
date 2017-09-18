@@ -29,11 +29,12 @@ describe('ChannelCtrl', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageMetaDataService;
+  let OverlayService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_, _OverlayService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
@@ -42,6 +43,7 @@ describe('ChannelCtrl', () => {
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      OverlayService = _OverlayService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
@@ -83,6 +85,16 @@ describe('ChannelCtrl', () => {
     });
 
     spyOn(FeedbackService, 'showError');
+  });
+
+  it('initially, content overlay is toggled on, component overlay is toggled off', () => {
+    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+  });
+
+  it('content overlay and component overlay values are aligned with OverlayService', () => {
+    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
   });
 
   it('loads the initial page', () => {

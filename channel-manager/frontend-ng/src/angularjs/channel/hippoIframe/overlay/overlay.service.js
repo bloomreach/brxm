@@ -50,7 +50,7 @@ class OverlayService {
     this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = false;
+    this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
