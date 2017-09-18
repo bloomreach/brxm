@@ -242,4 +242,11 @@ describe('hippoIframeCtrl', () => {
     callback('document-uuid');
     expect(scope.onEditContent).toHaveBeenCalledWith('document-uuid');
   });
+
+  it('resets overlay toggles', () => {
+    hippoIframeCtrl._resetOverlayToggles();
+
+    expect(hippoIframeCtrl.showComponentsOverlay).toEqual(false);
+    expect(hippoIframeCtrl.showContentOverlay).toEqual(true);
+  });
 });

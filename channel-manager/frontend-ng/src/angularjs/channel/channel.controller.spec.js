@@ -102,6 +102,17 @@ describe('ChannelCtrl', () => {
       OverlayService.toggleOverlayByComponent = true;
       expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
     });
+
+    it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed should call overlayService functions', () => {
+      spyOn(OverlayService, 'showContentOverlay');
+      spyOn(OverlayService, 'showComponentsOverlay');
+      const arg = false;
+      ChannelCtrl.isContentOverlayDisplayed = arg;
+      ChannelCtrl.isComponentsOverlayDisplayed = arg;
+
+      expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(arg);
+      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(arg);
+    });
   });
 
   it('loads the initial page', () => {
