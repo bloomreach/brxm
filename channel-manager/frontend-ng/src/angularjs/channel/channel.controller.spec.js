@@ -87,14 +87,21 @@ describe('ChannelCtrl', () => {
     spyOn(FeedbackService, 'showError');
   });
 
-  it('initially, content overlay is toggled on, component overlay is toggled off', () => {
-    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
-  });
+  describe('initialise overlays', () => {
+    it('initially, content overlay is toggled on, component overlay is toggled off', () => {
+      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+    });
 
-  it('content overlay and component overlay values are aligned with OverlayService', () => {
-    expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
+    it('content overlay and component overlay values are aligned with OverlayService', () => {
+      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
+    });
+
+    it('returns false if componentOverlay was triggered by component click', () => {
+      OverlayService.toggleOverlayByComponent = true;
+      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+    });
   });
 
   it('loads the initial page', () => {

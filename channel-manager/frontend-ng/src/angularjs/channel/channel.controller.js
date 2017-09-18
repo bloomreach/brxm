@@ -69,6 +69,7 @@ class ChannelCtrl {
   }
 
   get isComponentsOverlayDisplayed() {
+    if (this.OverlayService.toggleOverlayByComponent) return false;
     return this.OverlayService.isComponentsOverlayDisplayed;
   }
 
