@@ -32,23 +32,26 @@ public interface CmsSessionContext {
 
     /**
      * Key to the the SimpleCredentials with which the CMS session authenticates with the Repository.
+     *
      * @see #getRepositoryCredentials()
      */
     String REPOSITORY_CREDENTIALS = "repository.credentials";
 
     /**
      * Key to retrieve the locale applicable to the current CMS session.
+     *
      * @see #getLocale()
      */
     String LOCALE = "locale";
 
     /**
      * Static method to retrieve the CmsSessionContext from a HttpSession
+     *
      * @param session the HttpSession
      * @return the CmsSessionContext bound to the provided HttpSession
      */
     static CmsSessionContext getContext(HttpSession session) {
-        return (CmsSessionContext)session.getAttribute(SESSION_KEY);
+        return (CmsSessionContext) session.getAttribute(SESSION_KEY);
     }
 
     /**
@@ -63,6 +66,7 @@ public interface CmsSessionContext {
 
     /**
      * Retrieve CMS Session Context specific information by key
+     *
      * @param key the key of the information
      * @return the information
      */
@@ -72,13 +76,41 @@ public interface CmsSessionContext {
      * @return the SimpleCredentials with which the CMS session authenticates with the Repository
      */
     default SimpleCredentials getRepositoryCredentials() {
-        return (SimpleCredentials)get(REPOSITORY_CREDENTIALS);
+        return (SimpleCredentials) get(REPOSITORY_CREDENTIALS);
     }
 
     /**
      * @return the Locale applicable to the current CMS session
      */
     default Locale getLocale() {
-        return (Locale)get(LOCALE);
+        return (Locale) get(LOCALE);
     }
+
+    /**
+     * Retrieves the currently stored attribute value identified by key from the context and returns it.
+     *
+     * @param key the key of the value to set, must not be {@code null}
+     * @return the value associated with key, or {@code null} if there is no attribute for key.
+     */
+    Object getAttribute(String key);
+
+    /**
+     * Stores an attribute value identified by key in the context and returns the previously stored attribute value or
+     * {@code null} if there was no attribute for the key. The CmsSessionContext is shared amongst web-apps, so make
+     * sure that the class of the attribute value is on the classpath of the web-app that will read the value.
+     *
+     * @param key   the key of the value to set, must not be {@code null}
+     * @param value the value to associate with the key, must not be {@code null}
+     * @return the previous value associated with key, or {@code null} if there was no attribute for key.
+     */
+    Object setAttribute(String key, Object value);
+
+    /**
+     * Removes an attribute value and it's key from the context and returns the currently stored attribute value or
+     * {@code null} if there was no attribute for the key.
+     *
+     * @param key the key of the value to set, must not be {@code null}
+     */
+    Object removeAttribute(String key);
+
 }
