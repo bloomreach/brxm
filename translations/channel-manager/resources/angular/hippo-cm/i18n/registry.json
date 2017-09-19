@@ -741,15 +741,21 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "TOOLBAR_MENU_CHANNEL_CONFIRM" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "RESTORE_WIDTH" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "ERROR_FIELD_LONG_PATTERN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_CHANNEL_SUBMIT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
