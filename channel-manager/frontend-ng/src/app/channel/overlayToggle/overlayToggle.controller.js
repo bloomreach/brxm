@@ -15,6 +15,10 @@
  */
 
 class modeToggleController {
+  constructor() {
+    'ngInject';
+  }
+
   toggleState() {
     this.state = !this.state;
   }
