@@ -42,8 +42,16 @@ public interface LockManager {
      *      A lock is released when {@link #unlock(String)} is invoked as many times as
      *     {@link #lock(String)}. Alternatively, when the {@link LockManager} implementation detects that the Thread
      *     that held the lock is not live any more, the {@link LockManager} implementation can also release the lock.
-     *     Lastly, a lock will be released when it has not been refreshed for 60 seconds, see {@link #lock(String, int)}.
-     *     This last case is useful in clustered setups where a cluster node has an ungraceful shutdown.
+     *     Lastly, in a database setup, a lock will be released when it has not been refreshed for 60 seconds,
+     *     see {@link #lock(String, int)}. This last case is useful in clustered setups where a cluster node has
+     *     an ungraceful shutdown (crash) : A graceful shutdown should namely release all locks, also implying
+     *     that every Thread that holds a lock calls #unlock
+     * </p>
+     * <p>
+     *     A persisted {@link Lock} can be marked to be aborted: In this case, the {@link Thread} that holds the lock
+     *     gets interrupted ({@link Thread#interrupt()}). Threads that hold a lock should invoke {@link #unlock(String)}
+     *     when interrupted (in general by just stopping their work and make sure the finally in the try block is hit
+     *     which in general should contain the {@link #unlock(String)} logic.
      * </p>
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @throws LockException in case there is already a {@link Lock} for {@code key} or the lock could not be created
@@ -80,19 +88,43 @@ public interface LockManager {
     void unlock(String key) throws LockException;
 
     /**
-     * Returns {@code true} if there is a lock for {@code key}. Note that this method returns {@code true} or {@code false}
-     * regardless whether the {@link Thread} that invokes {@link #isLocked(String)} contains the lock or whether another
-     * {@link Thread} contains the lock
+     * <p>
+     *     Returns {@code true} if there is a lock for {@code key}. Note that this method returns {@code true} or {@code false}
+     *     regardless whether the {@link Thread} that invokes {@link #isLocked(String)} contains the lock or whether another
+     *     {@link Thread} contains the lock
+     * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @return {@code true} when locked
-     * @throws LockException
+     * @throws LockException in case some error occurs.
      */
     boolean isLocked(String key) throws LockException;
 
-    List<Lock> getLocks();
+    /**
+     * @return all the {@link Lock}s that are currently active (including locks that are marked to be aborted but not
+     * yet aborted)
+     * @throws LockException in case some error occurs
+     */
+    List<Lock> getLocks() throws LockException;
 
     /**
-     * Releases all locks held by the current JVM and destroys this {@link LockManager}.
+     * <p>
+     *     Indicates the {@link LockManager} that the {@link Thread} containing the {@link Lock} for {@code key} should
+     *     be interrupted.
+     *     This method can be invoked by another thread than the one that holds the  {@link Lock}. In clustered setups
+     *     it can be requested by other cluster nodes that do not contain a {@link Thread} that holds the {@link Lock}.
+     * </p>
+     * <p>
+     *     When the {@link LockManager} finds a lock marked to be aborted contained in its own JVM,
+     *     it must interrupt the {@link Thread} that holds the {@link Lock}. As a result, the process should stop
+     *     and the {@link Thread} to abort should invoke {@link #unlock(String)}
+     * </p>
+     * <p>
+     *     If there is no {@link Lock} for {@code key}, nothing happens and void is returned.
+     * </p>
+     * @param key the {@code key} to check whether there is a lock for
+     * @throws LockException in case some error occurs.
      */
-    void destroy();
+    void abort(String key) throws LockException;
+
+
 }

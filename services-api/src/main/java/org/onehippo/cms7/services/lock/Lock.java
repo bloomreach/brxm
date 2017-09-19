@@ -27,11 +27,15 @@ public class Lock {
 
     long lockTime;
 
-    public Lock(final String lockKey, final String lockOwner, final String lockThread, final long lockTime) {
+    String status;
+
+    public Lock(final String lockKey, final String lockOwner, final String lockThread, final long lockTime,
+                final String status) {
         this.lockKey = lockKey;
         this.lockOwner = lockOwner;
         this.lockThread = lockThread;
         this.lockTime = lockTime;
+        this.status = status;
     }
 
     public String getLockKey() {
@@ -54,5 +58,20 @@ public class Lock {
 
     public long getLockTime() {
         return lockTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return "Lock{" +
+                "lockKey='" + lockKey + '\'' +
+                ", lockOwner='" + lockOwner + '\'' +
+                ", lockThread='" + lockThread + '\'' +
+                ", lockTime=" + lockTime +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
