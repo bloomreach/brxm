@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 
 public abstract class OrderBeforeHolder implements Comparable {

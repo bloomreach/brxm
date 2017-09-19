@@ -20,8 +20,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class UpstreamConfigOrderBeforeHolder extends ConfigOrderBeforeHolder {
             return;
         }
 
-        final int position = intermediate.indexOf(JcrPathSegment.get(definitionNode.getOrderBefore()));
+        final int position = intermediate.indexOf(JcrPaths.getSegment(definitionNode.getOrderBefore()));
         if (position == -1) {
             // todo: add logic for delayed ordering mechanism
             log.error("Cannot find order-before target '{}' for node '{}' from '{}', ordering node as last",

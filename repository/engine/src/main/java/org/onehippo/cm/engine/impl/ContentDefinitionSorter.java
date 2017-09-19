@@ -22,7 +22,8 @@ import java.util.Set;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.OrderableByNameListSorter;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.SnsUtils;
 
 import com.google.common.collect.Sets;
@@ -46,8 +47,8 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
      */
     protected Comparator<String> getComparator() {
         return (o1, o2) -> {
-            final JcrPathSegment jcrPathSegment1 = JcrPathSegment.get(o1);
-            final JcrPathSegment jcrPathSegment2 = JcrPathSegment.get(o2);
+            final JcrPathSegment jcrPathSegment1 = JcrPaths.getSegment(o1);
+            final JcrPathSegment jcrPathSegment2 = JcrPaths.getSegment(o2);
             return jcrPathSegment1.compareTo(jcrPathSegment2);
         };
     }
