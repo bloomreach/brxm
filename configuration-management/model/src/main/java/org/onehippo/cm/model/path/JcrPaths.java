@@ -63,7 +63,7 @@ public class JcrPaths {
         final String[] segments = StringUtils.strip(path, "/").split("/");
 
         final ImmutableList<JcrPathSegment> names =
-                Arrays.stream(segments).map(JcrPaths::getPathSegment).collect(ImmutableList.toImmutableList());
+                Arrays.stream(segments).map(JcrPaths::getSegment).collect(ImmutableList.toImmutableList());
 
         return new JcrPathImpl(names, relative);
     }
@@ -71,7 +71,7 @@ public class JcrPaths {
     /**
      * Static factory for JcrPathSegment instances; parses the index from the input String.
      */
-    public static JcrPathSegment getPathSegment(final String fullName) {
+    public static JcrPathSegment getSegment(final String fullName) {
         if (fullName == null) {
             throw new IllegalArgumentException("Name must not be null!");
         }
@@ -87,7 +87,7 @@ public class JcrPaths {
     /**
      * Static factory for JcrPathSegment instances with separate index param.
      */
-    public static JcrPathSegment getPathSegment(final String name, final int index) {
+    public static JcrPathSegment getSegment(final String name, final int index) {
         if (name == null) {
             throw new IllegalArgumentException("Name must not be null!");
         }
@@ -103,7 +103,7 @@ public class JcrPaths {
     /**
      * Static factory for JcrPathSegment instances from JCR node. Sets an explicit index iff the node has SNS.
      */
-    public static JcrPathSegment getPathSegment(final Node node) throws RepositoryException {
+    public static JcrPathSegment getSegment(final Node node) throws RepositoryException {
         if (node == null) {
             throw new IllegalArgumentException("Node must not be null!");
         }

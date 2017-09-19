@@ -58,7 +58,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public ConfigurationNodeImpl getNode(final String name) {
-        return getNode(JcrPaths.getPathSegment(name));
+        return getNode(JcrPaths.getSegment(name));
     }
 
     public ConfigurationNodeImpl getNode(final JcrPathSegment name) {
@@ -67,7 +67,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public void setName(final String name) {
-        super.setName(JcrPaths.getPathSegment(name).forceIndex());
+        super.setName(JcrPaths.getSegment(name).forceIndex());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
-        modifiableNodes.put(JcrPaths.getPathSegment(name).forceIndex().toString(), node);
+        modifiableNodes.put(JcrPaths.getSegment(name).forceIndex().toString(), node);
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {

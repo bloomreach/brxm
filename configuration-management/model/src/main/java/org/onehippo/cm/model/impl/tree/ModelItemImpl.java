@@ -30,7 +30,7 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public void setName(final String name) {
-        this.name = JcrPaths.getPathSegment(name);
+        this.name = JcrPaths.getSegment(name);
     }
 
     public void setName(final JcrPathSegment name) {

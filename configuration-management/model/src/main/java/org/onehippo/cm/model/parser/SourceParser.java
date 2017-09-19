@@ -130,7 +130,7 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     protected void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         try {
-            JcrPathSegment segment = JcrPaths.getPathSegment(name);
+            JcrPathSegment segment = JcrPaths.getSegment(name);
         }
         catch (IllegalArgumentException e) {
             throw new ParserException("JCR node index cannot be less than 1", value, e);

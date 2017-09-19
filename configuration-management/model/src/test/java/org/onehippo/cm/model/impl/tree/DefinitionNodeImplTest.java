@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 
@@ -54,7 +53,7 @@ public class DefinitionNodeImplTest {
     }
 
     private DefinitionNodeImpl createDefinitionNode(final String... childNodeNames) {
-        final DefinitionNodeImpl result = new DefinitionNodeImpl(JcrPaths.ROOT, JcrPaths.getPathSegment("test"), null);
+        final DefinitionNodeImpl result = new DefinitionNodeImpl(JcrPaths.ROOT, JcrPaths.getSegment("test"), null);
         for (final String childName : childNodeNames) {
             result.addNode(childName);
         }
@@ -64,7 +63,7 @@ public class DefinitionNodeImplTest {
     private List<JcrPathSegment> createSegmentList(final String... segmentNames) {
         final List<JcrPathSegment> result = new ArrayList<>(segmentNames.length);
         for (final String segmentName : segmentNames) {
-            result.add(JcrPaths.getPathSegment(segmentName));
+            result.add(JcrPaths.getSegment(segmentName));
         }
         return result;
     }

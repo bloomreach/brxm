@@ -190,7 +190,7 @@ public abstract class AbstractBaseParser {
 
         for (String segment: pathSegments) {
             try {
-                final JcrPathSegment parsedName = JcrPaths.getPathSegment(segment);
+                final JcrPathSegment parsedName = JcrPaths.getSegment(segment);
                 if (!allowSnsIndices && parsedName.getIndex() != 0) {
                     throw new ParserException("Path must not contain name indices", node);
                 }

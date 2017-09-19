@@ -318,10 +318,10 @@ public class ConfigurationTreeBuilder {
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
         if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
-            final JcrPathSegment nameAndIndex = JcrPaths.getPathSegment(indexedName);
+            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
             for (String siblingIndexedName : node.getNodes().keySet()) {
-                final JcrPathSegment siblingNameAndIndex = JcrPaths.getPathSegment(siblingIndexedName);
+                final JcrPathSegment siblingNameAndIndex = JcrPaths.getSegment(siblingIndexedName);
                 if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
                 }
@@ -439,7 +439,7 @@ public class ConfigurationTreeBuilder {
             }
         }
 
-        final JcrPathSegment nameAndIndex = JcrPaths.getPathSegment(name);
+        final JcrPathSegment nameAndIndex = JcrPaths.getSegment(name);
         if (nameAndIndex.getIndex() > 1) {
             final String expectedSibling = createIndexedName(nameAndIndex.getName(), nameAndIndex.getIndex() - 1);
             if (parent.getNode(expectedSibling) == null) {

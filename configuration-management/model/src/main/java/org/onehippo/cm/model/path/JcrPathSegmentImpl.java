@@ -160,7 +160,7 @@ class JcrPathSegmentImpl implements JcrPathSegment {
         final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = JcrPaths.getPathSegment((String) o);
+            other = JcrPaths.getSegment((String) o);
         }
         else if (!(o instanceof JcrPathSegment)) {
             return false;
@@ -191,7 +191,7 @@ class JcrPathSegmentImpl implements JcrPathSegment {
         final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = JcrPaths.getPathSegment((String) o);
+            other = JcrPaths.getSegment((String) o);
         } else if (!(o instanceof JcrPathSegment)) {
             return false;
         } else {

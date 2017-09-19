@@ -30,7 +30,7 @@ public class JcrPathTest {
 
     @Test
     public void root_is_constant() {
-        JcrPathSegment rootName = JcrPaths.getPathSegment("/");
+        JcrPathSegment rootName = JcrPaths.getSegment("/");
         assertTrue("Parsing '/' should always produce constants ROOT_NAME or ROOT", rootName == ROOT_NAME);
 
         JcrPath root = JcrPaths.getPath("/");
@@ -42,8 +42,8 @@ public class JcrPathTest {
 
     @Test
     public void name_index_zero_equals_one() {
-        JcrPathSegment zero = JcrPaths.getPathSegment("name", 0);
-        JcrPathSegment one = JcrPaths.getPathSegment("name", 1);
+        JcrPathSegment zero = JcrPaths.getSegment("name", 0);
+        JcrPathSegment one = JcrPaths.getSegment("name", 1);
 
         assertTrue("name and name[1] should be considered equal", zero.equals(one));
 
@@ -135,9 +135,9 @@ public class JcrPathTest {
         assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPath("my/test/")));
         assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPath("/")));
 
-        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPathSegment("/my")));
-        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPathSegment("my")));
-        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPathSegment("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("/my")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("my")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("/")));
     }
 
     @Test
@@ -150,8 +150,8 @@ public class JcrPathTest {
         assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPath("test/path")));
         assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPath("/")));
 
-        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPathSegment("/path")));
-        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPathSegment("path")));
-        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPathSegment("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("/path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("/")));
     }
 }
