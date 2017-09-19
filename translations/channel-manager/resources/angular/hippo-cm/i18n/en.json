@@ -13,7 +13,6 @@
   "CLOSE": "Close",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
   "ERROR_CHANNEL_DELETE_FAILED": "Failed to delete channel",
-  "ERROR_FIELD_DOUBLE_PATTERN": "Use decimal numbers only",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Primary Document",
   "VIEWPORT_TABLET": "Tablet",
   "FEEDBACK_SWITCH_TO_CONTENT_EDITOR": "Switch to content editor",

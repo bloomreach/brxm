@@ -758,16 +758,6 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
-    },
-    "ERROR_FIELD_DOUBLE_PATTERN" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
     }
   }
 }
