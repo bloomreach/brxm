@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -25,24 +26,27 @@ import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 public class CanonicalCategory implements Serializable {
 
     private final Taxonomy taxonomy;
-
     private final String key;
-    private final String language;
+    private final Locale locale;
 
-    public CanonicalCategory(Taxonomy taxonomy, String key, Locale locale) {
-        this(taxonomy, key, locale.getLanguage());
-    }
-
-    public CanonicalCategory(Taxonomy taxonomy, String key, String language) {
+    public CanonicalCategory(final Taxonomy taxonomy, final String key, final Locale locale) {
         this.taxonomy = taxonomy;
         this.key = key;
-        this.language = language;
+        this.locale = locale;
+    }
+
+    /**
+     * @deprecated use {@link CanonicalCategory(Taxonomy, String, Locale)} instead
+     */
+    @Deprecated
+    public CanonicalCategory(final Taxonomy taxonomy, final String key, final String language) {
+        this(taxonomy, key, LocaleUtils.toLocale(language));
     }
 
     public String getName() {
         Category category = taxonomy.getCategoryByKey(key);
         if (category != null) {
-            return TaxonomyHelper.getCategoryName(category, language);
+            return TaxonomyHelper.getCategoryName(category, locale);
         }
         return null;
     }

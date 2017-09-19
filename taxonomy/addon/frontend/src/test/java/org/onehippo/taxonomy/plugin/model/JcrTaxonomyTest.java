@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -149,8 +149,8 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
     @Test
     public void testRenameNewCategoryToExistingNameDoesntChangeName() throws Exception {
         EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory aap = editable.addCategory("aap", "aap", null);
-        EditableCategory noot = editable.addCategory("noot", "noot", null);
+        EditableCategory aap = editable.addCategory("aap", "aap", (String) null);
+        EditableCategory noot = editable.addCategory("noot", "noot", (String) null);
         assertEquals("noot", noot.getKey());
 
         EditableCategoryInfo aapInfo = aap.getInfo("en");
@@ -162,9 +162,9 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
     @Test
     public void testSettingCategoryKeyToExistingKeyFails() throws Exception {
         EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory aap = editable.addCategory("aap", "aap", null);
+        EditableCategory aap = editable.addCategory("aap", "aap", (String) null);
         try {
-            EditableCategory noot = editable.addCategory("aap", "noot", null);
+            EditableCategory noot = editable.addCategory("aap", "noot", (String) null);
             throw new Exception("Should not reach this point");
         } catch (TaxonomyException ex) {
             // this is OK

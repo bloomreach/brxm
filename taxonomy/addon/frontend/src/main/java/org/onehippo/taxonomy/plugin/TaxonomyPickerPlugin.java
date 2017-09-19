@@ -18,11 +18,13 @@ package org.onehippo.taxonomy.plugin;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -197,13 +199,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             add(new CategoryListView("keys"));
             final ClassificationModel model = new ClassificationModel(dao, getModel());
             final IDialogFactory dialogFactory = () -> {
-                final String locale = getPreferredLocale();
-                @SuppressWarnings("deprecation")
-                AbstractDialog dialog = createPickerDialog(model, locale);
-                if (dialog == null) {
-                    dialog = createTaxonomyPickerDialog(model, locale);
-                }
-                return dialog;
+                final Locale locale = getPreferredLocaleObject();
+                return createTaxonomyPickerDialog(model, locale);
             };
             final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
             add(dialogLink);
@@ -243,7 +240,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 final Taxonomy taxonomy = getTaxonomy();
                 if (taxonomy != null) {
                     final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
-                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocale());
+                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocaleObject());
                 } else {
                     return null;
                 }
@@ -308,28 +305,53 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * If you want to provide a custom taxonomy picker plugin, you might want to
      * override this method.
      * </p>
+     * @deprecated use {@link #createTaxonomyPickerDialog(ClassificationModel, Locale)} instead
      */
+    @Deprecated
     protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
                                                                 final String preferredLocale) {
         return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
     }
 
     /**
+     * Creates and returns taxonomy picker dialog instance.
+     * <p>
+     * If you want to provide a custom taxonomy picker plugin, you might want to
+     * override this method.
+     * </p>
+     */
+    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
+                                                                final Locale preferredLocale) {
+        return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
+    }
+
+    /**
+     * Returns the translation locale of the document if exists.
+     * Otherwise, returns the user's UI locale as a fallback.
+     *
+     * @deprecated use {@link #getPreferredLocaleObject()} instead
+     */
+    @Deprecated
+    protected String getPreferredLocale() {
+        return getPreferredLocaleObject().getLanguage();
+    }
+
+    /**
      * Returns the translation locale of the document if exists.
      * Otherwise, returns the user's UI locale as a fallback.
      */
-    protected String getPreferredLocale() {
+     protected Locale getPreferredLocaleObject() {
         final Node node = getModel().getObject();
         try {
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
                     && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                return LocaleUtils.toLocale(node.getProperty(HippoTranslationNodeType.LOCALE).getString());
             }
         } catch (RepositoryException e) {
             log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
         }
 
-        return getLocale().getLanguage();
+        return getLocale();
     }
 
     /**
@@ -379,7 +401,12 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             return null;
         }
 
-        return service.getTaxonomy(taxonomyName);
+        if (service != null) {
+            return service.getTaxonomy(taxonomyName);
+        } else {
+            log.warn("Taxonomy service not found.");
+            return null;
+        }
     }
 
     /**
@@ -441,7 +468,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         if (taxonomy != null) {
             final Category category = taxonomy.getCategoryByKey(categoryKey);
             if (category != null) {
-                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
+                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocaleObject()));
             }
             return new ResourceModel(INVALID_TAXONOMY_CATEGORY_KEY);
         }

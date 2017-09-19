@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -29,6 +30,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -50,7 +52,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
     private Taxonomy taxonomy;
     private Category parent;
     private List<Category> childCategories = new ArrayList<Category>();
-    private Map<String, CategoryInfo> translations = new HashMap<String, CategoryInfo>();
+    private Map<Locale, CategoryInfo> translations = new HashMap<>();
     private String name;
     private String relPath;
     private String path;
@@ -73,7 +75,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
                 for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
                     try {
                         CategoryInfo info = new CategoryInfoImpl(infoNode);
-                        translations.put(info.getLanguage(), info);
+                        translations.put(info.getLocale(), info);
                     } catch (ServiceException e) {
                         log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
                     }
@@ -143,8 +145,17 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         return ancestors;
     }
 
+    /**
+     * @deprecated use {@link #getInfo(Locale)} instead
+     */
+    @Deprecated
     public CategoryInfo getInfo(String language) {
-        CategoryInfo info = translations.get(language);
+        return getInfo(LocaleUtils.toLocale(language));
+    }
+
+    @Override
+    public CategoryInfo getInfo(final Locale locale) {
+        CategoryInfo info = translations.get(locale);
         if (info == null) {
             return new TransientCategoryInfoImpl(this);
         }
@@ -153,12 +164,12 @@ public class CategoryImpl extends AbstractJCRService implements Category {
 
     @SuppressWarnings("unchecked")
     public Map<String, ? extends CategoryInfo> getInfos() {
-        final Map<String, CategoryInfo> map = new HashMap<String, CategoryInfo>();
+        final Map<String, CategoryInfo> map = new HashMap();
         
         return LazyMap.decorate(map, new Transformer() {
             @Override
             public Object transform(Object input) {
-                return getInfo((String) input);
+                return getInfo((Locale) input); // TODO: check this, must be Locale?
             }
         });
     }

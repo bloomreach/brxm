@@ -16,11 +16,13 @@
 package org.onehippo.taxonomy.plugin.model;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -107,7 +109,12 @@ public class TaxonomyObject extends JcrObject {
         return super.getNode();
     }
 
+    @Deprecated
     protected JcrCategory createCategory(Node parent, String key, String name, String locale) throws RepositoryException, TaxonomyException {
+        return createCategory(parent, key, name, LocaleUtils.toLocale(locale));
+    }
+
+    protected JcrCategory createCategory(Node parent, String key, String name, Locale locale) throws RepositoryException, TaxonomyException {
         if (StringUtils.isBlank(name)) {
             throw new TaxonomyException("Cannot create a new taxonomy with an empty name");
         }
@@ -137,7 +144,7 @@ public class TaxonomyObject extends JcrObject {
             } else {
                 infosNode = category.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
             }
-            final Node infoNode = infosNode.addNode(locale, HIPPOTAXONOMY_CATEGORYINFO);
+            final Node infoNode = infosNode.addNode(JcrHelper.getNodeName(locale), HIPPOTAXONOMY_CATEGORYINFO);
             infoNode.setProperty(HIPPOTAXONOMY_NAME, name);
         }
 

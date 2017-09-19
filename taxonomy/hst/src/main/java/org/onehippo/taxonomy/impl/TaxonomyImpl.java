@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -31,6 +32,7 @@ import org.hippoecm.hst.service.ServiceException;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ public class TaxonomyImpl extends AbstractJCRService implements Taxonomy{
 
     private String name;
     private String path;
-    private String [] locales;
+    private List<Locale> locales;
     private List<Category> childCategories = new ArrayList<Category>();
     private List<Category> descendantCategories = new ArrayList<Category>();
 
@@ -53,7 +55,7 @@ public class TaxonomyImpl extends AbstractJCRService implements Taxonomy{
         super(taxonomy);
         this.name = this.getValueProvider().getName();
         this.path = this.getValueProvider().getPath();
-        this.locales = this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES);
+        this.locales = TaxonomyUtil.getLocalesList(this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
 
         NodeIterator nodes = taxonomy.getNodes();
         while(nodes.hasNext()) {
@@ -103,7 +105,16 @@ public class TaxonomyImpl extends AbstractJCRService implements Taxonomy{
         return this.path;
     }
 
+    /**
+     * @deprecated use {@link #getLocaleObjects()} instead
+     */
+    @Deprecated
     public String [] getLocales() {
+        return getLocaleObjects().stream().map(Locale::getLanguage).toArray(String[]::new);
+    }
+
+    @Override
+    public List<Locale> getLocaleObjects() {
         return locales;
     }
 

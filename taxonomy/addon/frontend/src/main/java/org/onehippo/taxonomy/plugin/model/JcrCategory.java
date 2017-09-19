@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
@@ -28,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -195,14 +197,24 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         return null;
     }
 
+    /**
+     * @deprecated use {@link #getInfo(Locale)} instead
+     */
     @Override
+    @Deprecated
     public EditableCategoryInfo getInfo(final String language) {
+        return getInfo(LocaleUtils.toLocale(language));
+    }
+
+    @Override
+    public EditableCategoryInfo getInfo(final Locale locale) {
+        final String nodeName = JcrHelper.getNodeName(locale);
         try {
             Node node = getNode();
             if (node.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
                 final Node infoNodes = node.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
-                if (infoNodes.hasNode(language)) {
-                    final Node infoNode = infoNodes.getNode(language);
+                if (infoNodes.hasNode(nodeName)) {
+                    final Node infoNode = infoNodes.getNode(nodeName);
                     return new JcrCategoryInfo(new JcrNodeModel(infoNode), editable);
                 }
             }
@@ -213,9 +225,9 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
                 } else {
                     infoNodes = node.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
                 }
-                Node locale = infoNodes.addNode(language, HIPPOTAXONOMY_CATEGORYINFO);
-                locale.setProperty(HIPPOTAXONOMY_NAME, NodeNameCodec.decode(node.getName()));
-                return new JcrCategoryInfo(new JcrNodeModel(locale), true);
+                Node localeNode = infoNodes.addNode(nodeName, HIPPOTAXONOMY_CATEGORYINFO);
+                localeNode.setProperty(HIPPOTAXONOMY_NAME, NodeNameCodec.decode(node.getName()));
+                return new JcrCategoryInfo(new JcrNodeModel(localeNode), true);
             } else {
                 return new EditableCategoryInfo() {
 
@@ -237,7 +249,12 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
                     }
 
                     public String getLanguage() {
-                        return language;
+                        return getLocale().getLanguage();
+                    }
+
+                    @Override
+                    public Locale getLocale() {
+                        return locale;
                     }
 
                     public String getName() {
@@ -285,7 +302,7 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
                 new Transformer() {
                     @Override
                     public Object transform(Object language) {
-                        return getInfo((String) language);
+                        return getInfo((Locale) language); // TODO: check this, must it be Locale?
                     }
                 });
     }
@@ -304,7 +321,14 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     }
 
     @Override
+    @Deprecated
     public JcrCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException {
+        return addCategory(key, name, LocaleUtils.toLocale(locale), taxonomyModel);
+    }
+
+    @Override
+    public JcrCategory addCategory(final String key, final String name, Locale locale,
+                                   final IModel<Taxonomy> taxonomyModel) throws TaxonomyException {
         try {
             final JcrCategory category = createCategory(getNode(), key, name, locale);
             taxonomyModel.detach();

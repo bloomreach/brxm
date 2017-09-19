@@ -16,6 +16,7 @@
 package org.onehippo.taxonomy.plugin.api;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -25,11 +26,23 @@ public interface EditableCategory extends Category {
 
     List<? extends EditableCategory> getChildren();
 
+    /**
+     * @deprecated use {@link #getInfo(Locale)} instead
+     */
+    @Deprecated
     EditableCategoryInfo getInfo(String language);
+
+    EditableCategoryInfo getInfo(Locale locale);
 
     List<? extends EditableCategory> getAncestors();
 
+    /**
+     * @deprecated use {@link #addCategory(String, String, Locale, IModel)} instead
+     */
+    @Deprecated
     EditableCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException;
+
+    EditableCategory addCategory(String key, String name, Locale locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException;
 
     void remove() throws TaxonomyException;
 

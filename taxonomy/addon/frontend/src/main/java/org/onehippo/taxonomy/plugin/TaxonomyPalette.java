@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
@@ -41,9 +43,14 @@ public class TaxonomyPalette extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPalette.class);
 
-    private final String preferredLocale;
+    private final Locale preferredLocale;
 
+    @Deprecated
     public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
+        this(id, model, taxonomyModel, LocaleUtils.toLocale(preferredLocale));
+    }
+
+    public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, final Locale preferredLocale) {
         super(id, model);
 
         this.preferredLocale = preferredLocale;

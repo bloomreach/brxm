@@ -18,9 +18,11 @@ package org.onehippo.taxonomy.plugin.tree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -31,16 +33,23 @@ public class TaxonomyNode extends AbstractNode {
     private IModel<Taxonomy> model;
 
     /**
-     * @deprecated Use {@link #TaxonomyNode(IModel, String, Comparator)} instead.
-     * @param model
-     * @param language
+     * @deprecated Use {@link #TaxonomyNode(IModel, Locale, Comparator)} instead.
      */
+    @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language) {
-        this(model, language, null);
+        this(model, LocaleUtils.toLocale(language), null);
     }
 
+    /**
+     * @deprecated use {@link #TaxonomyNode(IModel, Locale, Comparator)} instead
+     */
+    @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language, Comparator<Category> categoryComparator) {
-        super(model, language, categoryComparator);
+        this(model, LocaleUtils.toLocale(language), categoryComparator);
+    }
+
+    public TaxonomyNode(final IModel<Taxonomy> model, final Locale locale, final Comparator<Category> categoryComparator) {
+        super(model, locale, categoryComparator);
         this.model = model;
     }
 

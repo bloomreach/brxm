@@ -16,12 +16,19 @@
 package org.onehippo.taxonomy.plugin.api;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.onehippo.taxonomy.api.Taxonomy;
 
 public interface EditableTaxonomy extends Taxonomy {
 
+    /**
+     * @deprecated use {@link #addCategory(String, String, Locale)} instead
+     */
+    @Deprecated
     EditableCategory addCategory(String key, String name, String locale) throws TaxonomyException;
+
+    EditableCategory addCategory(String key, String name, Locale locale) throws TaxonomyException;
 
     List<? extends EditableCategory> getCategories();
 

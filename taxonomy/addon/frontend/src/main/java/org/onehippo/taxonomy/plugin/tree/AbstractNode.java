@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -31,23 +33,31 @@ import org.onehippo.taxonomy.plugin.model.CategoryModel;
 
 public abstract class AbstractNode implements TreeNode, IDetachable {
 
-    final String language;
+    final Locale locale;
     private IModel<Taxonomy> taxonomyModel;
     private List<CategoryNode> children = null;
     private Comparator<Category> categoryComparator;
 
     /**
-     * @deprecated Use {@link #AbstractNode(IModel, String, Comparator)} instead.
-     * @param taxonomyModel
-     * @param language
+     * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
      */
+    @Deprecated
     public AbstractNode(IModel<Taxonomy> taxonomyModel, String language) {
-        this(taxonomyModel, language, null);
+        this(taxonomyModel, LocaleUtils.toLocale(language), null);
     }
 
+    /**
+     * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
+     */
+    @Deprecated
     public AbstractNode(IModel<Taxonomy> taxonomyModel, String language, Comparator<Category> categoryComparator) {
+        this(taxonomyModel, LocaleUtils.toLocale(language), categoryComparator);
+    }
+
+    public AbstractNode(final IModel<Taxonomy> taxonomyModel, final Locale locale,
+                        final Comparator<Category> categoryComparator) {
         this.taxonomyModel = taxonomyModel;
-        this.language = language;
+        this.locale = locale;
         this.categoryComparator = categoryComparator;
     }
 
@@ -63,10 +73,10 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
                 Collections.sort(categories, categoryComparator);
             }
 
-            List<CategoryNode> tempChildren = new LinkedList<CategoryNode>();
+            List<CategoryNode> tempChildren = new LinkedList<>();
 
             for (Category category : categories) {
-                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), language, categoryComparator));
+                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), locale, categoryComparator));
             }
 
             children = tempChildren;
