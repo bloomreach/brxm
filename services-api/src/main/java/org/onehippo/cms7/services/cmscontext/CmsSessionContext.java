@@ -110,6 +110,7 @@ public interface CmsSessionContext {
      * {@code null} if there was no attribute for the key.
      *
      * @param key the key of the value to set, must not be {@code null}
+     * @return the previous value associated with key, or {@code null} if there was no attribute for key.
      */
     Object removeAttribute(String key);
 
