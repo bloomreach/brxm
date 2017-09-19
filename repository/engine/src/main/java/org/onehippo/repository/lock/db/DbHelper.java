@@ -75,6 +75,16 @@ public class DbHelper {
         return resultSet.next();
     }
 
+    public static void close(final Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            log.error("Failed to close connection.", e);
+        }
+    }
 
     public static void close(final Connection connection, final boolean originalAutoCommit)  {
         if (connection == null) {

@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Repository;
@@ -31,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
@@ -116,7 +118,8 @@ public class LockManagerTest extends RepositoryTestCase {
         final String key = "123";
         lockManager.lock(key);
 
-        dbRowAssertion(key, "RUNNING");
+        // for 'node1', see h2-repository.xml or mysql-repository.xml the <cluster> node id
+        dbRowAssertion(key, "RUNNING", "node1", Thread.currentThread().getName());
 
         lockManager.lock(key);
 
@@ -126,12 +129,9 @@ public class LockManagerTest extends RepositoryTestCase {
         assertEquals(key, lockManager.getLocks().iterator().next().getLockKey());
         assertEquals(Thread.currentThread().getName(), lockManager.getLocks().iterator().next().getLockThread());
 
-        assertEquals(2, ((MutableLock)lockManager.getLocks().iterator().next()).getHoldCount());
-
         lockManager.unlock(key);
 
         assertEquals(1, lockManager.getLocks().size());
-        assertEquals(1, ((MutableLock)lockManager.getLocks().iterator().next()).getHoldCount());
 
         dbRowAssertion(key, "RUNNING");
 
@@ -145,8 +145,12 @@ public class LockManagerTest extends RepositoryTestCase {
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
     }
-    
+
     private void dbRowAssertion(final String key, final String expectedStatus) throws SQLException {
+        dbRowAssertion(key, expectedStatus, null, null);
+    }
+
+    private void dbRowAssertion(final String key, final String expectedStatus, final String lockOwnerExpectation, final String lockThreadExpectation) throws SQLException {
         if (dataSource == null) {
             // not a clustered db test
             return;
@@ -157,8 +161,13 @@ public class LockManagerTest extends RepositoryTestCase {
             selectStatement.setString(1, key);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
-                String status = resultSet.getString("status");
-                assertEquals(expectedStatus, status);
+                assertEquals(expectedStatus, resultSet.getString("status"));
+                if (lockOwnerExpectation != null) {
+                    assertEquals(lockOwnerExpectation, resultSet.getString("lockOwner"));
+                }
+                if (lockThreadExpectation != null) {
+                    assertEquals(lockThreadExpectation, resultSet.getString("lockThread"));
+                }
             } else {
                 fail(String.format("A row with lockKey '%s' should exist", key));
             }
@@ -275,6 +284,8 @@ public class LockManagerTest extends RepositoryTestCase {
         // give lockThread time to lock
         Thread.sleep(100);
 
+        dbRowAssertion(key, "RUNNING", "node1", lockThread.getName());
+
         try {
             lockManager.unlock(key);
             fail("Main thread should not be able to unlock");
@@ -332,7 +343,7 @@ public class LockManagerTest extends RepositoryTestCase {
         addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
         addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
 
-        dbRowAssertion("a", "RUNNING");
+        dbRowAssertion("a", "RUNNING", "node1", Thread.currentThread().getName());
         dbRowAssertion("b", "RUNNING");
         dbRowAssertion("c", "RUNNING");
         dbRowAssertion("d", "RUNNING");
@@ -393,4 +404,42 @@ public class LockManagerTest extends RepositoryTestCase {
             }
         }
     }
+
+    @Test
+    public void get_locks_returns_also_locks_owned_by_other_cluster_node_in_case_of_clustered_setup() throws Exception {
+        lockManager.lock("a");
+        lockManager.lock("b");
+        // insert manually non-owned rows
+
+        addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
+        addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
+
+        List<Lock> locks = lockManager.getLocks();
+        if (dataSource == null) {
+            // in memory manager
+            assertEquals(2, locks.size());
+        } else {
+            dbRowAssertion("a", "RUNNING", "node1", Thread.currentThread().getName());
+            dbRowAssertion("c", "RUNNING", "otherNode", "otherThreadName");
+
+            assertEquals(4, locks.size());
+        }
+    }
+
+    @Test
+    public void is_lock_also_checks_locks_owned_by_other_cluster_nodes_in_case_of_clustered_setup() throws Exception {
+        lockManager.lock("a");
+        lockManager.lock("b");
+        // insert manually non-owned rows
+
+        assertTrue(lockManager.isLocked("a"));
+        assertTrue(lockManager.isLocked("b"));
+        if (dataSource != null) {
+            addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
+            addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
+            assertTrue(lockManager.isLocked("c"));
+            assertTrue(lockManager.isLocked("d"));
+        }
+    }
+
 }

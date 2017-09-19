@@ -19,9 +19,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.MutableLock;
@@ -53,6 +57,8 @@ public class DbLockManager extends AbstractLockManager {
     public static final String LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET status='RUNNING', lockTime=?, expirationTime=?, lockOwner=?, lockThread=? WHERE lockKey=? AND status='FREE'";
 
     public static final String EXPIRED_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE expirationTime<? AND (status='RUNNING' OR status='ABORT') FOR UPDATE";
+
+    public static final String ALL_LOCKED_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='RUNNING' OR status='ABORT'";
 
     public static final String RESET_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
             "lockOwner=NULL, " +
@@ -142,7 +148,7 @@ public class DbLockManager extends AbstractLockManager {
                 }
             }
             log.debug("Obtained a lock for '{}'", key);
-            return new MutableLock(key, clusterNodeId, threadName, lockTime);
+            return new MutableLock(key, clusterNodeId, threadName, lockTime, "RUNNING");
 
         } catch (SQLException e) {
             if (log.isDebugEnabled()) {
@@ -210,6 +216,7 @@ public class DbLockManager extends AbstractLockManager {
             abortStatement.setString(1, key);
             int changed = abortStatement.executeUpdate();
             if (changed == 0) {
+                // can happen because by another Thread or cluster node already stopped in the meantime
                 log.info("Cannot set status to abort for '{}' because no such lock present.", key);
                 return;
             }
@@ -228,4 +235,61 @@ public class DbLockManager extends AbstractLockManager {
         }
     }
 
+    @Override
+    protected boolean containsLock(final String key) throws LockException {
+        try (Connection connection = dataSource.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+            selectStatement.setString(1, key);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (!resultSet.next()) {
+                log.debug("No database row found for lockKey '{}'", key);
+                return false;
+            }
+            final String status = resultSet.getString("status");
+            boolean locked = "RUNNING".equals(status) || "ABORT".equals(status);
+            log.debug("Found database row for '{}' with locked = {}", key, locked);
+            return locked;
+        } catch (SQLException e) {
+            String msg = String.format("Could not query for '%s'.", key);
+            if (log.isDebugEnabled()) {
+                log.info(msg, e);
+            } else {
+                log.info(msg + " : {}", e.toString());
+
+            }
+            throw new LockException(msg, e);
+        }
+    }
+
+    @Override
+    protected List<Lock> retrieveLocks() throws LockException {
+        try (Connection connection = dataSource.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(ALL_LOCKED_STATEMENT);
+            ResultSet resultSet = selectStatement.executeQuery();
+            final List<Lock> locks = new ArrayList<>();
+            while (resultSet.next()) {
+                final String lockKey = resultSet.getString("lockKey");
+                final String lockOwner = resultSet.getString("lockOwner");
+                final String lockThread = resultSet.getString("lockThread");
+                final long lockTime = resultSet.getLong("lockTime");
+                final String status = resultSet.getString("status");
+                final Lock lock = new Lock(lockKey, lockOwner, lockThread, lockTime, status);
+                log.debug("Adding lock : {}", lock.toString());
+                locks.add(lock);
+            }
+            if (locks.size() == 0) {
+                log.debug("No locks found");
+            }
+            return locks;
+        } catch (SQLException e) {
+            String msg = String.format("Could retrieve locks");
+            if (log.isDebugEnabled()) {
+                log.info(msg, e);
+            } else {
+                log.info(msg + " : {}", e.toString());
+
+            }
+            throw new LockException(msg, e);
+        }
+    }
 }

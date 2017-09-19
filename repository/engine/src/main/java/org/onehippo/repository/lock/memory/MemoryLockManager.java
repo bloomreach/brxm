@@ -15,6 +15,10 @@
  */
 package org.onehippo.repository.lock.memory;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.MutableLock;
@@ -36,7 +40,7 @@ public class MemoryLockManager extends AbstractLockManager {
 
     @Override
     protected MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException {
-        return new MutableLock(key, "default", threadName, System.currentTimeMillis());
+        return new MutableLock(key, "default", threadName, System.currentTimeMillis(), "RUNNING");
     }
 
     @Override
@@ -49,4 +53,13 @@ public class MemoryLockManager extends AbstractLockManager {
         // no persistent lock needs to be aborted so nothing else is needed
     }
 
+    @Override
+    protected synchronized boolean containsLock(final String key) throws LockException {
+        return localLocks.containsKey(key);
+    }
+
+    @Override
+    protected synchronized List<Lock> retrieveLocks() throws LockException {
+        return new ArrayList<>(localLocks.values());
+    }
 }

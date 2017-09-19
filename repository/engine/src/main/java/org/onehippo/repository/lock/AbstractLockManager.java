@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.lock;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,11 +47,15 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     protected abstract Logger getLogger();
 
-    protected abstract MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException;
+    protected abstract MutableLock createLock(String key, String threadName, int refreshRateSeconds) throws LockException;
 
-    protected abstract void releasePersistedLock(final String key, final String threadName) throws LockException;
+    protected abstract void releasePersistedLock(String key, String threadName) throws LockException;
 
-    protected abstract void abortPersistedLock(final String key) throws LockException;
+    protected abstract void abortPersistedLock(String key) throws LockException;
+
+    protected abstract boolean containsLock(String key) throws LockException;
+
+    protected abstract List<Lock> retrieveLocks() throws LockException;
 
     public AbstractLockManager() {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -169,16 +172,14 @@ public abstract class AbstractLockManager implements InternalLockManager {
         checkLive();
         validateKey(key);
         expungeNeverUnlockedLocksFromStoppedThreads();
-        // TODO in case of database, check agains database locks
-        return localLocks.containsKey(key);
+        return containsLock(key);
     }
 
     @Override
-    public synchronized List<Lock> getLocks() {
+    public synchronized List<Lock> getLocks() throws LockException {
         checkLive();
         expungeNeverUnlockedLocksFromStoppedThreads();
-        // TODO in case of database, get database locks
-        return new ArrayList<>(localLocks.values());
+        return retrieveLocks();
     }
 
     @Override
