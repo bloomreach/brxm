@@ -33,8 +33,11 @@ public class TestQueryStringBuilder {
     @Test
     public void lower_ascii_characters_relevant_in_query_are_encoded() throws UnsupportedEncodingException {
         final QueryStringBuilder builder = new QueryStringBuilder("UTF-8");
-        builder.append("foo%&=#bar", "foo%&=#bar");
-        assertEquals("?foo%25%26%3D%23bar=foo%25%26%3D%23bar", builder.toString());
+        builder.append("foo&", "foo&");
+        builder.append("bar=", "bar=");
+        builder.append("/?:@azAZ09-._~!$'()*+,;", "keep");
+
+        assertEquals("?foo%26=foo%26&bar%3D=bar%3D&/?:@azAZ09-._~!$'()*+,;=keep", builder.toString());
     }
 
     @Test
