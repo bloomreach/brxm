@@ -26,6 +26,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ChoiceFieldUtils {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldUtils.class);
+
     private static final String PROPERTY_PROVIDER_ID = "cpItemsPath";
     private static final String PROPERTY_COMPOUND_LIST = "compoundList";
 
@@ -103,7 +105,8 @@ public class ChoiceFieldUtils {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
 
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)
+                        || contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
                     // Suggestion: the provider compound may have an editor configuration, helping to initialize
                     //             the choice compound. We could try to find a node and add it to the fieldContext.
                     final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
@@ -131,6 +134,10 @@ public class ChoiceFieldUtils {
             final RichTextFieldType richText = new RichTextFieldType();
             richText.init(fieldContext);
             return richText;
+        } else if (contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
+            imageLink.init(fieldContext);
+            return imageLink;
         }
         return null;
     }
@@ -160,8 +167,8 @@ public class ChoiceFieldUtils {
 
             ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
                 final ContentType contentType = choiceContext.getContentType();
-
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)
+                        || contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
                     final String id = choiceContext.getContentType().getName();
 
                     final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
@@ -200,8 +207,15 @@ public class ChoiceFieldUtils {
             return compound;
         } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
             final RichTextFieldType richText = new RichTextFieldType();
+            // FIXME: this init call will not load configuration
             richText.initListBasedChoice(choiceId);
             return richText;
+        } else if(contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+            // FIXME: this init call will not load configuration
+            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
+            imageLink.initListBasedChoice(choiceId);
+            return imageLink;
+
         }
         return null;
     }

@@ -58,9 +58,10 @@ import org.slf4j.LoggerFactory;
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
  */
 public class FieldTypeUtils {
+
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
-    private static final String FIELD_TYPE_IMAGELINK = "hippogallerypicker:imagelink";
+    public static final String FIELD_TYPE_IMAGELINK = "hippogallerypicker:imagelink";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";

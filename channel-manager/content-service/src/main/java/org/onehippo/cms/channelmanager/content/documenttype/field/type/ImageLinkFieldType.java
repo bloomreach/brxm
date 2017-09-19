@@ -25,8 +25,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -38,9 +36,13 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldType {
 
@@ -91,6 +93,10 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
         config.set("imagepicker", imagePickerConfig);
     }
 
+    void initListBasedChoice(final String choiceId) {
+        setId(choiceId);
+    }
+
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
@@ -98,17 +104,20 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
 
     @Override
     protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
-        log.info("Write image-link value");
-    }
+        final String valueName = getId();
+        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
-    @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> value) throws ErrorWithPayloadException {
-        return false;
-    }
+        if (validateValues) {
+            checkCardinality(values);
+        }
 
-    @Override
-    public boolean validate(final List<FieldValue> valueList) {
-        return false;
+        try {
+            final NodeIterator children = node.getNodes(valueName);
+            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
+        } catch (final RepositoryException e) {
+            log.warn("Failed to write rich text field '{}'", valueName, e);
+            throw new InternalServerErrorException();
+        }
     }
 
     @Override
@@ -152,7 +161,7 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        // TODO
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, fieldValue.getValue());
     }
 
     @Override
@@ -163,7 +172,6 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
 
     @Override
     public boolean validateValue(final FieldValue value) {
-        // TODO
-        return false;
+        return !isRequired() || validateSingleRequired(value);
     }
 }
