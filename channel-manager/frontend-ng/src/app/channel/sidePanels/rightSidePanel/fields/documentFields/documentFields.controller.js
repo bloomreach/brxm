@@ -15,6 +15,10 @@
  */
 
 class DocumentFieldsCtrl {
+  constructor() {
+    'ngInject';
+  }
+
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
     this.onFieldBlur = this.onFieldBlur || angular.noop;
