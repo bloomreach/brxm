@@ -15,6 +15,10 @@
  */
 
 class CompoundFieldCtrl {
+  constructor() {
+    'ngInject';
+  }
+
   focusCompound() {
     this.hasFocus = true;
     this.onFieldFocus();

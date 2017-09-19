@@ -15,6 +15,10 @@
  */
 
 class ChoiceFieldCtrl {
+  constructor() {
+    'ngInject';
+  }
+
   getFieldName(index) {
     return index > 0 ? `${this.name}[${index + 1}]` : `${this.name}`;
   }
