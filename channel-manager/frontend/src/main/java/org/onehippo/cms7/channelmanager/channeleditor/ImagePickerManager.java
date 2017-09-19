@@ -17,15 +17,18 @@
 package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
-import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.ConfigProvider;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.onehippo.addon.frontend.gallerypicker.ImageItem;
+import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
+import org.onehippo.addon.frontend.gallerypicker.WicketJcrSessionProvider;
+import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
 
 /**
  * Manages the picker dialog for imagelink fields. The dialog is used to select an image.
@@ -33,47 +36,45 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
  * When done the method 'ChannelEditor#onImagePicked' is called.
  * Cancelling the dialog calls 'ChannelEditor#onImagePickCancelled'.
  */
-class ImagePickerManager extends PickerManager {
+class ImagePickerManager extends PickerManager<String> {
 
-    private static final IPluginConfig DEFAULT_PICKER_CONFIG = new JavaPluginConfig();
+    private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
-    private final AbstractAjaxBehavior behavior;
+    private Model<String> dialogModel;
 
     ImagePickerManager(final IPluginContext context, final String channelEditorId) {
-        super(DEFAULT_PICKER_CONFIG);
-        behavior = new GalleryPickerDialogBehavior(context);
+        super(context, channelEditorId);
+        dialogModel = Model.of(StringUtils.EMPTY);
     }
 
-    AbstractAjaxBehavior getBehavior() {
-        return behavior;
+    @Override
+    protected DialogBehavior<String> createBehavior(final IPluginContext context, final ConfigProvider configProvider) {
+        return new GalleryPickerDialogBehavior(context, configProvider);
     }
 
-    private class GalleryPickerDialogBehavior extends AbstractAjaxBehavior {
+    @Override
+    protected String toJsString(final String pickedItem) {
+        final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(pickedItem);
+        final String url = imageItem.getPrimaryUrl(WicketJcrSessionProvider.get());
 
-        private final IPluginContext context;
+        return "{ uuid: '" + pickedItem + "', url: '" + url + "'}";
+    }
 
-        public GalleryPickerDialogBehavior(final IPluginContext context) {
-            this.context = context;
+    @Override
+    protected void onConfigure(final IPluginConfig defaultDialogConfig, final Map<String, String> parameters) {
+        dialogModel.setObject(parameters.get("uuid"));
+    }
+
+    private class GalleryPickerDialogBehavior extends DialogBehavior<String> {
+
+        GalleryPickerDialogBehavior(final IPluginContext context, final ConfigProvider configProvider) {
+            super(context, configProvider);
         }
 
         @Override
-        public void onRequest() {
-            Map<String, String> params = getParameters();
-            initPicker(params);
-
-            // TODO: show the gallery picker dialog
+        protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config) {
+            return new GalleryPickerDialog(context, config, dialogModel);
         }
 
-        protected Map<String, String> getParameters() {
-            final Request request = RequestCycle.get().getRequest();
-            final IRequestParameters parameters = request.getPostParameters();
-            return parameters.getParameterNames()
-                    .stream()
-                    .collect(Collectors.toMap(
-                            name -> name,
-                            name -> parameters.getParameterValue(name).toString()
-                    ));
-        }
     }
-
 }
