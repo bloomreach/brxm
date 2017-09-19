@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -88,6 +89,9 @@ public class TaxonomyPickerPluginTest extends AbstractTaxonomyTest  {
         Node node = (Node) session.getItem("/test/content");
         node.addMixin(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE);
         node.setProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_KEYS, new String[] { BRANCH_KEY });
+        node.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        node.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        node.setProperty(HippoTranslationNodeType.ID, "fake-id");
         session.save();
 
         context.registerService(new TaxonomyService(), ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID);
