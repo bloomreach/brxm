@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import org.onehippo.ckeditor.HippoPicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
+import org.hippoecm.frontend.dialog.ScriptAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
+import org.onehippo.ckeditor.HippoPicker;
 
 /**
  * Executes the CKEditor command to insert a picked internal link into an editor.
  */
-class CKEditorInsertInternalLinkAction implements RichTextEditorAction<RichTextEditorDocumentLink> {
+class CKEditorInsertInternalLinkAction implements ScriptAction<RichTextEditorDocumentLink> {
 
     private final String editorId;
 
@@ -32,7 +32,8 @@ class CKEditorInsertInternalLinkAction implements RichTextEditorAction<RichTextE
 
     @Override
     public String getJavaScript(final RichTextEditorDocumentLink documentLink) {
-        return "CKEDITOR.instances." + editorId + ".execCommand('" + HippoPicker.InternalLink.COMMAND_INSERT_INTERNAL_LINK + "', " + documentLink.toJsString() + ");";
+        return String.format("CKEDITOR.instances.%s.execCommand('%s', %s);", editorId,
+                HippoPicker.InternalLink.COMMAND_INSERT_INTERNAL_LINK, documentLink.toJsString());
     }
 
 }

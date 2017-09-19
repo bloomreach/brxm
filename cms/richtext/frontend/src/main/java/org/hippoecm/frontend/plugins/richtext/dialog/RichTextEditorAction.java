@@ -16,10 +16,14 @@
 package org.hippoecm.frontend.plugins.richtext.dialog;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.dialog.ScriptAction;
 
 /**
  * Represents an action on a rich text editor instance.
+ *
+ * @deprecated use {@link ScriptAction} instead
  */
+@Deprecated
 public interface RichTextEditorAction<ModelType> extends IClusterable {
 
     /**

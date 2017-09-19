@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,21 +16,14 @@
 
 package org.hippoecm.frontend.plugins.richtext.dialog;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
 
-public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMap> extends Dialog<T> {
+public abstract class AbstractRichTextEditorDialog<ModelType extends AbstractPersistedMap> extends Dialog<ModelType> {
 
-    private RichTextEditorAction<T> cancelAction;
-    private RichTextEditorAction<T> closeAction;
-
-    public AbstractRichTextEditorDialog(IModel<T> model) {
+    public AbstractRichTextEditorDialog(final IModel<ModelType> model) {
         super(model);
 
         setTitleKey("dialog-title");
@@ -40,32 +33,9 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
         setOkEnabled(getModelObject().isValid() && getModelObject().hasChanged());
     }
 
-    public void setCancelAction(final RichTextEditorAction<T> cancelAction) {
-        this.cancelAction = cancelAction;
-    }
-
-    public void setCloseAction(final RichTextEditorAction<T> closeAction) {
-        this.closeAction = closeAction;
-    }
-
-    @Override
-    public void onClose() {
-        final RichTextEditorAction<T> action = cancelled ? cancelAction : closeAction;
-        if (action != null) {
-            final String script = action.getJavaScript(getModelObject());
-            if (StringUtils.isNotBlank(script)) {
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script));
-                }
-            }
-        }
-        super.onClose();
-    }
-
     protected static class StringPropertyModel extends PropertyModel<String> {
 
-        public StringPropertyModel(Object modelObject, String expression) {
+        public StringPropertyModel(final Object modelObject, final String expression) {
             super(modelObject, expression);
         }
 
