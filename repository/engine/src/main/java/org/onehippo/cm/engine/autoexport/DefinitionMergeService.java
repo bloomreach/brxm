@@ -45,10 +45,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -91,9 +87,11 @@ import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.function.Predicate.isEqual;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
@@ -748,6 +746,8 @@ public class DefinitionMergeService {
                 restoreDeletedTree(topDeletedConfigNode);
             }
 
+            reorderRegistry.add(incomingDefNode.getJcrPath().getParent());
+
             // delete parent and child delete definitions if exists
             removeDeleteDefinition(incomingDefNode.getJcrPath(), isChildNodeDeleted);
 
@@ -819,14 +819,11 @@ public class DefinitionMergeService {
             if (path.equals(definitionNode.getJcrPath())) {
                 return definitionNode;
             } else if (path.startsWith(definitionNode.getJcrPath())) {
-                // TODO: this should use JcrPath methods, not String manipulation
-                final String commonPrefix = StringUtils.getCommonPrefix(path.toString(), definitionNode.getJcrPath().toString());
-                final int commonSegmentsCount = commonPrefix.split("/").length - 1;
-                final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
-
+                final JcrPath pathDiff = definitionNode.getJcrPath().relativize(path);
                 DefinitionNodeImpl currentNode = (DefinitionNodeImpl) configDefinition.getNode();
-                for (final JcrPathSegment jcrPathSegment : subpath) {
-                    currentNode = currentNode.getNode(jcrPathSegment.toString());
+                for (final JcrPathSegment jcrPathSegment : pathDiff) {
+                    currentNode = currentNode.getModifiableNodes().getOrDefault(jcrPathSegment.toString(),
+                            currentNode.getModifiableNodes().get(jcrPathSegment.forceIndex().toString()));
                     if (currentNode == null) {
                         break; //wrong path
                     } else if (currentNode.getJcrPath().equals(path)) {
