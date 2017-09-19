@@ -1,27 +1,8 @@
-/*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-package org.onehippo.cm.model.impl.path;
+package org.onehippo.cm.model.path;
 
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,74 +12,13 @@ import org.apache.commons.lang3.tuple.Pair;
  * Note that implementations of this class should implement a non-standard natural ordering and definitions of
  * {@link #equals(Object)} and {@link #hashCode()} which treat the index value 0 (representing unindexed names) and 1
  * (representing the first indexed same-named-sibling) as strictly equivalent. Client code that wishes to treat these
- * states as distinct must use the {@link #compareUnindexedFirst(JcrPathSegment)} and
+ * states as distinct must use the {@link #compareUnindexedFirst(org.onehippo.cm.model.path.JcrPathSegment)} and
  * {@link #equalsUnindexedSignificant(Object)} methods or the {@link #UNINDEXED_FIRST_ORDER} comparator.
  */
-public class JcrPathSegment implements Comparable<JcrPathSegment> {
-    /**
-     * Comparator that treats unindexed segments as distinct (and less-than) the same name with index 1.
-     */
-    public static final Comparator<JcrPathSegment> UNINDEXED_FIRST_ORDER =
-            Comparator.comparing(JcrPathSegment::getName).thenComparingInt(JcrPathSegment::getIndex);
-
-    /**
-     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link JcrPath}.
-     */
-    public static final JcrPathSegment ROOT_NAME = new JcrPathSegment("", 0);
+class JcrPathSegmentImpl implements JcrPathSegment {
 
     // todo: is it true that node indices cannot have leading zeros?
     private static Pattern pattern = Pattern.compile("^([^\\[\\]]+)(\\[([1-9][0-9]*)])?$");
-
-    /**
-     * Static factory for NodePathSegment instances; parses the index from the input String.
-     */
-    public static JcrPathSegment get(final String fullName) {
-        if (fullName == null) {
-            throw new IllegalArgumentException("Name must not be null!");
-        }
-
-        if (fullName.equals("") || fullName.equals("/")) {
-            return ROOT_NAME;
-        }
-        else {
-            return new JcrPathSegment(fullName);
-        }
-    }
-
-    /**
-     * Static factory for NodePathSegment instances with separate index param.
-     */
-    public static JcrPathSegment get(final String name, final int index) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name must not be null!");
-        }
-
-        if (name.equals("") || name.equals("/")) {
-            return ROOT_NAME;
-        }
-        else {
-            return new JcrPathSegment(name, index);
-        }
-    }
-
-    /**
-     * Static factory for NodePathSegment instances from JCR node. Sets an explicit index iff the node has SNS.
-     */
-    public static JcrPathSegment get(final Node node) throws RepositoryException {
-        if (node == null) {
-            throw new IllegalArgumentException("Node must not be null!");
-        }
-
-        if (node.getDepth() == 0) {
-            return ROOT_NAME;
-        } else {
-            int index = node.getIndex();
-            if (index == 1 && node.getParent().getNodes(node.getName()).getSize() == 1) {
-                index = 0;
-            }
-            return new JcrPathSegment(node.getName(), index);
-        }
-    }
 
     // todo: split prefix? no obvious use case in HCM right now
     /**
@@ -112,7 +32,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
      * @param name an unindexed node name
      * @param index the desired new index
      */
-    private JcrPathSegment(final String name, final int index) {
+    JcrPathSegmentImpl(final String name, final int index) {
         this.name = StringUtils.strip(name, "/").trim().intern();
         this.index = index;
         checkArgs();
@@ -122,7 +42,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
      * Create a new instance by splitting a possibly-indexed name.
      * @param fullName a JCR node name with or without an index
      */
-    private JcrPathSegment(final String fullName) {
+    JcrPathSegmentImpl(final String fullName) {
         final Pair<String, Integer> split = splitIndexedName(fullName);
         this.name = StringUtils.strip(split.getLeft(), "/").trim().intern();
         this.index = split.getRight();
@@ -156,39 +76,28 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         }
     }
 
-    /**
-     * @return true iff this NodePathSegment is the singleton instance representing a root node
-     */
+    @Override
     public boolean isRoot() {
-        return this == ROOT_NAME;
+        return this == JcrPaths.ROOT_NAME;
     }
 
-    /**
-     * @return the String value of the full node name, without possible same-named-sibling index
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * @return the int value of the same-named-sibling index, or 0 if !{@link #hasIndex()}
-     */
+    @Override
     public int getIndex() {
         return index;
     }
 
-    /**
-     * @return does this name have a same-named-sibling index?
-     */
+    @Override
     public boolean hasIndex() {
         return index != 0;
     }
 
-    /**
-     * @param newIndex the index for the new instance of {@link JcrPathSegment}
-     * @return a new {@link JcrPathSegment} instance with the same name as this instance and the given index
-     */
-    public JcrPathSegment withIndex(final int newIndex) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment withIndex(final int newIndex) {
         if (isRoot()) {
             throw new IllegalStateException("Root name cannot have an index!");
         }
@@ -197,14 +106,12 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
             return this;
         }
         else {
-            return new JcrPathSegment(name, newIndex);
+            return new JcrPathSegmentImpl(name, newIndex);
         }
     }
 
-    /**
-     * @return if this name is unindexed, a variant with index 1; otherwise, this
-     */
-    public JcrPathSegment forceIndex() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment forceIndex() {
         if (hasIndex() || isRoot()) {
             return this;
         }
@@ -213,10 +120,8 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         }
     }
 
-    /**
-     * @return if this name has index 1, a variant with no index (i.e. index 0); otherwise, this
-     */
-    public JcrPathSegment suppressIndex() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment suppressIndex() {
         if (index == 1) {
             return withIndex(0);
         }
@@ -225,11 +130,8 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         }
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1.
-     */
     @Override
-    public int compareTo(final JcrPathSegment o) {
+    public int compareTo(final org.onehippo.cm.model.path.JcrPathSegment o) {
         final int sVal = name.compareTo(o.getName());
         if (sVal != 0) {
             return sVal;
@@ -244,16 +146,11 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         return Integer.compare(index, o.getIndex());
     }
 
-    /**
-     * Compare using {@link #UNINDEXED_FIRST_ORDER}.
-     */
-    public int compareUnindexedFirst(final JcrPathSegment o) {
+    @Override
+    public int compareUnindexedFirst(final org.onehippo.cm.model.path.JcrPathSegment o) {
         return UNINDEXED_FIRST_ORDER.compare(this, o);
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1.
-     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -263,7 +160,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = JcrPathSegment.get((String) o);
+            other = JcrPaths.getPathSegment((String) o);
         }
         else if (!(o instanceof JcrPathSegment)) {
             return false;
@@ -285,9 +182,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
                 && (other.getIndex() == 1 || other.getIndex() == 0);
     }
 
-    /**
-     * Equals comparison consistent with {@link #UNINDEXED_FIRST_ORDER}.
-     */
+    @Override
     public boolean equalsUnindexedSignificant(final Object o) {
         if (this == o) {
             return true;
@@ -296,7 +191,7 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = JcrPathSegment.get((String) o);
+            other = JcrPaths.getPathSegment((String) o);
         } else if (!(o instanceof JcrPathSegment)) {
             return false;
         } else {
@@ -306,9 +201,6 @@ public class JcrPathSegment implements Comparable<JcrPathSegment> {
         return name.equals(other.getName()) && (index == other.getIndex());
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1 (matching equals() and compareTo()).
-     */
     @Override
     public int hashCode() {
         return Objects.hash(name, (index == 0? 1: index));

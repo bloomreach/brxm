@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.util.SnsUtils;
@@ -57,7 +58,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public ConfigurationNodeImpl getNode(final String name) {
-        return getNode(JcrPathSegment.get(name));
+        return getNode(JcrPaths.getPathSegment(name));
     }
 
     public ConfigurationNodeImpl getNode(final JcrPathSegment name) {
@@ -66,7 +67,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
 
     @Override
     public void setName(final String name) {
-        super.setName(JcrPathSegment.get(name).forceIndex());
+        super.setName(JcrPaths.getPathSegment(name).forceIndex());
     }
 
     @Override
@@ -75,7 +76,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
-        modifiableNodes.put(JcrPathSegment.get(name).forceIndex().toString(), node);
+        modifiableNodes.put(JcrPaths.getPathSegment(name).forceIndex().toString(), node);
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {

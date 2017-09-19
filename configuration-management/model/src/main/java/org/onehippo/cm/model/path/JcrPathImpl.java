@@ -1,28 +1,8 @@
-/*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-package org.onehippo.cm.model.impl.path;
+package org.onehippo.cm.model.path;
 
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -35,64 +15,18 @@ import static java.util.stream.Collectors.joining;
  * Note that this is essentially an analogy to the {@link java.nio.file.Path} API, and instances can be used in a way
  * familiar to users of that class.
  */
-public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
+class JcrPathImpl implements JcrPath {
 
-    /**
-     * A constant value representing the path of the JCR root node.
-     */
-    public static final JcrPath ROOT = new JcrPath(ImmutableList.of(), false, true);
-
-    /**
-     * Static factory for NodePath instances.
-     * @see java.nio.file.Paths#get(String, String...)
-     */
-    public static JcrPath get(String path, final String... more) {
-
-        // do this check now to check for null or pure whitespace
-        if (StringUtils.isBlank(path)) {
-            throw new IllegalArgumentException("Path string must not be blank!");
-        }
-
-        // "/node/" => "/node"; "///" => ""
-        if (path.endsWith("/") && !path.equals("/")) {
-            path = StringUtils.stripEnd(path, "/");
-        }
-
-        // collapse "more" into a single path, so that this will work: get("/", "  ", "/parent/child", "/grandchild/");
-        if (ArrayUtils.isNotEmpty(more)) {
-            path += Arrays.stream(more).map(StringUtils::stripToEmpty).map(s -> StringUtils.stripEnd(s, "/"))
-                    .filter(StringUtils::isNotBlank).collect(joining("/", "/", ""));
-        }
-
-        // root is special
-        if (path.equals("/")) {
-            return ROOT;
-        }
-
-        // do this check now to detect weirdness like "////"
-        if (StringUtils.isBlank(path)) {
-            throw new IllegalArgumentException("Path string must contain non-empty segments!");
-        }
-
-        final boolean relative = !path.startsWith("/");
-        final String[] segments = StringUtils.strip(path, "/").split("/");
-
-        final ImmutableList<JcrPathSegment> names =
-                Arrays.stream(segments).map(JcrPathSegment::get).collect(ImmutableList.toImmutableList());
-
-        return new JcrPath(names, relative);
-    }
-
-    private final ImmutableList<JcrPathSegment> segments;
+    private final ImmutableList<org.onehippo.cm.model.path.JcrPathSegment> segments;
     private final boolean absolute;
 
     // private to guarantee ROOT is a constant
-    private JcrPath(final ImmutableList<JcrPathSegment> segments, final boolean absolute) {
+    JcrPathImpl(final ImmutableList<org.onehippo.cm.model.path.JcrPathSegment> segments, final boolean absolute) {
         this(segments, absolute, false);
     }
 
     // private to guarantee ROOT is a constant
-    private JcrPath(final ImmutableList<JcrPathSegment> segments, final boolean absolute, final boolean isRoot) {
+    JcrPathImpl(final ImmutableList<org.onehippo.cm.model.path.JcrPathSegment> segments, final boolean absolute, final boolean isRoot) {
         // this check is mainly for internal purposes, to make sure we're not accidentally failing to return ROOT
         if (!isRoot && segments.size() == 0) {
             throw new IllegalArgumentException("Should use ROOT instead of constructing new NodePath with no segments!");
@@ -104,31 +38,23 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         this.absolute = true;
     }
 
-    /**
-     * @return a constant value representing the path of the JCR root node
-     */
-    public JcrPath getRoot() {
-        return ROOT;
+    @Override
+    public org.onehippo.cm.model.path.JcrPath getRoot() {
+        return JcrPaths.ROOT;
     }
 
-    /**
-     * @return true iff this instance represents the path of the JCR root node
-     */
+    @Override
     public boolean isRoot() {
-        return this == ROOT;
+        return this == JcrPaths.ROOT;
     }
 
-    /**
-     * @return true if this path is an absolute path, represented in String form with a leading "/"
-     */
+    @Override
     public boolean isAbsolute() {
         return absolute;
     }
 
-    /**
-     * @return the final segment of this {@link JcrPath}, which may represent a JCR Node or Property
-     */
-    public JcrPathSegment getLastSegment() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment getLastSegment() {
         if (isRoot()) {
             // todo: should this return a constant NodePathSegment instead?
             throw new IllegalStateException("Root path has no path segments!");
@@ -137,62 +63,46 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         return segments.get(segments.size()-1);
     }
 
-    /**
-     * @return a path representing the parent node of this path
-     * @throws IllegalStateException iff {@link #isRoot()}
-     */
-    public JcrPath getParent() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath getParent() {
         if (isRoot()) {
             throw new IllegalStateException("Cannot get the parent of ROOT!");
         }
 
         if (segments.size() == 1) {
-            return ROOT;
+            return JcrPaths.ROOT;
         }
 
         // todo: implement this in a more memory-efficient way with Lisp-style list objects
-        return new JcrPath(segments.subList(0, segments.size()-1), absolute);
+        return new JcrPathImpl(segments.subList(0, segments.size()-1), absolute);
     }
 
-    /**
-     * @return the number of separate path segments are composed in this path
-     */
+    @Override
     public int getSegmentCount() {
         return segments.size();
     }
 
-    /**
-     * @param index the zero-based index of the desired path segment
-     * @return a {@link JcrPathSegment} representing the segment of this path at the index position
-     */
-    public JcrPathSegment getSegment(final int index) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment getSegment(final int index) {
         return segments.get(index);
     }
 
-    /**
-     * @param beginIndex the zero-based index (inclusive) of the starting segment of the desired subpath
-     * @param endIndex the zero-based index (exclusive) of the ending segment of the desired subpath
-     * @return a path representing a specific portion of this path
-     */
-    public JcrPath subpath(final int beginIndex, final int endIndex) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath subpath(final int beginIndex, final int endIndex) {
         if (beginIndex == 0 && endIndex == 0) {
-            return ROOT;
+            return JcrPaths.ROOT;
         }
 
-        return new JcrPath(segments.subList(beginIndex, endIndex), beginIndex == 0);
+        return new JcrPathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0);
     }
 
-    /**
-     * @see Path#startsWith(String)
-     */
+    @Override
     public boolean startsWith(final String other) {
-        return startsWith(get(other));
+        return startsWith(JcrPaths.getPath(other));
     }
 
-    /**
-     * @see Path#startsWith(String)
-     */
-    public boolean startsWith(final JcrPathSegment other) {
+    @Override
+    public boolean startsWith(final org.onehippo.cm.model.path.JcrPathSegment other) {
         if (other.isRoot()) {
             return true;
         }
@@ -200,10 +110,8 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         return getSegment(0).equals(other);
     }
 
-    /**
-     * @see Path#startsWith(Path)
-     */
-    public boolean startsWith(final JcrPath other) {
+    @Override
+    public boolean startsWith(final org.onehippo.cm.model.path.JcrPath other) {
         if (other.isRoot()) {
             return true;
         }
@@ -212,17 +120,13 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
                 && Iterables.elementsEqual(segments.subList(0, other.getSegmentCount()), other);
     }
 
-    /**
-     * @see Path#endsWith(String)
-     */
+    @Override
     public boolean endsWith(final String other) {
-        return endsWith(get(other));
+        return endsWith(JcrPaths.getPath(other));
     }
 
-    /**
-     * @see Path#endsWith(String)
-     */
-    public boolean endsWith(final JcrPathSegment other) {
+    @Override
+    public boolean endsWith(final org.onehippo.cm.model.path.JcrPathSegment other) {
         if (other.isRoot()) {
             return true;
         }
@@ -230,42 +134,34 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         return getLastSegment().equals(other);
     }
 
-    /**
-     * @see Path#endsWith(Path)
-     */
-    public boolean endsWith(final JcrPath other) {
+    @Override
+    public boolean endsWith(final org.onehippo.cm.model.path.JcrPath other) {
         if (other.isRoot()) {
             return true;
         }
 
         return (other.getSegmentCount() <= segments.size())
                 && Iterables.elementsEqual(
-                        segments.subList(segments.size() - other.getSegmentCount(), segments.size()),
-                        other);
+                segments.subList(segments.size() - other.getSegmentCount(), segments.size()),
+                other);
     }
 
-    /**
-     * @see Path#resolve(String)
-     */
-    public JcrPath resolve(final String other) {
-        return resolve(get(other));
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolve(final String other) {
+        return resolve(JcrPaths.getPath(other));
     }
 
-    /**
-     * @see Path#resolve(String)
-     */
-    public JcrPath resolve(final JcrPathSegment other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolve(final org.onehippo.cm.model.path.JcrPathSegment other) {
         if (other.isRoot()) {
             return this;
         }
 
-        return resolve(new JcrPath(ImmutableList.of(other), false));
+        return resolve(new JcrPathImpl(ImmutableList.of(other), false));
     }
 
-    /**
-     * @see Path#resolve(Path)
-     */
-    public JcrPath resolve(final JcrPath other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolve(final org.onehippo.cm.model.path.JcrPath other) {
         if (other.isRoot()) {
             return this;
         }
@@ -273,42 +169,34 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
             return other;
         }
 
-        return new JcrPath(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
+        return new JcrPathImpl(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
     }
 
-    /**
-     * @see Path#resolveSibling(String)
-     */
-    public JcrPath resolveSibling(final String other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolveSibling(final String other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
 
-    /**
-     * @see Path#resolveSibling(String)
-     */
-    public JcrPath resolveSibling(final JcrPathSegment other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolveSibling(final org.onehippo.cm.model.path.JcrPathSegment other) {
         if (other.isRoot()) {
             return getParent();
         }
 
-        return resolveSibling(new JcrPath(ImmutableList.of(other), false));
+        return resolveSibling(new JcrPathImpl(ImmutableList.of(other), false));
     }
 
-    /**
-     * @see Path#resolveSibling(Path)
-     */
-    public JcrPath resolveSibling(final JcrPath other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath resolveSibling(final org.onehippo.cm.model.path.JcrPath other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
 
-    /**
-     * @see Path#relativize(Path)
-     */
-    public JcrPath relativize(final JcrPath other) {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath relativize(final org.onehippo.cm.model.path.JcrPath other) {
         if (other.isRoot()) {
-            return new JcrPath(segments, false);
+            return new JcrPathImpl(segments, false);
         }
 
         if (other.startsWith(this)) {
@@ -317,71 +205,60 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
 
         // generate relative paths up to the root and then work down again
         // todo: remove common ancestors
-        return get(Streams.concat(Stream.generate(() -> "..").limit(segments.size()),
-                    other.stream().map(JcrPathSegment::toString)).collect(joining("/")));
+        return JcrPaths.getPath(Streams.concat(Stream.generate(() -> "..").limit(segments.size()),
+                other.stream().map(org.onehippo.cm.model.path.JcrPathSegment::toString)).collect(joining("/")));
     }
 
     // todo: normalize
 
-    /**
-     * @return if {@link #isRoot()} or {@link #isAbsolute()}, this; otherwise, a new variant of this path for which
-     * {@link #isAbsolute()} == true
-     */
-    public JcrPath toAbsolutePath() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath toAbsolutePath() {
         if (absolute || isRoot()) {
             return this;
         }
 
-        return new JcrPath(segments, true);
+        return new JcrPathImpl(segments, true);
     }
 
-    /**
-     * @return a NodePath equivalent to this one, except that each segment has had forceIndex() applied to it
-     */
-    public JcrPath toFullyIndexedPath() {
+    @Override
+    public org.onehippo.cm.model.path.JcrPath toFullyIndexedPath() {
         if (isRoot()) {
             return this;
         }
 
-        ImmutableList<JcrPathSegment> indexedSegments =
-                segments.stream().map(JcrPathSegment::forceIndex).collect(ImmutableList.toImmutableList());
-        return new JcrPath(indexedSegments, absolute);
+        ImmutableList<org.onehippo.cm.model.path.JcrPathSegment> indexedSegments =
+                segments.stream().map(org.onehippo.cm.model.path.JcrPathSegment::forceIndex).collect(ImmutableList.toImmutableList());
+        return new JcrPathImpl(indexedSegments, absolute);
     }
 
-    /**
-     * @return a NodePath equivalent to this one, except that each segment has had suppressIndex() applied to it
-     */
-    public JcrPath toMinimallyIndexedPath() {
+    @Override
+    public JcrPathImpl toMinimallyIndexedPath() {
         if (isRoot()) {
             return this;
         }
 
-        ImmutableList<JcrPathSegment> indexedSegments =
-                segments.stream().map(JcrPathSegment::suppressIndex).collect(ImmutableList.toImmutableList());
-        return new JcrPath(indexedSegments, absolute);
+        ImmutableList<org.onehippo.cm.model.path.JcrPathSegment> indexedSegments =
+                segments.stream().map(org.onehippo.cm.model.path.JcrPathSegment::suppressIndex).collect(ImmutableList.toImmutableList());
+        return new JcrPathImpl(indexedSegments, absolute);
     }
 
-    /**
-     * @return an ordered, serial stream of NodePathSegments in the same order used by {@link #getSegment(int)}
-     */
-    public Stream<JcrPathSegment> stream() {
+    @Override
+    public Stream<org.onehippo.cm.model.path.JcrPathSegment> stream() {
         return segments.stream();
     }
 
     @Override
-    public Iterator<JcrPathSegment> iterator() {
+    public Iterator<org.onehippo.cm.model.path.JcrPathSegment> iterator() {
         return segments.iterator();
     }
 
-    public JcrPathSegment[] toArray() {
-        return segments.toArray(new JcrPathSegment[segments.size()]);
+    @Override
+    public org.onehippo.cm.model.path.JcrPathSegment[] toArray() {
+        return segments.toArray(new org.onehippo.cm.model.path.JcrPathSegment[segments.size()]);
     }
 
-    /**
-     * Compare paths by name segment, with unindexed segments considered to be identical to name with index 1.
-     */
     @Override
-    public int compareTo(final JcrPath o) {
+    public int compareTo(final org.onehippo.cm.model.path.JcrPath o) {
         final int shorterLength = (segments.size() <= o.getSegmentCount())? segments.size(): o.getSegmentCount();
 
         for (int i = 0; i < shorterLength; i++) {
@@ -403,23 +280,20 @@ public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
         return sizeComp;
     }
 
-    /**
-     * @return true iff all name segments are equal, according to {@link JcrPathSegment#equals(Object)}.
-     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
 
-        final JcrPath other;
+        final org.onehippo.cm.model.path.JcrPath other;
         if (obj instanceof String) {
-            other = get((String) obj);
+            other = JcrPaths.getPath((String) obj);
         }
-        else if (obj instanceof JcrPathSegment) {
-            other = new JcrPath(ImmutableList.of((JcrPathSegment) obj), true);
+        else if (obj instanceof org.onehippo.cm.model.path.JcrPathSegment) {
+            other = new JcrPathImpl(ImmutableList.of((org.onehippo.cm.model.path.JcrPathSegment)obj), true);
         }
-        else if (!(obj instanceof JcrPath)) {
+        else if (!(obj instanceof org.onehippo.cm.model.path.JcrPath)) {
             return false;
         }
         else {

@@ -29,7 +29,7 @@ import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.impl.exceptions.MissingDependencyException;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.util.SnsUtils;
 
 /**

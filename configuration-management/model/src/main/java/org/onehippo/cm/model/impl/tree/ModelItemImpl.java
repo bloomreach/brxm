@@ -15,8 +15,9 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ModelItem;
 
 public abstract class ModelItemImpl implements ModelItem {
@@ -29,7 +30,7 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public void setName(final String name) {
-        this.name = JcrPathSegment.get(name);
+        this.name = JcrPaths.getPathSegment(name);
     }
 
     public void setName(final JcrPathSegment name) {

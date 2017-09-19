@@ -13,47 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.model.impl.path;
+package org.onehippo.cm.model.path;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class JcrPathSegmentTest {
 
     @Test
     public void test_canonical_sns() {
-        assertEquals(JcrPathSegment.get("sns", 1), JcrPathSegment.get("sns[1]"));
+        Assert.assertEquals(JcrPaths.getPathSegment("sns", 1), JcrPaths.getPathSegment("sns[1]"));
     }
 
     @Test
     public void test_sns_without_index() {
-        assertEquals(JcrPathSegment.get("sns", 0), JcrPathSegment.get("sns"));
+        Assert.assertEquals(JcrPaths.getPathSegment("sns", 0), JcrPaths.getPathSegment("sns"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_negative_index() {
-        JcrPathSegment.get("sns[-1]");
+        JcrPaths.getPathSegment("sns[-1]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_zero_index() {
-        JcrPathSegment.get("sns[0]");
+        JcrPaths.getPathSegment("sns[0]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_non_numeric_index() {
-        JcrPathSegment.get("sns[foo]");
+        JcrPaths.getPathSegment("sns[foo]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_trailing_chars() {
-        JcrPathSegment.get("sns[1]sns");
+        JcrPaths.getPathSegment("sns[1]sns");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_without_name() {
-        JcrPathSegment.get("[1]");
+        JcrPaths.getPathSegment("[1]");
     }
 
 }

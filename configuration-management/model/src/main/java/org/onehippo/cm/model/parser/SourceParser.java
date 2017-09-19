@@ -28,10 +28,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -129,7 +130,7 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     protected void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         try {
-            JcrPathSegment segment = JcrPathSegment.get(name);
+            JcrPathSegment segment = JcrPaths.getPathSegment(name);
         }
         catch (IllegalArgumentException e) {
             throw new ParserException("JCR node index cannot be less than 1", value, e);

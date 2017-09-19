@@ -19,8 +19,9 @@ package org.onehippo.cm.model.util;
 import java.util.function.Function;
 
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.slf4j.Logger;
@@ -88,8 +89,8 @@ public class ConfigurationModelUtils {
             final ConfigurationModel model,
             final Function<String, ConfigurationItemCategory> residualNodeCategoryOverrideResolver) {
 
-        final JcrPath itemPath = JcrPath.get(absoluteItemPath);
-        if (itemPath.equals(JcrPath.ROOT)) {
+        final JcrPath itemPath = JcrPaths.getPath(absoluteItemPath);
+        if (itemPath.equals(JcrPaths.ROOT)) {
             return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
 
@@ -98,7 +99,7 @@ public class ConfigurationModelUtils {
             return ConfigurationItemCategory.CONFIG;
         }
 
-        JcrPath parent = JcrPath.ROOT;
+        JcrPath parent = JcrPaths.ROOT;
         ConfigurationNode modelNode = model.getConfigurationRootNode();
         for (int i = 0; i < itemPath.getSegmentCount(); i++) {
             final JcrPathSegment childSegment = itemPath.getSegment(i);
