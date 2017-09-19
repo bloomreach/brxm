@@ -15,19 +15,23 @@
  */
 
 class ImageLinkController {
-  constructor(CmsService) {
+  constructor($scope, CmsService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.CmsService = CmsService;
   }
 
   openImagePicker() {
     const uuid = this.ngModel.$modelValue;
-    this.CmsService.publish('show-image-picker', this.id, this.config.imagepicker, { uuid }, (/* image */) => {
-      // TODO: use the picked values
+    this.CmsService.publish('show-image-picker', this.id, this.config.imagepicker, { uuid }, (image) => {
+      this.$scope.$apply(() => {
+        this.url = image.url;
+        this.ngModel.$setViewValue(image.uuid);
+      });
     }, () => {
       // Cancel callback
-      // TODO: nothing?
+      console.log('cancel callback');
     });
   }
 }

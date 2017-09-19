@@ -90,6 +90,7 @@
     <image-link ng-switch-when="IMAGE_LINK"
                 ng-model="fieldValue.value"
                 id="fieldValue.id"
+                ng-change="$ctrl.valueChanged()"
                 config="::$ctrl.fieldType.config"
                 url="fieldValue.url">
     </image-link>
