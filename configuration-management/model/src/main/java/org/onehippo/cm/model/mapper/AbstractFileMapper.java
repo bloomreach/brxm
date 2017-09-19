@@ -22,8 +22,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
@@ -52,7 +53,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
     }
 
     public static String constructFilePathFromJcrPath(String path) {
-        JcrPath jcrPath = JcrPath.get(path);
+        JcrPath jcrPath = JcrPaths.getPath(path);
         return jcrPath.stream().map(JcrPathSegment::toString).map(AbstractFileMapper::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER, "/", ""));
     }
 

@@ -24,9 +24,10 @@ import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class ConfigSourceImpl extends SourceImpl {
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
      */
     public DefinitionNodeImpl getOrCreateDefinitionFor(final String jcrPath) {
-        return getOrCreateDefinitionFor(JcrPath.get(jcrPath));
+        return getOrCreateDefinitionFor(JcrPaths.getPath(jcrPath));
     }
 
     /**

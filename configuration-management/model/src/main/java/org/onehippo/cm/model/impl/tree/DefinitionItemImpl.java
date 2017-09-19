@@ -17,8 +17,9 @@ package org.onehippo.cm.model.impl.tree;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionItem;
 
@@ -53,7 +54,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         }
 
         setName(name);
-        this.path = JcrPath.get(path);
+        this.path = JcrPaths.getPath(path);
         this.parent = null;
         this.definition = definition;
         this.sourceLocation = new SourceLocationImpl();

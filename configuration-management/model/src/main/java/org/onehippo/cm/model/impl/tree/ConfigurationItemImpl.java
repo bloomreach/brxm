@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
@@ -43,7 +44,7 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
     public JcrPath getJcrPath() {
         // todo: store path instead of recreating it on each call
         if (isRoot()) {
-            return JcrPath.ROOT;
+            return JcrPaths.ROOT;
         } else {
             if (SnsUtils.hasSns(getName(), parent.getNodes().keySet())) {
                 return parent.getJcrPath().resolve(name);

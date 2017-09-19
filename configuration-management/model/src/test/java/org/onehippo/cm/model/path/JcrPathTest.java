@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl.path;
+package org.onehippo.cm.model.path;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,27 +23,27 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.model.impl.path.JcrPath.ROOT;
-import static org.onehippo.cm.model.impl.path.JcrPathSegment.ROOT_NAME;
+import static org.onehippo.cm.model.path.JcrPaths.ROOT;
+import static org.onehippo.cm.model.path.JcrPaths.ROOT_NAME;
 
 public class JcrPathTest {
 
     @Test
     public void root_is_constant() {
-        JcrPathSegment rootName = JcrPathSegment.get("/");
+        JcrPathSegment rootName = JcrPaths.getSegment("/");
         assertTrue("Parsing '/' should always produce constants ROOT_NAME or ROOT", rootName == ROOT_NAME);
 
-        JcrPath root = JcrPath.get("/");
+        JcrPath root = JcrPaths.getPath("/");
         assertTrue("Parsing '/' should always produce constants ROOT_NAME or ROOT", root == ROOT);
 
-        root = JcrPath.get("/name").getParent();
+        root = JcrPaths.getPath("/name").getParent();
         assertTrue("Getting parent of top-level node should always produce constant ROOT", root == ROOT);
     }
 
     @Test
     public void name_index_zero_equals_one() {
-        JcrPathSegment zero = JcrPathSegment.get("name", 0);
-        JcrPathSegment one = JcrPathSegment.get("name", 1);
+        JcrPathSegment zero = JcrPaths.getSegment("name", 0);
+        JcrPathSegment one = JcrPaths.getSegment("name", 1);
 
         assertTrue("name and name[1] should be considered equal", zero.equals(one));
 
@@ -82,8 +82,8 @@ public class JcrPathTest {
 
     @Test
     public void minimally_indexed_path_equals_fully_indexed_path() {
-        JcrPath minimal = JcrPath.get("/one/two/three/four");
-        JcrPath full = JcrPath.get("/one[1]/two[1]/three[1]/four[1]");
+        JcrPath minimal = JcrPaths.getPath("/one/two/three/four");
+        JcrPath full = JcrPaths.getPath("/one[1]/two[1]/three[1]/four[1]");
 
         assertTrue("minimally-indexed path and fully-indexed path should be considered equal",
                 minimal.equals(full));
@@ -127,31 +127,31 @@ public class JcrPathTest {
 
     @Test
     public void starts_with() {
-        assertTrue(JcrPath.get("/my/test/path").startsWith("/my/test/"));
-        assertTrue(JcrPath.get("/my/test/path").startsWith("my/test/"));
-        assertTrue(JcrPath.get("/my/test/path").startsWith("/"));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith("/my/test/"));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith("my/test/"));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith("/"));
 
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("/my/test/")));
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("my/test/")));
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPath.get("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPath("/my/test/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPath("my/test/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getPath("/")));
 
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("/my")));
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("my")));
-        assertTrue(JcrPath.get("/my/test/path").startsWith(JcrPathSegment.get("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("/my")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("my")));
+        assertTrue(JcrPaths.getPath("/my/test/path").startsWith(JcrPaths.getSegment("/")));
     }
 
     @Test
     public void ends_with() {
-        assertTrue(JcrPath.get("/my/test/path").endsWith("/test/path"));
-        assertTrue(JcrPath.get("/my/test/path").endsWith("test/path"));
-        assertTrue(JcrPath.get("/my/test/path").endsWith("/"));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith("/test/path"));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith("test/path"));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith("/"));
 
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("/test/path")));
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("test/path")));
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPath.get("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPath("/test/path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPath("test/path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getPath("/")));
 
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("/path")));
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("path")));
-        assertTrue(JcrPath.get("/my/test/path").endsWith(JcrPathSegment.get("/")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("/path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("path")));
+        assertTrue(JcrPaths.getPath("/my/test/path").endsWith(JcrPaths.getSegment("/")));
     }
 }

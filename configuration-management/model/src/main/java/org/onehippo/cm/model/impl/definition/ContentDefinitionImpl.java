@@ -17,9 +17,10 @@ package org.onehippo.cm.model.impl.definition;
 
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl
         implements ContentDefinition {
@@ -64,7 +65,7 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
      */
     @Override
     public int compareTo(final ContentDefinition o) {
-        return this.getNode().getJcrPath().compareTo(JcrPath.get(o.getNode().getPath()));
+        return this.getNode().getJcrPath().compareTo(JcrPaths.getPath(o.getNode().getPath()));
     }
 
     public String toString() {

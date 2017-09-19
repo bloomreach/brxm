@@ -25,10 +25,11 @@ import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ValueType;
@@ -130,14 +131,14 @@ public class ConfigSourceParser extends SourceParser {
                     throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category
                             + "' cannot contain other keys", node);
                 }
-                final JcrPathSegment nameAndIndex = JcrPathSegment.get(definitionNode.getName());
+                final JcrPathSegment nameAndIndex = JcrPaths.getSegment(definitionNode.getName());
                 if (nameAndIndex.getIndex() > 0) {
                     throw new ParserException("'" + META_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }
                 definitionNode.setCategory(category);
             } else if (key.equals(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY)) {
-                final JcrPathSegment parsedName = JcrPathSegment.get(definitionNode.getName());
+                final JcrPathSegment parsedName = JcrPaths.getSegment(definitionNode.getName());
                 if (parsedName.getIndex() > 0) {
                     throw new ParserException("'" + META_RESIDUAL_CHILD_NODE_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);

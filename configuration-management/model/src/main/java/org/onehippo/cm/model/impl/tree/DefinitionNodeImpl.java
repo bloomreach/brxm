@@ -32,8 +32,8 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;

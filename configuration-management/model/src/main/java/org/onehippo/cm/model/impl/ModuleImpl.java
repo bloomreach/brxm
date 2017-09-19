@@ -46,7 +46,7 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;

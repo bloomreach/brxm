@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyType;
@@ -61,7 +62,7 @@ public class ConfigurationTreeBuilder {
 
     public ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
-        root.setName(JcrPathSegment.ROOT_NAME);
+        root.setName(JcrPaths.ROOT_NAME);
         root.setResidualNodeCategory(ConfigurationItemCategory.SYSTEM);
         root.setIgnoreReorderedChildren(true);
 
@@ -317,10 +318,10 @@ public class ConfigurationTreeBuilder {
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
         if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
-            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedName);
+            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
             for (String siblingIndexedName : node.getNodes().keySet()) {
-                final JcrPathSegment siblingNameAndIndex = JcrPathSegment.get(siblingIndexedName);
+                final JcrPathSegment siblingNameAndIndex = JcrPaths.getSegment(siblingIndexedName);
                 if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
                 }
@@ -438,7 +439,7 @@ public class ConfigurationTreeBuilder {
             }
         }
 
-        final JcrPathSegment nameAndIndex = JcrPathSegment.get(name);
+        final JcrPathSegment nameAndIndex = JcrPaths.getSegment(name);
         if (nameAndIndex.getIndex() > 1) {
             final String expectedSibling = createIndexedName(nameAndIndex.getName(), nameAndIndex.getIndex() - 1);
             if (parent.getNode(expectedSibling) == null) {

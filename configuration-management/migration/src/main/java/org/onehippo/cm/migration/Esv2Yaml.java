@@ -55,12 +55,13 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.serializer.MigrationConfigWriter;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.source.Source;
@@ -579,10 +580,10 @@ public class Esv2Yaml {
             final DefinitionNodeImpl definitionNode = orderedDefinitions.get(i);
             if (definitionNode.getDefinition().getSource() instanceof ContentSourceImpl
                     && i != orderedDefinitions.size() - 1 && definitionNode.isRoot()) {
-                final JcrPath currentParentPath = JcrPath.get(definitionNode.getPath()).getParent();
+                final JcrPath currentParentPath = JcrPaths.getPath(definitionNode.getPath()).getParent();
                 IntStream.range(i + 1, orderedDefinitions.size())
                         .mapToObj(orderedDefinitions::get)
-                        .filter(item -> currentParentPath.equals(JcrPath.get(item.getPath()).getParent()))
+                        .filter(item -> currentParentPath.equals(JcrPaths.getPath(item.getPath()).getParent()))
                         .findFirst()
                         .ifPresent(x -> definitionNode.setOrderBefore(x.getName()));
             }

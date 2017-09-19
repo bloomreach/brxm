@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.slf4j.Logger;
@@ -189,7 +190,7 @@ public abstract class AbstractBaseParser {
 
         for (String segment: pathSegments) {
             try {
-                final JcrPathSegment parsedName = JcrPathSegment.get(segment);
+                final JcrPathSegment parsedName = JcrPaths.getSegment(segment);
                 if (!allowSnsIndices && parsedName.getIndex() != 0) {
                     throw new ParserException("Path must not contain name indices", node);
                 }

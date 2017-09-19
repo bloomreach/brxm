@@ -25,13 +25,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
@@ -355,7 +356,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                                       final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                                       final Set<DefinitionNode> deltaNodes) {
         DefinitionNodeImpl node = parentNode;
-        JcrPath parentPath = JcrPath.get(nodePath);
+        JcrPath parentPath = JcrPaths.getPath(nodePath);
         for (JcrPathSegment parent : parentPath.relativize(parentNode.getJcrPath())) {
             node = node.addNode(parent.toString());
             node.getSourceLocation().copy(getInstructionNode().getSourceLocation());

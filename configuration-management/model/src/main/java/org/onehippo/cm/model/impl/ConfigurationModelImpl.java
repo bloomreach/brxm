@@ -36,11 +36,12 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -381,7 +382,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationNodeImpl resolveNode(String path) {
-        return resolveNode(JcrPath.get(path));
+        return resolveNode(JcrPaths.getPath(path));
     }
 
     /**
@@ -407,7 +408,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationPropertyImpl resolveProperty(String path) {
-        return resolveProperty(JcrPath.get(path));
+        return resolveProperty(JcrPaths.getPath(path));
     }
 
     /**
