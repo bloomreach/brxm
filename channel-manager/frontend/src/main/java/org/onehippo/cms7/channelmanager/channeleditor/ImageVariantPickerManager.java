@@ -18,10 +18,10 @@ package org.onehippo.cms7.channelmanager.channeleditor;
 
 import javax.jcr.Node;
 
+import org.hippoecm.frontend.dialog.DialogBehavior;
+import org.hippoecm.frontend.dialog.ConfigProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin;
-import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
@@ -37,38 +37,19 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFact
  * When done the method 'ChannelEditor#onImageVariantPicked' is called.
  * Cancelling the dialog calls 'ChannelEditor#onImageVariantPickCancelled'.
  */
-class ImageVariantPickerManager extends PickerManager {
+public class ImageVariantPickerManager extends LinkPickerManager<RichTextEditorImageLink> {
 
-    private final ImagePickerBehavior behavior;
+    public ImageVariantPickerManager(final IPluginContext context, final String channelEditorId) {
+        super(context, CKEditorNodePlugin.DEFAULT_IMAGE_PICKER_CONFIG, channelEditorId);
+    }
 
-    ImageVariantPickerManager(final IPluginContext context, final String channelEditorId) {
-        super(CKEditorNodePlugin.DEFAULT_IMAGE_PICKER_CONFIG);
-
+    @Override
+    protected DialogBehavior<RichTextEditorImageLink> createBehavior(final IPluginContext context,
+                                                                     final ConfigProvider configProvider) {
         final Model<Node> fieldNodeModel = getFieldNodeModel();
         final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(fieldNodeModel,
                 WicketNodeFactory.INSTANCE, WicketURLEncoder.INSTANCE);
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
-        behavior = new StatelessImagePickerBehavior(context, getPickerConfig(), imageService);
-        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onPicked", fieldNodeModel));
-        behavior.setCancelAction(image -> getCancelScript(channelEditorId));
-    }
-
-    ImagePickerBehavior getBehavior() {
-        return behavior;
-    }
-
-    private class StatelessImagePickerBehavior extends ImagePickerBehavior {
-
-        StatelessImagePickerBehavior(final IPluginContext context,
-                                     final IPluginConfig dialogConfig,
-                                     final RichTextEditorImageService imageService) {
-            super(context, dialogConfig, imageService);
-        }
-
-        @Override
-        protected AbstractRichTextEditorDialog<RichTextEditorImageLink> createDialog() {
-            initPicker(getParameters());
-            return super.createDialog();
-        }
+        return new ImagePickerBehavior(context, configProvider, imageService);
     }
 }

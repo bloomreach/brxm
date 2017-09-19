@@ -1,77 +1,110 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.onehippo.cms7.channelmanager.channeleditor;
 
-import javax.jcr.Node;
+import java.util.Map;
 
-import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin;
-import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
+import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
-import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Manages the picker dialog for internal links in rich text fields. The behavior can be called by the frontend to
- * open the link picker. When done the method 'ChannelEditor#onLinkPicked' is called.
+ * Base class manager for a picker dialog in richtext fields. Contains the generic code for parsing AJAX parameters:
+ *
+ * - 'fieldId' contains the UUID of the compound node of the rich text field, so the dialog configuration can determine
+ *   the field-node-specific settings
  */
-class LinkPickerManager extends PickerManager {
 
-    private final LinkPickerBehavior behavior;
+public class LinkPickerManager<Item extends RichTextEditorLink> extends PickerManager<Item> {
 
-    LinkPickerManager(final IPluginContext context, final String channelEditorId) {
-        super(CKEditorNodePlugin.DEFAULT_LINK_PICKER_CONFIG);
+    public static final Logger log = LoggerFactory.getLogger(LinkPickerManager.class);
 
-        final Model<Node> fieldNodeModel = this.getFieldNodeModel();
-        final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(fieldNodeModel, WicketNodeFactory.INSTANCE);
-        final RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
-        behavior = new StatelessLinkPickerBehavior(context, getPickerConfig(), linkService);
-        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onPicked", fieldNodeModel));
-        behavior.setCancelAction(link -> getCancelScript(channelEditorId));
+    private String fieldId;
+
+    LinkPickerManager(final IPluginContext context, final IPluginConfig defaultPickerConfig, final String channelEditorId) {
+        super(context, defaultPickerConfig, channelEditorId);
     }
 
-    LinkPickerBehavior getBehavior() {
-        return behavior;
+    @Override
+    protected void onConfigure(final IPluginConfig defaultDialogConfig, final Map<String, String> parameters) {
+        fieldId = parameters.get("fieldId");
     }
 
-    private class StatelessLinkPickerBehavior extends LinkPickerBehavior {
+    @Override
+    protected boolean isValid(final Item pickedItem) {
+        return savePendingChanges();
+    }
 
-        StatelessLinkPickerBehavior(final IPluginContext context,
-                                    final IPluginConfig dialogConfig,
-                                    final RichTextEditorLinkService linkService) {
-            super(context, dialogConfig, linkService);
+    @Override
+    protected String toJsString(final Item pickedItem) {
+        return pickedItem.toJsString();
+    }
+
+    Node getFieldNode() {
+        try {
+            return UserSession.get().getJcrSession().getNodeByIdentifier(fieldId);
+        } catch (IllegalArgumentException | RepositoryException e) {
+            log.info("Cannot find document '{}' while opening link picker", fieldId);
         }
+        return null;
+    }
 
-        @Override
-        protected AbstractRichTextEditorDialog<RichTextEditorDocumentLink> createDialog() {
-            initPicker(getParameters());
+    Model<Node> getFieldNodeModel() {
+        return new Model<Node>() {
+            @Override
+            public Node get() {
+                return getFieldNode();
+            }
 
-            final JavaPluginConfig pickerConfig = getPickerConfig();
-            final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pickerConfig, LinkPickerManager.this::getFieldNode);
-            pickerConfig.putAll(dialogConfig);
+            @Override
+            public void set(final Node value) {
+            }
 
-            return super.createDialog();
+            @Override
+            public void release() {
+            }
+        };
+    }
+
+    private boolean savePendingChanges() {
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.save();
+            return true;
+        } catch (RepositoryException e) {
+            final String user = session.getUserID();
+            log.warn("User '{}' failed to save session when closing picker, discarding changes. Cause:", user, e);
+            discardChangesInField();
+            return false;
+        }
+    }
+
+    private void discardChangesInField() {
+        try {
+            getFieldNodeModel().get().refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Also failed to discard changes", e);
         }
     }
 }
