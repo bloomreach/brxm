@@ -22,6 +22,7 @@
   </Appenders>
   <Loggers>
     <Logger name="org.hippoecm.frontend" level="info"/>
+    <Logger name="org.hippoecm.frontend.util" level="warn"/>
     <Root level="warn">
       <AppenderRef ref="console"/>
     </Root>
