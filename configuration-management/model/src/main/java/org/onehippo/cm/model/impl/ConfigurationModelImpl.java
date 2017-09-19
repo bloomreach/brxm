@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
@@ -265,12 +264,11 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         final ConfigurationNodeImpl deletedRootNode = resolveDeletedSubNodeRoot(path);
         if (deletedRootNode != null) {
-            String commonPrefix = StringUtils.getCommonPrefix(path.toString(), deletedRootNode.getJcrPath().toString());
-            int commonSegmentsCount = commonPrefix.split("/").length - 1;
-            final JcrPath subpath = path.subpath(commonSegmentsCount, path.getSegmentCount());
+            final JcrPath pathDiff = deletedRootNode.getJcrPath().relativize(path);
             ConfigurationNodeImpl currentNode = deletedRootNode;
-            for (final JcrPathSegment jcrPathSegment : subpath) {
-                currentNode = currentNode.getNode(jcrPathSegment);
+            for (final JcrPathSegment jcrPathSegment : pathDiff) {
+                currentNode = currentNode.getNodes().getOrDefault(jcrPathSegment.toString(),
+                        currentNode.getNodes().get(jcrPathSegment.forceIndex().toString()));
                 if (currentNode == null) {
                     break; //wrong path
                 } else if (currentNode.getJcrPath().equals(path)) {
