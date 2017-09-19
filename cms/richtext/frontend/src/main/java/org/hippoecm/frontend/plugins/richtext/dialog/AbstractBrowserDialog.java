@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
             @Override
             protected void onSelect(boolean isValid) {
                 IModel<Node> selectedModel = getSelectedModel();
-                if(isValid && selectedModel != null) {
+                if (isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
                     onModelSelected(selectedModel);
                     checkState();
@@ -106,7 +106,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     public void render(PluginRequestTarget target) {
         super.render(target);
 
-        if(controller.getRenderer() != null) {
+        if (controller.getRenderer() != null) {
             controller.getRenderer().render(target);
         }
     }
