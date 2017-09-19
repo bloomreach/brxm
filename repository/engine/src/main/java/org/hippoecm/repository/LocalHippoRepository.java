@@ -46,7 +46,8 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.modules.ModuleManager;
-import org.onehippo.services.lock.LockManagerFactory;
+import org.onehippo.repository.lock.InternalLockManager;
+import org.onehippo.repository.lock.LockManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private String repoConfig;
 
     private ConfigurationServiceImpl configurationService;
-    private LockManager lockManager;
+    private InternalLockManager lockManager;
 
     private ModuleManager moduleManager;
 
@@ -259,7 +260,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         jackrabbitRepository = new LocalRepositoryImpl(createRepositoryConfig());
 
         lockManager = new LockManagerFactory(jackrabbitRepository).create();
-        HippoServiceRegistry.registerService(lockManager, LockManager.class);
+        HippoServiceRegistry.registerService(lockManager, new Class[]{LockManager.class, InternalLockManager.class});
 
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);

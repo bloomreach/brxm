@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.services.lock.db;
+package org.onehippo.repository.lock.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,7 +36,10 @@ public class DbHelper {
      * @param dataSource
      * @param tableName
      */
-    public static void createTableIfNeeded(final DataSource dataSource, final String createTableStatement, final String tableName) throws RuntimeException {
+    public static void createTableIfNeeded(final DataSource dataSource,
+                                           final String createTableStatement,
+                                           final String tableName,
+                                           final String... uniqueIndexes) throws RuntimeException {
         try {
             try (Connection connection = dataSource.getConnection()) {
                 final boolean tableExists = tableExists(connection, tableName);
@@ -44,7 +47,9 @@ public class DbHelper {
                     log.info("Creating table {} ", tableName);
                     try (Statement statement = connection.createStatement()) {
                         statement.addBatch(String.format(createTableStatement, tableName));
-                        statement.addBatch("CREATE UNIQUE INDEX " + tableName + "_idx_1 on " + tableName + "(lockkey)");
+                        for (String uniqueIndex : uniqueIndexes) {
+                            statement.addBatch("CREATE UNIQUE INDEX " + tableName + "_idx_1 on " + tableName + "("+uniqueIndex+")");
+                        }
                         statement.setQueryTimeout(10);
                         statement.executeBatch();
                     } catch (SQLException e) {
@@ -68,6 +73,19 @@ public class DbHelper {
                 null,
                 connection.getMetaData().storesUpperCaseIdentifiers() ? tableName.toUpperCase() : tableName, null);
         return resultSet.next();
+    }
+
+
+    public static void close(final Connection connection, final boolean originalAutoCommit)  {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.setAutoCommit(originalAutoCommit);
+            connection.close();
+        } catch (SQLException e) {
+            log.error("Failed to close connection.", e);
+        }
     }
 
 }

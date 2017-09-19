@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.services.lock;
+package org.onehippo.repository.lock;
 
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.repository.lock.MutableLock;
+import org.onehippo.repository.lock.memory.MemoryLockManager;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.junit.Assert.assertEquals;
@@ -43,11 +46,11 @@ public class MemoryLockManagerTest {
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
         assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
 
-        assertEquals(2, ((MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
+        assertEquals(2, ((MutableLock)memoryLockManager.getLocks().iterator().next()).holdCount);
 
         memoryLockManager.unlock("123");
         assertEquals(1, memoryLockManager.getLocks().size());
-        assertEquals(1, ((MemoryLock)memoryLockManager.getLocks().iterator().next()).holdCount);
+        assertEquals(1, ((MutableLock)memoryLockManager.getLocks().iterator().next()).holdCount);
 
 
         memoryLockManager.unlock("123");
@@ -98,13 +101,16 @@ public class MemoryLockManagerTest {
         Thread lockThread = new Thread(() -> {
             try {
                 memoryLockManager.lock("123");
-            } catch (LockException e) {
-                e.printStackTrace();
+                // make sure the lock thread is alive long enough
+                Thread.sleep(200);
+            } catch (LockException | InterruptedException e) {
+                fail(e.toString());
             }
         });
 
         lockThread.start();
-        lockThread.join();
+        // give time to the lockThread
+        Thread.sleep(100);
 
         try {
             memoryLockManager.unlock("123");
@@ -119,13 +125,17 @@ public class MemoryLockManagerTest {
         Thread lockThread = new Thread(() -> {
             try {
                 memoryLockManager.lock("123");
-            } catch (LockException e) {
-                e.printStackTrace();
+                // make sure the lock thread is alive long enough
+                Thread.sleep(200);
+            } catch (LockException | InterruptedException e) {
+                fail(e.toString());
             }
         });
 
         lockThread.start();
-        lockThread.join();
+
+        // give time for the lockThread to retrieve the lock
+        Thread.sleep(100);
 
         try {
             memoryLockManager.lock("123");
@@ -137,26 +147,20 @@ public class MemoryLockManagerTest {
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
         assertEquals(lockThread.getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
 
-        // set the lock thread to null and make it eligible for GC ....however since the lock has not been unlocked, we
-        // do expect a warning
-        lockThread = null;
+        // wait for the lockThread to finish : it did not unlock but since the thread is not live any more, the lock
+        // should again be eligible for other threads
+        lockThread.join();
 
-        long l = System.currentTimeMillis();
-        while (tryFor10Seconds(l)) {
-            System.gc();
-            if (memoryLockManager.getLocks().size() == 0) {
-                break;
-            }
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class).build()) {
+            assertEquals(0, memoryLockManager.getLocks().size());
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Thread that created the lock already stopped")));
         }
 
-        assertEquals(0, memoryLockManager.getLocks().size());
         // main thread can lock again
         memoryLockManager.lock("123");
         assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
         assertEquals(Thread.currentThread().getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
     }
 
-    private boolean tryFor10Seconds(final long l) {
-        return System.currentTimeMillis() - l < 10000;
-    }
 }

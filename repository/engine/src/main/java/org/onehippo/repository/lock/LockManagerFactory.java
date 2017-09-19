@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.services.lock;
+package org.onehippo.repository.lock;
 
 import javax.jcr.RepositoryException;
 import javax.sql.DataSource;
@@ -22,6 +22,8 @@ import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.repository.lock.db.DbLockManager;
+import org.onehippo.repository.lock.memory.MemoryLockManager;
 
 public class LockManagerFactory {
 
@@ -37,15 +39,15 @@ public class LockManagerFactory {
      * @throws RuntimeException if the lock manager cannot be created, resulting the repository startup to short-circuit
      * @throws RepositoryException if a repository exception happened while creating the lock manager
      */
-    public LockManager create() throws RuntimeException, RepositoryException {
+    public AbstractLockManager create() throws RuntimeException, RepositoryException {
 
         final ConnectionHelper journalConnectionHelper = repositoryImpl.getJournalConnectionHelperAccessor().getConnectionHelper();
         if (journalConnectionHelper != null) {
             final DataSource dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelper);
             String clusterNodeId = repositoryImpl.getDescriptor("jackrabbit.cluster.id");
-            return new AssertingLockManager(new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId));
+            return new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
         } else {
-            return new AssertingLockManager(new MemoryLockManager());
+            return new MemoryLockManager();
         }
     }
 }

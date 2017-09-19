@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.services.lock;
+package org.onehippo.repository.lock;
 
 import java.lang.ref.WeakReference;
 
 import org.onehippo.cms7.services.lock.Lock;
 
-public abstract class AbstractLock extends Lock {
+public class MutableLock extends Lock {
 
     private WeakReference<Thread> thread;
 
     int holdCount;
 
-    public AbstractLock(final String lockKey, final String lockOwner, final String lockThread, final long creationTime) {
+    public MutableLock(final String lockKey, final String lockOwner, final String lockThread, final long creationTime) {
         super(lockKey, lockOwner, lockThread, creationTime);
         thread = new WeakReference<>(Thread.currentThread());
         holdCount = 1;
@@ -33,10 +33,6 @@ public abstract class AbstractLock extends Lock {
 
     public WeakReference<Thread> getThread() {
         return thread;
-    }
-
-    public void setThread(final WeakReference<Thread> thread) {
-        this.thread = thread;
     }
 
     public void increment() {
@@ -51,5 +47,4 @@ public abstract class AbstractLock extends Lock {
         return holdCount;
     }
 
-    abstract void destroy();
 }
