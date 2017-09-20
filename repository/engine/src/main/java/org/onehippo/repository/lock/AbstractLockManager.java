@@ -34,7 +34,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
     /**
      * This locks object contains only the locks held by the *current* JVM
      */
-    protected final Map<String, MutableLock> localLocks = new HashMap<>();
+    private final Map<String, MutableLock> localLocks = new HashMap<>();
 
     private final ScheduledExecutorService scheduledExecutorService;
 
@@ -265,6 +265,13 @@ public abstract class AbstractLockManager implements InternalLockManager {
             longestIntervalSeconds = periodSeconds;
         }
         scheduledExecutorService.scheduleAtFixedRate(synchronizedRunnable, initialDelaySeconds, periodSeconds, SECONDS);
+    }
+
+    /**
+     * @return a copy of {@code localLocks}
+     */
+    public synchronized Map<String, MutableLock> getLocalLocks() {
+        return new HashMap<>(localLocks);
     }
 
     public class UnlockStoppedThreadJanitor implements Runnable {

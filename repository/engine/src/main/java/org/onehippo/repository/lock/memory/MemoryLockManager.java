@@ -55,11 +55,11 @@ public class MemoryLockManager extends AbstractLockManager {
 
     @Override
     protected synchronized boolean containsLock(final String key) throws LockException {
-        return localLocks.containsKey(key);
+        return getLocalLocks().containsKey(key);
     }
 
     @Override
     protected synchronized List<Lock> retrieveLocks() throws LockException {
-        return new ArrayList<>(localLocks.values());
+        return new ArrayList<>(getLocalLocks().values());
     }
 }

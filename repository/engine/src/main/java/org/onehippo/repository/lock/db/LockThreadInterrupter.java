@@ -39,16 +39,17 @@ public class LockThreadInterrupter implements Runnable {
 
     private final DataSource dataSource;
     private final String clusterNodeId;
-    private final Map<String, MutableLock> locks;
+    private final DbLockManager dbLockManager;
 
 
     public static final String SELECT_ABORT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='ABORT' AND lockOwner=?";
 
-    public LockThreadInterrupter(final DataSource dataSource, final String clusterNodeId, final Map<String, MutableLock> locks) {
+    public LockThreadInterrupter(final DataSource dataSource, final String clusterNodeId, final DbLockManager dbLockManager) {
         this.dataSource = dataSource;
         this.clusterNodeId = clusterNodeId;
-        this.locks = locks;
+        this.dbLockManager = dbLockManager;
     }
+
 
     public void run() {
         Connection connection = null;
@@ -69,7 +70,7 @@ public class LockThreadInterrupter implements Runnable {
                     continue;
                 }
                 boolean lockThreadForAbortFound = false;
-                for (MutableLock lock : locks.values()) {
+                for (MutableLock lock : dbLockManager.getLocalLocks().values()) {
                     Thread thread = lock.getThread().get();
                     if (thread == null || !thread.isAlive()) {
                        // ignore since will be picked up by org.onehippo.services.lock.AbstractLockManager.UnlockStoppedThreadJanitor

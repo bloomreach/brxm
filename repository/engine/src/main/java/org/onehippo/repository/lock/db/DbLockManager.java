@@ -97,7 +97,7 @@ public class DbLockManager extends AbstractLockManager {
         addJob(new UnlockStoppedThreadJanitor());
         addJob(new DbResetExpiredLocksJanitor(dataSource));
         addJob(new DbLockRefresher(dataSource, clusterNodeId));
-        addJob(new LockThreadInterrupter(dataSource, clusterNodeId, localLocks));
+        addJob(new LockThreadInterrupter(dataSource, clusterNodeId, this));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    synchronized protected MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException {
+    protected synchronized MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -156,7 +156,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    synchronized protected void releasePersistedLock(final String key, final String threadName) throws LockException {
+    protected synchronized void releasePersistedLock(final String key, final String threadName) throws LockException {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -198,7 +198,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    synchronized protected void abortPersistedLock(final String key) throws LockException {
+    protected synchronized void abortPersistedLock(final String key) throws LockException {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -229,7 +229,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected boolean containsLock(final String key) throws LockException {
+    protected synchronized boolean containsLock(final String key) throws LockException {
         try (Connection connection = dataSource.getConnection()) {
             final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
             selectStatement.setString(1, key);
@@ -255,7 +255,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected List<Lock> retrieveLocks() throws LockException {
+    protected synchronized List<Lock> retrieveLocks() throws LockException {
         try (Connection connection = dataSource.getConnection()) {
             final PreparedStatement selectStatement = connection.prepareStatement(ALL_LOCKED_STATEMENT);
             ResultSet resultSet = selectStatement.executeQuery();
