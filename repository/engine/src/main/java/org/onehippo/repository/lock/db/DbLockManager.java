@@ -80,7 +80,7 @@ public class DbLockManager extends AbstractLockManager {
             "WHERE lockKey=?";
 
     // Abort time MUST keep the expirationTime???
-    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + "SET " +
+    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
             "status='ABORT', " +
             "lockTime=0, " +
             "expirationTime=0, " +
