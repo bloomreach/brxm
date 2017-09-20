@@ -23,7 +23,7 @@ public class MutableLock extends Lock {
 
     private WeakReference<Thread> thread;
 
-    int holdCount;
+    private int holdCount;
 
     public MutableLock(final String lockKey, final String lockOwner, final String lockThread,
                        final long creationTime, final String status) {

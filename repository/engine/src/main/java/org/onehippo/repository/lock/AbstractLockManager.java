@@ -124,18 +124,18 @@ public abstract class AbstractLockManager implements InternalLockManager {
                     lockThread.getName()));
         }
         lock.decrement();
-        if (lock.holdCount < 0) {
+        if (lock.getHoldCount() < 0) {
             getLogger().error("Hold count of lock should never be able to be less than 0. Core implementation issue in {}. Remove " +
                             "lock for {} nonetheless.",
                     this.getClass().getName(), key);
             localLocks.remove(key);
             releasePersistedLock(key, lockThread.getName());
-        } else if (lock.holdCount == 0) {
+        } else if (lock.getHoldCount() == 0) {
             getLogger().debug("Remove lock '{}'", key);
             localLocks.remove(key);
             releasePersistedLock(key, lockThread.getName());
         } else {
-            getLogger().debug("Lock '{}' will not be removed since hold count is '{}'", key, lock.holdCount);
+            getLogger().debug("Lock '{}' will not be removed since hold count is '{}'", key, lock.getHoldCount());
         }
 
     }
@@ -164,6 +164,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
                 throw new LockException(msg);
             }
         }
+
         abortPersistedLock(key);
     }
 
