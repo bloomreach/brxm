@@ -50,68 +50,8 @@ import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
-public class LockManagerTest extends RepositoryTestCase {
+public class LockManagerBasicTest extends AbstractLockManagerTest {
 
-    private InternalLockManager lockManager;
-    // dataSource is not null in case of cluster Db test
-    private DataSource dataSource;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        lockManager = (InternalLockManager)HippoServiceRegistry.getService(LockManager.class);
-
-        Repository repository = server.getRepository();
-        if (repository instanceof RepositoryDecorator) {
-            repository = RepositoryDecorator.unwrap(repository);
-        }
-        if (repository instanceof RepositoryImpl) {
-            JournalConnectionHelperAccessor journalConnectionHelperAccessor = ((RepositoryImpl)repository).getJournalConnectionHelperAccessor();
-            if (journalConnectionHelperAccessor.getConnectionHelper() != null) {
-                // running a cluster db test
-                dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelperAccessor.getConnectionHelper());
-            }
-        }
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-
-        lockManager.clear();
-
-        // DELETE ALL ROWS if there are any present
-        if (dataSource != null) {
-            Connection connection = null;
-            boolean originalAutoCommit = false;
-            try {
-                connection = dataSource.getConnection();
-                originalAutoCommit = connection.getAutoCommit();
-                connection.setAutoCommit(true);
-                final PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM hippo_lock");
-                deleteStatement.execute();
-
-            } catch (SQLException e) {
-                fail("Failed to delete rows : " + e.toString());
-            } finally {
-                close(connection, originalAutoCommit);
-            }
-        }
-        super.tearDown();
-    }
-
-    private void close(final Connection connection, final boolean originalAutoCommit)  {
-        if (connection == null) {
-            return;
-        }
-        try {
-            connection.setAutoCommit(originalAutoCommit);
-            connection.close();
-        } catch (SQLException e) {
-            log.error("Failed to close connection.", e);
-        }
-    }
 
     @Test
     public void general_single_threaded_lock_interaction() throws Exception {
@@ -144,34 +84,6 @@ public class LockManagerTest extends RepositoryTestCase {
         // now we should be able to lock again
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
-    }
-
-    private void dbRowAssertion(final String key, final String expectedStatus) throws SQLException {
-        dbRowAssertion(key, expectedStatus, null, null);
-    }
-
-    private void dbRowAssertion(final String key, final String expectedStatus, final String lockOwnerExpectation, final String lockThreadExpectation) throws SQLException {
-        if (dataSource == null) {
-            // not a clustered db test
-            return;
-        }
-
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
-            selectStatement.setString(1, key);
-            ResultSet resultSet = selectStatement.executeQuery();
-            if (resultSet.next()) {
-                assertEquals(expectedStatus, resultSet.getString("status"));
-                if (lockOwnerExpectation != null) {
-                    assertEquals(lockOwnerExpectation, resultSet.getString("lockOwner"));
-                }
-                if (lockThreadExpectation != null) {
-                    assertEquals(lockThreadExpectation, resultSet.getString("lockThread"));
-                }
-            } else {
-                fail(String.format("A row with lockKey '%s' should exist", key));
-            }
-        }
     }
 
     private void assertDbRowDoesExist(final String key) throws SQLException {
@@ -246,10 +158,11 @@ public class LockManagerTest extends RepositoryTestCase {
         }
     }
 
-    class LockRunnable implements Runnable {
+    protected class LockRunnable implements Runnable {
 
         private String key;
         private volatile boolean keepAlive;
+        private Exception e;
 
         LockRunnable(final String key , final boolean keepAlive) {
             this.key = key;
@@ -264,12 +177,7 @@ public class LockManagerTest extends RepositoryTestCase {
                     Thread.sleep(25);
                 }
             } catch (LockException | InterruptedException e) {
-                try {
-                    dbRowAssertion(key, "RUNNING");
-                } catch (SQLException e1) {
-                    fail(e1.toString());
-                }
-                fail(e.toString());
+                this.e = e;
             }
         }
     }
@@ -284,7 +192,7 @@ public class LockManagerTest extends RepositoryTestCase {
         // give lockThread time to lock
         Thread.sleep(100);
 
-        dbRowAssertion(key, "RUNNING", "node1", lockThread.getName());
+        dbRowAssertion(key, "RUNNING", CLUSTER_NODE_ID, lockThread.getName());
 
         try {
             lockManager.unlock(key);
@@ -299,6 +207,9 @@ public class LockManagerTest extends RepositoryTestCase {
         // after the thread is finished, the lock manager should have no locks any more
         lockThread.join();
 
+        if (runnable.e != null) {
+            fail(runnable.e.toString());
+        }
 
     }
 
@@ -324,6 +235,10 @@ public class LockManagerTest extends RepositoryTestCase {
 
         runnable.keepAlive = false;
         lockThread.join();
+
+        if (runnable.e != null) {
+            fail(runnable.e.toString());
+        }
 
         assertEquals(0, lockManager.getLocks().size());
         dbRowAssertion(key, "FREE");
@@ -370,37 +285,6 @@ public class LockManagerTest extends RepositoryTestCase {
                 } else {
                     fail(String.format("A row with lockKey '%s' should exist", "a"));
                 }
-            }
-        }
-    }
-
-    private void addManualLockToDatabase(final String key, final String clusterNodeId,
-                                         final String threadName, final int refreshRateSeconds) throws LockException {
-        if (dataSource != null) {
-            Connection connection = null;
-            boolean originalAutoCommit = false;
-            try {
-                connection = dataSource.getConnection();
-                originalAutoCommit = connection.getAutoCommit();
-
-                final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
-                connection.setAutoCommit(true);
-                createStatement.setString(1, key);
-                createStatement.setString(2, clusterNodeId);
-                createStatement.setString(3, threadName);
-                long lockTime = System.currentTimeMillis();
-                createStatement.setLong(4, lockTime);
-                createStatement.setLong(5, refreshRateSeconds);
-                createStatement.setLong(6, lockTime + refreshRateSeconds * 1000);
-                try {
-                    createStatement.execute();
-                } catch (SQLException e) {
-                    throw new LockException(String.format("Cannot create lock row for '{}'", key), e);
-                }
-            } catch (SQLException e) {
-                fail("Failed to delete rows : " + e.toString());
-            } finally {
-                close(connection, originalAutoCommit);
             }
         }
     }

@@ -1,0 +1,167 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.onehippo.repository.lock;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.jcr.Repository;
+import javax.sql.DataSource;
+
+import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
+import org.hippoecm.repository.impl.RepositoryDecorator;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
+import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
+
+public abstract class AbstractLockManagerTest extends RepositoryTestCase {
+
+    protected final String CLUSTER_NODE_ID = "node1";
+
+    protected InternalLockManager lockManager;
+    // dataSource is not null in case of cluster Db test
+    protected DataSource dataSource;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        lockManager = (InternalLockManager)HippoServiceRegistry.getService(LockManager.class);
+
+        Repository repository = server.getRepository();
+        if (repository instanceof RepositoryDecorator) {
+            repository = RepositoryDecorator.unwrap(repository);
+        }
+        if (repository instanceof RepositoryImpl) {
+            JournalConnectionHelperAccessor journalConnectionHelperAccessor = ((RepositoryImpl)repository).getJournalConnectionHelperAccessor();
+            if (journalConnectionHelperAccessor.getConnectionHelper() != null) {
+                // running a cluster db test
+                dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelperAccessor.getConnectionHelper());
+            }
+        }
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        lockManager.clear();
+        // DELETE ALL ROWS if there are any present
+        if (dataSource != null) {
+            Connection connection = null;
+            boolean originalAutoCommit = false;
+            try {
+                connection = dataSource.getConnection();
+                originalAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(true);
+                final PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM hippo_lock");
+                deleteStatement.execute();
+
+            } catch (SQLException e) {
+                fail("Failed to delete rows : " + e.toString());
+            } finally {
+                close(connection, originalAutoCommit);
+            }
+        }
+        super.tearDown();
+    }
+
+    private void close(final Connection connection, final boolean originalAutoCommit)  {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.setAutoCommit(originalAutoCommit);
+            connection.close();
+        } catch (SQLException e) {
+            log.error("Failed to close connection.", e);
+        }
+    }
+
+    protected void dbRowAssertion(final String key, final String expectedStatus) throws SQLException {
+        dbRowAssertion(key, expectedStatus, null, null);
+    }
+
+    protected void dbRowAssertion(final String key, final String expectedStatus, final String lockOwnerExpectation, final String lockThreadExpectation) throws SQLException {
+        if (dataSource == null) {
+            // not a clustered db test
+            return;
+        }
+
+        try (Connection connection = dataSource.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+            selectStatement.setString(1, key);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                assertEquals(expectedStatus, resultSet.getString("status"));
+                if (lockOwnerExpectation != null) {
+                    assertEquals(lockOwnerExpectation, resultSet.getString("lockOwner"));
+                }
+                if (lockThreadExpectation != null) {
+                    assertEquals(lockThreadExpectation, resultSet.getString("lockThread"));
+                }
+            } else {
+                fail(String.format("A row with lockKey '%s' should exist", key));
+            }
+        }
+    }
+
+    protected void addManualLockToDatabase(final String key, final String clusterNodeId,
+                                           final String threadName, final int refreshRateSeconds) throws LockException {
+        if (dataSource != null) {
+            Connection connection = null;
+            boolean originalAutoCommit = false;
+            try {
+                connection = dataSource.getConnection();
+                originalAutoCommit = connection.getAutoCommit();
+
+                final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
+                connection.setAutoCommit(true);
+                createStatement.setString(1, key);
+                createStatement.setString(2, clusterNodeId);
+                createStatement.setString(3, threadName);
+                long lockTime = System.currentTimeMillis();
+                createStatement.setLong(4, lockTime);
+                createStatement.setLong(5, refreshRateSeconds);
+                createStatement.setLong(6, lockTime + refreshRateSeconds * 1000);
+                try {
+                    createStatement.execute();
+                } catch (SQLException e) {
+                    throw new LockException(String.format("Cannot create lock row for '{}'", key), e);
+                }
+            } catch (SQLException e) {
+                fail("Failed to delete rows : " + e.toString());
+            } finally {
+                close(connection, originalAutoCommit);
+            }
+        }
+    }
+
+
+
+
+}
