@@ -36,13 +36,14 @@ import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
@@ -169,8 +170,8 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         final ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
         if (configNode == null) {
             //is it a deleted node or subnode?
-            ConfigurationNodeImpl deletedNode = configurationModel.resolveDeletedNode(JcrPath.get(jcrPath));
-            deletedNode = deletedNode != null ? deletedNode : configurationModel.resolveDeletedSubNode(JcrPath.get(jcrPath));
+            ConfigurationNodeImpl deletedNode = configurationModel.resolveDeletedNode(JcrPaths.getPath(jcrPath));
+            deletedNode = deletedNode != null ? deletedNode : configurationModel.resolveDeletedSubNode(JcrPaths.getPath(jcrPath));
             if (deletedNode != null) {
                 //run export delta against deleted node
                 exportConfigNodeDelta(jcrNode, deletedNode, configSource);

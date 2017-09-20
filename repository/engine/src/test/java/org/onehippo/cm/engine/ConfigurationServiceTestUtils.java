@@ -26,14 +26,15 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 
 public class ConfigurationServiceTestUtils {
 
     public static String createChildNodesString(final Node node) throws RepositoryException {
         final List<JcrPathSegment> names = new ArrayList<>();
         for (Node child : new NodeIterable(node.getNodes())) {
-            names.add(JcrPathSegment.get(child));
+            names.add(JcrPaths.getSegment(child));
         }
         if (!node.getPrimaryNodeType().hasOrderableChildNodes()) {
             Collections.sort(names);

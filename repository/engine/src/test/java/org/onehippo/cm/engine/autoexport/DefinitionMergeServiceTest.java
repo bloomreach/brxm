@@ -22,7 +22,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cm.engine.autoexport.DefinitionMergeService.getIncorrectlyOrdered;
@@ -59,7 +60,7 @@ public class DefinitionMergeServiceTest {
     private ImmutableList<JcrPathSegment> parse(final String string) {
         final List<JcrPathSegment> result = new ArrayList<>();
         for (final String segment : string.substring(1, string.length() - 1).split(",")) {
-            result.add(JcrPathSegment.get(segment.trim()));
+            result.add(JcrPaths.getSegment(segment.trim()));
         }
         return ImmutableList.copyOf(result);
     }

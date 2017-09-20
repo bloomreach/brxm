@@ -64,8 +64,8 @@ import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
@@ -77,6 +77,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionItem;
@@ -421,7 +422,7 @@ public class DefinitionMergeService {
         final List<JcrPathSegment> expectedOrder = new ArrayList<>();
 
         for (final Node child : new NodeIterable(jcrNode.getNodes())) {
-            final JcrPathSegment segment = JcrPathSegment.get(child);
+            final JcrPathSegment segment = JcrPaths.getSegment(child);
             if (configurationNode != null) {
                 if (configurationNode.getChildNodeCategory(segment.forceIndex().toString()) == SYSTEM) {
                     log.info("Not including node '{}' while reordering '{}'; the node is category 'system'",
@@ -625,7 +626,7 @@ public class DefinitionMergeService {
         }
         else {
             // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
-            final JcrPath incomingPath = JcrPath.get("/hippo:namespaces", nsd.getPrefix());
+            final JcrPath incomingPath = JcrPaths.getPath("/hippo:namespaces", nsd.getPrefix());
 
             // what module should we put it in?
             final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath);
@@ -966,7 +967,7 @@ public class DefinitionMergeService {
         // for the sake of creating new source files, we always want to use the minimally-indexed path
         // to avoid annoying and unnecessary "[1]" tags on filenames
         final String minimallyIndexedPath = incomingPath.toMinimallyIndexedPath().toString();
-        return JcrPath.get(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
+        return JcrPaths.getPath(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
                 .equals(incomingPath);
     }
 
@@ -1725,7 +1726,7 @@ public class DefinitionMergeService {
 
         for (final String changePath : contentChangesByPath) {
             // is there an existing source for this exact path? if so, use that
-            final JcrPath changeNodePath = JcrPath.get(changePath);
+            final JcrPath changeNodePath = JcrPaths.getPath(changePath);
             if (existingSourcesByNodePath.containsKey(changeNodePath)) {
                 // mark it changed for later re-export, and then we're done with this path
                 existingSourcesByNodePath.get(changeNodePath).getSource().markChanged();

@@ -19,8 +19,9 @@ package org.onehippo.cm.engine.autoexport.orderbeforeholder;
 import java.util.Map;
 
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 
 public class ContentOrderBeforeHolder extends OrderBeforeHolder {
 
@@ -48,7 +49,7 @@ public class ContentOrderBeforeHolder extends OrderBeforeHolder {
     }
 
     JcrPath getContentRoot() {
-        return JcrPath.get(contentDefinition.getRootPath());
+        return JcrPaths.getPath(contentDefinition.getRootPath());
     }
 
     @Override

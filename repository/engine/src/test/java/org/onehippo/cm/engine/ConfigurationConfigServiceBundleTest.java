@@ -24,7 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cm.engine.impl.DigestBundleResolver;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
@@ -51,7 +52,7 @@ public class ConfigurationConfigServiceBundleTest {
     private ConfigurationConfigService configurationConfigService = new ConfigurationConfigService();
 
     private final String bundleName = "site";
-    private final JcrPath bundlePath = JcrPath.get(WebFilesService.JCR_ROOT_PATH, bundleName);
+    private final JcrPath bundlePath = JcrPaths.getPath(WebFilesService.JCR_ROOT_PATH, bundleName);
 
     private final String fsBundleDigest = "A";
     private final String baselineBundleDigest = "B";
