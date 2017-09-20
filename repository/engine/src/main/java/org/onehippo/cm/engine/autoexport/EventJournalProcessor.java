@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,31 +37,30 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.ObservationManager;
-import javax.jcr.util.TraversingItemVisitor;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.PathConfigurationReader;
@@ -75,9 +75,6 @@ import org.slf4j.LoggerFactory;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
-import static org.onehippo.cm.model.definition.DefinitionType.CONFIG;
-import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
-import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class EventJournalProcessor {
@@ -101,62 +98,6 @@ public class EventJournalProcessor {
     private static final long TIME_TO_LIVE = 2000L;
     private static final int EXCEPTION_THRESHOLD = 3;
 
-    /**
-     * Track changed jcr paths of *parent* nodes of jcr events
-     */
-    protected static class Changes {
-        private Set<String> changedNsPrefixes = new HashSet<>();
-        private PathsMap addedConfig = new PathsMap();
-        private PathsMap changedConfig = new PathsMap();
-        private PathsMap addedContent = new PathsMap();
-        private PathsMap changedContent = new PathsMap();
-        private PathsMap deletedContent = new PathsMap();
-        private long creationTime;
-
-        protected Changes() {
-            this.creationTime = System.currentTimeMillis();
-        }
-
-        private boolean isEmpty() {
-            return changedNsPrefixes.isEmpty() && changedConfig.isEmpty() && changedContent.isEmpty() && deletedContent.isEmpty();
-        }
-
-        protected Set<String> getChangedNsPrefixes() {
-            return changedNsPrefixes;
-        }
-
-        protected PathsMap getAddedConfig() {
-            return addedConfig;
-        }
-
-        protected PathsMap getChangedConfig() {
-            return changedConfig;
-        }
-
-        protected PathsMap getAddedContent() {
-            return addedContent;
-        }
-
-        protected PathsMap getChangedContent() {
-            return changedContent;
-        }
-
-        protected PathsMap getDeletedContent() {
-            return deletedContent;
-        }
-
-        protected long getCreationTime() {
-            return creationTime;
-        }
-
-        protected void addCurrentChanges(Changes currentChanges) {
-            changedNsPrefixes.addAll(currentChanges.getChangedNsPrefixes());
-            changedConfig.addAll(currentChanges.getChangedConfig());
-            changedContent.addAll(currentChanges.getChangedContent());
-            deletedContent.addAll(currentChanges.getDeletedContent());
-        }
-    }
-
     private final ExceptionLoopDetector exceptionLoopDetector;
     private final boolean exceptionLoopPreventionEnabled;
     private final AutoExportConfig autoExportConfig;
@@ -169,8 +110,8 @@ public class EventJournalProcessor {
     private long lastRevision = -1;
     private Node autoExportConfigNode = null;
     private Long lastRevisionPropertyValue = null;
-    private Changes pendingChanges;
-    private Changes currentChanges;
+    private EventChanges pendingChanges;
+    private EventChanges currentChanges;
     private RevisionEventJournal eventJournal;
     private ConfigurationModelImpl currentModel;
 
@@ -307,9 +248,6 @@ public class EventJournalProcessor {
     }
 
     private void tryProcessEvents() throws RepositoryException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
         // try processEvents max MAX_REPEAT_PROCESS_EVENTS in a row until success (for one task run)
         for (int i = 0; i < MAX_REPEAT_PROCESS_EVENTS; i++) {
             if (processEvents()) {
@@ -318,11 +256,6 @@ public class EventJournalProcessor {
                 // processEvents unsuccessful: new events arrived before it could export already collected changes
                 log.debug("Incoming events during processEvents() -- retrying!");
             }
-        }
-
-        stopWatch.stop();
-        if (stopWatch.getTime(TimeUnit.MILLISECONDS) > 0) {
-            log.info("Full auto-export cycle in {}", stopWatch.toString());
         }
     }
 
@@ -346,7 +279,7 @@ public class EventJournalProcessor {
             if (lastEvent != null) {
                 log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
                 lastRevision = lastEvent.getRevision();
-                setLastRevision(lastRevision, true);
+                setLastRevision(lastRevision);
             }
         } else {
             eventJournal.skipToRevision(lastRevision);
@@ -369,7 +302,7 @@ public class EventJournalProcessor {
                 lastRevision = event.getRevision();
                 if (storeLastRevision) {
                     // still haven't yet stored the current last revision: do so now
-                    setLastRevision(lastRevision, true);
+                    setLastRevision(lastRevision);
                 }
                 if (event.getType() == Event.PERSIST) {
                     continue;
@@ -379,7 +312,8 @@ public class EventJournalProcessor {
                 }
                 // any other event can require processing or as a minimum result in updating the lastRevision
                 if (currentChanges == null) {
-                    currentChanges = new Changes();
+                    currentChanges =
+                            new EventChanges(autoExportConfig, currentModel);
                 }
                 count++;
                 if (HCM_ROOT.equals(event.getUserData())) {
@@ -393,15 +327,18 @@ public class EventJournalProcessor {
             if (currentChanges != null) {
                 if (!currentChanges.isEmpty()) {
                     if (pendingChanges != null) {
-                        pendingChanges.addCurrentChanges(currentChanges);
+                        pendingChanges.mergeCurrentChanges(currentChanges);
                         AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
                     } else if (runningOnce.get() || isReadyForProcessing(currentChanges)) {
                         pendingChanges = currentChanges;
                     }
                 } else {
-                    // all events are skipped, bump lastRevision to skip these in the future
+                    // all events are skipped
                     currentChanges = null;
-                    setLastRevision(lastRevision, true);
+                    if (pendingChanges == null) {
+                        // no pending changes either: bump lastRevision to skip these igorable events in the future
+                        setLastRevision(lastRevision);
+                    }
                 }
             }
             if (count > 0) {
@@ -411,7 +348,12 @@ public class EventJournalProcessor {
             if (pendingChanges != null) {
                 currentChanges = null;
 
-                ModuleImpl changesModule = createChangesModule();
+                // create cloned PathsMaps for added/deleted content as these might get 'enhanced' during the next
+                // stage, while if we detect later overlapping events came in *before* writing them out we
+                // need to rewind, without these 'enhancements'.
+                final PathsMap addedContent = new PathsMap(pendingChanges.getAddedContent());
+                final PathsMap deletedContent = new PathsMap(pendingChanges.getDeletedContent());
+                ModuleImpl changesModule = createChangesModule(addedContent, deletedContent);
                 if (eventJournal.hasNext()) {
                     stopWatch.stop();
                     log.info("Diff processing abandoned after {}", stopWatch.toString());
@@ -421,7 +363,7 @@ public class EventJournalProcessor {
                     return false;
                 } else {
                     try {
-                        exportChangesModule(changesModule);
+                        exportChangesModule(changesModule, addedContent, deletedContent);
                         pendingChanges = null;
                         if (exceptionLoopPreventionEnabled) {
                             exceptionLoopDetector.purge();
@@ -472,7 +414,7 @@ public class EventJournalProcessor {
         eventProcessorSession.save();
     }
 
-    private boolean isReadyForProcessing(final Changes changedNodes) {
+    private boolean isReadyForProcessing(final EventChanges changedNodes) {
         return System.currentTimeMillis() - changedNodes.getCreationTime() > minChangeLogAge;
     }
 
@@ -490,7 +432,7 @@ public class EventJournalProcessor {
                         if (event.getUserData() != null) {
                             String[] changedNamespacePrefixes = event.getUserData().split("\\|");
                             for (String changedNamespacePrefix : changedNamespacePrefixes) {
-                                currentChanges.getChangedNsPrefixes().add(changedNamespacePrefix);
+                                currentChanges.recordChangedNsPrefix(changedNamespacePrefix);
                             }
                             if (log.isDebugEnabled()) {
                                 AutoExportServiceImpl.log.debug(String.format("event %d: namespace prefixes %s updated",
@@ -498,23 +440,23 @@ public class EventJournalProcessor {
                             }
                         }
                     } else {
-                        checkAddEventPath(event, eventPath, false, false, true);
+                        currentChanges.recordEvent(event, eventPath, false, false, true);
                     }
                     break;
                 case Event.NODE_ADDED:
-                    checkAddEventPath(event, eventPath, true, false, false);
+                    currentChanges.recordEvent(event, eventPath, true, false, false);
                     break;
                 case Event.NODE_REMOVED:
-                    checkAddEventPath(event, eventPath, false, true, false);
+                    currentChanges.recordEvent(event, eventPath, false, true, false);
                     break;
                 case Event.NODE_MOVED:
                     final String srcAbsPath = (String) event.getInfo().get("srcAbsPath");
                     if (srcAbsPath != null) {
                         // not an order-before
-                        checkAddEventPath(event, eventPath, true, false, false);
-                        checkAddEventPath(event, srcAbsPath, false, true, false);
+                        currentChanges.recordEvent(event, eventPath, true, false, false);
+                        currentChanges.recordEvent(event, srcAbsPath, false, true, false);
                     } else {
-                        checkAddEventPath(event, eventPath, false, false, false);
+                        currentChanges.recordEvent(event, eventPath, false, false, false);
                     }
                     break;
             }
@@ -523,107 +465,45 @@ public class EventJournalProcessor {
         }
     }
 
-    private void checkAddEventPath(final RevisionEvent event, final String eventPath, final boolean addedNode,
-                                   final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
-        if (!autoExportConfig.isExcludedPath(eventPath)) {
-
-            // use getCategoryForItem from AutoExportConfig as that also takes into account category overrides
-            final ConfigurationItemCategory category = autoExportConfig.getCategoryForItem(eventPath, propertyPath,
-                    configurationService.getRuntimeConfigurationModel());
-
-            // for config, we want to store the paths of the parents of changed nodes or properties
-            // (that way, we always have a node to scan for detailed changes)
-            // also, remove descendants from the list, since we will be scanning them anyway
-            if (category == ConfigurationItemCategory.CONFIG && !currentChanges.getAddedConfig().matches(eventPath)) {
-                if (addedNode) {
-                    boolean childPathAddedBefore = currentChanges.getAddedConfig().removeChildren(eventPath);
-                    currentChanges.getAddedConfig().add(eventPath);
-                    if (childPathAddedBefore) {
-                        currentChanges.getChangedConfig().removeChildren(eventPath);
-                    }
-                    currentChanges.getChangedConfig().remove(eventPath);
-                } else if (deletedNode) {
-                    currentChanges.getAddedConfig().removeChildren(eventPath);
-                    currentChanges.getAddedConfig().remove(eventPath);
-                    currentChanges.getChangedConfig().removeChildren(eventPath);
-                    currentChanges.getChangedConfig().remove(eventPath);
-                }
-                String parentPath = getParentPath(eventPath);
-                if (currentChanges.getChangedConfig().add(parentPath)) {
-                    logEvent(event, parentPath);
-                }
-            }
-            // for content, we want to store the actual paths of changed nodes (not properties)
-            // for add or change events, keep descendants, since they may indicate a need to export a separate source file
-            else if (category == ConfigurationItemCategory.CONTENT && !currentChanges.getAddedContent().matches(eventPath)) {
-                if (addedNode) {
-                    currentChanges.getAddedContent().add(eventPath);
-                    currentChanges.getChangedContent().add(eventPath);
-
-                    // we must scan down the JCR tree and record an add for each descendant node path
-                    // protect against race conditions with add and then immediate delete
-                    // TODO: do this only for node move and not for all node-add, which will already have separate events
-                    // TODO: if add, then move, this could try to find children for a non-existing node
-                    // TODO: -- catch this case and continue processing
-                    if (eventProcessorSession.nodeExists(eventPath)) {
-                        final Node node = eventProcessorSession.getNode(eventPath);
-                        node.accept(new TraversingItemVisitor.Default() {
-                            @Override
-                            protected void entering(final Node node, final int level) throws RepositoryException {
-                                final String path = node.getPath();
-                                if (!autoExportConfig.isExcludedPath(path)) {
-                                    currentChanges.getAddedContent().add(path);
-                                }
-                            }
-
-                            @Override
-                            public void visit(final Node node) throws RepositoryException {
-                                final HippoNode hippoNode = (HippoNode) node;
-                                if (!hippoNode.isVirtual()) {
-                                    super.visit(node);
-                                }
-                            }
-                        });
-                    }
-
-                    // cleanup a previously-encountered delete
-                    currentChanges.getDeletedContent().removeChildren(eventPath);
-                    currentChanges.getDeletedContent().remove(eventPath);
-                } else if (deletedNode) {
-                    // clean up previously-recorded events for descendants, which are now redundant,
-                    // since this delete will clear out all descendants anyway
-                    currentChanges.getAddedContent().removeChildren(eventPath);
-                    currentChanges.getAddedContent().remove(eventPath);
-                    currentChanges.getChangedContent().removeChildren(eventPath);
-                    currentChanges.getChangedContent().remove(eventPath);
-                    currentChanges.getDeletedContent().removeChildren(eventPath);
-                    currentChanges.getDeletedContent().add(eventPath);
-                } else {
-                    final String changedPath = propertyPath ? getParentPath(eventPath) : eventPath;
-                    if (currentChanges.getChangedContent().add(changedPath)) {
-                        logEvent(event, changedPath);
+    // scan down the JCR tree and return for each added content node its path and those of its decendant node children
+    // protect against stale journal event processing where an added path might already have been deleted since
+    // TODO: do this only for node move and not for all node-add, which will already have separate events
+    // TODO: if add, then move, this could try to find children for a non-existing node
+    // TODO: -- catch this case and continue processing
+    public Set<String> getAllAddedContentPaths(final Set<String> addedContentRoots) throws RepositoryException {
+        final Set<String> contentPaths = Collections.newSetFromMap(new PatriciaTrie<>());
+        final ItemVisitor nodePathsCollector = new ItemVisitor() {
+            @Override
+            public void visit(final Node node) throws RepositoryException {
+                if (!((HippoNode)node).isVirtual()) {
+                    final String childPath = node.getPath();
+                    if (!autoExportConfig.isExcludedPath(childPath) &&
+                            ConfigurationItemCategory.SYSTEM != autoExportConfig.getCategoryForItem(childPath, false, currentModel)) {
+                        contentPaths.add(node.getPath());
+                        for (Node child : new NodeIterable(node.getNodes())) {
+                            child.accept(this);
+                        }
                     }
                 }
             }
+            @Override
+            public void visit(final Property ignore) throws RepositoryException {
+            }
+        };
+
+        for (String addedContentRoot : addedContentRoots) {
+            if (eventProcessorSession.nodeExists(addedContentRoot)) {
+                contentPaths.add(addedContentRoot);
+                for (Node child : new NodeIterable(eventProcessorSession.getNode(addedContentRoot).getNodes())) {
+                    child.accept(nodePathsCollector);
+                }
+            }
         }
-    }
+        return contentPaths;
+    };
 
-    private void logEvent(final RevisionEvent event, final String path) throws RepositoryException {
-        if (AutoExportServiceImpl.log.isDebugEnabled()) {
-            final String eventPath = event.getPath();
-            AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
-                    event.getRevision(), AutoExportConstants.getJCREventTypeName(event.getType()), path,
-                    eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
-                    event.getUserID()));
-        }
-    }
-
-    private String getParentPath(String absPath) {
-        int end = absPath.lastIndexOf('/');
-        return absPath.substring(0, end == 0 ? 1 : end);
-    }
-
-    private ModuleImpl createChangesModule() throws RepositoryException, IOException {
+    protected ModuleImpl createChangesModule(final PathsMap addedContent, final PathsMap deletedContent)
+            throws RepositoryException, IOException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -635,7 +515,7 @@ public class EventJournalProcessor {
         module.setContentResourceInputProvider(jcrResourceInputProvider);
         final ConfigSourceImpl configSource = module.addConfigSource("autoexport.yaml");
 
-        if (!pendingChanges.changedNsPrefixes.isEmpty()) {
+        if (!pendingChanges.getChangedNsPrefixes().isEmpty()) {
             Set<String> nsPrefixes = new HashSet<>(pendingChanges.getChangedNsPrefixes());
             List<NamespaceDefinitionImpl> modifiedNsDefs = currentModel.getNamespaceDefinitions().stream()
                     .filter(d -> nsPrefixes.remove(d.getPrefix()))
@@ -658,22 +538,21 @@ public class EventJournalProcessor {
             }
         }
 
-        final AutoExportConfigExporter autoExportConfigExporter = new AutoExportConfigExporter(currentModel, autoExportConfig);
+        final AutoExportConfigExporter autoExportConfigExporter =
+                new AutoExportConfigExporter(currentModel, autoExportConfig, addedContent, deletedContent);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
             autoExportConfigExporter.exportConfigNode(eventProcessorSession, path, configSource);
         }
-
-        injectResidualCategoryOverrides(configSource);
 
         if (log.isInfoEnabled()) {
             final SourceSerializer sourceSerializer = new SourceSerializer(null, configSource, false);
             final StringWriter writer = new StringWriter();
             sourceSerializer.serializeNode(writer, sourceSerializer.representSource(new ArrayList<>()::add));
             log.info("Computed diff: \n{}", writer.toString());
-            log.info("added content: \n\t{}", String.join("\n\t", pendingChanges.getAddedContent()));
+            log.info("added content: \n\t{}", String.join("\n\t", addedContent));
             log.info("changed content: \n\t{}", String.join("\n\t", pendingChanges.getChangedContent()));
-            log.info("deleted content: \n\t{}", String.join("\n\t", pendingChanges.getDeletedContent()));
+            log.info("deleted content: \n\t{}", String.join("\n\t", deletedContent));
         }
 
         module.build();
@@ -684,68 +563,31 @@ public class EventJournalProcessor {
         return module;
     }
 
-    /**
-     * Injects .meta:residual-child-node-category properties in definitions to be exported where indicated by patterns
-     * in the auto-export configuration; also, in case the category "content" is injected, moves child nodes of those
-     * definitions to content definitions, in case the category "system" is injected, removes child nodes of those
-     * definition.
-     *
-     * @param configSource the {@link ConfigSourceImpl} to scan for definition nodes
-     * @throws RepositoryException
-     * @throws IOException
-     */
-    private void injectResidualCategoryOverrides(final ConfigSourceImpl configSource) throws RepositoryException, IOException {
-        for (AbstractDefinitionImpl definition : configSource.getDefinitions()) {
-            if (definition.getType() == CONFIG) {
-                final ConfigDefinitionImpl configDefinition = (ConfigDefinitionImpl) definition;
-                injectResidualCategoryOverrides(configDefinition.getNode());
-            }
-        }
-    }
-
-    private void injectResidualCategoryOverrides(final DefinitionNodeImpl node) throws RepositoryException, IOException {
-        final ConfigurationItemCategory inject = autoExportConfig.getInjectResidualMatchers().getMatch(node, currentModel);
-
-        if (inject == CONTENT || inject == SYSTEM) {
-            // for hst:hosts, we need to support both injecting and overriding at the same time
-            final ConfigurationItemCategory override = autoExportConfig.getOverrideResidualMatchers().getMatch(node.getPath());
-            final ConfigurationItemCategory effective = override != null ? override : inject;
-            for (DefinitionNodeImpl child : node.getNodes().values()) {
-                if (effective == CONTENT) {
-                    pendingChanges.getAddedContent().add(child.getPath());
-                }
-            }
-            if (effective != ConfigurationItemCategory.CONFIG) {
-                node.removeAllNodes();
-            }
-            node.setResidualChildNodeCategory(inject);
-        }
-
-        for (DefinitionNodeImpl child : node.getNodes().values()) {
-            injectResidualCategoryOverrides(child);
-        }
-    }
-
-    private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
-        if (changesModule.isEmpty() && pendingChanges.getAddedContent().isEmpty()
+    protected void exportChangesModule(final ModuleImpl changesModule, final PathsMap addedContent, final PathsMap deletedContent)
+            throws RepositoryException, IOException, ParserException {
+        if (changesModule.isEmpty()
+                && addedContent.isEmpty()
                 && pendingChanges.getChangedContent().isEmpty()
-                && pendingChanges.getDeletedContent().isEmpty()) {
+                && deletedContent.isEmpty()) {
             log.info("No changes detected");
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
             // save this fact immediately and do nothing else
-            setLastRevision(lastRevision, true);
+            setLastRevision(lastRevision);
 
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
         } else {
             AutoExportServiceImpl.log.info("autoexport is processing changes...");
 
+            final Set<String> addedContentPaths = getAllAddedContentPaths(addedContent.getPaths());
+
             final DefinitionMergeService mergeService =
                     new DefinitionMergeService(autoExportConfig, currentModel, eventProcessorSession);
             final Collection<ModuleImpl> mergedModules =
-                    mergeService.mergeChangesToModules(changesModule, pendingChanges);
+                    mergeService.mergeChangesToModules(changesModule,
+                            addedContentPaths, pendingChanges.getChangedContent(), deletedContent.getPaths());
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
 
             StopWatch stopWatch = new StopWatch();
@@ -773,7 +615,7 @@ public class EventJournalProcessor {
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
                 final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath);
+                        new PathConfigurationReader(false, true).read(moduleDescriptorPath);
 
                 final ModuleImpl loadedModule = result.getModuleContext().getModule();
                 // store mvnPath again for later use
@@ -812,18 +654,15 @@ public class EventJournalProcessor {
                 reloadedModules.add(loadedModule);
             }
 
-            // 2) configuration.setLastRevision(lastRevision) (NOT saving the JCR session, yet!)
-            setLastRevision(lastRevision, false);
-
             stopWatch.stop();
             log.info("Diff export (writing modules) in {}", stopWatch.toString());
 
-            // 3) save result to baseline (which should do Session.save()
-            // 4) update or reload ConfigurationService.currentRuntimeModel
+            // 2) save result to baseline (which should do Session.save()
+            // 3) update or reload ConfigurationService.currentRuntimeModel
             configurationService.updateBaselineForAutoExport(reloadedModules);
 
-            // 5) now also save the lastRevision update
-            eventProcessorSession.save();
+            // 4) now also update and save the lastRevision
+            setLastRevision(lastRevision);
 
             // we've reached a new safe state, so a rollback recovery to this state is again possible
             fileWritesInProgress = false;
@@ -840,16 +679,13 @@ public class EventJournalProcessor {
     }
 
     /**
-     * Sets the lastRevision property
+     * Sets and saves the lastRevision property
      * @param lastRevision the new value of the lastRevision property
-     * @paramm save optionally save the value using the internal {@link #eventProcessorSession}
      * @throws RepositoryException
      */
-    private void setLastRevision(final long lastRevision, final boolean save) throws RepositoryException {
+    private void setLastRevision(final long lastRevision) throws RepositoryException {
         autoExportConfigNode.setProperty(AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
-        if (save) {
-            eventProcessorSession.save();
-        }
+        eventProcessorSession.save();
         this.lastRevisionPropertyValue = lastRevision;
     }
 }

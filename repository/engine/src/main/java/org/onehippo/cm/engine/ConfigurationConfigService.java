@@ -50,12 +50,13 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.impl.path.JcrPath;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
@@ -169,7 +170,7 @@ public class ConfigurationConfigService {
             return false;
         } else {
             log.info("classpath & baseline bundles digests are different");
-            final JcrPath bundlePath = JcrPath.get(WebFilesService.JCR_ROOT_PATH, bundleName);
+            final JcrPath bundlePath = JcrPaths.getPath(WebFilesService.JCR_ROOT_PATH, bundleName);
             final boolean bundleNodeExists = session.nodeExists(bundlePath.toString());
             if (bundleNodeExists) {
                 switch (reloadMode) {
@@ -310,7 +311,7 @@ public class ConfigurationConfigService {
             throws RepositoryException, IOException {
 
         if (targetNode.isLocked()) {
-            log.warn("Target node {} is locked, skipping it's processing", targetNode.getPath());
+            log.warn("Target node {} is locked, skipping its processing", targetNode.getPath());
             final LockManager lockManager = targetNode.getSession().getWorkspace().getLockManager();
             try {
                 final Lock lock = lockManager.getLock(targetNode.getPath());
@@ -512,7 +513,7 @@ public class ConfigurationConfigService {
         for (String indexedChildName : updateChildren.keySet()) {
             ConfigurationNode baselineChild = baselineChildren.get(indexedChildName);
             final ConfigurationNode updateChild = updateChildren.get(indexedChildName);
-            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
+            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedChildName);
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             final Node childNode;
 
@@ -580,7 +581,7 @@ public class ConfigurationConfigService {
         }
 
         for (String indexedChildName : indexedNamesOfToBeRemovedChildren) {
-            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
+            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedChildName);
             final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             if (childNode != null) {
                 if (!baselineChildren.containsKey(indexedChildName)) {
@@ -743,7 +744,8 @@ public class ConfigurationConfigService {
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session));
+                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session),
+                        updateProperty.getValueType().ordinal());
             } else {
                 if (verifiedUpdateValues.size() > 0) {
                     jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));

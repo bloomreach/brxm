@@ -35,7 +35,7 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
-import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;

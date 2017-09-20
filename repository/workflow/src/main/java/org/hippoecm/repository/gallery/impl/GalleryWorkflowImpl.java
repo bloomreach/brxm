@@ -48,6 +48,8 @@ import static org.onehippo.repository.util.JcrConstants.NT_BASE;
 
 public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow {
 
+    public static final String HIPPOGALLERY_IMAGESET = "hippogallery:imageset";
+    public static final String HIPPOGALLERY_FILENAME = "hippogallery:filename";
     private Session rootSession;
     private Node subject;
 
@@ -70,18 +72,19 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow {
     }
 
     public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException, WorkflowException {
-        Node folder = rootSession.getNodeByIdentifier(subject.getIdentifier());
-        name = NodeNameCodec.encode(name);
-        if (isSameNameSibling(name, folder)){
-            throw new WorkflowException(MessageFormat.format(
-                    "A node with name {0} already exists in folder {1}. Not allowed to create same-name siblings",
-                    name, folder.getPath()));
-        }
-        final Node handle = folder.addNode(name, NT_HANDLE);
-        handle.addMixin(MIX_REFERENCEABLE);
-        final Node document = handle.addNode(name, type);
-        document.setProperty(HIPPO_AVAILABILITY, new String[] { "live", "preview" });
+        return createGalleryItem(name, type, null);
+    }
 
+    public Document createGalleryItem(String nodeName, String type, String hippoGalleryImageSetFileName) throws RemoteException,
+            RepositoryException, WorkflowException {
+        final Node document = createNode(nodeName, type);
+        if (hippoGalleryImageSetFileName != null && document.isNodeType(HIPPOGALLERY_IMAGESET)) {
+            document.setProperty(HIPPOGALLERY_FILENAME, hippoGalleryImageSetFileName);
+        }
+        return createGalleryItem(document);
+    }
+
+    private Document createGalleryItem(final Node document) throws RepositoryException {
         final String primaryItemName = getPrimaryItemName(document);
         if (primaryItemName != null) {
             final Node primaryItem;
@@ -98,6 +101,21 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow {
         }
         rootSession.save();
         return new Document(document);
+    }
+
+    private Node createNode(String name, final String type) throws RepositoryException, WorkflowException {
+        Node folder = rootSession.getNodeByIdentifier(subject.getIdentifier());
+        name = NodeNameCodec.encode(name);
+        if (isSameNameSibling(name, folder)){
+            throw new WorkflowException(MessageFormat.format(
+                    "A node with name {0} already exists in folder {1}. Not allowed to create same-name siblings",
+                    name, folder.getPath()));
+        }
+        final Node handle = folder.addNode(name, NT_HANDLE);
+        handle.addMixin(MIX_REFERENCEABLE);
+        final Node document = handle.addNode(name, type);
+        document.setProperty(HIPPO_AVAILABILITY, new String[] { "live", "preview" });
+        return document;
     }
 
     private String getPrimaryItemName(final Node document) throws RepositoryException {

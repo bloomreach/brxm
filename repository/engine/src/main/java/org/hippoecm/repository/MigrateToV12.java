@@ -216,13 +216,15 @@ class MigrateToV12 {
     }
 
     private static void updateCleanerToProcessor(final Node node, final String processorType) throws RepositoryException {
-        node.getProperty(HTMLCLEANER_ID).remove();
+        if (node.hasProperty(HTMLCLEANER_ID)) {
+            node.getProperty(HTMLCLEANER_ID).remove();
+        }
         node.setProperty(HTMLPROCESSOR_ID, processorType);
     }
 
     private static boolean isHtmlCleanerNotDefined(final Node sourceNode) throws RepositoryException {
-        final Property htmlcleanerId = sourceNode.getProperty(HTMLCLEANER_ID);
-        return htmlcleanerId == null || StringUtils.isBlank(htmlcleanerId.getString());
+        return !sourceNode.hasProperty(HTMLCLEANER_ID) ||
+                StringUtils.isBlank(sourceNode.getProperty(HTMLCLEANER_ID).getString());
     }
 
     private static Collection<String> getCopiedProperties() {

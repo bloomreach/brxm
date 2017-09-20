@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,14 +33,13 @@ import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.PropInfo;
 
-class ExpandingCopyHandler extends DefaultCopyHandler {
+public class ExpandingCopyHandler extends DefaultCopyHandler {
 
     private final Map<String, String[]> renames;
     private final ValueFactory factory;
     private Path path;
-    private String lastSubstituteName;
 
-    ExpandingCopyHandler(final Node handle, final Map<String, String[]> renames, final ValueFactory factory) throws RepositoryException {
+    public ExpandingCopyHandler(final Node handle, final Map<String, String[]> renames, final ValueFactory factory) throws RepositoryException {
         super(handle);
         this.renames = renames;
         this.factory = factory;
@@ -60,9 +59,8 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/_name") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, substitutes[0])) {
+                    if (path.matchKey(key)) {
                         name = substitutes[0];
-                        lastSubstituteName = name;
                         break;
                     }
                 }
@@ -73,7 +71,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/jcr:primaryType") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, name)) {
+                    if (path.matchKey(key)) {
                         primaryType = nodeTypeManager.getNodeType(substitutes[0]);
                         break;
                     }
@@ -85,7 +83,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                 final String key = entry.getKey();
                 final String[] substitutes = entry.getValue();
                 if (key.endsWith("/jcr:mixinTypes") && substitutes != null && substitutes.length > 0) {
-                    if (path.matchKey(key, name)) {
+                    if (path.matchKey(key)) {
                         for (String substitute : substitutes) {
                             mixins.add(nodeTypeManager.getNodeType(substitute));
                         }
@@ -124,7 +122,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
             String[] substitutes = null;
             for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                 final String key = entry.getKey();
-                if (key.endsWith("/" + name) && path.matchKey(key, lastSubstituteName)) {
+                if (key.endsWith("/" + name) && path.matchKey(key)) {
                     substitutes = entry.getValue();
                     break;
                 }
@@ -145,7 +143,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
                         substitutes = null;
                         for (Map.Entry<String, String[]> entry : renames.entrySet()) {
                             final String key = entry.getKey();
-                            if (key.endsWith("/" + name + "[" + i + "]") && path.matchKey(key, lastSubstituteName)) {
+                            if (key.endsWith("/" + name + "[" + i + "]") && path.matchKey(key)) {
                                 substitutes = entry.getValue();
                                 break;
                             }
@@ -180,7 +178,7 @@ class ExpandingCopyHandler extends DefaultCopyHandler {
             names.pop();
         }
 
-        private boolean matchKey(final String keyPath, final String substitute) {
+        private boolean matchKey(final String keyPath) {
             final String[] elements = keyPath.split("/");
             if (names.size() != elements.length-1) {
                 return false;

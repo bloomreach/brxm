@@ -34,8 +34,9 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.model.definition.ActionType;
-import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyType;
@@ -154,7 +155,7 @@ public class JcrContentProcessor {
     }
 
     private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
-        final JcrPath parentPath = JcrPath.get(definitionNode.getPath()).getParent();
+        final JcrPath parentPath = JcrPaths.getPath(definitionNode.getPath()).getParent();
         if (parentPath.isRoot()) {
             return session.getRootNode();
         } else {
@@ -329,7 +330,8 @@ public class JcrContentProcessor {
                     jcrNode.setProperty(modelProperty.getName(), valueFrom(modelValues.get(0), jcrNode.getSession()));
                 }
             } else {
-                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()));
+                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelValues, jcrNode.getSession()),
+                        modelProperty.getValueType().ordinal());
             }
         } catch (RepositoryException e) {
             String msg = String.format(

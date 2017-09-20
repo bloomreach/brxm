@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /config-with-sns:
+      jcr:primaryType: nt:unstructured
+      /sns:
+        jcr:primaryType: nt:unstructured
+        property: value2
+      /sns[2]:
+        jcr:primaryType: nt:unstructured
+        property: value1
+    /config-with-sub:
+      jcr:primaryType: nt:unstructured
+      /sub-with-sns:
+        jcr:primaryType: nt:unstructured
+    /content:
+      .meta:category: content

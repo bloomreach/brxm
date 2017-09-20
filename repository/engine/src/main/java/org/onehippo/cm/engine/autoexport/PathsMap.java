@@ -136,7 +136,7 @@ public class PathsMap implements Iterable<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return paths.iterator();
+        return unmodifiablePaths.iterator();
     }
 
     @Override

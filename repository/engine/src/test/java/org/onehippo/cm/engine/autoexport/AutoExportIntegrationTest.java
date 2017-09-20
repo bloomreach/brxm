@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,11 +35,10 @@ import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.ConfigurationModel;
 
-import static org.junit.Assert.assertEquals;
-import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
-
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 
 public class AutoExportIntegrationTest {
 
@@ -261,6 +261,37 @@ public class AutoExportIntegrationTest {
             },
             (session, configurationModel) -> {
                 assertOrderInJcr("[c2, c1]", "/content", session);
+            });
+    }
+
+    @Test
+    public void autoexport_reorder_sns() throws Exception {
+        new Fixture("reorder_sns").test(
+            (session, configurationModel) -> {
+                // intentionally empty
+            },
+            (session) -> {
+                final Node configWithSns = session.getNode("/config-with-sns");
+                final Node snsInSameSource = configWithSns.addNode("sns", "nt:unstructured");
+                snsInSameSource.setProperty("property", "value2");
+                configWithSns.orderBefore("sns[2]", "sns[1]");
+
+                final Node subWithSns = session.getNode("/config-with-sub/sub-with-sns");
+                final Node snsInNewSource = subWithSns.addNode("sns", "nt:unstructured");
+                snsInNewSource.setProperty("property", "value3");
+                subWithSns.orderBefore("sns[3]", "sns[1]");
+            },
+            (session, configurationModel) -> {
+                assertOrderInJcr("[sns[1], sns[2]]", "/config-with-sns", session);
+                assertOrderModel("[sns, sns[2]]", "/config-with-sns", configurationModel);
+                assertEquals("value2", JcrUtils.getStringProperty(session.getNode("/config-with-sns/sns[1]"), "property", ""));
+                assertEquals("value1", JcrUtils.getStringProperty(session.getNode("/config-with-sns/sns[2]"), "property", ""));
+
+                assertOrderInJcr("[sns[1], sns[2], sns[3]]", "/config-with-sub/sub-with-sns", session);
+                assertOrderModel("[sns, sns[2], sns[3]]", "/config-with-sub/sub-with-sns", configurationModel);
+                assertEquals("value3", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[1]"), "property", ""));
+                assertEquals("value1", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[2]"), "property", ""));
+                assertEquals("value2", JcrUtils.getStringProperty(session.getNode("/config-with-sub/sub-with-sns/sns[3]"), "property", ""));
             });
     }
 
