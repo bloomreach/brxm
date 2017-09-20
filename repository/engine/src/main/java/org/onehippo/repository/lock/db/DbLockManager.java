@@ -82,7 +82,7 @@ public class DbLockManager extends AbstractLockManager {
     public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=?";
 
     // only refreshes its own cluster locks
-    public static final String LOCKS_TO_REFRESH_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockOwner=? AND expirationTime<? AND status='RUNNING' FOR UPDATE";
+    public static final String LOCKS_TO_REFRESH_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT') FOR UPDATE";
     public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=? WHERE lockKey=?";
 
 
