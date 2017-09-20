@@ -117,12 +117,15 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
             selectStatement.setString(1, key);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
-                assertEquals(expectedStatus, resultSet.getString("status"));
+                String status = resultSet.getString("status");
+                assertEquals(String.format("Unexpected status '%s' found", status), expectedStatus, status);
                 if (lockOwnerExpectation != null) {
-                    assertEquals(lockOwnerExpectation, resultSet.getString("lockOwner"));
+                    String lockOwner = resultSet.getString("lockOwner");
+                    assertEquals(String.format("Unexpected lockOwner '%s' found", lockOwner), lockOwnerExpectation, lockOwner);
                 }
                 if (lockThreadExpectation != null) {
-                    assertEquals(lockThreadExpectation, resultSet.getString("lockThread"));
+                    String lockThread = resultSet.getString("lockThread");
+                    assertEquals(String.format("Unexpected lockThread '%s' found", lockThread), lockThreadExpectation, lockThread);
                 }
             } else {
                 fail(String.format("A row with lockKey '%s' should exist", key));
