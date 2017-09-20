@@ -18,6 +18,7 @@ package org.onehippo.repository.lock.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -56,7 +57,7 @@ public class DbLockRefresher implements Runnable {
             final PreparedStatement locksToRefreshStatement = connection.prepareStatement(LOCKS_TO_REFRESH_BLOCKING_STATEMENT);
             locksToRefreshStatement.setString(1, clusterNodeId);
             // select all rows that have less than 20 seconds to live
-            locksToRefreshStatement.setLong(1, System.currentTimeMillis() + 20000);
+            locksToRefreshStatement.setLong(2, System.currentTimeMillis() + 20000);
             ResultSet resultSet = locksToRefreshStatement.executeQuery();
             while (resultSet.next()) {
                 // found lock to refresh
@@ -69,7 +70,7 @@ public class DbLockRefresher implements Runnable {
                 unlockStatement.execute();
             }
             connection.commit();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             if (log.isDebugEnabled()) {
                 log.info("Exception in {} happened. Possibly another cluster node did already reset some lock rows:", this.getClass().getName(), e);
             } else {
