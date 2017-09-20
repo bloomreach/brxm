@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.component;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -42,5 +44,19 @@ public interface HstParameterInfoProxyFactory {
      */
     <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
             HstRequest request, HstParameterValueConverter converter);
-    
+
+    /**
+     * Returns a proxy instance of the interface T. The proxy delegates the {@link Parameter} annotated getters in the interface T to the backing {@link ComponentConfiguration} parameters, 
+     * thus to {@link ComponentConfiguration#getParameter(String, org.hippoecm.hst.core.request.ResolvedSiteMapItem)}
+     * @param <T> proxy instance of the interface T
+     * @param parametersInfo the ParametersInfo annotation
+     * @param componentConfig the backing {@link ComponentConfiguration}
+     * @param request the {@link HttpServletRequest}
+     * @param converter the HstParameterValueConverter that does the actual conversion
+     * @return proxy instance of the interface T
+     * @throws IllegalArgumentException if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
+     */
+    <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
+            HttpServletRequest request, HstParameterValueConverter converter);
+
 }

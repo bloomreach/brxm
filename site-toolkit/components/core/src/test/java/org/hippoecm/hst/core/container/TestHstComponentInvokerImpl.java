@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationHandler;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
@@ -29,6 +30,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -167,11 +169,18 @@ public class TestHstComponentInvokerImpl {
     }
 
     class CustomParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
+
         @Override
-        protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HstRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
+        public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
+                final HstRequest request, final HstParameterValueConverter converter) {
+            return createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        }
+
+        @Override
+        protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HttpServletRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
             return new ParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType) {
                 @Override
-                protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+                protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HttpServletRequest req) {
                     return "professional-" + parameterName;
                 }
             };

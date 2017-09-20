@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -58,6 +59,12 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
             final HstRequest request, final HstParameterValueConverter converter) {
+        return createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+    }
+
+    @Override
+    public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
+            final HttpServletRequest request, final HstParameterValueConverter converter) {
 
         Class<?> parametersInfoType = parametersInfo.type();
 
@@ -83,7 +90,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * @return the {@link InvocationHandler} used in the created proxy to handle the invocations
      */
     protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,
-                                                                        final HstRequest request,
+                                                                        final HttpServletRequest request,
                                                                         final HstParameterValueConverter converter,
                                                                         final Class<?> parametersInfoType) {
         return new ParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType);
@@ -95,11 +102,11 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
     protected static class ParameterInfoInvocationHandler implements InvocationHandler {
 
         private final ComponentConfiguration componentConfig;
-        private final HstRequest request;
+        private final HttpServletRequest request;
         private final HstParameterValueConverter converter;
         private final Class<?> parametersInfoType;
 
-        public ParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request, 
+        public ParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HttpServletRequest request, 
                 final HstParameterValueConverter converter,
                 final Class<?> parametersInfoType) {
             this.componentConfig = componentConfig;
@@ -181,11 +188,11 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
         }
 
-        private String getParameterValue(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
-            final HstRequestContext requestContext = req.getRequestContext();
-            if (isComponentRenderingPreviewRequest(requestContext)) {
+        private String getParameterValue(final String parameterName, final ComponentConfiguration config, final HttpServletRequest req) {
+            final HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
+            if (isComponentRenderingPreviewRequest(requestContext) && (request instanceof HstRequest)) {
                 // POST parameters in case of component rendering preview request are namespace less
-                Map<String, String []> namespaceLessParameters = request.getParameterMap("");
+                Map<String, String []> namespaceLessParameters = ((HstRequest) request).getParameterMap("");
                 String [] paramValues = namespaceLessParameters.get(parameterName);
                 if (paramValues != null) {
                     log.debug("For parameterName '{}' returning value '{}' as the parameter was part of the request body.",
@@ -209,10 +216,10 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          * a prefixed value
          * @param parameterName the <code>parameterName</code> that can be prefixed
          * @param config the <code>ComponentConfiguration</code>
-         * @param req the <code>HstRequest</code> 
+         * @param req the <code>HstRequest</code> or <code>HttpServletRequest</code>
          * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
          */
-        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HttpServletRequest req) {
             final HttpSession session = req.getSession(false);
             if (session != null && session.getAttribute(ContainerConstants.RENDER_VARIANT) != null) {
                 final String prefix = session.getAttribute(ContainerConstants.RENDER_VARIANT).toString();

@@ -35,11 +35,15 @@
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
   </bean>
 
+  <bean id="jaxrsParametersInfoProviderContextProvider" class="org.hippoecm.hst.jaxrs.cxf.DefaultParametersInfoProviderContextProvider">
+  </bean>
+
   <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
   <bean id="jaxrsRestDefaultEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <ref bean="jaxrsRestJsonProvider"/>
+        <ref bean="jaxrsParametersInfoProviderContextProvider" />
       </list>
     </property>
   </bean>
