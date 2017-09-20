@@ -85,7 +85,6 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
 
     private void abortDataRowLock(final String key) throws SQLException {
         try (Connection connection = dataSource.getConnection()){
-            connection.setAutoCommit(true);
             final PreparedStatement abortStatement = connection.prepareStatement(ABORT_STATEMENT);
             abortStatement.setString(1, key);
             int changed = abortStatement.executeUpdate();
