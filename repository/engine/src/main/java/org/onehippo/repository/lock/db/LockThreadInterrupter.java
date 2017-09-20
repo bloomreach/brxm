@@ -84,7 +84,12 @@ public class LockThreadInterrupter implements Runnable {
                         try {
                             lockThreadForAbortFound = true;
                             log.info("Found Thread '{}' to be interrupted for Lock '{}'", thread.getName(), lockKey);
-                            thread.interrupt();
+                            if (thread.isInterrupted()) {
+                                log.info("Thread '{}' has already been interrupted. Not interrupting again.", thread.getName());
+                            } else {
+                                log.info("Interrupting thread '{}'", thread.getName());
+                                thread.interrupt();
+                            }
                         } catch (SecurityException e) {
                             String msg = String.format("Thread '%s' is not allowed to be interrupted. Can't abort '%s'",
                                     thread.getName(), lock.getLockKey());
