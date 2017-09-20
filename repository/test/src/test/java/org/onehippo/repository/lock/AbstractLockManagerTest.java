@@ -72,34 +72,15 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
         lockManager.clear();
         // DELETE ALL ROWS if there are any present
         if (dataSource != null) {
-            Connection connection = null;
-            boolean originalAutoCommit = false;
-            try {
-                connection = dataSource.getConnection();
-                originalAutoCommit = connection.getAutoCommit();
-                connection.setAutoCommit(true);
+            try (Connection connection = dataSource.getConnection() ){
                 final PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM hippo_lock");
                 deleteStatement.execute();
 
             } catch (SQLException e) {
                 fail("Failed to delete rows : " + e.toString());
-            } finally {
-                close(connection, originalAutoCommit);
             }
         }
         super.tearDown();
-    }
-
-    private void close(final Connection connection, final boolean originalAutoCommit)  {
-        if (connection == null) {
-            return;
-        }
-        try {
-            connection.setAutoCommit(originalAutoCommit);
-            connection.close();
-        } catch (SQLException e) {
-            log.error("Failed to close connection.", e);
-        }
     }
 
     protected void dbRowAssertion(final String key, final String expectedStatus) throws SQLException {
@@ -136,14 +117,9 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     protected void addManualLockToDatabase(final String key, final String clusterNodeId,
                                            final String threadName, final int refreshRateSeconds) throws LockException {
         if (dataSource != null) {
-            Connection connection = null;
-            boolean originalAutoCommit = false;
-            try {
-                connection = dataSource.getConnection();
-                originalAutoCommit = connection.getAutoCommit();
+            try (Connection connection = dataSource.getConnection()) {
 
                 final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
-                connection.setAutoCommit(true);
                 createStatement.setString(1, key);
                 createStatement.setString(2, clusterNodeId);
                 createStatement.setString(3, threadName);
@@ -158,13 +134,9 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
                 }
             } catch (SQLException e) {
                 fail("Failed to delete rows : " + e.toString());
-            } finally {
-                close(connection, originalAutoCommit);
             }
         }
     }
-
-
 
 
 }
