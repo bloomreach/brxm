@@ -17,7 +17,6 @@ package org.onehippo.cm.model.impl.definition;
 
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPaths;

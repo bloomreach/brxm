@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -161,9 +162,12 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    // TODO: convert to use NodePath API
+    // TODO: convert to use JcrPath API
     protected String asPathScalar(final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
-        final String path = asStringScalar(node);
+        return asPathScalar(asStringScalar(node), node, requireAbsolutePath, allowSnsIndices);
+    }
+    // TODO: convert to use JcrPath API
+    protected String asPathScalar(final String path, final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
 
         if (requireAbsolutePath && !path.startsWith("/")) {
             throw new ParserException("Path must start with a slash", node);
@@ -256,25 +260,31 @@ public abstract class AbstractBaseParser {
         return scalarNode.getValue();
     }
 
-    protected Set<String> asSingleOrSetOfStrScalars(final Node node) throws ParserException {
+    protected void collectSingleOrSequenceOfStrScalars(final Node node, final Collection<String> collection) throws ParserException {
         if (node == null) {
-            return Collections.emptySet();
+            return;
         }
-        final Set<String> result = new LinkedHashSet<>();
         switch (node.getNodeId()) {
             case scalar:
-                result.add(asStringScalar(node));
+                collection.add(asStringScalar(node));
                 break;
             case sequence:
                 final List<Node> values = asSequence(node);
                 for (Node value : values) {
-                    result.add(asStringScalar(value));
+                    collection.add(asStringScalar(value));
                 }
                 break;
             default:
                 throw new ParserException("Node must be scalar or sequence, found '" + node.getNodeId() + "'", node);
         }
-        return result;
     }
 
+    protected Set<String> asSingleOrSetOfStrScalars(final Node node) throws ParserException {
+        if (node == null) {
+            return Collections.emptySet();
+        }
+        final Set<String> result = new LinkedHashSet<>();
+        collectSingleOrSequenceOfStrScalars(node, result);
+        return result;
+    }
 }

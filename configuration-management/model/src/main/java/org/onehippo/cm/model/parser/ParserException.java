@@ -22,24 +22,24 @@ public class ParserException extends Exception {
     private final Node node;
     private String source;
 
-    ParserException(final String message) {
+    public ParserException(final String message) {
         this(message, null, null);
     }
 
-    ParserException(final String message, final Node node) {
+    public ParserException(final String message, final Node node) {
         this(message, node, null);
     }
 
-    ParserException(final String message, final Throwable cause) {
+    public ParserException(final String message, final Throwable cause) {
         this(message, null, cause);
     }
 
-    ParserException(final String message, final Node node, final Throwable cause) {
+    public ParserException(final String message, final Node node, final Throwable cause) {
         super(message, cause);
         this.node = node;
     }
 
-    Node getNode() {
+    public Node getNode() {
         return node;
     }
 

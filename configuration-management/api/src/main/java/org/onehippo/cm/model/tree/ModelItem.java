@@ -16,6 +16,9 @@
 package org.onehippo.cm.model.tree;
 
 
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+
 /**
  * Represents the (potential) state of a JCR Node or Property as specified in either a ConfigurationItem or
  * DefinitionItem tree.
@@ -27,9 +30,19 @@ public interface ModelItem {
     String getName();
 
     /**
+     * @return the name of this node or property -- not expected to be JCR encoded
+     */
+    JcrPathSegment getJcrName();
+
+    /**
      * @return the full path of this node or property (including a segment for {@link #getName()})
      */
     String getPath();
+
+    /**
+     * @return the full path of this node or property (including a segment for {@link #getName()})
+     */
+    JcrPath getJcrPath();
 
     /**
      * @return the parent node for this item, or null if this item represents the root node
