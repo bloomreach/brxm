@@ -79,14 +79,7 @@ public class DbLockManager extends AbstractLockManager {
             "expirationTime=0 " +
             "WHERE lockKey=?";
 
-    // Abort time MUST keep the expirationTime???
-    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
-            "status='ABORT', " +
-            "lockTime=0, " +
-            "expirationTime=0, " +
-            "lockOwner=NULL, " +
-            "lockThread=NULL " +
-            "WHERE lockKey=?";
+    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=?";
 
     // only refreshes its own cluster locks
     public static final String LOCKS_TO_REFRESH_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockOwner=? AND expirationTime<? AND status='RUNNING' FOR UPDATE";
@@ -180,11 +173,11 @@ public class DbLockManager extends AbstractLockManager {
                 selectStatement.setString(1, key);
                 ResultSet resultSet = selectStatement.executeQuery();
                 if (!resultSet.next()) {
-                    String msg = String.format("'%s' cannot be released by '%s' because lock does not exist", key, threadName);
+                    String msg = String.format("Lock '%s' cannot be released by '%s' because lock does not exist", key, threadName);
                     log.warn(msg);
                     throw new LockException(msg);
                 } else {
-                    String msg = String.format("'%s' cannot be released for thread '%s' because lock is not owned.", key, threadName);
+                    String msg = String.format("Lock '%s' cannot be released for thread '%s' because lock is not owned.", key, threadName);
                     log.warn(msg);
                     throw new LockException(msg);
                 }

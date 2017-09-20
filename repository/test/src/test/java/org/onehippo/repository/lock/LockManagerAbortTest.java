@@ -15,15 +15,17 @@
  */
 package org.onehippo.repository.lock;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.LockException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.lock.db.DbLockManager.ABORT_STATEMENT;
 
 public class LockManagerAbortTest extends AbstractLockManagerTest {
 
@@ -46,18 +48,11 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
         lockThread.join();
 
         assertTrue("lockThread should be interrupted", runnable.interrupted);
-        if (runnable.msgExceptionPair != null) {
-            fail(runnable.msgExceptionPair.msg + " : " + runnable.msgExceptionPair.e.toString());
-        }
 
         // AFTER the interrupt, the database record should be in state 'FREE' since LockRunnable invoked #unlock
         dbRowAssertion(key, "FREE");
     }
 
-    @Test
-    public void fake_other_cluster_node_has_set_abort() throws Exception {
-        // by manually in the database setting status 'ABORT' is the same as if it is done on a different cluster node
-    }
 
 
     private class LockRunnable implements Runnable {
@@ -65,9 +60,8 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
         private String key;
         private volatile boolean keepAlive;
         private boolean interrupted = false;
-        private MsgExceptionPair msgExceptionPair;
 
-        LockRunnable(final String key , final boolean keepAlive) {
+        LockRunnable(final String key, final boolean keepAlive) {
             this.key = key;
             this.keepAlive = keepAlive;
         }
@@ -80,33 +74,38 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
                     Thread.sleep(25);
                 }
             } catch (LockException e) {
-                msgExceptionPair = new MsgExceptionPair("LockException", e);
+                fail("Unexpected lock exception :" + e.toString());
             } catch (InterruptedException e) {
+                // The DB entry should be in status 'ABORT' and thus still locked
+                boolean locked = false;
                 try {
-                    // The DB entry is either in status 'ABORT' or in status 'RUNNING'
-                    boolean locked = lockManager.isLocked(key);
-                    if (!locked) {
-                        msgExceptionPair = new MsgExceptionPair("Key should be in state ABORT or RUNNING", new IllegalStateException());
-                    }
-                    // because of the call above to lockManager.isLocked which is synchronized, the #abort invocation by the main
-                    // thread must have finished (because synchronized on same object) and thus the database record must now
-                    // be 'ABORT'
-                    try {
-                        dbRowAssertion(key, "ABORT");
-                    } catch (SQLException e1) {
-                        msgExceptionPair = new MsgExceptionPair("SQL Exception", e);
-                    }
-                    interrupted = true;
-
-                    lockManager.unlock(key);
-
-                    try {
-                        dbRowAssertion(key, "FREE");
-                    } catch (SQLException e1) {
-                        msgExceptionPair = new MsgExceptionPair("SQL Exception", e);
-                    }
+                    locked = lockManager.isLocked(key);
                 } catch (LockException e1) {
-                    msgExceptionPair = new MsgExceptionPair("After interruption, the current Thread holding the lock should be able to unlock", e1);
+                    fail(e1.toString());
+                }
+                if (!locked) {
+                    fail(String.format("Lock for '%s' should be in state ABORT or RUNNNING", key));
+                }
+                // because of the call above to lockManager.isLocked which is synchronized, the #abort invocation by the main
+                // thread must have finished (because synchronized on same object) and thus the database record must now
+                // be 'ABORT' : This subtle thing is because 'dbRowAssertion' check the database directly without taking
+                // synchronization in the LockManager into account
+                try {
+                    dbRowAssertion(key, "ABORT");
+                } catch (SQLException e1) {
+                    fail(String.format("SQL Exception : " + e.toString()));
+                }
+
+                interrupted = true;
+                try {
+                    lockManager.unlock(key);
+                } catch (LockException e1) {
+                    fail("After interruption, the current Thread holding the lock should be able to unlock :" + e1.toString());
+                }
+                try {
+                    dbRowAssertion(key, "FREE");
+                } catch (SQLException e1) {
+                    fail(String.format("SQL Exception : " + e.toString()));
                 }
             }
         }
