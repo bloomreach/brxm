@@ -32,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.manager.workflow.BaseWorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.parameters.ParametersInfoProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
@@ -45,19 +47,30 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 @Path("/demosite:productdocument/")
+@ParametersInfo(type = ProductResourceParamsInfo.class)
 public class ProductContentResource extends AbstractContentResource {
     
     private static Logger log = LoggerFactory.getLogger(ProductContentResource.class);
     
     @GET
     @Path("/")
-    public ProductRepresentation getProductResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+    public ProductRepresentation getProductResource(
+            @Context HttpServletRequest servletRequest,
+            @Context HttpServletResponse servletResponse,
+            @Context UriInfo uriInfo,
+            @Context ParametersInfoProvider paramsInfoProvider) {
         try {
+            final ProductResourceParamsInfo paramsInfo = paramsInfoProvider.getParametersInfo();
+
             HstRequestContext requestContext = getRequestContext(servletRequest);       
             ProductBean productBean = getRequestContentBean(requestContext, ProductBean.class);
             ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
-            productRep.addLink(getNodeLink(requestContext, productBean));
-            productRep.addLink(getSiteLink(requestContext, productBean));
+            if (paramsInfo.isNodeLinkIncluded()) {
+                productRep.addLink(getNodeLink(requestContext, productBean));
+            }
+            if (paramsInfo.isSiteLinkIncluded()) {
+                productRep.addLink(getSiteLink(requestContext, productBean));
+            }
             return productRep;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

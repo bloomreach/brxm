@@ -36,6 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.annotations.Persistable;
@@ -50,6 +51,8 @@ import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.parameters.ParametersInfoProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
@@ -63,24 +66,31 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 @Path("/products/")
+@ParametersInfo(type = ProductResourceParamsInfo.class)
 public class ProductPlainResource extends AbstractResource {
     
     private static Logger log = LoggerFactory.getLogger(ProductPlainResource.class);
     
     @GET
     @Path("/search/")
-    public List<ProductRepresentation> searchProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    public List<ProductRepresentation> searchProductResources(
+            @Context HttpServletRequest servletRequest,
+            @Context HttpServletResponse servletResponse,
+            @Context UriInfo uriInfo,
+            @Context ParametersInfoProvider paramsInfoProvider,
             @QueryParam("brand") String brand,
             @QueryParam("product") String productType,
             @QueryParam("color") String color,
             @QueryParam("query") String query,
             @QueryParam("begin") @DefaultValue("0") int begin,
             @QueryParam("psize") @DefaultValue("10") int pageSize,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @MatrixParam("sitelink") Boolean siteLinkParam) {
         
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
         
         try {
+            final ProductResourceParamsInfo paramsInfo = paramsInfoProvider.getParametersInfo();
+
             // You can use either getRequestContext(servletRequest) or RequestContextProvider.get().
             //
             //HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -111,8 +121,18 @@ public class ProductPlainResource extends AbstractResource {
             }
             
             hstQuery.setFilter(filter);
-            hstQuery.addOrderByDescending("demosite:price");
-            
+
+            String [] sortFields = StringUtils.split(paramsInfo.getSortFields(), "\t\r\n, ");
+            if (sortFields != null) {
+                for (String sortField : sortFields) {
+                    if (sortField.startsWith("-")) {
+                        hstQuery.addOrderByDescending(sortField.substring(1));
+                    } else {
+                        hstQuery.addOrderByAscending(sortField);
+                    }
+                }
+            }
+
             HstQueryResult result = hstQuery.execute();
             HippoBeanIterator iterator = result.getHippoBeans();
 
@@ -121,12 +141,15 @@ public class ProductPlainResource extends AbstractResource {
                 
                 if (productBean != null) {
                     ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
-                    productRep.addLink(getNodeLink(requestContext, productBean));
-                    
-                    if (siteLink) {
+
+                    if (paramsInfo.isNodeLinkIncluded()) {
+                        productRep.addLink(getNodeLink(requestContext, productBean));
+                    }
+
+                    if (BooleanUtils.isTrue(siteLinkParam) || paramsInfo.isSiteLinkIncluded()) {
                         productRep.addLink(getSiteLink(requestContext, productBean));
                     }
-                    
+
                     products.add(productRep);
                 }
             }
@@ -146,14 +169,20 @@ public class ProductPlainResource extends AbstractResource {
     
     @GET
     @Path("/brand/{brand}/")
-    public ProductRepresentation getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    public ProductRepresentation getProductResources(
+            @Context HttpServletRequest servletRequest,
+            @Context HttpServletResponse servletResponse,
+            @Context UriInfo uriInfo,
+            @Context ParametersInfoProvider paramsInfoProvider,
             @PathParam("brand") String brand,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @MatrixParam("sitelink") Boolean siteLinkParam) {
         
         ProductRepresentation productRep = null;
         
         if (!StringUtils.isEmpty(brand)) {
             try {
+                final ProductResourceParamsInfo paramsInfo = paramsInfoProvider.getParametersInfo();
+
                 // You can use either getRequestContext(servletRequest) or RequestContextProvider.get().
                 //
                 //HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -181,9 +210,12 @@ public class ProductPlainResource extends AbstractResource {
                     
                     if (productBean != null) {
                         productRep = new ProductRepresentation().represent(productBean);
-                        productRep.addLink(getNodeLink(requestContext, productBean));
-                        
-                        if (siteLink) {
+
+                        if (paramsInfo.isNodeLinkIncluded()) {
+                            productRep.addLink(getNodeLink(requestContext, productBean));
+                        }
+
+                        if (BooleanUtils.isTrue(siteLinkParam) || paramsInfo.isSiteLinkIncluded()) {
                             productRep.addLink(getSiteLink(requestContext, productBean));
                         }
                     }

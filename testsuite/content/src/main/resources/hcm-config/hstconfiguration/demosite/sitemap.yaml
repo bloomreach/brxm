@@ -186,6 +186,8 @@ definitions:
           hst:componentconfigurationmappingnames: ['demosite:newsdocument']
           hst:componentconfigurationmappingvalues: ['hst:pages/detailpage']
           hst:relativecontentpath: products/${1}
+          hst:parameternames: [rest.product.siteLinkIncluded, rest.product.nodeLinkIncluded]
+          hst:parametervalues: ['true', 'true']
       /form:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/formpage
