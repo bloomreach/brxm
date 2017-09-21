@@ -301,8 +301,12 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         return LazyMap.decorate(map,
                 new Transformer() {
                     @Override
-                    public Object transform(Object language) {
-                        return getInfo((Locale) language); // TODO: check this, must it be Locale?
+                    public Object transform(Object locale) {
+                        if (locale instanceof Locale) {
+                            return getInfo((Locale) locale);
+                        } else {
+                            return getInfo((String) locale);
+                        }
                     }
                 });
     }

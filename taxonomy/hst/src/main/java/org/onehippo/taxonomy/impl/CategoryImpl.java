@@ -168,8 +168,12 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         
         return LazyMap.decorate(map, new Transformer() {
             @Override
-            public Object transform(Object input) {
-                return getInfo((Locale) input); // TODO: check this, must be Locale?
+            public Object transform(Object locale) {
+                if (locale instanceof Locale) {
+                    return getInfo((Locale) locale);
+                } else {
+                    return getInfo((String) locale);
+                }
             }
         });
     }
