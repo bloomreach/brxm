@@ -2,15 +2,15 @@
   "@type": "plugin",
   "id": "newsPlugin",
   "name": "News",
-  "icon": "/essentials/images/icons/news.png",
+  "icon": "/essentials/feature/images/news-plugin-icon.png",
   "introduction": "With News, you add news functionality to the project. This feature will be installed as a drag-and-drop component in the component library of the Channel manager.",
   "description": "<ul><li>This feature installs a new document type 'News Item' in the CMS, containing fields for Title, Introduction, Content, News date, Author, Source, Location and News Image.</li><li>A structured document tree is created in the project: news/&lt;year&gt;/&lt;month&gt;/&lt;newsdocuments&gt;</li><li>A configurable drag-and-drop component 'News List' is added to the component library in the Channel Manager.</li><li>Some sample news articles are installed and a page (with corresponding menu entry) with an example news list is created.</li></ul>",
-  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/news-component.html",
+  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/news-component.html",
   "imageUrls": [
-    "/essentials/images/screenshots/news01.png",
-    "/essentials/images/screenshots/news02.png",
-    "/essentials/images/screenshots/news03.png",
-    "/essentials/images/screenshots/news04.png"
+    "/essentials/feature/images/screenshots/news01.png",
+    "/essentials/feature/images/screenshots/news02.png",
+    "/essentials/feature/images/screenshots/news03.png",
+    "/essentials/feature/images/screenshots/news04.png"
   ],
   "packageFile": "/META-INF/news_package_instructions.xml",
   "restClasses": [],

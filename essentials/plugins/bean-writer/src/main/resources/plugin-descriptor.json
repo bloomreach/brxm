@@ -1,8 +1,8 @@
 {
   "@type": "plugin",
   "id": "beanwriter",
-  "name": "Beanwriter",
-  "icon": "/essentials/images/icons/bean-writer.png",
+  "name": "Bean Writer",
+  "icon": "/essentials/tool/images/bean-writer-icon.png",
   "introduction": "Generate HST Content beans.",
   "restClasses": [
     "org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"

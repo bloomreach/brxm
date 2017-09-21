@@ -2,11 +2,11 @@
   "@type": "plugin",
   "id": "googlemapsPlugin",
   "name": "Google Maps",
-  "icon": "/essentials/images/icons/googlemaps.png",
+  "icon": "/essentials/feature/images/googlemaps-plugin-icon.png",
   "description": "This feature adds a configurable drag-and-drop Google Maps component.",
   "introduction": "With Google Maps, you can easily place a Google Map on your pages. This Feature will be installed as a drag-and-drop component in the component gallery in the Channel Manager. You can select in the CMS what coordinates, etc. should be shown.",
   "imageUrls": [
-    "/essentials/images/screenshots/googlemaps01.png"
+    "/essentials/feature/images/screenshots/googlemaps01.png"
   ],
   "packageFile": "/META-INF/googlemaps_instructions.xml",
   "restClasses": [],

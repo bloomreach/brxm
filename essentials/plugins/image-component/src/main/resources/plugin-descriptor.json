@@ -2,13 +2,13 @@
   "@type": "plugin",
   "id": "imageComponentPlugin",
   "name": "Images",
-  "icon": "/essentials/images/icons/images.png",
+  "icon": "/essentials/feature/images/images-plugin-icon.png",
   "introduction": "With Images, you can easily use single images in your project. This feature will be installed as a drag-and-drop component in the component library of the Channel Manager. You can select in the CMS what image from the repository needs to be shown.",
   "imageUrls": [
-    "/essentials/images/screenshots/image01.png",
-    "/essentials/images/screenshots/image02.png"
+    "/essentials/feature/images/screenshots/image01.png",
+    "/essentials/feature/images/screenshots/image02.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/image-component.html",
+  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/image-component.html",
   "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
   "restClasses": [],
   "type": "feature",

@@ -1,15 +1,15 @@
 {
   "@type": "plugin",
   "id": "documentWizardPlugin",
-  "name": "Documents wizard",
-  "icon": "/essentials/images/icons/documents-wizard.png",
+  "name": "Documents Wizard",
+  "icon": "/essentials/feature/images/documents-wizard-plugin-icon.png",
   "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
   "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the certified Hippo Dashboard Document Wizard.",
   "imageUrls": [
-    "/essentials/images/screenshots/documentwizard01.png",
-    "/essentials/images/screenshots/documentwizard02.png"
+    "/essentials/feature/images/screenshots/documentwizard01.png",
+    "/essentials/feature/images/screenshots/documentwizard02.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"

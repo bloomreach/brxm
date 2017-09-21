@@ -2,15 +2,15 @@
   "@type": "plugin",
   "id": "taxonomyPlugin",
   "name": "Taxonomy",
-  "icon": "/essentials/images/icons/taxonomy.png",
+  "icon": "/essentials/feature/images/taxonomy-plugin-icon.png",
   "introduction": "With the Taxonomy feature you can add extra meta data to your documents to categorize them.",
   "description": "This feature wraps the 'Taxonomy' Standard Plugin.",
   "imageUrls": [
-    "/essentials/images/screenshots/taxonomy01.png",
-    "/essentials/images/screenshots/taxonomy02.png",
-    "/essentials/images/screenshots/taxonomy03.png"
+    "/essentials/feature/images/screenshots/taxonomy01.png",
+    "/essentials/feature/images/screenshots/taxonomy02.png",
+    "/essentials/feature/images/screenshots/taxonomy03.png"
   ],
-  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"
