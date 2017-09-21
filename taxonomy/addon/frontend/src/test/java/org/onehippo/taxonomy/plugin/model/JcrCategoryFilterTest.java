@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class JcrCategoryFilterTest extends AbstractTaxonomyTest {
 
         EditableCategory topItem = taxonomy.getCategoryByKey(TOP_KEY);
         List<? extends EditableCategory> children = topItem.getChildren();
-        assertEquals(1, children.size());
+        assertEquals(3, children.size());
         final EditableCategory firstLevelChild1 = children.get(0);
         assertEquals(BRANCH_NAME, firstLevelChild1.getName());
         assertEquals(BRANCH_KEY, firstLevelChild1.getKey());
@@ -95,7 +95,7 @@ public class JcrCategoryFilterTest extends AbstractTaxonomyTest {
     public void test_filtering_does_apply_when_non_editing_taxonomy() throws Exception {
         EditableCategory topItem = nonEditingTaxonomy.getCategoryByKey(TOP_KEY);
         List<? extends EditableCategory> children = topItem.getChildren();
-        assertEquals(1, children.size());
+        assertEquals(3, children.size());
         final EditableCategory firstLevelChild1 = children.get(0);
         assertEquals(BRANCH_NAME, firstLevelChild1.getName());
         assertEquals(BRANCH_KEY, firstLevelChild1.getKey());

@@ -58,7 +58,7 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
     public void testCategoryChildren() throws Exception {
         Category item = taxonomy.getCategoryByKey(TOP_KEY);
         List<? extends Category> children = item.getChildren();
-        assertEquals(1, children.size());
+        assertEquals(3, children.size());
         assertEquals(BRANCH_NAME, children.get(0).getName());
         assertEquals(BRANCH_KEY, children.get(0).getKey());
     }
