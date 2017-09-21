@@ -77,9 +77,16 @@ public interface Category {
 
     /**
      * @return returns unmodifiable translations map keyed by language names.
+     * @deprecated use {@link #getInfosByLocale()} instead
      */
+    @Deprecated
     Map<String, ? extends CategoryInfo> getInfos();
-    
+
+    /**
+     * @return returns unmodifiable translations map keyed by Locales.
+     */
+    Map<Locale, ? extends CategoryInfo> getInfosByLocale();
+
     /**
      * 
      * @return the {@link Taxonomy} that contains this item

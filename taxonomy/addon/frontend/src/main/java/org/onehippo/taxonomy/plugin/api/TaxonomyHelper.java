@@ -15,7 +15,9 @@
  */
 package org.onehippo.taxonomy.plugin.api;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.onehippo.taxonomy.api.Category;
@@ -30,9 +32,13 @@ public final class TaxonomyHelper {
     }
 
     public static String getCategoryName(final Category category, final Locale locale) {
-        CategoryInfo info = category.getInfo(locale);
-        if (info != null) {
-            return info.getName();
+        if (locale != null) {
+            final List<Locale.LanguageRange> documentLocale = Locale.LanguageRange.parse(locale.toLanguageTag());
+            final Map<Locale, ? extends CategoryInfo> availableTranslationsMap = category.getInfosByLocale();
+            final Locale matchingLocale = Locale.lookup(documentLocale, availableTranslationsMap.keySet());
+            if (matchingLocale != null) {
+                return availableTranslationsMap.get(matchingLocale).getName();
+            }
         }
         return category.getName();
     }

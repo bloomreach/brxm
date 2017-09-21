@@ -312,6 +312,27 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     }
 
     @Override
+    public Map<Locale, ? extends CategoryInfo> getInfosByLocale() {
+        Map<Locale, JcrCategoryInfo> map = new HashMap<>();
+        try {
+            final Node node = getNode();
+            if (node.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                final Node infosNode = node.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
+                final NodeIterator infoNodesIterator = infosNode.getNodes();
+                while (infoNodesIterator.hasNext()) {
+                    final Node infoNode = infoNodesIterator.nextNode();
+                    final Locale locale = LocaleUtils.toLocale(infoNode.getName());
+                    final JcrCategoryInfo jcrCategoryInfo = new JcrCategoryInfo(new JcrNodeModel(infoNode), editable);
+                    map.put(locale, jcrCategoryInfo);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return map;
+    }
+
+    @Override
     public boolean equals(Object obj) {
          if (obj instanceof JcrCategory) {
             return ((JcrCategory) obj).getNodeModel().equals(getNodeModel());

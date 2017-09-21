@@ -162,7 +162,11 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         return info;
     }
 
+    /**
+     * @deprecated use {@link #getInfosByLocale()} instead
+     */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Map<String, ? extends CategoryInfo> getInfos() {
         final Map<String, CategoryInfo> map = new HashMap();
         
@@ -178,4 +182,20 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         });
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Locale, ? extends CategoryInfo> getInfosByLocale() {
+        final Map<Locale, CategoryInfo> map = new HashMap();
+
+        return LazyMap.decorate(map, new Transformer() {
+            @Override
+            public Object transform(Object locale) {
+                if (locale instanceof Locale) {
+                    return getInfo((Locale) locale);
+                } else {
+                    return getInfo((String) locale);
+                }
+            }
+        });
+    }
 }
