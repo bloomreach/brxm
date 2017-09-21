@@ -114,11 +114,14 @@ public class StringCodecFactory {
     }
 
     /**
-     * Direct usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
-     * <p/>
-     * Performs a one-way encoding (no decoding possible) for translating any string to a suitable set of characters
-     * that can be used in URIs.
-     *
+     * The UriEncoding class is responsible for creating human-readable URI from a String, by either removing characters
+     * or by mapping them to characters that need not be percent-encoded.
+     * <p>
+     * Note that the name 'UriEncoding' is not fully accurate as it does not conform to URI specs but rather creates a
+     * slug, a human-readable String.
+     * </p><p>
+     * Direct usage of this class discouraged. It should only be used by frameworks to initialize the StringCodecFactory instance.
+     * </p>
      * @see <a href="doc-files/encoding.html">Encoding of node names</a>
      */
     public static class UriEncoding implements StringCodec {
@@ -512,6 +515,24 @@ public class StringCodecFactory {
                         case 0x017d: sb.append("z");    break; // Ž
                         case 0x017e: sb.append("z");    break; // ž
                         case 0x017f: sb.append("s");    break; // ſ
+
+                        // 0x201x subrange of Unicode General Punctuation, see https://en.wikipedia.org/wiki/General_Punctuation
+                        case 0x2010: sb.append("-");    break; // ‐ (hyphen-minus)
+                        case 0x2011: sb.append("-");    break; // ‑ (non-breaking hyphen)
+                        case 0x2012: sb.append("-");    break; // ‒
+                        case 0x2013: sb.append("-");    break; // –
+                        case 0x2014: sb.append("-");    break; // —
+                        case 0x2015: sb.append("-");    break; // ―
+                        case 0x2016: sb.append("-");    break; // ‖
+                        case 0x2017: sb.append("-");    break; // ‗
+                        case 0x2018: break; // ‘ (left single quotation) treat quote-like characters as quote: remove
+                        case 0x2019: break; // ’ (right single quotation)
+                        case 0x201a: break; // ‚
+                        case 0x201b: break; // ‛
+                        case 0x201c: break; // “
+                        case 0x201d: break; // ”
+                        case 0x201e: break; // „
+                        case 0x201f: break; // ‟
 
                         // 0xac00 - 0xd7a3 : Hangul Syllables (only some of them are encoded)
                         case 0xc2a0:
