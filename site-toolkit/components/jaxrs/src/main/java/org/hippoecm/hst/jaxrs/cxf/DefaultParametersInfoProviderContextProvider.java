@@ -15,20 +15,11 @@
  */
 package org.hippoecm.hst.jaxrs.cxf;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.jaxrs.ext.ContextProvider;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Message;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
@@ -37,13 +28,23 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.parameters.ParametersInfoProvider;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
+/**
+ * Default <code>ContextProvider&lt;ParametersInfoProvider&gt;</code> implementation providing parameter resolution
+ * based on the resolved {@link ComponentConfiguration} via the {@link ComponentConfigurationResolver} property.
+ */
 @Provider
 public class DefaultParametersInfoProviderContextProvider implements ContextProvider<ParametersInfoProvider> {
 
+    /**
+     * Default component parameter value converter.
+     */
     private static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new DefaultHstParameterValueConverter();
+
+    /**
+     * {@link ComponentConfigurationResolver} instance used when resolving a {@link ComponentConfiguration}.
+     */
+    private ComponentConfigurationResolver componentConfigurationResolver;
 
     @Override
     public ParametersInfoProvider createContext(Message message) {
@@ -59,16 +60,36 @@ public class DefaultParametersInfoProviderContextProvider implements ContextProv
         return new ParametersInfoProviderImpl(message, resourceCls.getAnnotation(ParametersInfo.class));
     }
 
-    protected ComponentConfiguration getComponentConfiguration(final Message message) {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final ComponentConfiguration componentConfig = new ResolvedSiteMapItemOrResolvedMountBasedComponentConfiguration(
-                requestContext.getResolvedSiteMapItem(), requestContext.getResolvedMount());
-        return componentConfig;
+    /**
+     * Return the {@link ComponentConfigurationResolver} instance.
+     * @return
+     */
+    public ComponentConfigurationResolver getComponentConfigurationResolver() {
+        return componentConfigurationResolver;
     }
 
+    /**
+     * Set the {@link ComponentConfigurationResolver} instance.
+     * @param componentConfigurationResolver
+     */
+    public void setComponentConfigurationResolver(ComponentConfigurationResolver componentConfigurationResolver) {
+        this.componentConfigurationResolver = componentConfigurationResolver;
+    }
+
+    /**
+     * {@link ParametersInfoProvider} implementation which is passed to a JAX-RS Resource class through a parameter annotated
+     * with <code>@Context</code> annotation.
+     */
     private class ParametersInfoProviderImpl implements ParametersInfoProvider {
 
+        /**
+         * CXF message in the JAX-RS invocation context.
+         */
         private final Message message;
+
+        /**
+         * {@link ParametersInfo} annotation instance.
+         */
         private final ParametersInfo paramsInfoAnno;
 
         public ParametersInfoProviderImpl(final Message message, final ParametersInfo paramsInfoAnno) {
@@ -81,128 +102,9 @@ public class DefaultParametersInfoProviderContextProvider implements ContextProv
             final HstRequestContext requestContext = RequestContextProvider.get();
             final HstParameterInfoProxyFactory parameterInfoProxyFacotory = requestContext
                     .getParameterInfoProxyFactory();
-            final ComponentConfiguration componentConfig = getComponentConfiguration(message);
+            final ComponentConfiguration componentConfig = getComponentConfigurationResolver().resolve(message);
             return parameterInfoProxyFacotory.createParameterInfoProxy(paramsInfoAnno, componentConfig,
                     requestContext.getServletRequest(), DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
         }
-    }
-
-    private static class ResolvedSiteMapItemOrResolvedMountBasedComponentConfiguration
-            implements ComponentConfiguration {
-
-        private final ResolvedSiteMapItem resolvedSiteMapItem;
-        private final ResolvedMount resolvedMount;
-        private final List<String> parameterNames;
-
-        public ResolvedSiteMapItemOrResolvedMountBasedComponentConfiguration(
-                final ResolvedSiteMapItem resolvedSiteMapItem, final ResolvedMount resolvedMount) {
-            this.resolvedSiteMapItem = resolvedSiteMapItem;
-            this.resolvedMount = resolvedMount;
-
-            Set<String> paramNames = new HashSet<>();
-
-            if (resolvedSiteMapItem != null) {
-                resolvedSiteMapItem.getParameters().keySet().forEach(k -> {
-                    paramNames.add((String) k);
-                });
-            }
-
-            if (resolvedMount != null) {
-                resolvedMount.getMount().getParameters().keySet().forEach(k -> {
-                    paramNames.add(k);
-                });
-            }
-
-            parameterNames = (paramNames.isEmpty()) ? Collections.emptyList()
-                    : Collections.unmodifiableList(new ArrayList<>(paramNames));
-        }
-
-        @Override
-        public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            return hstResolvedSiteMapItem.getParameter(name);
-        }
-
-        @Override
-        public List<String> getParameterNames() {
-            return parameterNames;
-        }
-
-        @Override
-        public Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            Map<String, String> parameters = new HashMap<String, String>();
-            hstResolvedSiteMapItem.getParameters().forEach((k, v) -> {
-                parameters.put((String) k, (String) v);
-            });
-            return parameters;
-        }
-
-        @Override
-        public String getLocalParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            return hstResolvedSiteMapItem.getLocalParameter(name);
-        }
-
-        @Override
-        public Map<String, String> getLocalParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            Map<String, String> parameters = new HashMap<String, String>();
-            hstResolvedSiteMapItem.getLocalParameters().forEach((k, v) -> {
-                parameters.put((String) k, (String) v);
-            });
-            return parameters;
-        }
-
-        @Override
-        public Map<String, String> getRawParameters() {
-            Map<String, String> parameters = new HashMap<String, String>();
-
-            if (resolvedSiteMapItem != null) {
-                resolvedSiteMapItem.getHstSiteMapItem().getParameters().forEach((k, v) -> {
-                    parameters.put((String) k, (String) v);
-                });
-            }
-
-            if (resolvedMount != null) {
-                resolvedMount.getMount().getParameters().forEach((k, v) -> {
-                    parameters.put(k, v);
-                });
-            }
-
-            return parameters;
-        }
-
-        @Override
-        public Map<String, String> getRawLocalParameters() {
-            return getRawParameters();
-        }
-
-        @Override
-        public String getRenderPath() {
-            return null;
-        }
-
-        @Override
-        public String getServeResourcePath() {
-            return null;
-        }
-
-        @Override
-        public String getCanonicalPath() {
-            return null;
-        }
-
-        @Override
-        public String getCanonicalIdentifier() {
-            return null;
-        }
-
-        @Override
-        public String getXType() {
-            return null;
-        }
-
-        @Override
-        public Type getComponentType() {
-            return null;
-        }
-
     }
 }
