@@ -78,7 +78,7 @@ public class UriEncodingTest {
               uri.encode("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"));
 
         // 0x201x subrange of Unicode General Punctuation
-        assertEquals("--------''''''''", uri.encode("‐‑‒–—―‖‗‘’‚‛“”„‟"));
+        assertEquals("--------with-ending", uri.encode("‐‑‒–—―‖‗‘’‚‛“”„‟with-ending"));
 
         // trailing dots
         assertEquals("abc", uri.encode("abc."));

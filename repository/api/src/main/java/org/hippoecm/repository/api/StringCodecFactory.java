@@ -525,14 +525,14 @@ public class StringCodecFactory {
                         case 0x2015: sb.append("-");    break; // ―
                         case 0x2016: sb.append("-");    break; // ‖
                         case 0x2017: sb.append("-");    break; // ‗
-                        case 0x2018: sb.append("'");    break; // ‘ (left single quotation)
-                        case 0x2019: sb.append("'");    break; // ’ (right single quotation)
-                        case 0x201a: sb.append("'");    break; // ‚
-                        case 0x201b: sb.append("'");    break; // ‛
-                        case 0x201c: sb.append("'");    break; // “
-                        case 0x201d: sb.append("'");    break; // ”
-                        case 0x201e: sb.append("'");    break; // „
-                        case 0x201f: sb.append("'");    break; // ‟
+                        case 0x2018: break; // ‘ (left single quotation) treat quote-like characters as quote: remove
+                        case 0x2019: break; // ’ (right single quotation)
+                        case 0x201a: break; // ‚
+                        case 0x201b: break; // ‛
+                        case 0x201c: break; // “
+                        case 0x201d: break; // ”
+                        case 0x201e: break; // „
+                        case 0x201f: break; // ‟
 
                         // 0xac00 - 0xd7a3 : Hangul Syllables (only some of them are encoded)
                         case 0xc2a0:
