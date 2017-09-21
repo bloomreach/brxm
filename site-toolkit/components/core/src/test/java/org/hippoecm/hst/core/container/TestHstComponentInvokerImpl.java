@@ -173,7 +173,7 @@ public class TestHstComponentInvokerImpl {
         @Override
         public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
                 final HstRequest request, final HstParameterValueConverter converter) {
-            return createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+            return createParameterInfoProxy(parametersInfo, componentConfig, (HttpServletRequest) request, converter);
         }
 
         @Override

@@ -49,6 +49,13 @@ public class DefaultParametersInfoProviderContextProvider implements ContextProv
     public ParametersInfoProvider createContext(Message message) {
         final OperationResourceInfo operationResourceInfo = message.getExchange().get(OperationResourceInfo.class);
         final Class<?> resourceCls = operationResourceInfo.getClassResourceInfo().getResourceClass();
+
+        if (!resourceCls.isAnnotationPresent(ParametersInfo.class)) {
+            throw new RuntimeException(
+                    "Cannot find org.hippoecm.hst.core.parameters.ParametersInfo annotation in the resource class: "
+                            + resourceCls);
+        }
+
         return new ParametersInfoProviderImpl(message, resourceCls.getAnnotation(ParametersInfo.class));
     }
 
@@ -71,10 +78,6 @@ public class DefaultParametersInfoProviderContextProvider implements ContextProv
 
         @Override
         public <T> T getParametersInfo() {
-            if (paramsInfoAnno == null) {
-                return null;
-            }
-
             final HstRequestContext requestContext = RequestContextProvider.get();
             final HstParameterInfoProxyFactory parameterInfoProxyFacotory = requestContext
                     .getParameterInfoProxyFactory();
