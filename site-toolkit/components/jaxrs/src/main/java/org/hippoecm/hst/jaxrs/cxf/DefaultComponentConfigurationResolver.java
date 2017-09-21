@@ -152,5 +152,8 @@ public class DefaultComponentConfigurationResolver implements ComponentConfigura
             return null;
         }
 
+        public String getParametersInfoClassName() {
+            return null;
+        }
     }
 }
