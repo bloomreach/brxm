@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.onehippo.taxonomy.demo.plugin;
 
+import java.util.Locale;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,10 +30,10 @@ public class AdditionalFieldCustomTaxonomyPickerDialog extends TaxonomyPickerDia
         private static final long serialVersionUID = 1L;
 
         public AdditionalFieldCustomTaxonomyPickerDialog(IPluginContext context, IPluginConfig config,
-                IModel<Classification> model, String preferredLocale) {
+                IModel<Classification> model, Locale preferredLocale) {
             super(context, config, model, preferredLocale);
 
-            addOrReplace(browser = new AdditionalFieldCustomTaxonomyBrowser("content", new Model<Classification>(model.getObject()),
+            addOrReplace(browser = new AdditionalFieldCustomTaxonomyBrowser("content", new Model<>(model.getObject()),
                     new TaxonomyModel(context, config), preferredLocale));
         }
     }

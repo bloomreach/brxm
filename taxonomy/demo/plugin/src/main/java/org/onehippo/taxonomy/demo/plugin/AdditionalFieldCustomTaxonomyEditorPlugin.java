@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,14 +47,14 @@ public class AdditionalFieldCustomTaxonomyEditorPlugin extends TaxonomyEditorPlu
             EditableCategory category = getCategory();
 
             if (category != null) {
-                return category.getInfo(getCurrentLanguageSelection().getLanguageCode()).getString(CustomTaxonomyConstants.FULL_DESCRIPTION, "");
+                return category.getInfo(getCurrentLocaleSelection()).getString(CustomTaxonomyConstants.FULL_DESCRIPTION, "");
             }
 
             return null;
         }
 
         public void setObject(String object) {
-            EditableCategoryInfo info = getCategory().getInfo(getCurrentLanguageSelection().getLanguageCode());
+            EditableCategoryInfo info = getCategory().getInfo(getCurrentLocaleSelection());
 
             try {
                 info.setString(CustomTaxonomyConstants.FULL_DESCRIPTION, object);
