@@ -27,10 +27,11 @@ const imageLinkComponent = {
     url: '<',
     isRequired: '<',
     fieldObject: '=',
+    fieldName: '@',
   },
   require: {
     ngModel: 'ngModel',
-    form: '^form',
+    form: '^^form',
   },
 };
 

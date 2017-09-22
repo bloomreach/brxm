@@ -18,6 +18,7 @@
        ng-class="{
           'has-errors': $ctrl.form.$error && $ctrl.form.$dirty
        }"
+       name="{{ $ctrl.fieldName }}"
        readonly="readonly"
        ng-model="$ctrl.ngModel.$modelValue"
        ng-hide="$ctrl.ngModel.$modelValue"
@@ -29,17 +30,14 @@
      ng-click="$ctrl.openImagePicker()"
      class="hippo-image-link-thumbnail">
 
-<div ng-messages="$ctrl.form.$error">
-  <div ng-message="required" ng-if="!$ctrl.ngModel.$modelValue">{{ ::'ERROR_FIELD_REQUIRED' | translate }}</div>
+<div class="hippo-imagelink-buttons">
+  <md-button class="md-icon-button"
+             ng-show="$ctrl.url"
+             ng-click="$ctrl.clearPickedImage()">
+    <md-icon class="material-icons">clear</md-icon>
+  </md-button>
+  <md-button class="md-icon-button"
+             ng-click="$ctrl.openImagePicker()">
+    <md-icon class="material-icons">search</md-icon>
+  </md-button>
 </div>
-
-
-<md-button class="md-icon-button"
-           ng-show="$ctrl.url"
-           ng-click="$ctrl.clearPickedImage()">
-  <md-icon class="material-icons">clear</md-icon>
-</md-button>
-<md-button class="md-icon-button"
-           ng-click="$ctrl.openImagePicker()">
-  <md-icon class="material-icons">search</md-icon>
-</md-button>

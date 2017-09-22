@@ -24,7 +24,6 @@ class ImageLinkController {
   }
 
   $onInit() {
-    setTimeout(() => console.log(this.fieldObject));
     this.inputElement = this.$element.find('input');
   }
 
