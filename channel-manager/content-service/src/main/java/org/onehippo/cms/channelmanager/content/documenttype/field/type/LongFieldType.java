@@ -47,4 +47,8 @@ public class LongFieldType extends PrimitiveFieldType {
         return DEFAULT_VALUE;
     }
 
+    @Override
+    protected String convertToSpecificType(final String input) {
+        return Long.parseLong(input) + "";
+    }
 }

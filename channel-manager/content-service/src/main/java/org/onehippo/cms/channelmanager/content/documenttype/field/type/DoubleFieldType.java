@@ -15,18 +15,8 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +45,11 @@ public class DoubleFieldType extends PrimitiveFieldType {
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
+    }
+
+    @Override
+    protected String convertToSpecificType(final String input) {
+        return Double.parseDouble(input) + "";
     }
 
 }

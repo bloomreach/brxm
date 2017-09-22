@@ -113,17 +113,29 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
 
                 try {
                     if (isMultiple()) {
-                        node.setProperty(propertyName, strings, getPropertyType());
+                        node.setProperty(propertyName, convertToSpecificTypeArray(strings), getPropertyType());
                     } else {
-                        node.setProperty(propertyName, strings[0], getPropertyType());
+                        node.setProperty(propertyName, convertToSpecificType(strings[0]), getPropertyType());
                     }
-                } catch (final ValueFormatException ignore) {
+                } catch (final NumberFormatException | ValueFormatException ignore) {
                 }
             }
         } catch (final RepositoryException e) {
             log.warn("Failed to write value(s) to property {}", propertyName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    protected String convertToSpecificType(final String input) {
+        return input;
+    }
+
+    private String[] convertToSpecificTypeArray(final String[] strings) {
+        final List<String> convertedStrings = new ArrayList<>();
+        for (final String element : strings) {
+            convertedStrings.add(convertToSpecificType(element));
+        }
+        return convertedStrings.toArray(new String[0]);
     }
 
     protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
