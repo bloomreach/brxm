@@ -13,8 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
+<input type="text"
+       class="hippo-imagelink-input"
+       ng-class="{
+          'has-errors': $ctrl.form.$error && $ctrl.form.$dirty
+       }"
+       readonly="readonly"
+       ng-model="$ctrl.ngModel.$modelValue"
+       ng-hide="$ctrl.ngModel.$modelValue"
+       ng-required="$ctrl.isRequired"
+       ng-disabled="true">
 
-<img ng-src="../../{{$ctrl.url}}"/>
-<input type="hidden" ng-model="$ctrl.ngModel.$modelValue" />
-<button ng-click="$ctrl.openImagePicker()">pick</button>
+<img ng-if="$ctrl.url"
+     ng-src="../../{{ $ctrl.url }}"
+     ng-click="$ctrl.openImagePicker()"
+     class="hippo-image-link-thumbnail">
 
+<div ng-messages="$ctrl.form.$error">
+  <div ng-message="required" ng-if="!$ctrl.ngModel.$modelValue">{{ ::'ERROR_FIELD_REQUIRED' | translate }}</div>
+</div>
+
+
+<md-button class="md-icon-button"
+           ng-show="$ctrl.url"
+           ng-click="$ctrl.clearPickedImage()">
+  <md-icon class="material-icons">clear</md-icon>
+</md-button>
+<md-button class="md-icon-button"
+           ng-click="$ctrl.openImagePicker()">
+  <md-icon class="material-icons">search</md-icon>
+</md-button>

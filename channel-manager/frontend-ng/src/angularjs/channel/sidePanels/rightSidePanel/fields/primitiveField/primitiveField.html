@@ -89,9 +89,11 @@
 
     <image-link ng-switch-when="IMAGE_LINK"
                 ng-model="fieldValue.value"
-                id="fieldValue.id"
+                name="{{ ::$ctrl.getFieldName($index) }}"
                 ng-change="$ctrl.valueChanged()"
+                field-object="$ctrl.form[$ctrl.getFieldName()]"
                 config="::$ctrl.fieldType.config"
+                is-required="::$ctrl.fieldType.required"
                 url="fieldValue.url">
     </image-link>
 

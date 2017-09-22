@@ -16,6 +16,7 @@
 
 import template from './imageLink.html';
 import controller from './imageLink.controller';
+import './imageLink.scss';
 
 const imageLinkComponent = {
   template,
@@ -24,9 +25,12 @@ const imageLinkComponent = {
     config: '<',
     id: '<',
     url: '<',
+    isRequired: '<',
+    fieldObject: '=',
   },
   require: {
     ngModel: 'ngModel',
+    form: '^form',
   },
 };
 

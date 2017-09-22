@@ -1,0 +1,10 @@
+@import 'variables';
+
+input.hippo-imagelink-input {
+  background: none !important;
+  border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+
+  &.has-errors {
+    border-bottom-color: $red-a700 !important;
+  }
+}

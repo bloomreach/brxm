@@ -15,11 +15,17 @@
  */
 
 class ImageLinkController {
-  constructor($scope, CmsService) {
+  constructor($scope, $element, CmsService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$element = $element;
     this.CmsService = CmsService;
+  }
+
+  $onInit() {
+    setTimeout(() => console.log(this.fieldObject));
+    this.inputElement = this.$element.find('input');
   }
 
   openImagePicker() {
@@ -31,8 +37,13 @@ class ImageLinkController {
       });
     }, () => {
       // Cancel callback
-      console.log('cancel callback');
     });
+  }
+
+  clearPickedImage() {
+    this.url = '';
+    this.ngModel.$setViewValue('');
+    this.inputElement.blur();
   }
 }
 
