@@ -269,64 +269,60 @@
 .hippo-fab-dial-container {
   .hippo-fab-option-btn {
     @extend %hippo-material-btn;
-    background-color: $overlay-link-dial-option;
-    border: none;
-    padding: 8px 0 0 5px;
+    background-color: $white;
+    border: 0;
     fill: $overlay-link-shadow-color;
-  }
-  #hippo-fab_btn {
-    @extend %hippo-material-btn;
     padding: 8px 0 0 5px;
-    border: none;
-    width: 100%;
+  }
+  .hippo-fab-btn {
+    @extend %hippo-material-btn;
+    border: 0;
     height: 100%;
+    padding: 8px 0 0 5px;
+    width: 100%;
+
+    &-open {
+      fill: $overlay-link-shadow-color;
+    }
   }
   &.is-showing-options {
     > button i {
-      transition: transform 0.1s linear;
       transform: translate(-12px, -12px) rotate(45deg);
+      transition: transform .1s linear;
     }
     .hippo-fab-dial-options {
       display: flex;
       flex-direction: column-reverse;
       button {
-        display: block;
-        animation-name: enter;
+        animation-duration: .1s;
         animation-fill-mode: forwards;
-        animation-duration: 0.1s;
+        animation-name: enter;
+        display: block;
         transform-origin: bottom center;
       }
     }
   }
-  &.hippo-bottom.is-showing-options .hippo-fab-dial-options button {
-    $incrementor: 1;
-    @for $i from 3 to 0 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{0.1 * $incrementor}s;
-      }
-      $incrementor: $incrementor + 1;
-    }
-  }
-  &.hippo-top.is-showing-options .hippo-fab-dial-options button {
-    @for $i from 1 to 4 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{0.1 * $i}s;
+  &.hippo-top.is-showing-options .hippo-fab-dial-options {
+    @for $i from 1 to 3 {
+      .hippo-fab-option-#{$i} {
+        animation-delay: #{.1 * $i}s;
       }
     }
   }
   .hippo-fab-dial-options {
-    position: absolute;
     bottom: 100%;
     margin-bottom: 10px;
+    position: absolute;
+    width: 100%;
   }
   &.hippo-bottom .hippo-fab-dial-options {
-    top: 100%;
     bottom: initial;
-    margin-top: 10px;
+    margin-top: 5px;
+    top: 100%;
   }
   .hippo-fab-dial-options button {
-    transform: scale(0);
     display: none;
+    transform: scale(0);
   }
 }
 
@@ -336,7 +332,7 @@
   }
 
   to {
-    transform: scale(0.8);
+    transform: scale(.8);
   }
 }
 

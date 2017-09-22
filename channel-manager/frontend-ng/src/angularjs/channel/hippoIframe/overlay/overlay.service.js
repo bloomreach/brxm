@@ -21,6 +21,11 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
+// import resizeHandleSvg from '../../../../images/resize-handle.svg';
+// import docStatusNewSvg from '../../../../images/document-status-new.svg';
+// resizeHandleSvg
+// dropSvg
+// docStatusNewSvg
 
 class OverlayService {
   constructor(
@@ -315,43 +320,36 @@ class OverlayService {
   }
 
   _initManageContentLink(structureElement, overlayElement, svg) {
-    // TODO: Remove ${svg} statemenet, get svg. Style svg to center of the button
-    overlayElement.addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container');
-    overlayElement.append(`
-      <button id="hippo-fab_btn" class="qa-manage-content-link">
-        <!--<i class="material-icons">add</i>-->
-        ${svg}
-      </button>
-      <!--Options container-->
-      <div class="hippo-fab-dial-options">
-        <button class="hippo-fab-option-btn">
-          <i class="material-icons">local_printshop</i>
-        </button>
-        <button class="hippo-fab-option-btn">
-          <i class="material-icons">content_copy</i>
-        </button>
-        <button class="hippo-fab-option-btn">
-          <i class="material-icons">content_paste</i>
-        </button>
-      </div>
-    `);
-    const distanceFromTop = this._getDistanceFromTop(structureElement);
-    if (distanceFromTop > 780) overlayElement.removeClass('hippo-bottom').addClass('hippo-top');
+    // TODO: Replace icons
+    const openSvg = 'X';
+    const closedSvg = svg;
+
+    const buttonsConfig = {
+      0: { svg: '1', callback: console.log },
+      1: { svg: '2', callback: console.log },
+    };
+    const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, buttonsConfig);
+
+    overlayElement
+      .addClass('hippo-overlay-element-link hippo-top hippo-fab-dial-container')
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${closedSvg}</button>`)
+      .append(buttons);
 
     const VISIBLE_CLASS = 'is-showing-options';
-    const fabBtn = overlayElement.find('#hippo-fab_btn');
-    const showOpts = function (e) {
+    const BTN_OPEN_CLASS = 'hippo-fab-btn-open';
+    const fabBtn = overlayElement.find('#hippo-fab-btn');
+    const showOpts = (e) => {
       const processClick = (evt) => {
-        console.log('clicked for off');
         if (e !== evt) {
+          fabBtn.removeClass(BTN_OPEN_CLASS).html(closedSvg);
           overlayElement.removeClass(VISIBLE_CLASS);
           overlayElement.IS_SHOWING = false;
           fabBtn.off('click', processClick);
         }
       };
       if (!overlayElement.IS_SHOWING) {
-        console.log('clicked for on');
         overlayElement.IS_SHOWING = true;
+        fabBtn.addClass(BTN_OPEN_CLASS).html(openSvg);
         overlayElement.addClass(VISIBLE_CLASS);
         fabBtn.on('click', processClick);
       }
@@ -359,12 +357,32 @@ class OverlayService {
     fabBtn.on('click', showOpts);
   }
 
-  _getDistanceFromTop(structureElement) {
+  __initManageContentLinkOptions(structureElement, overlayElement, config) {
+    const optionsContainer = $('<div class="hippo-fab-dial-options"></div>');
+    const buttons = [];
+    Object.keys(config).forEach((i) => {
+      const button = config[i];
+      const tpl = $(`<button>${button.svg}</button>`)
+        .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
+        .on('click', () => button.callback(i));
+      buttons.push(tpl);
+    });
+
+    const direction = this._getOptionButtonsDirection(structureElement);
+    if (direction === 'bottom') {
+      overlayElement.removeClass('hippo-top').addClass('hippo-bottom');
+      buttons.reverse();
+    }
+
+    return optionsContainer.append(...buttons);
+  }
+
+  _getOptionButtonsDirection(structureElement) {
     const boxElement = structureElement.prepareBoxElement();
     const rect = boxElement[0].getBoundingClientRect();
     let top = rect.top;
     top += this.iframeWindow.pageYOffset;
-    return top;
+    return top > 780 ? 'top' : 'bottom';
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
