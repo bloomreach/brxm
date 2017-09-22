@@ -15,6 +15,8 @@
  */
 package org.onehippo.taxonomy.plugin;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -91,10 +93,16 @@ public class TaxonomyPalette extends Panel {
 
                 }, 20/*rows*/, false/*allowOrder*/) {
 
+            // FIXME: workaround for https://issues.apache.org/jira/browse/WICKET-2843
+            @Override
+            public Collection getModelCollection() {
+                return new ArrayList(super.getModelCollection());
+            }
+
             // trigger setObject on selection changed
             @Override
-            protected Recorder<String> newRecorderComponent() {
-                Recorder<String> recorder = super.newRecorderComponent();
+            protected Recorder newRecorderComponent() {
+                Recorder recorder = super.newRecorderComponent();
                 recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
