@@ -31,6 +31,7 @@ class OverlayService {
     $log,
     $rootScope,
     $translate,
+    $window,
     CmsService,
     DomService,
     ExperimentStateService,
@@ -324,8 +325,6 @@ class OverlayService {
   }
 
   _initManageContentLink(structureElement, overlayElement) {
-    // contentLinkSvg
-    // const initialIcon = `<div style="position: relative">${docSvg}<div style="position: absolute; bottom: 0; right: 0">${docPlusSvg}</div></div>`;
     const initialIcon = addContentSvg;
     const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig);
 
