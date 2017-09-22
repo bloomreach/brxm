@@ -151,7 +151,7 @@
   }
 }
 
-.hippo-overlay-element-link {
+%hippo-material-btn {
   align-items: center;
   background-color: $overlay-link-bgcolor;
   border-radius: 50%;
@@ -162,7 +162,10 @@
   padding-top: 1px;  // visually move the icons to the middle of the circle
   transition: background-color $overlay-link-transition, box-shadow $overlay-link-transition;
   z-index: $z-index-overlay-link;
+}
 
+.hippo-overlay-element-link-button {
+  @extend %hippo-material-btn;
   &:hover {
     background-color: $overlay-link-hover-bgcolor;
   }
@@ -261,3 +264,80 @@
     display: none;
   }
 }
+
+
+.hippo-fab-dial-container {
+  .hippo-fab-option-btn {
+    @extend %hippo-material-btn;
+    background-color: $overlay-link-dial-option;
+    border: none;
+    padding: 8px 0 0 5px;
+    fill: $overlay-link-shadow-color;
+  }
+  #hippo-fab_btn {
+    @extend %hippo-material-btn;
+    padding: 8px 0 0 5px;
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+  &.is-showing-options {
+    > button i {
+      transition: transform 0.1s linear;
+      transform: translate(-12px, -12px) rotate(45deg);
+    }
+    .hippo-fab-dial-options {
+      display: flex;
+      flex-direction: column-reverse;
+      button {
+        display: block;
+        animation-name: enter;
+        animation-fill-mode: forwards;
+        animation-duration: 0.1s;
+        transform-origin: bottom center;
+      }
+    }
+  }
+  &.hippo-bottom.is-showing-options .hippo-fab-dial-options button {
+    $incrementor: 1;
+    @for $i from 3 to 0 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{0.1 * $incrementor}s;
+      }
+      $incrementor: $incrementor + 1;
+    }
+  }
+  &.hippo-top.is-showing-options .hippo-fab-dial-options button {
+    @for $i from 1 to 4 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{0.1 * $i}s;
+      }
+    }
+  }
+  .hippo-fab-dial-options {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 10px;
+  }
+  &.hippo-bottom .hippo-fab-dial-options {
+    top: 100%;
+    bottom: initial;
+    margin-top: 10px;
+  }
+  .hippo-fab-dial-options button {
+    transform: scale(0);
+    display: none;
+  }
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(0.8);
+  }
+}
+
+

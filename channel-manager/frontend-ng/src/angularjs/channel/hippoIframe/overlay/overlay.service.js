@@ -267,6 +267,9 @@ class OverlayService {
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
+      case 'manage-content-link':
+        this._initManageContentLink(structureElement, overlayElement, contentLinkSvg);
+        break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
@@ -306,9 +309,62 @@ class OverlayService {
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
-    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
+    overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
+  }
+
+  _initManageContentLink(structureElement, overlayElement, svg) {
+    // TODO: Remove ${svg} statemenet, get svg. Style svg to center of the button
+    overlayElement.addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container');
+    overlayElement.append(`
+      <button id="hippo-fab_btn" class="qa-manage-content-link">
+        <!--<i class="material-icons">add</i>-->
+        ${svg}
+      </button>
+      <!--Options container-->
+      <div class="hippo-fab-dial-options">
+        <button class="hippo-fab-option-btn">
+          <i class="material-icons">local_printshop</i>
+        </button>
+        <button class="hippo-fab-option-btn">
+          <i class="material-icons">content_copy</i>
+        </button>
+        <button class="hippo-fab-option-btn">
+          <i class="material-icons">content_paste</i>
+        </button>
+      </div>
+    `);
+    const distanceFromTop = this._getDistanceFromTop(structureElement);
+    if (distanceFromTop > 780) overlayElement.removeClass('hippo-bottom').addClass('hippo-top');
+
+    const VISIBLE_CLASS = 'is-showing-options';
+    const fabBtn = overlayElement.find('#hippo-fab_btn');
+    const showOpts = function (e) {
+      const processClick = (evt) => {
+        console.log('clicked for off');
+        if (e !== evt) {
+          overlayElement.removeClass(VISIBLE_CLASS);
+          overlayElement.IS_SHOWING = false;
+          fabBtn.off('click', processClick);
+        }
+      };
+      if (!overlayElement.IS_SHOWING) {
+        console.log('clicked for on');
+        overlayElement.IS_SHOWING = true;
+        overlayElement.addClass(VISIBLE_CLASS);
+        fabBtn.on('click', processClick);
+      }
+    };
+    fabBtn.on('click', showOpts);
+  }
+
+  _getDistanceFromTop(structureElement) {
+    const boxElement = structureElement.prepareBoxElement();
+    const rect = boxElement[0].getBoundingClientRect();
+    let top = rect.top;
+    top += this.iframeWindow.pageYOffset;
+    return top;
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
@@ -351,7 +407,6 @@ class OverlayService {
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
-
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
     switch (structureElement.getType()) {
@@ -379,6 +434,8 @@ class OverlayService {
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
+      case 'manage-content-link':
         return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
         return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
