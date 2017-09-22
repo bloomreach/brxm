@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 import org.onehippo.taxonomy.api.Category;
@@ -77,7 +78,7 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
     @Test
     public void testTaxonomyTranslation() throws Exception {
         Category branchItem = taxonomy.getCategoryByKey(BRANCH_KEY);
-        CategoryInfo info = branchItem.getInfo("en");
+        CategoryInfo info = branchItem.getInfo(Locale.ENGLISH);
         assertEquals(BRANCH_NAME_EN, info.getName());
         assertArrayEquals(new String[] { BRANCH_SYNONYM }, info.getSynonyms());
     }
@@ -91,10 +92,11 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
         assertEquals(branchItem, ancestors.get(1));
     }
 
+    // TODO: (also) test with en-GB style Locale?
     @Test
     public void testNewCategory() throws Exception {
         EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory category = editable.addCategory("new_category", "New:Category", "en");
+        EditableCategory category = editable.addCategory("new_category", "New:Category", Locale.ENGLISH);
         assertNotNull(category);
         assertEquals("new_category", category.getKey());
         assertEquals("new:category", category.getName());
@@ -106,12 +108,12 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
         assertEquals(testCat, category);
 
         // verify auto-generated info
-        EditableCategoryInfo info = category.getInfo("en");
+        EditableCategoryInfo info = category.getInfo(Locale.ENGLISH);
         assertNotNull(info);
         assertEquals("New:Category", info.getName());
         assertEquals("", info.getDescription());
-        assertEquals("en", info.getLanguage());
-        assertEquals(new String[0], info.getSynonyms());
+        assertEquals(Locale.ENGLISH, info.getLocale());
+        assertArrayEquals(new String[0], info.getSynonyms());
 
         // verify new name is propagated to category name and key
         info.setName("new-name");
@@ -132,28 +134,28 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
 
     @Test
     public void testRenameExistingCategory() throws Exception {
-        EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory category = editable.addCategory("key", "Category", "en");
+        EditableTaxonomy editable = taxonomy;
+        EditableCategory category = editable.addCategory("key", "Category", Locale.ENGLISH);
         session.save();
 
         String key = category.getKey();
         assertEquals("key", key);
 
-        EditableCategoryInfo info = category.getInfo("en");
+        EditableCategoryInfo info = category.getInfo(Locale.ENGLISH);
         info.setName("new-name");
         assertEquals("category", category.getName());
         assertEquals("key", category.getKey());
-        assertEquals("new-name", category.getInfo("en").getName());
+        assertEquals("new-name", category.getInfo(Locale.ENGLISH).getName());
     }
 
     @Test
     public void testRenameNewCategoryToExistingNameDoesntChangeName() throws Exception {
-        EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory aap = editable.addCategory("aap", "aap", (String) null);
-        EditableCategory noot = editable.addCategory("noot", "noot", (String) null);
+        EditableTaxonomy editable = taxonomy;
+        EditableCategory aap = editable.addCategory("aap", "aap", (Locale) null);
+        EditableCategory noot = editable.addCategory("noot", "noot", (Locale) null);
         assertEquals("noot", noot.getKey());
 
-        EditableCategoryInfo aapInfo = aap.getInfo("en");
+        EditableCategoryInfo aapInfo = aap.getInfo(Locale.ENGLISH);
         aapInfo.setName("noot");
         assertEquals("aap", aap.getName());
         assertEquals("aap", aap.getKey());
@@ -161,10 +163,10 @@ public class JcrTaxonomyTest extends AbstractTaxonomyTest {
 
     @Test
     public void testSettingCategoryKeyToExistingKeyFails() throws Exception {
-        EditableTaxonomy editable = (EditableTaxonomy) taxonomy;
-        EditableCategory aap = editable.addCategory("aap", "aap", (String) null);
+        EditableTaxonomy editable =  taxonomy;
+        EditableCategory aap = editable.addCategory("aap", "aap", (Locale) null);
         try {
-            EditableCategory noot = editable.addCategory("aap", "noot", (String) null);
+            EditableCategory noot = editable.addCategory("aap", "noot", (Locale) null);
             throw new Exception("Should not reach this point");
         } catch (TaxonomyException ex) {
             // this is OK
