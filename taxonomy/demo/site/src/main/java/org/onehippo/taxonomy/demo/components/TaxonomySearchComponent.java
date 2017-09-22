@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package org.onehippo.taxonomy.demo.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -46,7 +44,7 @@ public class TaxonomySearchComponent extends BaseHstComponent{
             Query q = request.getRequestContext().getSession().getWorkspace().getQueryManager().createQuery(xpath, "xpath");
             QueryResult result = q.execute();
             
-            List<String> keys = new ArrayList<String>();
+            List<String> keys = new ArrayList<>();
             
             NodeIterator nodes = result.getNodes();
             while(nodes.hasNext()) {
@@ -69,10 +67,6 @@ public class TaxonomySearchComponent extends BaseHstComponent{
             }
             return taxonomyFilter;
             
-        } catch (InvalidQueryException e) {
-            log.error("Error creating taxonomy filter", e);
-        } catch (LoginException e) {
-            log.error("Error creating taxonomy filter", e);
         } catch (RepositoryException e) {
             log.error("Error creating taxonomy filter", e);
         }

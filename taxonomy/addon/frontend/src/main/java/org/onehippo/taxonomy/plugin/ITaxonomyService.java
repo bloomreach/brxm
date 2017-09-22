@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.onehippo.taxonomy.plugin.api.JcrCategoryFilter;
 public interface ITaxonomyService extends IClusterable {
 
 
-    static final String DEFAULT_SERVICE_TAXONOMY_ID = "service.taxonomy";
+    String DEFAULT_SERVICE_TAXONOMY_ID = "service.taxonomy";
 
     /**
      * Name of the (configuration) property that contains the
@@ -34,14 +34,14 @@ public interface ITaxonomyService extends IClusterable {
      * If this property is not present, the name to be used is
      * the default registration point (ITaxonomyService.class.getName()).
      */
-    static final String SERVICE_ID = "taxonomy.id";
+    String SERVICE_ID = "taxonomy.id";
     
     /**
      * Name of the configuration property that corresponds to
      * the name of the taxonomy to use.  Use this name to achieve
      * cross-plugin consistency of configuration.
      */
-    static final String TAXONOMY_NAME = "taxonomy.name";
+    String TAXONOMY_NAME = "taxonomy.name";
 
     /**
      * Get {@link Taxonomy} instance by the name,

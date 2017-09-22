@@ -26,12 +26,12 @@ import java.util.List;
 import org.junit.Test;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.AbstractTaxonomyTest;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 
 public class JcrTaxonomyTest extends AbstractTaxonomyTest {
 

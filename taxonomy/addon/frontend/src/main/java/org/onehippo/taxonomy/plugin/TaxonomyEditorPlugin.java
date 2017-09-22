@@ -82,7 +82,7 @@ import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
@@ -672,6 +672,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         try {
             String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']/..";
+            @SuppressWarnings("deprecation")
             Query query = getModelObject().getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
             query.setLimit(maxItems);
             QueryResult result = query.execute();

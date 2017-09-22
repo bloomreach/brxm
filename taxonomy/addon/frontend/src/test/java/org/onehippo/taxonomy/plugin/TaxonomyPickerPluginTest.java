@@ -46,7 +46,7 @@ public class TaxonomyPickerPluginTest extends AbstractTaxonomyTest  {
     static class TaxonomyService implements ITaxonomyService {
 
         public List<String> getTaxonomies() {
-            List<String> list = new ArrayList<String>(1);
+            List<String> list = new ArrayList<>(1);
             list.add("taxonomy");
             return list;
         }

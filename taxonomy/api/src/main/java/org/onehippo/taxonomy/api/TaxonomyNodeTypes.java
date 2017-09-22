@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@ package org.onehippo.taxonomy.api;
 
 public interface TaxonomyNodeTypes {
 
-    static final String NODETYPE_HIPPOTAXONOMY_CONTAINER = "hippotaxonomy:container";
-    static final String NODETYPE_HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
-    static final String NODETYPE_HIPPOTAXONOMY_CATEGORY = "hippotaxonomy:category";
-    static final String NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE = "hippotaxonomy:classifiable";
-    static final String NODETYPE_HIPPOTAXONOMY_CANONISED = "hippotaxonomy:canonised";
+    String NODETYPE_HIPPOTAXONOMY_CONTAINER = "hippotaxonomy:container";
+    String NODETYPE_HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
+    String NODETYPE_HIPPOTAXONOMY_CATEGORY = "hippotaxonomy:category";
+    String NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE = "hippotaxonomy:classifiable";
+    String NODETYPE_HIPPOTAXONOMY_CANONISED = "hippotaxonomy:canonised";
     
-    static final String HIPPOTAXONOMY_CATEGORYINFOS = "hippotaxonomy:categoryinfos";
-    static final String HIPPOTAXONOMY_CATEGORYINFO = "hippotaxonomy:categoryinfo";
+    String HIPPOTAXONOMY_CATEGORYINFOS = "hippotaxonomy:categoryinfos";
+    String HIPPOTAXONOMY_CATEGORYINFO = "hippotaxonomy:categoryinfo";
     
-    static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
+    String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     
-    static final String HIPPOTAXONOMY_NAME = "hippotaxonomy:name";
-    static final String HIPPOTAXONOMY_DESCRIPTION = "hippotaxonomy:description";
-    static final String HIPPOTAXONOMY_SYNONYMS = "hippotaxonomy:synonyms";
+    String HIPPOTAXONOMY_NAME = "hippotaxonomy:name";
+    String HIPPOTAXONOMY_DESCRIPTION = "hippotaxonomy:description";
+    String HIPPOTAXONOMY_SYNONYMS = "hippotaxonomy:synonyms";
 
-    static final String HIPPOTAXONOMY_KEY = "hippotaxonomy:key";
-    static final String HIPPOTAXONOMY_KEYS = "hippotaxonomy:keys";
-    static final String HIPPOTAXONOMY_CANONICALKEY = "hippotaxonomy:canonkey";
+    String HIPPOTAXONOMY_KEY = "hippotaxonomy:key";
+    String HIPPOTAXONOMY_KEYS = "hippotaxonomy:keys";
+    String HIPPOTAXONOMY_CANONICALKEY = "hippotaxonomy:canonkey";
     
 }

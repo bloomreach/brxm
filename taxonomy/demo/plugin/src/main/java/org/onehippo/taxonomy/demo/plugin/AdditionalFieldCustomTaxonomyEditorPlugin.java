@@ -21,10 +21,10 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.TaxonomyEditorPlugin;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 
 /**
  * AdditionalFieldCustomTaxonomyEditorPlugin

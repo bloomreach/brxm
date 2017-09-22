@@ -22,12 +22,11 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.ServiceException;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo {
 
@@ -38,7 +37,7 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
 
     private Map<String, Object> properties;
 
-    public CategoryInfoImpl(Node jcrNode) throws ServiceException {
+    public CategoryInfoImpl(Node jcrNode) {
         super(jcrNode);
 
         this.locale = TaxonomyUtil.toLocale(getValueProvider().getName());

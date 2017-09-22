@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.util.TaxonomyUtil;

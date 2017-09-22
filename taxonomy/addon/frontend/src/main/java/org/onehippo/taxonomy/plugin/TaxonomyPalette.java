@@ -15,15 +15,12 @@
  */
 package org.onehippo.taxonomy.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
@@ -36,6 +33,7 @@ import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,14 +70,14 @@ public class TaxonomyPalette extends Panel {
             }
 
         };
-        Map<String, String> leaves = new TreeMap<String, String>();
+        Map<String, String> leaves = new TreeMap<>();
         for (Category category : taxonomyModel.getObject().getCategories()) {
             findLeaves(leaves, category);
         }
-        LinkedList<String> options = new LinkedList<String>();
+        LinkedList<String> options = new LinkedList<>();
         options.addAll(leaves.values());
 
-        add(new Palette<String>("palette", choices, new Model<LinkedList<String>>(options),
+        add(new Palette<String>("palette", choices, new Model<>(options),
                 new IChoiceRenderer<String>() {
 
                     public Object getDisplayValue(String object) {
@@ -93,16 +91,10 @@ public class TaxonomyPalette extends Panel {
 
                 }, 20/*rows*/, false/*allowOrder*/) {
 
-            // FIXME: workaround for https://issues.apache.org/jira/browse/WICKET-2843
-            @Override
-            public Collection getModelCollection() {
-                return new ArrayList(super.getModelCollection());
-            }
-
             // trigger setObject on selection changed
             @Override
-            protected Recorder newRecorderComponent() {
-                Recorder recorder = super.newRecorderComponent();
+            protected Recorder<String> newRecorderComponent() {
+                Recorder<String> recorder = super.newRecorderComponent();
                 recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {

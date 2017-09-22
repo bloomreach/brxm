@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.taxonomy.api.Taxonomies;
 import org.onehippo.taxonomy.api.Taxonomy;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class TaxonomiesImpl implements Taxonomies {
 
     static Logger log = LoggerFactory.getLogger(TaxonomiesImpl.class);
 
-    private Map<String, Taxonomy> taxonomies = new HashMap<String, Taxonomy>();
+    private Map<String, Taxonomy> taxonomies = new HashMap<>();
 
     public TaxonomiesImpl(Node taxonomiesNode) {
         NodeIterator nodes;
@@ -58,7 +59,7 @@ public class TaxonomiesImpl implements Taxonomies {
                                         this.taxonomies.put(taxonomy.getName(), taxonomy);
                                         break;
                                     }
-                                } catch (RepositoryException e) {
+                                } catch (TaxonomyException | RepositoryException e) {
                                     log.error("Error while creating taxonomy below handle " +  handle.getPath(), e);
                                 }
                             }
@@ -74,7 +75,7 @@ public class TaxonomiesImpl implements Taxonomies {
     }
 
     public List<Taxonomy> getRootTaxonomies() {
-        return Collections.unmodifiableList(new ArrayList<Taxonomy>(taxonomies.values()));
+        return Collections.unmodifiableList(new ArrayList<>(taxonomies.values()));
     }
 
     public Taxonomy getTaxonomy(String name) {
