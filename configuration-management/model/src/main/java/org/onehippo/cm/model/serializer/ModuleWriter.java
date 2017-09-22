@@ -28,7 +28,6 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
-import org.onehippo.cm.model.impl.tree.JcrBinaryValueImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
@@ -117,13 +116,8 @@ public class ModuleWriter {
 
         final String finalName = binaryItem.getNode().getValue();
         final InputStream inputStream;
-        if (binaryItem.getValue() instanceof JcrBinaryValueImpl) {
-            inputStream = binaryItem.getValue().getResourceInputStream();
-        } else {
-            // todo move this logic to ValueImpl.getResourceInputStream(), so we can avoid the ugly cast above
-            final byte[] content = (byte[]) binaryItem.getValue().getObject();
-            inputStream = new ByteArrayInputStream(content);
-        }
+        final byte[] content = (byte[]) binaryItem.getValue().getObject();
+        inputStream = new ByteArrayInputStream(content);
 
         try (final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source).getResourceOutputStream(source, finalName)) {
             IOUtils.copy(inputStream, resourceOutputStream);

@@ -68,6 +68,14 @@ public class PathConfigurationReader {
         this.contentSourceHeadOnly = contentSourceHeadOnly;
     }
 
+    protected boolean isExplicitSequencing() {
+        return explicitSequencing;
+    }
+
+    protected boolean isContentSourceHeadOnly() {
+        return contentSourceHeadOnly;
+    }
+
     public ReadResult read(final Path moduleDescriptorPath) throws IOException, ParserException {
         return read(moduleDescriptorPath, false);
     }
@@ -122,12 +130,20 @@ public class PathConfigurationReader {
         }
     }
 
+    protected SourceParser getConfigSourceParser(final ModuleContext moduleContext, boolean verifyOnly) {
+        return new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, isExplicitSequencing());
+    }
+
+    protected SourceParser getContentSourceParser(final ModuleContext moduleContext, boolean verifyOnly) {
+        return isContentSourceHeadOnly()
+                ? new ContentSourceHeadParser(moduleContext.getContentInputProvider(), verifyOnly, isExplicitSequencing())
+                : new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, isExplicitSequencing());
+    }
+
     protected void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
         final Path contentBasePath = moduleContext.getContentRoot();
         if (Files.exists(contentBasePath)) {
-            final SourceParser contentSourceParser = contentSourceHeadOnly
-                    ? new ContentSourceHeadParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing)
-                    : new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
+            final SourceParser contentSourceParser = getContentSourceParser(moduleContext, verifyOnly);
             parseSources(module, contentBasePath, contentSourceParser);
         }
     }
@@ -135,7 +151,7 @@ public class PathConfigurationReader {
     protected void processConfigSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
         final Path configBasePath = moduleContext.getConfigRoot();
         if (Files.exists(configBasePath)) {
-            final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
+            final SourceParser configSourceParser = getConfigSourceParser(moduleContext, verifyOnly);
             parseSources(module, configBasePath, configSourceParser);
         }
     }

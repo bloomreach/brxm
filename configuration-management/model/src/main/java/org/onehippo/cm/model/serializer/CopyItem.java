@@ -17,7 +17,7 @@ package org.onehippo.cm.model.serializer;
 
 import org.onehippo.cm.model.tree.Value;
 
-public final class CopyItem implements PostProcessItem {
+public class CopyItem implements PostProcessItem {
 
     private final Value value;
 

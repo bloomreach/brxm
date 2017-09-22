@@ -20,12 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.source.Source;
-import org.onehippo.cm.model.source.SourceType;
 
 public abstract class SourceImpl implements Source {
 

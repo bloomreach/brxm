@@ -84,7 +84,7 @@ public class FileResourceInputProvider implements ResourceInputProvider {
         return StringUtils.stripStart(resourceModulePath, "/");
     }
 
-    private String getSourceFolder(final Source source) {
+    protected String getSourceFolder(final Source source) {
         return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }
 }

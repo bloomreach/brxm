@@ -18,7 +18,7 @@ package org.onehippo.cm.model.serializer;
 import org.onehippo.cm.model.tree.Value;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
-public final class BinaryItem implements PostProcessItem {
+public class BinaryItem implements PostProcessItem {
 
     private final Value value;
 

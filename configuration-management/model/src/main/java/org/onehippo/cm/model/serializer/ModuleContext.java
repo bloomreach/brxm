@@ -87,6 +87,10 @@ public class ModuleContext {
         return configRootPath;
     }
 
+    protected void setConfigRoot(final Path configRootPath) {
+        this.configRootPath = configRootPath;
+    }
+
     /**
      * @return {@link Path} to hcm-content folder of current module
      */
@@ -95,6 +99,10 @@ public class ModuleContext {
             contentRootPath = moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER);
         }
         return contentRootPath;
+    }
+
+    protected void setContentRoot(final Path contentRootPath) {
+        this.contentRootPath = contentRootPath;
     }
 
     public ResourceInputProvider getConfigInputProvider() {
