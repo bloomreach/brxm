@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
@@ -47,7 +47,7 @@ public class TaxonomyPalette extends Panel {
 
     @Deprecated
     public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
-        this(id, model, taxonomyModel, LocaleUtils.toLocale(preferredLocale));
+        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale));
     }
 
     public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, final Locale preferredLocale) {

@@ -22,7 +22,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -111,7 +111,7 @@ public class TaxonomyObject extends JcrObject {
 
     @Deprecated
     protected JcrCategory createCategory(Node parent, String key, String name, String locale) throws RepositoryException, TaxonomyException {
-        return createCategory(parent, key, name, LocaleUtils.toLocale(locale));
+        return createCategory(parent, key, name, TaxonomyUtil.toLocale(locale));
     }
 
     protected JcrCategory createCategory(Node parent, String key, String name, Locale locale) throws RepositoryException, TaxonomyException {

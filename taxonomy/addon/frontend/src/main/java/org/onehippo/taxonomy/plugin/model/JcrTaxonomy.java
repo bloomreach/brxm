@@ -27,7 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -73,7 +73,7 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
                 for (Value value : node.getProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES).getValues()) {
                     final String localeString = StringUtils.trim(value.getString());
                     if (!StringUtils.isEmpty(localeString)) {
-                        locales.add(LocaleUtils.toLocale(localeString));
+                        locales.add(TaxonomyUtil.toLocale(localeString));
                     }
                 }
             }
@@ -145,7 +145,7 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
     @Override
     @Deprecated
     public JcrCategory addCategory(String key, String name, String locale) throws TaxonomyException {
-        return addCategory(key, name, LocaleUtils.toLocale(locale));
+        return addCategory(key, name, TaxonomyUtil.toLocale(locale));
     }
 
     @Override

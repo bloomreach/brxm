@@ -28,7 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
@@ -96,7 +96,7 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
     @Override
     public Locale getLocale() {
         try {
-            return LocaleUtils.toLocale(getNode().getName());
+            return TaxonomyUtil.toLocale(getNode().getName());
         } catch (RepositoryException e) {
             log.warn("Failed to read name of category info node");
         }

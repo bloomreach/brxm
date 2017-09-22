@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -72,7 +72,7 @@ public class TaxonomyBrowser extends Panel {
      */
     @Deprecated
     public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
-        this(id, model, taxonomyModel, LocaleUtils.toLocale(preferredLocale), false, null);
+        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale), false, null);
     }
 
     /**
@@ -82,7 +82,7 @@ public class TaxonomyBrowser extends Panel {
     @Deprecated
     public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel,
                            String preferredLocale, final boolean detailsReadOnly, final ITreeNodeIconProvider iconProvider) {
-        this(id, model, taxonomyModel, LocaleUtils.toLocale(preferredLocale), detailsReadOnly, iconProvider);
+        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale), detailsReadOnly, iconProvider);
     }
 
     /**
@@ -288,7 +288,7 @@ public class TaxonomyBrowser extends Panel {
      */
     @Deprecated
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
-        return getCategoryComparator(config, LocaleUtils.toLocale(locale));
+        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
     }
 
     /**

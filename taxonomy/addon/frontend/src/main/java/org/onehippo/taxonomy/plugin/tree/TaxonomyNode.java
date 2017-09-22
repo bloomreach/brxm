@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -37,7 +37,7 @@ public class TaxonomyNode extends AbstractNode {
      */
     @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language) {
-        this(model, LocaleUtils.toLocale(language), null);
+        this(model, TaxonomyUtil.toLocale(language), null);
     }
 
     /**
@@ -45,7 +45,7 @@ public class TaxonomyNode extends AbstractNode {
      */
     @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language, Comparator<Category> categoryComparator) {
-        this(model, LocaleUtils.toLocale(language), categoryComparator);
+        this(model, TaxonomyUtil.toLocale(language), categoryComparator);
     }
 
     public TaxonomyNode(final IModel<Taxonomy> model, final Locale locale, final Comparator<Category> categoryComparator) {

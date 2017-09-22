@@ -29,7 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -203,7 +203,7 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     @Override
     @Deprecated
     public EditableCategoryInfo getInfo(final String language) {
-        return getInfo(LocaleUtils.toLocale(language));
+        return getInfo(TaxonomyUtil.toLocale(language));
     }
 
     @Override
@@ -321,7 +321,7 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
                 final NodeIterator infoNodesIterator = infosNode.getNodes();
                 while (infoNodesIterator.hasNext()) {
                     final Node infoNode = infoNodesIterator.nextNode();
-                    final Locale locale = LocaleUtils.toLocale(infoNode.getName());
+                    final Locale locale = TaxonomyUtil.toLocale(infoNode.getName());
                     final JcrCategoryInfo jcrCategoryInfo = new JcrCategoryInfo(new JcrNodeModel(infoNode), editable);
                     map.put(locale, jcrCategoryInfo);
                 }
@@ -348,7 +348,7 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     @Override
     @Deprecated
     public JcrCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException {
-        return addCategory(key, name, LocaleUtils.toLocale(locale), taxonomyModel);
+        return addCategory(key, name, TaxonomyUtil.toLocale(locale), taxonomyModel);
     }
 
     @Override

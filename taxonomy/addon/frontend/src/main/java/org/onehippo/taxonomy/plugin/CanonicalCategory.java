@@ -18,7 +18,7 @@ package org.onehippo.taxonomy.plugin;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -40,7 +40,7 @@ public class CanonicalCategory implements Serializable {
      */
     @Deprecated
     public CanonicalCategory(final Taxonomy taxonomy, final String key, final String language) {
-        this(taxonomy, key, LocaleUtils.toLocale(language));
+        this(taxonomy, key, TaxonomyUtil.toLocale(language));
     }
 
     public String getName() {

@@ -33,7 +33,7 @@ import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -449,7 +449,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     @Deprecated
     public void setCurrentLanguageSelection(LanguageSelection currentLanguageSelection) {
-        this.currentLocaleSelection = LocaleUtils.toLocale(currentLanguageSelection.getLanguageCode());
+        this.currentLocaleSelection = TaxonomyUtil.toLocale(currentLanguageSelection.getLanguageCode());
     }
 
     public Locale getCurrentLocaleSelection() {
@@ -477,7 +477,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     @Deprecated
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
-        return getCategoryComparator(config, LocaleUtils.toLocale(locale));
+        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
     }
 
     /**

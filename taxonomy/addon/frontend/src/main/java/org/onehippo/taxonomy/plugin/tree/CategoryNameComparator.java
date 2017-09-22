@@ -18,7 +18,7 @@ package org.onehippo.taxonomy.plugin.tree;
 import java.util.Comparator;
 import java.util.Locale;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 
 /**
@@ -36,7 +36,7 @@ public class CategoryNameComparator implements Comparator<Category> {
      */
     @Deprecated
     public CategoryNameComparator(final String language) {
-        this(LocaleUtils.toLocale(language));
+        this(TaxonomyUtil.toLocale(language));
     }
 
     public CategoryNameComparator(final Locale locale) {

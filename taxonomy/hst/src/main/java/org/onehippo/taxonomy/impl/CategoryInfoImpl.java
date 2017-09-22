@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -41,7 +41,7 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
     public CategoryInfoImpl(Node jcrNode) throws ServiceException {
         super(jcrNode);
 
-        this.locale = LocaleUtils.toLocale(getValueProvider().getName());
+        this.locale = TaxonomyUtil.toLocale(getValueProvider().getName());
         this.name = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
         this.description = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
 

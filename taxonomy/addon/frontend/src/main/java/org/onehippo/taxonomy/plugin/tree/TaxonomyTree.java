@@ -20,7 +20,7 @@ import java.util.Locale;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -47,7 +47,7 @@ public class TaxonomyTree extends ContextMenuTree {
      */
     @Deprecated
     public TaxonomyTree(String id, TreeModel model, String preferredLanguage, ITreeNodeIconProvider treeNodeIconService) {
-        this(id, model, LocaleUtils.toLocale(preferredLanguage), treeNodeIconService);
+        this(id, model, TaxonomyUtil.toLocale(preferredLanguage), treeNodeIconService);
 
     }
 

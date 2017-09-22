@@ -20,9 +20,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 /**
  * Used for the category which is not yet translated so doesn't have category info.
@@ -57,7 +58,7 @@ public class TransientCategoryInfoImpl implements CategoryInfo {
      */
     @Deprecated
     public void setLanguage(String language) {
-        this.locale = LocaleUtils.toLocale(language);
+        this.locale = TaxonomyUtil.toLocale(language);
     }
 
     @Override

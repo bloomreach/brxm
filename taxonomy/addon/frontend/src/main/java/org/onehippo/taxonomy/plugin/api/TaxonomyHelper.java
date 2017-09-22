@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 
@@ -48,7 +48,7 @@ public final class TaxonomyHelper {
      */
     @Deprecated
     public static String getCategoryName(Category category, String language) {
-        return getCategoryName(category, LocaleUtils.toLocale(language));
+        return getCategoryName(category, TaxonomyUtil.toLocale(language));
     }
 
 }

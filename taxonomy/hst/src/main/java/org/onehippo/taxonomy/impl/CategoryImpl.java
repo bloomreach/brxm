@@ -30,7 +30,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -150,7 +150,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
      */
     @Deprecated
     public CategoryInfo getInfo(String language) {
-        return getInfo(LocaleUtils.toLocale(language));
+        return getInfo(TaxonomyUtil.toLocale(language));
     }
 
     @Override

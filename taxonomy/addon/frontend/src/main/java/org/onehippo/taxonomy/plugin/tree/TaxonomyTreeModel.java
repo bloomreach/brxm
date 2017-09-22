@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -42,7 +42,7 @@ public class TaxonomyTreeModel extends DefaultTreeModel {
      */
     @Deprecated
     public TaxonomyTreeModel(IModel<Taxonomy> root, String language, Comparator<Category> categoryComparator) {
-        this(root, LocaleUtils.toLocale(language), categoryComparator);
+        this(root, TaxonomyUtil.toLocale(language), categoryComparator);
     }
 
     public TaxonomyTreeModel(IModel<Taxonomy> root, Locale locale) {

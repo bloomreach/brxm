@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -345,7 +345,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         try {
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
                     && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                return LocaleUtils.toLocale(node.getProperty(HippoTranslationNodeType.LOCALE).getString());
+                return TaxonomyUtil.toLocale(node.getProperty(HippoTranslationNodeType.LOCALE).getString());
             }
         } catch (RepositoryException e) {
             log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
