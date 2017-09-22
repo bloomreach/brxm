@@ -21,11 +21,10 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
-// import resizeHandleSvg from '../../../../images/resize-handle.svg';
-// import docStatusNewSvg from '../../../../images/document-status-new.svg';
-// resizeHandleSvg
-// dropSvg
-// docStatusNewSvg
+import clear from '../../../../images/html/clear.svg';
+import plus from '../../../../images/html/plus.svg';
+import search from '../../../../images/html/search.svg';
+import addContentSvg from '../../../../images/html/add-content.svg';
 
 class OverlayService {
   constructor(
@@ -58,6 +57,11 @@ class OverlayService {
     this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
+
+    this.dialButtonsConfig = {
+      0: { svg: plus, callback: console.log },
+      1: { svg: search, callback: console.log },
+    };
   }
 
   init(iframeJQueryElement) {
@@ -273,7 +277,7 @@ class OverlayService {
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'manage-content-link':
-        this._initManageContentLink(structureElement, overlayElement, contentLinkSvg);
+        this._initManageContentLink(structureElement, overlayElement);
         break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
@@ -319,20 +323,15 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _initManageContentLink(structureElement, overlayElement, svg) {
-    // TODO: Replace icons
-    const openSvg = 'X';
-    const closedSvg = svg;
-
-    const buttonsConfig = {
-      0: { svg: '1', callback: console.log },
-      1: { svg: '2', callback: console.log },
-    };
-    const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, buttonsConfig);
+  _initManageContentLink(structureElement, overlayElement) {
+    // contentLinkSvg
+    // const initialIcon = `<div style="position: relative">${docSvg}<div style="position: absolute; bottom: 0; right: 0">${docPlusSvg}</div></div>`;
+    const initialIcon = addContentSvg;
+    const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig);
 
     overlayElement
       .addClass('hippo-overlay-element-link hippo-top hippo-fab-dial-container')
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${closedSvg}</button>`)
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${initialIcon}</button>`)
       .append(buttons);
 
     const VISIBLE_CLASS = 'is-showing-options';
@@ -341,20 +340,20 @@ class OverlayService {
     const showOpts = (e) => {
       const processClick = (evt) => {
         if (e !== evt) {
-          fabBtn.removeClass(BTN_OPEN_CLASS).html(closedSvg);
+          fabBtn.removeClass(BTN_OPEN_CLASS).html(initialIcon);
           overlayElement.removeClass(VISIBLE_CLASS);
           overlayElement.IS_SHOWING = false;
-          fabBtn.off('click', processClick);
+          fabBtn.off('click mouseleave', processClick);
         }
       };
       if (!overlayElement.IS_SHOWING) {
         overlayElement.IS_SHOWING = true;
-        fabBtn.addClass(BTN_OPEN_CLASS).html(openSvg);
+        fabBtn.html(clear).addClass(BTN_OPEN_CLASS);
         overlayElement.addClass(VISIBLE_CLASS);
-        fabBtn.on('click', processClick);
+        fabBtn.on('click mouseleave', processClick);
       }
     };
-    fabBtn.on('click', showOpts);
+    fabBtn.on('click mouseenter', showOpts);
   }
 
   __initManageContentLinkOptions(structureElement, overlayElement, config) {

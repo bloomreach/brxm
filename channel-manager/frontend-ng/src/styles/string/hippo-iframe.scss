@@ -265,14 +265,13 @@
   }
 }
 
-
 .hippo-fab-dial-container {
   .hippo-fab-option-btn {
     @extend %hippo-material-btn;
     background-color: $white;
     border: 0;
     fill: $overlay-link-shadow-color;
-    padding: 8px 0 0 5px;
+    padding-top: 7px;
   }
   .hippo-fab-btn {
     @extend %hippo-material-btn;
@@ -282,7 +281,8 @@
     width: 100%;
 
     &-open {
-      fill: $overlay-link-shadow-color;
+      padding: 7px 0 0;
+      svg { fill: $white; }
     }
   }
   &.is-showing-options {
