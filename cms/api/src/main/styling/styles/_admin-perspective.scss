@@ -1,4 +1,4 @@
-// Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -273,8 +273,9 @@
 
   .updater-left {
     min-width: 200px;
-    max-width: 200px;
+    max-width: 750px;
     border-right: 1px solid $dark-gray;
+    resize: horizontal;
   }
 
   .updater-editor-top > .updater-left {
