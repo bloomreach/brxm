@@ -36,7 +36,7 @@
       <ul>
         <c:forEach var="category" items="${ancestors}">
           <li>
-            <c:set var="categoryInfo" value="${category.infos[hstRequest.locale.language]}" />
+            <c:set var="categoryInfo" value="${category.infos[hstRequest.locale]}" />
             <a href="${taxonomies}/${category.taxonomy.name}/${category.path}">${categoryInfo.name}</a>
           </li>
         </c:forEach>
