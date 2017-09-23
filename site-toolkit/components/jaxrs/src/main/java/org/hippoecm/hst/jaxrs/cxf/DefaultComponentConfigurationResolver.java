@@ -35,7 +35,7 @@ public class DefaultComponentConfigurationResolver implements ComponentConfigura
      * {@link ComponentConfiguration} implementation to read parameters from either the resolved sitemap item or resolved
      * mount.
      */
-    private static class ResolvedSiteMapItemOrResolvedMountBasedComponentConfiguration
+    protected static class ResolvedSiteMapItemOrResolvedMountBasedComponentConfiguration
             implements ComponentConfiguration {
 
         private final ResolvedSiteMapItem resolvedSiteMapItem;
