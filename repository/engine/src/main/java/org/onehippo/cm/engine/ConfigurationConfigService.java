@@ -223,7 +223,8 @@ public class ConfigurationConfigService {
         final Node targetNode = session.getNode(baselineRoot.getPath());
         final List<UnprocessedReference> unprocessedReferences = new ArrayList<>();
 
-        computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, forceApply, unprocessedReferences);
+        computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode,
+                false, forceApply, unprocessedReferences);
         postProcessReferences(unprocessedReferences);
     }
 
@@ -304,10 +305,11 @@ public class ConfigurationConfigService {
     }
 
     private void computeAndWriteNodeDelta(final ConfigurationNode baselineNode,
-                                  final ConfigurationNode updateNode,
-                                  final Node targetNode,
-                                  final boolean forceApply,
-                                  final List<UnprocessedReference> unprocessedReferences)
+                                          final ConfigurationNode updateNode,
+                                          final Node targetNode,
+                                          final boolean isNew,
+                                          final boolean forceApply,
+                                          final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
         if (targetNode.isLocked()) {
@@ -323,7 +325,7 @@ public class ConfigurationConfigService {
         } else {
             computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
             computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
-            computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
+            computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, isNew, forceApply, unprocessedReferences);
         }
 
         computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
@@ -437,11 +439,12 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void computeAndWritePropertiesDelta(final ConfigurationNode baselineNode,
-                                                 final ConfigurationNode updateNode,
-                                                 final Node targetNode,
-                                                 final boolean forceApply,
-                                                 final List<UnprocessedReference> unprocessedReferences)
+    private void computeAndWritePropertiesDelta(final ConfigurationNode<?> baselineNode,
+                                                final ConfigurationNode<?> updateNode,
+                                                final Node targetNode,
+                                                final boolean isNew,
+                                                final boolean forceApply,
+                                                final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
         final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
@@ -453,6 +456,13 @@ public class ConfigurationConfigService {
             }
             if (propertyName.equals(JCR_UUID)) {
                 continue; // nor need to look at immutable jcr:uuid
+            }
+
+            // skip initial-value system property, if this node is not new (and forceApply is false)
+            // todo: should this perhaps only apply initial value on forceApply if property is missing?
+            final ConfigurationItemCategory category = updateNode.getChildPropertyCategory(propertyName);
+            if (category == ConfigurationItemCategory.SYSTEM && !isNew && !forceApply) {
+                continue;
             }
 
             final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
@@ -472,6 +482,8 @@ public class ConfigurationConfigService {
             for (String propertyName : getDeletablePropertyNames(targetNode)) {
                 if (!updateProperties.containsKey(propertyName)
                         && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
+                    // todo: deal with system properties
+
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
@@ -480,6 +492,8 @@ public class ConfigurationConfigService {
                 if (!propertyName.equals(JCR_PRIMARYTYPE)
                         && !propertyName.equals(JCR_MIXINTYPES)
                         && !updateProperties.containsKey(propertyName)) {
+                    // todo: deal with system properties
+
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
@@ -498,8 +512,8 @@ public class ConfigurationConfigService {
         return names;
     }
 
-    private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
-                                                final ConfigurationNode updateNode,
+    private void computeAndWriteChildNodesDelta(final ConfigurationNode<?> baselineNode,
+                                                final ConfigurationNode<?> updateNode,
                                                 final Node targetNode,
                                                 final boolean forceApply,
                                                 final List<UnprocessedReference> unprocessedReferences)
@@ -517,7 +531,8 @@ public class ConfigurationConfigService {
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             final Node childNode;
 
-            if (existingChildNode == null) {
+            final boolean isNew = (existingChildNode == null);
+            if (isNew) {
                 // need to add node
                 final String childPrimaryType = updateChild.getProperty(JCR_PRIMARYTYPE).getValue().getString();
                 final String childName = nameAndIndex.getName();
@@ -548,7 +563,7 @@ public class ConfigurationConfigService {
             }
 
             // recurse
-            computeAndWriteNodeDelta(baselineChild, updateChild, childNode, forceApply, unprocessedReferences);
+            computeAndWriteNodeDelta(baselineChild, updateChild, childNode, isNew, forceApply, unprocessedReferences);
         }
 
         // Remove child nodes that are not / no longer in the model.
@@ -589,10 +604,11 @@ public class ConfigurationConfigService {
                                     "but will be deleted while processing the children of node '%s' defined in %s.",
                             indexedChildName, updateNode.getPath(), updateNode.getOrigin());
                     log.info(msg);
-                } else {
-                    // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
-                    //            Such a check would be rather invasive (potentially full sub-tree compare)
                 }
+//                else {
+//                    // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
+//                    //            Such a check would be rather invasive (potentially full sub-tree compare)
+//                }
                 childNode.remove();
             }
         }
