@@ -343,7 +343,7 @@ public class EventJournalProcessor {
             }
             if (count > 0) {
                 stopWatch.split();
-                log.info("Events processed in {}", stopWatch.toSplitString());
+                AutoExportServiceImpl.log.debug("Events processed in {}", stopWatch.toSplitString());
             }
             if (pendingChanges != null) {
                 currentChanges = null;
