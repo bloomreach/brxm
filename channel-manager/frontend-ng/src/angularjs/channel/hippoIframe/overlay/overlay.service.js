@@ -50,7 +50,7 @@ class OverlayService {
     this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = false;
+    this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -113,11 +113,6 @@ class OverlayService {
     this.overlay.addClass('hippo-overlay-add-mode');
     this.overlay.on('click', () => {
       this.$rootScope.$apply(() => {
-        if (this.toggleOverlayByComponent) {
-          this.showComponentsOverlay(false);
-          this.toggleOverlayByComponent = false;
-        }
-
         this._resetMask();
       });
     });

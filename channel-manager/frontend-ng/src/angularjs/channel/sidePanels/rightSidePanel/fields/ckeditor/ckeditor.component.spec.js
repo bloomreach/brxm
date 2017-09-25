@@ -216,9 +216,12 @@ describe('CKEditor Component', () => {
   });
 
   it('destroys the editor once the scope is destroyed', () => {
+    spyOn(SharedSpaceToolbarService, 'hideToolbar');
+
     init();
     $ctrl.$onDestroy();
     expect(editor.destroy).toHaveBeenCalled();
+    expect(SharedSpaceToolbarService.hideToolbar).toHaveBeenCalled();
   });
 
   describe('CKEditor field validation', () => {

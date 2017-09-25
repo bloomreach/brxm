@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ public class EditingUtils {
      *
      * @param userId  ID of some user
      * @param session current user's JCR session
-     * @return        name of the user or nithing, wrapped in an Optional
+     * @return        name of the user or nothing, wrapped in an Optional
      */
     public static Optional<String> getUserName(final String userId, final Session session) {
         try {

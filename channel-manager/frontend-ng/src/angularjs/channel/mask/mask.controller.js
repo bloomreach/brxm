@@ -27,7 +27,7 @@ class MaskCtrl {
   }
 
   onClick() {
-    if (this.state && this.OverlayService.toggleOverlayByComponent === true) this.state = false;
+    if (this.state && this.OverlayService.toggleOverlayByComponent) this.state = false;
     this.MaskService.clickHandler();
   }
 }
