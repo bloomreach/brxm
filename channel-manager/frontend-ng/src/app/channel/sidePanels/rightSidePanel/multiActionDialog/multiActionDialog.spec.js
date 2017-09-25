@@ -24,7 +24,7 @@ describe('hippoIframeCtrl', () => {
     $ctrl = new MultiActionDialogCtrl($mdDialog, { title: 'title', message: 'message', actions: [] });
   });
 
-  it('mvn hides the dialog with the given action', () => {
+  it('hides the dialog with the given action', () => {
     $ctrl.action('transparent');
 
     expect($mdDialog.hide).toHaveBeenCalledWith('transparent');
