@@ -142,7 +142,9 @@ public class CategoryImpl extends AbstractJCRService implements Category {
 
     @Override
     public CategoryInfo getInfo(final Locale locale) {
-        CategoryInfo info = translations.get(locale);
+        final List<Locale.LanguageRange> documentLocale = Locale.LanguageRange.parse(locale.toLanguageTag());
+        final Locale matchingLocale = Locale.lookup(documentLocale, translations.keySet());
+        CategoryInfo info = translations.get(matchingLocale);
         if (info == null) {
             return new TransientCategoryInfoImpl(this);
         }
