@@ -467,10 +467,11 @@ public class ConfigurationTreeBuilder {
         final ConfigurationItemCategory category = definitionProperty.getCategory();
         if (properties.containsKey(name)) {
             property = properties.get(name);
-
+            final ConfigurationItemCategory configPropertyCategory = parent.getChildPropertyCategory(name);
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
                         property.getJcrPath(), definitionProperty.getOrigin());
+                return this;
             }
 
             // property already exists
@@ -521,7 +522,7 @@ public class ConfigurationTreeBuilder {
                 // a property should have a back-reference to any def that affects it
                 property.addDefinition(definitionProperty);
 
-                if (category == ConfigurationItemCategory.SYSTEM) {
+                if (category == ConfigurationItemCategory.SYSTEM && configPropertyCategory == ConfigurationItemCategory.CONFIG) {
                     // warn about redefining from config to system without clearing value
                     logger.warn("Redefining a property from config to system without clearing (initial) value '{}', defined in '{}'.",
                             definitionProperty.getJcrPath(), definitionProperty.getOrigin());
@@ -542,22 +543,6 @@ public class ConfigurationTreeBuilder {
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
             requireOverrideOperationForMixinTypes(definitionProperty, property, op);
         } else {
-            if (category != null) {
-                if (category == ConfigurationItemCategory.CONFIG) {
-                    parent.clearChildPropertyCategorySettings(name);
-                }
-                if (category == ConfigurationItemCategory.CONTENT) {
-                    // it doesn't make sense to define a single property as content
-                    logger.warn("Trying to define a property on a config node as content '{}', defined in '{}'. Skipping.",
-                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
-                    return this;
-                }
-                else {
-                    // this must be a system property, which might have an initial value
-                    parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
-                }
-            }
-
             if (op == DELETE) {
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
                         definitionProperty.getOrigin(), definitionProperty.getJcrPath());
@@ -565,17 +550,30 @@ public class ConfigurationTreeBuilder {
                 return this;
             }
 
+            if (category != null) {
+                if (category == ConfigurationItemCategory.CONFIG) {
+                    parent.clearChildPropertyCategorySettings(name);
+                } else if (category == ConfigurationItemCategory.CONTENT) {
+                    // it doesn't make sense to define a single property as content
+                    logger.warn("Trying to define a property on a config node as content '{}', defined in '{}'. Skipping.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
+                    return this;
+                } else {
+                    // this must be a system property, which might have an initial value
+                    parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
+                }
+            }
+
             if (definitionProperty.isEmptyPropertyWithCategory()) {
                 // this is a .meta:category property with no value
-                if (category == ConfigurationItemCategory.CONFIG) {
-                    // Defining a property as config with no value (not even an inherited initial value) is an error
-                    throw new IllegalStateException(String.format(
-                            "Redefining a property from system to config without setting a value '%s', defined in '%s'.",
-                            definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
-                }
-                else {
-                    // in any case, don't process anything else here
+                if (category == ConfigurationItemCategory.SYSTEM) {
+                    // don't process anything else here
                     return this;
+                } else {
+                    // Defining a property as config with no value is an error
+                    throw new IllegalStateException(String.format(
+                            "Missing required value(s) for config property '%s', defined in '%s'.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
                 }
             }
 

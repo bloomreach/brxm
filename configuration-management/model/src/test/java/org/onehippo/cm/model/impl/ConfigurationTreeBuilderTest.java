@@ -2069,7 +2069,7 @@ public class ConfigurationTreeBuilderTest {
             builder.push((ContentDefinitionImpl) definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Redefining a property from system to config without setting a value '/a/property', defined in 'test-group/test-project/test-module [config: string]'.", e.getMessage());
+            assertEquals("Missing required value(s) for config property '/a/property', defined in 'test-group/test-project/test-module [config: string]'.", e.getMessage());
         }
     }
 
