@@ -1,0 +1,35 @@
+'<!--
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-dialog flex="50" aria-label="{{ $ctrl.title }}">
+  <md-dialog-content>
+    <div class="md-dialog-content">
+      <h3 ng-if="$ctrl.title">{{ ::$ctrl.title }}</h3>
+      <p>{{ ::$ctrl.message }}</p>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="$ctrl.cancel()"
+               class="qa-cancel">
+      {{ ::'CANCEL' | translate }}
+    </md-button>
+    <md-button ng-repeat="action in $ctrl.actions"
+               class="qa-{{ ::action | lowercase }}"
+               ng-click="$ctrl.action(action)">
+      {{ ::action | translate }}
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>
