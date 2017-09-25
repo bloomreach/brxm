@@ -153,7 +153,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(emptyNode, "/empty/emptyString", "emptyString", emptyDefinition, ValueType.STRING, new Object[0]);
 
         final ConfigDefinitionImpl categoryDefinition = assertDefinition(source, 4, ConfigDefinitionImpl.class);
-        final DefinitionNodeImpl categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 4);
+        final DefinitionNodeImpl categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 3);
         assertNull(categoryTreeNode.getCategory());
         assertNull(categoryTreeNode.getResidualChildNodeCategory());
         final DefinitionPropertyImpl regularProperty = categoryTreeNode.getProperty("regular-property");
@@ -163,9 +163,6 @@ public class ParserValueTest extends AbstractBaseTest {
         final DefinitionPropertyImpl categoryWithInitProperty = categoryTreeNode.getProperty("system-property-with-initial-value");
         assertEquals("system", categoryWithInitProperty.getCategory().toString());
         assertEquals("initial", categoryWithInitProperty.getValue().getString());
-        final DefinitionPropertyImpl categoryWithDelete = categoryTreeNode.getProperty("system-property-with-delete");
-        assertEquals("system", categoryWithDelete.getCategory().toString());
-        assertTrue(categoryWithDelete.isDeleted());
 
         final DefinitionNodeImpl systemCategoryNode = assertNode(categoryTreeNode, "/categories/category", "category", categoryDefinition, 0, 0);
         assertEquals("system", systemCategoryNode.getCategory().toString());

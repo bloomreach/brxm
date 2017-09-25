@@ -906,7 +906,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node nodeMap = firstConfigTuple(root).getValueNode();
         final Node propertyMap = firstTuple(nodeMap).getValueNode();
 
-        assertParserException(root, propertyMap, "Property map cannot contain 'operation: delete' and other keys except .meta:category");
+        assertParserException(root, propertyMap, "Property map cannot contain 'operation: delete' and other keys");
     }
 
     @Test

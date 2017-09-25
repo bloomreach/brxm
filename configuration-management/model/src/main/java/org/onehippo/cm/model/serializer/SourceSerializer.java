@@ -193,8 +193,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (property.getOperation() == PropertyOperation.DELETE) {
             valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
         }
-        else if (property.isEmptyPropertyWithCategory()) {
-            // this is a .meta:category property with no specified value -- don't output anything else here
+        else if (property.isEmptySystemProperty()) {
+            // this is a .meta:category system property with no specified value -- don't output anything else here
         }
         else {
             // otherwise, we need to process operation, type, and value(s)

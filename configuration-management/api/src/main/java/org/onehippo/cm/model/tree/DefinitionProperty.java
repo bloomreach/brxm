@@ -30,5 +30,5 @@ public interface DefinitionProperty extends DefinitionItem, ModelProperty {
      */
     boolean isDeleted();
 
-    boolean isEmptyPropertyWithCategory();
+    boolean isEmptySystemProperty();
 }

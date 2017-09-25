@@ -259,6 +259,10 @@ public abstract class SourceParser extends AbstractBaseParser {
                         value);
             }
             if (map.size() == 1) {
+                if (category != ConfigurationItemCategory.SYSTEM) {
+                    throw new ParserException("Property '"+ META_CATEGORY_KEY +": "+ category +
+                            "' requires specifying replacement/overriding value(s)", value);
+                }
                 property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
                 property.setCategory(category);
                 return property;
@@ -272,12 +276,11 @@ public abstract class SourceParser extends AbstractBaseParser {
         if (map.keySet().contains(OPERATION_KEY)) {
             operation = constructPropertyOperation(map.get(OPERATION_KEY));
             if (operation == PropertyOperation.DELETE) {
-                if (map.size() > 2 || (map.size() == 2 && !map.containsKey(META_CATEGORY_KEY))) {
+                if (map.size() > 1) {
                     throw new ParserException("Property map cannot contain '" + OPERATION_KEY + ": "
-                            + PropertyOperation.DELETE.toString() + "' and other keys except " + META_CATEGORY_KEY, value);
+                            + PropertyOperation.DELETE.toString() + "' and other keys", value);
                 }
                 property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
-                property.setCategory(category);
                 property.setOperation(operation);
                 return property;
             }
@@ -323,6 +326,11 @@ public abstract class SourceParser extends AbstractBaseParser {
 
         property.setOperation(operation);
         property.setCategory(category);
+
+        if (property.isEmptySystemProperty() && map.containsKey(VALUE_KEY)) {
+            // system property with empty (String) multi-value initial value isn't recognized as such: fix-up by explicitly setting operation: override
+            property.setOperation(PropertyOperation.OVERRIDE);
+        }
 
         return property;
     }

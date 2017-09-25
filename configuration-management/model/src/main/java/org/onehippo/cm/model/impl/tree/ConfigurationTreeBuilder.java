@@ -467,14 +467,14 @@ public class ConfigurationTreeBuilder {
         final ConfigurationItemCategory category = definitionProperty.getCategory();
         if (properties.containsKey(name)) {
             property = properties.get(name);
-            final ConfigurationItemCategory configPropertyCategory = parent.getChildPropertyCategory(name);
+            final ConfigurationItemCategory configCategory = parent.getChildPropertyCategory(name);
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
                         property.getJcrPath(), definitionProperty.getOrigin());
                 return this;
             }
 
-            // property already exists
+            // property already exists: first check category override
             if (category != null) {
                 if (category == ConfigurationItemCategory.CONTENT) {
                     // it doesn't make sense to define a single property as content
@@ -483,14 +483,26 @@ public class ConfigurationTreeBuilder {
                     return this;
                 }
 
-                // this may be an override back to config -- clear the category settings and continue processing
-                if (category == ConfigurationItemCategory.CONFIG) {
-                    parent.clearChildPropertyCategorySettings(name);
-                }
-                else {
-                    // this may be a system property with an initial value or an override
-                    // from config to system -- record the new category and continue processing the definition
-                    parent.setChildPropertyCategorySettings(name, category, definitionProperty);
+                if (category != configCategory) {
+
+                    if (category == ConfigurationItemCategory.CONFIG) {
+                        // override system -> config: clear/reset category override and existing property values
+                        parent.clearChildPropertyCategorySettings(name);
+                        property.setValue(null);
+                        property.setValues(null);
+                    }
+                    else {
+                        // record the system category override
+                        parent.setChildPropertyCategorySettings(name, category, definitionProperty);
+
+                        if (definitionProperty.isEmptySystemProperty()) {
+                            // this is a .meta:category system property with an overriding no initial value
+                            // meaning the original property (only) is removed, NOT put in the deletedProperties map
+                            property.getParent().removeProperty(name);
+                            // don't process anything else here
+                            return this;
+                        }
+                    }
                 }
             }
 
@@ -517,21 +529,6 @@ public class ConfigurationTreeBuilder {
                 return this;
             }
 
-            if (definitionProperty.isEmptyPropertyWithCategory()) {
-                // this is a .meta:category property with no initial value
-                // a property should have a back-reference to any def that affects it
-                property.addDefinition(definitionProperty);
-
-                if (category == ConfigurationItemCategory.SYSTEM && configPropertyCategory == ConfigurationItemCategory.CONFIG) {
-                    // warn about redefining from config to system without clearing value
-                    logger.warn("Redefining a property from config to system without clearing (initial) value '{}', defined in '{}'.",
-                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
-                }
-
-                // in any case, don't process anything else here
-                return this;
-            }
-
             if (property.getType() != definitionProperty.getType()) {
                 handleTypeConflict(property, definitionProperty, op == OVERRIDE);
             }
@@ -552,28 +549,27 @@ public class ConfigurationTreeBuilder {
 
             if (category != null) {
                 if (category == ConfigurationItemCategory.CONFIG) {
+                    if (definitionProperty.getType() != PropertyType.SINGLE && definitionProperty.getValues().length==0) {
+                        // Defining a property as config with no values is an error
+                        throw new IllegalStateException(String.format(
+                                "Missing required value(s) for config property '%s', defined in '%s'.",
+                                definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
+                    }
                     parent.clearChildPropertyCategorySettings(name);
                 } else if (category == ConfigurationItemCategory.CONTENT) {
                     // it doesn't make sense to define a single property as content
+                    // TODO: shouldn't this be an IllegalStateException???
                     logger.warn("Trying to define a property on a config node as content '{}', defined in '{}'. Skipping.",
                             definitionProperty.getJcrPath(), definitionProperty.getOrigin());
                     return this;
                 } else {
                     // this must be a system property, which might have an initial value
                     parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
-                }
-            }
-
-            if (definitionProperty.isEmptyPropertyWithCategory()) {
-                // this is a .meta:category property with no value
-                if (category == ConfigurationItemCategory.SYSTEM) {
-                    // don't process anything else here
-                    return this;
-                } else {
-                    // Defining a property as config with no value is an error
-                    throw new IllegalStateException(String.format(
-                            "Missing required value(s) for config property '%s', defined in '%s'.",
-                            definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
+                    if (definitionProperty.isEmptySystemProperty()) {
+                        // this is a .meta:category system property with no value
+                        // don't process anything else here
+                        return this;
+                    }
                 }
             }
 
