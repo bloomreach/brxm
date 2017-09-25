@@ -70,7 +70,7 @@
            ng-focus="$ctrl.focusPrimitive($event)"
            ng-blur="$ctrl.blurPrimitive($event)"
            ng-required="::$ctrl.fieldType.required"
-           ng-pattern="/^[+-]?((\d+((\.|,)\d*)?)|((\.|,)\d+))$/">
+           ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
