@@ -40,7 +40,7 @@
     <c:forEach var="ancestors" items="${list}">
       <p>
         <c:forEach var="category" items="${ancestors}" varStatus="status">
-          <c:set var="categoryInfo" value="${category.infosByLocale[hstRequest.locale]}" />
+          <c:set var="categoryInfo" value="${category.infosByLocale[document.locale]}" />
           <a href="${taxonomies}/${category.taxonomy.name}/${category.path}">${categoryInfo.name}</a>
           <c:if test="${not status.last}"> ></c:if>
         </c:forEach>
