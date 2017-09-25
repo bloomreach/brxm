@@ -25,10 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import javax.jcr.ValueFormatException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
@@ -38,12 +35,17 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
- * This bean represents a primitive field type, used for the fields of a {@link DocumentType}. It can be serialized
- * into JSON to expose it through a REST API.
+ * This bean represents a primitive field type, used for the fields of a {@link DocumentType}. It can be serialized into
+ * JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
 public abstract class PrimitiveFieldType extends AbstractFieldType {
@@ -74,6 +76,73 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
 
         return isValid;
     }
+
+    @Override
+    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
+        final List<FieldValue> processedValues = processValues(optionalValues);
+
+        if (validateValues) {
+            checkCardinality(processedValues);
+        }
+
+        final String propertyName = getId();
+        try {
+            if (processedValues.isEmpty()) {
+                if (hasProperty(node, propertyName)) {
+                    node.getProperty(propertyName).remove();
+                }
+            } else {
+                final String[] strings = new String[processedValues.size()];
+                for (int i = 0; i < strings.length; i++) {
+                    final Optional<String> value = processedValues.get(i).findValue();
+
+                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(getDefault());
+
+                    if (validateValues) {
+                        fieldSpecificValidations(strings[i]);
+                    }
+                }
+
+                // make sure we can set the new property value
+                if (node.hasProperty(propertyName)) {
+                    final Property property = node.getProperty(propertyName);
+                    if (isMultiple() != property.isMultiple()) {
+                        property.remove();
+                    }
+                }
+
+                try {
+                    if (isMultiple()) {
+                        node.setProperty(propertyName, convertToSpecificTypeArray(strings), getPropertyType());
+                    } else {
+                        node.setProperty(propertyName, convertToSpecificType(strings[0]), getPropertyType());
+                    }
+                } catch (final NumberFormatException | ValueFormatException ignore) {
+                }
+            }
+        } catch (final RepositoryException e) {
+            log.warn("Failed to write value(s) to property {}", propertyName, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    protected String convertToSpecificType(final String input) {
+        return input;
+    }
+
+    private String[] convertToSpecificTypeArray(final String[] strings) {
+        final List<String> convertedStrings = new ArrayList<>();
+        for (final String element : strings) {
+            convertedStrings.add(convertToSpecificType(element));
+        }
+        return convertedStrings.toArray(new String[0]);
+    }
+
+    protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
+        // empty on purpose
+    }
+
+    protected abstract int getPropertyType();
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
