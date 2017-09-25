@@ -262,12 +262,6 @@ public abstract class SourceParser extends AbstractBaseParser {
                 property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
                 property.setCategory(category);
                 return property;
-            } else {
-                if (category != ConfigurationItemCategory.CONFIG) {
-                    throw new ParserException(
-                            "Properties that specify '" + META_CATEGORY_KEY + ": " + category + "' cannot contain other keys",
-                            value);
-                }
             }
             expectedMapSize++;
         } else {
@@ -278,11 +272,12 @@ public abstract class SourceParser extends AbstractBaseParser {
         if (map.keySet().contains(OPERATION_KEY)) {
             operation = constructPropertyOperation(map.get(OPERATION_KEY));
             if (operation == PropertyOperation.DELETE) {
-                if (map.size() > 1) {
+                if (map.size() > 2 || (map.size() == 2 && !map.containsKey(META_CATEGORY_KEY))) {
                     throw new ParserException("Property map cannot contain '" + OPERATION_KEY + ": "
-                            + PropertyOperation.DELETE.toString() + "' and other keys", value);
+                            + PropertyOperation.DELETE.toString() + "' and other keys except " + META_CATEGORY_KEY, value);
                 }
                 property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
+                property.setCategory(category);
                 property.setOperation(operation);
                 return property;
             }

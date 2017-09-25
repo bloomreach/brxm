@@ -86,6 +86,13 @@ definitions:
       regular-property: value
       system-property:
         .meta:category: system
+      system-property-with-initial-value:
+        .meta:category: system
+        type: string
+        value: initial
+      system-property-with-delete:
+        .meta:category: system
+        operation: delete
       /category:
         .meta:category: system
       /residual-child-node-category:

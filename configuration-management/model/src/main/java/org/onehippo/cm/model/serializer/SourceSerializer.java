@@ -185,11 +185,19 @@ public class SourceSerializer extends AbstractBaseSerializer {
     protected NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
+        // .meta:category is no longer mutually-exclusive with value etc.
         if (property.getCategory() != null) {
             valueMapTuples.add(representCategory(META_CATEGORY_KEY, property.getCategory()));
-        } else if (property.getOperation() == PropertyOperation.DELETE) {
+        }
+
+        if (property.getOperation() == PropertyOperation.DELETE) {
             valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
-        } else {
+        }
+        else if (property.isEmptyPropertyWithCategory()) {
+            // this is a .meta:category property with no specified value -- don't output anything else here
+        }
+        else {
+            // otherwise, we need to process operation, type, and value(s)
             if (property.getOperation() != PropertyOperation.REPLACE) {
                 valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
             }

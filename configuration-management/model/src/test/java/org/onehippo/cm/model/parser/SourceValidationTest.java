@@ -906,7 +906,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node nodeMap = firstConfigTuple(root).getValueNode();
         final Node propertyMap = firstTuple(nodeMap).getValueNode();
 
-        assertParserException(root, propertyMap, "Property map cannot contain 'operation: delete' and other keys");
+        assertParserException(root, propertyMap, "Property map cannot contain 'operation: delete' and other keys except .meta:category");
     }
 
     @Test
@@ -1124,23 +1124,6 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node nodeMap = firstConfigTuple(root).getValueNode();
 
         assertParserException(root, nodeMap, "Nodes that specify '.meta:category: system' cannot contain other keys");
-    }
-
-    @Test
-    public void metaCategoryMustBeSoleStatementForNonConfigurationProperty() {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /path/to/node:\n"
-                + "      property:\n"
-                + "        .meta:category: system\n"
-                + "        value: foo\n";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node nodeMap = firstConfigTuple(root).getValueNode();
-        final Node propertyMap = firstTuple(nodeMap).getValueNode();
-
-        assertParserException(root, propertyMap,
-                "Properties that specify '.meta:category: system' cannot contain other keys");
     }
 
     @Test

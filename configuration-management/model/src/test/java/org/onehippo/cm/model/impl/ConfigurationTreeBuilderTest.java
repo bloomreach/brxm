@@ -1909,7 +1909,27 @@ public class ConfigurationTreeBuilderTest {
     }
 
     @Test
-    public void property_meta_category_override_to_runtime() throws Exception {
+    public void property_initial_value_for_system_property() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property:\n"
+                + "        .meta:category: system\n"
+                + "        value: value\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
+        assertEquals("value", valueToString(a.getProperty("property")));
+    }
+
+    @Test
+    public void property_meta_category_override_to_system() throws Exception {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
@@ -1924,46 +1944,52 @@ public class ConfigurationTreeBuilderTest {
                 + "    /a:\n"
                 + "      property:\n"
                 + "        .meta:category: system\n";
+
+        final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            assertTrue(interceptor.messages().anyMatch(m->m.equals(
+                        "Redefining a property from config to system without clearing (initial) value '/a/property'," +
+                        " defined in 'test-group/test-project/test-module [config: string]'.")));
+        }
+
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("value", valueToString(a.getProperty("property")));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
+    }
+
+    @Test
+    public void property_meta_category_override_to_system_clear_value() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property: value\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property:\n"
+                + "        .meta:category: system\n"
+                + "        operation: delete\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
-        assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
-        assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getChildPropertyCategory("property"));
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        assertEquals("[jcr:primaryType]", sortedCollectionToString(a.getProperties()));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
     }
 
     @Test
-    public void definitions_below_non_configuration_property_are_ignored() throws Exception {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /a:\n"
-                + "      jcr:primaryType: foo\n"
-                + "      property:\n"
-                + "        .meta:category: system\n";
-
-        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-
-        final String yaml2 = "definitions:\n"
-                + "  config:\n"
-                + "    /a:\n"
-                + "      property: value\n";
-
-        final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions2.get(0));
-            assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Trying to modify non-configuration property '/a/property', defined in 'test-group/test-project/test-module [config: string]'. Skipping.")));
-        }
-
-        final ConfigurationNodeImpl root = builder.finishModule().build();
-        assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
-        assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getChildPropertyCategory("property"));
-    }
-
-    @Test
-    public void property_meta_category_override_from_runtime_to_configuration() throws Exception {
+    public void property_meta_category_override_from_system_to_configuration() throws Exception {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
@@ -1992,7 +2018,63 @@ public class ConfigurationTreeBuilderTest {
     }
 
     @Test
-    public void node_meta_category_override_to_runtime() throws Exception {
+    public void property_meta_category_override_from_system_to_configuration_same_value() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property:\n"
+                + "        .meta:category: system\n"
+                + "        value: value\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property:\n"
+                + "        .meta:category: config\n";
+
+        final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
+        builder.push((ContentDefinitionImpl) definitions2.get(0));
+
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("value", valueToString(a.getProperty("property")));
+        assertEquals(ConfigurationItemCategory.CONFIG, a.getChildPropertyCategory("property"));
+    }
+
+    @Test
+    public void property_meta_category_override_from_system_to_configuration_without_value_fail() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property:\n"
+                + "        .meta:category: system\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property:\n"
+                + "        .meta:category: config\n";
+
+        final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("Redefining a property from system to config without setting a value '/a/property', defined in 'test-group/test-project/test-module [config: string]'.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void node_meta_category_override_to_system() throws Exception {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"

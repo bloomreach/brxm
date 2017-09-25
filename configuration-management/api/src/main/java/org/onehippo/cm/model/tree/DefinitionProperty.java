@@ -29,4 +29,6 @@ public interface DefinitionProperty extends DefinitionItem, ModelProperty {
      * @return true iff this definition represents a delete of the described property
      */
     boolean isDeleted();
+
+    boolean isEmptyPropertyWithCategory();
 }

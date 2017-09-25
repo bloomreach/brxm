@@ -43,6 +43,7 @@ import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -152,17 +153,23 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(emptyNode, "/empty/emptyString", "emptyString", emptyDefinition, ValueType.STRING, new Object[0]);
 
         final ConfigDefinitionImpl categoryDefinition = assertDefinition(source, 4, ConfigDefinitionImpl.class);
-        final DefinitionNodeImpl categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 2);
+        final DefinitionNodeImpl categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 4);
         assertNull(categoryTreeNode.getCategory());
         assertNull(categoryTreeNode.getResidualChildNodeCategory());
         final DefinitionPropertyImpl regularProperty = categoryTreeNode.getProperty("regular-property");
         assertNull(regularProperty.getCategory());
         final DefinitionPropertyImpl categoryProperty = categoryTreeNode.getProperty("system-property");
         assertEquals("system", categoryProperty.getCategory().toString());
+        final DefinitionPropertyImpl categoryWithInitProperty = categoryTreeNode.getProperty("system-property-with-initial-value");
+        assertEquals("system", categoryWithInitProperty.getCategory().toString());
+        assertEquals("initial", categoryWithInitProperty.getValue().getString());
+        final DefinitionPropertyImpl categoryWithDelete = categoryTreeNode.getProperty("system-property-with-delete");
+        assertEquals("system", categoryWithDelete.getCategory().toString());
+        assertTrue(categoryWithDelete.isDeleted());
 
-        final DefinitionNodeImpl runtimeCategoryNode = assertNode(categoryTreeNode, "/categories/category", "category", categoryDefinition, 0, 0);
-        assertEquals("system", runtimeCategoryNode.getCategory().toString());
-        assertNull(runtimeCategoryNode.getResidualChildNodeCategory());
+        final DefinitionNodeImpl systemCategoryNode = assertNode(categoryTreeNode, "/categories/category", "category", categoryDefinition, 0, 0);
+        assertEquals("system", systemCategoryNode.getCategory().toString());
+        assertNull(systemCategoryNode.getResidualChildNodeCategory());
         final DefinitionNodeImpl residualChildNodes = assertNode(categoryTreeNode, "/categories/residual-child-node-category", "residual-child-node-category", categoryDefinition, 0, 0);
         assertNull(residualChildNodes.getCategory());
         assertEquals("content", residualChildNodes.getResidualChildNodeCategory().toString());

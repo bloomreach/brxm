@@ -343,17 +343,6 @@ public class ConfigurationTreeBuilder {
                 && override != ConfigurationItemCategory.CONFIG;
     }
 
-    private boolean isAndRemainsNonConfigurationProperty(final ConfigurationNodeImpl node,
-                                                         final String propertyName,
-                                                         final ConfigurationItemCategory override) {
-        final Pair<ConfigurationItemCategory, DefinitionItemImpl> categoryAndDefinition =
-                node.getChildPropertyCategorySettings(propertyName);
-
-        return categoryAndDefinition != null
-                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIG
-                && override != ConfigurationItemCategory.CONFIG;
-    }
-
     // used by DefinitionMergeService to update model in-place
     public ConfigurationTreeBuilder markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         node.setDeleted(true);
@@ -467,7 +456,15 @@ public class ConfigurationTreeBuilder {
         final String name = definitionProperty.getName();
         final PropertyOperation op = definitionProperty.getOperation();
 
+        // category rules:
+        // 1. a config node cannot have content properties, since properties are impossible to define without a content node
+        // 2. a config node may have system properties with or without initial values, which must be preserved in the tree
+        // 3. a config node may have a system property that is redefined back to config in a downstream module
+        // 4. a config node may have a config property that is redefined to system -- in this case, the previous value
+        //    will be treated as an initial value unless an explicit operation: delete is specified
+
         ConfigurationPropertyImpl property;
+        final ConfigurationItemCategory category = definitionProperty.getCategory();
         if (properties.containsKey(name)) {
             property = properties.get(name);
 
@@ -476,13 +473,24 @@ public class ConfigurationTreeBuilder {
                         property.getJcrPath(), definitionProperty.getOrigin());
             }
 
-            // property already exists, so its parent has this property registered as configuration
-            final ConfigurationItemCategory category = definitionProperty.getCategory();
-            if (category != null && category != ConfigurationItemCategory.CONFIG) {
-                property.setDeleted(true);
-                property.addDefinition(definitionProperty);
-                parent.setChildPropertyCategorySettings(name, category, definitionProperty);
-                return this;
+            // property already exists
+            if (category != null) {
+                if (category == ConfigurationItemCategory.CONTENT) {
+                    // it doesn't make sense to define a single property as content
+                    logger.warn("Trying to redefine a property on a config node as content '{}', defined in '{}'. Skipping.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
+                    return this;
+                }
+
+                // this may be an override back to config -- clear the category settings and continue processing
+                if (category == ConfigurationItemCategory.CONFIG) {
+                    parent.clearChildPropertyCategorySettings(name);
+                }
+                else {
+                    // this may be a system property with an initial value or an override
+                    // from config to system -- record the new category and continue processing the definition
+                    parent.setChildPropertyCategorySettings(name, category, definitionProperty);
+                }
             }
 
             if (op == DELETE) {
@@ -508,6 +516,21 @@ public class ConfigurationTreeBuilder {
                 return this;
             }
 
+            if (definitionProperty.isEmptyPropertyWithCategory()) {
+                // this is a .meta:category property with no initial value
+                // a property should have a back-reference to any def that affects it
+                property.addDefinition(definitionProperty);
+
+                if (category == ConfigurationItemCategory.SYSTEM) {
+                    // warn about redefining from config to system without clearing value
+                    logger.warn("Redefining a property from config to system without clearing (initial) value '{}', defined in '{}'.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
+                }
+
+                // in any case, don't process anything else here
+                return this;
+            }
+
             if (property.getType() != definitionProperty.getType()) {
                 handleTypeConflict(property, definitionProperty, op == OVERRIDE);
             }
@@ -519,18 +542,19 @@ public class ConfigurationTreeBuilder {
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
             requireOverrideOperationForMixinTypes(definitionProperty, property, op);
         } else {
-            final ConfigurationItemCategory category = definitionProperty.getCategory();
-            if (isAndRemainsNonConfigurationProperty(parent, definitionProperty.getName(), category)) {
-                logger.warn("Trying to modify non-configuration property '{}', defined in '{}'. Skipping.",
-                        definitionProperty.getJcrPath(), definitionProperty.getOrigin());
-                return this;
-            }
             if (category != null) {
                 if (category == ConfigurationItemCategory.CONFIG) {
                     parent.clearChildPropertyCategorySettings(name);
-                } else {
-                    parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
+                }
+                if (category == ConfigurationItemCategory.CONTENT) {
+                    // it doesn't make sense to define a single property as content
+                    logger.warn("Trying to define a property on a config node as content '{}', defined in '{}'. Skipping.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin());
                     return this;
+                }
+                else {
+                    // this must be a system property, which might have an initial value
+                    parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
                 }
             }
 
@@ -539,6 +563,20 @@ public class ConfigurationTreeBuilder {
                         definitionProperty.getOrigin(), definitionProperty.getJcrPath());
                 logger.warn(msg);
                 return this;
+            }
+
+            if (definitionProperty.isEmptyPropertyWithCategory()) {
+                // this is a .meta:category property with no value
+                if (category == ConfigurationItemCategory.CONFIG) {
+                    // Defining a property as config with no value (not even an inherited initial value) is an error
+                    throw new IllegalStateException(String.format(
+                            "Redefining a property from system to config without setting a value '%s', defined in '%s'.",
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
+                }
+                else {
+                    // in any case, don't process anything else here
+                    return this;
+                }
             }
 
             // create new property
@@ -554,7 +592,9 @@ public class ConfigurationTreeBuilder {
             warnIfValuesAreEqual(definitionProperty, property);
         }
 
+        // a property should have a back-reference to any def that affects it
         property.addDefinition(definitionProperty);
+
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
         } else {
@@ -648,8 +688,12 @@ public class ConfigurationTreeBuilder {
 
         final ValueImpl[] existingValues = property.getValues();
         if (existingValues == null) {
-            logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
-                    definitionProperty.getJcrPath(), definitionProperty.getOrigin());
+            // suppress warning if adding to a system property, since we can't tell the difference between
+            // explicit empty and not-specified in this common case
+            if (property.getParent().getChildPropertyCategory(property.getName()) != ConfigurationItemCategory.SYSTEM) {
+                logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
+                        definitionProperty.getJcrPath(), definitionProperty.getOrigin());
+            }
             property.setValues(definitionProperty.getValues());
         } else {
             List<ValueImpl> values = Arrays.stream(existingValues).collect(Collectors.toList());

@@ -109,6 +109,14 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     /**
+     * Helper method to determine if this is a .meta:category: system property with no initial value on this def.
+     */
+    public boolean isEmptyPropertyWithCategory() {
+        return getCategory() != null
+                && getType() != PropertyType.SINGLE && getValues().length == 0;
+    }
+
+    /**
      * In-place update the content of this definition with content from another definition.
      * @param other
      */
