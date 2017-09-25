@@ -439,8 +439,8 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void computeAndWritePropertiesDelta(final ConfigurationNode<?> baselineNode,
-                                                final ConfigurationNode<?> updateNode,
+    private void computeAndWritePropertiesDelta(final ConfigurationNode baselineNode,
+                                                final ConfigurationNode updateNode,
                                                 final Node targetNode,
                                                 final boolean isNew,
                                                 final boolean forceApply,
@@ -461,7 +461,7 @@ public class ConfigurationConfigService {
             // skip initial-value system property, if this node is not new (and forceApply is false)
             // todo: should this perhaps only apply initial value on forceApply if property is missing?
             final ConfigurationItemCategory category = updateNode.getChildPropertyCategory(propertyName);
-            if (category == ConfigurationItemCategory.SYSTEM && !isNew && !forceApply) {
+            if (category == ConfigurationItemCategory.SYSTEM && !isNew) {
                 continue;
             }
 
@@ -481,9 +481,8 @@ public class ConfigurationConfigService {
         if (forceApply) {
             for (String propertyName : getDeletablePropertyNames(targetNode)) {
                 if (!updateProperties.containsKey(propertyName)
+                        // make sure not to remove properties (now) of category SYSTEM, not even with forceApply==true
                         && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
-                    // todo: deal with system properties
-
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
@@ -491,9 +490,9 @@ public class ConfigurationConfigService {
             for (String propertyName : baselineProperties.keySet()) {
                 if (!propertyName.equals(JCR_PRIMARYTYPE)
                         && !propertyName.equals(JCR_MIXINTYPES)
-                        && !updateProperties.containsKey(propertyName)) {
-                    // todo: deal with system properties
-
+                        && !updateProperties.containsKey(propertyName)
+                        // make sure not to remove properties (now) of category SYSTEM
+                        && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
@@ -512,8 +511,8 @@ public class ConfigurationConfigService {
         return names;
     }
 
-    private void computeAndWriteChildNodesDelta(final ConfigurationNode<?> baselineNode,
-                                                final ConfigurationNode<?> updateNode,
+    private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
+                                                final ConfigurationNode updateNode,
                                                 final Node targetNode,
                                                 final boolean forceApply,
                                                 final List<UnprocessedReference> unprocessedReferences)
