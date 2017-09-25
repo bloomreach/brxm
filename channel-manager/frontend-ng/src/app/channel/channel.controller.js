@@ -21,6 +21,7 @@ class ChannelCtrl {
     $stateParams,
     $timeout,
     $translate,
+    OverlayService,
     ChannelActionsService,
     ChannelService,
     CmsService,
@@ -37,6 +38,7 @@ class ChannelCtrl {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$translate = $translate;
+    this.OverlayService = OverlayService;
     this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -49,15 +51,29 @@ class ChannelCtrl {
 
     this.projectsEnabled = ConfigService.projectsEnabled;
 
-    this.isContentOverlayDisplayed = true;
-    this.isComponentsOverlayDisplayed = false;
-
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     this.menus = [
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
       PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
     ];
+  }
+
+  get isContentOverlayDisplayed() {
+    return this.OverlayService.isContentOverlayDisplayed;
+  }
+
+  set isContentOverlayDisplayed(value) {
+    this.OverlayService.showContentOverlay(value);
+  }
+
+  get isComponentsOverlayDisplayed() {
+    if (this.OverlayService.toggleOverlayByComponent) return false;
+    return this.OverlayService.isComponentsOverlayDisplayed;
+  }
+
+  set isComponentsOverlayDisplayed(value) {
+    this.OverlayService.showComponentsOverlay(value);
   }
 
   isControlsDisabled() {

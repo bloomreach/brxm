@@ -69,7 +69,7 @@ class ChannelActionsService extends MenuService {
         onClick: () => this._publish(),
       })
       .addAction('confirm', {
-        translationKey: 'TOOLBAR_MENU_CHANNEL_CONFIRM',
+        translationKey: 'TOOLBAR_MENU_CHANNEL_SUBMIT',
         iconName: 'publish',
         isVisible: () => this._isBranch(),
         isEnabled: () => this._hasOwnChanges(),

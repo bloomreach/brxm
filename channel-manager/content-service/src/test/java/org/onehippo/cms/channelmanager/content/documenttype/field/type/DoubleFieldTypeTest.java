@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -46,7 +45,7 @@ import static org.junit.Assert.fail;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({JcrUtils.class, NamespaceUtils.class})
-public class LongFieldTypeTest {
+public class DoubleFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
 
@@ -57,11 +56,11 @@ public class LongFieldTypeTest {
     }
 
     @Test
-    public void writeToSingleLong() throws Exception {
+    public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new LongFieldType();
-        final Long oldValue = 1l;
-        final Long newValue = 16l;
+        final PrimitiveFieldType fieldType = new DoubleFieldType();
+        final Double oldValue = 0.8;
+        final Double newValue = 14.65;
 
         fieldType.setId(PROPERTY);
         node.setProperty(PROPERTY, oldValue);

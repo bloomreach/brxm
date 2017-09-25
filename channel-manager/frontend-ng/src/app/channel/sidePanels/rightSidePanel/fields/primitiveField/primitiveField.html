@@ -60,7 +60,17 @@
            ng-focus="$ctrl.focusPrimitive($event)"
            ng-blur="$ctrl.blurPrimitive($event)"
            ng-required="::$ctrl.fieldType.required"
-           ng-pattern="/^(0|[1-9][0-9]*)$/">
+           ng-pattern="/^-?[0-9]\d*(\.\d+)?$/">
+
+    <input ng-switch-when="DOUBLE"
+           ng-model="fieldValue.value"
+           ng-change="$ctrl.valueChanged()"
+           name="{{::$ctrl.getFieldName($index)}}"
+           aria-label="{{::$ctrl.fieldType.displayName}}"
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)"
+           ng-required="::$ctrl.fieldType.required"
+           ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
@@ -91,6 +101,7 @@
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
+      <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
     </div>
   </md-input-container>
 </div>

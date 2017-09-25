@@ -116,6 +116,7 @@ class DragDropService {
         moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
         accepts: (el, target) => this._isContainerEnabled(target),
         invalid: () => !this.draggingOrClicking,
+        dragDelay: 300,
       };
 
       this.drake = this.iframe.dragula(containerBoxElements, this.dragulaOptions);

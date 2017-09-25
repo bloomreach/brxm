@@ -83,6 +83,7 @@ class CKEditorController {
 
   $onDestroy() {
     this.editor.destroy();
+    this.SharedSpaceToolbarService.hideToolbar();
   }
 
   _applyEditorCSS(editorConfig) {
