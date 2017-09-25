@@ -103,10 +103,10 @@
 - hst:label (string)
 + * (hst:containeritemcomponent)
 
-[hst:containeritempackage] > nt:base, mix:referenceable orderable
+[hst:containeritempackage] > nt:base, mix:referenceable
 + * (hst:containeritemcomponent)
 
-[hst:containercomponentfolder] > nt:base orderable
+[hst:containercomponentfolder] > nt:base
 + * (hst:containercomponentfolder)
 + * (hst:containercomponent)
 
