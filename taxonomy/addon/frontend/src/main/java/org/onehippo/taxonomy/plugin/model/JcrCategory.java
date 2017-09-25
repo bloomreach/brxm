@@ -294,8 +294,12 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         return null;
     }
 
+    /**
+     * @deprecated use {@link #getInfosByLocale()} instead
+     */
     @SuppressWarnings("unchecked")
     @Override
+    @Deprecated
     public Map<String, ? extends CategoryInfo> getInfos() {
         Map<String, ? extends CategoryInfo> map = new HashMap<>();
         return LazyMap.decorate(map,
