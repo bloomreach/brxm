@@ -67,20 +67,34 @@ definitions:
         /admin:
           jcr:primaryType: hipposys:user
           hipposys:active: true
-          hipposys:password: $SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=
+          hipposys:password:
+            .meta:category: system
+            value: $SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=
           hipposys:securityprovider: internal
+          hipposys:passwordlastmodified:
+            .meta:category: system
+          hipposys:previouspasswords:
+            .meta:category: system
         /workflowuser:
           jcr:primaryType: hipposys:user
           hipposys:active: true
           hipposys:system: true
-          hipposys:password: $SHA-256$*
+          hipposys:password:
+            .meta:category: system
+            value: $SHA-256$*
           hipposys:securityprovider: internal
+          hipposys:passwordlastmodified:
+            .meta:category: system
+          hipposys:previouspasswords:
+            .meta:category: system
       /hippo:groups:
         jcr:primaryType: hipposys:groupfolder
         .meta:residual-child-node-category: system
         /admin:
           jcr:primaryType: hipposys:group
-          hipposys:members: [admin, workflowuser]
+          hipposys:members:
+            .meta:category: system
+            value: [admin, workflowuser]
           hipposys:securityprovider: internal
       /hippo:roles:
         jcr:primaryType: hipposys:rolefolder
