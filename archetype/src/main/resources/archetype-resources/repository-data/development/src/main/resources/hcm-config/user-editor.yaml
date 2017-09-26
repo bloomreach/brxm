@@ -3,5 +3,11 @@ definitions:
     /hippo:configuration/hippo:users/editor:
       jcr:primaryType: hipposys:user
       hipposys:active: true
-      hipposys:password: editor
+      hipposys:password:
+        .meta:category: system
+        value: editor
+      hipposys:passwordlastmodified:
+        .meta:category: system
+      hipposys:previouspasswords:
+        .meta:category: system
       hipposys:securityprovider: internal
