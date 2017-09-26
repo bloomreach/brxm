@@ -329,7 +329,7 @@ class OverlayService {
     const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig);
 
     overlayElement
-      .addClass('hippo-overlay-element-link hippo-top hippo-fab-dial-container')
+      .addClass('hippo-overlay-element-link hippo-fab-dial-container')
       .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${initialIcon}</button>`)
       .append(buttons);
 
@@ -342,22 +342,22 @@ class OverlayService {
           fabBtn.removeClass(BTN_OPEN_CLASS).html(initialIcon);
           overlayElement.removeClass(VISIBLE_CLASS);
           overlayElement.IS_SHOWING = false;
-          fabBtn.off('click mouseleave', processClick);
+          fabBtn.off('click', processClick);
         }
       };
       if (!overlayElement.IS_SHOWING) {
         overlayElement.IS_SHOWING = true;
         fabBtn.html(clear).addClass(BTN_OPEN_CLASS);
         overlayElement.addClass(VISIBLE_CLASS);
-        fabBtn.on('click mouseleave', processClick);
+        fabBtn.on('click', processClick);
       }
     };
-    fabBtn.on('click mouseenter', showOpts);
+    fabBtn.on('click', showOpts);
   }
 
   __initManageContentLinkOptions(structureElement, overlayElement, config) {
     const optionsContainer = $('<div class="hippo-fab-dial-options"></div>');
-    const buttons = [];
+    let buttons = [];
     Object.keys(config).forEach((i) => {
       const button = config[i];
       const tpl = $(`<button>${button.svg}</button>`)
@@ -366,21 +366,45 @@ class OverlayService {
       buttons.push(tpl);
     });
 
-    const direction = this._getOptionButtonsDirection(structureElement);
-    if (direction === 'bottom') {
-      overlayElement.removeClass('hippo-top').addClass('hippo-bottom');
-      buttons.reverse();
-    }
+    buttons = this._adjustButtonsPosition(structureElement, overlayElement, buttons);
+    $(this.iframeWindow).on('scroll resize', () => {
+      buttons = this._adjustButtonsPosition(structureElement, overlayElement, buttons);
+    });
 
-    return optionsContainer.append(...buttons);
+    return optionsContainer.html(buttons.reverse());
   }
 
-  _getOptionButtonsDirection(structureElement) {
+  _adjustButtonsPosition(structureElement, overlayElement, buttons) {
     const boxElement = structureElement.prepareBoxElement();
     const rect = boxElement[0].getBoundingClientRect();
     let top = rect.top;
     top += this.iframeWindow.pageYOffset;
-    return top > 780 ? 'top' : 'bottom';
+
+    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const scrollBottom = viewHeight + scrollTop;
+
+    const buttonsByDirection = {
+      top: buttons.slice(),
+      bottom: buttons.slice().reverse(),
+    };
+
+    const setButtonsDirection = (direction) => {
+      const directions = ['top', 'bottom'];
+      const unselectedDirection = directions.slice();
+      unselectedDirection.splice(directions.indexOf(direction), 1);
+
+      overlayElement.addClass(`hippo-${direction}`).removeClass(`hippo-${unselectedDirection}`);
+      return buttonsByDirection[direction];
+    };
+
+    if (scrollTop > (top - 80)) {
+      return setButtonsDirection('bottom');
+    } else if (scrollBottom < (top + 130)) {
+      return setButtonsDirection('top');
+    }
+
+    return setButtonsDirection('bottom');
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
