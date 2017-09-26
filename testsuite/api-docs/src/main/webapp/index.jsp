@@ -16,7 +16,7 @@
 --%>
 <%@ page import="java.io.*,java.util.*" %>
 <%!
-private static final String DEFAULT_SWAGGER_API_URI = "/site/restservices/swagger.json";
+private static final String DEFAULT_SWAGGER_API_URI = "/site/restservices/swagger.yaml";
 private static final String SWAGGER_POM_PROPS_RESOURCE_PATH = "META-INF/maven/org.webjars/swagger-ui/pom.properties";
 
 private volatile String swaggerVersion;

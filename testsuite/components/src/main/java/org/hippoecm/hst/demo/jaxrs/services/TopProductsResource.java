@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * @version $Id$
@@ -59,21 +60,17 @@ public class TopProductsResource extends AbstractResource {
         response = ProductRepresentation.class,
         responseContainer = "List")
     public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @MatrixParam("max") @DefaultValue("10") int max) {
+            @ApiParam(hidden = true) @MatrixParam("max") @DefaultValue("10") int max) {
         
         List<ProductRepresentation> productRepList = new ArrayList<ProductRepresentation>();
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            HippoBean scope = null;
-            try {
-                // was there a sitemap item with a relative content path pointing to a bean. If so, use this as scope
-                scope = getRequestContentBean(requestContext);
-            } catch (ObjectBeanManagerException e) {
-                // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
-                scope = getMountContentBaseBean(requestContext);
+            HippoBean scope = requestContext.getContentBean();
+            if (scope == null) {
+                scope = requestContext.getSiteContentBaseBean();
             }
-            
+
             HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
             HstQuery hstQuery = manager.createQuery(scope, ProductBean.class, true);
             hstQuery.addOrderByDescending("demosite:price");

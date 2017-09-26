@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * @version $Id$
@@ -83,7 +84,7 @@ public class ProductPlainResource extends AbstractResource {
             @QueryParam("query") String query,
             @QueryParam("begin") @DefaultValue("0") int begin,
             @QueryParam("psize") @DefaultValue("10") int pageSize,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @ApiParam(hidden = true) @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
         
@@ -156,7 +157,7 @@ public class ProductPlainResource extends AbstractResource {
     @ApiOperation(value = "Finds product of the brand", response = ProductRepresentation.class)
     public ProductRepresentation getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("brand") String brand,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @ApiParam(hidden = true) @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         
         ProductRepresentation productRep = null;
         
@@ -220,7 +221,7 @@ public class ProductPlainResource extends AbstractResource {
     @POST
     public ProductRepresentation createProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             ProductRepresentation productRepresentation,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @ApiParam(hidden = true) @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
@@ -276,7 +277,7 @@ public class ProductPlainResource extends AbstractResource {
     public ProductRepresentation updateProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("brand") String brand,
             @QueryParam("wfaction") String workflowAction,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink,
+            @ApiParam(hidden = true) @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink,
             ProductRepresentation productRepresentation) {
         
         ProductBean productBean = null;
@@ -378,7 +379,7 @@ public class ProductPlainResource extends AbstractResource {
     @Path("/brand/{brand}/")
     public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("brand") String brand,
-            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+            @ApiParam(hidden = true) @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         ProductBean productBean = null;
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
