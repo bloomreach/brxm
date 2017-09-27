@@ -21,9 +21,9 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
-import clear from '../../../../images/html/clear.svg';
-import plus from '../../../../images/html/plus.svg';
-import search from '../../../../images/html/search.svg';
+import clearSvg from '../../../../images/html/clear.svg';
+import plusSvg from '../../../../images/html/plus.svg';
+import searchSvg from '../../../../images/html/search.svg';
 import addContentSvg from '../../../../images/html/add-content.svg';
 
 class OverlayService {
@@ -31,7 +31,6 @@ class OverlayService {
     $log,
     $rootScope,
     $translate,
-    $window,
     CmsService,
     DomService,
     ExperimentStateService,
@@ -60,8 +59,8 @@ class OverlayService {
     PageStructureService.registerChangeListener(() => this.sync());
 
     this.dialButtonsConfig = {
-      0: { svg: plus, callback: console.log, tooltip: 'create content' },
-      1: { svg: search, callback: console.log, tooltip: 'edit content' },
+      0: { svg: plusSvg, callback: console.log, tooltip: 'create content' },
+      1: { svg: searchSvg, callback: console.log, tooltip: 'edit content' },
     };
   }
 
@@ -278,7 +277,7 @@ class OverlayService {
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'manage-content-link':
-        this._initManageContentLink(structureElement, overlayElement, addContentSvg);
+        this._initManageContentLink(structureElement, overlayElement, addContentSvg, clearSvg);
         break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
@@ -324,44 +323,55 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _initManageContentLink(structureElement, overlayElement, svg, preventCloseIcon) {
-    const buttonClosedStateIcon = svg;
-    let buttonOpenStateIcon = clear;
-    if (preventCloseIcon) buttonOpenStateIcon = svg;
-
+  _initManageContentLink(structureElement, overlayElement, icon, closeIcon) {
     overlayElement
       .addClass('hippo-overlay-element-link hippo-fab-dial-container')
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${buttonClosedStateIcon}</button>`)
+      .addClass('is-left')  // mouse never entered yet
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${icon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
-    const VISIBLE_CLASS = 'is-showing-options';
-    const BTN_OPEN_CLASS = 'hippo-fab-btn-open';
     const fabBtn = overlayElement.find('#hippo-fab-btn');
-    const showOpts = (e) => {
-      const processClick = (evt) => {
-        overlayElement.on('mouseleave', () => overlayElement.on('mouseenter', showOpts));
-        if (e !== evt) {
-          fabBtn.removeClass(BTN_OPEN_CLASS).html(buttonClosedStateIcon);
-          overlayElement.removeClass(VISIBLE_CLASS);
-          overlayElement.IS_SHOWING = false;
-          overlayElement.off('click mouseleave', processClick);
+
+    const showOptions = () => {
+      if (!overlayElement.hasClass('is-showing-options')) {
+        overlayElement.find('.hippo-fab-dial-options').html(this._initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
+        fabBtn.addClass('hippo-fab-btn-open');
+        if (closeIcon) {
+          fabBtn.html(closeIcon);
         }
-      };
-      if (!overlayElement.IS_SHOWING) {
-        overlayElement.find('.hippo-fab-dial-options').html(this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
-        overlayElement.IS_SHOWING = true;
-        fabBtn.html(buttonOpenStateIcon).addClass(BTN_OPEN_CLASS);
-        overlayElement.addClass(VISIBLE_CLASS);
-        overlayElement.on('click mouseleave', processClick);
-        overlayElement.off('mouseenter', showOpts);
+        overlayElement.addClass('is-showing-options');
+        return true;
       }
+      return false;
     };
-    overlayElement.on('click mouseenter', showOpts);
-    overlayElement.on('click', '.hippo-fab-dial-options > button', () => overlayElement.trigger('mouseleave'));
+    const hideOptions = () => {
+      fabBtn.removeClass('hippo-fab-btn-open');
+      if (closeIcon) {
+        fabBtn.html(icon);
+      }
+      overlayElement.removeClass('is-showing-options');
+    };
+    const showOptionsIfLeft = () => {
+      if (overlayElement.hasClass('is-left')) {
+        showOptions();
+      }
+      overlayElement.removeClass('is-left');
+    };
+    const hideOptionsAndLeave = () => {
+      hideOptions();
+      overlayElement.addClass('is-left');
+    };
+    overlayElement.on('click', () => showOptions() || hideOptions());
+    overlayElement.on('mouseenter', showOptionsIfLeft);
+    overlayElement.on('mouseleave', hideOptionsAndLeave);
+
+    $(this.iframeWindow).on('scroll resize', () => {
+      overlayElement.find('.hippo-fab-dial-options').html(this._initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
+    });
   }
 
-  __initManageContentLinkOptions(structureElement, overlayElement, config) {
-    let buttons = [];
+  _initManageContentLinkOptions(structureElement, overlayElement, config) {
+    const buttons = [];
     Object.keys(config).forEach((i) => {
       const button = config[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
@@ -370,23 +380,40 @@ class OverlayService {
       buttons.push(tpl);
     });
 
-    buttons = this._adjustButtonsPosition(structureElement, overlayElement, buttons);
-    $(this.iframeWindow).on('scroll resize', () => {
-      buttons = this._adjustButtonsPosition(structureElement, overlayElement, buttons);
-    });
-
-    return buttons;
+    return this._adjustButtonsPosition(structureElement, overlayElement, buttons);
   }
 
-  _adjustButtonsPosition(structureElement, overlayElement, buttons) {
-    const boxElement = structureElement.prepareBoxElement();
+  _getElementPositionObject(boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
+
     let top = rect.top;
+    let left = rect.left;
+    const width = rect.width;
+    const height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    left += this.iframeWindow.pageXOffset;
     top += this.iframeWindow.pageYOffset;
 
     const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
     const viewHeight = $(this.iframeWindow).height();
     const scrollBottom = viewHeight + scrollTop;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      scrollTop,
+      scrollBottom,
+      viewHeight,
+    };
+  }
+
+  _adjustButtonsPosition(structureElement, overlayElement, buttons) {
+    const boxElement = structureElement.prepareBoxElement();
+    const position = this._getElementPositionObject(boxElement);
 
     const buttonsByDirection = {
       top: buttons.slice(),
@@ -402,10 +429,14 @@ class OverlayService {
       return buttonsByDirection[direction];
     };
 
-    if (scrollTop > (top - 80)) return setButtonsDirection('bottom');
-    else if (scrollBottom < (top + 130)) return setButtonsDirection('top');
+    let direction = 'bottom';
+    if (position.scrollTop > (position.top - 80)) {
+      direction = 'bottom';
+    } else if (position.scrollBottom < (position.top + 130)) {
+      direction = 'top';
+    }
 
-    return setButtonsDirection('bottom');
+    return setButtonsDirection(direction);
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
@@ -510,22 +541,12 @@ class OverlayService {
   }
 
   _syncPosition(overlayElement, boxElement) {
-    const rect = boxElement[0].getBoundingClientRect();
+    const position = this._getElementPositionObject(boxElement);
 
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
-
-    overlayElement.css('top', `${top}px`);
-    overlayElement.css('left', `${left}px`);
-    overlayElement.css('width', `${width}px`);
-    overlayElement.css('height', `${height}px`);
+    overlayElement.css('top', `${position.top}px`);
+    overlayElement.css('left', `${position.left}px`);
+    overlayElement.css('width', `${position.width}px`);
+    overlayElement.css('height', `${position.height}px`);
   }
 
   _tidyOverlay(elementsToKeep) {

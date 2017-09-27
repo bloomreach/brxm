@@ -286,10 +286,6 @@
     }
   }
   &.is-showing-options {
-    > button i {
-      transform: translate(-12px, -12px) rotate(45deg);
-      transition: transform .1s linear;
-    }
     .hippo-fab-dial-options {
       display: flex;
       flex-direction: column-reverse;
