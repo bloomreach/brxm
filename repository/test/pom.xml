@@ -158,6 +158,7 @@
             <exclude>**/LockTest.java</exclude>
             <exclude>**/LockManagerAbortTest.java</exclude>
             <exclude>**/LockManagerBasicTest.java</exclude>
+            <exclude>**/LockManagerExpiresTest.java</exclude>
             <exclude>**/LockManagerRefreshTest.java</exclude>
           </excludes>
         </configuration>
@@ -201,6 +202,7 @@
                     <include>**/LockTest.java</include>
                     <include>**/LockManagerAbortTest.java</include>
                     <include>**/LockManagerBasicTest.java</include>
+                    <include>**/LockManagerExpiresTest.java</include>
                     <include>**/LockManagerRefreshTest.java</include>
                   </includes>
                 </configuration>
