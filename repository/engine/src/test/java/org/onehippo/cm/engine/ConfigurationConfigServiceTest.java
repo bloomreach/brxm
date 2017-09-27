@@ -577,6 +577,61 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
     }
 
+
+    @Test
+    public void expect_system_properties_with_initial_value_to_be_created() throws Exception {
+        // no initial content
+
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "    /newNode:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single:\n"
+                + "        .meta:category: system\n"
+                + "        value: new\n"
+                + "      multiple:\n"
+                + "        .meta:category: system\n"
+                + "        value: [new1, new2]\n"
+                + "";
+
+        applyDefinitions(definition);
+
+        expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/newNode/single", PropertyType.STRING, "new");
+        expectProp("/newNode/multiple", PropertyType.STRING, "[new1, new2]");
+
+        final Node newNode = session.getNode("/newNode");
+        newNode.setProperty("single", "updated");
+        newNode.setProperty("multiple", new String[]{"updated1", "updated2"});
+        session.save();
+
+        expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/newNode/single", PropertyType.STRING, "updated");
+        expectProp("/newNode/multiple", PropertyType.STRING, "[updated1, updated2]");
+
+        // Modified system properties not to be overwritten, not even in forceApply mode
+        applyDefinitions(definition, true);
+
+        expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/newNode/single", PropertyType.STRING, "updated");
+        expectProp("/newNode/multiple", PropertyType.STRING, "[updated1, updated2]");
+
+        newNode.getProperty("single").remove();
+        newNode.getProperty("multiple").remove();
+        session.save();
+
+        // nor when the properties don't exist (anymore) but the node does
+        applyDefinitions(definition,true);
+
+        expectNode("/newNode", "[]", "[jcr:primaryType]");
+
+        newNode.remove();
+        session.save();
+    }
+
     @Test
     public void expect_manually_added_property_to_be_overridden_if_added_to_baseline() throws Exception {
         testNode.setProperty("single", "tweaked");

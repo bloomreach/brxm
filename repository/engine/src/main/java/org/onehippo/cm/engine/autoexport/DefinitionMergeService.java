@@ -1792,6 +1792,8 @@ public class DefinitionMergeService {
      */
     protected SortedMap<JcrPath, ContentDefinitionImpl> collectContentSourcesByNodePath() {
         final Function<ContentDefinitionImpl, JcrPath> cdPath = cd -> cd.getNode().getJcrPath();
+        // TODO: this will silently ignore a situation where multiple sources define the same content path!
+        // if there are multiple modules with the same content path, use the first one we encounter
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
         final Supplier<TreeMap<JcrPath, ContentDefinitionImpl>> reverseTreeMapper =
                 () -> new TreeMap<>(Comparator.reverseOrder());

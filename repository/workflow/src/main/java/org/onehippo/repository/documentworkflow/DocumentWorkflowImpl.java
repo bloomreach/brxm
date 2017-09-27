@@ -124,20 +124,9 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
-
-        String scxmlId = "documentworkflow";
-
         try {
-            final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();
-            // check if a custom scxml-definition identifier is configured for this workflow instance
-            if (workflowConfiguration != null && workflowConfiguration.exists() &&
-                    workflowConfiguration.get(SCXML_DEFINITION_KEY) instanceof String) {
-                // use custom scxml-definition identifier
-                scxmlId = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
-            }
-
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
-            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(scxmlId, getWorkflowContext()), createDocumentHandle(node));
+            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext()),      createDocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -145,6 +134,17 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             }
             throw new RepositoryException(wfe);
         }
+    }
+
+    protected String getScxmlId() {
+        final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();
+        // check if a custom scxml-definition identifier is configured for this workflow instance
+        if (workflowConfiguration != null && workflowConfiguration.exists() &&
+                workflowConfiguration.get(SCXML_DEFINITION_KEY) instanceof String) {
+            // use custom scxml-definition identifier
+            return (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
+        }
+        return "documentworkflow";
     }
 
     @Override

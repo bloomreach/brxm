@@ -17,6 +17,7 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
@@ -68,6 +69,10 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         return map;
     }
 
+    public DocumentWorkflowImpl getDocumentWorkflowImpl() throws RemoteException {
+        return new DocumentWorkflowImpl();
+    }
+
     protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor executor) {
         Set<EnterableState> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
 
@@ -106,10 +111,10 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
 
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
@@ -122,7 +127,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -238,13 +243,15 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
     }
 
+
+
     @Test
     public void testStatusState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -344,7 +351,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -442,7 +449,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -704,7 +711,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -825,7 +832,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -943,7 +950,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -998,7 +1005,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         session.setPermissions(folderNode.getPath(), "jcr:write", false);
         MockNode handleNode = (MockNode)folderNode.addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 
@@ -1114,7 +1121,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
 

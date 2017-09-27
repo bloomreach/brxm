@@ -10,7 +10,9 @@ definitions:
         .meta:residual-child-node-category: content
         jcr:primaryType: hippostd:folder
         jcr:mixinTypes: ['mix:referenceable']
-        jcr:uuid: 302beda6-84a3-4636-bbab-63972219bca8
+        # note: the following value is referenced by /hippo:reports/facet-types/hippo:docbase and elsewhere
+        #       until HCM supports node-path-to-UUID conversions for String properties, preserve this value
+        jcr:uuid: 2c21a29c-a5d1-4e84-aec4-594e5bf93b25
         hippostd:foldertype: [new-folder, new-translated-folder]
       /gallery:
         .meta:residual-child-node-category: content
