@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     public void testCreateRepositoryLogger() throws Exception {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
-        assertTrue(session.itemExists("/hippo:log/default"));
+        assertTrue(session.itemExists("/hippo:log/" + RepositoryLogger.getClusterNodeId(session)));
     }
 
     @Test
