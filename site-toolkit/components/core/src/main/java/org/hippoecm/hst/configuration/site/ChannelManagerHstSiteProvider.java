@@ -15,13 +15,11 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,21 +32,20 @@ public class ChannelManagerHstSiteProvider implements HstSiteProvider {
     @Override
     public HstSite getHstSite(final CompositeHstSite compositeHstSite, final HstRequestContext requestContext) {
         HttpSession session = requestContext.getServletRequest().getSession();
-        Map<String, String> mountToBranchIdMapping =
-                (Map<String, String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
 
-        final String renderingMountId = (String)session.getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
+        final String renderingMountId = (String) session.getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
         Mount mount;
         if (renderingMountId == null) {
             mount = requestContext.getResolvedMount().getMount();
         } else {
             mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
         }
-        if (mountToBranchIdMapping == null) {
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        if (cmsSessionContext == null) {
             log.debug("No branch selected for mount '{}'. Return master", mount);
             return compositeHstSite.getMaster();
         }
-        final String branchId = mountToBranchIdMapping.get(mount.getIdentifier());
+        final String branchId = (String) cmsSessionContext.getAttribute(ATTRIBUTE_ACTIVE_PROJECT_ID);
         if (branchId == null) {
             log.debug("No branch selected for mount '{}'. Return master", mount);
             return compositeHstSite.getMaster();
@@ -57,7 +54,7 @@ public class ChannelManagerHstSiteProvider implements HstSiteProvider {
         if (branch == null) {
             log.info("Unexpected branchId '{}' for mount '{}' found on http session because no such branch present. Removing " +
                     "branch now and return master.", branchId, mount);
-            mountToBranchIdMapping.remove(branchId);
+            cmsSessionContext.removeAttribute(ATTRIBUTE_ACTIVE_PROJECT_ID);
             return compositeHstSite.getMaster();
         }
         log.info("Using branch '{}' for mount '{}'", branch.getName(), mount);

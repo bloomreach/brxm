@@ -15,20 +15,13 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-
-import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -46,8 +39,12 @@ import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.hst.Channel;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
+
+import com.google.common.base.Optional;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
@@ -56,7 +53,6 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
-import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -83,8 +79,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
 
         assertNull(hstSite1.componentsConfiguration);
         assertNull(hstSite2.componentsConfiguration);
@@ -98,10 +94,10 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Test
     public void previewSiteComponentsConfigurationLoadedLazilyAndInstancesShared() throws Exception {
         final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+        final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
 
-        final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
-        final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+        final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
+        final HstSiteService previewHstSite = (HstSiteService) mount.getPreviewHstSite();
 
         assertNotSame(hstSite, previewHstSite);
         assertNull(hstSite.componentsConfiguration);
@@ -117,19 +113,19 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     public void previewSiteComponentsConfigurationNotLoadedForCurrentHostGroupIfNoPreviewChannel() throws Exception {
 
         final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
-        final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+        final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
 
-        final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
-        final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+        final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
+        final HstSiteService previewHstSite = (HstSiteService) mount.getPreviewHstSite();
 
         assertNotSame(hstSite, previewHstSite);
         assertNull(hstSite.componentsConfiguration);
         assertNull(previewHstSite.componentsConfiguration);
 
         final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
-        assertTrue(virtualHosts.getChannelById("dev-localhost","unittestproject").getChangedBySet() instanceof HashSet);
+        assertTrue(virtualHosts.getChannelById("dev-localhost", "unittestproject").getChangedBySet() instanceof HashSet);
 
-        virtualHosts.getChannelById("dev-localhost","unittestproject").getChangedBySet().size();
+        virtualHosts.getChannelById("dev-localhost", "unittestproject").getChangedBySet().size();
         // only when there is a PREVIEW channel, a ChannelLazyLoadingChangedBySet is created. When there is not preview channel
         // the componentsConfiguration is still not loaded
         assertNull(previewHstSite.componentsConfiguration);
@@ -145,17 +141,17 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createHstConfigBackup(session);
             {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
-                final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+                final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
                 // since we do not have a preview yet, previewChannel and live channel should have the same #getId, though
                 // there instances are different
                 assertNotSame(mount.getPreviewChannel(), mount.getChannel());
                 assertEquals("Since there is not preview, the preview channel id should be same as the live channel" +
                         " instance", mount.getPreviewChannel().getId(), mount.getChannel().getId());
 
-                final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+                final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
                 // create preview configuration and preview channel
                 String configPath = hstSite.getConfigurationPath();
-                JcrUtils.copy(session, configPath, configPath+"-preview");
+                JcrUtils.copy(session, configPath, configPath + "-preview");
                 // add a change by setting 'lockedby' on preview channel node
                 session.getNode(configPath + "-preview/hst:channel").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
             }
@@ -166,22 +162,22 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
-                final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+                final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
                 assertNotSame("Since there is *a* preview, the preview channel instance should NOT be same as the live channel" +
                         " instance", mount.getPreviewChannel(), mount.getChannel());
-                final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+                final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
                 // componentsConfiguration is loaded lazily
                 assertNull(hstSite.componentsConfiguration);
                 final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
 
-                assertEquals(0, virtualHosts.getChannelById("dev-localhost","unittestproject").getChangedBySet().size());
+                assertEquals(0, virtualHosts.getChannelById("dev-localhost", "unittestproject").getChangedBySet().size());
 
-                final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+                final HstSiteService previewHstSite = (HstSiteService) mount.getPreviewHstSite();
                 // only when changes from preview channel are loaded the lazy component configuration gets populated
                 assertNull(previewHstSite.componentsConfiguration);
 
-                assertEquals(1, virtualHosts.getChannelById("dev-localhost","unittestproject-preview").getChangedBySet().size());
-                assertTrue(virtualHosts.getChannelById("dev-localhost","unittestproject-preview").getChangedBySet().contains("someonelikeyou"));
+                assertEquals(1, virtualHosts.getChannelById("dev-localhost", "unittestproject-preview").getChangedBySet().size());
+                assertTrue(virtualHosts.getChannelById("dev-localhost", "unittestproject-preview").getChangedBySet().contains("someonelikeyou"));
                 // since changedBySet is request on preview channel, we expect previewHstSite.componentsConfiguration not to be
                 // null any more.
                 assertNull(hstSite.componentsConfiguration);
@@ -200,8 +196,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
         assertNull(hstSite1.componentsConfiguration);
         assertNull(hstSite2.componentsConfiguration);
 
@@ -227,8 +223,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         assertNotSame(mountAfter1, mount1);
         assertNotSame(mountAfter2, mount2);
 
-        final HstSiteService hstSiteAfter1 = (HstSiteService)mountAfter1.getMount().getHstSite();
-        final HstSiteService hstSiteAfter2 = (HstSiteService)mountAfter2.getMount().getHstSite();
+        final HstSiteService hstSiteAfter1 = (HstSiteService) mountAfter1.getMount().getHstSite();
+        final HstSiteService hstSiteAfter2 = (HstSiteService) mountAfter2.getMount().getHstSite();
 
         assertNotSame(hstSiteAfter1, hstSite1);
         assertNotSame(hstSiteAfter2, hstSite2);
@@ -254,8 +250,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
 
         assertNull(hstSite1.siteMap);
         hstSite1.getSiteMap();
@@ -279,8 +275,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
 
         assertNull(hstSite1.locationMapTree);
         hstSite1.getLocationMapTree();
@@ -304,8 +300,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
 
         assertNull(hstSite1.siteMapItemHandlersConfigurationService);
         hstSite1.getSiteMapItemHandlersConfiguration();
@@ -325,8 +321,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
         assertNull(hstSite1.siteMapItemHandlersConfigurationService);
         assertNull(hstSite2.siteMapItemHandlersConfigurationService);
 
@@ -352,8 +348,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         assertNotSame(mountAfter1, mount1);
         assertNotSame(mountAfter2, mount2);
 
-        final HstSiteService hstSiteAfter1 = (HstSiteService)mountAfter1.getMount().getHstSite();
-        final HstSiteService hstSiteAfter2 = (HstSiteService)mountAfter2.getMount().getHstSite();
+        final HstSiteService hstSiteAfter1 = (HstSiteService) mountAfter1.getMount().getHstSite();
+        final HstSiteService hstSiteAfter2 = (HstSiteService) mountAfter2.getMount().getHstSite();
 
         assertNotSame(hstSiteAfter1, hstSite1);
         assertNotSame(hstSiteAfter2, hstSite2);
@@ -378,8 +374,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
 
-        final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
-        final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
+        final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
+        final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
 
         assertNull(hstSite1.siteMenusConfigurations);
         hstSite1.getSiteMenusConfiguration();
@@ -435,7 +431,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         branchNode.addMixin(MIXINTYPE_HST_BRANCH);
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "unittestproject");
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
-        branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../unittestproject"});
+        branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
         session.save();
     }
 
@@ -534,7 +530,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                     "/hst:hst/hst:configurations/unittestproject-branchid-000-preview");
             // preview branch extends from the live branch
             session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
-                    new String[] {"../unittestproject-branchid-000"});
+                    new String[]{"../unittestproject-branchid-000"});
             session.save();
             assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
         } finally {
@@ -560,10 +556,9 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             ctx.setCmsRequest(true);
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
             ctx.setServletRequest(servletRequest);
+
             MockHttpSession httpSession = new MockHttpSession();
-            Map<String, String> mountToBranchMap = new HashMap();
-            mountToBranchMap.put(mountNode.getIdentifier(), branch.getBranchId());
-            httpSession.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchMap);
+            httpSession.setAttribute(CmsSessionContext.SESSION_KEY, mockCmsSessionContext(branch));
             servletRequest.setSession(httpSession);
             ModifiableRequestContextProvider.set(ctx);
 
@@ -572,7 +567,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // nonetheless because the mount can have valid child mounts
             final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "");
             Channel channel = resolvedMount.getMount().getChannel();
-            assertSame(channel,  resolvedMount.getMount().getHstSite().getChannel());
+            assertSame(channel, resolvedMount.getMount().getHstSite().getChannel());
             assertSame("Expected that the branch channel would be matched because it is a cms request with the mount id " +
                     "mapped to the branch id", channel, branch);
         } finally {
@@ -609,7 +604,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // nonetheless because the mount can have valid child mounts
             final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "");
             Channel channel = resolvedMount.getMount().getChannel();
-            assertSame(channel,  resolvedMount.getMount().getHstSite().getChannel());
+            assertSame(channel, resolvedMount.getMount().getHstSite().getChannel());
 
             assertSame("Expected that the branch channel would be matched", channel, branch);
         } finally {
@@ -618,5 +613,39 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             session.logout();
             ModifiableRequestContextProvider.clear();
         }
+    }
+
+    private CmsSessionContext mockCmsSessionContext(final Channel branch) {
+        return new CmsSessionContext() {
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public String getCmsContextServiceId() {
+                return null;
+            }
+
+            @Override
+            public Object get(final String s) {
+                return null;
+            }
+
+            @Override
+            public Object getAttribute(final String s) {
+                return branch.getBranchId();
+            }
+
+            @Override
+            public Object setAttribute(final String s, final Object o) {
+                return null;
+            }
+
+            @Override
+            public Object removeAttribute(final String s) {
+                return null;
+            }
+        };
     }
 }

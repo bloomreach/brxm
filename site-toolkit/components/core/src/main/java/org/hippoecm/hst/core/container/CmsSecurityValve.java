@@ -39,7 +39,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.ATTRIBUTE_ACTIVE_PROJECT_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
 
@@ -64,7 +64,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
     private SessionSecurityDelegation sessionSecurityDelegation;
 
-    private final String[] CMS_INTERACTION_ATTRIBUTES = new String[]{HST_SITE_PROVIDER_HTTP_SESSION_KEY};
+    private final String[] CMS_INTERACTION_ATTRIBUTES = new String[]{ATTRIBUTE_ACTIVE_PROJECT_ID};
 
     public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
         this.sessionSecurityDelegation = sessionSecurityDelegation;

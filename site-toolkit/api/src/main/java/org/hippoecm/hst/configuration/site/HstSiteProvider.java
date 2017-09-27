@@ -15,18 +15,18 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import org.onehippo.cms7.services.hst.Channel;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.hst.Channel;
 
 @FunctionalInterface
 public interface HstSiteProvider {
 
     /**
-     * This key is used to store the map on the http session of the webmaster in the channel mngr. The map will contain
-     * which branch should be used for a mount. The mapping will be {@link Mount#getIdentifier()} to {@link Channel#getBranchId()}
+     * This key is used to store active project id on the http session of the webmaster in the channel mngr. If it is
+     * not null then and thre is a channel with {@link Channel#getBranchId()} equal to projectId then that branch will
+     * be used for rendering.
      */
-    String HST_SITE_PROVIDER_HTTP_SESSION_KEY = HstSiteProvider.class.getName() + ".key";
+    String ATTRIBUTE_ACTIVE_PROJECT_ID = "com.onehippo.cms7.services.wpm.project.active_project_id";
 
     HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
 
