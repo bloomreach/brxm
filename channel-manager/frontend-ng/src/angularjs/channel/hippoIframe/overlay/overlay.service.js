@@ -278,7 +278,7 @@ class OverlayService {
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'manage-content-link':
-        this._initManageContentLink(structureElement, overlayElement);
+        this._initManageContentLink(structureElement, overlayElement, addContentSvg);
         break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
@@ -324,12 +324,14 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _initManageContentLink(structureElement, overlayElement) {
-    const initialIcon = addContentSvg;
+  _initManageContentLink(structureElement, overlayElement, svg, preventCloseIcon) {
+    const buttonClosedStateIcon = svg;
+    let buttonOpenStateIcon = clear;
+    if (preventCloseIcon) buttonOpenStateIcon = svg;
 
     overlayElement
       .addClass('hippo-overlay-element-link hippo-fab-dial-container')
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${initialIcon}</button>`)
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${buttonClosedStateIcon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const VISIBLE_CLASS = 'is-showing-options';
@@ -339,7 +341,7 @@ class OverlayService {
       const processClick = (evt) => {
         overlayElement.on('mouseleave', () => overlayElement.on('mouseenter', showOpts));
         if (e !== evt) {
-          fabBtn.removeClass(BTN_OPEN_CLASS).html(initialIcon);
+          fabBtn.removeClass(BTN_OPEN_CLASS).html(buttonClosedStateIcon);
           overlayElement.removeClass(VISIBLE_CLASS);
           overlayElement.IS_SHOWING = false;
           overlayElement.off('click mouseleave', processClick);
@@ -348,7 +350,7 @@ class OverlayService {
       if (!overlayElement.IS_SHOWING) {
         overlayElement.find('.hippo-fab-dial-options').html(this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
         overlayElement.IS_SHOWING = true;
-        fabBtn.html(clear).addClass(BTN_OPEN_CLASS);
+        fabBtn.html(buttonOpenStateIcon).addClass(BTN_OPEN_CLASS);
         overlayElement.addClass(VISIBLE_CLASS);
         overlayElement.on('click mouseleave', processClick);
         overlayElement.off('mouseenter', showOpts);
