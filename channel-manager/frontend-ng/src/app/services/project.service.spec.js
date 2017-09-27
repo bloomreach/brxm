@@ -17,9 +17,7 @@
 
 describe('ProjectService', () => {
   let $httpBackend;
-  let $q;
   let ConfigService;
-  let HstService;
   let ProjectService;
 
   const mountId = '12';
@@ -63,27 +61,21 @@ describe('ProjectService', () => {
 
     inject((
       _$httpBackend_,
-      _$q_,
       _ConfigService_,
       _HstService_,
       _ProjectService_,
     ) => {
       $httpBackend = _$httpBackend_;
-      $q = _$q_;
       ConfigService = _ConfigService_;
-      HstService = _HstService_;
       ProjectService = _ProjectService_;
     });
 
     spyOn(ConfigService, 'getCmsContextPath').and.returnValue('/test/');
-    spyOn(HstService, 'doPut');
-    spyOn(HstService, 'doGet');
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
     $httpBackend.expectGET('/test/ws/channels/').respond(200, channels);
 
-    HstService.doGet.and.returnValue($q.resolve({ data: currentProject.id }));
-    HstService.doPut.and.returnValue($q.resolve());
+    $httpBackend.expectPUT(`/test/ws/projects/activeProject/${currentProject.id}`).respond(200, currentProject.id);
 
     ProjectService.load(mountId, currentProject.id);
     $httpBackend.flush();
@@ -100,16 +92,12 @@ describe('ProjectService', () => {
   });
 
   it('selects the core if the selectedProject is not a project', () => {
-    HstService.doPut.calls.reset();
+    $httpBackend.expectDELETE('/test/ws/projects/activeProject').respond(200, currentProject.id);
     ProjectService.updateSelectedProject('something');
-
-    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
   });
 
   it('calls setproject if the selectedProject is a project', () => {
-    HstService.doPut.calls.reset();
+    $httpBackend.expectPUT(`/test/ws/projects/activeProject/${projects[1].id}`).respond(200, currentProject.id);
     ProjectService.updateSelectedProject(projects[1].id);
-
-    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', projects[1].id);
   });
 });

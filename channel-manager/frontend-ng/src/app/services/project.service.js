@@ -20,7 +20,6 @@ class ProjectService {
     $http,
     $q,
     ConfigService,
-    HstService,
     HippoGlobal,
   ) {
     'ngInject';
@@ -29,7 +28,6 @@ class ProjectService {
     this.$q = $q;
 
     this.ConfigService = ConfigService;
-    this.HstService = HstService;
     this.HippoGlobal = HippoGlobal;
   }
 
@@ -50,9 +48,10 @@ class ProjectService {
     return channel && channel.branchOf ? channel.branchOf : channelId;
   }
 
-  getCurrentProject(mountId = this.mountId) {
-    return this.HstService
-      .doGet(mountId, 'currentbranch')
+  getCurrentProject() {
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
+    return this.$http
+      .get(url)
       .then(result => result.data);
   }
 
@@ -132,13 +131,15 @@ class ProjectService {
   }
 
   _selectProject(projectId) {
-    return this.HstService
-      .doPut(null, this.mountId, 'selectbranch', projectId);
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
+    return this.$http
+      .put(url);
   }
 
   _selectCore() {
-    return this.HstService
-      .doPut(null, this.mountId, 'selectmaster');
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
+    return this.$http
+      .delete(url);
   }
 }
 
