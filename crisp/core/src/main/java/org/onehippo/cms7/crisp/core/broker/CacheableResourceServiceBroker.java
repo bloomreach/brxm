@@ -168,7 +168,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         Resource resource = null;
         ValueMap cacheKey = null;
 
-        if (isCacheInRequestEnabled()) {
+        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
             resource = getResourceCacheInRequestLevelCache(cacheKey);
 
@@ -214,7 +214,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             }
         }
 
-        if (isCacheInRequestEnabled()) {
+        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             putResourceCacheInRequestLevelCache(cacheKey, resource);
         }
 
@@ -239,7 +239,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
 
-        if (isCacheInRequestEnabled()) {
+        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, baseAbsPath, pathVariables);
             resource = getResourceCacheInRequestLevelCache(cacheKey);
 
@@ -284,7 +284,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             }
         }
 
-        if (isCacheInRequestEnabled()) {
+        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             putResourceCacheInRequestLevelCache(cacheKey, resource);
         }
 

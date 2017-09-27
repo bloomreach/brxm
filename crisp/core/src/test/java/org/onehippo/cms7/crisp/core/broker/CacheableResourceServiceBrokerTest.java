@@ -15,14 +15,6 @@
  */
 package org.onehippo.cms7.crisp.core.broker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,6 +39,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CacheableResourceServiceBrokerTest {
 
@@ -144,7 +144,7 @@ public class CacheableResourceServiceBrokerTest {
     @Test
     public void testRequestLevelCaching() throws Exception {
         assertFalse(demoResourceResolver2.isCacheEnabled());
-        assertTrue(broker.isCacheInRequestEnabled());
+        assertTrue(broker.isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest());
 
         demo1CallCounter.set(0);
 
@@ -169,7 +169,7 @@ public class CacheableResourceServiceBrokerTest {
     @Test
     public void testRequestLevelCachingForNull() throws Exception {
         assertFalse(demoResourceResolver2.isCacheEnabled());
-        assertTrue(broker.isCacheInRequestEnabled());
+        assertTrue(broker.isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest());
 
         demo1CallCounter.set(0);
 

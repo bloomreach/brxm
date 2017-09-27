@@ -28,6 +28,14 @@ public class ResourceServiceBrokerRequestContext {
     }
 
     /**
+     * Return true if the current request object if available.
+     * @return true if the current request object if available
+     */
+    public static boolean hasCurrentServletRequest() {
+        return tlRequest.get() != null;
+    }
+
+    /**
      * Return the current request object if available.
      * @return the current request object
      */
