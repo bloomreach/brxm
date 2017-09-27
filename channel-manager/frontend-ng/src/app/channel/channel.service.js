@@ -72,7 +72,7 @@ class ChannelService {
 
     if (this.ConfigService.projectsEnabled) {
       setupPromise = this.$q
-        .when(passedProjectId || this.ProjectService.getCurrentProject())
+        .when(passedProjectId || this.ProjectService.getActiveProject())
         .then((selectedProjectId) => {
           if (selectedProjectId && selectedProjectId !== 'master') {
             channelId = channelId.replace(/-preview$/, `-${selectedProjectId}-preview`);

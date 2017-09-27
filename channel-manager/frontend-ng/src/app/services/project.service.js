@@ -48,7 +48,7 @@ class ProjectService {
     return channel && channel.branchOf ? channel.branchOf : channelId;
   }
 
-  getCurrentProject() {
+  getActiveProject() {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
     return this.$http
       .get(url)
