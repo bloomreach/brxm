@@ -139,4 +139,20 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     }
 
 
+    protected void insertDataRowLock(final String key, final String clusterId, final String threadName,
+                                   final long expirationTime) throws SQLException {
+        final long lockTime = System.currentTimeMillis();
+        try (Connection connection = dataSource.getConnection()){
+            final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
+            createStatement.setString(1, key);
+            createStatement.setString(2, clusterId);
+            createStatement.setString(3, threadName);
+            createStatement.setLong(4, lockTime);
+            createStatement.setInt(5, 60);
+            createStatement.setLong(6, expirationTime);
+            createStatement.execute();
+        }
+    }
+
+
 }
