@@ -83,7 +83,6 @@ public interface LockManager {
      *            the {@link LockManager} implementation most likely logging a warning or error, because it is an
      *            implementation issue if  {@code unlock(key)} is invoked by a thread that does not hold the lock.
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
-     * @throws RuntimeException in case some error occurs.
      */
     void unlock(String key);
 
@@ -95,7 +94,6 @@ public interface LockManager {
      * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @return {@code true} when locked
-     * @throws RuntimeException in case some error occurs.
      */
     boolean isLocked(String key);
 
@@ -123,7 +121,6 @@ public interface LockManager {
      * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
-     * @throws RuntimeException in case some error occurs.
      */
     void abort(String key);
 
