@@ -170,7 +170,8 @@ describe('CKEditor Component', () => {
   it('uses the current language', () => {
     ConfigService.locale = 'fr';
     init();
-    expect(CKEditor.replace).toHaveBeenCalled();
+    const editorConfig = CKEditor.replace.calls.mostRecent().args[1];
+    expect(editorConfig.language).toEqual('fr');
   });
 
   it('updates the editor data when the model changes', () => {
