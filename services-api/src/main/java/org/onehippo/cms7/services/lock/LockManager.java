@@ -39,7 +39,7 @@ public interface LockManager {
      *     a safeguard against a lock being kept by a cluster node that died / has been stopped
      * </p>
      * <p>
-     *      A lock is released when {@link #unlock(String)} is invoked as many times as
+     *      A lock is released when a successful {@link #unlock(String)} is invoked as many times as
      *     {@link #lock(String)}. Alternatively, when the {@link LockManager} implementation detects that the Thread
      *     that held the lock is not live any more, the {@link LockManager} implementation can also release the lock.
      *     Lastly, in a database setup, a lock will be released when it has not been refreshed for 60 seconds,
@@ -78,14 +78,14 @@ public interface LockManager {
     void lock(String key, int refreshRateSeconds) throws LockException;
 
     /**
-     * @param key the key to unlock where {@code key} is at most 256 chars. If there exists no lock for {@code key}, a
-     *            {link LockException} is thrown. If there is a {@link Lock} but it cannot be released (for example because not owned) a
-     *            {@link LockException} is thrown
-     * @throws LockException in case no {@link Lock} exists or in case a {@link Lock} exists for {@code key}
-     *                      but could not be released or some other exception happened
+     * @param key the key to unlock where {@code key} is at most 256 chars. If the {@link Thread} that invokes
+     *           {@link #unlock(String) unlock(key)} does not hold the {@link Lock}, nothing happens (apart from
+     *            the {@link LockManager} implementation most likely logging a warning or error, because it is an
+     *            implementation issue if  {@code unlock(key)} is invoked by a thread that does not hold the lock.
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
+     * @throws RuntimeException in case some error occurs.
      */
-    void unlock(String key) throws LockException;
+    void unlock(String key);
 
     /**
      * <p>
@@ -95,16 +95,16 @@ public interface LockManager {
      * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @return {@code true} when locked
-     * @throws LockException in case some error occurs.
+     * @throws RuntimeException in case some error occurs.
      */
-    boolean isLocked(String key) throws LockException;
+    boolean isLocked(String key);
 
     /**
      * @return all the {@link Lock}s that are currently active (including locks that are marked to be aborted but not
      * yet aborted)
-     * @throws LockException in case some error occurs
+     * @throws RuntimeException in case some error occurs.
      */
-    List<Lock> getLocks() throws LockException;
+    List<Lock> getLocks();
 
     /**
      * <p>
@@ -122,9 +122,10 @@ public interface LockManager {
      *     If there is no {@link Lock} for {@code key}, nothing happens and void is returned.
      * </p>
      * @param key the {@code key} to check whether there is a lock for
-     * @throws LockException in case some error occurs.
+     * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
+     * @throws RuntimeException in case some error occurs.
      */
-    void abort(String key) throws LockException;
+    void abort(String key);
 
 
 }
