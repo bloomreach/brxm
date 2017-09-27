@@ -326,11 +326,11 @@ class OverlayService {
 
   _initManageContentLink(structureElement, overlayElement) {
     const initialIcon = addContentSvg;
-    const buttons = this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig);
 
     overlayElement
       .addClass('hippo-overlay-element-link hippo-fab-dial-container')
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${initialIcon}</button>`);
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${initialIcon}</button>`)
+      .append('<div class="hippo-fab-dial-options"></div>');
 
     const VISIBLE_CLASS = 'is-showing-options';
     const BTN_OPEN_CLASS = 'hippo-fab-btn-open';
@@ -346,7 +346,7 @@ class OverlayService {
         }
       };
       if (!overlayElement.IS_SHOWING) {
-        overlayElement.append(buttons);
+        overlayElement.find('.hippo-fab-dial-options').html(this.__initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
         overlayElement.IS_SHOWING = true;
         fabBtn.html(clear).addClass(BTN_OPEN_CLASS);
         overlayElement.addClass(VISIBLE_CLASS);
@@ -359,7 +359,6 @@ class OverlayService {
   }
 
   __initManageContentLinkOptions(structureElement, overlayElement, config) {
-    const optionsContainer = $('<div class="hippo-fab-dial-options"></div>');
     let buttons = [];
     Object.keys(config).forEach((i) => {
       const button = config[i];
@@ -374,7 +373,7 @@ class OverlayService {
       buttons = this._adjustButtonsPosition(structureElement, overlayElement, buttons);
     });
 
-    return optionsContainer.html(buttons);
+    return buttons;
   }
 
   _adjustButtonsPosition(structureElement, overlayElement, buttons) {
@@ -388,8 +387,8 @@ class OverlayService {
     const scrollBottom = viewHeight + scrollTop;
 
     const buttonsByDirection = {
-      top: buttons.slice().reverse(),
-      bottom: buttons.slice(),
+      top: buttons.slice(),
+      bottom: buttons.slice().reverse(),
     };
 
     const setButtonsDirection = (direction) => {
@@ -401,11 +400,8 @@ class OverlayService {
       return buttonsByDirection[direction];
     };
 
-    if (scrollTop > (top - 80)) {
-      return setButtonsDirection('bottom');
-    } else if (scrollBottom < (top + 130)) {
-      return setButtonsDirection('top');
-    }
+    if (scrollTop > (top - 80)) return setButtonsDirection('bottom');
+    else if (scrollBottom < (top + 130)) return setButtonsDirection('top');
 
     return setButtonsDirection('bottom');
   }
