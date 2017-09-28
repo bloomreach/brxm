@@ -16,10 +16,13 @@
 
 import { NgModule } from '@angular/core';
 import {
+  MATERIAL_SANITY_CHECKS,
   NoConflictStyleCompatibilityMode,
   MdListModule,
   MdButtonModule,
-  MATERIAL_SANITY_CHECKS,
+  MdFormFieldModule,
+  MdInputModule,
+  MatGridListModule
 } from '@angular/material';
 import './material.scss';
 
@@ -28,6 +31,9 @@ import './material.scss';
     NoConflictStyleCompatibilityMode,
     MdListModule,
     MdButtonModule,
+    MdFormFieldModule,
+    MdInputModule,
+    MatGridListModule
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},

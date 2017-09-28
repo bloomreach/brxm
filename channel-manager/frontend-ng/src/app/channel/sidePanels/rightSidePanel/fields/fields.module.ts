@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
-import { ImageLinkComponent } from './imageLinkField/imageLink.component';
+import { ImageLinkComponent } from './imageLink/imageLink.component';
+import { MaterialModule } from '../../../../material/material.module';
 
 @NgModule({
+  imports: [
+    MaterialModule
+  ],
   declarations: [
     ImageLinkComponent
   ],

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { downgradeComponent } from '@angular/upgrade/static';
-import { ImageLinkComponent } from './imageLinkField/imageLink.component.ts';
+import { ImageLinkComponent } from './imageLink/imageLink.component.ts';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
@@ -34,6 +34,6 @@ const fieldsModule = angular
   .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse)
   .service('FieldService', fieldService)
-  .directive('imageLink', downgradeComponent({ component: ImageLinkComponent }));
+  .directive('hippoImageLink', downgradeComponent({ component: ImageLinkComponent }));
 
 export default fieldsModule.name;
