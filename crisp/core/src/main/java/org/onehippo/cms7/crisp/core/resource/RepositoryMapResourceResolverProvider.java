@@ -256,7 +256,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                 inited = true;
             }
         } catch (RepositoryException e) {
-            log.error("Failed to initialize resource resolvers.", e);
+            log.warn("Cannot initialize resource resolvers (yet). Perhaps the repository wasn't initialized yet. {}", e.toString());
         } finally {
             if (session != null) {
                 session.logout();
