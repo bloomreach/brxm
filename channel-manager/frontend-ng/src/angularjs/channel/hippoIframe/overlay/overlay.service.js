@@ -58,10 +58,10 @@ class OverlayService {
 
     PageStructureService.registerChangeListener(() => this.sync());
 
-    this.dialButtonsConfig = {
-      0: { svg: plusSvg, callback: console.log, tooltip: 'create content' },
-      1: { svg: searchSvg, callback: console.log, tooltip: 'edit content' },
-    };
+    this.dialButtonsConfig = [
+      { svg: plusSvg, callback: console.log, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
+      { svg: searchSvg, callback: console.log, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
+    ];
   }
 
   init(iframeJQueryElement) {
