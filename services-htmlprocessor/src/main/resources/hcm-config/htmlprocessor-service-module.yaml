@@ -161,7 +161,7 @@ definitions:
             attributes: [class, style]
           /h1:
             jcr:primaryType: hipposys:moduleconfig
-            attributes: [class, id, dir, style]
+            attributes: [class, dir, id, style]
           /h2:
             jcr:primaryType: hipposys:moduleconfig
             attributes: [class, dir, id, style]
