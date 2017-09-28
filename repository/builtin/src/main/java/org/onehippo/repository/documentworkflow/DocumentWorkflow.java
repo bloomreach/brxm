@@ -537,12 +537,12 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * Triggers the action with supplied payload.
      *
      * @param action
-     * @param transitionPayload
+     * @param initialPayload
      * @return
      * @throws WorkflowException
      * @throws RepositoryException
      */
-    Object transition(String action, Map<String, Object> transitionPayload) throws WorkflowException;
+    Object transition(String action, Map<String, Object> initialPayload) throws WorkflowException;
 
     /**
      * Triggers the action with supplied transaction payload and initial payload
@@ -552,7 +552,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @return
      * @throws WorkflowException
      */
-    Object transition(String action, Map<String, Object> transitionPayload, Map<String, Object> initialPayload) throws WorkflowException;
+    Object transition(String action, Map<String, Object> initialPayload, Map<String, Object> transitionPayload) throws WorkflowException;
 
     /**
      * Triggers the action

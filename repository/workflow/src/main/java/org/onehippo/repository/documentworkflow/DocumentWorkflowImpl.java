@@ -378,13 +378,13 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
 
     @Override
-    public Object transition(String action, Map<String, Object> transitionPayload) throws WorkflowException{
-        return transition(action,transitionPayload,Collections.emptyMap());
+    public Object transition(String action, Map<String, Object> initialPayload) throws WorkflowException{
+        return transition(action,initialPayload,Collections.emptyMap());
     }
 
 
     @Override
-    public Object transition(String action, Map<String, Object> transitionPayload, Map<String, Object> initialPayload) throws WorkflowException{
+    public Object transition(String action, Map<String, Object> initialPayload, Map<String, Object> transitionPayload) throws WorkflowException{
         workflowExecutor.start(initialPayload);
         return workflowExecutor.triggerAction(action,transitionPayload);
     }
