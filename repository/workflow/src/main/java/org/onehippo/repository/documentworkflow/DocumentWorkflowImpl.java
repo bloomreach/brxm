@@ -162,6 +162,23 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return Collections.unmodifiableMap(hints);
     }
 
+    @Override
+    public Map<String, Serializable> hints(Map<String, Object> initializationPayload) throws WorkflowException {
+        workflowExecutor.start(initializationPayload);
+        Map<String, Serializable> hints = super.hints();
+        hints.putAll(workflowExecutor.getContext().getFeedback());
+        hints.putAll(workflowExecutor.getContext().getActions());
+        for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
+            if (entry.getValue() instanceof Collection) {
+                // protect against modifications
+                entry.setValue((Serializable)Collections.unmodifiableCollection((Collection)entry.getValue()));
+            }
+        }
+        return Collections.unmodifiableMap(hints);
+    }
+
+
+
     // EditableWorkflow implementation
 
     @Override
@@ -359,17 +376,25 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return (Document)workflowExecutor.triggerAction("retrieveVersion", createPayload("date", historic));
     }
 
-    /**
-     * Triggers the action with supplied payload. {@link SCXMLWorkflowExecutor#triggerAction(String)}
-     *
-     * @param action
-     * @param payload
-     * @return
-     * @throws WorkflowException
-     * @throws RepositoryException
-     */
-    protected Object transition(String action, Map<String, Object> payload) throws WorkflowException{
-        workflowExecutor.start();
-        return workflowExecutor.triggerAction(action, payload);
+
+    @Override
+    public Object transition(String action, Map<String, Object> transitionPayload) throws WorkflowException{
+        return transition(action,transitionPayload,Collections.emptyMap());
     }
+
+
+    @Override
+    public Object transition(String action, Map<String, Object> transitionPayload, Map<String, Object> initialPayload) throws WorkflowException{
+        workflowExecutor.start(initialPayload);
+        return workflowExecutor.triggerAction(action,transitionPayload);
+    }
+
+
+    @Override
+    public Object transition(String action) throws WorkflowException{
+        return transition(action,Collections.emptyMap());
+    }
+
+
+
 }

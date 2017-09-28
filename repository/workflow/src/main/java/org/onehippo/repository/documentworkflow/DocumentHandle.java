@@ -16,6 +16,7 @@
 
 package org.onehippo.repository.documentworkflow;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending = false;
     private boolean initialized;
+    private Map<String, Object> initialPayload = Collections.emptyMap();
 
     public DocumentHandle(Node handle) throws WorkflowException {
         this.handle = handle;
@@ -145,6 +147,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             requests.clear();
             requestPending = false;
             initialized = false;
+            initialPayload = Collections.emptyMap();
         }
     }
 
@@ -172,5 +175,13 @@ public class DocumentHandle implements SCXMLWorkflowData {
             }
         }
         return count > 1;
+    }
+
+    public void setInitialPayload(final Map<String, Object> initialPayload) {
+        this.initialPayload = initialPayload;
+    }
+
+    public Map<String, Object> getInitialPayload() {
+        return initialPayload;
     }
 }
