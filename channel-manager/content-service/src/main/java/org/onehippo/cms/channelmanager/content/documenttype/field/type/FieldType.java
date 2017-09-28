@@ -35,6 +35,7 @@ public interface FieldType {
 
     enum Type {
         STRING,
+        DOUBLE,
         LONG,
         MULTILINE_STRING,
         HTML,

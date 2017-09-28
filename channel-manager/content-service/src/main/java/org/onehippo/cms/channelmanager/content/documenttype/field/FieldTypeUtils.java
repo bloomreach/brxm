@@ -36,6 +36,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSort
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
@@ -103,6 +104,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Long", new TypeDescriptor(LongFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("Double", new TypeDescriptor(DoubleFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));

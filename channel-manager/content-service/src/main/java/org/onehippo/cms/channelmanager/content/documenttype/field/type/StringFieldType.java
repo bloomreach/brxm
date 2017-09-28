@@ -16,18 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
+import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,49 +66,8 @@ public class StringFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
-        final List<FieldValue> processedValues = processValues(optionalValues);
-
-        if (validateValues) {
-            checkCardinality(processedValues);
-        }
-
-        final String propertyName = getId();
-        try {
-            if (processedValues.isEmpty()) {
-                if (hasProperty(node, propertyName)) {
-                    node.getProperty(propertyName).remove();
-                }
-            } else {
-                final String[] strings = new String[processedValues.size()];
-                for (int i = 0; i < strings.length; i++) {
-                    final Optional<String> value = processedValues.get(i).findValue();
-
-                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(DEFAULT_VALUE);
-
-                    if (validateValues && maxLength != null && strings[i].length() > maxLength) {
-                        throw INVALID_DATA.get();
-                    }
-                }
-
-                // make sure we can set the new property value
-                if (node.hasProperty(propertyName)) {
-                    final Property property = node.getProperty(propertyName);
-                    if (isMultiple() != property.isMultiple()) {
-                        property.remove();
-                    }
-                }
-
-                if (isMultiple()) {
-                    node.setProperty(propertyName, strings);
-                } else {
-                    node.setProperty(propertyName, strings[0]);
-                }
-            }
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write String value(s) to property {}", propertyName, e);
-            throw new InternalServerErrorException();
-        }
+    protected int getPropertyType() {
+        return PropertyType.STRING;
     }
 
     @Override
@@ -123,4 +75,10 @@ public class StringFieldType extends PrimitiveFieldType {
         return DEFAULT_VALUE;
     }
 
+    @Override
+    protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
+        if (maxLength != null && validatedField.length() > maxLength) {
+            throw INVALID_DATA.get();
+        }
+    }
 }

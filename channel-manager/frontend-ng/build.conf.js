@@ -27,11 +27,11 @@ const customConfig = {
   ],
   copyFiles: [
     {
-      from: `${npmDir}/dragula/dist/dragula.min.css`,
+      from: `${npmDir}/@bloomreach/dragula/dist/dragula.min.css`,
       to: `${targetDir}/styles`,
     },
     {
-      from: `${npmDir}/dragula/dist/dragula.min.js`,
+      from: `${npmDir}/@bloomreach/dragula/dist/dragula.min.js`,
       to: `${targetDir}/scripts`,
     },
   ],
@@ -46,13 +46,13 @@ const customConfig = {
   karma: {
     port: 10002,
     files: [
-      'node_modules/dragula/dist/dragula.min.js',
-      'node_modules/dragula/dist/dragula.min.css',
+      'node_modules/@bloomreach/dragula/dist/dragula.min.js',
+      'node_modules/@bloomreach/dragula/dist/dragula.min.css',
       'node_modules/jquery/dist/jquery.js',
     ],
     proxies: {
-      '/styles/dragula.min.css': '/base/node_modules/dragula/dist/dragula.min.css',
-      '/scripts/dragula.min.js': '/base/node_modules/dragula/dist/dragula.min.js',
+      '/styles/dragula.min.css': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.css',
+      '/scripts/dragula.min.js': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.js',
     },
   },
 };

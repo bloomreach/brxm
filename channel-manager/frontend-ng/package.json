@@ -1,21 +1,39 @@
 {
   "name": "hippo-cm",
   "private": true,
+  "author": "Hippo B.V.",
   "license": "Apache-2.0",
-  "description": "Channel manager NG for Hippo B.V.",
+  "description": "Manage channels for Bloomreach Experience",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
+  },
   "scripts": {
-    "gulp": "gulp",
     "build": "gulp build",
     "buildDev": "gulp buildDev",
     "buildProfile": "gulp buildProfile",
     "clean": "gulp clean",
+    "gulp": "gulp",
     "start": "gulp start",
     "startDist": "gulp startDist",
     "test": "gulp test",
-    "testOnce": "gulp testOnce",
-    "testDebug": "gulp testDebug"
+    "testDebug": "gulp testDebug",
+    "testOnce": "gulp testOnce"
   },
   "dependencies": {
+    "@angular/animations": "4.3.6",
+    "@angular/cdk": "2.0.0-beta.8",
+    "@angular/common": "4.3.6",
+    "@angular/compiler": "4.3.6",
+    "@angular/core": "4.3.6",
+    "@angular/forms": "4.3.6",
+    "@angular/http": "4.3.6",
+    "@angular/material": "2.0.0-beta.8",
+    "@angular/platform-browser": "4.3.6",
+    "@angular/platform-browser-dynamic": "4.3.6",
+    "@angular/router": "4.3.6",
+    "@angular/upgrade": "4.3.6",
+    "@bloomreach/dragula": "3.7.2-br.3",
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
     "angular-aria": "1.5.11",
@@ -26,18 +44,25 @@
     "angular-translate-loader-static-files": "2.15.1",
     "angular-ui-router": "1.0.0-rc.1",
     "angular-ui-tree": "2.22.5",
-    "dragula": "3.7.2",
+    "core-js": "2.5.1",
     "es6-shim": "0.35.3",
+    "hammerjs": "2.0.8",
     "jquery": "3.2.1",
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
-    "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c"
+    "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c",
+    "rxjs": "5.4.3",
+    "zone.js": "0.8.17"
   },
   "devDependencies": {
+    "@bloomreach/frontend-build": "6.0.2",
+    "@types/jasmine": "2.5.54",
+    "@types/node": "8.0.28",
+    "@types/webpack-env": "1.13.1",
     "angular-mocks": "1.5.11",
-    "frontend-build": "5.1.0",
-    "gulp": "gulpjs/gulp#38246c3f8b6dbb8d4ef657183e92d90c8299e22f",
-    "gulp-hub": "frankwallis/gulp-hub#292f8ab005165c3267accb01a51f31719970d443"
+    "codelyzer": "3.2.0",
+    "gulp": "github:gulpjs/gulp#38246c3f8b6dbb8d4ef657183e92d90c8299e22f",
+    "gulp-hub": "github:frankwallis/gulp-hub#292f8ab005165c3267accb01a51f31719970d443"
   }
 }

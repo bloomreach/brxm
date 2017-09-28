@@ -15,18 +15,8 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,48 +38,8 @@ public class LongFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues,
-                               final boolean validateValues) throws ErrorWithPayloadException {
-        final List<FieldValue> processedValues = processValues(optionalValues);
-
-        if (validateValues) {
-            checkCardinality(processedValues);
-        }
-
-        final String propertyName = getId();
-        try {
-            if (processedValues.isEmpty()) {
-                if (hasProperty(node, propertyName)) {
-                    node.getProperty(propertyName).remove();
-                }
-            } else {
-                final String[] strings = new String[processedValues.size()];
-                for (int i = 0; i < strings.length; i++) {
-                    final Optional<String> value = processedValues.get(i).findValue();
-
-                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(DEFAULT_VALUE);
-                }
-
-                if (node.hasProperty(propertyName)) {
-                    final Property property = node.getProperty(propertyName);
-                    if (isMultiple() != property.isMultiple()) {
-                        property.remove();
-                    }
-                }
-
-                try {
-                    if (isMultiple()) {
-                        node.setProperty(propertyName, strings, PropertyType.LONG);
-                    } else {
-                        node.setProperty(propertyName, strings[0], PropertyType.LONG);
-                    }
-                } catch (final ValueFormatException ignore) {
-                }
-            }
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write long value(s) to property {}", propertyName, e);
-            throw new InternalServerErrorException();
-        }
+    protected int getPropertyType() {
+        return PropertyType.LONG;
     }
 
     @Override
@@ -97,4 +47,8 @@ public class LongFieldType extends PrimitiveFieldType {
         return DEFAULT_VALUE;
     }
 
+    @Override
+    protected String convertToSpecificType(final String input) {
+        return Long.parseLong(input) + "";
+    }
 }
