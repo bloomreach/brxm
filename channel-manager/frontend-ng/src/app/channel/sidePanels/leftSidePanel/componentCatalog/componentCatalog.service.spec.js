@@ -168,20 +168,11 @@ describe('ComponentCatalogService', () => {
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
     });
 
-    it('should show component properties dialog if component contains no head contributions', () => {
-      spyOn(PageStructureService, 'containsNewHeadContributions').and.callFake(() => false);
-      ComponentCatalogService.addComponentToContainer();
-      $rootScope.$apply();
-      expect(PageStructureService.showComponentProperties).toHaveBeenCalled();
-    });
-
-    it('should reload and then show component properties dialog if component contains head contributions', () => {
+    it('should reload if component contains head contributions', () => {
       spyOn(PageStructureService, 'containsNewHeadContributions').and.callFake(() => true);
       ComponentCatalogService.addComponentToContainer();
       $rootScope.$apply();
       expect(HippoIframeService.reload).toHaveBeenCalled();
-      $rootScope.$apply();
-      expect(PageStructureService.showComponentProperties).toHaveBeenCalled();
     });
   });
 
