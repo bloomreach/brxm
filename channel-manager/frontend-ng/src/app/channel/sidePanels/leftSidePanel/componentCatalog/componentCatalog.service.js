@@ -109,11 +109,6 @@ class ComponentCatalogService {
       this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
         component: component.label,
       });
-    }).finally(() => {
-      if (this.OverlayService.toggleOverlayByComponent) {
-        this.OverlayService.toggleOverlayByComponent = false;
-        this.OverlayService.showComponentsOverlay(false);
-      }
     });
   }
 }
