@@ -5,7 +5,6 @@ definitions:
       hipposys:className: org.onehippo.cms7.services.htmlprocessor.HtmlProcessorServiceModule
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
-        enabled: true
         /richtext:
           jcr:primaryType: hipposys:moduleconfig
           charset: UTF-8
