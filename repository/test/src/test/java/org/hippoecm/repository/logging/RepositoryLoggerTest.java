@@ -32,12 +32,12 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        removeNode("/hippo:log/default");
+        removeNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
     }
 
     @After
     public void tearDown() throws Exception {
-        removeNode("/hippo:log/default");
+        removeNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
         super.tearDown();
     }
 
@@ -58,7 +58,7 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
         event.message("message").timestamp(System.currentTimeMillis()).set("residual", true);
         repositoryLogger.logHippoEvent(event);
 
-        Node logFolder = session.getNode("/hippo:log/default");
+        Node logFolder = session.getNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
         Node currentNode = logFolder;
         for (int i = 0; i < 4; i++) {
             NodeIterator nodes = currentNode.getNodes();

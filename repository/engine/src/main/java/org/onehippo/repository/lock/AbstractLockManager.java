@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManagerException;
 import org.slf4j.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -49,13 +50,13 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     protected abstract MutableLock createLock(String key, String threadName, int refreshRateSeconds) throws LockException;
 
-    protected abstract void releasePersistedLock(String key, String threadName) throws LockException;
+    protected abstract void releasePersistedLock(String key, String threadName);
 
-    protected abstract void abortPersistedLock(String key) throws LockException;
+    protected abstract void abortPersistedLock(String key) throws LockManagerException;
 
-    protected abstract boolean containsLock(String key) throws LockException;
+    protected abstract boolean containsLock(String key) throws LockManagerException;
 
-    protected abstract List<Lock> retrieveLocks() throws LockException;
+    protected abstract List<Lock> retrieveLocks() throws LockManagerException;
 
     public AbstractLockManager() {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -103,25 +104,29 @@ public abstract class AbstractLockManager implements InternalLockManager {
     }
 
     @Override
-    public synchronized void unlock(final String key) throws LockException {
+    public synchronized void unlock(final String key) {
         checkLive();
         validateKey(key);
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
-            // note there can still be a database lock : The lock might be owned by a different cluster node
-            throw new LockException(String.format("No lock present for '{}'", key));
+            getLogger().error("Lock '{}' does not exist or this cluster node does not contain the lock hence a thread from " +
+                            "this JVM cannot unlock it", key);
+            return;
         }
         final Thread lockThread = lock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
-            getLogger().warn("Thread '{}' that created lock for '{}' has stopped without releasing the lock. Removing lock now",
+            getLogger().error("Thread '{}' that created lock for '{}' has stopped without releasing the lock. The Thread " +
+                            "should had invoked #unlock. Removing lock now",
                     lock.getLockOwner(), key, Thread.currentThread().getName());
             releasePersistedLock(key, lockThread.getName());
             localLocks.remove(key);
             return;
         }
         if (lockThread != Thread.currentThread()) {
-            throw new LockException(String.format("Thread '%s' cannot unlock '%s' because lock owned by '%s'", Thread.currentThread().getName(), key,
-                    lockThread.getName()));
+            getLogger().error("Thread '{}' cannot unlock '{}' because lock owned by '{}'. Thread '{}' should never had " +
+                            "invoked #unlock({}), this is an end implementation error.", Thread.currentThread().getName(), key,
+                    lockThread.getName(), Thread.currentThread().getName(), key);
+            return;
         }
         lock.decrement();
         if (lock.getHoldCount() < 0) {
@@ -141,7 +146,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
     }
 
     @Override
-    public synchronized void abort(final String key) throws LockException {
+    public synchronized void abort(final String key) throws LockManagerException {
         checkLive();
         validateKey(key);
         final MutableLock localLock = localLocks.get(key);
@@ -161,7 +166,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             } catch (SecurityException e) {
                 String msg = String.format("Thread '%s' is not allowed to be interrupted. Can't abort '%s'", thread.getName(), key);
                 getLogger().warn(msg);
-                throw new LockException(msg);
+                throw new IllegalStateException(msg);
             }
         }
 
@@ -169,7 +174,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
     }
 
     @Override
-    public synchronized boolean isLocked(final String key) throws LockException {
+    public synchronized boolean isLocked(final String key) throws LockManagerException {
         checkLive();
         validateKey(key);
         expungeNeverUnlockedLocksFromStoppedThreads();
@@ -177,7 +182,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
     }
 
     @Override
-    public synchronized List<Lock> getLocks() throws LockException {
+    public synchronized List<Lock> getLocks() throws LockManagerException {
         checkLive();
         expungeNeverUnlockedLocksFromStoppedThreads();
         return retrieveLocks();
@@ -202,7 +207,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
         while (iterator.hasNext()) {
             final Map.Entry<String, MutableLock> next = iterator.next();
             getLogger().warn("Lock '{}' owned by '{}' was never unlocked. Removing the lock now.", next.getKey(), next.getValue().getLockOwner());
-            tryReleaseLock(next.getKey(), next.getValue().getLockThread());
+            releasePersistedLock(next.getKey(), next.getValue().getLockThread());
             iterator.remove();
         }
     }
@@ -210,18 +215,6 @@ public abstract class AbstractLockManager implements InternalLockManager {
     public synchronized void checkLive() {
         if (destroyed) {
             throw new IllegalStateException("This LockManager has been destroyed.");
-        }
-    }
-
-    private synchronized  void tryReleaseLock(final String key, final String lockThread) {
-        try {
-            releasePersistedLock(key, lockThread);
-        } catch (LockException e) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().warn("Could not release '{}'", key, e);
-            } else {
-                getLogger().warn("Could not release '{}' : {}", key, e.toString());
-            }
         }
     }
 
@@ -233,7 +226,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             if (lock.getThread().get() == null || !lock.getThread().get().isAlive()) {
                 getLogger().warn("Lock '{}' with lockOwner '{}' was present but the Thread that created the lock already stopped. " +
                         "Removing the lock now", next.getKey(), lock.getLockOwner());
-                tryReleaseLock(next.getKey(), next.getValue().getLockThread());
+                releasePersistedLock(next.getKey(), next.getValue().getLockThread());
                 iterator.remove();
             }
         }

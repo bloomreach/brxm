@@ -22,11 +22,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.MutableLock;
 import org.slf4j.Logger;
@@ -156,7 +158,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected synchronized void releasePersistedLock(final String key, final String threadName) throws LockException {
+    protected synchronized void releasePersistedLock(final String key, final String threadName) {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -173,32 +175,29 @@ public class DbLockManager extends AbstractLockManager {
                 selectStatement.setString(1, key);
                 ResultSet resultSet = selectStatement.executeQuery();
                 if (!resultSet.next()) {
-                    String msg = String.format("Lock '%s' cannot be released by '%s' because lock does not exist", key, threadName);
-                    log.warn(msg);
-                    throw new LockException(msg);
+                    log.error("Database Lock '{}' cannot be released by '{}' and cluster '{}' because lock does not exist",
+                            key, threadName, clusterNodeId);
+                    return;
                 } else {
-                    String msg = String.format("Lock '%s' cannot be released for thread '%s' because lock is not owned.", key, threadName);
-                    log.warn(msg);
-                    throw new LockException(msg);
+                    log.error("Database Lock '{}' cannot be released for thread '{}' and cluster '{}' because lock is not owned.",
+                            key, threadName, clusterNodeId);
+                    return;
                 }
             }
             log.info("Successfully released '{}'", key);
         } catch (SQLException e) {
-            String msg = String.format("Cannot unlock '%s'.", key);
-            if (log.isDebugEnabled()) {
-                log.info(msg, e);
-            } else {
-                log.info(msg + " : {}", e.toString());
-
-            }
-            throw new LockException(msg, e);
+            final String msg = String.format("Unlocking Database Lock '%s' for thread '%s' and cluster '%s' failed.", key, threadName, clusterNodeId, e);
+            log.error(msg);
+            // we do not want to throw a checked exception for #unlock because that would mean code flow that in the finally block
+            // wants to unlock would always have to catch an exception....with which a developer can't do much
+            throw new RuntimeException(msg, e);
         } finally {
             close(connection, originalAutoCommit);
         }
     }
 
     @Override
-    protected synchronized void abortPersistedLock(final String key) throws LockException {
+    protected synchronized void abortPersistedLock(final String key) throws LockManagerException {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -215,21 +214,16 @@ public class DbLockManager extends AbstractLockManager {
             }
             log.info("Successfully changed status to abort for '{}'", key);
         } catch (SQLException e) {
-            String msg = String.format("Cannot abort '%s'.", key);
-            if (log.isDebugEnabled()) {
-                log.info(msg, e);
-            } else {
-                log.info(msg + " : {}", e.toString());
-
-            }
-            throw new LockException(msg, e);
+            final String msg = String.format("Aborting Database Lock '%s' failed.", key);
+            log.error(msg, e);
+            throw new LockManagerException(msg, e);
         } finally {
             close(connection, originalAutoCommit);
         }
     }
 
     @Override
-    protected synchronized boolean containsLock(final String key) throws LockException {
+    protected synchronized boolean containsLock(final String key) throws LockManagerException {
         try (Connection connection = dataSource.getConnection()) {
             final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
             selectStatement.setString(1, key);
@@ -243,19 +237,14 @@ public class DbLockManager extends AbstractLockManager {
             log.debug("Found database row for '{}' with locked = {}", key, locked);
             return locked;
         } catch (SQLException e) {
-            String msg = String.format("Could not query for '%s'.", key);
-            if (log.isDebugEnabled()) {
-                log.info(msg, e);
-            } else {
-                log.info(msg + " : {}", e.toString());
-
-            }
-            throw new LockException(msg, e);
+            final String msg = String.format("Exception while checking lock for '%s'. Return false.", key);
+            log.error(msg, e);
+            throw new LockManagerException(msg, e);
         }
     }
 
     @Override
-    protected synchronized List<Lock> retrieveLocks() throws LockException {
+    protected synchronized List<Lock> retrieveLocks() throws LockManagerException {
         try (Connection connection = dataSource.getConnection()) {
             final PreparedStatement selectStatement = connection.prepareStatement(ALL_LOCKED_STATEMENT);
             ResultSet resultSet = selectStatement.executeQuery();
@@ -275,14 +264,9 @@ public class DbLockManager extends AbstractLockManager {
             }
             return locks;
         } catch (SQLException e) {
-            String msg = String.format("Could retrieve locks");
-            if (log.isDebugEnabled()) {
-                log.info(msg, e);
-            } else {
-                log.info(msg + " : {}", e.toString());
-
-            }
-            throw new LockException(msg, e);
+            final String msg = "Exception while retrieving database locks. Return empty list";
+            log.error(msg, e);
+            throw new LockManagerException(msg, e);
         }
     }
 }

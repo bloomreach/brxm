@@ -21,6 +21,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManagerException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -152,7 +153,7 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
                 boolean locked = false;
                 try {
                     locked = lockManager.isLocked(key);
-                } catch (LockException e1) {
+                } catch (LockManagerException e1) {
                     fail(e1.toString());
                 }
                 if (!locked) {
@@ -169,10 +170,13 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
                 }
 
                 interrupted = true;
+                lockManager.unlock(key);
                 try {
-                    lockManager.unlock(key);
-                } catch (LockException e1) {
-                    fail("After interruption, the current Thread holding the lock should be able to unlock :" + e1.toString());
+                    if (lockManager.isLocked(key)) {
+                        fail("After interruption, the current Thread holding the lock should had been able to unlock");
+                    }
+                } catch (LockManagerException e1) {
+                    fail("#isLocked test should not fail : " + e.toString());
                 }
                 try {
                     dbRowAssertion(key, "FREE");

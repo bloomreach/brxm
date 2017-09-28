@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.MutableLock;
 import org.slf4j.Logger;
@@ -44,22 +45,22 @@ public class MemoryLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected void releasePersistedLock(final String key, final String threadName) throws LockException {
+    protected void releasePersistedLock(final String key, final String threadName) {
         // no persistent lock needs to be removed so nothing to do
     }
 
     @Override
-    protected void abortPersistedLock(final String key) throws LockException {
+    protected void abortPersistedLock(final String key) throws LockManagerException {
         // no persistent lock needs to be aborted so nothing else is needed
     }
 
     @Override
-    protected synchronized boolean containsLock(final String key) throws LockException {
+    protected synchronized boolean containsLock(final String key) throws LockManagerException {
         return getLocalLocks().containsKey(key);
     }
 
     @Override
-    protected synchronized List<Lock> retrieveLocks() throws LockException {
+    protected synchronized List<Lock> retrieveLocks() throws LockManagerException {
         return new ArrayList<>(getLocalLocks().values());
     }
 }

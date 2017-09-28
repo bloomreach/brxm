@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.LockException;
-import org.onehippo.repository.lock.MutableLock;
+import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.repository.lock.memory.MemoryLockManager;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -69,10 +69,16 @@ public class MemoryLockManagerTest {
     public void other_thread_cannot_unlock_() throws Exception {
         memoryLockManager.lock("123");
         Thread lockThread = new Thread(() -> {
-            try {
+            // other thread should not successfully unlock and we expect an error to be logged
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class).build()) {
                 memoryLockManager.unlock("123");
-            } catch (LockException e) {
-                // expected
+                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '"+Thread.currentThread().getName()+"' should never had invoked #unlock(123)")));
+            }
+            // "123" should still be locked
+            try {
+                assertTrue(memoryLockManager.isLocked("123"));
+            } catch (LockManagerException e) {
+                fail("#isLocked check failed");
             }
         });
 
@@ -112,12 +118,21 @@ public class MemoryLockManagerTest {
         // give time to the lockThread
         Thread.sleep(100);
 
-        try {
+
+        // other thread should not successfully unlock and we expect an error to be logged
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class).build()) {
             memoryLockManager.unlock("123");
-            fail("Main thread should not be able to unlock");
-        } catch (LockException e) {
-            // expected
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread 'main' should never had invoked #unlock(123)")));
         }
+
+        // trying again should result in same error
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class).build()) {
+            memoryLockManager.unlock("123");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread 'main' should never had invoked #unlock(123)")));
+        }
+
+        // "123" should still be locked
+        assertTrue(memoryLockManager.isLocked("123"));
     }
 
     @Test

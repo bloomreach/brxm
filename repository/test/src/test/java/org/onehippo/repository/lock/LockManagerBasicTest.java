@@ -35,10 +35,14 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
+import org.onehippo.repository.lock.db.DbLockManager;
+import org.onehippo.repository.lock.memory.MemoryLockManager;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.lock.InternalLockManager;
 import org.onehippo.repository.lock.MutableLock;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.junit.Assert.assertEquals;
@@ -113,20 +117,40 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
     }
 
     @Test
+    public void unlock_non_existing_lock() throws Exception {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            lockManager.unlock("123");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '123' does not exist or this cluster node does not contain the lock")));
+        }
+    }
+
+    @Test
     public void other_thread_cannot_unlock_() throws Exception {
         final String key = "123";
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
         Thread lockThread = new Thread(() -> {
-            try {
+            // unlock should fail with error logging because not owned
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
                 lockManager.unlock(key);
-            } catch (LockException e) {
-                // expected
-                try {
-                    dbRowAssertion(key, "RUNNING");
-                } catch (SQLException e1) {
-                    fail(e1.toString());
-                }
+                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '"+Thread.currentThread().getName()+"' should never had invoked #unlock(123)")));
+            }
+
+            // second time again
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+                lockManager.unlock(key);
+                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '"+Thread.currentThread().getName()+"' should never had invoked #unlock(123)")));
+            }
+
+            try {
+                assertTrue(lockManager.isLocked(key));
+            } catch (LockManagerException e) {
+                fail("#isLocked should not fail : " +  e.toString());
+            }
+            try {
+                dbRowAssertion(key, "RUNNING");
+            } catch (SQLException e1) {
+                fail(e1.toString());
             }
         });
 
@@ -194,13 +218,21 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         dbRowAssertion(key, "RUNNING", CLUSTER_NODE_ID, lockThread.getName());
 
-        try {
-            lockManager.unlock(key);
-            fail("Main thread should not be able to unlock");
-        } catch (LockException e) {
-            dbRowAssertion(key, "RUNNING");
-            // expected
+        // main thread should not be able to unlock, error log expected
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            lockManager.unlock("123");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread 'main' should never had invoked #unlock(123)")));
         }
+
+        // trying again should again result in error log
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            lockManager.unlock("123");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread 'main' should never had invoked #unlock(123)")));
+        }
+
+        assertTrue(lockManager.isLocked(key));
+        dbRowAssertion(key, "RUNNING");
+        // expected
 
         runnable.keepAlive = false;
 
