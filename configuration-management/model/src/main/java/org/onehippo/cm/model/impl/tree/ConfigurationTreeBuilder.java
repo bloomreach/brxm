@@ -550,16 +550,14 @@ public class ConfigurationTreeBuilder {
 
             if (category != null) {
                 if (category == ConfigurationItemCategory.CONFIG) {
-                    if (definitionProperty.getType() != PropertyType.SINGLE && definitionProperty.getValues().length==0) {
-                        // Defining a property as config with no values is an error
-                        throw new IllegalStateException(String.format(
-                                "Missing required value(s) for config property '%s', defined in '%s'.",
-                                definitionProperty.getJcrPath(), definitionProperty.getOrigin()));
-                    }
+                    // we're recategorizing back to config -- reset previous category info
+                    // note: value(s) will be processed below, and the case of an unspecified value is blocked by both
+                    //       the parser and the object model impl.
                     parent.clearChildPropertyCategorySettings(name);
                 } else if (category == ConfigurationItemCategory.CONTENT) {
                     // it doesn't make sense to define a single property as content
-                    // TODO: shouldn't this be an IllegalStateException???
+                    // this case is blocked by both the parser and the object model impl, but we check here just to be
+                    // extra paranoid about safety
                     logger.warn("Trying to define a property on a config node as content '{}', defined in '{}'. Skipping.",
                             definitionProperty.getJcrPath(), definitionProperty.getOrigin());
                     return this;

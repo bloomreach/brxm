@@ -1136,6 +1136,34 @@ public class ConfigurationTreeBuilderTest {
         assertEquals("bla4", property2.getValues()[1].getString());
     }
 
+
+    @Test
+    public void empty_list_property_with_explicit_config_category() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: \n"
+                + "          .meta:category: config\n"
+                + "          value: []\n";
+
+        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+
+        final ConfigurationNodeImpl a = root.getNode("a[1]");
+        final ConfigurationNodeImpl b = a.getNode("b[1]");
+        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
+        final ConfigurationPropertyImpl property2 = b.getProperty("property2");
+        assertEquals(PropertyType.LIST, property2.getType());
+        assertEquals(ValueType.STRING, property2.getValueType());
+        assertEquals(0, property2.getValues().length);
+    }
+
     @Test
     public void replace_list_property_with_equal_values() throws Exception {
         final String yaml = "definitions:\n"
