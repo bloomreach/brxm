@@ -16,12 +16,10 @@
 package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -29,8 +27,6 @@ import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.impl.exceptions.MissingDependencyException;
-import org.onehippo.cm.model.path.JcrPathSegment;
-import org.onehippo.cm.model.util.SnsUtils;
 
 /**
  * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link OrderableByName}s.
@@ -112,7 +108,7 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
             if (!orderable.getAfter().isEmpty()) {
                 final List<String> dependencies = new ArrayList<>(orderable.getAfter());
                 // ensure processing the dependencies in alphabetic order as well
-                Collections.sort(dependencies);
+                dependencies.sort(getComparator());
                 dependencyChain.add(orderable.getName());
                 for (String dependency : dependencies) {
                     if (map.containsKey(dependency)) {

@@ -47,13 +47,22 @@ public class ContentSourceImpl extends SourceImpl {
     }
 
     public ContentDefinitionImpl addContentDefinition(final String contentPath) {
-        return addContentDefinition(JcrPaths.getPath(contentPath));
+        return addContentDefinition(JcrPaths.getPath(contentPath), null);
+    }
+
+    public ContentDefinitionImpl addContentDefinition(final String contentPath, final String orderBefore) {
+        return addContentDefinition(JcrPaths.getPath(contentPath), orderBefore);
     }
 
     public ContentDefinitionImpl addContentDefinition(final JcrPath contentPath) {
+        return addContentDefinition(contentPath, null);
+    }
+
+    public ContentDefinitionImpl addContentDefinition(final JcrPath contentPath, final String orderBefore) {
         final ContentDefinitionImpl cd = addContentDefinition();
 
         DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, contentPath.getLastSegment(), cd);
+        defNode.setOrderBefore(orderBefore);
         cd.setNode(defNode);
 
         return cd;

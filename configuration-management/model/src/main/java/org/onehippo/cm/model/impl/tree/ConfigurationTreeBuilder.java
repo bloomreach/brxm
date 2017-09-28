@@ -42,6 +42,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.model.tree.PropertyOperation.ADD;
 import static org.onehippo.cm.model.tree.PropertyOperation.DELETE;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
@@ -220,7 +221,7 @@ public class ConfigurationTreeBuilder {
                 logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
                         orderBefore, node.getJcrPath(), definitionNode.getOrigin(), parent.getJcrPath(), META_IGNORE_REORDERED_CHILDREN);
             }
-            final boolean orderFirst = "".equals(orderBefore);
+            final boolean orderFirst = META_ORDER_BEFORE_FIRST.equals(orderBefore);
             final String orderBeforeIndexedName = createIndexedName(orderBefore);
             if (!orderFirst) {
                 if (node.getName().equals(orderBeforeIndexedName)) {
