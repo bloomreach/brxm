@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import rightSidePanelComponent from './rightSidePanel.component';
 import fieldsModule from './fields/fields.ng1.module';
+import rightSidePanelComponent from './rightSidePanel.component';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
 const rightSidePanelModule = angular

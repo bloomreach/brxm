@@ -17,19 +17,13 @@ import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
-<<<<<<< HEAD:frontend-ng/src/angularjs/channel/sidePanels/rightSidePanel/fields/fields.module.js
-import ckeditorModule from './ckeditor/ckeditor.module';
-import imageLinkModule from './imageLink/imageLink.module';
-=======
 import ckeditorModule from './ckeditor/ckeditor.ng1.module';
->>>>>>> master:frontend-ng/src/app/channel/sidePanels/rightSidePanel/fields/fields.ng1.module.js
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
     ckeditorModule,
-    imageLinkModule,
   ])
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
