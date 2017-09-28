@@ -288,20 +288,19 @@
   &.is-showing-options {
     .hippo-fab-dial-options {
       display: flex;
-      flex-direction: column-reverse;
+      flex-direction: column;
       button {
-        animation-duration: .1s;
+        animation-duration: .2s;
         animation-fill-mode: forwards;
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
       }
-    }
-  }
-  &.hippo-top.is-showing-options .hippo-fab-dial-options {
-    @for $i from 1 to 3 {
-      .hippo-fab-option-#{$i} {
-        animation-delay: #{.1 * $i}s;
+
+      @for $i from 0 to 3 {
+        .hippo-fab-option-#{$i} {
+          animation-delay: #{.15 * $i}s;
+        }
       }
     }
   }

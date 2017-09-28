@@ -325,16 +325,17 @@ class OverlayService {
 
   _initManageContentLink(structureElement, overlayElement, icon, closeIcon) {
     overlayElement
-      .addClass('hippo-overlay-element-link hippo-fab-dial-container')
+      .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left')  // mouse never entered yet
       .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${icon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('#hippo-fab-btn');
+    const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
 
     const showOptions = () => {
       if (!overlayElement.hasClass('is-showing-options')) {
-        overlayElement.find('.hippo-fab-dial-options').html(this._initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
+        optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
         fabBtn.addClass('hippo-fab-btn-open');
         if (closeIcon) {
           fabBtn.html(closeIcon);
@@ -361,16 +362,15 @@ class OverlayService {
       hideOptions();
       overlayElement.addClass('is-left');
     };
+
     overlayElement.on('click', () => showOptions() || hideOptions());
     overlayElement.on('mouseenter', showOptionsIfLeft);
     overlayElement.on('mouseleave', hideOptionsAndLeave);
 
-    $(this.iframeWindow).on('scroll resize', () => {
-      overlayElement.find('.hippo-fab-dial-options').html(this._initManageContentLinkOptions(structureElement, overlayElement, this.dialButtonsConfig));
-    });
+    this._adjustButtonsPosition(structureElement, overlayElement, optionButtonsContainer);
   }
 
-  _initManageContentLinkOptions(structureElement, overlayElement, config) {
+  _initManageContentLinkOptions(config) {
     const buttons = [];
     Object.keys(config).forEach((i) => {
       const button = config[i];
@@ -379,36 +379,32 @@ class OverlayService {
         .on('click', () => button.callback(i));
       buttons.push(tpl);
     });
-
-    return this._adjustButtonsPosition(structureElement, overlayElement, buttons);
+    return buttons;
   }
 
-  _adjustButtonsPosition(structureElement, overlayElement, buttons) {
-    const boxElement = structureElement.prepareBoxElement();
-    const position = this._getElementPositionObject(boxElement);
-
-    const buttonsByDirection = {
-      top: buttons.slice(),
-      bottom: buttons.slice().reverse(),
+  _adjustButtonsPosition(structureElement, overlayElement, optionButtonsContainer) {
+    const buttonsToTop = () => {
+      optionButtonsContainer.css('flex-direction', 'column-reverse');
+      overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
+    };
+    const buttonsToBottom = () => {
+      optionButtonsContainer.css('flex-direction', 'column');
+      overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
     };
 
-    const setButtonsDirection = (direction) => {
-      const directions = ['top', 'bottom'];
-      const unselectedDirection = directions.slice();
-      unselectedDirection.splice(directions.indexOf(direction), 1);
+    buttonsToBottom(); // initial direction of buttons
+    $(this.iframeWindow).on('scroll resize', () => {
+      const boxElement = structureElement.prepareBoxElement();
+      const position = this._getElementPositionObject(boxElement);
 
-      overlayElement.addClass(`hippo-${direction}`).removeClass(`hippo-${unselectedDirection}`);
-      return buttonsByDirection[direction];
-    };
-
-    let direction = 'bottom';
-    if (position.scrollTop > (position.top - 80)) {
-      direction = 'bottom';
-    } else if (position.scrollBottom < (position.top + 130)) {
-      direction = 'top';
-    }
-
-    return setButtonsDirection(direction);
+      if (position.scrollTop > (position.top - 80)) {
+        buttonsToBottom();
+      } else if (position.scrollBottom < (position.top + 130)) {
+        buttonsToTop();
+      } else {
+        buttonsToBottom();
+      }
+    });
   }
 
   _getElementPositionObject(boxElement) {
