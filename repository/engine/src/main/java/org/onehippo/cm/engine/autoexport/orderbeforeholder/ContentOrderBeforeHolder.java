@@ -18,6 +18,7 @@ package org.onehippo.cm.engine.autoexport.orderbeforeholder;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -27,10 +28,12 @@ public class ContentOrderBeforeHolder extends OrderBeforeHolder {
 
     private final ContentDefinitionImpl contentDefinition;
     private final Map<JcrPath, String> contentOrderBefores;
+    private final String originalOrderBefore;
 
     public ContentOrderBeforeHolder(final ContentDefinitionImpl contentDefinition, final Map<JcrPath, String> contentOrderBefores) {
         this.contentDefinition = contentDefinition;
         this.contentOrderBefores = contentOrderBefores;
+        this.originalOrderBefore = contentDefinition.getNode().getOrderBefore();
     }
 
     @Override
@@ -42,13 +45,16 @@ public class ContentOrderBeforeHolder extends OrderBeforeHolder {
             return 0;
         }
         if (object instanceof ContentOrderBeforeHolder) {
+            // compare using only the root path -- when applying content, the order before is also used to order the
+            // definitions, but we are recalculating the order before, so assume they are all null
+
             final ContentOrderBeforeHolder other = (ContentOrderBeforeHolder) object;
             return this.getContentRoot().compareTo(other.getContentRoot());
         }
-        return 1;
+        return 1;  // assuming 'object' is config, which means this content object must be sorted later
     }
 
-    JcrPath getContentRoot() {
+    public JcrPath getContentRoot() {
         return JcrPaths.getPath(contentDefinition.getRootPath());
     }
 
@@ -64,8 +70,8 @@ public class ContentOrderBeforeHolder extends OrderBeforeHolder {
 
     @Override
     public void finish() {
-        // Unfortunately, it is not yet possible to detect a changed order-before. Always mark the source as
-        // changed, triggering a re-export.
-        contentDefinition.getSource().markChanged();
+        if (!StringUtils.equals(contentOrderBefores.get(getContentRoot()), originalOrderBefore)) {
+            contentDefinition.getSource().markChanged();
+        }
     }
 }

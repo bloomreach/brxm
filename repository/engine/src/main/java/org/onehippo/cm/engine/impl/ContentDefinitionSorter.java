@@ -17,8 +17,13 @@ package org.onehippo.cm.engine.impl;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.OrderableByNameListSorter;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
@@ -26,10 +31,11 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.SnsUtils;
 
-import com.google.common.collect.Sets;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 
 /**
  * Sort definitions by natural order and order before so that independent definitions come first.
+ * Sorts definitions that have 'order-before first' as a separate group.
  * See also {@link OrderableByNameListSorter}
  */
 public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDefinitionSorter.Item>{
@@ -53,23 +59,75 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
         };
     }
 
+    @Override
+    public <U extends ContentDefinitionSorter.Item> void sort(final List<U> orderables) {
+        // Add an item representing 'first'; without this item, definitions that have 'order-before first' would
+        // actually have a missing dependency.
+        final ContentDefinitionSorter.Item first = new ContentDefinitionSorter.Item(orderables);
+        orderables.add((U)first);
+        super.sort(orderables);
+        orderables.remove(first);
+    }
+
     public static class Item implements OrderableByName {
 
+        private final String name;
+        private final String orderBefore;
+        private final Set<String> after;
         private final ContentDefinitionImpl definition;
 
         public Item(ContentDefinitionImpl definition) {
+            this.name = SnsUtils.createIndexedName(definition.getNode().getName());
+
+            final String unindexedOrderBefore = definition.getNode().getOrderBefore();
+            if (unindexedOrderBefore == null) {
+                orderBefore = null;
+                after = Collections.emptySet();
+            } else if (unindexedOrderBefore.equals(META_ORDER_BEFORE_FIRST)) {
+                orderBefore = META_ORDER_BEFORE_FIRST;
+                after = Sets.newHashSet(META_ORDER_BEFORE_FIRST);
+            } else {
+                orderBefore = SnsUtils.createIndexedName(unindexedOrderBefore);
+                after = Sets.newHashSet(orderBefore);
+            }
+
             this.definition = definition;
+        }
+
+        /**
+         * Special purpose constructor for creating an item representing 'first'.
+         */
+        private Item(final List<? extends Item> siblings) {
+            name = META_ORDER_BEFORE_FIRST;
+            orderBefore = null;
+            after = new HashSet<>();
+            definition = null;
+
+            // 'first' must be ordered after siblings that have no order-before and (recursively) their dependencies
+            buildAfter(null, siblings, after);
+        }
+
+        private void buildAfter(final String orderBefore, final List<? extends Item> siblings, final Set<String> after) {
+            for (final Item item : siblings) {
+                if (StringUtils.equals(orderBefore, item.getOrderBefore())) {
+                    after.add(item.getName());
+                    buildAfter(item.getName(), siblings, after);
+                }
+            }
         }
 
         @Override
         public String getName() {
-            return SnsUtils.createIndexedName(definition.getNode().getName());
+            return name;
+        }
+
+        public String getOrderBefore() {
+            return orderBefore;
         }
 
         @Override
         public Set<String> getAfter() {
-            return definition.getNode().getOrderBefore() == null ? Collections.emptySet()
-                    : Sets.newHashSet(SnsUtils.createIndexedName(definition.getNode().getOrderBefore()));
+            return after;
         }
 
         public ContentDefinitionImpl getDefinition() {
@@ -79,8 +137,9 @@ public class ContentDefinitionSorter extends OrderableByNameListSorter<ContentDe
         @Override
         public String toString() {
             return "ContentDefinitionSorter.Item{" +
-                    "name='" + getName() + '\'' +
-                    ", before='" + definition.getNode().getOrderBefore() + '\'' +
+                    "name='" + name + '\'' +
+                    ", orderBefore='" + orderBefore + '\'' +
+                    ", after=" + after.toString() +
                     ", definition=" + definition +
                     '}';
         }

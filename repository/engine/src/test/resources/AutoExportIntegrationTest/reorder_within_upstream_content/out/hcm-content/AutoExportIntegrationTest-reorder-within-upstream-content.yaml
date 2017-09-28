@@ -1,0 +1,3 @@
+/AutoExportIntegrationTest-reorder-within-upstream-content/local:
+  .meta:order-before: up-b
+  jcr:primaryType: nt:unstructured

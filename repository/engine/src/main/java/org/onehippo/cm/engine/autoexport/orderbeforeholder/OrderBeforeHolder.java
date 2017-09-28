@@ -27,6 +27,8 @@ public abstract class OrderBeforeHolder implements Comparable {
     public void apply(final ImmutableList<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
         final JcrPathSegment myName = getDefinitionNode().getJcrName();
 
+        intermediate.remove(myName);
+
         if (intermediate.size() == 0) {
             intermediate.add(myName);
             return;

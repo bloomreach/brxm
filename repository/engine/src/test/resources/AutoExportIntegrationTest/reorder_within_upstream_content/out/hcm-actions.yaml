@@ -1,0 +1,3 @@
+action-lists:
+- 1.0:
+    /AutoExportIntegrationTest-reorder-within-upstream-content/c: delete
