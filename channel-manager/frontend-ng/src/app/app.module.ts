@@ -21,6 +21,7 @@ import { UpgradeModule  } from '@angular/upgrade/static';
 
 import { MaterialModule } from './material/material.module';
 import ng1Module from './hippo-cm.ng1.module.js';
+import { FieldsModule } from './channel/sidePanels/rightSidePanel/fields/fields.module';
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import ng1Module from './hippo-cm.ng1.module.js';
     BrowserAnimationsModule,
     UpgradeModule,
     MaterialModule,
+    FieldsModule
   ],
 })
 export class AppModule {

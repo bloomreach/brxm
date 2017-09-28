@@ -97,16 +97,6 @@
               ng-class="{ 'is-invalid': !$ctrl.isValid() }">
     </ckeditor>
 
-    <image-link ng-switch-when="IMAGE_LINK"
-                ng-model="fieldValue.value"
-                ng-change="$ctrl.valueChanged()"
-                field-object="$ctrl.form[$ctrl.getFieldName()]"
-                field-name="{{ $ctrl.getFieldName() }}"
-                config="::$ctrl.fieldType.config"
-                is-required="::$ctrl.fieldType.required"
-                url="fieldValue.url">
-    </image-link>
-
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>

@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -118,6 +119,11 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             log.warn("Failed to write rich text field '{}'", valueName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    protected int getPropertyType() {
+        return PropertyType.STRING;
     }
 
     @Override

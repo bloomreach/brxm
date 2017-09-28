@@ -36,6 +36,8 @@
                 on-field-blur="$ctrl.onFieldBlur()">
   </choice-field>
 
+  <image-link ng-switch-when="IMAGE_LINK"></image-link>
+
   <primitive-field ng-switch-default
                    ng-if="::$ctrl.hasValue(fieldType)"
                    name="::$ctrl.name"

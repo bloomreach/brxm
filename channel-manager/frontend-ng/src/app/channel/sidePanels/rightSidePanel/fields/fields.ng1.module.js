@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { downgradeComponent } from '@angular/upgrade/static';
+import { ImageLinkComponent } from './imageLinkField/imageLink.component.ts';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
@@ -20,6 +22,7 @@ import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.ng1.module';
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
+
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
@@ -30,6 +33,7 @@ const fieldsModule = angular
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse)
-  .service('FieldService', fieldService);
+  .service('FieldService', fieldService)
+  .directive('imageLink', downgradeComponent({ component: ImageLinkComponent }));
 
 export default fieldsModule.name;
