@@ -94,15 +94,17 @@ public interface LockManager {
      * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @return {@code true} when locked
+     * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
+     * @throws LockManagerException if some irrecoverable error occurs, for example a database request timeout
      */
-    boolean isLocked(String key);
+    boolean isLocked(String key) throws LockManagerException;
 
     /**
      * @return all the {@link Lock}s that are currently active (including locks that are marked to be aborted but not
      * yet aborted)
-     * @throws RuntimeException in case some error occurs.
+     * @throws LockManagerException if some irrecoverable error occurs, for example a database request timeout
      */
-    List<Lock> getLocks();
+    List<Lock> getLocks() throws LockManagerException;
 
     /**
      * <p>
@@ -121,8 +123,9 @@ public interface LockManager {
      * </p>
      * @param key the {@code key} to check whether there is a lock for
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
+     * @throws LockManagerException if some irrecoverable error occurs, for example a database request timeout
      */
-    void abort(String key);
+    void abort(String key) throws LockManagerException;
 
 
 }
