@@ -219,7 +219,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         ChoiceRenderer<Locale> choiceRenderer = new ChoiceRenderer<>("displayName", "toString");
         DropDownChoice<Locale> languageSelectionChoice =
-                new DropDownChoice<>("language", new PropertyModel<>(this, "currentLocaleSelection"), availableLocaleSelections, choiceRenderer);
+                new DropDownChoice<>("locales", new PropertyModel<>(this, "currentLocaleSelection"), availableLocaleSelections, choiceRenderer);
         languageSelectionChoice.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
