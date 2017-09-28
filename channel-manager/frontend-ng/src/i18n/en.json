@@ -12,7 +12,7 @@
   "CONFIRM_DELETE_MENU_ITEM_MESSAGE": "Delete '{{menuItem}}'?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all changes?",
-  "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Discard your changes?",
+  "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Discard your changes to the core of channel '{{ channelName }}'?",
   "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "Discard unsaved changes to '{{documentName}}'?",
   "CONFIRM_OPEN_EXTERNAL_LINK": "This external link will be opened in a new tab.\nDo you want to continue?",
   "CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE": "Publish all changes?",
