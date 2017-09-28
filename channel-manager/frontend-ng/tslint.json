@@ -2,6 +2,5 @@
   "rulesDirectory": [
     "./node_modules/codelyzer"
   ],
-  "component-selector-prefix": [false],
   "extends": "./node_modules/@bloomreach/frontend-build/tslint.json"
 }
