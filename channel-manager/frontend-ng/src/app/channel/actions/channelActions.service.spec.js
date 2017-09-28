@@ -31,6 +31,7 @@ describe('ChannelActionsService', () => {
   let SessionService;
   let SiteMapService;
   let SidePanelService;
+  let ProjectService;
 
   let ChannelActionsService;
 
@@ -58,6 +59,7 @@ describe('ChannelActionsService', () => {
       _SessionService_,
       _SiteMapService_,
       _SidePanelService_,
+      _ProjectService_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
@@ -73,6 +75,7 @@ describe('ChannelActionsService', () => {
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
       SidePanelService = _SidePanelService_;
+      ProjectService = _ProjectService_;
     });
 
     spyOn($translate, 'instant');
@@ -95,6 +98,10 @@ describe('ChannelActionsService', () => {
     spyOn(SessionService, 'canDeleteChannel').and.returnValue(true);
     spyOn(SessionService, 'canManageChanges').and.returnValue(true);
     spyOn(SiteMapService, 'load');
+
+    ProjectService.selectedProject = {
+      name: 'testProject',
+    };
 
     ConfigService.cmsUser = 'testUser';
   });

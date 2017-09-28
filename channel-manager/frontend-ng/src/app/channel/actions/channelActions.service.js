@@ -176,8 +176,17 @@ class ChannelActionsService extends MenuService {
 
   _confirmDiscard() {
     const channel = this.ChannelService.getChannel();
-    console.log(channel);
-    const content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
+    let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
+
+    if (this._isBranch()) {
+      const project = this.ProjectService.selectedProject;
+
+      content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE', {
+        channelName: channel.name,
+        projectName: project.name,
+      });
+    }
+
     const confirm = this.DialogService.confirm()
       .textContent(content)
       .ok(this.$translate.instant('DISCARD'))
