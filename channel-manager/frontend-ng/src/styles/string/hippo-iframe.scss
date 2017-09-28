@@ -288,7 +288,6 @@
   &.is-showing-options {
     .hippo-fab-dial-options {
       display: flex;
-      flex-direction: column;
       button {
         animation-duration: .2s;
         animation-fill-mode: forwards;
@@ -303,6 +302,12 @@
         }
       }
     }
+  }
+  &.hippo-bottom.is-showing-options .hippo-fab-dial-options {
+    flex-direction: column;
+  }
+  &.hippo-top.is-showing-options .hippo-fab-dial-options {
+    flex-direction: column-reverse;
   }
   .hippo-fab-dial-options {
     bottom: 100%;

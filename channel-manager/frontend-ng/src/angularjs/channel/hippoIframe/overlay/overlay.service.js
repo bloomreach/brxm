@@ -367,7 +367,18 @@ class OverlayService {
     overlayElement.on('mouseenter', showOptionsIfLeft);
     overlayElement.on('mouseleave', hideOptionsAndLeave);
 
-    this._adjustButtonsPosition(structureElement, overlayElement, optionButtonsContainer);
+    $(this.iframeWindow).on('scroll resize', () => {
+      const boxElement = structureElement.prepareBoxElement();
+      const position = this._getElementPositionObject(boxElement);
+
+      if (position.scrollTop > (position.top - 80)) {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      } else if (position.scrollBottom < (position.top + 130)) {
+        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
+      } else {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      }
+    });
   }
 
   _initManageContentLinkOptions(config) {
@@ -380,31 +391,6 @@ class OverlayService {
       buttons.push(tpl);
     });
     return buttons;
-  }
-
-  _adjustButtonsPosition(structureElement, overlayElement, optionButtonsContainer) {
-    const buttonsToTop = () => {
-      optionButtonsContainer.css('flex-direction', 'column-reverse');
-      overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
-    };
-    const buttonsToBottom = () => {
-      optionButtonsContainer.css('flex-direction', 'column');
-      overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
-    };
-
-    buttonsToBottom(); // initial direction of buttons
-    $(this.iframeWindow).on('scroll resize', () => {
-      const boxElement = structureElement.prepareBoxElement();
-      const position = this._getElementPositionObject(boxElement);
-
-      if (position.scrollTop > (position.top - 80)) {
-        buttonsToBottom();
-      } else if (position.scrollBottom < (position.top + 130)) {
-        buttonsToTop();
-      } else {
-        buttonsToBottom();
-      }
-    });
   }
 
   _getElementPositionObject(boxElement) {
