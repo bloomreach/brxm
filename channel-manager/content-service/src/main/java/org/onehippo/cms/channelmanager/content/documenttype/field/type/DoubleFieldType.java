@@ -48,7 +48,7 @@ public class DoubleFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected String convertToSpecificType(final String input) {
+    protected String fieldSpecificConversion(final String input) {
         return Double.parseDouble(input) + "";
     }
 
