@@ -383,34 +383,6 @@ class OverlayService {
     return this._adjustButtonsPosition(structureElement, overlayElement, buttons);
   }
 
-  _getElementPositionObject(boxElement) {
-    const rect = boxElement[0].getBoundingClientRect();
-
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
-
-    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
-    const viewHeight = $(this.iframeWindow).height();
-    const scrollBottom = viewHeight + scrollTop;
-
-    return {
-      top,
-      left,
-      width,
-      height,
-      scrollTop,
-      scrollBottom,
-      viewHeight,
-    };
-  }
-
   _adjustButtonsPosition(structureElement, overlayElement, buttons) {
     const boxElement = structureElement.prepareBoxElement();
     const position = this._getElementPositionObject(boxElement);
@@ -437,6 +409,34 @@ class OverlayService {
     }
 
     return setButtonsDirection(direction);
+  }
+
+  _getElementPositionObject(boxElement) {
+    const rect = boxElement[0].getBoundingClientRect();
+
+    let top = rect.top;
+    let left = rect.left;
+    const width = rect.width;
+    const height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    left += this.iframeWindow.pageXOffset;
+    top += this.iframeWindow.pageYOffset;
+
+    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const scrollBottom = viewHeight + scrollTop;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      scrollTop,
+      scrollBottom,
+      viewHeight,
+    };
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
