@@ -33,7 +33,7 @@ public interface CategoryInfo {
     String getLanguage();
 
     /**
-     * @return the Locale of this translation
+     * @return the Locale of this translation or null if the locale cannot be determined
      */
     Locale getLocale();
 

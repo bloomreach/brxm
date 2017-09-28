@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +77,7 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
     @Deprecated
     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
                                 String preferredLocale, final TaxonomyModel taxonomyModel, final boolean detailsReadOnly) {
+        this(context, config, model, TaxonomyUtil.toLocale(preferredLocale), taxonomyModel, detailsReadOnly);
     }
 
     /**

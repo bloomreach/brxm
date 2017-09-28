@@ -137,7 +137,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         taxonomy = newTaxonomy(getModel(), editing, service);
 
-        final List<Locale> availableLocaleSelections = getAvailableLanguageSelections();
+        final List<Locale> availableLocaleSelections = getAvailableLocaleSelections();
         currentLocaleSelection = getLocale();
 
         synonymModel = new IModel<String[]>() {
@@ -432,7 +432,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         return list;
     }
 
-    private List<Locale> getAvailableLanguageSelections() {
+    private List<Locale> getAvailableLocaleSelections() {
         return taxonomy.getLocaleObjects();
     }
 
