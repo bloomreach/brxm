@@ -52,9 +52,7 @@ public class ChannelManagerHstSiteProvider implements HstSiteProvider {
         }
         HstSite branch = compositeHstSite.getBranches().get(branchId);
         if (branch == null) {
-            log.info("Unexpected branchId '{}' for mount '{}' found on http session because no such branch present. Removing " +
-                    "branch now and return master.", branchId, mount);
-            cmsSessionContext.removeAttribute(ATTRIBUTE_ACTIVE_PROJECT_ID);
+            log.info("No branch found with branchId '{}' for mount '{}', probably site is requested for rendering a cross-site link or project has been deleted. ", branchId, mount);
             return compositeHstSite.getMaster();
         }
         log.info("Using branch '{}' for mount '{}'", branch.getName(), mount);
