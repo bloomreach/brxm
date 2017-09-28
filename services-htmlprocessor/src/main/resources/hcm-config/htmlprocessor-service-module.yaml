@@ -9,7 +9,7 @@ definitions:
           jcr:primaryType: hipposys:moduleconfig
           charset: UTF-8
           filter: true
-          omitComments: 'false'
+          omitComments: false
           /a:
             jcr:primaryType: hipposys:moduleconfig
             attributes: [accesskey, charset, class, dir, href, id, lang, name, rel,
@@ -149,7 +149,7 @@ definitions:
           jcr:primaryType: hipposys:moduleconfig
           charset: UTF-8
           filter: true
-          omitComments: 'false'
+          omitComments: false
           /address:
             jcr:primaryType: hipposys:moduleconfig
             attributes: [class, style]
@@ -193,4 +193,4 @@ definitions:
           jcr:primaryType: hipposys:moduleconfig
           charset: UTF-8
           filter: false
-          omitComments: 'false'
+          omitComments: false
