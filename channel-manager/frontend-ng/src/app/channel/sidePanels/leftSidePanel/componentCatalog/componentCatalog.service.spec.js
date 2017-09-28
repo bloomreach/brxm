@@ -156,18 +156,6 @@ describe('ComponentCatalogService', () => {
       });
     });
 
-    it('remove overlay if it was added by ComponentCatalogService', () => {
-      spyOn(OverlayService, 'showComponentsOverlay');
-      PageStructureService.addComponentToContainer.and.returnValue($q.reject());
-
-      OverlayService.toggleOverlayByComponent = true;
-      ComponentCatalogService.addComponentToContainer({ label: 'Banner' });
-      $rootScope.$apply();
-
-      expect(OverlayService.toggleOverlayByComponent).toEqual(false);
-      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
-    });
-
     it('should reload if component contains head contributions', () => {
       spyOn(PageStructureService, 'containsNewHeadContributions').and.callFake(() => true);
       ComponentCatalogService.addComponentToContainer();

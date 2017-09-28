@@ -98,11 +98,6 @@ describe('ChannelCtrl', () => {
       expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
     });
 
-    it('returns false if componentOverlay was triggered by component click', () => {
-      OverlayService.toggleOverlayByComponent = true;
-      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
-    });
-
     it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed should call overlayService functions', () => {
       spyOn(OverlayService, 'showContentOverlay');
       spyOn(OverlayService, 'showComponentsOverlay');
