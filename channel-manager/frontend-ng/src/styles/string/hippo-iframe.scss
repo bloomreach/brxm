@@ -214,7 +214,6 @@
 // Adding a component
 .hippo-overlay-add-mode {
   cursor: copy;
-  cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   pointer-events: auto;
 
   .hippo-overlay-element-container {
