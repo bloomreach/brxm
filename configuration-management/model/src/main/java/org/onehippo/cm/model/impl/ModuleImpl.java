@@ -94,9 +94,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
 
-    private Map<Double, Set<ActionItem>> actionsMap = new LinkedHashMap<>();
+    private Map<String, Set<ActionItem>> actionsMap = new LinkedHashMap<>();
 
-    private Double sequenceNumber;
+    private String lastExecutedAction;
 
     private ResourceInputProvider configResourceInputProvider;
 
@@ -131,7 +131,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         modifiableAfter.addAll(module.getAfter());
         configResourceInputProvider = module.getConfigResourceInputProvider();
         contentResourceInputProvider = module.getContentResourceInputProvider();
-        sequenceNumber = module.sequenceNumber;
+        lastExecutedAction = module.lastExecutedAction;
         actionsMap.putAll(module.getActionsMap());
 
         // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
@@ -226,17 +226,17 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     @Override
-    public Map<Double, Set<ActionItem>> getActionsMap() {
+    public Map<String, Set<ActionItem>> getActionsMap() {
         return actionsMap;
     }
 
     @Override
-    public Double getSequenceNumber() {
-        return sequenceNumber;
+    public String getLastExecutedAction() {
+        return lastExecutedAction;
     }
 
-    public void setSequenceNumber(double value) {
-        sequenceNumber = value;
+    public void setLastExecutedAction(String value) {
+        lastExecutedAction = value;
     }
 
     /**
@@ -664,7 +664,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 
-            newModule.sequenceNumber = sequenceNumber;
+            newModule.lastExecutedAction = lastExecutedAction;
             newModule.getActionsMap().putAll(actionsMap);
 
             // reload sources from raw YAML instead of attempting to copy the full parsed structure

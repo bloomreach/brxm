@@ -81,11 +81,11 @@ public interface Module extends OrderableByName {
      * @return the current "sequence number" of this module, which describes the most recent set of actions from
      * {@link #getActionsMap()} that have been applied to the JCR
      */
-    Double getSequenceNumber();
+    String getLastExecutedAction();
 
     /**
      * @return The immutable map of action items per version, which describe how to handle content source bootstrapping
      */
-    Map<Double, Set<ActionItem>> getActionsMap();
+    Map<String, Set<ActionItem>> getActionsMap();
 
 }

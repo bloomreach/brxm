@@ -39,10 +39,10 @@ public class ActionListParserTest extends AbstractBaseTest {
     @Test
     public void testLoad() throws ParserException {
         InputStream stream = this.getClass().getResourceAsStream("/parser/value_test/hcm-actions.yaml");
-        Map<Double, Set<ActionItem>> actionsMap = parseActionMap(stream);
+        Map<String, Set<ActionItem>> actionsMap = parseActionMap(stream);
 
         assertTrue(actionsMap.size() == 3);
-        Set<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
+        Set<ActionItem> actionItemsV1 = actionsMap.get("1.0");
         assertTrue(actionItemsV1.size() == 2);
         assertEquals(ActionType.RELOAD, actionItemsV1.iterator().next().getType());
     }
@@ -77,11 +77,11 @@ public class ActionListParserTest extends AbstractBaseTest {
         }
     }
 
-    private Map<Double, Set<ActionItem>> parseActionMap(final String yaml) throws ParserException {
+    private Map<String, Set<ActionItem>> parseActionMap(final String yaml) throws ParserException {
         return parseActionMap(IOUtils.toInputStream(yaml, StandardCharsets.UTF_8));
     }
 
-    private Map<Double, Set<ActionItem>> parseActionMap(final InputStream inputStream) throws ParserException {
+    private Map<String, Set<ActionItem>> parseActionMap(final InputStream inputStream) throws ParserException {
         ActionListParser parser = new ActionListParser();
         GroupImpl group = new GroupImpl("group");
         ProjectImpl project = new ProjectImpl("project", group);

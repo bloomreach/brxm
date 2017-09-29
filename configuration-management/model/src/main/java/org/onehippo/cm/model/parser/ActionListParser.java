@@ -59,10 +59,9 @@ public class ActionListParser extends AbstractBaseParser {
             final NodeTuple nodeTuple = mappingNode.getValue().get(0);
 
             final String strVersion = asScalar(nodeTuple.getKeyNode()).getValue();
-            final Double version = Double.parseDouble(strVersion);
 
             final Set<ActionItem> actionItems = collectActionItems(nodeTuple.getValueNode());
-            module.getActionsMap().put(version, actionItems);
+            module.getActionsMap().put(strVersion, actionItems);
         }
     }
 
