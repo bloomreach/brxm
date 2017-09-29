@@ -207,6 +207,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-webfiles</artifactId>
         <version>${hippo.services.webfiles.version}</version>
       </dependency>
