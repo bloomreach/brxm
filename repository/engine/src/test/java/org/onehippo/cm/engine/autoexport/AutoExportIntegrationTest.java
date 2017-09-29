@@ -437,6 +437,18 @@ public class AutoExportIntegrationTest {
                 });
     }
 
+    @Test @Ignore
+    public void change_within_downstream_overlapping_content() throws Exception {
+        final String overlapping = "/AutoExportIntegrationTest-reorder-within-upstream-content/up-b/overlapping";
+
+        new Fixture("change_within_downstream_overlapping_content").test(
+                NOOP,
+                (session) -> {
+                    session.getNode(overlapping).getNode("local-b").setProperty("newProperty", "value");
+                },
+                NOOP);
+    }
+
     private void assertOrder(final String order, final String path, final Session session,
                              final ConfigurationModel model) throws Exception {
         assertOrderInJcr(order, path, session);

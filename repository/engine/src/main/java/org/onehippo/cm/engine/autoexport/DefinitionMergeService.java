@@ -546,6 +546,8 @@ public class DefinitionMergeService {
     }
 
     private boolean isRelevantContentDefinition(final JcrPath definitionPath, final JcrPath parentPath) {
+        // TODO: actually, any ancestor of the parentPath is potentially relevant, but we would have to dig for the
+        // TODO: specific node that matters, and we don't have that info for upstream content
         return definitionPath.startsWith(parentPath)
                 && definitionPath.getSegmentCount() == parentPath.getSegmentCount() + 1;
     }
@@ -575,8 +577,8 @@ public class DefinitionMergeService {
                     path.toString(), intermediate.toString(), expected.toString());
         }
     }
-
     private static class Holders {
+
         final List<OrderBeforeHolder> upstream = new ArrayList<>();
         final List<OrderBeforeHolder> local = new ArrayList<>();
         void finish() {
@@ -669,14 +671,14 @@ public class DefinitionMergeService {
 
     private void exportChangedContentSources(final Map<JcrPath, String> contentOrderBefores) {
 
-        final Set<JcrPath> allContentPaths = collectContentSourcesByNodePath().keySet();
+        final Set<JcrPath> allExportableContentPaths = collectContentSourcesByNodePath(true).keySet();
 
         getChangedContentSourcesStream().forEach(source -> {
             final ContentDefinitionImpl def = source.getDefinition();
             final JcrPath defPath = def.getNode().getJcrPath();
 
             // exclude all paths that have their own sources
-            final Set<String> excludedPaths = allContentPaths.stream()
+            final Set<String> excludedPaths = allExportableContentPaths.stream()
                     // (but don't exclude what we're exporting!)
                     .filter(isEqual(defPath).negate())
                     .map(JcrPath::toString).collect(toImmutableSet());
@@ -1141,7 +1143,7 @@ public class DefinitionMergeService {
     /**
      * Get or create a definition in the local modules to contain data for jcrPath.
      * Note: this method performs a three-step check for what module to use similar to
-     * {@link #createNewContentSource(JcrPath, SortedMap)}.
+     * {@link #createNewContentSource(JcrPath)}.
      * @param path the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root and may or not may be
      * empty
@@ -1174,10 +1176,17 @@ public class DefinitionMergeService {
      * @param path the path whose parent's source module we want to find
      * @param defaultModule a default module to use if the parent cannot be found
      * @return the ModuleImpl where the parent node of the given path is first defined, or defaultModule
+     * @throws IllegalStateException iff the path's parent is not actually a content node
      */
     protected ModuleImpl findModuleOfParent(final JcrPath path, final ModuleImpl defaultModule) {
-        final ModuleImpl parentNodeModule;// search the parent node's defs in reverse order
-        final List<DefinitionNodeImpl> defs = model.resolveNode(path.getParent()).getDefinitions();
+        final ModuleImpl parentNodeModule;
+        final ConfigurationNodeImpl configNode = model.resolveNode(path.getParent());
+        if (configNode == null) {
+            throw new IllegalStateException("Path does not have a config parent: " + path.toString());
+        }
+
+        // search the parent node's defs in reverse order
+        final List<DefinitionNodeImpl> defs = configNode.getDefinitions();
         parentNodeModule = reverseStream(defs).filter(this::isNewNodeDefinition).findFirst()
             .map(defNode -> defNode.getDefinition().getSource().getModule())
                 // this should be impossible, but we'll default to the old behavior, just in case
@@ -1810,7 +1819,7 @@ public class DefinitionMergeService {
         // set of existing sources in reverse lexical order, so that longer paths come first
         // note: we can use an ordinary TreeMap here, because we don't expect as many sources as raw paths
         final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
-                collectContentSourcesByNodePath();
+                collectContentSourcesByNodePath(true);
 
         // process deletes, including resource removal
         for (final String deletePath : contentDeleted) {
@@ -1856,7 +1865,7 @@ public class DefinitionMergeService {
             if (shouldPathCreateNewSource(changeNodePath)) {
                 // create a new source file
                 existingSourcesByNodePath.put(changeNodePath,
-                        createNewContentSource(changeNodePath, existingSourcesByNodePath));
+                        createNewContentSource(changeNodePath));
 
                 // REPO-1715 We have a potential for a race condition where child nodes can be accidentally
                 //           exported to source files for an ancestor node before we process the add events
@@ -1884,7 +1893,7 @@ public class DefinitionMergeService {
                     // REPO-1715 We don't have to walk up the tree in this case, since we know there's
                     //           no source on an ancestor path that might have picked up these changes.
                     existingSourcesByNodePath.put(changeNodePath,
-                            createNewContentSource(changeNodePath, existingSourcesByNodePath));
+                            createNewContentSource(changeNodePath));
                 }
             }
         }
@@ -1906,16 +1915,19 @@ public class DefinitionMergeService {
     }
 
     /**
-     * Helper to collect all content sources of given modules by root path in reverse lexical order of root paths.
+     * Helper to collect all content sources of modules by root path in reverse lexical order of root paths.
+     * @param toExportOnly if true, only include the modules in toExport; otherwise, include the full model
      */
-    protected SortedMap<JcrPath, ContentDefinitionImpl> collectContentSourcesByNodePath() {
+    protected SortedMap<JcrPath, ContentDefinitionImpl> collectContentSourcesByNodePath(final boolean toExportOnly) {
         final Function<ContentDefinitionImpl, JcrPath> cdPath = cd -> cd.getNode().getJcrPath();
         // TODO: this will silently ignore a situation where multiple sources define the same content path!
         // if there are multiple modules with the same content path, use the first one we encounter
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
         final Supplier<TreeMap<JcrPath, ContentDefinitionImpl>> reverseTreeMapper =
                 () -> new TreeMap<>(Comparator.reverseOrder());
-        return toExport.values().stream()
+
+        final Stream<ModuleImpl> modulesStream = toExportOnly? toExport.values().stream(): model.getModulesStream();
+        return modulesStream
                 .flatMap(m -> Lists.reverse(m.getContentDefinitions()).stream())
                 .collect(Collectors.toMap(cdPath, Function.identity(), pickOne, reverseTreeMapper));
     }
@@ -1977,13 +1989,16 @@ public class DefinitionMergeService {
      * Note: this method performs a three-step check for what module to use similar to
      * {@link #getOrCreateLocalDef(JcrPath, ModuleImpl)}.
      * @param changePath the path whose content we want to store in the new source
-     * @param existingSourcesByNodePath (in reverse lexical order of node path, so deeper paths are before ancestor paths)
      */
-    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath,
-                                                           final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath) {
+    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath) {
 
         // what module does the auto-export config tell us to use?
         final ModuleImpl defaultModule = getModuleByAutoExportConfig(changePath);
+
+        // find existingSourcesByNodePath (in reverse lexical order of node path, so deeper paths are before ancestor paths)
+        // but use the full set of Modules, not just the toExport modules as used in #mergeContentDefinitions
+        final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
+                collectContentSourcesByNodePath(false);
 
         // where is the nearest ancestor node defined?
         // we should scan existingSourcesByNodePath first, and then possibly the config model
