@@ -81,7 +81,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String CONFIG_REST_URI = "rest.uri";
     public static final String CONFIG_CONTEXT_PATH = "context.path";
     public static final String CONFIG_SERVICE_ID = "service.id";
-    public static final String CONFIG_LOGGING_MESSAGES = "logging.messages";
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
 
     private static final long serialVersionUID = 1L;
@@ -96,7 +95,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     private final String restUri;
     private final String contextPath;
-    private final boolean loggingMessages;
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -116,8 +114,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         } else {
             log.info("No context path set. #getContextPath will return null");
         }
-
-        loggingMessages = config.getAsBoolean(CONFIG_LOGGING_MESSAGES, false);
 
         final String serviceId = config.getString(CONFIG_SERVICE_ID, DEFAULT_SERVICE_ID);
         log.info("Registering this service under id '{}'", serviceId);
@@ -217,12 +213,10 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
                 .header(CMSREST_CMSHOST_HEADER, RequestUtils.getFarthestRequestHost(httpServletRequest))
                 .accept(MediaType.WILDCARD_TYPE);
  
-        // Enabling CXF logging from client-side if 'logging.messages' config parameter is set to true.
-        if (loggingMessages) {
-            ClientConfiguration config = WebClient.getConfig(client);
-            config.getInInterceptors().add(new RestProxyLoggingInInterceptor());
-            config.getOutInterceptors().add(new RestProxyLoggingOutInterceptor());
-        }
+        // Enabling CXF logging from client-side
+        ClientConfiguration config = WebClient.getConfig(client);
+        config.getInInterceptors().add(new RestProxyLoggingInInterceptor());
+        config.getOutInterceptors().add(new RestProxyLoggingOutInterceptor());
 
         // default time out is 60000 ms;
 
