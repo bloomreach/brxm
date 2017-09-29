@@ -523,7 +523,7 @@ public class DefinitionMergeService {
         // See also REPO-1833
 
         final List<ActionItem> actionItems =
-                ConfigurationContentService.collectNewActions(Double.MIN_VALUE, module.getActionsMap());
+                ConfigurationContentService.collectNewActions(null, module.getActionsMap());
 
         for (final ActionItem actionItem : actionItems) {
             final JcrPath actionItemJcrPath = JcrPaths.getPath(actionItem.getPath());
