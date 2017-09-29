@@ -437,30 +437,20 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             }
         }
 
-        fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
+        fileParam = "/WEB-INF/" + HST_CONFIGURATION_XML;
 
-        if (StringUtils.isNotBlank(fileParam)) {
-            Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
-            if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
-                configs.add(config);
-            } else {
-                fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
-                config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
-                if (config != null) {
-                    log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
-                    configs.add(config);
-                }
-            }
+        Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
+        if (config != null) {
+            log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+            configs.add(config);
         } else {
-            fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
-            Configuration config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
+            fileParam = "/WEB-INF/" + HST_CONFIG_PROPERTIES;
+            config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
             if (config != null) {
                 log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
                 configs.add(config);
             }
         }
-
         return configs.toArray(new Configuration[configs.size()]);
     }
 
