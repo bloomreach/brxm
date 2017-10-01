@@ -375,14 +375,14 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             if (!jcrMixins.isEmpty()) {
                 definitionNode = createDefNodeIfNecessary(definitionNode, jcrNode, configSource);
                 DefinitionPropertyImpl propertyDef = definitionNode.addProperty(JCR_MIXINTYPES,
-                        ValueType.STRING,jcrMixins.stream().map(ValueImpl::new).toArray(ValueImpl[]::new));
+                        ValueType.NAME,jcrMixins.stream().map(ValueImpl::new).toArray(ValueImpl[]::new));
                 if (op != null) {
                     propertyDef.setOperation(op);
                 }
             }
         } else if (mixinsProperty != null) {
             definitionNode = createDefNodeIfNecessary(definitionNode, jcrNode, configSource);
-            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, new ValueImpl[0])
+            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.NAME, new ValueImpl[0])
                     .setOperation(PropertyOperation.DELETE);
         }
         return definitionNode;
