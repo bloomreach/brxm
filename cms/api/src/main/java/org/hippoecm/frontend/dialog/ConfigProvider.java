@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.util.Json;
+import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
