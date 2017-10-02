@@ -17,9 +17,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +47,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
 
 public class ContainerItemComponentServiceImpl implements ContainerItemComponentService {
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentServiceImpl.class);

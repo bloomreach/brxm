@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.util;
 
-import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -48,6 +46,8 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
 
 public class DocumentUtils {
 
