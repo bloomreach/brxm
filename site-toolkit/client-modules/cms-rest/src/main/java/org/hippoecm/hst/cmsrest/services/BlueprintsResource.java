@@ -16,11 +16,10 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import java.util.List;
-
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.rest.BlueprintService;
+import org.hippoecm.hst.rest.beans.BlueprintDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,10 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
     private static final Logger log = LoggerFactory.getLogger(BlueprintsResource.class);
 
     @Override
-    public List<Blueprint> getBlueprints() {
-        return getVirtualHosts().getBlueprints();
+    public BlueprintDataset getBlueprints() {
+        final BlueprintDataset dataset = new BlueprintDataset();
+        dataset.setBlueprints(getVirtualHosts().getBlueprints());
+        return dataset;
     }
 
     @Override

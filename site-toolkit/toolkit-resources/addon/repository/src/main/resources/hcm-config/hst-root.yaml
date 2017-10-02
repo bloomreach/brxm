@@ -10,6 +10,7 @@ definitions:
           /hst:pages:
             jcr:primaryType: hst:pages
           /hst:components:
+            .meta:ignore-reordered-children: true
             jcr:primaryType: hst:components
           /hst:templates:
             jcr:primaryType: hst:templates
