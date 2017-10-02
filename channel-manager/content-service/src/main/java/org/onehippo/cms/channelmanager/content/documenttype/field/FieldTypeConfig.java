@@ -15,11 +15,11 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.json.Json;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.commons.lang.StringUtils;
-import org.onehippo.ckeditor.Json;
 
 /**
  * Reads configuration properties of a field type into a JSON object using the 'builder' pattern with a fluid syntax.
