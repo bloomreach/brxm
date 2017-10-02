@@ -109,7 +109,7 @@ public class DocumentParamsScanner {
     }
 
     /**
-     * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
+     * @param config the {@link HstComponentConfiguration} for which we need to return the parameter names
      * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
      * annotation
      * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
