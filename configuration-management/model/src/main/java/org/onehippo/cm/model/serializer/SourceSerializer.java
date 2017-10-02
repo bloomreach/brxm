@@ -61,7 +61,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private final static YamlRepresenter representer = new YamlRepresenter();
 
-    private final ModuleContext moduleContext;
+    protected final ModuleContext moduleContext;
     protected SourceImpl source;
 
     public SourceSerializer(ModuleContext moduleContext, SourceImpl source, boolean explicitSequencing) {
