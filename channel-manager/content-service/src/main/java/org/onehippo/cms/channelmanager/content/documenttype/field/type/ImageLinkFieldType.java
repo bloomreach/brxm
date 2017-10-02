@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -31,7 +32,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.ckeditor.Json;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
@@ -39,6 +39,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,9 +116,14 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             final NodeIterator children = node.getNodes(valueName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write rich text field '{}'", valueName, e);
+            log.warn("Failed to write image link field '{}'", valueName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    protected int getPropertyType() {
+        return PropertyType.STRING;
     }
 
     @Override
