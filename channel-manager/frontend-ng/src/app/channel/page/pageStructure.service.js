@@ -17,6 +17,7 @@
 import ComponentElement from './element/componentElement';
 import ContainerElement from './element/containerElement';
 import ContentLink from './element/contentLink';
+import ManageContentLink from './element/manageContentLink';
 import MenuLink from './element/menuLink';
 
 class PageStructureService {
@@ -81,6 +82,9 @@ class PageStructureService {
       case this.HST.TYPE_CONTENT_LINK:
         this._registerContentLink(commentDomElement, metaData);
         break;
+      case this.HST.TYPE_MANAGE_CONTENT_LINK:
+        this._registerManageContentLink(commentDomElement, metaData);
+        break;
       case this.HST.TYPE_EDIT_MENU_LINK:
         this._registerMenuLink(commentDomElement, metaData);
         break;
@@ -120,6 +124,10 @@ class PageStructureService {
 
   _registerContentLink(commentDomElement, metaData) {
     this.embeddedLinks.push(new ContentLink(commentDomElement, metaData));
+  }
+
+  _registerManageContentLink(commentDomElement, metaData) {
+    this.embeddedLinks.push(new ManageContentLink(commentDomElement, metaData));
   }
 
   _registerMenuLink(commentDomElement, metaData) {

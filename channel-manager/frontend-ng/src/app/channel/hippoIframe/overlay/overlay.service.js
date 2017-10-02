@@ -21,6 +21,10 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
+import clearSvg from '../../../../images/html/clear.svg';
+import plusSvg from '../../../../images/html/plus.svg';
+import searchSvg from '../../../../images/html/search.svg';
+import addContentSvg from '../../../../images/html/add-content.svg';
 
 class OverlayService {
   constructor(
@@ -53,6 +57,11 @@ class OverlayService {
     this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
+
+    this.dialButtonsConfig = [
+      { svg: plusSvg, callback: angular.noop, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
+      { svg: searchSvg, callback: angular.noop, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
+    ];
   }
 
   init(iframeJQueryElement) {
@@ -267,6 +276,9 @@ class OverlayService {
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
+      case 'manage-content-link':
+        this._initManageContentLink(structureElement, overlayElement, addContentSvg, clearSvg);
+        break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
@@ -306,9 +318,108 @@ class OverlayService {
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
-    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
+    overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
+  }
+
+  _initManageContentLink(structureElement, overlayElement, icon, closeIcon) {
+    overlayElement
+      .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
+      .addClass('is-left')  // mouse never entered yet
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${icon}</button>`)
+      .append('<div class="hippo-fab-dial-options"></div>');
+
+    const fabBtn = overlayElement.find('#hippo-fab-btn');
+    const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
+
+    const adjustOptionsPosition = () => {
+      const boxElement = structureElement.prepareBoxElement();
+      const position = this._getElementPositionObject(boxElement);
+
+      if (position.scrollTop > (position.top - 80)) {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      } else if (position.scrollBottom < (position.top + 130)) {
+        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
+      } else {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      }
+    };
+
+    const showOptions = () => {
+      adjustOptionsPosition();
+      if (!overlayElement.hasClass('is-showing-options')) {
+        optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
+        fabBtn.addClass('hippo-fab-btn-open');
+        if (closeIcon) {
+          fabBtn.html(closeIcon);
+        }
+        overlayElement.addClass('is-showing-options');
+        return true;
+      }
+      return false;
+    };
+    const hideOptions = () => {
+      fabBtn.removeClass('hippo-fab-btn-open');
+      if (closeIcon) {
+        fabBtn.html(icon);
+      }
+      overlayElement.removeClass('is-showing-options');
+    };
+    const showOptionsIfLeft = () => {
+      if (overlayElement.hasClass('is-left')) {
+        showOptions();
+      }
+      overlayElement.removeClass('is-left');
+    };
+    const hideOptionsAndLeave = () => {
+      hideOptions();
+      overlayElement.addClass('is-left');
+    };
+
+    overlayElement.on('click', () => showOptions() || hideOptions());
+    overlayElement.on('mouseenter', showOptionsIfLeft);
+    overlayElement.on('mouseleave', hideOptionsAndLeave);
+  }
+
+  _initManageContentLinkOptions(config) {
+    const buttons = [];
+    Object.keys(config).forEach((i) => {
+      const button = config[i];
+      const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
+        .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
+        .on('click', () => button.callback(i));
+      buttons.push(tpl);
+    });
+    return buttons;
+  }
+
+  _getElementPositionObject(boxElement) {
+    const rect = boxElement[0].getBoundingClientRect();
+
+    let top = rect.top;
+    let left = rect.left;
+    const width = rect.width;
+    const height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    left += this.iframeWindow.pageXOffset;
+    top += this.iframeWindow.pageYOffset;
+
+    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const scrollBottom = viewHeight + scrollTop;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      scrollTop,
+      scrollBottom,
+      viewHeight,
+    };
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
@@ -351,7 +462,6 @@ class OverlayService {
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
-
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
     switch (structureElement.getType()) {
@@ -379,6 +489,8 @@ class OverlayService {
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
+      case 'manage-content-link':
         return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
         return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
@@ -412,22 +524,12 @@ class OverlayService {
   }
 
   _syncPosition(overlayElement, boxElement) {
-    const rect = boxElement[0].getBoundingClientRect();
+    const position = this._getElementPositionObject(boxElement);
 
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
-
-    overlayElement.css('top', `${top}px`);
-    overlayElement.css('left', `${left}px`);
-    overlayElement.css('width', `${width}px`);
-    overlayElement.css('height', `${height}px`);
+    overlayElement.css('top', `${position.top}px`);
+    overlayElement.css('left', `${position.left}px`);
+    overlayElement.css('width', `${position.width}px`);
+    overlayElement.css('height', `${position.height}px`);
   }
 
   _tidyOverlay(elementsToKeep) {

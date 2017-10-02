@@ -151,7 +151,7 @@
   }
 }
 
-.hippo-overlay-element-link {
+%hippo-material-btn {
   align-items: center;
   background-color: $overlay-link-bgcolor;
   border-radius: 50%;
@@ -162,7 +162,10 @@
   padding-top: 1px;  // visually move the icons to the middle of the circle
   transition: background-color $overlay-link-transition, box-shadow $overlay-link-transition;
   z-index: $z-index-overlay-link;
+}
 
+.hippo-overlay-element-link-button {
+  @extend %hippo-material-btn;
   &:hover {
     background-color: $overlay-link-hover-bgcolor;
   }
@@ -261,3 +264,77 @@
     display: none;
   }
 }
+
+.hippo-fab-dial-container {
+  .hippo-fab-option-btn {
+    @extend %hippo-material-btn;
+    background-color: $white;
+    border: 0;
+    fill: $overlay-link-shadow-color;
+    padding-top: 7px;
+  }
+  .hippo-fab-btn {
+    @extend %hippo-material-btn;
+    border: 0;
+    height: 100%;
+    padding: 8px 0 0 5px;
+    width: 100%;
+
+    &-open {
+      padding: 7px 0 0;
+      svg { fill: $white; }
+    }
+  }
+  &.is-showing-options {
+    .hippo-fab-dial-options {
+      display: flex;
+      button {
+        animation-duration: .2s;
+        animation-fill-mode: forwards;
+        animation-name: enter;
+        display: block;
+        transform-origin: bottom center;
+      }
+
+      @for $i from 0 to 3 {
+        .hippo-fab-option-#{$i} {
+          animation-delay: #{.15 * $i}s;
+        }
+      }
+    }
+  }
+  &.hippo-bottom.is-showing-options .hippo-fab-dial-options {
+    flex-direction: column;
+  }
+  &.hippo-top.is-showing-options .hippo-fab-dial-options {
+    flex-direction: column-reverse;
+  }
+  .hippo-fab-dial-options {
+    bottom: 100%;
+    margin-bottom: 10px;
+    position: absolute;
+    width: 100%;
+    z-index: $z-index-overlay-dial-options;
+  }
+  &.hippo-bottom .hippo-fab-dial-options {
+    bottom: initial;
+    padding-top: 5px;
+    top: 100%;
+  }
+  .hippo-fab-dial-options button {
+    display: none;
+    transform: scale(0);
+  }
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(.8);
+  }
+}
+
+
