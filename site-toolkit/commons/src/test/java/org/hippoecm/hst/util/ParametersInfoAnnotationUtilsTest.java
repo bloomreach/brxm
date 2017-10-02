@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import javax.jcr.Node;
 import javax.jcr.Property;
 
@@ -29,6 +25,10 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ParametersInfoAnnotationUtilsTest {
 
@@ -169,29 +169,38 @@ public class ParametersInfoAnnotationUtilsTest {
         assertNull(paramsInfo);
 
         // with an annotated class name, when componentConfigNode is non-null but no overriding...
-        componentConfigNode = createMockComponentConfigurationNode(AnnotatedComponent.class.getName(), null);
+        componentConfigNode = createMockComponentConfigurationNode(AnnotatedComponent.class.getName(), null,
+                HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType1.class, paramsInfo.type());
 
         // with an annotated class name, when componentConfigNode is non-null with overriding...
         componentConfigNode = createMockComponentConfigurationNode(AnnotatedComponent.class.getName(),
-                ExampleParametersInfoType2.class.getName());
+                ExampleParametersInfoType2.class.getName(), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
 
         // with a non-annotated class name, when componentConfigNode is non-null but no overriding...
-        componentConfigNode = createMockComponentConfigurationNode(NonAnnotatedComponent.class.getName(), null);
+        componentConfigNode = createMockComponentConfigurationNode(NonAnnotatedComponent.class.getName(), null,
+                HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
         assertNull(paramsInfo);
 
         // with a non-annotated class name, when componentConfigNode is non-null with overriding...
         componentConfigNode = createMockComponentConfigurationNode(NonAnnotatedComponent.class.getName(),
-                ExampleParametersInfoType2.class.getName());
+                ExampleParametersInfoType2.class.getName(), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetParametersInfoAnnotation_Node_only_works_for_containeritemcomponent() throws Exception {
+        final Node componentConfigNode = createMockComponentConfigurationNode(AnnotatedComponent.class.getName(), null,
+                HstNodeTypes.NODETYPE_HST_COMPONENT);
+        ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
     }
 
     @Test
@@ -243,7 +252,8 @@ public class ParametersInfoAnnotationUtilsTest {
         return componentConfig;
     }
 
-    private Node createMockComponentConfigurationNode(String componentClazzName, String paramsInfoClassName)
+    private Node createMockComponentConfigurationNode(final String componentClazzName, final String paramsInfoClassName,
+                                                      final String primaryNodeType)
             throws Exception {
         Node node = EasyMock.createNiceMock(Node.class);
         Property compClazzNameProp = EasyMock.createNiceMock(Property.class);
@@ -258,6 +268,7 @@ public class ParametersInfoAnnotationUtilsTest {
                 .andReturn(compClazzNameProp).anyTimes();
         EasyMock.expect(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME))
                 .andReturn(paramsInfoClazzNameProp).anyTimes();
+        EasyMock.expect(node.isNodeType(EasyMock.eq(primaryNodeType))).andReturn(true).anyTimes();
         EasyMock.replay(compClazzNameProp);
         EasyMock.replay(paramsInfoClazzNameProp);
         EasyMock.replay(node);
