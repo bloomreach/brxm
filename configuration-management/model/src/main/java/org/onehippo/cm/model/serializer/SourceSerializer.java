@@ -18,19 +18,18 @@ package org.onehippo.cm.model.serializer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
-import org.onehippo.cm.model.definition.ConfigDefinition;
-import org.onehippo.cm.model.definition.ContentDefinition;
-import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.definition.NamespaceDefinition;
-import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
-import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.DefinitionNode;
-import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.Value;
@@ -63,35 +62,33 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private final static YamlRepresenter representer = new YamlRepresenter();
 
     private final ModuleContext moduleContext;
-    protected final Source source;
-    private final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
+    protected SourceImpl source;
 
-
-    public SourceSerializer(ModuleContext moduleContext, Source source, boolean explicitSequencing) {
+    public SourceSerializer(ModuleContext moduleContext, SourceImpl source, boolean explicitSequencing) {
         super(explicitSequencing);
         this.moduleContext = moduleContext;
         this.source = source;
     }
 
-    public Node representSource(final Consumer<PostProcessItem> resourceConsumer) {
+    public Node representSource() {
         final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> namespaceDefinitionTuples = new ArrayList<>();
         final List<Node> webFilesDefinitionNodes = new ArrayList<>();
 
-        for (Definition definition : source.getDefinitions()) {
+        for (AbstractDefinitionImpl definition : source.getDefinitions()) {
             switch (definition.getType()) {
                 case CONFIG:
-                    configDefinitionTuples.add(representConfigDefinition((ConfigDefinition) definition, resourceConsumer));
+                    configDefinitionTuples.add(representConfigDefinition((ConfigDefinitionImpl) definition));
                     break;
                 case CONTENT:
-                    contentDefinitionTuples.add(representContentDefinition((ContentDefinition) definition, resourceConsumer));
+                    contentDefinitionTuples.add(representContentDefinition((ContentDefinitionImpl) definition));
                     break;
                 case NAMESPACE:
-                    namespaceDefinitionTuples.add(representNamespaceDefinition((NamespaceDefinition) definition, resourceConsumer));
+                    namespaceDefinitionTuples.add(representNamespaceDefinition((NamespaceDefinitionImpl) definition));
                     break;
                 case WEBFILEBUNDLE:
-                    webFilesDefinitionNodes.add(representWebFilesDefinition((WebFileBundleDefinition) definition));
+                    webFilesDefinitionNodes.add(representWebFilesDefinition((WebFileBundleDefinitionImpl) definition));
                     break;
                 default:
                     throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
@@ -120,15 +117,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
-    protected NodeTuple representConfigDefinition(final ConfigDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
-        return representDefinitionNode(definition.getNode(), resourceConsumer);
+    protected NodeTuple representConfigDefinition(final ConfigDefinitionImpl definition) {
+        return representDefinitionNode(definition.getNode());
     }
 
-    protected NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
-        return representDefinitionNode(definition.getNode(), resourceConsumer);
+    protected NodeTuple representContentDefinition(final ContentDefinitionImpl definition) {
+        return representDefinitionNode(definition.getNode());
     }
 
-    protected NodeTuple representDefinitionNode(final DefinitionNode node, final Consumer<PostProcessItem> resourceConsumer) {
+    protected NodeTuple representDefinitionNode(final DefinitionNodeImpl node) {
         final List<NodeTuple> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
         if (node.isDelete()) {
@@ -146,11 +143,11 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (node.getResidualChildNodeCategory() != null) {
             children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
         }
-        for (DefinitionProperty childProperty : node.getProperties().values()) {
-            children.add(representProperty(childProperty, resourceConsumer));
+        for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+            children.add(representProperty(childProperty));
         }
-        for (DefinitionNode childNode : node.getNodes().values()) {
-            children.add(representDefinitionNode(childNode, resourceConsumer));
+        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+            children.add(representDefinitionNode(childNode));
         }
 
         // root defs get a full path, but nested defs just get one relative path segment
@@ -174,15 +171,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return createStrStrTuple(metaDataField, category.toString());
     }
 
-    protected NodeTuple representProperty(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
+    protected NodeTuple representProperty(final DefinitionPropertyImpl property) {
         if (requiresValueMap(property)) {
-            return representPropertyUsingMap(property, resourceConsumer);
+            return representPropertyUsingMap(property);
         } else {
             return representPropertyUsingScalarOrSequence(property);
         }
     }
 
-    protected NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
+    protected NodeTuple representPropertyUsingMap(final DefinitionPropertyImpl property) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
         // .meta:category is no longer mutually-exclusive with value etc.
@@ -218,25 +215,25 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
             if (property.getType() == PropertyType.SINGLE) {
 
-                final Value value = property.getValue();
+                final ValueImpl value = property.getValue();
                 final Node valueNode = representValue(value);
                 final ScalarNode keyNode = createStrScalar(key);
                 valueMapTuples.add(new NodeTuple(keyNode, valueNode));
 
                 if (exposeAsResource) {
-                    processSingleResource(resourceConsumer, value, valueNode);
+                    processSingleResource(value, valueNode);
                 }
             } else {
                 final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-                for (Value value : property.getValues()) {
+                for (ValueImpl value : property.getValues()) {
                     final Node valueNode = representValue(value);
                     valueNodes.add(valueNode);
 
                     if (isBinaryEmbedded(value)) {
-                        resourceConsumer.accept(new BinaryItem(value, (ScalarNode) valueNode));
+                        serializeBinaryValue(((ScalarNode) valueNode).getValue(), value);
                     }
                     else if (exposeAsResource) {
-                        resourceConsumer.accept(new CopyItem(value));
+                        serializeResourceValue(value);
                     }
                 }
 
@@ -247,35 +244,38 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new NodeTuple(createStrScalar(property.getName()), new MappingNode(Tag.MAP, valueMapTuples, false));
     }
 
-    protected void processSingleResource(Consumer<PostProcessItem> resourceConsumer, Value value, Node valueNode) {
-        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, (ScalarNode) valueNode) : new CopyItem(value);
-        resourceConsumer.accept(postProcessItem);
+    protected void processSingleResource(ValueImpl value, Node valueNode) {
+        if (isBinaryEmbedded(value)) {
+            serializeBinaryValue(((ScalarNode) valueNode).getValue(), value);
+        } else {
+            serializeResourceValue(value);
+        }
     }
 
-    protected boolean isBinaryEmbedded(Value value) {
+    protected boolean isBinaryEmbedded(ValueImpl value) {
         return value.getType() == ValueType.BINARY && !value.isResource();
     }
 
-    protected boolean isBinaryProperty(final DefinitionProperty property) {
+    protected boolean isBinaryProperty(final DefinitionPropertyImpl property) {
         if (property.getType() == PropertyType.SINGLE) {
             return property.getValueType() == ValueType.BINARY;
         }
         return Arrays.stream(property.getValues()).anyMatch(value -> value.getType() == ValueType.BINARY);
     }
 
-    protected NodeTuple representPropertyUsingScalarOrSequence(final DefinitionProperty property) {
+    protected NodeTuple representPropertyUsingScalarOrSequence(final DefinitionPropertyImpl property) {
         if (property.getType() == PropertyType.SINGLE) {
             return new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue()));
         } else {
             final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-            for (Value value : property.getValues()) {
+            for (ValueImpl value : property.getValues()) {
                 valueNodes.add(representValue(value));
             }
             return createStrSeqTuple(property.getName(), valueNodes, true);
         }
     }
 
-    protected boolean requiresValueMap(final DefinitionProperty property) {
+    protected boolean requiresValueMap(final DefinitionPropertyImpl property) {
 
         if (property.getOperation() != PropertyOperation.REPLACE
                 || hasResourceValues(property)
@@ -303,7 +303,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    protected boolean shouldHaveExplicitType(final DefinitionProperty property) {
+    protected boolean shouldHaveExplicitType(final DefinitionPropertyImpl property) {
         if (property.getType() == PropertyType.SINGLE) {
             final String propertyValue = property.getValue().getString();
             return !StreamReader.isPrintable(propertyValue);
@@ -312,11 +312,11 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    protected boolean allElementsArePrintable(DefinitionProperty property) {
+    protected boolean allElementsArePrintable(DefinitionPropertyImpl property) {
         return Arrays.stream(property.getValues()).map(Value::getString).allMatch(StreamReader::isPrintable);
     }
 
-    protected boolean hasResourceValues(final DefinitionProperty property) {
+    protected boolean hasResourceValues(final DefinitionPropertyImpl property) {
         if (property.getType() == PropertyType.SINGLE) {
             return property.getValue().isResource();
         }
@@ -328,7 +328,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return false;
     }
 
-    protected boolean hasPathValues(final DefinitionProperty property) {
+    protected boolean hasPathValues(final DefinitionPropertyImpl property) {
         if (property.getType() == PropertyType.SINGLE) {
             return property.getValue().isPath();
         }
@@ -340,7 +340,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return false;
     }
 
-    protected Node representValue(final Value value) {
+    protected Node representValue(final ValueImpl value) {
         switch (value.getType()) {
             case DECIMAL:
                 // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
@@ -349,25 +349,41 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case URI:
                 return representer.represent(value.getString());
             case BINARY:
-                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, mapperProvider.generateName(value));
+                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, value);
                 return representer.represent(nodeValue);
             default:
                 return representer.represent(value.getObject());
         }
     }
 
-    protected NodeTuple representNamespaceDefinition(final NamespaceDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
+    protected NodeTuple representNamespaceDefinition(final NamespaceDefinitionImpl definition) {
         final List<NodeTuple> children = new ArrayList<>(2);
         children.add(createStrStrTuple(URI_KEY, definition.getURI().toString()));
         if (definition.getCndPath() != null) {
-            resourceConsumer.accept(new CopyItem(definition.getCndPath()));
+            serializeResourceValue(definition.getCndPath());
             children.add(createStrStrTuple(CND_KEY, definition.getCndPath().getString()));
         }
         return new NodeTuple(createStrScalar(definition.getPrefix()), new MappingNode(Tag.MAP, children, false));
     }
 
-    protected Node representWebFilesDefinition(final WebFileBundleDefinition definition) {
+    protected Node representWebFilesDefinition(final WebFileBundleDefinitionImpl definition) {
         return createStrScalar(definition.getName());
     }
 
+    protected void serializeBinaryValue(final String finalName, final ValueImpl value) {
+        // check we have an outputProvider! May be null when serializing definitions only
+        if (moduleContext.getOutputProvider(source) != null) {
+            moduleContext.serializeBinaryValue(source, finalName, value);
+        }
+    }
+
+    protected void serializeResourceValue(final ValueImpl value) {
+        // check we have an outputProvider! May be null when serializing definitions only
+        if (moduleContext.getOutputProvider(source) != null) {
+            if (value.isNewResource()) {
+                moduleContext.resolveNewResourceValuePath(source, value);
+            }
+            moduleContext.serializeResourceValue(source, value);
+        }
+    }
 }

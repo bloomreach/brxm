@@ -62,8 +62,8 @@ import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.path.JcrPaths;
-import org.onehippo.cm.model.serializer.MigrationConfigWriter;
 import org.onehippo.cm.model.serializer.ModuleContext;
+import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -608,14 +608,14 @@ public class Esv2Yaml {
                 .map(ContentDefinitionImpl::getNode)
                 .forEach(DefinitionNodeImpl::recursiveSortProperties);
 
-        ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath());
+        ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath(), migrationMode);
         moduleContext.createOutputProviders(target.toPath());
 
         // patch up references to RIPs, so they can be accessed during processing via back-references
         module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
         module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
 
-        new MigrationConfigWriter(migrationMode).writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+        new ModuleWriter().writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
 
 }

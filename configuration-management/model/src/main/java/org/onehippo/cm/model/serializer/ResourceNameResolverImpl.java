@@ -27,11 +27,6 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
 
     private Set<String> knownFileEntries = new HashSet<>();
 
-    /**
-     * Generates file unique name and add it to known list along with its full path.
-     * @param filePath
-     * @return unique filename within already known paths
-     */
     @Override
     public String generateName(final String filePath) {
         final String generatedPath = FilePathUtils.generateUniquePath(filePath,
@@ -40,4 +35,15 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
         return generatedPath;
     }
 
+    @Override
+    public void seedName(final String filePath) {
+        if (!knownFileEntries.add(filePath)) {
+            throw new IllegalStateException("File path '"+filePath+"' already known");
+        }
+    }
+
+    @Override
+    public void clear() {
+        knownFileEntries.clear();
+    }
 }

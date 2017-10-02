@@ -16,8 +16,26 @@
 package org.onehippo.cm.model.serializer;
 
 /**
- * Unique name manager
+ * Unique resource name manager
  */
 public interface ResourceNameResolver {
-    String generateName(String filePath);
+    /**
+     * Generates unique name and add it to known list of names.
+     * @param name
+     * @return unique name within already known names
+     */
+    String generateName(String name);
+
+    /**
+     * Adds a known name to ensure {@link #generateName(String)} will generate a unique name when provided with
+     * a same (conflicting) name.
+     * @param name known name
+     * @throws IllegalStateException if name already is known.
+     */
+    public void seedName(final String name);
+
+    /**
+     * Clears the known names
+     */
+    public void clear();
 }

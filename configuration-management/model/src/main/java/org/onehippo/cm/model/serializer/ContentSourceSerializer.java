@@ -17,23 +17,22 @@ package org.onehippo.cm.model.serializer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-import org.onehippo.cm.model.definition.ContentDefinition;
-import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 
 public class ContentSourceSerializer extends SourceSerializer {
-    public ContentSourceSerializer(ModuleContext moduleContext, Source source, boolean explicitSequencing) {
+    public ContentSourceSerializer(ModuleContext moduleContext, SourceImpl source, boolean explicitSequencing) {
         super(moduleContext, source, explicitSequencing);
     }
 
-    public Node representSource(final Consumer<PostProcessItem> resourceConsumer) {
+    public Node representSource() {
 
-        NodeTuple nodeTuple = representContentDefinition((ContentDefinition) source.getDefinitions().get(0), resourceConsumer);
+        NodeTuple nodeTuple = representContentDefinition((ContentDefinitionImpl) source.getDefinitions().get(0));
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
         sourceTuples.add(nodeTuple);

@@ -23,9 +23,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.OrderableByName;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -51,9 +51,9 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Module module) throws IOException {
+    public void serialize(final OutputStream outputStream, final ModuleImpl module) throws IOException {
 
-        final Group group = module.getProject().getGroup();
+        final GroupImpl group = module.getProject().getGroup();
 
         final Node groupNode = representNode(group);
         final NodeTuple groupTuple = new NodeTuple(createStrScalar(GROUP_KEY), groupNode);

@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.junit.Test;
-import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +35,7 @@ public class ModuleDescriptorTest {
         final String resource = "/hcm-module-full.yaml";
         final InputStream stream = getClass().getResourceAsStream(resource);
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
-        final Module module = moduleDescriptorParser.parse(stream, "");
+        final ModuleImpl module = moduleDescriptorParser.parse(stream, "");
         IOUtils.closeQuietly(stream);
 
         final ModuleDescriptorSerializer serializer = new ModuleDescriptorSerializer(true);
@@ -53,7 +53,7 @@ public class ModuleDescriptorTest {
         final String resource = "/hcm-module-short.yaml";
         final InputStream stream = getClass().getResourceAsStream(resource);
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
-        Module module = moduleDescriptorParser.parse(stream, "");
+        ModuleImpl module = moduleDescriptorParser.parse(stream, "");
         IOUtils.closeQuietly(stream);
 
         final ModuleDescriptorSerializer serializer = new ModuleDescriptorSerializer(true);
