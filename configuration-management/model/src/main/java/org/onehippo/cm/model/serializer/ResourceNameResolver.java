@@ -29,8 +29,9 @@ public interface ResourceNameResolver {
     /**
      * Adds a known name to ensure {@link #generateName(String)} will generate a unique name when provided with
      * a same (conflicting) name.
+     * If the same name is seeded multiple times, a warning will be logged (this indicates a non-optimal and
+     * possibly dangerous 'cross-link' between multiple resource values pointing to the same resource).
      * @param name known name
-     * @throws IllegalStateException if name already is known.
      */
     public void seedName(final String name);
 

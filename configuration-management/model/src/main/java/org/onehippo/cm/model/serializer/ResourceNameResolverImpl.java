@@ -19,11 +19,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.onehippo.cm.model.util.FilePathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unique file name generator
  */
 public class ResourceNameResolverImpl implements ResourceNameResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(ResourceNameResolver.class);
 
     private Set<String> knownFileEntries = new HashSet<>();
 
@@ -38,7 +42,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     @Override
     public void seedName(final String filePath) {
         if (!knownFileEntries.add(filePath)) {
-            throw new IllegalStateException("File path '"+filePath+"' already known");
+            log.warn("Resource file path {} already seeded before within this module context which indicates a cross-linked resource path", filePath);
         }
     }
 
