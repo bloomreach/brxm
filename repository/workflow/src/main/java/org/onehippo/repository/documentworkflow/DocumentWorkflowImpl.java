@@ -389,11 +389,18 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Object transition(DocumentWorkflowTransition transition) throws WorkflowException {
         workflowExecutor.start(transition.getInitializationPayload());
-        return workflowExecutor.triggerAction(transition.getAction(), transition.getActionsMap(),transition.getEventPayload());
+        Object result;
+        if (transition.getActionsMap()==null){
+            result = workflowExecutor.triggerAction(transition.getAction(),transition.getEventPayload());
+        }
+        else{
+            result = workflowExecutor.triggerAction(transition.getAction(), transition.getActionsMap(),transition.getEventPayload());
+        }
+        return result;
     }
 
     private  Object transition(DocumentWorkflowAction documentWorkflowAction) throws WorkflowException {
-        return transition(getBuilder().action(documentWorkflowAction).build());
+        return transition(getBuilder().action(documentWorkflowAction.getAction()).build());
     }
 
 }

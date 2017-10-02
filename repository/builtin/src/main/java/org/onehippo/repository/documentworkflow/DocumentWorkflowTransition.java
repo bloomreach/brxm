@@ -26,7 +26,7 @@ public class DocumentWorkflowTransition {
     private Map<String, Object> eventPayload = new HashMap<>();
     private final Map<String, Object> initializationPayload;
     private final String action;
-    private Map<String, Boolean> actionsMap = Collections.emptyMap();
+    private Map<String, Boolean> actionsMap;
 
     public Map<String, Boolean> getActionsMap() {
         return actionsMap;
@@ -49,7 +49,7 @@ public class DocumentWorkflowTransition {
         private final Map<String, Object> eventPayload = new HashMap<>();
         private Map<String, Object> initializationPayload;
         private String action;
-        private Map<String, Boolean> actionsMap = new HashMap<>();
+        private Map<String, Boolean> actionsMap;
 
         public Builder() {
             initializationPayload = new HashMap<>();
