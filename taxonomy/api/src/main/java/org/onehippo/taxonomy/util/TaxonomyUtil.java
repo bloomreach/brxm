@@ -45,10 +45,7 @@ public class TaxonomyUtil {
      * Creates a Locale from a String.
      * @param localeString can be in Java Locale#toString format or a LanguageTag as described by the IETF BCP 47
      *                     specification. For example "en_GB" and "en-GB" will result in the same Locale object.
-     *                     For now, strings that cannot be converted to a valid locale are condoned. The string
-     *                     will be set as the language of the returned Locale. This may not be allowed in a future
-     *                     release.
-     * @return null if localeString was null, or the requested Locale
+     * @return null if localeString was null or not representing a valid Locale, or the requested Locale
      */
     public static Locale toLocale(final String localeString) {
         if (localeString == null) {
@@ -59,15 +56,15 @@ public class TaxonomyUtil {
                 return LocaleUtils.toLocale(localeString);
             } else {
                 final Locale locale = Locale.forLanguageTag(localeString);
-                // fallback for invalid locales
+                // fallback for invalid language tags: try the more lenient LocaleUtils.
                 if (!locale.toLanguageTag().equals(localeString)) {
                     return LocaleUtils.toLocale(localeString);
                 }
                 return locale;
             }
         } catch (IllegalArgumentException e) {
-            log.debug("Locale \"{}\" is not valid. This may not be accepted in a future release.", localeString);
-            return new Locale(localeString);
+            log.error("Locale \"{}\" is not valid.", localeString);
+            return null;
         }
     }
 

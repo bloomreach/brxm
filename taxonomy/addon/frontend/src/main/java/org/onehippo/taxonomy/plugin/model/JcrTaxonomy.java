@@ -73,7 +73,10 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
                 for (Value value : node.getProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES).getValues()) {
                     final String localeString = StringUtils.trim(value.getString());
                     if (!StringUtils.isEmpty(localeString)) {
-                        locales.add(TaxonomyUtil.toLocale(localeString));
+                        final Locale locale = TaxonomyUtil.toLocale(localeString);
+                        if (locale != null) {
+                            locales.add(locale);
+                        }
                     }
                 }
             }

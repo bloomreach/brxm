@@ -37,5 +37,18 @@ public class TaxonomyUtilTest {
         assertNull(TaxonomyUtil.toLocale(null));
         assertEquals(TaxonomyUtil.toLocale("en_GB"), Locale.UK);
         assertEquals(TaxonomyUtil.toLocale("en-GB"), Locale.UK);
+
+        // Util is lenient for locale strings with underscores. Variant "11" is condoned.
+        Locale enGB11 = new Locale("en", "GB", "11");
+        assertEquals(TaxonomyUtil.toLocale("en_GB_11"), enGB11);
+
+        // Util is not lenient for languageTags. Variant "11" is invalid.
+        assertNull(TaxonomyUtil.toLocale("en-GB-11"));
+
+        // LanguageTags with a valid variant will produce a valid Locale object.
+        Locale enGB0011 = new Locale("en", "GB", "0011");
+        assertEquals(TaxonomyUtil.toLocale("en-GB-0011"), enGB0011);
+        Locale enGBHIP11 = new Locale("en", "GB", "HIP11");
+        assertEquals(TaxonomyUtil.toLocale("en-GB-HIP11"), enGBHIP11);
     }
 }

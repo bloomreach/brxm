@@ -100,7 +100,7 @@ public class TaxonomyBrowser extends Panel {
         super(id, model);
 
         this.taxonomyModel = taxonomyModel;
-        this.preferredLocale = preferredLocale;
+        setPreferredLocale(preferredLocale);
         this.detailsReadOnly = detailsReadOnly;
 
         emptyDetails = new EmptyDetails("details", "emptyDetails", this);
@@ -265,6 +265,17 @@ public class TaxonomyBrowser extends Panel {
 
     protected Locale getPreferredLocaleObject() {
         return preferredLocale;
+    }
+
+    /**
+     * @param locale if null, the Locale from the Wicket Session is used, as fallback
+     */
+    private void setPreferredLocale(final Locale locale) {
+        if (locale != null) {
+            this.preferredLocale = locale;
+        } else {
+            this.preferredLocale = getSession().getLocale();
+        }
     }
 
     protected Details newDetails(String id, CategoryModel model) {
