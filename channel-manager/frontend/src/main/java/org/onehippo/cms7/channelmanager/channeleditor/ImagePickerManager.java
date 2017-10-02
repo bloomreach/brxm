@@ -29,6 +29,9 @@ import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.addon.frontend.gallerypicker.WicketJcrSessionProvider;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
+import org.onehippo.cms.json.Json;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Manages the picker dialog for imagelink fields. The dialog is used to select an image.
@@ -57,7 +60,11 @@ class ImagePickerManager extends PickerManager<String> {
         final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(pickedItem);
         final String url = imageItem.getPrimaryUrl(WicketJcrSessionProvider.get());
 
-        return "{ uuid: '" + pickedItem + "', url: '" + url + "'}";
+        final ObjectNode picked = Json.object();
+        picked.put("uuid", pickedItem);
+        picked.put("url", url);
+
+        return picked.toString();
     }
 
     @Override
