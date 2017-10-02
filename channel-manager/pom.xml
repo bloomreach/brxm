@@ -35,8 +35,8 @@
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
     <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>5.1.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>5.1.0-projectdocs-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>5.1.0-projectdocs-SNAPSHOT</hippo.hst.version>
     <hippo.ckeditor.version>4.7.1-h2-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
