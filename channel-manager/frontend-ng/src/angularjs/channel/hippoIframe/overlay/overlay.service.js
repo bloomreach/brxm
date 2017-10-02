@@ -59,8 +59,8 @@ class OverlayService {
     PageStructureService.registerChangeListener(() => this.sync());
 
     this.dialButtonsConfig = [
-      { svg: plusSvg, callback: console.log, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
-      { svg: searchSvg, callback: console.log, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
+      { svg: plusSvg, callback: angular.noop, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
+      { svg: searchSvg, callback: angular.noop, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
     ];
   }
 
@@ -333,7 +333,21 @@ class OverlayService {
     const fabBtn = overlayElement.find('#hippo-fab-btn');
     const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
 
+    const adjustOptionsPosition = () => {
+      const boxElement = structureElement.prepareBoxElement();
+      const position = this._getElementPositionObject(boxElement);
+
+      if (position.scrollTop > (position.top - 80)) {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      } else if (position.scrollBottom < (position.top + 130)) {
+        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
+      } else {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      }
+    };
+
     const showOptions = () => {
+      adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
         optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
         fabBtn.addClass('hippo-fab-btn-open');
@@ -366,19 +380,6 @@ class OverlayService {
     overlayElement.on('click', () => showOptions() || hideOptions());
     overlayElement.on('mouseenter', showOptionsIfLeft);
     overlayElement.on('mouseleave', hideOptionsAndLeave);
-
-    $(this.iframeWindow).on('scroll resize', () => {
-      const boxElement = structureElement.prepareBoxElement();
-      const position = this._getElementPositionObject(boxElement);
-
-      if (position.scrollTop > (position.top - 80)) {
-        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
-      } else if (position.scrollBottom < (position.top + 130)) {
-        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
-      } else {
-        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
-      }
-    });
   }
 
   _initManageContentLinkOptions(config) {

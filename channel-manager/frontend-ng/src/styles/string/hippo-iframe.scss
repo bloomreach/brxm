@@ -314,6 +314,7 @@
     margin-bottom: 10px;
     position: absolute;
     width: 100%;
+    z-index: $z-index-overlay-dial-options;
   }
   &.hippo-bottom .hippo-fab-dial-options {
     bottom: initial;
