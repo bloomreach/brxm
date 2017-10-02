@@ -23,10 +23,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 public class PageComposerUtil {
 
@@ -36,11 +42,11 @@ public class PageComposerUtil {
      * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
      * empty default value are also represented in the returned map.
      *
-     * @param node the current container item node
+     * @param componentItemNode the current container item componentItemNode
      * @return the Map of all {@link Parameter} names and their default value
      */
-    public static Map<String, String> getAnnotatedDefaultValues(Node node) {
-        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
+    public static Map<String, String> getAnnotatedDefaultValues(final Node componentItemNode) throws RepositoryException, IllegalArgumentException {
+        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
         if (parametersInfo != null) {
             Class<?> classType = parametersInfo.type();
             if (classType == null) {

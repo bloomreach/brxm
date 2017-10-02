@@ -222,22 +222,22 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     /**
      * Constructs a component node wrapper
      *
-     * @param node   JcrNode for a component.
+     * @param componentItemNode   JcrNode for a component.
      * @param locale the locale to get localized names, can be null
      * @param prefix the parameter prefix
      * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
-    private ContainerItemComponentRepresentation represent(final Node node,
+    private ContainerItemComponentRepresentation represent(final Node componentItemNode,
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
         final String contentPath = getContentPath();
-        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
+        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
         if (parametersInfo == null) {
             parametersInfo = defaultMissingParametersInfo;
         }
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
+        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, componentItemNode,
                 containerItemHelper, propertyPresentationFactories);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();

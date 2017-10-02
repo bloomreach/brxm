@@ -18,6 +18,7 @@ package org.hippoecm.hst.util;
 import java.lang.annotation.Annotation;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -25,6 +26,8 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 /**
  * Utility to find or create a <code>ParametersInfo</code> annotation by reading the annotation of a component
@@ -114,18 +117,30 @@ public class ParametersInfoAnnotationUtils {
     }
 
     /**
-     * Find the <code>ParametersInfo</code> annotation from the {@code componentConfigNode} directly.
-     * @param componentConfigNode component configuration node
+     * Find the <code>ParametersInfo</code> annotation from the {@code componentItemNode} directly.The {@code componentItemNode}
+     * must be of type {@code hst:containeritemcomponent} : Any other type will result in an {@link IllegalArgumentException}.
+     * The reason that only type {@code hst:containeritemcomponent} is allowed is because this type does not support
+     * complex inheritance and merging which nodes of type {@code hst:component} do support (in such a case the {@code hst:componentclassname}
+     * or {@code hst:parametersinfoclassname} could be inherited from a different {@link Node}.
+     * @param componentItemNode component configuration node
      * @return the type of <code>ParametersInfo</code>
+     * @throws IllegalArgumentException if {@code componentItemNode} is not of type  {@code hst:containeritemcomponent}
      */
-    public static ParametersInfo getParametersInfoAnnotation(Node componentConfigNode) {
-        if (componentConfigNode != null) {
+    public static ParametersInfo getParametersInfoAnnotation(final Node componentItemNode) throws RepositoryException {
+        if (componentItemNode != null) {
+            if (!componentItemNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                final String msg =  String.format("#getParametersInfoAnnotation for a jcr Node is only allowed for node " +
+                        "of type '%s' since these do not allow complex component inheritance and merging.", NODETYPE_HST_CONTAINERITEMCOMPONENT);
+                log.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
             Class<?> componentClazz = null;
             String componentClassName = null;
 
             try {
-                if (componentConfigNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
-                    componentClassName = componentConfigNode
+                if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
+                    componentClassName = componentItemNode
                             .getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
                     componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
                 }
@@ -137,8 +152,8 @@ public class ParametersInfoAnnotationUtils {
             String paramsInfoClassName = null;
 
             try {
-                if (componentConfigNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME)) {
-                    paramsInfoClassName = componentConfigNode
+                if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME)) {
+                    paramsInfoClassName = componentItemNode
                             .getProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME).getString();
                 }
             } catch (Exception e) {
