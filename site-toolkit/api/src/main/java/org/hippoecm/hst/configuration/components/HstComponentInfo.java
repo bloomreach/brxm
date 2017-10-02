@@ -57,7 +57,8 @@ public interface HstComponentInfo {
     String getComponentClassName();
 
     /**
-     * @return the fully-qualified class name of the interface representing <code>ParametersInfo</code> for a component.
+     * @return if configured, the fully-qualified class name of the interface representing <code>ParametersInfo</code>
+     * for a component, and otherwise {@code null}.
      */
     String getParametersInfoClassName();
 

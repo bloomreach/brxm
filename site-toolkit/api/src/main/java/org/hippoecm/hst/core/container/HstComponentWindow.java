@@ -66,8 +66,8 @@ public interface HstComponentWindow {
     String getComponentName();
 
     /**
-     * The type name of <code>ParametersInfo</code> for the component.
-     * @return the type name of <code>ParametersInfo</code> for the component
+     * @return if configured, the fully-qualified class name of the interface representing <code>ParametersInfo</code>
+     * for a component, and otherwise {@code null}.
      */
     String getParametersInfoClassName();
 
