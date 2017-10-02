@@ -27,12 +27,8 @@ import javax.jcr.Node;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PageComposerUtil {
-    private static Logger log = LoggerFactory.getLogger(PageComposerUtil.class);
-    public static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
     private PageComposerUtil() {}
 
