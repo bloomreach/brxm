@@ -45,10 +45,16 @@ public class DocumentWorkflowTransition {
     }
 
     public static class Builder {
+        public static final String INITIALIZATION_PAYLOAD_USED = DocumentWorkflowTransition.class.getName() + ".initializationPayloadUsed";
         private final Map<String, Object> eventPayload = new HashMap<>();
-        private Map<String, Object> initializationPayload = Collections.emptyMap();
+        private Map<String, Object> initializationPayload;
         private String action;
         private Map<String, Boolean> actionsMap = new HashMap<>();
+
+        public Builder() {
+            initializationPayload = new HashMap<>();
+            initializationPayload.put(INITIALIZATION_PAYLOAD_USED,false);
+        }
 
         public Builder actionsMap(Map<String, Boolean> actionsMap) {
             this.actionsMap = actionsMap;
@@ -73,7 +79,10 @@ public class DocumentWorkflowTransition {
 
 
         public Builder initializationPayload(Map<String, Object> initializationPayload) {
-            this.initializationPayload = initializationPayload;
+            if (initializationPayload!=null) {
+                this.initializationPayload = initializationPayload;
+                initializationPayload.put(INITIALIZATION_PAYLOAD_USED,true);
+            }
             return this;
         }
 
