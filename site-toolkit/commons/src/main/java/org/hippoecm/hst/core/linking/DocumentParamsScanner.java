@@ -154,7 +154,7 @@ public class DocumentParamsScanner {
         }
 
         ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClassName,
-                parametersInfoClassName);
+                parametersInfoClassName, classLoader);
 
         if (parametersInfo == null) {
             return Collections.emptySet();

@@ -76,8 +76,8 @@ public class ParametersInfoAnnotationUtils {
      * @param componentConfig HstComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(Object component,
-            HstComponentConfiguration componentConfig) {
+    public static ParametersInfo getParametersInfoAnnotation(final Object component,
+                                                             final HstComponentConfiguration componentConfig) {
         return getParametersInfoAnnotation(component.getClass(), componentConfig);
     }
 
@@ -88,7 +88,7 @@ public class ParametersInfoAnnotationUtils {
      * @param componentConfig ComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz,
+    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz,
             HstComponentConfiguration componentConfig) {
         return getParametersInfoAnnotation(componentClazz,
                 (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null);
@@ -99,7 +99,7 @@ public class ParametersInfoAnnotationUtils {
      * @param componentConfig ComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(HstComponentConfiguration componentConfig) {
+    public static ParametersInfo getParametersInfoAnnotation(final HstComponentConfiguration componentConfig) {
         if (componentConfig != null) {
             Class<?> componentClazz = null;
 
@@ -174,13 +174,25 @@ public class ParametersInfoAnnotationUtils {
      * @param parametersInfoClassName class name for <code>ParametersInfo</code> type
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(String componentClazzName,
-            String parametersInfoClassName) {
+    public static ParametersInfo getParametersInfoAnnotation(final String componentClazzName, final String parametersInfoClassName) {
+        return getParametersInfoAnnotation(componentClazzName, parametersInfoClassName, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Find the <code>ParametersInfo</code> annotation from the {@code componentClazz} or create one from {@code parametersInfoClassName}
+     * if specified.
+     * @param componentClazzName component class name
+     * @param parametersInfoClassName class name for <code>ParametersInfo</code> type
+     * @return the type of <code>ParametersInfo</code>
+     */
+    public static ParametersInfo getParametersInfoAnnotation(final String componentClazzName,
+                                                             final String parametersInfoClassName,
+                                                             final ClassLoader classLoader) {
         Class<?> componentClazz = null;
 
         if (componentClazzName != null && !componentClazzName.isEmpty()) {
             try {
-                componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClazzName);
+                componentClazz = classLoader.loadClass(componentClazzName);
             } catch (Exception e) {
                 log.warn("Component class not loadable: {}", componentClazzName);
             }
@@ -196,7 +208,7 @@ public class ParametersInfoAnnotationUtils {
      * @param parametersInfoClassName class name for <code>ParametersInfo</code> type
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz, String parametersInfoClassName) {
+    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz, final String parametersInfoClassName) {
         if (parametersInfoClassName != null && !parametersInfoClassName.isEmpty()) {
             try {
                 Class<?> paramsInfoType = Thread.currentThread().getContextClassLoader()
