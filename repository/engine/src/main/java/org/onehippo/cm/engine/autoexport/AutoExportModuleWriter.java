@@ -16,20 +16,17 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.serializer.ResourceOutputProvider;
 import org.onehippo.cm.model.source.ResourceInputProvider;
-import org.onehippo.cm.model.source.Source;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 
@@ -41,7 +38,7 @@ public class AutoExportModuleWriter extends ModuleWriter {
         this.inputProvider = inputProvider;
     }
 
-    public void writeModule(final Module module, final boolean explicitSequencing, final ModuleContext moduleContext) throws IOException {
+    public void writeModule(final ModuleImpl module, final boolean explicitSequencing, final ModuleContext moduleContext) throws IOException {
         log.debug("exporting module: {}", module.getFullName());
 
         // remove deleted resources before processing new resource names
@@ -82,7 +79,7 @@ public class AutoExportModuleWriter extends ModuleWriter {
         }
     }
 
-    protected boolean sourceShouldBeSkipped(final Source source) {
+    protected boolean sourceShouldBeSkipped(final SourceImpl source) {
         // this is a tripwire for testing error handling via AutoExportIntegrationTest.write_error_handling()
         // to run the test, uncomment the following 3 lines and remove the @Ignore annotation on that test
 //        if (source.getPath().equals("TestSourceThatShouldCauseAnExceptionOnlyInTesting.yaml")) {
@@ -95,15 +92,5 @@ public class AutoExportModuleWriter extends ModuleWriter {
 
         // short-circuit processing of unchanged sources
         return !source.hasChangedSinceLoad();
-    }
-
-    protected InputStream getValueInputProvider(final ValueImpl value) throws IOException {
-        final String internalResourcePath = value.getInternalResourcePath();
-        if (internalResourcePath != null) {
-            return inputProvider.getResourceInputStream(null, internalResourcePath);
-        }
-        else {
-            return super.getValueInputProvider(value);
-        }
     }
 }
