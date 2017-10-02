@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class DocumentWorkflowTransition {
 
+    private final String requestIdentifier;
     private Map<String, Object> eventPayload = new HashMap<>();
     private final Map<String, Object> initializationPayload;
     private final String action;
@@ -44,12 +45,17 @@ public class DocumentWorkflowTransition {
         return action;
     }
 
+    public String getRequestIdentifier(){
+        return requestIdentifier;
+    }
+
     public static class Builder {
         public static final String INITIALIZATION_PAYLOAD_USED = DocumentWorkflowTransition.class.getName() + ".initializationPayloadUsed";
         private final Map<String, Object> eventPayload = new HashMap<>();
         private Map<String, Object> initializationPayload;
         private String action;
         private Map<String, Boolean> actionsMap;
+        private String requestIdentifier;
 
         public Builder() {
             initializationPayload = new HashMap<>();
@@ -101,6 +107,10 @@ public class DocumentWorkflowTransition {
             return new DocumentWorkflowTransition(this);
         }
 
+        public Builder requestIdentifier(final String requestIdentifier) {
+            this.requestIdentifier = requestIdentifier;
+            return this;
+        }
     }
 
     private DocumentWorkflowTransition(Builder b) {
@@ -108,5 +118,6 @@ public class DocumentWorkflowTransition {
         this.actionsMap = b.actionsMap;
         this.initializationPayload = b.initializationPayload;
         this.eventPayload = b.eventPayload;
+        this.requestIdentifier = b.requestIdentifier;
     }
 }

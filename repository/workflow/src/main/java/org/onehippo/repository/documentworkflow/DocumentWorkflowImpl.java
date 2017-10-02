@@ -303,8 +303,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void cancelRequest(String requestIdentifier) throws WorkflowException {
         transition(getBuilder()
                 .action(CANCEL_REQUEST)
-                .actionsMap(getRequestActionActions(requestIdentifier, "cancelRequest"))
-                .eventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier))
+                .requestIdentifier(requestIdentifier)
                 .build());
     }
 
@@ -321,8 +320,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void acceptRequest(String requestIdentifier) throws WorkflowException {
         transition(getBuilder()
                 .action(ACCEPT_REQUEST)
-                .actionsMap(getRequestActionActions(requestIdentifier, "acceptRequest"))
-                .eventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier))
+                .requestIdentifier(requestIdentifier)
                 .build());
     }
 
@@ -335,8 +333,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void rejectRequest(String requestIdentifier, final String reason) throws WorkflowException {
         transition(getBuilder()
                 .action(REJECT_REQUEST)
-                .actionsMap(getRequestActionActions(requestIdentifier, "rejectRequest"))
-                .eventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier),"reason",reason)
+                .requestIdentifier(requestIdentifier)
+                .eventPayload("reason",reason)
                 .build());
     }
 
@@ -389,14 +387,26 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Object transition(DocumentWorkflowTransition transition) throws WorkflowException {
         workflowExecutor.start(transition.getInitializationPayload());
-        Object result;
-        if (transition.getActionsMap()==null){
-            result = workflowExecutor.triggerAction(transition.getAction(),transition.getEventPayload());
+        final Map<String, Object> eventPayload = transition.getEventPayload();
+        Map<String, Boolean> actionsMap = transition.getActionsMap();
+        final String requestIdentifier = transition.getRequestIdentifier();
+        final String action = transition.getAction();
+        if (requestIdentifier !=null){
+            addRequestToEventPayload(eventPayload, requestIdentifier);
+            if (actionsMap==null){
+                actionsMap = new HashMap<>();
+            }
+            actionsMap.putAll(getRequestActionActions(requestIdentifier, action));
         }
-        else{
-            result = workflowExecutor.triggerAction(transition.getAction(), transition.getActionsMap(),transition.getEventPayload());
-        }
-        return result;
+        return triggerAction(eventPayload, actionsMap, action);
+    }
+
+    public void addRequestToEventPayload(final Map<String, Object> eventPayload, final String requestIdentifier) {
+        eventPayload.put(REQUEST,workflowExecutor.getData().getRequests().get(requestIdentifier));
+    }
+
+    public Object triggerAction(final Map<String, Object> eventPayload, final Map<String, Boolean> actionsMap, final String action) throws WorkflowException {
+        return actionsMap==null?workflowExecutor.triggerAction(action, eventPayload):workflowExecutor.triggerAction(action, actionsMap, eventPayload);
     }
 
     private  Object transition(DocumentWorkflowAction documentWorkflowAction) throws WorkflowException {
