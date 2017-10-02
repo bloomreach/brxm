@@ -109,7 +109,7 @@ public class ChannelEditor extends ExtPanel {
     private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
-    private final DocumentPickerManager linkPickerManager;
+    private final LinkPickerManager linkPickerManager;
     private final ImageVariantPickerManager imageVariantPickerManager;
     private final ImagePickerManager imagePickerManager;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
@@ -142,7 +142,7 @@ public class ChannelEditor extends ExtPanel {
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
         addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
 
-        linkPickerManager = new DocumentPickerManager(context, getMarkupId());
+        linkPickerManager = new LinkPickerManager(context, getMarkupId());
         add(linkPickerManager.getBehavior());
 
         imageVariantPickerManager = new ImageVariantPickerManager(context, getMarkupId());

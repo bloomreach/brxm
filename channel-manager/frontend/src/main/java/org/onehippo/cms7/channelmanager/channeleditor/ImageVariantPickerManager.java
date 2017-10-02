@@ -37,7 +37,7 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFact
  * When done the method 'ChannelEditor#onImageVariantPicked' is called.
  * Cancelling the dialog calls 'ChannelEditor#onImageVariantPickCancelled'.
  */
-public class ImageVariantPickerManager extends LinkPickerManager<RichTextEditorImageLink> {
+public class ImageVariantPickerManager extends RichTextPickerManager<RichTextEditorImageLink> {
 
     public ImageVariantPickerManager(final IPluginContext context, final String channelEditorId) {
         super(context, CKEditorNodePlugin.DEFAULT_IMAGE_PICKER_CONFIG, channelEditorId);
