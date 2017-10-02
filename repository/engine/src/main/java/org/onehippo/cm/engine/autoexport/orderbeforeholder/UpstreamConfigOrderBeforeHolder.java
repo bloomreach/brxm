@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableList;
 
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
-import org.onehippo.cm.model.path.JcrPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,29 +35,7 @@ public class UpstreamConfigOrderBeforeHolder extends ConfigOrderBeforeHolder {
 
     @Override
     public void apply(final ImmutableList<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
-        final DefinitionNodeImpl definitionNode = getDefinitionNode();
-
-        intermediate.remove(definitionNode.getJcrName());
-
-        if (definitionNode.getOrderBefore() == null) {
-            intermediate.add(definitionNode.getJcrName());
-            return;
-        }
-
-        if ("".equals(definitionNode.getOrderBefore())) {
-            intermediate.add(0, definitionNode.getJcrName());
-            return;
-        }
-
-        final int position = intermediate.indexOf(JcrPaths.getSegment(definitionNode.getOrderBefore()));
-        if (position == -1) {
-            // todo: add logic for delayed ordering mechanism
-            log.error("Cannot find order-before target '{}' for node '{}' from '{}', ordering node as last",
-                    definitionNode.getOrderBefore(), definitionNode.getPath(), definitionNode.getSourceLocation());
-            intermediate.add(definitionNode.getJcrName());
-        } else {
-            intermediate.add(position, definitionNode.getJcrName());
-        }
+        OrderBeforeUtils.insert(getDefinitionNode(), intermediate);
     }
 
     @Override

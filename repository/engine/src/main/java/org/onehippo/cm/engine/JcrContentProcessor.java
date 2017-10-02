@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -54,6 +55,7 @@ import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
 import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.model.definition.ActionType.APPEND;
 import static org.onehippo.cm.model.definition.ActionType.DELETE;
 
@@ -186,25 +188,39 @@ public class JcrContentProcessor {
         }
 
         final Node jcrNode = addNode(parentNode, definitionNode);
-        if (definitionNode.getOrderBefore() != null) {
-            if (parentNode.hasNode(definitionNode.getOrderBefore())) {
-                if (parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
-                    parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(definitionNode.getOrderBefore()));
-                } else {
-                    final String msg = String.format(
-                            "Ignoring order-before meta property for node '%s' defined in %s: parent node does not allow child node ordering.",
-                            definitionNode.getPath(), definitionNode.getOrigin());
-                    log.warn(msg);
-                }
-            } else {
-                final String msg = String.format(
-                        "Failed to process order before property of node '%s' defined in %s: '%s': does not exist.",
-                        definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore());
-                throw new ConfigurationRuntimeException(msg);
-            }
-        }
+
+        applyOrderBefore(definitionNode, jcrNode, parentNode);
         applyProperties(definitionNode, jcrNode, unprocessedReferences);
         applyChildNodes(definitionNode, jcrNode, actionType, unprocessedReferences);
+    }
+
+    private void applyOrderBefore(final DefinitionNode definitionNode, final Node jcrNode, final Node parentNode) throws RepositoryException {
+        if (definitionNode.getOrderBefore() == null) {
+            return;
+        }
+
+        if (!parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
+            final String msg = String.format(
+                    "Ignoring order-before meta property for node '%s' defined in %s: parent node does not allow child node ordering.",
+                    definitionNode.getPath(), definitionNode.getOrigin());
+            log.warn(msg);
+            return;
+        }
+
+        if (definitionNode.getOrderBefore().equals(META_ORDER_BEFORE_FIRST)) {
+            final NodeIterator nodeIterator = parentNode.getNodes();
+            if (nodeIterator.hasNext()) {
+                final Node firstNode = nodeIterator.nextNode();
+                parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(firstNode));
+            } // if there is no first node, no need to reorder
+        } else if (parentNode.hasNode(definitionNode.getOrderBefore())) {
+            parentNode.orderBefore(SnsUtils.createIndexedName(jcrNode), SnsUtils.createIndexedName(definitionNode.getOrderBefore()));
+        } else {
+            final String msg = String.format(
+                    "Failed to process order before property of node '%s' defined in %s: '%s': does not exist.",
+                    definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore());
+            throw new ConfigurationRuntimeException(msg);
+        }
     }
 
     private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType,

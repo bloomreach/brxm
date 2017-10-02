@@ -15,15 +15,14 @@
  */
 package org.onehippo.cm.engine;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
+
+import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,14 +34,11 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import com.google.common.collect.ImmutableList;
 
 import junit.framework.AssertionFailedError;
 import static org.easymock.EasyMock.anyObject;
@@ -148,7 +144,7 @@ public class ConfigurationContentServiceTest {
         pa2.getNode().setOrderBefore("a1");
         pa4.getNode().setOrderBefore("a3");
 
-        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        final List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
 
         assertAfter(sortedDefinitions, a3, a2);
         assertAfter(sortedDefinitions, a2, a1);
@@ -180,7 +176,7 @@ public class ConfigurationContentServiceTest {
         z.getNode().setOrderBefore("n");
         b.getNode().setOrderBefore("z");
 
-        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        final List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
 
         assertAfter(sortedDefinitions, a2, a1);
         assertAfter(sortedDefinitions, a1, a3);
@@ -203,7 +199,7 @@ public class ConfigurationContentServiceTest {
         ca3.getNode().setOrderBefore("ca2");
 
         try {
-            configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
             fail("Circular Dependency exception should have been raised");
         } catch(CircularDependencyException ignore) {
         }
@@ -219,7 +215,7 @@ public class ConfigurationContentServiceTest {
         ca12.getNode().setOrderBefore("ca3[1]");
         ca3.getNode().setOrderBefore("ca2[2]");
 
-        final List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        final List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
         assertAfter(sortedDefinitions, ca12, ca3);
         assertAfter(sortedDefinitions, ca3, ca2);
 
@@ -237,7 +233,7 @@ public class ConfigurationContentServiceTest {
         ca1.getNode().setOrderBefore("ca3");
 
         try {
-            configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
             fail();
         } catch (DuplicateNameException ignore) {}
     }
@@ -258,7 +254,7 @@ public class ConfigurationContentServiceTest {
         ca5.getNode().setOrderBefore("ca1");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationContentService.class).build()) {
-            List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+            List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Following node(s) are referenced multiple times in order before")));
 
@@ -280,8 +276,25 @@ public class ConfigurationContentServiceTest {
         final ContentDefinitionImpl ca2 = addContentDefinition(module, "s2", "/banner1");
         final ContentDefinitionImpl ca1 = addContentDefinition(module, "s1", "/banner");
 
-        List<ContentDefinitionImpl> sortedDefinitions = configurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
         assertEquals("[banner, banner1, banner2]", sortedNames(sortedDefinitions));
+    }
+
+    @Test
+    public void test_ordering_order_first() {
+        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final ContentDefinitionImpl c1 = addContentDefinition(module, "s1", "/c1");
+        final ContentDefinitionImpl c2 = addContentDefinition(module, "s2", "/c2");
+        final ContentDefinitionImpl c3 = addContentDefinition(module, "s3", "/c3");
+        final ContentDefinitionImpl c4 = addContentDefinition(module, "s4", "/c4");
+        final ContentDefinitionImpl c5 = addContentDefinition(module, "s5", "/c5");
+        c1.getNode().setOrderBefore("c3");
+        c3.getNode().setOrderBefore("");
+        c4.getNode().setOrderBefore("c2");
+        c5.getNode().setOrderBefore("");
+
+        List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
+        assertEquals("[c2, c4, c3, c1, c5]", sortedNames(sortedDefinitions));
     }
 
     private static String sortedNames(List<ContentDefinitionImpl> definitions) {

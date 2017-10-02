@@ -324,7 +324,7 @@ public abstract class ValueProcessor {
             case URI:
             case NAME:
             case PATH:
-                return new ValueImpl(jcrValue.getString());
+                return new ValueImpl(jcrValue.getString(),ValueType.fromJcrType(jcrType), false, false);
             case REFERENCE:
             case WEAKREFERENCE:
                 return getPathValue(property, jcrType, jcrValue, definitionNode);

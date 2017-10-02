@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
@@ -146,7 +146,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
     public List<Node> getContentSourceNodes() throws RepositoryException {
         // we expect baseNode to be HCM_CONTENT_FOLDER for this module
         // search for content nodes by type
-        return searchByType(NT_HCM_CONTENT, baseNode);
+        return searchByType(NT_HCM_CONTENT_SOURCE, baseNode);
     }
 
     /**

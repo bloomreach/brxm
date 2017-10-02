@@ -2,3 +2,9 @@ definitions:
   config:
     /AutoExportIntegrationTest:
       jcr:primaryType: nt:unstructured
+    /AutoExportIntegrationTest-reorder-within-upstream-content:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured
+    /AutoExportIntegrationTest-reorder-overlapping-breaks:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured

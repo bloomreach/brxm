@@ -34,6 +34,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
 
@@ -66,6 +67,7 @@ public class IsolatedRepository {
     private String originalRepoPath;
     private String originalProjectBaseDir;
     private String originalAutoexportAllowed;
+    private String originalRepoBootstrap;
 
     /**
      * Constructor that will start a repository in given folder with AutoExport disabled.
@@ -97,9 +99,11 @@ public class IsolatedRepository {
         originalRepoPath = System.getProperty("repo.path", "");
         originalProjectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY, "");
         originalAutoexportAllowed = System.getProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "");
+        originalRepoBootstrap = System.getProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "");
 
         System.setProperty("rep.home", repositoryPath);
         System.setProperty("repo.path", "");
+        System.setProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "true");
         if (autoExportEnabled) {
             System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "true");
@@ -120,6 +124,7 @@ public class IsolatedRepository {
         System.setProperty("repo.path", originalRepoPath);
         System.setProperty(PROJECT_BASEDIR_PROPERTY, originalProjectBaseDir);
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, originalAutoexportAllowed);
+        System.setProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, originalRepoBootstrap);
     }
 
     public ClassLoader getRepositoryClassLoader() {

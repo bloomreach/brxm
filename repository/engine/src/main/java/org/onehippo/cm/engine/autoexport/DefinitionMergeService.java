@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -45,16 +46,24 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.ContentOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.LocalConfigOrderBeforeHolder;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeHolder;
+import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeUtils;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.UpstreamConfigOrderBeforeHolder;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
@@ -64,8 +73,6 @@ import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
@@ -77,6 +84,8 @@ import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
@@ -87,10 +96,6 @@ import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
@@ -261,7 +266,9 @@ public class DefinitionMergeService {
         // merge content changes
         mergeContentDefinitions(contentAdded, contentChanged, contentDeleted);
 
+        // map maintaining for each content definition that must be re-exported the order before that must be exported
         final Map<JcrPath, String> contentOrderBefores = new HashMap<>();
+
         reorder(contentOrderBefores);
 
         exportChangedContentSources(contentOrderBefores);
@@ -324,17 +331,27 @@ public class DefinitionMergeService {
 
         /* The algorithm works essentially in these steps:
          *  1) determine the expected ordering from JCR
-         *  2) collect all upstream and local definitions that contribute to the ordering of these nodes
-         *     each definition is captured in a OrderBeforeHolder object, which, depending on the type, keeps some state
-         *  3) apply all definitions in the same order as if they would be applied to JCR and if the result is not what
+         *  2) build up an intermediate state by applying config and content definitions that contribute nodes that
+         *     have 'path' as parent
+         *  3) log warnings for any discrepancies between the final intermediate state and the expected ordering
+         *     (see #logWarningsForDiscrepencies for details)
+         *
+         *  To build up the intermediate state, perform these steps:
+         *  1) collect all upstream and local config definitions that contribute to the ordering of these nodes;
+         *     each definition is captured in a OrderBeforeHolder object, which, depending on the type, keeps state
+         *  2) apply all definitions in the same order as if they would be applied to JCR and if the result is not what
          *     is expected, add additional order before instructions:
          *      a) apply all upstream config definitions, build up the result in intermediate
          *      b) determine if there any names in intermediate that are incorrectly ordered, if so, remove those from
-         *        intermediate and add an additional _local_ config holders to adjust their order
+         *         intermediate and add an additional _local_ config holders to adjust their order
          *      c) apply all local config definitions, add those to intermediate and record order before if needed
-         *      d) apply upstream content definitions (TODO)
-         *      e) apply local content definitions, add those to intermediate and record order before if needed
-         *      f) 'finish' each holder to write its state and/or do cleanup
+         *      d) 'finish' each holder to write its state and/or do cleanup
+         *  3) apply upstream content definitions, add those to intermediate
+         *  4) apply local content definitions, add those to intermediate and record order before if needed
+         *
+         *  Note that lists of config and content holders are sorted using the same rules that are used by the
+         *  ConfigurationTreeBuilder. See ConfigOrderBeforeHolder#compareTo and ContentOrderBeforeHolder#compareTo
+         *  for details.
          */
 
         log.debug("Reordering node {}", path.toString());
@@ -343,7 +360,6 @@ public class DefinitionMergeService {
         final List<JcrPathSegment> intermediate = new LinkedList<>();
 
         final Holders configHolders = createConfigHolders(configurationNode, expected, sortedModules);
-        final Holders contentHolders = createContentHolders(path, expected, contentOrderBefores);
 
         configHolders.upstream.forEach((holder) -> holder.apply(expected, intermediate));
 
@@ -351,11 +367,12 @@ public class DefinitionMergeService {
                 intermediate, configHolders.local);
 
         configHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
-
-        contentHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
-
         configHolders.finish();
-        contentHolders.finish();
+
+        applyUpstreamContentDefinitions(path, intermediate);
+        applyLocalContentDefinitions(path, expected, intermediate, contentOrderBefores);
+
+        logWarningsForDiscrepencies(path, expected, intermediate);
     }
 
     /**
@@ -398,6 +415,9 @@ public class DefinitionMergeService {
         holders.sort(Comparator.naturalOrder());
     }
 
+    /**
+     * Returns the list of segments in 'intermediate' that are not in same order as seen in 'expected'
+     */
     static List<JcrPathSegment> getIncorrectlyOrdered(final ImmutableList<JcrPathSegment> expected,
                                                       final List<JcrPathSegment> intermediate) {
 
@@ -416,6 +436,10 @@ public class DefinitionMergeService {
         return incorrectlyOrdered;
     }
 
+    /**
+     * Return the list of segments in 'jcrNode' that can be sorted. Currently, nodes that are categorized as 'system'
+     * cannot be sorted, those are not returned.
+     */
     private ImmutableList<JcrPathSegment> getExpectedOrder(final Node jcrNode, final ConfigurationNodeImpl configurationNode)
             throws RepositoryException {
 
@@ -434,6 +458,122 @@ public class DefinitionMergeService {
         }
 
         return ImmutableList.copyOf(expectedOrder);
+    }
+
+    /**
+     * Find all upstream content definitions that have a root node that has 'path' as its parent and add them to
+     * intermediate using their order before info.
+     * @param path          the path to the node being sorted
+     * @param intermediate  (in & out) the intermediate order of the sub nodes of the given path
+     */
+    private void applyUpstreamContentDefinitions(final JcrPath path, final List<JcrPathSegment> intermediate) {
+        final Consumer<ContentDefinitionImpl> consumer = (cdi) -> OrderBeforeUtils.insert(cdi.getNode(), intermediate);
+
+        model.getModulesStream()
+                .filter(m -> !toExport.values().contains(m))
+                .forEach(m -> processContentDefinitions(m, path, intermediate, consumer));
+    }
+
+    /**
+     * Find all local content definitions that have a root node that has 'path' as its parent and add them to
+     * intermediate, use 'expected' to determine if the content definition must be re-exported with a different
+     * order before than is currently used. If the definition must be re-exported, updates 'contentOrderBefores' and
+     * marks the source as changed.
+     * @param path                the path to the node being sorted
+     * @param expected            the expected ordering
+     * @param intermediate        (in & out) the intermediate order of the sub nodes of the given path
+     * @param contentOrderBefores (in & out) map maintaining for each content definition that must be re-exported the
+     *                            order before that must be exported
+     */
+    private void applyLocalContentDefinitions(final JcrPath path,
+                                              final ImmutableList<JcrPathSegment> expected,
+                                              final List<JcrPathSegment> intermediate,
+                                              final Map<JcrPath, String> contentOrderBefores) {
+
+        for (final ModuleImpl module : toExport.values()) {
+            // Create the holders for local content definitions
+            final List<ContentOrderBeforeHolder> holders = new ArrayList<>();
+            final Consumer<ContentDefinitionImpl> consumer =
+                    (cdi) -> holders.add(new ContentOrderBeforeHolder(cdi, contentOrderBefores));
+            processContentDefinitions(module, path, intermediate, consumer);
+
+            // Sort the list on just the lexical ordering of the path (#processContentDefinitions visits items based on
+            // their original processing order which takes their order before into account)
+            holders.sort(Comparator.naturalOrder());
+
+            // Apply each holder and save its state
+            for (final ContentOrderBeforeHolder holder : holders) {
+                holder.apply(expected, intermediate);
+                holder.finish();
+            }
+        }
+    }
+
+    /**
+     * Helper method to process the content definitions that have a root node that have 'path' as its parent. Paths
+     * that are deleted using content actions are removed from 'intermediate', for each content definition that must
+     * be added, 'consumer' is called.
+     */
+    private void processContentDefinitions(final ModuleImpl module,
+                                           final JcrPath path,
+                                           final List<JcrPathSegment> intermediate,
+                                           final Consumer<ContentDefinitionImpl> consumer) {
+
+        // Analogous to the logic in ConfigurationContentService.apply(ModuleImpl, ConfigurationModel, Session, boolean)
+        // See also REPO-1833
+
+        final List<ActionItem> actionItems =
+                ConfigurationContentService.collectNewActions(Double.MIN_VALUE, module.getActionsMap());
+
+        for (final ActionItem actionItem : actionItems) {
+            final JcrPath actionItemJcrPath = JcrPaths.getPath(actionItem.getPath());
+            if (actionItem.getType() == ActionType.DELETE && isRelevantContentDefinition(actionItemJcrPath, path)) {
+                intermediate.remove(actionItemJcrPath.getLastSegment());
+            }
+        }
+
+        final List<ContentDefinitionImpl> sortedDefinitions =
+                ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
+
+        for (final ContentDefinitionImpl contentDefinition : sortedDefinitions) {
+            if (isRelevantContentDefinition(contentDefinition.getNode().getJcrPath(), path)) {
+                // Precise action type does not really matter at this point, reload and append are treated the same
+                // Relies on the assumption that deleted paths are no longer present as definitions
+                // See also REPO-1833
+                consumer.accept(contentDefinition);
+            }
+        }
+    }
+
+    private boolean isRelevantContentDefinition(final JcrPath definitionPath, final JcrPath parentPath) {
+        return definitionPath.startsWith(parentPath)
+                && definitionPath.getSegmentCount() == parentPath.getSegmentCount() + 1;
+    }
+
+    private void logWarningsForDiscrepencies(final JcrPath path, final ImmutableList<JcrPathSegment> expected, final List<JcrPathSegment> intermediate) {
+        // There can be names in 'expected' that are not contributed by a definition that a root with 'path' as parent.
+        // #getExpectedOrder filters out any 'system' node names, but there may also be names in 'expected' that are
+        // contributed by content definitions with a root that is higher up in the content tree.
+
+        final List<JcrPathSegment> notContributedByParent = new ArrayList<>(expected);
+        notContributedByParent.removeAll(intermediate);
+        for (final JcrPathSegment name : notContributedByParent) {
+            log.warn("While reordering '{}': cannot guarantee correct ordering of node '{}' contributed by a higher content definition",
+                    path.toString(), name.toString());
+        }
+
+        // If during local development, a dev temporarily disables AutoExport, then re-orders in JCR nodes at 'path'
+        // that are root of an upstream content definition, then removes the 'autoexport:lastrevision' property,
+        // then re-enable AutoExport again, and then cause a change at 'path', then it is possible for 'intermediate'
+        // to not be in the exact order as 'expected'.
+        //
+        // Or -- there is a bug in the reordering mechanism :-/
+
+        final List<JcrPathSegment> incorrectlyOrdered = getIncorrectlyOrdered(expected, intermediate);
+        if (incorrectlyOrdered.size() > 0) {
+            log.warn("While reordering '{}': intermediate ({}) and expected ({}) are ordered differently, most likely caused by manually updating 'autoexport:lastrevision'",
+                    path.toString(), intermediate.toString(), expected.toString());
+        }
     }
 
     private static class Holders {
@@ -458,6 +598,8 @@ public class DefinitionMergeService {
         // Maintain a set of local nodes definitions who's children must be sorted according to the expected ordering
         final Set<DefinitionNodeImpl> reorderChildDefinitions = new HashSet<>();
 
+        // Iterate over all expected child names, check if the child name is config, and if so, create holders for
+        // upstream and local definitions that contributed to the configuration node
         for (final JcrPathSegment childName : expected) {
             final ConfigurationNodeImpl childNode = configurationNode.getNode(childName);
             if (childNode == null) {
@@ -511,6 +653,10 @@ public class DefinitionMergeService {
         return holders;
     }
 
+    /**
+     * Re-orders the child definitions for each of the given parent nodes in the expected order and flags their source
+     * as changed.
+     */
     private void reorderChildDefinitions(final Set<DefinitionNodeImpl> parents,
                                          final ImmutableList<JcrPathSegment> expected) {
         for (final DefinitionNodeImpl parent : parents) {
@@ -519,34 +665,6 @@ public class DefinitionMergeService {
             parent.reorder(expected);
             parent.getDefinition().getSource().markChanged();
         }
-    }
-
-    private Holders createContentHolders(final JcrPath path,
-                                         final ImmutableList<JcrPathSegment> expected,
-                                         final Map<JcrPath, String> contentOrderBefores) {
-
-        final Holders holders = new Holders();
-        final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
-                collectContentSourcesByNodePath();
-
-        for (final JcrPathSegment childName : expected) {
-            final JcrPath childPath = path.resolve(childName);
-            final ContentDefinitionImpl contentDefinition = existingSourcesByNodePath.get(childPath);
-            if (contentDefinition != null) {
-                final ContentOrderBeforeHolder holder =
-                        new ContentOrderBeforeHolder(contentDefinition, contentOrderBefores);
-                if (isLocalDef().test(contentDefinition.getNode())) {
-                    holders.local.add(holder);
-                } else {
-                    holders.upstream.add(holder);
-                }
-            }
-        }
-
-        holders.local.sort(Comparator.naturalOrder());
-        holders.upstream.sort(Comparator.naturalOrder());
-
-        return holders;
     }
 
     private void exportChangedContentSources(final Map<JcrPath, String> contentOrderBefores) {
@@ -1792,6 +1910,8 @@ public class DefinitionMergeService {
      */
     protected SortedMap<JcrPath, ContentDefinitionImpl> collectContentSourcesByNodePath() {
         final Function<ContentDefinitionImpl, JcrPath> cdPath = cd -> cd.getNode().getJcrPath();
+        // TODO: this will silently ignore a situation where multiple sources define the same content path!
+        // if there are multiple modules with the same content path, use the first one we encounter
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
         final Supplier<TreeMap<JcrPath, ContentDefinitionImpl>> reverseTreeMapper =
                 () -> new TreeMap<>(Comparator.reverseOrder());

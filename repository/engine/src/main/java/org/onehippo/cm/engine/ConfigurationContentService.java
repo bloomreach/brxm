@@ -125,6 +125,10 @@ public class ConfigurationContentService {
      */
     private boolean apply(final ModuleImpl module, final ConfigurationModel model,
                           final Session session, final boolean isUpgradeTo12) throws RepositoryException {
+
+        // TODO: below processing contains a small bug, see REPO-1833
+        // TODO: a path with an append and a later delete action always is applied
+
         final double moduleSequenceNumber = module.getSequenceNumber() != null ? module.getSequenceNumber() : Double.MIN_VALUE;
         final List<ActionItem> actionsToProcess = collectNewActions(moduleSequenceNumber, module.getActionsMap());
         processItemsToDelete(actionsToProcess, model, session, isUpgradeTo12);
@@ -190,7 +194,8 @@ public class ConfigurationContentService {
      * @param actionsMap     Action items per version map
      * @return New action items
      */
-    private List<ActionItem> collectNewActions(final double currentVersion, final Map<Double, Set<ActionItem>> actionsMap) {
+    public static List<ActionItem> collectNewActions(final double currentVersion,
+                                                     final Map<Double, Set<ActionItem>> actionsMap) {
         return actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
                 .flatMap(e -> e.getValue().stream()).collect(toList());
     }
@@ -200,10 +205,12 @@ public class ConfigurationContentService {
      * Item A that has order before on item B in this list then item B should be applied before item A, i.e.
      * in reverse order
      */
-    List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions) {
+    public static List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions) {
+
+        final Function<ContentDefinitionImpl, JcrPath> getParentPath = (cdi) -> cdi.getNode().getJcrPath().getParent();
 
         final Map<JcrPath, List<ContentDefinitionSorter.Item>> itemsPerPath = contentDefinitions.stream()
-                .collect(Collectors.groupingBy(getParentPath(), TreeMap::new,
+                .collect(Collectors.groupingBy(getParentPath, TreeMap::new,
                         mapping(ContentDefinitionSorter.Item::new, toList())));
 
         for (JcrPath path : itemsPerPath.keySet()) {
@@ -217,7 +224,7 @@ public class ConfigurationContentService {
                 .map(ContentDefinitionSorter.Item::getDefinition).collect(Collectors.toList());
     }
 
-    private void warnForDuplicateOrderBefores(final List<ContentDefinitionSorter.Item> siblings) {
+    private static void warnForDuplicateOrderBefores(final List<ContentDefinitionSorter.Item> siblings) {
         final List<String> orderBeforeList = siblings.stream()
                 .map(s -> s.getDefinition().getNode().getOrderBefore()).filter(Objects::nonNull).collect(toList());
         final String orderBeforeDuplicates = siblings.stream()
@@ -227,10 +234,6 @@ public class ConfigurationContentService {
         if (StringUtils.isNotEmpty(orderBeforeDuplicates)) {
             log.warn("Following node(s) are referenced multiple times in order before: {}", orderBeforeDuplicates);
         }
-    }
-
-    private Function<ContentDefinitionImpl, JcrPath> getParentPath() {
-        return definition -> definition.getNode().getJcrPath().getParent();
     }
 
     /**

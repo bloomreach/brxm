@@ -16,9 +16,8 @@
 
 package org.onehippo.cm.engine.autoexport.orderbeforeholder;
 
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
 
 public abstract class ConfigOrderBeforeHolder extends OrderBeforeHolder {
@@ -42,6 +41,13 @@ public abstract class ConfigOrderBeforeHolder extends OrderBeforeHolder {
             return 0;
         }
         if (object instanceof ConfigOrderBeforeHolder) {
+            // Definitions are merged into the configuration model by first sorting all modules, then all definitions
+            // within a module on their root path, and then by applying the nodes in a definition in the order they
+            // appear in the source file. ConfigOrderBeforeHolders must be sorted identically, so:
+            // - first, compare the module order
+            // - second, compare the root path of the definition
+            // - third, compare the position within the parent
+
             final ConfigOrderBeforeHolder other = (ConfigOrderBeforeHolder) object;
 
             int result = Integer.compare(this.getModuleIndex(), other.getModuleIndex());
@@ -56,7 +62,7 @@ public abstract class ConfigOrderBeforeHolder extends OrderBeforeHolder {
 
             return Integer.compare(this.getSiblingIndex(), other.getSiblingIndex());
         }
-        return -1;
+        return -1; // Assuming 'object' is content, which means this config object must be sorted earlier
     }
 
     private int getModuleIndex() {

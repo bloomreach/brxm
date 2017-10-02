@@ -26,6 +26,7 @@
 // Stores the root definition path for a content source file
 [hcm:contentsource]
   - hcm:contentpath (string) primary mandatory
+  - hcm:contentorderbefore (string)
 
 // Used for storing content in a hierarchy
 [hcm:contentfolder]
