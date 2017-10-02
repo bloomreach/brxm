@@ -17,7 +17,6 @@
 import EmbeddedLink from './embeddedLink';
 
 class ManageContentLink extends EmbeddedLink {
-
   constructor(commentElement, metaData) {
     super('manage-content-link', commentElement, metaData);
   }

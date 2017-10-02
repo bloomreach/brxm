@@ -326,7 +326,7 @@ class OverlayService {
   _initManageContentLink(structureElement, overlayElement, icon, closeIcon) {
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
-      .addClass('is-left')  // mouse never entered yet
+      .addClass('is-left') // mouse never entered yet
       .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${icon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
