@@ -101,8 +101,8 @@
     <dependency.solr.version>4.9.0</dependency.solr.version>
     <h2.version>1.3.175</h2.version>
 
-    <swagger-core.version>1.5.10</swagger-core.version>
-    <swagger-jaxrs.version>1.5.10</swagger-jaxrs.version>
+    <swagger-core.version>1.5.15</swagger-core.version>
+    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
   </properties>
 
