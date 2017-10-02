@@ -454,8 +454,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         final ModuleContext moduleContext = new ExportModuleContext(module);
         final ContentSourceSerializer contentSourceSerializer = new ContentSourceSerializer(moduleContext, module.getContentSources().iterator().next(), false);
 
-        final org.yaml.snakeyaml.nodes.Node node = contentSourceSerializer.representSource(postProcessItem -> {
-        });
+        final org.yaml.snakeyaml.nodes.Node node = contentSourceSerializer.representSource();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         contentSourceSerializer.serializeNode(out, node);
         return new String(out.toByteArray());

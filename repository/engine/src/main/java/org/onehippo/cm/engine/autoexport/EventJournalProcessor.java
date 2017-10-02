@@ -548,7 +548,7 @@ public class EventJournalProcessor {
         if (log.isInfoEnabled()) {
             final SourceSerializer sourceSerializer = new SourceSerializer(null, configSource, false);
             final StringWriter writer = new StringWriter();
-            sourceSerializer.serializeNode(writer, sourceSerializer.representSource(new ArrayList<>()::add));
+            sourceSerializer.serializeNode(writer, sourceSerializer.representSource());
             log.info("Computed diff: \n{}", writer.toString());
             log.info("added content: \n\t{}", String.join("\n\t", addedContent));
             log.info("changed content: \n\t{}", String.join("\n\t", pendingChanges.getChangedContent()));
@@ -599,11 +599,12 @@ public class EventJournalProcessor {
             final Path projectPath = Paths.get(projectDir);
 
             // write each module to the file system
-            final AutoExportModuleWriter writer = new AutoExportModuleWriter(new JcrResourceInputProvider(eventProcessorSession));
+            final JcrResourceInputProvider valueInputProvider = new JcrResourceInputProvider(eventProcessorSession);
+            final AutoExportModuleWriter writer = new AutoExportModuleWriter(valueInputProvider);
             for (ModuleImpl module : mergedModules) {
                 final Path moduleDescriptorPath = projectPath.resolve(nativePath(
                         module.getMvnPath() + org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR));
-                final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath);
+                final ModuleContext ctx = new AutoExportModuleContext(module, moduleDescriptorPath, valueInputProvider);
                 ctx.createOutputProviders(moduleDescriptorPath);
 
                 // set a critical segment flag -- if we pass this point but don't reach the full successful completion,
