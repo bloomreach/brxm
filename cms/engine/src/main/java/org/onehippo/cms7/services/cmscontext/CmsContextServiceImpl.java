@@ -76,17 +76,17 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         }
 
         @Override
-        public Object setAttribute(String key, Object value) {
+        public synchronized Object setAttribute(String key, Object value) {
             return attributeMap.put(key, value);
         }
 
         @Override
-        public Object getAttribute(String key) {
+        public synchronized Object getAttribute(String key) {
             return attributeMap.get(key);
         }
 
         @Override
-        public Object removeAttribute(final String key) {
+        public synchronized Object removeAttribute(final String key) {
             return attributeMap.remove(key);
         }
 
