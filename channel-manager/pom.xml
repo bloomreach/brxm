@@ -260,6 +260,9 @@
                 <!-- 3rd-party licenses -->
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/*</exclude>
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/*</exclude>
+                <exclude>frontend-ng/src/images/html/clear.svg</exclude>
+                <exclude>frontend-ng/src/images/html/plus.svg</exclude>
+                <exclude>frontend-ng/src/images/html/search.svg</exclude>
 
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>

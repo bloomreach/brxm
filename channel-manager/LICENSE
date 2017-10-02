@@ -341,3 +341,11 @@ frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugi
 
     Licensed under the MIT License, without specific license text provided.
     For general information about the MIT License: http://opensource.org/licenses/mit-license.php
+
+------------------------------------------------------------------------------------------------------------------------
+frontend-ng/src/images/html/clear.svg
+frontend-ng/src/images/html/plus.svg
+frontend-ng/src/images/html/search.svg
+
+    Licensed under the Apache 2.0 License, without specific license text provided.
+    For more information: https://github.com/google/material-design-icons/blob/master/LICENSE
