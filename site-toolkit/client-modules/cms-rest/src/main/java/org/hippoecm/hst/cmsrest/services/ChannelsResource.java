@@ -21,12 +21,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.rest.ChannelService;
+import org.hippoecm.hst.rest.beans.ChannelDataset;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
     @Override
-    public List<Channel> getChannels() {
+    public ChannelDataset getChannels() {
+        final ChannelDataset dataset = new ChannelDataset();
         final List<Channel> channels = new ArrayList<>();
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
@@ -69,7 +71,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             }
         }
 
-        return channels;
+        dataset.setChannels(channels);
+        return dataset;
     }
 
     @Override

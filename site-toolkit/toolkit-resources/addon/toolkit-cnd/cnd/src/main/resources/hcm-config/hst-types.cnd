@@ -42,7 +42,7 @@
 - hst:script (string)
 - * (string)
 
-[hst:templates] > nt:base, mix:referenceable orderable
+[hst:templates] > nt:base, mix:referenceable
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)
@@ -126,7 +126,7 @@
 + * (hst:abstractcomponent)
 
 
-[hst:pages] > nt:base, mix:referenceable orderable
+[hst:pages] > nt:base, mix:referenceable
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)
@@ -183,7 +183,7 @@
 - hst:hiddeninchannelmanager (boolean)
 + * (hst:sitemapitem)
 
-[hst:sitemap] > nt:base, mix:referenceable orderable
+[hst:sitemap] > nt:base, mix:referenceable
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)
@@ -247,7 +247,7 @@
 [hst:channels] > nt:base, mix:referenceable, mix:versionable
 + * (hst:channel)
 
-[hst:workspace] > nt:base orderable
+[hst:workspace] > nt:base
 + hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 + hst:abstractpages (hst:pages) = hst:pages

@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.rest.beans.BlueprintDataset;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Blueprint} resources
@@ -40,7 +41,7 @@ public interface BlueprintService {
      */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-    List<Blueprint> getBlueprints();
+    BlueprintDataset getBlueprints();
 
     /**
      * Retrieve a blue print identified by an Id

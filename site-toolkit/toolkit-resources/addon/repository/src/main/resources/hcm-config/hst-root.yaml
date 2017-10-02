@@ -10,6 +10,7 @@ definitions:
           /hst:pages:
             jcr:primaryType: hst:pages
           /hst:components:
+            .meta:ignore-reordered-children: true
             jcr:primaryType: hst:components
           /hst:templates:
             jcr:primaryType: hst:templates
@@ -21,3 +22,10 @@ definitions:
             jcr:primaryType: hst:catalog
       /hst:blueprints:
         jcr:primaryType: hst:blueprints
+      /hst:hosts:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:virtualhosts
+        hst:defaultcontextpath: /site
+      /hst:sites:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:sites

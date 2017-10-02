@@ -1,7 +1,6 @@
 definitions:
   config:
     /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
       /unittestproject:
         jcr:primaryType: hst:site
         hst:content: /unittestcontent/documents/unittestproject

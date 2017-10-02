@@ -31,8 +31,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.rest.beans.ChannelDataset;
+import org.onehippo.cms7.services.hst.Channel;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Channel} resources
@@ -49,7 +50,7 @@ public interface ChannelService {
      */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Channel> getChannels();
+	public ChannelDataset getChannels();
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -196,14 +197,14 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
 
     @Test
-    public void publication_of_mode_than_1_new_page_does_not_result_in_reordering_warnings() throws Exception {
+    public void publication_of_more_than_1_new_component_does_not_result_in_reordering_warnings() throws Exception {
         movePagesFromCommonToUnitTestProject();
 
         final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
         unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
-        // only sitemap in workspace is copied over to preview
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
-                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pages",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
 
         session.save();
 
@@ -219,29 +220,28 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         // add manually two new pages to the preview
         Node previewConfigurationNode = session.getNode(previewConfigurationPath);
-        Node aboutUsSiteMapItemNode = previewConfigurationNode.getNode("hst:workspace/hst:sitemap/about-us");
+        Node standardComponentBody = previewConfigurationNode.getNode("hst:workspace/hst:pages/standardoverview/body");
 
-        Node about2 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-2", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
-        Node about3 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-3", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
+        Node body2 = JcrUtils.copy(standardComponentBody, "body-2", previewConfigurationNode.getNode("hst:workspace/hst:pages/standardoverview"));
+        Node body3 = JcrUtils.copy(standardComponentBody, "body-3", previewConfigurationNode.getNode("hst:workspace/hst:pages/standardoverview"));
 
-        about2.addMixin(MIXINTYPE_HST_EDITABLE);
-        about2.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+        body2.addMixin(MIXINTYPE_HST_EDITABLE);
+        body2.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
 
-        about3.addMixin(MIXINTYPE_HST_EDITABLE);
-        about3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+        body3.addMixin(MIXINTYPE_HST_EDITABLE);
+        body3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
 
         session.save();
 
         mockNewRequest(session, "localhost", "/home");
 
-        try ( Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(AbstractHelper.class).build()) {
+        try ( Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(AbstractHelper.class).build()) {
             mountResource.publish();
-            assertTrue(listener.messages().anyMatch(m -> m.contains("Successfully ordered 'about-us-2' before 'about-us-3'")));
-            assertFalse(listener.messages().anyMatch(m -> m.contains(SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR)));
+            assertTrue(listener.messages().count() == 0);
         };
 
-        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-2"));
-        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-3"));
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:pages/standardoverview/body-2"));
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:pages/standardoverview/body-3"));
     }
 
     @Test
