@@ -131,22 +131,16 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     private String convertToSpecificType(final String input) throws ValueFormatException {
-        if (input != null) {
+        if(input != null) {
             return fieldSpecificConversion(input);
         }
         throw new ValueFormatException("Trying to convert null value");
     }
 
-    private String[] convertToSpecificTypeArray(final String[] strings) {
+    private String[] convertToSpecificTypeArray(final String[] strings) throws ValueFormatException {
         final List<String> convertedStrings = new ArrayList<>();
         for (final String element : strings) {
-            String specificType;
-            try {
-                specificType = convertToSpecificType(element);
-            } catch (final ValueFormatException ignore) {
-                specificType = null;
-            }
-            convertedStrings.add(specificType);
+            convertedStrings.add(convertToSpecificType(element));
         }
         return convertedStrings.toArray(new String[0]);
     }
