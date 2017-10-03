@@ -153,6 +153,7 @@ class RightSidePanelCtrl {
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
+    delete this.createContent;
 
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
@@ -185,7 +186,7 @@ class RightSidePanelCtrl {
   }
 
   _createContent() {
-    this.createContentMode = true;
+    this.createContent = true;
     this.title = 'Create new content';
     this._onLoadSuccess({}, { allFieldsIncluded: true });
   }
