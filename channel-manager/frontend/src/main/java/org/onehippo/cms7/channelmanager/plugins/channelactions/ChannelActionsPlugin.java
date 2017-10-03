@@ -156,7 +156,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             restProxyJobs.add(new Callable<List<ChannelDocument>>() {
                 @Override
                 public List<ChannelDocument> call() throws Exception {
-                    return documentService.getChannels(documentUuid);
+                    return documentService.getChannels(documentUuid).getChannelDocuments();
                 }
             });
         }

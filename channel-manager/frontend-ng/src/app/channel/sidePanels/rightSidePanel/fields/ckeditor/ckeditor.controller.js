@@ -40,9 +40,9 @@ class CKEditorController {
         bottom: 'ckeditor-shared-space-bottom',
       };
 
-      editorConfig.extraPlugins = 'sharedspace,sourcedialog,autogrow';
-      editorConfig.removePlugins += 'sourcearea,resize,maximize';
-      editorConfig.removeButtons = 'Source';
+      editorConfig.extraPlugins = this._appendNames(editorConfig.extraPlugins, 'sharedspace,sourcedialog,autogrow');
+      editorConfig.removePlugins = this._appendNames(editorConfig.removePlugins, 'sourcearea,resize,maximize');
+      editorConfig.removeButtons = this._appendNames(editorConfig.removeButtons, 'Source');
 
       editorConfig.language = this.ConfigService.locale;
 
@@ -79,6 +79,10 @@ class CKEditorController {
       });
       this._validate();
     });
+  }
+
+  _appendNames(existingNames, moreNames) {
+    return `${existingNames || ''},${moreNames || ''}`;
   }
 
   $onDestroy() {
