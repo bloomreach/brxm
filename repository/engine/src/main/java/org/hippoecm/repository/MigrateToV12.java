@@ -16,7 +16,9 @@
 package org.hippoecm.repository;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -61,10 +63,31 @@ class MigrateToV12 {
     private static final String PLUGIN_CLASS = "plugin.class";
     private static final String CLUSTER_OPTIONS = "cluster.options";
 
+    private static final String HIPPO_MODULES_PATH = "/hippo:configuration/hippo:modules";
+    private static final String HTML_PROCESSOR = "htmlprocessor";
+    private static final String HTML_PROCESSOR_SERVICE_MODULE = "org.onehippo.cms7.services.htmlprocessor.HtmlProcessorServiceModule";
+
     // builtin htmlprocessor's
     private static final String NO_FILTER_PROCESSOR = "no-filter";
     private static final String FORMATTED_PROCESSOR = "formatted";
     private static final String RICHTEXT_PROCESSOR = "richtext";
+
+    private static final Map<String, String[]> FORMATTED_HTML_PROCESSOR_WHITELIST = new HashMap<>();
+    static {
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("address", new String[] {"class", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("br", new String[] {"class", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("em", new String[] {"class", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h1", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h2", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h3", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h4", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h5", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("h6", new String[] {"class", "dir", "id", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("p", new String[] {"align", "class", "dir", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("pre", new String[] {"class", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("strong", new String[] {"class", "style"});
+        FORMATTED_HTML_PROCESSOR_WHITELIST.put("u", new String[] {"class", "style"});
+    }
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -104,30 +127,109 @@ class MigrateToV12 {
     }
 
     private void migrateHtmlProcessor() throws RepositoryException {
+        final Node moduleConfigNode = getHtmlProcessorModuleConfigNode();
+        migrateNoFilterHtmlProcessor(moduleConfigNode);
+        migrateFormattedHtmlProcessor(moduleConfigNode);
+        migrateRichTextHtmlProcessor(moduleConfigNode);
+    }
+
+    private Node getHtmlProcessorModuleConfigNode() throws RepositoryException {
+        boolean saveNeeded = false;
+
+        final Node modulesNode = session.getNode(HIPPO_MODULES_PATH);
+        final String htmlProcessor = HTML_PROCESSOR;
+
+        final Node htmlProcessorNode;
+        if (modulesNode.hasNode(htmlProcessor)) {
+            htmlProcessorNode = modulesNode.getNode(htmlProcessor);
+        } else {
+            htmlProcessorNode = modulesNode.addNode(htmlProcessor, NT_MODULE);
+            saveNeeded = true;
+        }
+
+        if (!htmlProcessorNode.hasProperty("hipposys:className")) {
+            htmlProcessorNode.setProperty("hipposys:className", HTML_PROCESSOR_SERVICE_MODULE);
+            saveNeeded = true;
+        }
+
+        final Node moduleConfigNode;
+        if (htmlProcessorNode.hasNode(HIPPO_MODULECONFIG)) {
+            moduleConfigNode = htmlProcessorNode.getNode(HIPPO_MODULECONFIG);
+        } else {
+            moduleConfigNode = htmlProcessorNode.addNode(HIPPO_MODULECONFIG, HIPPOSYS_MODULE_CONFIG);
+            saveNeeded = true;
+        }
+
+        if (!dryRun && saveNeeded) {
+            session.save();
+        }
+
+        return moduleConfigNode;
+    }
+
+    private void migrateNoFilterHtmlProcessor(final Node moduleConfigNode) throws RepositoryException {
+        if (!moduleConfigNode.hasNode(NO_FILTER_PROCESSOR)) {
+            log.info("Creating default no-filter HtmlProcessor");
+
+            final Node noFilter = moduleConfigNode.addNode(NO_FILTER_PROCESSOR, HIPPOSYS_MODULE_CONFIG);
+            noFilter.setProperty("charset", "UTF-8");
+            noFilter.setProperty("filter", false);
+            noFilter.setProperty("omitComments", false);
+
+            if (!dryRun) {
+                session.save();
+            }
+        }
+    }
+
+    private void migrateFormattedHtmlProcessor(final Node moduleConfigNode) throws RepositoryException {
+        if (!moduleConfigNode.hasNode(FORMATTED_PROCESSOR)) {
+            log.info("Creating default formatted HtmlProcessor");
+
+            final Node formatted = moduleConfigNode.addNode(FORMATTED_PROCESSOR, HIPPOSYS_MODULE_CONFIG);
+            formatted.setProperty("charset", "UTF-8");
+            formatted.setProperty("filter", true);
+            formatted.setProperty("omitComments", false);
+
+            for (final Map.Entry<String, String[]> entry : FORMATTED_HTML_PROCESSOR_WHITELIST.entrySet()) {
+                final Node whitelistNode = formatted.addNode(entry.getKey(), HIPPOSYS_MODULE_CONFIG);
+                whitelistNode.setProperty("attributes", entry.getValue());
+            }
+
+            if (!dryRun) {
+                session.save();
+            }
+        }
+    }
+
+    private void migrateRichTextHtmlProcessor(final Node htmlProcessorModuleConfigNode) throws RepositoryException {
         final String sourceNodePath = "/hippo:configuration/hippo:frontend/cms/cms-services/filteringHtmlCleanerService";
-        final String destinationNodePath = "/hippo:configuration/hippo:modules/htmlprocessor/hippo:moduleconfig/richtext";
-
         final boolean sourceNodeExists = session.nodeExists(sourceNodePath);
-        final boolean destinationNodeExists = session.nodeExists(destinationNodePath);
-
         if (sourceNodeExists) {
-            final boolean saveNeeded = migrateHtmlCleanerConfiguration(sourceNodePath, destinationNodePath,
-                    destinationNodeExists);
+            log.info("Migrating filteringHtmlCleanerService to richtext HtmlProcessor");
+
+            final boolean saveNeeded = migrateHtmlCleanerConfiguration(sourceNodePath, htmlProcessorModuleConfigNode);
             if (!dryRun && saveNeeded) {
                 session.save();
             }
         } else {
-            log.info("Source node {} does not exist, skipping migrating html cleaner", sourceNodePath);
+            log.info("Source node {} does not exist, skipping migrating richtext html cleaner", sourceNodePath);
         }
     }
 
-    private boolean migrateHtmlCleanerConfiguration(final String sourceNodePath, final String destinationNodePath,
-            final boolean destinationNodeExists) throws RepositoryException {
-        log.info("Migrating html cleaner");
-        final Node sourceNode = session.getNode(sourceNodePath);
-        final Node destinationNode = destinationNodeExists ? session.getNode(
-                destinationNodePath) : createHtmlCleanerDestinationNode();
+    private boolean migrateHtmlCleanerConfiguration(final String sourceNodePath, final Node moduleConfig)
+            throws RepositoryException {
+
         boolean saveNeeded = false;
+
+        final Node sourceNode = session.getNode(sourceNodePath);
+        final Node destinationNode;
+        if (moduleConfig.hasNode(RICHTEXT_PROCESSOR)) {
+            destinationNode = moduleConfig.getNode(RICHTEXT_PROCESSOR);
+        } else {
+            destinationNode = moduleConfig.addNode(RICHTEXT_PROCESSOR, HIPPOSYS_MODULE_CONFIG);
+            saveNeeded = true;
+        }
 
         final Collection<String> copiedProperties = getCopiedProperties();
 
@@ -137,17 +239,22 @@ class MigrateToV12 {
 
             if (copiedProperties.contains(property.getName())) {
                 log.info("Migrating property '{}'", property.getName());
-                movePropertyToNode(property, destinationNode);
+                if (property.getName().equals("omitComments")) {
+                    destinationNode.setProperty(property.getName(), Boolean.valueOf(property.getString()));
+                } else {
+                    movePropertyToNode(property, destinationNode);
+                }
                 saveNeeded = true;
             }
         }
+
         final NodeIterator nodeIterator = sourceNode.getNode("whitelist").getNodes();
         while (nodeIterator.hasNext()) {
             final Node node = nodeIterator.nextNode();
-            log.info("Migrating whitelisted node '{}'", node.getName());
-            final String newPath = destinationNodePath + "/" + node.getName();
-            if (!session.nodeExists(newPath)) {
-                final Node whitelistedNode = destinationNode.addNode(node.getName(), HIPPOSYS_MODULE_CONFIG);
+            final String name = node.getName();
+            log.info("Migrating whitelisted node '{}'", name);
+            if (!destinationNode.hasNode(name)) {
+                final Node whitelistedNode = destinationNode.addNode(name, HIPPOSYS_MODULE_CONFIG);
                 final String attributes = "attributes";
                 if (node.hasProperty(attributes)) {
                     whitelistedNode.setProperty(attributes, node.getProperty(attributes).getValues());
@@ -234,22 +341,6 @@ class MigrateToV12 {
         copiedProperties.add("omitComments");
         copiedProperties.add("serializer");
         return copiedProperties;
-    }
-
-    private Node createHtmlCleanerDestinationNode() throws RepositoryException {
-        final Node modulesNode = session.getNode("/hippo:configuration/hippo:modules");
-        final String htmlProcessor = "htmlprocessor";
-        final Node htmlprocessorNode = modulesNode.hasNode(htmlProcessor) ?
-                modulesNode.getNode(htmlProcessor) :
-                modulesNode.addNode(htmlProcessor, NT_MODULE);
-
-        final Node moduleConfigNode = htmlprocessorNode.hasNode(HIPPO_MODULECONFIG) ?
-                htmlprocessorNode.getNode(HIPPO_MODULECONFIG) : htmlprocessorNode.addNode(HIPPO_MODULECONFIG,
-                HIPPOSYS_MODULE_CONFIG);
-
-        final String richtext = RICHTEXT_PROCESSOR;
-        return moduleConfigNode.hasNode(richtext) ?
-                moduleConfigNode.getNode(richtext) : moduleConfigNode.addNode(richtext, HIPPOSYS_MODULE_CONFIG);
     }
 
     void migrateUrlRewriter() throws RepositoryException {
@@ -432,8 +523,8 @@ class MigrateToV12 {
                 final String newPath = node.getParent().getPath() + "/" + ruleId;
                 if (session.nodeExists(newPath)) {
                     throw new RepositoryException(String.format(
-                                    "Cannot fix eforms:daterule SNS for node with eforms:dateruleid '%s'. Another SNS found: %s",
-                                    ruleId, newPath));
+                            "Cannot fix eforms:daterule SNS for node with eforms:dateruleid '%s'. Another SNS found: %s",
+                            ruleId, newPath));
                 }
                 ruleIdProperty.remove();
                 log.info("Renaming " + node.getPath() + " to " + ruleId);

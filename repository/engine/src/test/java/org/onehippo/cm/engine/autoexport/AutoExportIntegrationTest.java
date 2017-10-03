@@ -16,6 +16,7 @@
 
 package org.onehippo.cm.engine.autoexport;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,15 +40,24 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 
 public class AutoExportIntegrationTest {
 
-    /* These tests work as follows: the Fixture class loads a named fixture from the resource/AutoExportIntegrationTest
-     * folder. This named fixture contains two folders: "in" and "out". The "in" folder is copied to a temporary folder,
-     * which is then used as the project folder by  AutoExport. A repository is started and after that, a new session is
-     * created, which is handed to the lambda in the test method. When that lambda returns, the session is saved and the
-     * Fixture waits for AutoExport to export the changes. Once that is done, the temporary folder is compared to the
-     * "out" resource folder.
+    /* In their simplest form, these tests work as follows: the Fixture class loads a named fixture from
+     * resource/AutoExportIntegrationTest. This named fixture contains two folders: 'in' and 'out'. The 'in' folder is
+     * copied to a temporary folder, which is then used as the project folder by AutoExport. A repository is started
+     * and after that, a new session is created, which is handed to the lambda in the test method. When that lambda
+     * returns, the session is saved and the Fixture waits for AutoExport to export the changes. Once that is done, the
+     * temporary folder is compared to the 'out' resource folder.
+     *
+     * The fixture class also has some additional capabilities:
+     * - perform pre and post validation, see #autoexport_reorder_content_only
+     * - initialize AutoExport using multiple modules, see #autoexport_reorder_second_module for an example
+     * - perform multiple runs, see #reapply_content, the first run starts the repository with an empty database,
+     *   stops the repository again, restarts the repository reusing the existing database
      */
 
     @Test
@@ -345,6 +355,100 @@ public class AutoExportIntegrationTest {
                 });
     }
 
+    @Test
+    public void reapply_content() throws Exception {
+        final ModuleInfo cycle1Module = new ModuleInfo("reapply_content", "cycle1", "in", "in");
+        final ModuleInfo cycle2Module = new ModuleInfo("reapply_content", "cycle2", "in", "in");
+
+        final String moduleBaselineRoot = "/hcm:hcm/hcm:baseline/hippo-cms-test/autoexport-integration-test-project/autoexport-integration-test-module";
+
+        final Validator validateBaselineAfterCycle1 = (session, configurationModel) -> {
+            final Node baselineNode1 = session.getNode(moduleBaselineRoot + "/hcm-content/node1.yaml");
+            final Node baselineNode2 = session.getNode(moduleBaselineRoot + "/hcm-content/node2.yaml");
+            assertFalse(baselineNode1.hasProperty(HCM_CONTENT_ORDER_BEFORE));
+            assertEquals("node1", baselineNode2.getProperty(HCM_CONTENT_ORDER_BEFORE).getString());
+            assertTrue(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node3.yaml"));
+            assertTrue(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node4.yaml"));
+
+            assertOrderInJcr("[node2, node3, node1, node4]", "/content-test", session);
+            assertEquals("node1-cycle1", session.getProperty("/content-test/node1/property").getString());
+            assertEquals("node2-cycle1", session.getProperty("/content-test/node2/property").getString());
+            assertEquals("node3-cycle1", session.getProperty("/content-test/node3/property").getString());
+
+            // 3 from module 'hippo-repository-engine-test' and 4 from this test
+            assertEquals(7, configurationModel.getContentDefinitions().size());
+            assertEquals(null, getOrderBefore(configurationModel, "/content-test/node1"));
+            assertEquals("node1", getOrderBefore(configurationModel, "/content-test/node2"));
+        };
+        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {}, NOOP);
+
+        final Validator validateBaselineAfterCycle2 = (session, configurationModel) -> {
+            final Node baselineNode1 = session.getNode(moduleBaselineRoot + "/hcm-content/node1.yaml");
+            final Node baselineNode2 = session.getNode(moduleBaselineRoot + "/hcm-content/node2.yaml");
+            assertEquals(HCM_CONTENT_ORDER_BEFORE_FIRST, baselineNode1.getProperty(HCM_CONTENT_ORDER_BEFORE).getString());
+            assertFalse(baselineNode2.hasProperty(HCM_CONTENT_ORDER_BEFORE));
+            assertTrue(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node3.yaml"));
+            assertFalse(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node4.yaml"));
+
+            assertOrderInJcr("[node1, node3, node2]", "/content-test", session);
+            assertEquals("node1-cycle2", session.getProperty("/content-test/node1/property").getString());
+            assertEquals("node2-cycle2", session.getProperty("/content-test/node2/property").getString());
+            assertEquals("node3-cycle1", session.getProperty("/content-test/node3/property").getString());
+
+            // 3 from module 'hippo-repository-engine-test' and 3 from this test
+            assertEquals(6, configurationModel.getContentDefinitions().size());
+            assertEquals(META_ORDER_BEFORE_FIRST, getOrderBefore(configurationModel, "/content-test/node1"));
+            assertEquals(null, getOrderBefore(configurationModel, "/content-test/node2"));
+        };
+        final Run run2 = new Run(cycle2Module, validateBaselineAfterCycle2, (session) -> {}, NOOP);
+
+        new Fixture().run(run1, run2);
+    }
+
+    @Test
+    public void reorder_within_upstream_content() throws Exception {
+        // In the node 'addNewLocal', three upstream nodes are bootstrapped.
+        // The upstream node 'up-c' is deleted by a local action.
+        // When adding a new node, it is expected to be exported as a new local content definition.
+        final String addNewLocal = "/AutoExportIntegrationTest-reorder-within-upstream-content";
+
+        // In the node 'overlapping', two upstream nodes are bootstrapped, and two local definitions.
+        // The two local definitions are ordered before the two upstream nodes.
+        // When 'overlapping' is reordered (triggered by a delete of one the local definitions), it is not possible to
+        // correctly order the nodes in overlapping, for which a warning is written in the log. As a result, the order
+        // before of the remaining local definition disappears, while in jcr it remains ordered before the upstream.
+        final String overlapping = "/AutoExportIntegrationTest-reorder-within-upstream-content/up-b/overlapping";
+
+        new Fixture("reorder_within_upstream_content").test(
+                (session, configurationModel) -> {
+                    assertOrderInJcr("[up-b, up-a]", addNewLocal, session);
+                    assertOrderInJcr("[local-b, local-a, up-a, up-b]", overlapping, session);
+                },
+                (session) -> {
+                    final Node content = session.getNode(addNewLocal);
+                    content.addNode("local", "nt:unstructured");
+                    content.orderBefore("local", "up-b");
+
+                    session.getNode(overlapping).getNode("local-b").remove();
+                },
+                (session, configurationModel) -> {
+                    assertOrderInJcr("[local, up-b, up-a]", addNewLocal, session);
+                    assertOrderInJcr("[local-a, up-a, up-b]", overlapping, session);
+                });
+    }
+
+    @Test @Ignore
+    public void change_within_downstream_overlapping_content() throws Exception {
+        final String overlapping = "/AutoExportIntegrationTest-reorder-within-upstream-content/up-b/overlapping";
+
+        new Fixture("change_within_downstream_overlapping_content").test(
+                NOOP,
+                (session) -> {
+                    session.getNode(overlapping).getNode("local-b").setProperty("newProperty", "value");
+                },
+                NOOP);
+    }
+
     private void assertOrder(final String order, final String path, final Session session,
                              final ConfigurationModel model) throws Exception {
         assertOrderInJcr(order, path, session);
@@ -357,6 +461,12 @@ public class AutoExportIntegrationTest {
 
     private void assertOrderModel(final String order, final String path, final ConfigurationModel model) throws Exception {
         assertEquals(order, model.resolveNode(path).getNodes().keySet().toString().replaceAll("\\[1]", ""));
+    }
+
+    private String getOrderBefore(final ConfigurationModel configurationModel, final String definitionRootPath) {
+        return configurationModel.getContentDefinitions().stream()
+                .filter(d -> d.getRootPath().equals(definitionRootPath))
+                .findFirst().get().getNode().getOrderBefore();
     }
 
     // this test can only be run if a failure tripwire is enabled in DefinitionMergeService.mergeConfigDefinitionNode()
@@ -395,40 +505,40 @@ public class AutoExportIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    public static class ModuleInfo {
+    private static class ModuleInfo {
         private final String fixtureName;
         private final String moduleName;
-        private final String inSegment;
-        private final String outSegment;
+        private final String inName;
+        private final String outName;
         private Path workingDirectory = null;
-        public ModuleInfo(final String fixtureName) {
+        ModuleInfo(final String fixtureName) {
             this(fixtureName, null, "in", "out");
         }
-        public ModuleInfo(final String fixtureName, final String moduleName) {
+        ModuleInfo(final String fixtureName, final String moduleName) {
             this(fixtureName, moduleName, "in", "out");
         }
-        public ModuleInfo(final String fixtureName, final String moduleName, final String inSegment, final String outSegment) {
+        ModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
             this.fixtureName = fixtureName;
             this.moduleName = moduleName;
-            this.inSegment = inSegment;
-            this.outSegment = outSegment;
+            this.inName = inName;
+            this.outName = outName;
         }
-        public String getFixtureName() {
+        String getFixtureName() {
             return fixtureName;
         }
-        public String getEffectiveModuleName() {
+        String getEffectiveModuleName() {
             return moduleName == null ? "TestModuleFileSource" : moduleName;
         }
-        public Path getInPath() {
-            return getPath(inSegment);
+        Path getInPath() {
+            return getPath(inName);
         }
-        public Path getOutPath() {
-            return getPath(outSegment);
+        Path getOutPath() {
+            return getPath(outName);
         }
-        public Path getWorkingDirectory() {
+        Path getWorkingDirectory() {
             return workingDirectory;
         }
-        public void setWorkingDirectory(final Path workingDirectory) {
+        void setWorkingDirectory(final Path workingDirectory) {
             this.workingDirectory = workingDirectory;
         }
         private Path getPath(final String lastSegment) {
@@ -440,72 +550,122 @@ public class AutoExportIntegrationTest {
         }
     }
 
+    private static class Run {
+        private final ModuleInfo[] modules;
+        private final Validator preConditionValidator;
+        private final JcrRunner jcrRunner;
+        private final Validator postConditionValidator;
+        Run(final ModuleInfo module,
+            final Validator preConditionValidator,
+            final JcrRunner jcrRunner,
+            final Validator postConditionValidator)
+        {
+            this(new ModuleInfo[]{module}, preConditionValidator, jcrRunner, postConditionValidator);
+        }
+        Run(final ModuleInfo[] modules,
+            final Validator preConditionValidator,
+            final JcrRunner jcrRunner,
+            final Validator postConditionValidator)
+        {
+            this.modules = modules;
+            this.preConditionValidator = preConditionValidator;
+            this.jcrRunner = jcrRunner;
+            this.postConditionValidator = postConditionValidator;
+        }
+        ModuleInfo[] getModules() {
+            return modules;
+        }
+        Validator getPreConditionValidator() {
+            return preConditionValidator;
+        }
+        JcrRunner getJcrRunner() {
+            return jcrRunner;
+        }
+        Validator getPostConditionValidator() {
+            return postConditionValidator;
+        }
+    }
+
     // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
     private static final Validator NOOP = (session, configurationModel) -> {};
 
     private class Fixture extends AbstractBaseTest {
 
         private final ModuleInfo[] modules;
-        Fixture(final String fixtureName) {
+        private final Path projectPath;
+
+        Fixture() throws IOException {
+            this(new ModuleInfo[0]);
+        }
+
+        Fixture(final String fixtureName) throws IOException {
             this(new ModuleInfo(fixtureName));
         }
 
-        Fixture(final ModuleInfo... modules) {
+        Fixture(final ModuleInfo... modules) throws IOException {
+            this.projectPath = folder.newFolder("project").toPath();
             this.modules = modules;
         }
 
         void test(final JcrRunner jcrRunner) throws Exception {
             test(NOOP, jcrRunner, NOOP);
         }
+
         void test(final Validator preConditionValidator,
                   final JcrRunner jcrRunner,
                   final Validator postConditionValidator) throws Exception {
-            final Path projectPath = folder.newFolder("project").toPath();
+            run(new Run(modules, preConditionValidator, jcrRunner, postConditionValidator));
+        }
 
-            final List<URL> additionalClasspathURLs = new ArrayList<>(modules.length);
-            for (final ModuleInfo module : modules) {
-                final Path workingDirectory =
-                        projectPath.resolve(Paths.get(module.getEffectiveModuleName(), "src", "main", "resources"));
-                module.setWorkingDirectory(workingDirectory);
-                Files.createDirectories(workingDirectory);
-                FileUtils.copyDirectory(module.getInPath().toFile(), workingDirectory.toFile());
-                additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
-            }
+        void run(final Run... runs) throws Exception {
+            for (final Run run : runs) {
+                FileUtils.cleanDirectory(projectPath.toFile());
 
-            final IsolatedRepository repository =
-                    new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
+                final List<URL> additionalClasspathURLs = new ArrayList<>(run.getModules().length);
+                for (final ModuleInfo module : run.getModules()) {
+                    final Path workingDirectory =
+                            projectPath.resolve(Paths.get(module.getEffectiveModuleName(), "src", "main", "resources"));
+                    module.setWorkingDirectory(workingDirectory);
+                    Files.createDirectories(workingDirectory);
+                    FileUtils.copyDirectory(module.getInPath().toFile(), workingDirectory.toFile());
+                    additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
+                }
 
-            repository.startRepository();
-            final Session session = repository.login(IsolatedRepository.CREDENTIALS);
+                final IsolatedRepository repository =
+                        new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
 
-            // verify that auto-export is disabled, since we want to control when it runs
-            assertTrue(session.nodeExists("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig"));
-            assertFalse(session.getNode("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig")
-                    .getProperty("autoexport:enabled").getBoolean());
+                repository.startRepository();
+                final Session session = repository.login(IsolatedRepository.CREDENTIALS);
 
-            preConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
+                // verify that auto-export is disabled, since we want to control when it runs
+                assertTrue(session.nodeExists("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig"));
+                assertFalse(session.getNode("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig")
+                        .getProperty("autoexport:enabled").getBoolean());
 
-            // Run AutoExport to set its lastRevision ...
-            repository.runSingleAutoExportCycle();
+                run.getPreConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
 
-            jcrRunner.run(session);
-            session.save();
+                // Run AutoExport to set its lastRevision ...
+                repository.runSingleAutoExportCycle();
 
-            // ... and run it again to export the changes made by jcrRunner
-            repository.runSingleAutoExportCycle();
+                run.getJcrRunner().run(session);
+                session.save();
 
-            session.refresh(false);
-            postConditionValidator.validate(session, repository.getRuntimeConfigurationModel());
+                // ... and run it again to export the changes made by jcrRunner
+                repository.runSingleAutoExportCycle();
 
-            session.logout();
-            repository.stop();
+                session.refresh(false);
+                run.getPostConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
 
-            for (final ModuleInfo module : modules) {
-                assertNoFileDiff(
-                        "In fixture '" + module.getFixtureName() + "', the module '" + module.getEffectiveModuleName()
-                                + "' is not as expected",
-                        module.getOutPath(),
-                        module.getWorkingDirectory());
+                session.logout();
+                repository.stop();
+
+                for (final ModuleInfo module : run.getModules()) {
+                    assertNoFileDiff(
+                            "In fixture '" + module.getFixtureName() + "', the module '" + module.getEffectiveModuleName()
+                                    + "' is not as expected",
+                            module.getOutPath(),
+                            module.getWorkingDirectory());
+                }
             }
         }
     }

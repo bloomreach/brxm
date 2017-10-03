@@ -50,7 +50,9 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -318,6 +320,17 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         new ModuleWriter()
                 .writeModule(module, org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
         tempDir.delete();
+    }
+
+    @Test
+    public void check_exported_primaryType_and_Mixins_ValueType() throws Exception {
+        final Node importedNode = session.getNode("/test");
+        importedNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        final JcrContentExporter jcrContentExporter = new JcrContentExporter();
+        final ModuleImpl module = jcrContentExporter.exportNode(importedNode).build();
+        final DefinitionNodeImpl defNode = module.getContentDefinitions().get(0).getNode();
+        assertEquals(ValueType.NAME, defNode.getProperty(JcrConstants.JCR_PRIMARY_TYPE).getValueType());
+        assertEquals(ValueType.NAME, defNode.getProperty(JcrConstants.JCR_MIXIN_TYPES).getValueType());
     }
 
     @Test

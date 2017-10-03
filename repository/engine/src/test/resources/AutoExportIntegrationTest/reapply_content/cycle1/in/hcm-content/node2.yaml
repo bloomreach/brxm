@@ -1,0 +1,4 @@
+/content-test/node2:
+  .meta:order-before: node1
+  jcr:primaryType: nt:unstructured
+  property: node2-cycle1

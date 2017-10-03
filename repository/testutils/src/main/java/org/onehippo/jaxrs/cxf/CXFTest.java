@@ -216,7 +216,7 @@ public class CXFTest {
                 return config.getServerSingletons();
             }
         };
-        JAXRSServerFactoryBean serverFactory = ResourceUtils.createApplication(application, true);
+        JAXRSServerFactoryBean serverFactory = ResourceUtils.createApplication(application, true, false, false, null);
         serverFactory.setAddress(address);
 
         server = serverFactory.create();

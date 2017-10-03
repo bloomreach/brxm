@@ -71,6 +71,8 @@ import static org.onehippo.cm.engine.Constants.HCM_BUNDLES_DIGESTS;
 import static org.onehippo.cm.engine.Constants.HCM_BUNDLE_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CND;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_NODE_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
@@ -98,6 +100,7 @@ import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 
 public class ConfigurationBaselineService {
@@ -336,8 +339,12 @@ public class ConfigurationBaselineService {
             // assume that there is exactly one content definition here, as required
             ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
-            // set content path property
+            // set content path property and order before
             sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
+            String orderBefore = firstDef.getNode().getOrderBefore();
+            String encodedOrderBefore =
+                    META_ORDER_BEFORE_FIRST.equals(orderBefore) ? HCM_CONTENT_ORDER_BEFORE_FIRST : orderBefore;
+            sourceNode.setProperty(HCM_CONTENT_ORDER_BEFORE, encodedOrderBefore);
 
             if (incremental) {
                 final String contentNodePath = firstDef.getNode().getPath();
@@ -721,17 +728,32 @@ public class ConfigurationBaselineService {
                             log.debug("Building content def from {} in {}/{}/{}", sourcePath,
                                     group.getName(), project.getName(), module.getName());
 
-                            // get content path from JCR Node
+                            // get content path and order before from JCR Node
                             String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
+                            String orderBefore = getOrderBefore(contentNode);
 
                             // create Source
-                            // create ContentDefinition with a single definition node and just the node path
-                            module.addContentSource(sourcePath).addContentDefinition(contentPath);
+                            // create ContentDefinition with a single definition node and just the node path and the order before
+                            module.addContentSource(sourcePath).addContentDefinition(contentPath, orderBefore);
                         }
                     }
                 }
             }
         }
+    }
+
+    private String getOrderBefore(final Node node) throws RepositoryException {
+        if (!node.hasProperty(HCM_CONTENT_ORDER_BEFORE)) {
+            return null;
+        }
+
+        final String orderBefore = node.getProperty(HCM_CONTENT_ORDER_BEFORE).getString();
+
+        if (HCM_CONTENT_ORDER_BEFORE_FIRST.equals(orderBefore)) {
+            return META_ORDER_BEFORE_FIRST;
+        }
+
+        return orderBefore;
     }
 
     /**

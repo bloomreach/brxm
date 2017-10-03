@@ -52,6 +52,8 @@ public final class Constants {
     public static final String HCM_BUNDLES_DIGESTS = "hcm:bundlesDigest";
     public static final String HCM_PROCESSED = "hcm:processed";
     public static final String HCM_CONTENT_PATH = "hcm:contentpath";
+    public static final String HCM_CONTENT_ORDER_BEFORE = "hcm:contentorderbefore";
+    public static final String HCM_CONTENT_ORDER_BEFORE_FIRST = ".:order first:.";
     public static final String HCM_YAML = "hcm:yaml";
     public static final String HCM_CND = "hcm:cnd";
     // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
