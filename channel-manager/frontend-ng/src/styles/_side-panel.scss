@@ -78,6 +78,14 @@
     padding-left: 0;
     padding-right: 0;
   }
+
+  .create-content {
+    background: $grey-100;
+    padding-top: 30px;
+    md-input-container {
+      margin: 5px 0;
+    }
+  }
 }
 
 .text-truncate {

@@ -99,17 +99,30 @@
       </md-button>
     </div>
 
-    <form ng-if="$ctrl.editing || $ctrl.createContentMode"
+    <form ng-if="$ctrl.editing || $ctrl.createContent"
           name="$ctrl.form"
+          ng-class="{'create-content': $ctrl.createContent}"
           class="form-dense-layout">
       <document-fields class="top-level"
                        field-types="$ctrl.docType.fields"
                        field-values="$ctrl.doc.fields">
       </document-fields>
+      <div layout="row" layout-align="end center" ng-if="$ctrl.createContent">
+        <md-button class="qa-close"
+                   ng-click="$ctrl.close()">
+          {{ $ctrl.closeButtonLabel() }}
+        </md-button>
+
+        <md-button class="qa-create-content"
+                   ng-click="$ctrl.saveNewDocument()"
+                   ng-disabled="$ctrl.form.$invalid">
+          {{ 'CONTINUE' | translate }}
+        </md-button>
+      </div>
     </form>
   </md-content>
 
-  <md-toolbar>
+  <md-toolbar ng-hide="$ctrl.createContent">
     <div class="md-toolbar-tools">
       <span flex></span>
 

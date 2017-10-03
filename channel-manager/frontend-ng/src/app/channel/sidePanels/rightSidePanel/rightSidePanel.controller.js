@@ -104,7 +104,7 @@ class RightSidePanelCtrl {
         if (documentId) {
           this.openDocument(documentId);
         } else {
-          this._createContent();
+          this._initNewContent();
         }
         this._onOpen();
       },
@@ -185,10 +185,34 @@ class RightSidePanelCtrl {
       .finally(() => delete this.loading);
   }
 
-  _createContent() {
+  _initNewContent() {
     this.createContent = true;
     this.title = 'Create new content';
-    this._onLoadSuccess({}, { allFieldsIncluded: true });
+    const doc = {
+      fields: {
+        'hap:title': [{ value: 'Govino glass' }],
+        'hap:url': [{ value: 'govino-glass' }],
+        'hap:type': [{ value: 'Product' }],
+        'hap:location': [{ value: 'Products' }],
+      },
+    };
+    const docType = {
+      allFieldsIncluded: true,
+      fields: [
+        { id: 'hap:title', type: 'STRING', displayName: 'Document name', required: true },
+        { id: 'hap:url', type: 'STRING', displayName: 'URL', required: true },
+        { id: 'hap:type', type: 'STRING', displayName: 'Document type', required: true },
+        { id: 'hap:location', type: 'STRING', displayName: 'Document location', required: true },
+      ],
+    };
+    this._onLoadSuccess(doc, docType);
+  }
+
+  saveNewDocument() {
+    // Add the logic to validate all fields again backend, if resolved, continue with the below methods
+    this.createContent = false;
+    this.editing = false;
+    this._onLoadSuccess(this.doc, this.docType); // If document UUID is received we can use openDocument and just pretend to edit
   }
 
 
