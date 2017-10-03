@@ -94,7 +94,7 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
     }
 
     @Test
-    public void a_lock_set_to_abort_is_still_freed_on_lockmanager_clear_but_not_being_interrupted_any_more() throws Exception {
+    public void a_lock_set_to_abort_is_still_set_to_free_on_lockmanager_clear_but_not_being_interrupted_any_more() throws Exception {
         if (dataSource == null) {
             // in memory test
             return;

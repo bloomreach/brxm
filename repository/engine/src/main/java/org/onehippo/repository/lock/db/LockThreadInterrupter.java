@@ -27,11 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.lock.db.DbHelper.close;
+import static org.onehippo.repository.lock.db.DbLockManager.SELECT_ABORT_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 /**
  * A Thread that contains a lock marked with 'ABORT' will be interrupted : In turn, that Thread should invoke #unlock itself
- * If there is no Thread for the 'ABORT' marked lock, the lock will be reset to 'FREE'
+ * If there is no Thread for the 'ABORT' marked lock and the lock is for the current cluster node, the lock will be reset to 'FREE'
  */
 public class LockThreadInterrupter implements Runnable {
 
@@ -40,9 +41,6 @@ public class LockThreadInterrupter implements Runnable {
     private final DataSource dataSource;
     private final String clusterNodeId;
     private final DbLockManager dbLockManager;
-
-
-    public static final String SELECT_ABORT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='ABORT' AND lockOwner=?";
 
     public LockThreadInterrupter(final DataSource dataSource, final String clusterNodeId, final DbLockManager dbLockManager) {
         this.dataSource = dataSource;
@@ -63,10 +61,10 @@ public class LockThreadInterrupter implements Runnable {
             ResultSet resultSet = selectAbortStatement.executeQuery();
             while (resultSet.next()) {
                 // interrupt the thread for this lock (if still present). Otherwise ignore.
-                String lockKey = resultSet.getString("lockKey");
+                final String lockKey = resultSet.getString("lockKey");
                 final String lockThread = resultSet.getString("lockThread");
                 if (lockThread == null) {
-                    log.error("Cannot abort db entry '{}' for which lockThread is null.", lockKey);
+                    log.error("Illegal database row state: cannot abort db entry '{}' for which lockThread is null.", lockKey);
                     continue;
                 }
                 boolean lockThreadForAbortFound = false;
@@ -74,7 +72,12 @@ public class LockThreadInterrupter implements Runnable {
                     Thread thread = lock.getThread().get();
                     if (thread == null || !thread.isAlive()) {
                        // ignore since will be picked up by org.onehippo.services.lock.AbstractLockManager.UnlockStoppedThreadJanitor
-                    } else if (lockThread.equals(thread.getName()) && lockKey.equals(lock.getLockKey())){
+                    } else if (lockKey.equals(lock.getLockKey())){
+                        if (!lockThread.equals(thread.getName())) {
+                            log.error("Lock thread in JVM is other one than in database for lock '{}' which is an illegal state.",
+                                    lockKey);
+                            continue;
+                        }
                         // best effort : thread interrupt : As a result, the Thread containing the lock should invoke
                         // #unlock at some point in time
                         // There are no guarantees beyond best-effort attempts to stop
@@ -102,6 +105,7 @@ public class LockThreadInterrupter implements Runnable {
                             "lock has been expired it will be removed by DbLockResetJanitor", lockKey);
                 }
             }
+            selectAbortStatement.close();
         } catch (Exception e) {
             log.error("Exception in {} happened:", this.getClass().getName(), e);
         } finally {

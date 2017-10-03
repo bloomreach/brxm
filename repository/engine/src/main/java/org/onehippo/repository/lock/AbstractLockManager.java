@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.lock;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +45,8 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     private long longestIntervalSeconds = DEFAULT_SCHEDULED_JOBS_INTERVAL_SECONDS;
 
-    private boolean destroyed = false;
+    private volatile boolean destroyed = false;
+    private boolean destroyInProgress = false;
 
     protected abstract Logger getLogger();
 
@@ -59,7 +61,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
     protected abstract List<Lock> retrieveLocks() throws LockManagerException;
 
     public AbstractLockManager() {
-        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     protected void addJob(final Runnable runnable) {
@@ -89,7 +91,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
         final Thread lockThread = lock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
             getLogger().warn("Thread '{}' that created lock for '{}' has stopped without releasing the lock. Thread '{}' " +
-                    "now gets the lock", lock.getLockOwner(), key, Thread.currentThread().getName());
+                    "now gets the lock", lock.getLockThread(), key, Thread.currentThread().getName());
             unlock(key);
             localLocks.put(key, createLock(key, Thread.currentThread().getName(), refreshRateSeconds));
             return;
@@ -110,15 +112,15 @@ public abstract class AbstractLockManager implements InternalLockManager {
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
             getLogger().error("Lock '{}' does not exist or this cluster node does not contain the lock hence a thread from " +
-                            "this JVM cannot unlock it", key);
+                    "this JVM cannot unlock it", key);
             return;
         }
         final Thread lockThread = lock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
             getLogger().error("Thread '{}' that created lock for '{}' has stopped without releasing the lock. The Thread " +
                             "should had invoked #unlock. Removing lock now",
-                    lock.getLockOwner(), key, Thread.currentThread().getName());
-            releasePersistedLock(key, lockThread.getName());
+                    lock.getLockThread(), key, Thread.currentThread().getName());
+            releasePersistedLock(key, lock.getLockThread());
             localLocks.remove(key);
             return;
         }
@@ -188,17 +190,53 @@ public abstract class AbstractLockManager implements InternalLockManager {
         return retrieveLocks();
     }
 
+    /**
+     * Destroy MOST not be synchronized because other threads need to be able to #unlock
+     */
     @Override
-    public synchronized void destroy() {
-        checkLive();
-        destroyed = true;
+    public void destroy() {
+
+        synchronized (this) {
+            if (destroyInProgress) {
+                return;
+            }
+            destroyInProgress = true;
+        }
+
         scheduledExecutorService.shutdown();
         try {
-            scheduledExecutorService.awaitTermination(longestIntervalSeconds + 5, SECONDS);
+            boolean success = scheduledExecutorService.awaitTermination(longestIntervalSeconds + 5, SECONDS);
+            if (!success) {
+                getLogger().warn("Not all jobs have been successfully completed.");
+            }
         } catch (InterruptedException e) {
             getLogger().error("InterruptedException during shutdown of scheduledExecutorService : ", e);
         }
+
+        final List<Thread> waitForThreads = new ArrayList<>();
+        for (MutableLock mutableLock : localLocks.values()) {
+            Thread thread = mutableLock.getThread().get();
+            if (thread == null || !thread.isAlive() || thread.isInterrupted()) {
+                continue;
+            }
+            thread.interrupt();
+            waitForThreads.add(thread);
+        }
+
+        // try graceful shutdown for the interrupted threads
+        long waitMax = 10_000;
+        for (Thread thread : waitForThreads) {
+            try {
+                long start = System.currentTimeMillis();
+                thread.join(waitMax);
+                waitMax -= System.currentTimeMillis() - start;
+            } catch (InterruptedException e) {
+                getLogger().info("Thread '{}' already interrupted");
+                thread.interrupt();
+            }
+        }
         clear();
+        destroyed = true;
     }
 
     @Override
@@ -224,7 +262,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             Map.Entry<String, MutableLock> next = iterator.next();
             MutableLock lock = next.getValue();
             if (lock.getThread().get() == null || !lock.getThread().get().isAlive()) {
-                getLogger().warn("Lock '{}' with lockOwner '{}' was present but the Thread that created the lock already stopped. " +
+                getLogger().error("Lock '{}' with lockOwner '{}' was present but the Thread that created the lock already stopped. " +
                         "Removing the lock now", next.getKey(), lock.getLockOwner());
                 releasePersistedLock(next.getKey(), next.getValue().getLockThread());
                 iterator.remove();
@@ -238,26 +276,23 @@ public abstract class AbstractLockManager implements InternalLockManager {
         }
     }
 
-    @Override
     public void addJob(final Runnable runnable, final long initialDelaySeconds, final long periodSeconds) {
         // make the runnable synchronized to avoid concurrency from background jobs with methods in the LockManager
         // modifying 'locks'
-        final Runnable synchronizedRunnable = () -> {
-            synchronized (AbstractLockManager.this) {
-                final long start = System.currentTimeMillis();
-                getLogger().info("Running '{}' at {}", runnable.getClass().getName(), Calendar.getInstance().getTime());
-                try {
-                    runnable.run();
-                } catch (Exception e) {
-                    getLogger().error("Background job '{}' resulted in exception.", runnable.getClass().getName(), e);
-                }
-                getLogger().info("Running '{}' finished in '{}' ms.", runnable.getClass().getName(), (System.currentTimeMillis() - start));
+        final Runnable exceptionCatchingRunnable = () -> {
+            final long start = System.currentTimeMillis();
+            getLogger().info("Running '{}' at {}", runnable.getClass().getName(), Calendar.getInstance().getTime());
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                getLogger().error("Background job '{}' resulted in exception.", runnable.getClass().getName(), e);
             }
+            getLogger().info("Running '{}' finished in '{}' ms.", runnable.getClass().getName(), (System.currentTimeMillis() - start));
         };
         if (periodSeconds > longestIntervalSeconds) {
             longestIntervalSeconds = periodSeconds;
         }
-        scheduledExecutorService.scheduleAtFixedRate(synchronizedRunnable, initialDelaySeconds, periodSeconds, SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(exceptionCatchingRunnable, initialDelaySeconds, periodSeconds, SECONDS);
     }
 
     /**

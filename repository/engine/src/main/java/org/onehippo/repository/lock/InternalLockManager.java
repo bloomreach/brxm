@@ -28,9 +28,4 @@ public interface InternalLockManager extends LockManager {
      */
     void clear();
 
-    /**
-     * Adds a job to be scheduled. This method is part of this {@link InternalLockManager} because in integration tests
-     * we can then set the initialDelaySeconds and periodSeconds very low (for testing concurrency)
-     */
-    void addJob(Runnable runnable, long initialDelaySeconds, long periodSeconds);
 }

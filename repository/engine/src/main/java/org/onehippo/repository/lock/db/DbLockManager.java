@@ -58,8 +58,6 @@ public class DbLockManager extends AbstractLockManager {
     public static final String SELECT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=?";
     public static final String LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET status='RUNNING', lockTime=?, expirationTime=?, lockOwner=?, lockThread=? WHERE lockKey=? AND status='FREE'";
 
-    public static final String EXPIRED_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE expirationTime<? AND (status='RUNNING' OR status='ABORT') FOR UPDATE";
-
     public static final String ALL_LOCKED_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='RUNNING' OR status='ABORT'";
 
     public static final String RESET_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
@@ -72,21 +70,22 @@ public class DbLockManager extends AbstractLockManager {
             "WHERE lockKey=? AND lockOwner=? AND lockThread=?";
 
 
-    public static final String RESET_LOCK_STATEMENT_BY_KEY_ONLY = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
+    public static final String RESET_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
             "lockOwner=NULL, " +
             "lockThread=NULL, " +
             "status='FREE', " +
             "lockTime=0, " +
             "refreshRateSeconds=0, " +
             "expirationTime=0 " +
-            "WHERE lockKey=?";
+            "WHERE expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
-    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=?";
+    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=? AND status='RUNNING'";
 
     // only refreshes its own cluster locks
-    public static final String LOCKS_TO_REFRESH_BLOCKING_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT') FOR UPDATE";
-    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=? WHERE lockKey=?";
+    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=expirationTime+60000 " +
+            "WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
+    public static final String SELECT_ABORT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='ABORT' AND lockOwner=?";
 
     private final DataSource dataSource;
     private final String clusterNodeId;
@@ -125,6 +124,7 @@ public class DbLockManager extends AbstractLockManager {
             lockStatement.setString(4, threadName);
             lockStatement.setString(5, key);
             int changed = lockStatement.executeUpdate();
+            lockStatement.close();
 
             if (changed == 0) {
                 log.debug("Either there is already a row entry for key '{}' which is not free OR the entry is not yet " +
@@ -138,6 +138,7 @@ public class DbLockManager extends AbstractLockManager {
                 createStatement.setLong(6, expirationTime);
                 try {
                     createStatement.execute();
+                    createStatement.close();
                 } catch (SQLException e) {
                     throw new LockException(String.format("Lock for '%s' is already taken", key), e);
                 }
@@ -170,6 +171,7 @@ public class DbLockManager extends AbstractLockManager {
             resetLockStatement.setString(2, clusterNodeId);
             resetLockStatement.setString(3, threadName);
             int changed = resetLockStatement.executeUpdate();
+            resetLockStatement.close();
             if (changed == 0) {
                 final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
                 selectStatement.setString(1, key);
@@ -177,10 +179,12 @@ public class DbLockManager extends AbstractLockManager {
                 if (!resultSet.next()) {
                     log.error("Database Lock '{}' cannot be released by '{}' and cluster '{}' because lock does not exist",
                             key, threadName, clusterNodeId);
+                    selectStatement.close();
                     return;
                 } else {
                     log.error("Database Lock '{}' cannot be released for thread '{}' and cluster '{}' because lock is not owned.",
                             key, threadName, clusterNodeId);
+                    selectStatement.close();
                     return;
                 }
             }
@@ -207,9 +211,12 @@ public class DbLockManager extends AbstractLockManager {
             final PreparedStatement abortStatement = connection.prepareStatement(ABORT_STATEMENT);
             abortStatement.setString(1, key);
             int changed = abortStatement.executeUpdate();
+            abortStatement.close();
+
             if (changed == 0) {
                 // can happen because by another Thread or cluster node already stopped in the meantime
-                log.info("Cannot set status to abort for '{}' because no such lock present.", key);
+                log.info("Cannot set status to abort for '{}' because no such lock present or already aborted or not runnning.",
+                        key);
                 return;
             }
             log.info("Successfully changed status to abort for '{}'", key);
@@ -230,9 +237,12 @@ public class DbLockManager extends AbstractLockManager {
             ResultSet resultSet = selectStatement.executeQuery();
             if (!resultSet.next()) {
                 log.debug("No database row found for lockKey '{}'", key);
+                selectStatement.close();
                 return false;
             }
             final String status = resultSet.getString("status");
+            selectStatement.close();
+
             boolean locked = "RUNNING".equals(status) || "ABORT".equals(status);
             log.debug("Found database row for '{}' with locked = {}", key, locked);
             return locked;
@@ -259,6 +269,8 @@ public class DbLockManager extends AbstractLockManager {
                 log.debug("Adding lock : {}", lock.toString());
                 locks.add(lock);
             }
+            resultSet.close();
+
             if (locks.size() == 0) {
                 log.debug("No locks found");
             }

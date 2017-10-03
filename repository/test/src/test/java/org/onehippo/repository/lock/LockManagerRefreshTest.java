@@ -34,7 +34,7 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
 
 
     @Test
-    public void locks_gets_refreshed_while_still_in_use() throws Exception {
+    public void locks_get_refreshed_while_still_in_use() throws Exception {
         if (dataSource == null) {
             // db test only
             return;
@@ -57,7 +57,7 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
         long start = System.currentTimeMillis();
         while (expires == getExpireTime(key)) {
             if ((System.currentTimeMillis() - start) > 10000) {
-                fail("Within 5 seconds DbLockRefresher should had bumped the expires time but it didn't do it after 6 seconds");
+                fail("Within 5 seconds DbLockRefresher should had bumped the expires time but it didn't do it after 10 seconds");
             }
             Thread.sleep(100);
         }

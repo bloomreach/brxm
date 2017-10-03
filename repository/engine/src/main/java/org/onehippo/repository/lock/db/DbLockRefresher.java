@@ -17,7 +17,6 @@ package org.onehippo.repository.lock.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.LOCKS_TO_REFRESH_BLOCKING_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT;
 
 /**
@@ -53,23 +51,14 @@ public class DbLockRefresher implements Runnable {
         try {
             connection = dataSource.getConnection();
             originalAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
-            final PreparedStatement locksToRefreshStatement = connection.prepareStatement(LOCKS_TO_REFRESH_BLOCKING_STATEMENT);
-            locksToRefreshStatement.setString(1, clusterNodeId);
+            connection.setAutoCommit(true);
+            final PreparedStatement refreshStatement = connection.prepareStatement(REFRESH_LOCK_STATEMENT);
+            refreshStatement.setString(1, clusterNodeId);
             // select all rows that have less than 20 seconds to live
-            locksToRefreshStatement.setLong(2, System.currentTimeMillis() + 20000);
-            ResultSet resultSet = locksToRefreshStatement.executeQuery();
-            while (resultSet.next()) {
-                // found lock to refresh
-                final String lockKey = resultSet.getString("lockKey");
-                final int refreshRateSeconds = resultSet.getInt("refreshRateSeconds");
-                log.info("Refreshing row with lockKey '{}'", lockKey);
-                final PreparedStatement unlockStatement = connection.prepareStatement(REFRESH_LOCK_STATEMENT);
-                unlockStatement.setLong(1, System.currentTimeMillis() + refreshRateSeconds * 1000);
-                unlockStatement.setString(2, lockKey);
-                unlockStatement.execute();
-            }
-            connection.commit();
+            refreshStatement.setLong(2, System.currentTimeMillis() + 20000);
+            int updated = refreshStatement.executeUpdate();
+            log.info("Refreshed {} locks", updated);
+            refreshStatement.close();
         } catch (SQLException e) {
             if (log.isDebugEnabled()) {
                 log.info("Exception in {} happened. Possibly another cluster node did already reset some lock rows:", this.getClass().getName(), e);

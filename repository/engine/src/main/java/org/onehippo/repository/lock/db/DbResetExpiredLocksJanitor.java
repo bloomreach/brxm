@@ -17,15 +17,15 @@ package org.onehippo.repository.lock.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.EXPIRED_BLOCKING_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.RESET_LOCK_STATEMENT_BY_KEY_ONLY;
+import static org.onehippo.repository.lock.db.DbLockManager.RESET_STATEMENT;
 
 /**
  * Resets expired locks to 'FREE' if they are in state 'RUNNING' or 'ABORT'
@@ -47,22 +47,13 @@ public class DbResetExpiredLocksJanitor implements Runnable {
         try {
             connection = dataSource.getConnection();
             originalAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
-            // since the 'expired blocking statement' can modify the same rows as another cluster node, we use
-            // autocommit 'false' and use a blocking statement
-            final PreparedStatement expiredBlockingStatement = connection.prepareStatement(EXPIRED_BLOCKING_STATEMENT);
-            expiredBlockingStatement.setLong(1, System.currentTimeMillis());
-            ResultSet resultSet = expiredBlockingStatement.executeQuery();
-            while (resultSet.next()) {
-                // found expired lock. Reset it
-                String lockKey = resultSet.getString("lockKey");
-                log.info("Resetting row with lockKey '{}' because expired", lockKey);
-                final PreparedStatement resetLockStatement = connection.prepareStatement(RESET_LOCK_STATEMENT_BY_KEY_ONLY);
-                resetLockStatement.setString(1, lockKey);
-                resetLockStatement.execute();
-            }
-            connection.commit();
-        } catch (Exception e) {
+            connection.setAutoCommit(true);
+            final PreparedStatement resetStatement = connection.prepareStatement(RESET_STATEMENT);
+            resetStatement.setLong(1, System.currentTimeMillis());
+            int updated = resetStatement.executeUpdate();
+            log.info("Expired {} locks", updated);
+            resetStatement.close();
+        } catch (SQLException e) {
             if (log.isDebugEnabled()) {
                 log.info("Exception in {} happened. Possibly another cluster node did already reset some lock rows:", this.getClass().getName(), e);
             } else {

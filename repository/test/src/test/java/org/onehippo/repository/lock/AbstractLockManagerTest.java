@@ -48,7 +48,6 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     protected DataSource dataSource;
 
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
         lockManager = (InternalLockManager)HippoServiceRegistry.getService(LockManager.class);
