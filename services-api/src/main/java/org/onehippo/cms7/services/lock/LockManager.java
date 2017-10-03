@@ -30,22 +30,20 @@ public interface LockManager {
      * </p>
      * <p>
      *     Invoking this method multiple times with the same {@code key} and the same thread results in the hold count
-     *     being incremented.
-     * </p>
-     * <p>
-     *     This {@link #lock(String)} method is the same as invoking {@link #lock(String, int) lock(key, 60)}. The
-     *     {@code refreshRateSeconds} only has meaning in a clustered setup: if the cluster wide lock
-     *     is not being updated by the {@link LockManager} for more than 60 seconds, the lock will be released. This is
-     *     a safeguard against a lock being kept by a cluster node that died / has been stopped
+     *     being incremented. To unlock the lock, {@link #unlock(String)} must be invoked an equal amount of times as
+     *     {@link #lock(String)} was invoked.
      * </p>
      * <p>
      *      A lock is released when a successful {@link #unlock(String)} is invoked as many times as
      *     {@link #lock(String)}. Alternatively, when the {@link LockManager} implementation detects that the Thread
      *     that held the lock is not live any more, the {@link LockManager} implementation can also release the lock.
-     *     Lastly, in a database setup, a lock will be released when it has not been refreshed for 60 seconds,
-     *     see {@link #lock(String, int)}. This last case is useful in clustered setups where a cluster node has
-     *     an ungraceful shutdown (crash) : A graceful shutdown should namely release all locks, also implying
-     *     that every Thread that holds a lock calls #unlock
+     * </p>
+     * <p>
+     *     In a clustered setup, a lock will be released (in the database) when it has not been refreshed for more than
+     *     60 seconds.
+     *     This is a safeguard in case of a clustered setup where a cluster node has an ungraceful shutdown (crash) : In that
+     *     case some database lock might still be present for the crashed node.
+     *     A graceful shutdown should release all locks, implying that every Thread that holds a lock calls {@link #unlock}
      * </p>
      * <p>
      *     A persisted {@link Lock} can be marked to be aborted: In this case, the {@link Thread} that holds the lock
@@ -56,26 +54,9 @@ public interface LockManager {
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @throws LockException in case there is already a {@link Lock} for {@code key} or the lock could not be created
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
-     * @see #lock(String, int)
      */
     void lock(String key) throws LockException;
 
-    /**
-     * <p>
-     *     Same as {@link #lock(String)} only with explicit value for {@code refreshRateSeconds}. The larger {@code refreshRateSeconds}
-     *     is set, the less frequently the {@link LockManager} has to refresh this lock. Thus for example for master election long
-     *     running processes where it is not important if there is for example no master for, say, 10 minutes, you can set
-     *     {@code refreshRateSeconds} to 10 minutes.
-     * </p>
-     * @param key key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
-     * @param refreshRateSeconds If the {@link LockManager} does not refresh the lock for more than {@code refreshRateSeconds}
-     *                          the lock gets released. The minimal value for {@code refreshRateSeconds} is 60 seconds. If
-     *                          a smaller value is used, the {@link LockManager} will use 60 seconds instead.
-     * @throws LockException in case there is already a {@link Lock} for {@code key} or the lock could not be created
-     * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
-     * @see #lock(String)
-     */
-    void lock(String key, int refreshRateSeconds) throws LockException;
 
     /**
      * @param key the key to unlock where {@code key} is at most 256 chars. If the {@link Thread} that invokes
