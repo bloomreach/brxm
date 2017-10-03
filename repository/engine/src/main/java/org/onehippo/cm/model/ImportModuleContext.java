@@ -18,9 +18,9 @@ package org.onehippo.cm.model;
 import java.nio.file.Path;
 
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.source.ResourceInputProvider;
-import org.onehippo.cm.model.source.Source;
 
 public class ImportModuleContext extends ModuleContext {
 
@@ -41,7 +41,7 @@ public class ImportModuleContext extends ModuleContext {
     }
 
     @Override
-    public ResourceInputProvider getInputProvider(final Source source) {
+    public ResourceInputProvider getInputProvider(final SourceImpl source) {
         return super.getInputProvider(source);
     }
 }
