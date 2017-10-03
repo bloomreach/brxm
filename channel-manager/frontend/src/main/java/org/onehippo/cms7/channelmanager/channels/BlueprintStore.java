@@ -120,7 +120,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             restProxyJobs.add(new Callable<List<Blueprint>>() {
                 @Override
                 public List<Blueprint> call() throws Exception {
-                    return blueprintService.getBlueprints();
+                    return blueprintService.getBlueprints().getBlueprints();
                 }
             });
         }

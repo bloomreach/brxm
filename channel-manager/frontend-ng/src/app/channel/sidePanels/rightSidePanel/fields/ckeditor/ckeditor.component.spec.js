@@ -170,7 +170,19 @@ describe('CKEditor Component', () => {
   it('uses the current language', () => {
     ConfigService.locale = 'fr';
     init();
-    expect(CKEditor.replace).toHaveBeenCalled();
+    const editorConfig = CKEditor.replace.calls.mostRecent().args[1];
+    expect(editorConfig.language).toEqual('fr');
+  });
+
+  it('adjusts the editor configuration without breaking tweaks by customers', () => {
+    config.extraPlugins = 'smiley';
+    config.removePlugins = 'justify';
+    config.removeButtons = 'Bold';
+    init();
+    const editorConfig = CKEditor.replace.calls.mostRecent().args[1];
+    expect(editorConfig.extraPlugins).toEqual('smiley,sharedspace,sourcedialog,autogrow');
+    expect(editorConfig.removePlugins).toEqual('justify,sourcearea,resize,maximize');
+    expect(editorConfig.removeButtons).toEqual('Bold,Source');
   });
 
   it('updates the editor data when the model changes', () => {
