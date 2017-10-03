@@ -205,14 +205,14 @@ class RightSidePanelCtrl {
         { id: 'hap:location', type: 'STRING', displayName: 'Document location', required: true },
       ],
     };
-    this._onLoadSuccess(doc, docType);
+    this._onLoadSuccess(doc, docType, false);
   }
 
   saveNewDocument() {
     // Add the logic to validate all fields again backend, if resolved, continue with the below methods
     this.createContent = false;
     this.editing = false;
-    this._onLoadSuccess(this.doc, this.docType); // If document UUID is received we can use openDocument and just pretend to edit
+    this._onLoadSuccess(this.doc, this.docType, true); // If document UUID is received we can use openDocument and just pretend to edit
   }
 
 
@@ -238,10 +238,10 @@ class RightSidePanelCtrl {
       },
     };
   }
-  _onLoadSuccess(doc, docType) {
+  _onLoadSuccess(doc, docType, editing = true) {
     this.doc = doc;
     this.docType = docType;
-    this.editing = true;
+    this.editing = editing;
 
     if (this.doc.displayName) {
       this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
