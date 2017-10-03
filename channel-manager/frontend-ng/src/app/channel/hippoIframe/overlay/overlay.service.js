@@ -52,6 +52,7 @@ class OverlayService {
 
     this.editMenuHandler = angular.noop;
     this.editContentHandler = angular.noop;
+    this.createContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -59,8 +60,20 @@ class OverlayService {
     PageStructureService.registerChangeListener(() => this.sync());
 
     this.dialButtonsConfig = [
-      { svg: plusSvg, callback: angular.noop, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
-      { svg: searchSvg, callback: angular.noop, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
+      {
+        svg: plusSvg,
+        callback: () => {
+          this.$rootScope.$apply(() => {
+            this.editContentHandler();
+          });
+        },
+        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+      },
+      {
+        svg: searchSvg,
+        callback: () => {},
+        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+      },
     ];
   }
 
@@ -388,7 +401,7 @@ class OverlayService {
       const button = config[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
         .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
-        .on('click', () => button.callback(i));
+        .on('click', button.callback);
       buttons.push(tpl);
     });
     return buttons;

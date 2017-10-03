@@ -101,7 +101,11 @@ class RightSidePanelCtrl {
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
       // onOpen
       (documentId) => {
-        this.openDocument(documentId);
+        if (documentId) {
+          this.openDocument(documentId);
+        } else {
+          this._createContent();
+        }
         this._onOpen();
       },
       // onClose
@@ -132,12 +136,14 @@ class RightSidePanelCtrl {
     if (this.documentId === documentId) {
       return;
     }
-    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
-      this._deleteDraft().finally(() => {
-        this._resetState();
-        this._loadDocument(documentId);
+    if (documentId) {
+      this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
+        this._deleteDraft().finally(() => {
+          this._resetState();
+          this._loadDocument(documentId);
+        });
       });
-    });
+    }
   }
 
   _resetState() {
@@ -177,6 +183,13 @@ class RightSidePanelCtrl {
       .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
   }
+
+  _createContent() {
+    this.createContentMode = true;
+    this.title = 'Create new content';
+    this._onLoadSuccess({}, { allFieldsIncluded: true });
+  }
+
 
   _showFeedbackDraftInvalid() {
     this.feedback = {
