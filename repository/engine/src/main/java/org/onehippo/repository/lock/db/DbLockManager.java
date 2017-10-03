@@ -20,9 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
@@ -50,11 +48,10 @@ public class DbLockManager extends AbstractLockManager {
             "lockThread VARCHAR(256)," +
             "status VARCHAR(256) NOT NULL," +
             "lockTime BIGINT," +
-            "refreshRateSeconds SMALLINT," +
             "expirationTime BIGINT" +
             ")";
 
-    public static final String CREATE_STATEMENT = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?,?,?,'RUNNING',?,?,?)";
+    public static final String CREATE_STATEMENT = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?,?,?,'RUNNING',?,?)";
     public static final String SELECT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=?";
     public static final String LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET status='RUNNING', lockTime=?, expirationTime=?, lockOwner=?, lockThread=? WHERE lockKey=? AND status='FREE'";
 
@@ -65,7 +62,6 @@ public class DbLockManager extends AbstractLockManager {
             "lockThread=NULL, " +
             "status='FREE', " +
             "lockTime=0, " +
-            "refreshRateSeconds=0, " +
             "expirationTime=0 " +
             "WHERE lockKey=? AND lockOwner=? AND lockThread=?";
 
@@ -75,15 +71,14 @@ public class DbLockManager extends AbstractLockManager {
             "lockThread=NULL, " +
             "status='FREE', " +
             "lockTime=0, " +
-            "refreshRateSeconds=0, " +
             "expirationTime=0 " +
             "WHERE expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
     public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=? AND status='RUNNING'";
 
     // only refreshes its own cluster locks
-    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=expirationTime+60000 " +
-            "WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT')";
+    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=expirationTime+"+ REFRESH_RATE_SECONDS * 1000 +
+            " WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
     public static final String SELECT_ABORT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='ABORT' AND lockOwner=?";
 
@@ -107,7 +102,7 @@ public class DbLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected synchronized MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException {
+    protected synchronized MutableLock createLock(final String key, final String threadName) throws LockException {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
@@ -116,7 +111,7 @@ public class DbLockManager extends AbstractLockManager {
             connection.setAutoCommit(true);
 
             final long lockTime = System.currentTimeMillis();
-            final long expirationTime = lockTime + refreshRateSeconds * 1000;
+            final long expirationTime = lockTime + REFRESH_RATE_SECONDS * 1000;
             final PreparedStatement lockStatement = connection.prepareStatement(LOCK_STATEMENT);
             lockStatement.setLong(1, lockTime);
             lockStatement.setLong(2, expirationTime);
@@ -134,8 +129,7 @@ public class DbLockManager extends AbstractLockManager {
                 createStatement.setString(2, clusterNodeId);
                 createStatement.setString(3, threadName);
                 createStatement.setLong(4, lockTime);
-                createStatement.setInt(5, refreshRateSeconds);
-                createStatement.setLong(6, expirationTime);
+                createStatement.setLong(5, expirationTime);
                 try {
                     createStatement.execute();
                     createStatement.close();

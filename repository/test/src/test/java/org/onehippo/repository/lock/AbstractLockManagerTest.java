@@ -36,6 +36,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.lock.AbstractLockManager.REFRESH_RATE_SECONDS;
 import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
 
@@ -114,7 +115,7 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     }
 
     protected void addManualLockToDatabase(final String key, final String clusterNodeId,
-                                           final String threadName, final int refreshRateSeconds) throws LockException {
+                                           final String threadName) throws LockException {
         if (dataSource != null) {
             try (Connection connection = dataSource.getConnection()) {
 
@@ -124,8 +125,7 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
                 createStatement.setString(3, threadName);
                 long lockTime = System.currentTimeMillis();
                 createStatement.setLong(4, lockTime);
-                createStatement.setLong(5, refreshRateSeconds);
-                createStatement.setLong(6, lockTime + refreshRateSeconds * 1000);
+                createStatement.setLong(5, lockTime + REFRESH_RATE_SECONDS * 1000);
                 try {
                     createStatement.execute();
                 } catch (SQLException e) {
@@ -147,8 +147,7 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
             createStatement.setString(2, clusterId);
             createStatement.setString(3, threadName);
             createStatement.setLong(4, lockTime);
-            createStatement.setInt(5, 60);
-            createStatement.setLong(6, expirationTime);
+            createStatement.setLong(5, expirationTime);
             createStatement.execute();
         }
     }

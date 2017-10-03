@@ -287,8 +287,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         lockManager.lock("b");
         // insert manually non-owned rows
 
-        addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
-        addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
+        addManualLockToDatabase("c", "otherNode", "otherThreadName");
+        addManualLockToDatabase("d", "otherNode", "otherThreadName");
 
         dbRowAssertion("a", "RUNNING", "node1", Thread.currentThread().getName());
         dbRowAssertion("b", "RUNNING");
@@ -327,8 +327,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         lockManager.lock("b");
         // insert manually non-owned rows
 
-        addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
-        addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
+        addManualLockToDatabase("c", "otherNode", "otherThreadName");
+        addManualLockToDatabase("d", "otherNode", "otherThreadName");
 
         List<Lock> locks = lockManager.getLocks();
         if (dataSource == null) {
@@ -351,8 +351,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         assertTrue(lockManager.isLocked("a"));
         assertTrue(lockManager.isLocked("b"));
         if (dataSource != null) {
-            addManualLockToDatabase("c", "otherNode", "otherThreadName", 60);
-            addManualLockToDatabase("d", "otherNode", "otherThreadName", 60);
+            addManualLockToDatabase("c", "otherNode", "otherThreadName");
+            addManualLockToDatabase("d", "otherNode", "otherThreadName");
             assertTrue(lockManager.isLocked("c"));
             assertTrue(lockManager.isLocked("d"));
         }

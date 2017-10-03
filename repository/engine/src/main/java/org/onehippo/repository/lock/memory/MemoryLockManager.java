@@ -40,7 +40,7 @@ public class MemoryLockManager extends AbstractLockManager {
     }
 
     @Override
-    protected MutableLock createLock(final String key, final String threadName, final int refreshRateSeconds) throws LockException {
+    protected MutableLock createLock(final String key, final String threadName) throws LockException {
         return new MutableLock(key, "default", threadName, System.currentTimeMillis(), "RUNNING");
     }
 

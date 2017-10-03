@@ -42,6 +42,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     private static final long DEFAULT_SCHEDULED_JOBS_INITIAL_DELAY_SECONDS = 5;
     private static final long DEFAULT_SCHEDULED_JOBS_INTERVAL_SECONDS = 5;
+    public static final long REFRESH_RATE_SECONDS = 60;
 
     private long longestIntervalSeconds = DEFAULT_SCHEDULED_JOBS_INTERVAL_SECONDS;
 
@@ -50,7 +51,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     protected abstract Logger getLogger();
 
-    protected abstract MutableLock createLock(String key, String threadName, int refreshRateSeconds) throws LockException;
+    protected abstract MutableLock createLock(String key, String threadName) throws LockException;
 
     protected abstract void releasePersistedLock(String key, String threadName);
 
@@ -70,22 +71,12 @@ public abstract class AbstractLockManager implements InternalLockManager {
 
     @Override
     public synchronized void lock(final String key) throws LockException {
-        lock(key, 60);
-    }
-
-    @Override
-    public synchronized void lock(final String key, int refreshRateSeconds) throws LockException {
         checkLive();
         validateKey(key);
-        if (refreshRateSeconds < 60) {
-            getLogger().warn("refreshRateSeconds not allowed to be '{}'. Must be at least 60 or higher. Using 60 now.",
-                    refreshRateSeconds);
-            refreshRateSeconds = 60;
-        }
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
             getLogger().debug("Create lock '{}' for thread '{}'", key, Thread.currentThread().getName());
-            localLocks.put(key, createLock(key, Thread.currentThread().getName(), refreshRateSeconds));
+            localLocks.put(key, createLock(key, Thread.currentThread().getName()));
             return;
         }
         final Thread lockThread = lock.getThread().get();
@@ -93,7 +84,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             getLogger().warn("Thread '{}' that created lock for '{}' has stopped without releasing the lock. Thread '{}' " +
                     "now gets the lock", lock.getLockThread(), key, Thread.currentThread().getName());
             unlock(key);
-            localLocks.put(key, createLock(key, Thread.currentThread().getName(), refreshRateSeconds));
+            localLocks.put(key, createLock(key, Thread.currentThread().getName()));
             return;
         }
         if (lockThread == Thread.currentThread()) {

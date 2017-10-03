@@ -27,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 public class LockManagerRefreshTest extends AbstractLockManagerTest {
@@ -40,7 +39,7 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
             return;
         }
         final String key = "123";
-        final LockRunnable runnable = new LockRunnable(key, true, 60);
+        final LockRunnable runnable = new LockRunnable(key, true);
         final Thread lockThread = new Thread(runnable);
 
         lockThread.start();
@@ -62,6 +61,10 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
             Thread.sleep(100);
         }
 
+        // assert expires time got exactly bumped 60000 millis, see org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT
+        // at 'SET expirationTime=expirationTime+"+ REFRESH_RATE_SECONDS * 1000'
+        assertEquals(expires+60_000, getExpireTime(key));
+
         runnable.keepAlive = false;
         // after the thread is finished, the lock manager should have no locks any more
         lockThread.join();
@@ -74,13 +77,13 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
             return;
         }
         final String key1 = "123";
-        final LockRunnable runnable = new LockRunnable(key1, true, 60);
+        final LockRunnable runnable = new LockRunnable(key1, true);
         final Thread lockThread = new Thread(runnable);
 
         lockThread.start();
 
         final String key2 = "456";
-        final LockRunnable runnable2 = new LockRunnable(key2, true, 60, true);
+        final LockRunnable runnable2 = new LockRunnable(key2, true, true);
         final Thread lockThread2 = new Thread(runnable2);
 
         lockThread2.start();
@@ -120,6 +123,12 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
         long expireAfter3 = getExpireTime(key3);
         assertEquals("The expiration time of a lock in possession of a different cluster node should not be refreshed",
                 expirationTimeOtherClusterNodeLock, expireAfter3);
+
+        // end locks
+        runnable.keepAlive = false;
+        runnable2.keepAlive = false;
+        lockThread.join();
+        lockThread2.join();
     }
 
 
@@ -151,26 +160,22 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
 
         private String key;
         private volatile boolean keepAlive;
-        private int refreshRateSeconds;
         private boolean ignoreInterruption;
 
-        LockRunnable(final String key , final boolean keepAlive,
-                     final int refreshRateSeconds) {
-            this(key, keepAlive, refreshRateSeconds, false);
+        LockRunnable(final String key , final boolean keepAlive) {
+            this(key, keepAlive, false);
         }
 
-        LockRunnable(final String key , final boolean keepAlive,
-                     final int refreshRateSeconds, final boolean ignoreInterruption) {
+        LockRunnable(final String key , final boolean keepAlive, final boolean ignoreInterruption) {
             this.key = key;
             this.keepAlive = keepAlive;
-            this.refreshRateSeconds = refreshRateSeconds;
             this.ignoreInterruption = ignoreInterruption;
         }
 
         @Override
         public void run() {
             try {
-                lockManager.lock(key, refreshRateSeconds);
+                lockManager.lock(key);
                 while (keepAlive) {
                     Thread.sleep(25);
                 }
@@ -185,7 +190,8 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
                         }
                     }
                 }
-                fail(e.toString());
+            } finally {
+                lockManager.unlock(key);
             }
         }
     }
