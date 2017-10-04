@@ -59,8 +59,8 @@ public class ValueFileMapperProvider {
      * @return Best matching filename
      */
     public String generateName(Value value) {
-
-        return valueFileMappers.stream().map(x -> x.apply(value))
+        return value.getParent() == null ? value.getString() :
+                valueFileMappers.stream().map(x -> x.apply(value))
                 .filter(Objects::nonNull)
                 .sorted(getShortestString())
                 .findFirst()
