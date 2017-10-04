@@ -51,7 +51,7 @@ class ChannelActionsService extends MenuService {
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
-      isIconVisible: () => this.hasAnyChanges(),
+      isIconVisible: () => this._hasAnyChanges(),
       iconSvg: 'attention',
     })
       .addAction('settings', {
@@ -119,7 +119,7 @@ class ChannelActionsService extends MenuService {
     this.showSubPage('manage-changes');
   }
 
-  hasAnyChanges() {
+  _hasAnyChanges() {
     return this._hasOwnChanges() || this._hasChangesToManage();
   }
 
