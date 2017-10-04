@@ -5,8 +5,8 @@
 #set($empty = '')
 /content/gallery/${rootArtifactId.replace($hyphen,$empty)}:
   jcr:primaryType: hippogallery:stdImageGallery
-  jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  hippo:name: ${projectName}
   hippostd:foldertype: [new-image-folder]
   hippostd:gallerytype: ['hippogallery:imageset']
-  hippo:name: ${projectName}
 
