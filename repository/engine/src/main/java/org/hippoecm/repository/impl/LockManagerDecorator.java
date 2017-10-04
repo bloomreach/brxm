@@ -37,6 +37,25 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCKEXPIRATIONTIME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_LOCKABLE;
 
+/**
+ * JCR locking is deprecated, use {@link org.onehippo.cms7.services.lock.LockManager} instead. Creating a (cluster wide)
+ * lock with {@link org.onehippo.cms7.services.lock.LockManager} can be achieved as follows:
+ * <code>
+ *     <pre>
+ *        final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+ *        try {
+ *            lockManager.lock(key);
+ *            // do locked work
+ *        } catch (LockException e) {
+ *            log.info("{} already locked", key);
+ *        } finally {
+ *            lockManager.unlock(key);
+ *        }
+ *     </pre>
+ * </code>
+ * @deprecated since 5.0.3
+ */
+@Deprecated
 public class LockManagerDecorator extends org.hippoecm.repository.decorating.LockManagerDecorator implements HippoLockManager {
 
     private static final Logger log = LoggerFactory.getLogger(LockManagerDecorator.class);
@@ -108,6 +127,10 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
         lockNode.getSession().save();
     }
 
+    /**
+     * Using jcr locking is deprecated, use {@link org.onehippo.cms7.services.lock.LockManager} instead
+     */
+    @Deprecated
     public class LockDecorator implements HippoLock {
 
         private Lock lock;

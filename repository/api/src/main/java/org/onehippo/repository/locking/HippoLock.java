@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,25 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 
+/**
+ * JCR locking is deprecated, use {@link org.onehippo.cms7.services.lock.LockManager} instead. Creating a (cluster wide)
+ * lock with {@link org.onehippo.cms7.services.lock.LockManager} can be achieved as follows:
+ * <code>
+ *     <pre>
+ *        final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+ *        try {
+ *            lockManager.lock(key);
+ *            // do locked work
+ *        } catch (LockException e) {
+ *            log.info("{} already locked", key);
+ *        } finally {
+ *            lockManager.unlock(key);
+ *        }
+ *     </pre>
+ * </code>
+ * @deprecated since 5.0.3
+ */
+@Deprecated
 public interface HippoLock extends Lock {
 
     /**
