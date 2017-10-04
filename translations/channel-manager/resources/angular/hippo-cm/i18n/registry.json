@@ -130,8 +130,14 @@
       "locales" : null
     },
     "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "ERROR_ADD_COMPONENT" : {
       "status" : "CLEAN",
@@ -766,6 +772,16 @@
       }
     },
     "ERROR_FIELD_DOUBLE_PATTERN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
