@@ -2,6 +2,4 @@ group:
   name: ${artifactId}
   after: hippo-cms
 project: ${artifactId}
-module: 
-  name: ${artifactId}-repository-data-webfiles
-  after: ${artifactId}-repository-data-application
+module: ${artifactId}-repository-data-webfiles

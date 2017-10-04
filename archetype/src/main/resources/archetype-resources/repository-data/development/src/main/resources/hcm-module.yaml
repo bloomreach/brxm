@@ -4,4 +4,4 @@ group:
 project: ${artifactId}
 module: 
   name: ${artifactId}-repository-data-development
-  after: [${artifactId}-repository-data-application, ${artifactId}-repository-data-webfiles]
+  after: ${artifactId}-repository-data-application
