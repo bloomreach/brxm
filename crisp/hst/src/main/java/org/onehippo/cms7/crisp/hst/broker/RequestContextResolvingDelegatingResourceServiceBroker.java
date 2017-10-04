@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.crisp.api.broker.AbstractDelegatingResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -47,6 +48,16 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
     }
 
     @Override
+    public Resource resolve(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolve(resourceSpace, absPath, exchangeHint);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
     public Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables)
             throws ResourceException {
         try {
@@ -58,10 +69,31 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
     }
 
     @Override
+    public Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolve(resourceSpace, absPath, pathVariables, exchangeHint);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
     public Binary resolveBinary(String resourceSpace, String absPath) throws ResourceException {
         try {
             resolveResourceServiceBrokerRequestContext();
             return super.resolveBinary(resourceSpace, absPath);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinary(resourceSpace, absPath, exchangeHint);
         } finally {
             clearResourceServiceBrokerRequestContext();
         }
@@ -79,10 +111,31 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
     }
 
     @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinary(resourceSpace, absPath, pathVariables, exchangeHint);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
     public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         try {
             resolveResourceServiceBrokerRequestContext();
             return super.findResources(resourceSpace, baseAbsPath);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, ExchangeHint exchangeHint) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.findResources(resourceSpace, baseAbsPath, exchangeHint);
         } finally {
             clearResourceServiceBrokerRequestContext();
         }
@@ -94,6 +147,17 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
         try {
             resolveResourceServiceBrokerRequestContext();
             return super.findResources(resourceSpace, baseAbsPath, pathVariables);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.findResources(resourceSpace, baseAbsPath, pathVariables, exchangeHint);
         } finally {
             clearResourceServiceBrokerRequestContext();
         }

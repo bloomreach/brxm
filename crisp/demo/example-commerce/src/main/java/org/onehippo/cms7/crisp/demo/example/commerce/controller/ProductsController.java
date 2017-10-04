@@ -37,7 +37,8 @@ public class ProductsController {
     private ProductRepository productRepository;
 
     @RequestMapping(value="/products",
-            method = RequestMethod.GET,
+            method = { RequestMethod.GET, RequestMethod.POST },
+            consumes = { "*/*" },
             produces = { "application/json" }
     )
     public List<Product> findProductList(@RequestParam(value="q", required=false) String query) {
@@ -45,7 +46,8 @@ public class ProductsController {
     }
 
     @RequestMapping(value="/products.xml",
-            method = RequestMethod.GET,
+            method = { RequestMethod.GET, RequestMethod.POST },
+            consumes = { "*/*" },
             produces = { "application/xml" }
     )
     public ProductDataResult findProductDataResult(@RequestParam(value="q", required=false) String query) {
@@ -55,7 +57,8 @@ public class ProductsController {
     }
 
     @RequestMapping(value="/products/{sku}/image/download",
-            method = RequestMethod.GET,
+            method = { RequestMethod.GET, RequestMethod.POST },
+            consumes = { "*/*" },
             produces = { "image/jpeg" }
     )
     public Resource downloadProductImage(@PathVariable(value="sku") String sku) {

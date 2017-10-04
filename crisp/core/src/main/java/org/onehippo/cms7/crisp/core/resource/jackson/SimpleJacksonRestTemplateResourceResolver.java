@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -42,11 +44,19 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+    public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
+            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
+            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class,
-                    pathVariables);
+            ResponseEntity<String> result;
+
+            if (HttpMethod.POST.equals(httpMethod)) {
+                result = restTemplate.postForEntity(getBaseResourceURI(absPath), requestObject, String.class, pathVariables);
+            } else {
+                result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class, pathVariables);
+            }
 
             if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
@@ -73,12 +83,22 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables)
+    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         try {
+            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
+            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
+            ResponseEntity<String> result;
+
+            if (HttpMethod.POST.equals(httpMethod)) {
+                result = restTemplate.postForEntity(getBaseResourceURI(baseAbsPath), requestObject, String.class,
                     pathVariables);
+            } else {
+                result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
+                        pathVariables);
+            }
 
             if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();

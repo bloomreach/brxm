@@ -21,9 +21,13 @@ import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHintBuilder;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
@@ -71,7 +75,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
             // Note: Just as an example, let's try to find all the data by passing empty query string.
             pathVars.put("fullTextSearchTerm", "");
             productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
-                    "/products/?q={fullTextSearchTerm}", pathVars);
+                    "/products/?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
                     RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/", document.getTitle(), e);
@@ -91,7 +95,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
                 final Map<String, Object> pathVars = new HashMap<>();
                 pathVars.put("sku", sku);
                 Binary binary = resourceServiceBroker.resolveBinary(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
-                        "/products/{sku}/image/download", pathVars);
+                        "/products/{sku}/image/download", pathVars, createExampleExchangeHintFromParameter());
                 request.setAttribute("binary", binary);
             } catch (Exception e) {
                 log.warn("Failed to find binary.", e);
@@ -110,12 +114,24 @@ public class NewsContentComponent extends EssentialsContentComponent {
             // Note: Just as an example, let's try to find all the data by passing empty query string.
             pathVars.put("fullTextSearchTerm", "");
             productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML,
-                    "/products.xml?q={fullTextSearchTerm}", pathVars);
+                    "/products.xml?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
                     RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products.xml", document.getTitle(), e);
         }
 
         return productCatalogs;
+    }
+
+    /**
+     * Create a demo-purpose-only <code>ExchangeHint</code> instance that can be passed *optionally*.
+     * @return
+     */
+    private ExchangeHint createExampleExchangeHintFromParameter() {
+        final String methodName = RequestContextProvider.get().getServletRequest().getParameter("_method");
+        if (!StringUtils.equalsIgnoreCase("POST", methodName)) {
+            return null;
+        }
+        return ExchangeHintBuilder.create().methodName("POST").request("{}").build();
     }
 }

@@ -15,47 +15,32 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.crisp.api.resource.Binary;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
- * {@link File} based {@link Binary} implementation.
- * <P>
- * This stores binary input stream into a file. When {@link #dispose()} is called, it closes the input stream and
- * internal file if any.
- * </P>
- * @deprecated Use {@link SpringResourceBinary} instead. e.g, <code>new SpringResourceBinary(new FileSystemResource(file), true)</code>.
+ * Spring Framework {@link Resource} based {@link Binary} implementation.
  */
-@Deprecated
-public class FileBinary implements Binary {
+public class SpringResourceBinary implements Binary {
 
     private static final long serialVersionUID = 1L;
 
-    private File file;
+    private final Resource resource;
+    private final boolean temporaryResource;
     private InputStream inputStream;
 
-    public FileBinary() throws IOException {
-    }
-
-    public void save(final File file, final InputStream input) throws IOException {
-        dispose();
-
-        this.file = file;
-
-        FileOutputStream output = null;
-
-        try {
-            output = new FileOutputStream(file);
-            IOUtils.copy(input, output);
-        } finally {
-            IOUtils.closeQuietly(output);
+    public SpringResourceBinary(final Resource resource, final boolean temporaryResource) throws IOException {
+        if (resource == null) {
+            throw new IllegalArgumentException("resource is null.");
         }
+
+        this.resource = resource;
+        this.temporaryResource = temporaryResource;
     }
 
     @Override
@@ -64,11 +49,16 @@ public class FileBinary implements Binary {
             IOUtils.closeQuietly(inputStream);
         }
 
-        if (file == null || !file.isFile()) {
-            throw new IOException("File wasn't saved.");
+        if (!resource.exists()) {
+            throw new IOException("resource doesn't exist.");
         }
 
-        inputStream = new FileInputStream(file);
+        if (!resource.isReadable()) {
+            throw new IOException("resource isn't readable.");
+        }
+
+        inputStream = resource.getInputStream();
+
         return inputStream;
     }
 
@@ -83,8 +73,10 @@ public class FileBinary implements Binary {
             }
         }
 
-        if (file != null) {
-            file.delete();
+        if (temporaryResource) {
+            if (resource instanceof FileSystemResource) {
+                ((FileSystemResource) resource).getFile().delete();
+            }
         }
     }
 }
