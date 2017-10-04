@@ -15,6 +15,14 @@
  */
 package org.onehippo.cms7.crisp.core.broker;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
@@ -39,14 +48,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 public class CacheableResourceServiceBrokerTest {
 
@@ -68,7 +69,7 @@ public class CacheableResourceServiceBrokerTest {
 
         demoResourceResolver2 = new AbstractResourceResolver() {
             @Override
-            public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+            public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
                 demo1CallCounter.incrementAndGet();
                 if ("/null".equals(absPath)) {
                     return null;
@@ -79,12 +80,12 @@ public class CacheableResourceServiceBrokerTest {
             }
 
             @Override
-            public Binary resolveBinary(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+            public Binary resolveBinary(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
                 return null;
             }
 
             @Override
-            public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables)
+            public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
                     throws ResourceException {
                 demo1CallCounter.incrementAndGet();
                 if ("/null".equals(baseAbsPath)) {

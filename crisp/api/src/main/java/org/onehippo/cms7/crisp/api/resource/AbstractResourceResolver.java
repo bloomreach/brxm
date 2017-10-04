@@ -16,6 +16,9 @@
 package org.onehippo.cms7.crisp.api.resource;
 
 import java.util.Collections;
+import java.util.Map;
+
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 
 /**
  * Abstract {@link ResourceResolver} base class.
@@ -32,7 +35,23 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
      */
     @Override
     public Resource resolve(String absPath) throws ResourceException {
-        return resolve(absPath, Collections.emptyMap());
+        return resolve(absPath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource resolve(String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolve(absPath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolve(absPath, pathVariables, null);
     }
 
     /**
@@ -40,7 +59,23 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
      */
     @Override
     public Binary resolveBinary(String absPath) throws ResourceException {
-        return resolveBinary(absPath, Collections.emptyMap());
+        return resolveBinary(absPath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Binary resolveBinary(String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolveBinary(absPath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Binary resolveBinary(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolveBinary(absPath, pathVariables, null);
     }
 
     /**
@@ -48,7 +83,23 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
      */
     @Override
     public Resource findResources(String baseAbsPath) throws ResourceException {
-        return findResources(baseAbsPath, Collections.emptyMap());
+        return findResources(baseAbsPath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource findResources(String baseAbsPath, ExchangeHint exchangeHint) throws ResourceException {
+        return findResources(baseAbsPath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables) throws ResourceException {
+        return findResources(baseAbsPath, pathVariables, null);
     }
 
     /**

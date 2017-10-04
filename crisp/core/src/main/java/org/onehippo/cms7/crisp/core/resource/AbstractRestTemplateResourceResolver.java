@@ -15,16 +15,22 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -49,6 +55,11 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
      * {@link RestTemplate} instance to be used in communication with REST API backends.
      */
     private RestTemplate restTemplate;
+
+    /**
+     * Max byte size of {@link Binary} to keep in memory.
+     */
+    private long maxInMemoryBinarySize = 4096L;
 
     /**
      * Default constructor.
@@ -98,35 +109,79 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         this.restTemplate = defaultRestTemplate;
     }
 
+    /**
+     * Return max byte size of {@link Binary} to keep in memory.
+     * @return max byte size of {@link Binary} to keep in memory
+     */
+    public long getMaxInMemoryBinarySize() {
+        return maxInMemoryBinarySize;
+    }
+
+    /**
+     * Set max byte size of {@link Binary} to keep in memory.
+     * @param maxInMemoryBinarySize max byte size of {@link Binary} to keep in memory
+     */
+    public void setMaxInMemoryBinarySize(long maxInMemoryBinarySize) {
+        this.maxInMemoryBinarySize = maxInMemoryBinarySize;
+    }
+
     @Override
-    public Binary resolveBinary(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+    public Binary resolveBinary(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         Binary binary = null;
 
         try {
+            HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : null;
+            if (!HttpMethod.POST.equals(httpMethod)) {
+                httpMethod = HttpMethod.GET;
+            }
+
             RestTemplate restTemplate = getRestTemplate();
-            binary = restTemplate.execute(getBaseResourceURI(absPath), HttpMethod.GET, null,
-                    new ResponseExtractor<FileBinary>() {
-                        @Override
-                        public FileBinary extractData(ClientHttpResponse response) throws IOException {
-                            FileBinary fileBinary = null;
-                            InputStream input = null;
 
-                            if (response.getStatusCode().is2xxSuccessful()) {
-                                try {
-                                    fileBinary = new FileBinary();
-                                    File file = File.createTempFile("crispbin-", ".tmp");
-                                    input = response.getBody();
-                                    fileBinary.save(file, input);
-                                } finally {
-                                    IOUtils.closeQuietly(input);
+            binary =
+                    restTemplate.execute(
+                            getBaseResourceURI(absPath),
+                            httpMethod,
+                            null,
+                            new ResponseExtractor<SpringResourceBinary>() {
+                                @Override
+                                public SpringResourceBinary extractData(ClientHttpResponse response) throws IOException {
+                                    SpringResourceBinary resourceBinary = null;
+
+                                    if (response.getStatusCode().is2xxSuccessful()) {
+                                        final long contentLength = response.getHeaders().getContentLength();
+                                        InputStream input = null;
+                                        OutputStream output = null;
+
+                                        try {
+                                            input = response.getBody();
+
+                                            if (contentLength >=0 && contentLength <= getMaxInMemoryBinarySize()) {
+                                                output = new ByteArrayOutputStream((int) contentLength);
+                                                IOUtils.copy(input, output);
+                                                resourceBinary = new SpringResourceBinary(new ByteArrayResource(
+                                                        ((ByteArrayOutputStream) output).toByteArray()), true);
+                                                output.close();
+                                                output = null;
+                                            } else {
+                                                File file = File.createTempFile("crispbin-", ".tmp");
+                                                output = new FileOutputStream(file);
+                                                IOUtils.copy(input, output);
+                                                output.close();
+                                                output = null;
+                                                resourceBinary = new SpringResourceBinary(new FileSystemResource(file), true);
+                                            }
+                                        } finally {
+                                            IOUtils.closeQuietly(output);
+                                            IOUtils.closeQuietly(input);
+                                        }
+                                    } else {
+                                        throw new ResourceException("Unexpected response status: " + response.getStatusCode());
+                                    }
+
+                                    return resourceBinary;
                                 }
-                            } else {
-                                throw new ResourceException("Unexpected response status: " + response.getStatusCode());
-                            }
-
-                            return fileBinary;
-                        }
-                    }, pathVariables);
+                            },
+                            pathVariables);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (Exception e) {

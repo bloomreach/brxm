@@ -24,9 +24,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -38,11 +40,21 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     }
 
     @Override
-    public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+    public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
+            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
+            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<ByteArrayResource> result = restTemplate.getForEntity(getBaseResourceURI(absPath),
-                    ByteArrayResource.class, pathVariables);
+            ResponseEntity<ByteArrayResource> result;
+
+            if (HttpMethod.POST.equals(httpMethod)) {
+                result = restTemplate.postForEntity(getBaseResourceURI(absPath), requestObject,
+                        ByteArrayResource.class, pathVariables);
+            } else {
+                result = restTemplate.getForEntity(getBaseResourceURI(absPath),
+                        ByteArrayResource.class, pathVariables);
+            }
 
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();
@@ -62,12 +74,22 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     }
 
     @Override
-    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables)
+    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         try {
+            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
+            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<ByteArrayResource> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath),
-                    ByteArrayResource.class, pathVariables);
+            ResponseEntity<ByteArrayResource> result;
+
+            if (HttpMethod.POST.equals(httpMethod)) {
+                result = restTemplate.postForEntity(getBaseResourceURI(baseAbsPath), requestObject,
+                        ByteArrayResource.class, pathVariables);
+            } else {
+                result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath),
+                        ByteArrayResource.class, pathVariables);
+            }
 
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();

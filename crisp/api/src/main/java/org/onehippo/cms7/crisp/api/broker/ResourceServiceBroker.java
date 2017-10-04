@@ -17,6 +17,7 @@ package org.onehippo.cms7.crisp.api.broker;
 
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCacheResolvable;
@@ -72,6 +73,23 @@ public interface ResourceServiceBroker {
      * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
      * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
      * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Resource}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return single {@link Resource} representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Resource resolve(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and resolves single {@link Resource}
+     * representation by {@code absPath}.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
      * <p>The {@code absPath} template is expanded using the given path variables ({@code pathVariables}), if any.
      * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
      * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
@@ -84,6 +102,30 @@ public interface ResourceServiceBroker {
      * @throws ResourceException if resource resolution operation fails
      */
     Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and resolves single {@link Resource}
+     * representation by {@code absPath}.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>The {@code absPath} template is expanded using the given path variables ({@code pathVariables}), if any.
+     * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
+     * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
+     * <code>".../some/path/hello/world/overview"</code> by the {@code pathVariables} when making a real request
+     * to the backend.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Resource}
+     * @param pathVariables the variables to expand the template given by {@code absPath}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return single {@link Resource} representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException;
 
     /**
@@ -107,6 +149,23 @@ public interface ResourceServiceBroker {
      * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
      * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
      * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Binary}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return single {@link Binary} representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Binary resolveBinary(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and resolves single {@link Binary}
+     * representation by {@code absPath}.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
      * <p>The {@code absPath} template is expanded using the given path variables ({@code pathVariables}), if any.
      * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
      * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
@@ -119,6 +178,30 @@ public interface ResourceServiceBroker {
      * @throws ResourceException if resource resolution operation fails
      */
     Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and resolves single {@link Binary}
+     * representation by {@code absPath}.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>The {@code absPath} template is expanded using the given path variables ({@code pathVariables}), if any.
+     * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
+     * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
+     * <code>".../some/path/hello/world/overview"</code> by the {@code pathVariables} when making a real request
+     * to the backend.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Binary}
+     * @param pathVariables the variables to expand the template given by {@code absPath}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return single {@link Binary} representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException;
 
     /**
@@ -144,6 +227,24 @@ public interface ResourceServiceBroker {
      * For example, if the backend is a REST API, then {@code baseAbsPath} can be a URI path or part of URL. Or, as
      * an example, the {@code baseAbsPath} can be an index name of a search index, table name of databases or node
      * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param baseAbsPath base absolute path of a {@link Resource}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return a parent {@link Resource} representation which contains a collection of child {@link Resource} representations
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Resource findResources(String resourceSpace, String baseAbsPath, ExchangeHint exchangeHint) throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and search {@link Resource}
+     * representations from {@code baseAbsPath} and returns a parent {@link Resource} representation which contains
+     * a collection of child {@link Resource} representations.
+     * <p>{@code baseAbsPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code baseAbsPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code baseAbsPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
      * <p>The {@code baseAbsPath} template is expanded using the given path variables ({@code pathVariables}), if any.
      * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
      * and {@code baseAbsPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
@@ -156,6 +257,31 @@ public interface ResourceServiceBroker {
      * @throws ResourceException if resource resolution operation fails
      */
     Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
+            throws ResourceException;
+
+    /**
+     * Resolves a proper {@link ResourceResolver} by the specified {@code resourceSpace} and search {@link Resource}
+     * representations from {@code baseAbsPath} and returns a parent {@link Resource} representation which contains
+     * a collection of child {@link Resource} representations.
+     * <p>{@code baseAbsPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code baseAbsPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code baseAbsPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>The {@code baseAbsPath} template is expanded using the given path variables ({@code pathVariables}), if any.
+     * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
+     * and {@code baseAbsPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
+     * <code>".../some/path/hello/world/overview"</code> by the {@code pathVariables} when making a real request
+     * to the backend.</p>
+     * <p>If a non-null {@code exchangeHint} is given, then it can be understood by the specific {@link ResourceResolver}
+     * implementation for its specific backend.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param baseAbsPath base absolute path of a {@link Resource}
+     * @param pathVariables the variables to expand the template given by {@code absPath}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return a parent {@link Resource} representation which contains a collection of child {@link Resource} representations
+     * @throws ResourceException if resource resolution operation fails
+     */
+    Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException;
 
     /**

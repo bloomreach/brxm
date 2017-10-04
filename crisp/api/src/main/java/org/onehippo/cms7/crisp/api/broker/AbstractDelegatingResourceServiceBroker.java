@@ -17,12 +17,12 @@ package org.onehippo.cms7.crisp.api.broker;
 
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
-import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 /**
  * Abstract delegating Resource Service Broker adaptor class.
@@ -41,14 +41,30 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     }
 
     @Override
+    public Resource resolve(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return delegated.resolve(resourceSpace, absPath, exchangeHint);
+    }
+
+    @Override
     public Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables)
             throws ResourceException {
         return delegated.resolve(resourceSpace, absPath, pathVariables);
     }
 
     @Override
+    public Resource resolve(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        return delegated.resolve(resourceSpace, absPath, pathVariables, exchangeHint);
+    }
+
+    @Override
     public Binary resolveBinary(String resourceSpace, String absPath) throws ResourceException {
         return delegated.resolveBinary(resourceSpace, absPath);
+    }
+
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return delegated.resolveBinary(resourceSpace, absPath, exchangeHint);
     }
 
     @Override
@@ -58,14 +74,31 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     }
 
     @Override
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        return delegated.resolveBinary(resourceSpace, absPath, pathVariables, exchangeHint);
+    }
+
+    @Override
     public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         return delegated.findResources(resourceSpace, baseAbsPath);
+    }
+
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, ExchangeHint exchangeHint) throws ResourceException {
+        return delegated.findResources(resourceSpace, baseAbsPath, exchangeHint);
     }
 
     @Override
     public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
             throws ResourceException {
         return delegated.findResources(resourceSpace, baseAbsPath, pathVariables);
+    }
+
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        return delegated.findResources(resourceSpace, baseAbsPath, pathVariables, exchangeHint);
     }
 
     @Override

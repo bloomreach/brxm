@@ -18,6 +18,7 @@ package org.onehippo.cms7.crisp.api.broker;
 import java.util.Collections;
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
@@ -64,7 +65,23 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
      */
     @Override
     public Resource resolve(String resourceSpace, String absResourcePath) throws ResourceException {
-        return resolve(resourceSpace, absResourcePath, Collections.emptyMap());
+        return resolve(resourceSpace, absResourcePath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource resolve(String resourceSpace, String absResourcePath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolve(resourceSpace, absResourcePath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolve(resourceSpace, absResourcePath, pathVariables, null);
     }
 
     /**
@@ -72,7 +89,23 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
      */
     @Override
     public Binary resolveBinary(String resourceSpace, String absResourcePath) throws ResourceException {
-        return resolveBinary(resourceSpace, absResourcePath, Collections.emptyMap());
+        return resolveBinary(resourceSpace, absResourcePath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absResourcePath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolveBinary(resourceSpace, absResourcePath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Binary resolveBinary(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolveBinary(resourceSpace, absResourcePath, pathVariables, null);
     }
 
     /**
@@ -80,7 +113,23 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
      */
     @Override
     public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
-        return findResources(resourceSpace, baseAbsPath, Collections.emptyMap());
+        return findResources(resourceSpace, baseAbsPath, Collections.emptyMap(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, ExchangeHint exchangeHint) throws ResourceException {
+        return findResources(resourceSpace, baseAbsPath, Collections.emptyMap(), exchangeHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables) throws ResourceException {
+        return findResources(resourceSpace, baseAbsPath, pathVariables, null);
     }
 
     /**

@@ -23,6 +23,7 @@ import javax.servlet.ServletRequest;
 import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
@@ -163,7 +164,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
      * {@inheritDoc}
      */
     @Override
-    public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables)
+    public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         Resource resource = null;
         ValueMap cacheKey = null;
@@ -199,7 +200,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         }
 
         if (resource == null) {
-            resource = resourceResolver.resolve(absResourcePath, pathVariables);
+            resource = resourceResolver.resolve(absResourcePath, pathVariables, exchangeHint);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
                 try {
@@ -223,17 +224,17 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
 
 
     @Override
-    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+    public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
-        return resourceResolver.resolveBinary(absPath, pathVariables);
+        return resourceResolver.resolveBinary(absPath, pathVariables, exchangeHint);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
+    public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         Resource resource = null;
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
@@ -269,7 +270,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         }
 
         if (resource == null) {
-            resource = resourceResolver.findResources(baseAbsPath, pathVariables);
+            resource = resourceResolver.findResources(baseAbsPath, pathVariables, exchangeHint);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
                 try {
