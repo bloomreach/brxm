@@ -35,4 +35,9 @@ public interface ExchangeHint {
      */
     public Object getRequest();
 
+    /**
+     * Return a cache key of this hint.
+     * @return a cache key of this hint
+     */
+    public Object getCacheKey();
 }

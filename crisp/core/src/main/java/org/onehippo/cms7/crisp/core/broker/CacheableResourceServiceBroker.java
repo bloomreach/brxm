@@ -67,6 +67,11 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
     private static final String VARIABLES = "variables";
 
     /**
+     * Cache key attribute name for the exchange hint.
+     */
+    private static final String EXCHANGE_HINT = "exchangeHint";
+
+    /**
      * Cache key value of {@link #OPERATION_KEY} in {@link #resolve(String, String, Map)} operation invocation.
      */
     private static final String OPERATION_KEY_RESOLVE = CacheableResourceServiceBroker.class.getName() + ".resolve";
@@ -170,7 +175,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ValueMap cacheKey = null;
 
         if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
-            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables, exchangeHint);
             resource = getResourceCacheInRequestLevelCache(cacheKey);
 
             if (resource == NULL_RESOURCE_INSTANCE) {
@@ -185,7 +190,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
 
         if (isCacheEnabled() && resourceDataCache != null) {
             if (cacheKey == null) {
-                cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+                cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables, exchangeHint);
             }
 
             Object cacheData = resourceDataCache.getData(cacheKey);
@@ -241,7 +246,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ValueMap cacheKey = null;
 
         if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
-            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, baseAbsPath, pathVariables);
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, baseAbsPath, pathVariables, exchangeHint);
             resource = getResourceCacheInRequestLevelCache(cacheKey);
 
             if (resource == NULL_RESOURCE_INSTANCE) {
@@ -255,7 +260,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
 
         if (isCacheEnabled() && resourceDataCache != null) {
             if (cacheKey == null) {
-                cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
+                cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables, exchangeHint);
             }
 
             Object cacheData = resourceDataCache.getData(cacheKey);
@@ -323,7 +328,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
      * @return a cache key to cache a result resource object in the {@link ResourceDataCache}
      */
     protected ValueMap createCacheKey(final String operationKey, final String resourceSpace, final String resourcePath,
-            final Map<String, Object> variables) {
+            final Map<String, Object> variables, final ExchangeHint exchangeHint) {
         final ValueMap cacheKey = new DefaultValueMap();
 
         if (operationKey != null) {
@@ -340,6 +345,10 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
 
         if (variables != null && !variables.isEmpty()) {
             cacheKey.put(VARIABLES, variables);
+        }
+
+        if (exchangeHint != null) {
+            cacheKey.put(EXCHANGE_HINT, exchangeHint.getCacheKey());
         }
 
         return cacheKey;
