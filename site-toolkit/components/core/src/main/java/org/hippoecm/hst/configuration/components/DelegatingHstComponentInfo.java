@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     
     private HstComponentInfo delegatee;
     private String componentName;
+    private String parametersInfoClassName;
 
     /**
      * HST Component Info constructor with delegatee and component name arguments.
@@ -32,13 +33,19 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
      * @param delegatee
      * @param componentName
      */
-    public DelegatingHstComponentInfo(HstComponentInfo delegatee, String componentName) {
+    public DelegatingHstComponentInfo(HstComponentInfo delegatee, String componentName, String parametersInfoClassName) {
         this.delegatee = delegatee;
         this.componentName = componentName;
+        this.parametersInfoClassName = parametersInfoClassName;
     }
     
     public String getComponentClassName() {
         return (componentName != null ? componentName : delegatee.getComponentClassName());
+    }
+
+    @Override
+    public String getParametersInfoClassName() {
+        return (parametersInfoClassName != null ? parametersInfoClassName : delegatee.getParametersInfoClassName());
     }
 
     public String getId() {

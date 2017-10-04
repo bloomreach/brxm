@@ -98,7 +98,8 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 component,
                 componentMetadata,
                 parentWindow,
-                referenceNamespace);
+                referenceNamespace,
+                compConfig.getParametersInfoClassName());
 
         if (componentFactoryException != null) {
             window.addComponentExcpetion(componentFactoryException);
