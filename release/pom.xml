@@ -181,7 +181,6 @@
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-configuration-management-api</artifactId>
         <version>${hippo.configuration-management.version}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms</groupId>
@@ -912,10 +911,6 @@
       <artifactId>hippo-services</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms</groupId>
-      <artifactId>hippo-configuration-management-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
@@ -1035,11 +1030,6 @@
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-services-autoreload</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms</groupId>
-                    <artifactId>hippo-configuration-management-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
