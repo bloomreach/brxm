@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import rightSidePanelComponent from './rightSidePanel.component';
+import createContentForm from './createContentForm/createContentForm.component';
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
@@ -22,6 +23,7 @@ const rightSidePanelModule = angular
     fieldsModule,
     resizeHandleModule,
   ])
+  .component('createContentForm', createContentForm)
   .component('rightSidePanel', rightSidePanelComponent);
 
 export default rightSidePanelModule.name;

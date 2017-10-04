@@ -103,21 +103,25 @@
           name="$ctrl.form"
           ng-class="{'create-content': $ctrl.createContent}"
           class="form-dense-layout">
-      <document-fields class="top-level"
+      <document-fields ng-if="$ctrl.editing || $ctrl.createContent"
+                       class="top-level"
                        field-types="$ctrl.docType.fields"
                        field-values="$ctrl.doc.fields">
       </document-fields>
-      <div layout="row" layout-align="end center" ng-if="$ctrl.createContent">
-        <md-button class="qa-close"
-                   ng-click="$ctrl.close()">
-          {{ 'CANCEL' | translate }}
-        </md-button>
+      <div ng-if="$ctrl.createContent">
+        <create-content-form document="$ctrl.newDocument"></create-content-form>
+        <div layout="row" layout-align="end center">
+          <md-button class="qa-close"
+                     ng-click="$ctrl.close()">
+            {{ 'CANCEL' | translate }}
+          </md-button>
 
-        <md-button class="qa-create-content"
-                   ng-click="$ctrl.saveNewDocument()"
-                   ng-disabled="$ctrl.form.$invalid">
-          {{ 'CONTINUE' | translate }}
-        </md-button>
+          <md-button class="qa-create-content"
+                     ng-click="$ctrl.saveNewDocument()"
+                     ng-disabled="$ctrl.form.$invalid">
+            {{ 'CONTINUE' | translate }}
+          </md-button>
+        </div>
       </div>
     </form>
   </md-content>

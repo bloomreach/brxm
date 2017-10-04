@@ -81,9 +81,8 @@
 
   .create-content {
     background: $grey-100;
-    padding-top: 30px;
-    md-input-container {
-      margin: 5px 0;
+    &-container {
+      padding-left: 12px;
     }
   }
 }

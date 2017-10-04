@@ -186,33 +186,18 @@ class RightSidePanelCtrl {
   }
 
   _initNewContent() {
+    this._resetState();
     this.createContent = true;
     this.title = 'Create new content';
-    const doc = {
-      fields: {
-        'hap:title': [{ value: 'Govino glass' }],
-        'hap:url': [{ value: 'govino-glass' }],
-        'hap:type': [{ value: 'Product' }],
-        'hap:location': [{ value: 'Products' }],
-      },
-    };
-    const docType = {
-      allFieldsIncluded: true,
-      fields: [
-        { id: 'hap:title', type: 'STRING', displayName: 'Document name', required: true },
-        { id: 'hap:url', type: 'STRING', displayName: 'URL', required: true },
-        { id: 'hap:type', type: 'STRING', displayName: 'Document type', required: true },
-        { id: 'hap:location', type: 'STRING', displayName: 'Document location', required: true },
-      ],
-    };
-    this._onLoadSuccess(doc, docType, false);
+    this.newDocument = {};
+    this.doc = {};
+    this.docType = { allFieldsIncluded: true };
   }
 
   saveNewDocument() {
-    // Add the logic to validate all fields again backend, if resolved, continue with the below methods
     this.createContent = false;
-    this.editing = false;
-    this._onLoadSuccess(this.doc, this.docType, true); // If document UUID is received we can use openDocument and just pretend to edit
+    const documentId = null;
+    this._loadDocument(documentId); // If document UUID is received we can use openDocument and just pretend to edit
   }
 
 
@@ -238,10 +223,10 @@ class RightSidePanelCtrl {
       },
     };
   }
-  _onLoadSuccess(doc, docType, editing = true) {
+  _onLoadSuccess(doc, docType) {
     this.doc = doc;
     this.docType = docType;
-    this.editing = editing;
+    this.editing = true;
 
     if (this.doc.displayName) {
       this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
