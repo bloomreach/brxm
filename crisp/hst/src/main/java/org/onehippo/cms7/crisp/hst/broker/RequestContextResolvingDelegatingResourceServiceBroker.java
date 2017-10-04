@@ -157,7 +157,7 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
             throws ResourceException {
         try {
             resolveResourceServiceBrokerRequestContext();
-            return super.findResources(resourceSpace, baseAbsPath, pathVariables);
+            return super.findResources(resourceSpace, baseAbsPath, pathVariables, exchangeHint);
         } finally {
             clearResourceServiceBrokerRequestContext();
         }
