@@ -111,7 +111,7 @@ public final class AutoExportServiceImpl implements EventListener {
                 }
                 else {
                     // but webfiles-only modules are okay, even if mixed in with or trailing exported modules
-                    log.debug("autoexport detected a dependent module, allowed because it includes webfilebundle definitions only: {}", module.getFullName());
+                    log.debug("autoexport detected a dependent module, allowed because it is either empty or includes webfilebundle definitions only: {}", module.getFullName());
                 }
             }
         }
