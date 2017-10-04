@@ -349,7 +349,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case URI:
                 return representer.represent(value.getString());
             case BINARY:
-                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, value);
+                String nodeValue = !value.isResource() || value.isNewResource() ?
+                        moduleContext.generateUniqueName(source, value) : value.getString();
                 return representer.represent(nodeValue);
             default:
                 return representer.represent(value.getObject());
