@@ -45,10 +45,13 @@ class DefaultExchangeHint implements ExchangeHint {
     public Object getCacheKey() {
         StringBuilder sb = new StringBuilder(10);
         if (methodName != null) {
-            sb.append(methodName);
+            sb.append("method=").append(methodName);
         }
         if (request != null) {
-            sb.append(request.toString());
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("request=").append(request.toString());
         }
         return sb.toString();
     }
