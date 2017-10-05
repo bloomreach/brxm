@@ -130,24 +130,25 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
         if (node.isDelete()) {
             children.add(representNodeDelete());
-        }
-        if (node.getOrderBefore() != null) {
-            children.add(representNodeOrderBefore(node.getOrderBefore()));
-        }
-        if (node.getIgnoreReorderedChildren() != null) {
-            children.add(representNodeIgnoreReorderedChildren(node.getIgnoreReorderedChildren()));
-        }
-        if (node.getCategory() != null) {
-            children.add(representCategory(META_CATEGORY_KEY, node.getCategory()));
-        }
-        if (node.getResidualChildNodeCategory() != null) {
-            children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
-        }
-        for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
-            children.add(representProperty(childProperty));
-        }
-        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
-            children.add(representDefinitionNode(childNode));
+        } else {
+            if (node.getOrderBefore() != null) {
+                children.add(representNodeOrderBefore(node.getOrderBefore()));
+            }
+            if (node.getIgnoreReorderedChildren() != null) {
+                children.add(representNodeIgnoreReorderedChildren(node.getIgnoreReorderedChildren()));
+            }
+            if (node.getCategory() != null) {
+                children.add(representCategory(META_CATEGORY_KEY, node.getCategory()));
+            }
+            if (node.getResidualChildNodeCategory() != null) {
+                children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
+            }
+            for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+                children.add(representProperty(childProperty));
+            }
+            for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+                children.add(representDefinitionNode(childNode));
+            }
         }
 
         // root defs get a full path, but nested defs just get one relative path segment
@@ -182,65 +183,63 @@ public class SourceSerializer extends AbstractBaseSerializer {
     protected NodeTuple representPropertyUsingMap(final DefinitionPropertyImpl property) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
-        // .meta:category is no longer mutually-exclusive with value etc.
-        if (property.getCategory() != null) {
-            valueMapTuples.add(representCategory(META_CATEGORY_KEY, property.getCategory()));
-        }
-
         if (property.getOperation() == PropertyOperation.DELETE) {
             valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
-        }
-        else if (property.isEmptySystemProperty()) {
-            // this is a .meta:category system property with no specified value -- don't output anything else here
-        }
-        else {
-            // otherwise, we need to process operation, type, and value(s)
-            if (property.getOperation() != PropertyOperation.REPLACE) {
-                valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
+        } else {
+            // .meta:category is no longer mutually-exclusive with value etc.
+            if (property.getCategory() != null) {
+                valueMapTuples.add(representCategory(META_CATEGORY_KEY, property.getCategory()));
             }
-            if (ValueType.NAME != property.getValueType() ||
-                    !(JCR_PRIMARYTYPE.equals(property.getName()) || JCR_MIXINTYPES.equals(property.getName()))) {
-                valueMapTuples.add(createStrStrTuple(TYPE_KEY, property.getValueType().name().toLowerCase()));
-            }
-
-            final boolean exposeAsResource = hasResourceValues(property) || isBinaryProperty(property);
-            final String key;
-            if (exposeAsResource) {
-                key = RESOURCE_KEY;
-            } else if (hasPathValues(property)) {
-                key = PATH_KEY;
+            if (property.isEmptySystemProperty()) {
+                // this is a .meta:category system property with no specified value -- don't output anything else here
             } else {
-                key = VALUE_KEY;
-            }
+                // otherwise, we need to process operation, type, and value(s)
+                if (property.getOperation() != PropertyOperation.REPLACE) {
+                    valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
+                }
+                if (ValueType.NAME != property.getValueType() ||
+                        !(JCR_PRIMARYTYPE.equals(property.getName()) || JCR_MIXINTYPES.equals(property.getName()))) {
+                    valueMapTuples.add(createStrStrTuple(TYPE_KEY, property.getValueType().name().toLowerCase()));
+                }
 
-            if (property.getType() == PropertyType.SINGLE) {
-
-                final ValueImpl value = property.getValue();
-                final Node valueNode = representValue(value);
-                final ScalarNode keyNode = createStrScalar(key);
-                valueMapTuples.add(new NodeTuple(keyNode, valueNode));
-
+                final boolean exposeAsResource = hasResourceValues(property) || isBinaryProperty(property);
+                final String key;
                 if (exposeAsResource) {
-                    processSingleResource(value, valueNode);
+                    key = RESOURCE_KEY;
+                } else if (hasPathValues(property)) {
+                    key = PATH_KEY;
+                } else {
+                    key = VALUE_KEY;
                 }
-            } else {
-                final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-                for (ValueImpl value : property.getValues()) {
+
+                if (property.getType() == PropertyType.SINGLE) {
+
+                    final ValueImpl value = property.getValue();
                     final Node valueNode = representValue(value);
-                    valueNodes.add(valueNode);
+                    final ScalarNode keyNode = createStrScalar(key);
+                    valueMapTuples.add(new NodeTuple(keyNode, valueNode));
 
-                    if (isBinaryEmbedded(value)) {
-                        serializeBinaryValue(((ScalarNode) valueNode).getValue(), value);
+                    if (exposeAsResource) {
+                        processSingleResource(value, valueNode);
                     }
-                    else if (exposeAsResource) {
-                        serializeResourceValue(value);
+                } else {
+                    final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+                    for (ValueImpl value : property.getValues()) {
+                        final Node valueNode = representValue(value);
+                        valueNodes.add(valueNode);
+
+                        if (isBinaryEmbedded(value)) {
+                            serializeBinaryValue(((ScalarNode) valueNode).getValue(), value);
+                        }
+                        else if (exposeAsResource) {
+                            serializeResourceValue(value);
+                        }
                     }
+
+                    valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
                 }
-
-                valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
             }
         }
-
         return new NodeTuple(createStrScalar(property.getName()), new MappingNode(Tag.MAP, valueMapTuples, false));
     }
 
@@ -341,6 +340,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected Node representValue(final ValueImpl value) {
+        if (value.isNewResource()) {
+            moduleContext.resolveNewResourceValuePath(source, value);
+        }
         switch (value.getType()) {
             case DECIMAL:
                 // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
@@ -372,19 +374,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected void serializeBinaryValue(final String finalName, final ValueImpl value) {
-        // check we have an outputProvider! May be null when serializing definitions only
-        if (moduleContext.getOutputProvider(source) != null) {
-            moduleContext.serializeBinaryValue(source, finalName, value);
-        }
+        moduleContext.serializeBinaryValue(source, finalName, value);
     }
 
     protected void serializeResourceValue(final ValueImpl value) {
-        // check we have an outputProvider! May be null when serializing definitions only
-        if (moduleContext.getOutputProvider(source) != null) {
-            if (value.isNewResource()) {
-                moduleContext.resolveNewResourceValuePath(source, value);
-            }
-            moduleContext.serializeResourceValue(source, value);
-        }
+        moduleContext.serializeResourceValue(source, value);
     }
 }
