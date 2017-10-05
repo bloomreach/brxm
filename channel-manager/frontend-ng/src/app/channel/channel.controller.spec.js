@@ -206,7 +206,7 @@ describe('ChannelCtrl', () => {
   it('opens the content editor in the right sidepanel when told so', () => {
     spyOn(CmsService, 'reportUsageStatistic');
 
-    ChannelCtrl.editContent('testUuid');
+    ChannelCtrl.manageContent('testUuid');
 
     expect(SidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
