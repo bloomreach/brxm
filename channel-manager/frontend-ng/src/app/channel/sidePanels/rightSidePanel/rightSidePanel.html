@@ -103,7 +103,7 @@
           name="$ctrl.form"
           ng-class="{'create-content': $ctrl.createContent}"
           class="form-dense-layout">
-      <document-fields ng-if="$ctrl.editing || $ctrl.createContent"
+      <document-fields ng-if="$ctrl.editing"
                        class="top-level"
                        field-types="$ctrl.docType.fields"
                        field-values="$ctrl.doc.fields">
