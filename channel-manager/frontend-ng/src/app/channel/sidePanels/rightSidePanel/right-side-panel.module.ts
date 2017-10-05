@@ -18,11 +18,13 @@ import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../../material/material.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { CreateContentComponent } from './createContentForm/create-content.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     MaterialModule,
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   declarations: [
     CreateContentComponent

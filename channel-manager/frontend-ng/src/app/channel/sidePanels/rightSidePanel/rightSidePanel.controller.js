@@ -198,6 +198,8 @@ class RightSidePanelCtrl {
     this.createContent = false;
     const documentId = null;
     this._loadDocument(documentId); // If document UUID is received we can use openDocument and just pretend to edit
+
+    console.log(this.newDocument);
   }
 
 

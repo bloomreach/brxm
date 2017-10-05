@@ -99,7 +99,7 @@
       </md-button>
     </div>
 
-    <form ng-if="$ctrl.editing || $ctrl.createContent"
+    <form novalidate ng-if="$ctrl.editing || $ctrl.createContent"
           name="$ctrl.form"
           ng-class="{'create-content': $ctrl.createContent}"
           class="form-dense-layout">
@@ -112,21 +112,12 @@
         <!--<create-content-form document="$ctrl.newDocument"></create-content-form>-->
 
         <!-- Angular 4 create content -->
-        <hippo-create-content></hippo-create-content>
+        <hippo-create-content [form]="$ctrl.form"
+                              [document]="$ctrl.newDocument"
+                              (on-close)="$ctrl.close()"
+                              (on-continue)="$ctrl.saveNewDocument()">
+        </hippo-create-content>
         <!-- / Angular 4 create content -->
-
-        <div layout="row" layout-align="end center">
-          <md-button class="qa-close"
-                     ng-click="$ctrl.close()">
-            {{ 'CANCEL' | translate }}
-          </md-button>
-
-          <md-button class="qa-create-content"
-                     ng-click="$ctrl.saveNewDocument()"
-                     ng-disabled="$ctrl.form.$invalid">
-            {{ 'CONTINUE' | translate }}
-          </md-button>
-        </div>
       </div>
     </form>
   </md-content>
