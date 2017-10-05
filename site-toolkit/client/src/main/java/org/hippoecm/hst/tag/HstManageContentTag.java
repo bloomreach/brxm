@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
@@ -35,18 +36,17 @@ import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
 /**
- * <p>
  * This tag creates a cms manage content link for a template query or a root path.
  */
 public class HstManageContentTag extends TagSupport {
 
     private static final Logger log = LoggerFactory.getLogger(HstManageContentTag.class);
 
-    protected String templateQuery;
-    protected String rootPath;
-    protected String defaultPath;
-    protected String componentParameter;
-    protected String scope;
+    private String componentParameter;
+    private String defaultPath;
+    private HippoBean document;
+    private String rootPath;
+    private String templateQuery;
 
     /**
      * @return Tag.EVAL_BODY_INCLUDE
@@ -57,7 +57,6 @@ public class HstManageContentTag extends TagSupport {
     public int doStartTag() throws JspException {
         return EVAL_BODY_INCLUDE;
     }
-
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
@@ -103,7 +102,11 @@ public class HstManageContentTag extends TagSupport {
     }
 
     protected void cleanup() {
-        scope = null;
+        templateQuery = null;
+        rootPath = null;
+        defaultPath = null;
+        componentParameter = null;
+        document = null;
     }
 
     private void write() throws IOException {
@@ -115,51 +118,31 @@ public class HstManageContentTag extends TagSupport {
     private Map<?, ?> getAttributeMap() {
         final Map<String, Object> result = new HashMap<>();
         result.put(ChannelManagerConstants.HST_TYPE, "CONTENT_LINK");
-        result.put("templateQuery", getTemplateQuery());
-        result.put("rootPath", getRootPath());
-        result.put("defaultPath", getDefaultPath());
-        result.put("componentParameter", getComponentParameter());
+        result.put("templateQuery", templateQuery);
+        result.put("rootPath", rootPath);
+        result.put("defaultPath", defaultPath);
+        result.put("componentParameter", componentParameter);
         return result;
     }
 
-    public String getScope() {
-        return scope;
-    }
-
-    public String getTemplateQuery() {
-        return templateQuery;
+    public void setDocument(final HippoBean document) {
+        this.document = document;
     }
 
     public String getRootPath() {
         return rootPath;
     }
 
-    public String getDefaultPath() {
-        return defaultPath;
-    }
-
-    public String getComponentParameter() {
-        return componentParameter;
-    }
-
-    public void setComponentParameter(final String componentParameter) {
-        this.componentParameter = componentParameter;
-    }
-
-    public void setDefaultPath(final String defaultPath) {
-        this.defaultPath = defaultPath;
-    }
-
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
     }
 
-    public void setTemplateQuery(final String templateQuery) {
-        this.templateQuery = templateQuery;
+    public String getTemplateQuery() {
+        return templateQuery;
     }
 
-    public void setScope(final String scope) {
-        this.scope = scope;
+    public void setTemplateQuery(final String templateQuery) {
+        this.templateQuery = templateQuery;
     }
 
 }

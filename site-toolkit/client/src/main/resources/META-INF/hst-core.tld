@@ -717,20 +717,38 @@
     <tag-class>org.hippoecm.hst.tag.HstManageContentTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-      <description>A HippoBean object. This is typically one of your bean mapped objects</description>
-      <name>hippobean</name>
+      <description>Bean for existing document.</description>
+      <name>document</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
     </attribute>
     <attribute>
-      <description>
-        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
-        "page" scope by default.
-      </description>
-      <name>scope</name>
+      <description>Template query to use for creating new documents.</description>
+      <name>templateQuery</name>
       <required>false</required>
-      <rtexprvalue>false</rtexprvalue>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Path to the root folder of selectable document locations. Can be a relative path to the channel's root folder or an absolute path in the repository.</description>
+      <name>rootPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Initial location of a new document, relative to the rootPath. Can still be changed by the user.</description>
+      <name>defaultPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Name of the component parameter to set when changing the content.</description>
+      <name>componentParameter</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
   </tag>
