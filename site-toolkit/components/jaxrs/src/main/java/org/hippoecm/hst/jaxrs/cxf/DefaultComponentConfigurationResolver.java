@@ -49,14 +49,12 @@ public class DefaultComponentConfigurationResolver implements ComponentConfigura
 
             Set<String> paramNames = new HashSet<>();
 
-            if (resolvedSiteMapItem != null) {
-                resolvedSiteMapItem.getParameters().keySet().forEach(k -> {
+            if (this.resolvedSiteMapItem != null) {
+                this.resolvedSiteMapItem.getParameters().keySet().forEach(k -> {
                     paramNames.add((String) k);
                 });
-            }
-
-            if (resolvedMount != null) {
-                resolvedMount.getMount().getParameters().keySet().forEach(k -> {
+            } else if (this.resolvedMount != null) {
+                this.resolvedMount.getMount().getParameters().keySet().forEach(k -> {
                     paramNames.add(k);
                 });
             }
@@ -66,35 +64,75 @@ public class DefaultComponentConfigurationResolver implements ComponentConfigura
         }
 
         @Override
-        public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            return hstResolvedSiteMapItem.getParameter(name);
-        }
-
-        @Override
         public List<String> getParameterNames() {
             return parameterNames;
         }
 
         @Override
-        public Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
+        public String getParameter(String name, ResolvedSiteMapItem resolvedSiteMapItemArg) {
+            // NOTE: the internal resolvedSiteMapItem member must be the same as the argument!
+            checkIfSameResolvedSiteMapItemArg(resolvedSiteMapItemArg);
+
+            if (resolvedSiteMapItem != null) {
+                return resolvedSiteMapItem.getParameter(name);
+            } else if (resolvedMount != null) {
+                return resolvedMount.getMount().getParameter(name);
+            }
+
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getParameters(ResolvedSiteMapItem resolvedSiteMapItemArg) {
+            // NOTE: the internal resolvedSiteMapItem member must be the same as the argument!
+            checkIfSameResolvedSiteMapItemArg(resolvedSiteMapItemArg);
+
             Map<String, String> parameters = new HashMap<String, String>();
-            hstResolvedSiteMapItem.getParameters().forEach((k, v) -> {
-                parameters.put((String) k, (String) v);
-            });
+
+            if (resolvedSiteMapItem != null) {
+                resolvedSiteMapItem.getParameters().forEach((k, v) -> {
+                    parameters.put((String) k, (String) v);
+                });
+            } else if (resolvedMount != null) {
+                resolvedMount.getMount().getParameters().forEach((k, v) -> {
+                    parameters.put((String) k, (String) v);
+                });
+            }
+
             return parameters;
         }
 
         @Override
-        public String getLocalParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-            return hstResolvedSiteMapItem.getLocalParameter(name);
+        public String getLocalParameter(String name, ResolvedSiteMapItem resolvedSiteMapItemArg) {
+            // NOTE: the internal resolvedSiteMapItem member must be the same as the argument!
+            checkIfSameResolvedSiteMapItemArg(resolvedSiteMapItemArg);
+
+            if (resolvedSiteMapItem != null) {
+                return resolvedSiteMapItem.getLocalParameter(name);
+            } else if (resolvedMount != null) {
+                return resolvedMount.getMount().getParameter(name);
+            }
+
+            return null;
         }
 
         @Override
-        public Map<String, String> getLocalParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
+        public Map<String, String> getLocalParameters(ResolvedSiteMapItem resolvedSiteMapItemArg) {
+            // NOTE: the internal resolvedSiteMapItem member must be the same as the argument!
+            checkIfSameResolvedSiteMapItemArg(resolvedSiteMapItemArg);
+
             Map<String, String> parameters = new HashMap<String, String>();
-            hstResolvedSiteMapItem.getLocalParameters().forEach((k, v) -> {
-                parameters.put((String) k, (String) v);
-            });
+
+            if (resolvedSiteMapItem != null) {
+                resolvedSiteMapItem.getLocalParameters().forEach((k, v) -> {
+                    parameters.put((String) k, (String) v);
+                });
+            } else if (resolvedMount != null) {
+                resolvedMount.getMount().getParameters().forEach((k, v) -> {
+                    parameters.put((String) k, (String) v);
+                });
+            }
+
             return parameters;
         }
 
@@ -154,6 +192,19 @@ public class DefaultComponentConfigurationResolver implements ComponentConfigura
 
         public String getParametersInfoClassName() {
             return null;
+        }
+
+        private void checkIfSameResolvedSiteMapItemArg(final ResolvedSiteMapItem resolvedSiteMapItemArg) {
+            if (resolvedSiteMapItemArg != resolvedSiteMapItem) {
+                // NOTE: o.h.hst.core.component.HstParameterInfoProxyFactoryImpl.ParameterInfoInvocationHandler.getParameterValue#(...)
+                //       is supposed to pass HstRequestContext#getResolvedSiteMapItem() in this call.
+                //       Therefore, if the internal resolvedSiteMapItem is different from the caller's hstResolvedSiteMapItem,
+                //       it means an error or requires an explanation why for later potential use cases.
+                //       So, let's throw an exception here.
+                throw new IllegalStateException(
+                        "The passed resolved sitemap item is different from the internal resolved sitemap item. "
+                                + "Doesn't it use the same HstRequestContext instance?");
+            }
         }
     }
 }
