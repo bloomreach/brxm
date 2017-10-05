@@ -109,13 +109,9 @@
                        field-values="$ctrl.doc.fields">
       </document-fields>
       <div ng-if="$ctrl.createContent">
-        <!--<create-content-form document="$ctrl.newDocument"></create-content-form>-->
-
         <!-- Angular 4 create content -->
-        <hippo-create-content [form]="$ctrl.form"
-                              [document]="$ctrl.newDocument"
-                              (on-close)="$ctrl.close()"
-                              (on-continue)="$ctrl.saveNewDocument()">
+        <hippo-create-content (on-close)="$ctrl.close()"
+                              (on-continue)="$ctrl.saveNewDocument($event)">
         </hippo-create-content>
         <!-- / Angular 4 create content -->
       </div>

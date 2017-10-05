@@ -188,18 +188,14 @@ class RightSidePanelCtrl {
   _initNewContent() {
     this._resetState();
     this.createContent = true;
-    this.title = 'Create new content';
-    this.newDocument = {};
-    this.doc = {};
-    this.docType = { allFieldsIncluded: true };
+    this.title = this.$translate.instant('NEW_CONTENT');
   }
 
-  saveNewDocument() {
+  saveNewDocument(createContentForm) {
+    console.log(createContentForm);
     this.createContent = false;
     const documentId = null;
     this._loadDocument(documentId); // If document UUID is received we can use openDocument and just pretend to edit
-
-    console.log(this.newDocument);
   }
 
 

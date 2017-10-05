@@ -1,5 +1,16 @@
-.create-content-container {
-  .mat-input-container {
-    width: 100%;
+@import 'variables';
+.create-content {
+  background: $grey-100;
+  &-container {
+    padding-left: 12px;
+    .mat-input-container {
+      width: 100%;
+    }
+    .hint-invalid-field {
+      color: $red-500;
+    }
+  }
+  &-actions {
+    padding: 10px 0 5px;
   }
 }
