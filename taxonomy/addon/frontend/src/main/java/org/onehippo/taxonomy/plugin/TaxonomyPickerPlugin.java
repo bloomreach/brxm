@@ -320,6 +320,18 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     }
 
     /**
+     * Creates and returns taxonomy picker dialog instance.
+     * <p>
+     * If you want to provide a custom taxonomy picker plugin, you might want to
+     * override this method.
+     * </p>
+     */
+    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
+                                                                final Locale preferredLocale) {
+        return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
+    }
+
+    /**
      * Returns the translation locale of the document if exists.
      * Otherwise, returns the user's UI locale as a fallback.
      *
