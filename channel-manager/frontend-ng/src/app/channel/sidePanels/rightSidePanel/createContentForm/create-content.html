@@ -14,23 +14,41 @@
   limitations under the License.
   -->
 <div layout="column" class="create-content-container">
-  <mat-input-container>
-    <input mdInput [(ngModel)]="document.title" placeholder="Document name" required>
-    <!--<div ng-messages="$ctrl.form.$error">-->
-      <!--<div ng-message="required">This is required.</div>-->
-    <!--</div>-->
-  </mat-input-container>
+  <form (ngSubmit)="submit(form)" #form="ngForm">
+    <!-- Document name field -->
 
+    <mat-input-container class="create-content-field">
+      <input mdInput ngModel name="documentName" placeholder="Document name" required>
+      <mat-hint align="start"
+                class="hint-invalid-field"
+                *ngIf="form.controls.documentName && form.controls.documentName.invalid && form.controls.documentName.touched">
+        Invalid bye
+      </mat-hint>
+    </mat-input-container>
+
+    <!-- Document type field -->
+    <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type mat-input-container">
+      <mat-option value="hallo">Test</mat-option>
+    </mat-select>
+
+    <!-- Buttons -->
     <button mat-button class="qa-create-content-close"
-               (click)="close()">
-      CANCEL <!-- TODO: translate -->
+            (click)="close()">
+      CANCEL
     </button>
 
     <button mat-button class="qa-create-content-continue"
-               (click)="continue()"
-               [disabled]="form.$invalid">
-      CONTINUE <!-- TODO: translate -->
+            type="submit"
+            [disabled]="form.invalid">
+      CONTINUE
     </button>
+  </form>
+<!--  <mat-input-container>
+    <input mdInput [(ngModel)]="document.title" placeholder="Document name" required>
+    &lt;!&ndash;<div ng-messages="$ctrl.form.$error">&ndash;&gt;
+      &lt;!&ndash;<div ng-message="required">This is required.</div>&ndash;&gt;
+    &lt;!&ndash;</div>&ndash;&gt;
+  </mat-input-container>
 
   <!--<mat-input-container>-->
     <!--<label>URL</label>-->

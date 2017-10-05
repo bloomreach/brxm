@@ -22,8 +22,8 @@ import { FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
-    MaterialModule,
     BrowserModule,
+    MaterialModule,
     FormsModule
   ],
   declarations: [

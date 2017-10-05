@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import './create-content.scss';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
 export class CreateContentComponent implements OnInit {
-  @Input() form: any;
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
@@ -20,12 +20,11 @@ export class CreateContentComponent implements OnInit {
   }
 
   close() {
-    console.log('closerino');
     this.onClose.emit();
   }
 
-  continue() {
-    console.log('life is a cycle');
-    this.onContinue.emit();
+  submit(form: NgForm) {
+    console.log(form);
+    // this.onContinue.emit(form.value);
   }
 }
