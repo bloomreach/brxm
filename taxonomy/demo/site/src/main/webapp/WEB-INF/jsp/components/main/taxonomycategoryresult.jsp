@@ -26,7 +26,7 @@
 <c:set var="categoryInfo" value="${category.infos[hstRequest.locale]}" />
 
 <div>
-  <h2>Taxonomy Category: ${category.name} '${hstRequest.locale}'</h2>
+  <h2>Taxonomy Category: ${category.name} '${hstRequest.locale.toLanguageTag()}'</h2>
     <c:if test="${not empty categoryInfo}">
     <ul>
       <li>Name: <c:out value="${categoryInfo.name}"/></li>

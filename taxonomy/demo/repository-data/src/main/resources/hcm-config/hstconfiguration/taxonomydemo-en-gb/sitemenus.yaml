@@ -1,15 +1,15 @@
 definitions:
   config:
-    /hst:hst/hst:configurations/taxonomydemo-fr/hst:sitemenus:
+    /hst:hst/hst:configurations/taxonomydemo-en-gb/hst:sitemenus:
       jcr:primaryType: hst:sitemenus
       /main:
         jcr:primaryType: hst:sitemenu
         /home:
           jcr:primaryType: hst:sitemenuitem
           hst:referencesitemapitem: root
-        /apropos:
+        /about us:
           jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: apropos
+          hst:referencesitemapitem: aboutus
         /taxonomies:
           jcr:primaryType: hst:sitemenuitem
           hst:referencesitemapitem: taxonomies

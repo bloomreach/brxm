@@ -12,11 +12,11 @@ definitions:
             jcr:primaryType: hst:mount
             hst:alias: site
             hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-en
-            /fr:
+            /en-gb:
               jcr:primaryType: hst:mount
-              hst:alias: site-fr
-              hst:locale: fr
-              hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-fr
+              hst:alias: site-en-gb
+              hst:locale: en_GB
+              hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-en-gb
               hst:showport: true
             /nl:
               jcr:primaryType: hst:mount

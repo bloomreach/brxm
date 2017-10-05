@@ -21,72 +21,71 @@ import java.util.List;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyManager;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.demo.beans.TextPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
+
+@ParametersInfo(type = TaxonomyCategoryResultInfo.class)
 public class TaxonomyCategoryResult extends BaseHstComponent {
 
-    public static final Logger log = LoggerFactory.getLogger(TaxonomyCategoryResult.class);
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyCategoryResult.class);
 
- 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        TaxonomyManager taxonomyManager = HstServices.getComponentManager().getComponent(TaxonomyManager.class.getName());
+        final TaxonomyManager taxonomyManager = HstServices.getComponentManager().getComponent(TaxonomyManager.class.getName());
+        final TaxonomyCategoryResultInfo componentParametersInfo = getComponentParametersInfo(request);
+        final String root = componentParametersInfo.getRoot();
+        final String relativePath = componentParametersInfo.getPath();
 
-        String taxonomy = getComponentParameter("root");
-        String relPath = getComponentParameter("path");
-        
-        if(taxonomy == null || taxonomyManager.getTaxonomies().getTaxonomy(taxonomy) == null) {
-            request.setAttribute("error", "Cannot find taxonomy " + taxonomy);
+        if (root == null || taxonomyManager.getTaxonomies().getTaxonomy(root) == null) {
+            request.setAttribute("error", "Cannot find taxonomy " + root);
         } else {
-            Taxonomy tax = taxonomyManager.getTaxonomies().getTaxonomy(taxonomy);
-            if(relPath == null || tax.getCategory(relPath) == null){
-                request.setAttribute("error", "Cannot find taxonomy term for relPath " + relPath);
+            final Taxonomy taxonomy = taxonomyManager.getTaxonomies().getTaxonomy(root);
+            if (relativePath == null || taxonomy.getCategory(relativePath) == null) {
+                request.setAttribute("error", "Cannot find taxonomy term for relative path: " + relativePath);
             } else {
-                Category category = tax.getCategory(relPath);
-                /*
-                 * Search for documents having the key of the selected category,
-                 * using the hippotaxonomy:keys property.
-                 */ 
-                String key = category.getKey();
-                HippoBean root = request.getRequestContext().getSiteContentBaseBean();
+                final Category category = taxonomy.getCategory(relativePath);
+                final String key = category.getKey();
+                final HippoBean baseBean = request.getRequestContext().getSiteContentBaseBean();
                 try {
-                    
-                    HstQuery query = request.getRequestContext().getQueryManager().createQuery(root);
-                    Filter filter = query.createFilter();
-                    // only documents having at least one "hippotaxonomy:keys" = key
-                    filter.addEqualTo(TaxonomyNodeTypes.HIPPOTAXONOMY_KEYS, key);
-                    query.setFilter(filter);
-                    HstQueryResult result = query.execute();
-                    HippoBeanIterator beans = result.getHippoBeans();
-                    List<HippoBean> documents = new ArrayList<>();
-                    while(beans.hasNext()) {
-                        HippoBean bean =  beans.nextHippoBean();
-                        if(bean == null) {
-                            continue;
+
+                    HstQuery query = HstQueryBuilder.create(baseBean)
+                            .ofTypes(TextPage.class)
+                            .where(constraint(TaxonomyNodeTypes.HIPPOTAXONOMY_KEYS).contains(key))
+                            .build();
+
+                    final HstQueryResult queryResult = query.execute();
+                    final HippoBeanIterator beans = queryResult.getHippoBeans();
+                    final List<TextPage> documents = new ArrayList<>();
+                    while (beans.hasNext()) {
+                        TextPage bean = (TextPage) beans.nextHippoBean();
+                        // in case document was depublished / removed in the meantime...
+                        if (bean != null) {
+                            documents.add(bean);
                         }
-                        documents.add(bean);
                     }
                     request.setAttribute("category", category);
                     request.setAttribute("documents", documents);
                 } catch (QueryException e) {
                     log.error("Invalid query", e);
                 }
-                
             }
         }
     }

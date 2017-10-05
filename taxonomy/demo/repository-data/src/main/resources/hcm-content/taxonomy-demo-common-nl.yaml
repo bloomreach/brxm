@@ -1,6 +1,6 @@
 /content/documents/taxonomydemo-nl/common:
-  jcr:primaryType: hippostd:directory
-  jcr:mixinTypes: ['hippotranslation:translated', 'hippo:named', 'mix:referenceable']
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippo:named', 'hippotranslation:translated', 'mix:referenceable']
   jcr:uuid: 92a9df29-4f4e-4d0d-b38e-abea4a7a65cf
   hippo:name: Common
   hippostd:foldertype: [new-translated-folder, new-document]
@@ -13,7 +13,8 @@
     hippo:name: Home Page
     /homepage:
       jcr:primaryType: taxonomydemo:textpage
-      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippotaxonomy:classifiable']
+      jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
+        'mix:referenceable']
       jcr:uuid: 14d684d0-b9b9-4bc8-9239-c10baea952e5
       hippo:availability: [live, preview]
       hippostd:holder: admin
@@ -34,18 +35,62 @@
     jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
     jcr:uuid: d9e5562f-014c-402d-b4d3-984dafced7c7
     hippo:name: Over ons
-    /About Us:
+    /About Us[1]:
       jcr:primaryType: taxonomydemo:textpage
-      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippotaxonomy:classifiable']
+      jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
+        'mix:referenceable']
       jcr:uuid: 171217f7-20e0-43a5-9e18-88baa15690d6
-      hippo:availability: [live, preview]
+      hippo:availability: [live]
       hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
-      hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:29:15.200+02:00
       hippostdpubwf:lastModifiedBy: admin
-      hippotaxonomy:keys: [key_77536ad5-c640-451d-b663-c10f55a94317]
+      hippostdpubwf:publicationDate: 2017-10-05T13:29:17.148+02:00
+      hippotaxonomy:keys: [humor]
+      hippotranslation:id: taxonomydemo-common-about-us-id
+      hippotranslation:locale: nl
+      taxonomydemo:summary: Wie wij zijn.
+      taxonomydemo:title: Over ons
+      /taxonomydemo:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: "Wij zijn Hippo! Kom en bezoek onze website <a href=\"http://www.onehippo.com\"\
+          \ target=\"_blank\" title=\"Hippo\n            website\">www.onehippo.com</a>!\n\
+          \          "
+    /About Us[2]:
+      jcr:primaryType: taxonomydemo:textpage
+      jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
+        'mix:referenceable', 'mix:versionable']
+      jcr:uuid: 688ab567-019d-4bdb-8a86-d07684583a24
+      hippo:availability: [preview]
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:29:15.200+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippotaxonomy:keys: [humor]
+      hippotranslation:id: taxonomydemo-common-about-us-id
+      hippotranslation:locale: nl
+      taxonomydemo:summary: Wie wij zijn.
+      taxonomydemo:title: Over ons
+      /taxonomydemo:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: "Wij zijn Hippo! Kom en bezoek onze website <a href=\"http://www.onehippo.com\"\
+          \ target=\"_blank\" title=\"Hippo\n            website\">www.onehippo.com</a>!\n\
+          \          "
+    /About Us[3]:
+      jcr:primaryType: taxonomydemo:textpage
+      jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
+        'mix:referenceable']
+      jcr:uuid: df040277-f43f-4fd9-b4b2-043091a3d442
+      hippo:availability: []
+      hippostd:state: draft
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:52.816+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippotaxonomy:keys: [humor]
       hippotranslation:id: taxonomydemo-common-about-us-id
       hippotranslation:locale: nl
       taxonomydemo:summary: Wie wij zijn.
