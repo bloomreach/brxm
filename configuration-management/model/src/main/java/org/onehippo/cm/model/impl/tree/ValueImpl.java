@@ -34,11 +34,11 @@ import org.onehippo.cm.model.tree.ValueType;
 
 public class ValueImpl implements Value, Cloneable {
 
-    protected Object value;
-    protected final ValueType valueType;
-    protected boolean isResource;
-    protected final boolean isPath;
-    protected DefinitionPropertyImpl parent = null;
+    private Object value;
+    private final ValueType valueType;
+    private boolean isResource;
+    private final boolean isPath;
+    private DefinitionPropertyImpl parent = null;
 
     /**
      * Retained value resource Source reference after {@link #clone()} cloning) ValueImpl, which is needed when exporting
