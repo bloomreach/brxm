@@ -51,8 +51,7 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
-    this.createContentHandler = angular.noop;
+    this.manageContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -64,7 +63,7 @@ class OverlayService {
         svg: plusSvg,
         callback: () => {
           this.$rootScope.$apply(() => {
-            this.editContentHandler();
+            this.manageContentHandler();
           });
         },
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
@@ -86,8 +85,8 @@ class OverlayService {
     this.editMenuHandler = callback;
   }
 
-  onEditContent(callback) {
-    this.editContentHandler = callback;
+  onManageContent(callback) {
+    this.manageContentHandler = callback;
   }
 
   _onLoad() {
@@ -440,7 +439,7 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.manageContentHandler(structureElement.getUuid());
       });
     });
   }

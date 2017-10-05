@@ -26,7 +26,7 @@ function hippoIframe() {
       showComponentsOverlay: '=',
       showContentOverlay: '=',
       onEditMenu: '&',
-      onEditContent: '&',
+      onManageContent: '&',
     },
     template,
     controller: 'hippoIframeCtrl',
