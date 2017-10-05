@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model.mapper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.Value;
 
@@ -27,6 +28,11 @@ public class DefaultFileMapper extends AbstractFileMapper {
     public String apply(Value value) {
         final DefinitionProperty property = value.getParent();
         final String filePath = constructFilePathFromJcrPath(property.getPath());
-        return String.format("%s.%s", filePath, getFileExtension(property.getParent()));
+        final String fileExtension = getFileExtension(property.getParent());
+        final String valueExtension = StringUtils.substringAfterLast(value.getString(), "/");
+        final String resourceExtension =
+                DEFAULT_EXTENSION.equals(fileExtension) && !StringUtils.isEmpty(valueExtension) && valueExtension.indexOf('/') == -1
+                ? valueExtension : fileExtension;
+        return String.format("%s.%s", filePath, resourceExtension);
     }
 }

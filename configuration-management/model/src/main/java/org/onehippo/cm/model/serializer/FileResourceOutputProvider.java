@@ -33,7 +33,7 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
     public FileResourceOutputProvider(final Path basePath, final String sourceBasePath)
     {
         this.basePath = basePath;
-        this.sourceBasePath = sourceBasePath;
+        this.sourceBasePath = StringUtils.stripStart(sourceBasePath, "/");
     }
 
     public Path getBasePath() {
@@ -66,20 +66,12 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
 
     @Override
     public String getResourceModulePath(final Source source, final String resourcePath) {
-        final String resourceModulePath;
+        String resourceModulePath;
         if (resourcePath.startsWith("/")) {
             resourceModulePath = sourceBasePath + resourcePath;
         } else {
-            resourceModulePath = sourceBasePath + getSourceFolder(source) + "/"+ resourcePath;
+            resourceModulePath = sourceBasePath + StringUtils.prependIfMissing(source.getFolderPath() + "/" + resourcePath, "/");
         }
         return StringUtils.stripStart(resourceModulePath, "/");
-    }
-
-    /**
-     * @param source a Source with a reasonable getPath()
-     * @return a relative path to the folder containing the given source, using UNIX style forward-slash separators
-     */
-    protected String getSourceFolder(final Source source) {
-        return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }
 }

@@ -28,9 +28,14 @@ public interface Source {
     SourceType getType();
 
     /**
-     * @return the relative path of this source to the {@link Module} base path
+     * @return the relative path of this source to the {@link Module} base path, not starting with '/'
      */
     String getPath();
+
+    /**
+     * @return the folder path relative to the module base containing this source, not starting with '/', might be empty
+     */
+    public String getFolderPath();
 
     Module getModule();
     /**

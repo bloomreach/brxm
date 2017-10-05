@@ -59,9 +59,9 @@ public class ModuleContext {
     private Path configRootPath;
     private Path contentRootPath;
 
-    private final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
-    private final ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
-    private final ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
+    protected final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
+    protected final ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
+    protected final ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
     public ModuleContext(ModuleImpl module, Path moduleDescriptorPath) {
         this.module = module;

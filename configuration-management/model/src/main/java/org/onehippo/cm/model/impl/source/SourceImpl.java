@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
@@ -27,7 +28,8 @@ import org.onehippo.cm.model.source.Source;
 
 public abstract class SourceImpl implements Source {
 
-    private String path;
+    final private String path;
+    final private String folderPath;
     private ModuleImpl module;
     List<AbstractDefinitionImpl> modifiableDefinitions = new ArrayList<>();
     private List<AbstractDefinitionImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
@@ -42,17 +44,22 @@ public abstract class SourceImpl implements Source {
         if (path == null) {
             throw new IllegalArgumentException("Parameter 'path' cannot be null");
         }
-        this.path = path;
+        this.path = StringUtils.stripStart(path, "/");
 
         if (module == null) {
             throw new IllegalArgumentException("Parameter 'module' cannot be null");
         }
         this.module = module;
+        this.folderPath = path.contains("/") ? StringUtils.substringBeforeLast(path, "/") : "";
     }
 
     @Override
     public String getPath() {
         return path;
+    }
+
+    public String getFolderPath() {
+        return folderPath;
     }
 
     @Override
@@ -93,8 +100,7 @@ public abstract class SourceImpl implements Source {
             return resourcePath;
         }
         else {
-            final String path = "/" + this.getPath() + resourcePath;
-            return path;
+            return StringUtils.prependIfMissing(folderPath + "/" + resourcePath, "/");
         }
     }
 

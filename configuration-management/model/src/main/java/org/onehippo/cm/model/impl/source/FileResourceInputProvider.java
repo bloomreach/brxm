@@ -41,7 +41,7 @@ public class FileResourceInputProvider implements ResourceInputProvider {
 
     public FileResourceInputProvider(final Path basePath, final String sourceBasePath) {
         this.basePath = basePath;
-        this.sourceBasePath = sourceBasePath;
+        this.sourceBasePath = StringUtils.stripStart(sourceBasePath, "/");
     }
 
     @Override
@@ -79,12 +79,8 @@ public class FileResourceInputProvider implements ResourceInputProvider {
         if (resourcePath.startsWith("/")) {
             resourceModulePath = sourceBasePath + resourcePath;
         } else {
-            resourceModulePath = sourceBasePath + getSourceFolder(source) + "/"+ resourcePath;
+            resourceModulePath = sourceBasePath + StringUtils.prependIfMissing(source.getFolderPath() + "/" + resourcePath, "/");
         }
         return StringUtils.stripStart(resourceModulePath, "/");
-    }
-
-    protected String getSourceFolder(final Source source) {
-        return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }
 }
