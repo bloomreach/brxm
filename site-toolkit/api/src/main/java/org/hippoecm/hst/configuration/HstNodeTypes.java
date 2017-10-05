@@ -95,6 +95,7 @@ public interface HstNodeTypes {
 
     String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
+    String COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME = "hst:parametersinfoclassname";
     String COMPONENT_PROPERTY_TEMPLATE = "hst:template";
     String COMPONENT_PROPERTY_RESOURCE_TEMPLATE = "hst:resourcetemplate";
     String COMPONENT_PROPERTY_XTYPE = "hst:xtype";

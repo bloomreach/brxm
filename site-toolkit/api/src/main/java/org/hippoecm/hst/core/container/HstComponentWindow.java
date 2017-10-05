@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,7 +64,13 @@ public interface HstComponentWindow {
      * @return the HstComponent name
      */
     String getComponentName();
-    
+
+    /**
+     * @return if configured, the fully-qualified class name of the interface representing <code>ParametersInfo</code>
+     * for a component, and otherwise {@code null}.
+     */
+    String getParametersInfoClassName();
+
     /**
      * The actual HstComponent instance.
      * 

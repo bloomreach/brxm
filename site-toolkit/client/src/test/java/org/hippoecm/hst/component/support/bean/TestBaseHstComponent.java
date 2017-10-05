@@ -68,12 +68,16 @@ public class TestBaseHstComponent {
         ProxyFactory factory = new ProxyFactory();
         ComponentConfiguration compConfig = (ComponentConfiguration) factory.createInvokerProxy(new Invoker() {
             public Object invoke(Object o, Method m, Object[] args) throws Throwable {
-                if ("pagesize".equals(args[0])) {
-                    return "10";
-                } else if ("description".equals(args[0])) {
-                    return "Test description";
-                } else if ("color".equals(args[0])) {
-                    return "#ff0000";
+                if (args == null) {
+                    return null;
+                } else {
+                    if ("pagesize".equals(args[0])) {
+                        return "10";
+                    } else if ("description".equals(args[0])) {
+                        return "Test description";
+                    } else if ("color".equals(args[0])) {
+                        return "#ff0000";
+                    }
                 }
                 return null;
             }

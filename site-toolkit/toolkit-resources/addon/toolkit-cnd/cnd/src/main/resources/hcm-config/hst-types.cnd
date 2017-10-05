@@ -54,6 +54,7 @@
 - hst:template (string)
 - hst:resourcetemplate (string)
 - hst:componentclassname (string)
+- hst:parametersinfoclassname (string)
 - hst:referencename (string)
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
@@ -182,7 +183,7 @@
 - hst:hiddeninchannelmanager (boolean)
 + * (hst:sitemapitem)
 
-[hst:sitemap] > nt:base, mix:referenceable orderable
+[hst:sitemap] > nt:base, mix:referenceable
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)

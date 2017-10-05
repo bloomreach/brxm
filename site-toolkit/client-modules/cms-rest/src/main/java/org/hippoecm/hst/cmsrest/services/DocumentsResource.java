@@ -22,7 +22,6 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -33,6 +32,8 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
+import org.hippoecm.hst.rest.beans.ChannelDocumentDataset;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,13 +47,15 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         this.hstLinkCreator = hstLinkCreator;
     }
 
-    public List<ChannelDocument> getChannels(String uuid) {
+    public ChannelDocumentDataset getChannels(String uuid) {
+
+        final ChannelDocumentDataset dataset = new ChannelDocumentDataset();
 
         HstRequestContext requestContext = RequestContextProvider.get();
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
-            return Collections.emptyList();
+            return dataset;
         }
 
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, getHostGroupNameForCmsHost());
@@ -100,7 +103,8 @@ public class DocumentsResource extends BaseResource implements DocumentService {
 
         }
 
-        return channelDocuments;
+        dataset.setChannelDocuments(channelDocuments);
+        return dataset;
     }
 
     public String getUrl(final String uuid, final String type) {

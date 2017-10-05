@@ -44,14 +44,22 @@ public class QueryStringBuilder {
     }
 
     private String encodeName(final String name) throws UnsupportedEncodingException {
-        // do not encode 'name' if only composed of ASCII characters, except if 'name' contains characters
-        // that have other meaning in URL parameters: % = & and #
-        // reason for this exception: we want to keep certain characters decoded (most notably : for readability of
-        // component rendering urls)
+        // Do not encode 'name' if only composed of allowed characters -- from https://tools.ietf.org/html/rfc3986:
+        //
+        // query      = *( pchar / "/" / "?" )
+        // pchar      = unreserved / pct-encoded / sub-delims / ":" / "@"
+        // unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+        // sub-delims = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+        //
+        // Reason for this exception: we want to keep certain characters decoded (most notably ":" for readability of
+        // component rendering urls).
+
         boolean encode = false;
         for (int i = 0; i < name.length(); i++) {
             final char c = name.charAt(i);
-            if (c > 127 || c == '%' || c == '=' || c == '&' || c == '#') {
+
+            // The above rules state that "&" and "=" are allowed chars, but do encode the name if they are in the name
+            if (isOneOf(c, "&=") || !isQueryChar(c)) {
                 encode = true;
                 break;
             }
@@ -61,6 +69,26 @@ public class QueryStringBuilder {
         } else {
             return name;
         }
+    }
+
+    private boolean isQueryChar(final char ch) {
+        return isPchar(ch) || isOneOf(ch, "/?");
+    }
+
+    private boolean isPchar(final char ch) {
+        return isUnreserved(ch) || isSubDelim(ch) || isOneOf(ch, ":@");
+    }
+
+    private boolean isUnreserved(final char ch) {
+        return (ch >= 'a' && ch <='z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || isOneOf(ch, "-._~");
+    }
+
+    private boolean isSubDelim(final char ch) {
+        return isOneOf(ch, "!$&'()*+,;=");
+    }
+
+    private boolean isOneOf(final char ch, final String s) {
+        return s.indexOf(ch) != -1;
     }
 
 }

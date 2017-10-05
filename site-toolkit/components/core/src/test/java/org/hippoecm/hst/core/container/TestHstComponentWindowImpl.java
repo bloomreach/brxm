@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class TestHstComponentWindowImpl {
         EasyMock.replay(hstComponentWindow4);
         EasyMock.replay(hstComponentWindow5);
 
-        HstComponentWindowImpl hstComponentWindowImpl = new HstComponentWindowImpl(null, null, null, null, null, null);
+        HstComponentWindowImpl hstComponentWindowImpl = new HstComponentWindowImpl(null, null, null, null, null, null, null);
         hstComponentWindowImpl.addChildWindow(hstComponentWindow1);
         hstComponentWindowImpl.addChildWindow(hstComponentWindow2);
         hstComponentWindowImpl.addChildWindow(hstComponentWindow3);
@@ -60,7 +60,7 @@ public class TestHstComponentWindowImpl {
         assertEquals("fourth name should be a", names.get(3), "a");
         assertEquals("fifth name should be b", names.get(4), "b");
         
-        HstComponentWindowImpl hstComponentWindowImplReverted = new HstComponentWindowImpl(null, null, null, null, null, null);
+        HstComponentWindowImpl hstComponentWindowImplReverted = new HstComponentWindowImpl(null, null, null, null, null, null, null);
         hstComponentWindowImplReverted.addChildWindow(hstComponentWindow5);
         hstComponentWindowImplReverted.addChildWindow(hstComponentWindow4);
         hstComponentWindowImplReverted.addChildWindow(hstComponentWindow3);
