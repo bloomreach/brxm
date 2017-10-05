@@ -32,7 +32,7 @@ import './material.scss';
     MdButtonModule,
     MdInputModule,
     MdButtonModule,
-    MdSelectModule
+    MdSelectModule,
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},

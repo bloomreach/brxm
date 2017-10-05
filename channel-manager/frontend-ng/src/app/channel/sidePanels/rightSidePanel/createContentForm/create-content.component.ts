@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
@@ -6,12 +6,17 @@ import { NgForm } from '@angular/forms';
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-export class CreateContentComponent {
+export class CreateContentComponent implements OnInit {
+  docTypes: any;
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
+
+  ngOnInit() {
+    this.docTypes = ['Product', 'Event'];
+  }
 
   close() {
     this.onClose.emit();
