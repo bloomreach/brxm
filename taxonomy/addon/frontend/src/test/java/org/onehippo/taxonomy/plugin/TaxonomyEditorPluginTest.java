@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class TaxonomyEditorPluginTest extends AbstractTaxonomyTest  {
         formTester.setValue("name", "test-category");
         formTester.submit();
 
-        tester.assertLabel("root:tree:i:4:nodeLink:label", "test-category");
+        tester.assertLabel("root:tree:i:8:nodeLink:label", "test-category");
         assertNotNull(taxonomy.getCategoryByKey("test-category"));
     }
 }

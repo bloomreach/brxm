@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin.model;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.repository.api.HippoSession;
@@ -38,8 +39,6 @@ import static org.junit.Assert.assertTrue;
 public class JcrCategoryFilterTest extends AbstractTaxonomyTest {
 
     private IModel<Taxonomy> taxonomyModel;
-
-
 
     @Before
     public void setUp() throws Exception {
@@ -72,16 +71,16 @@ public class JcrCategoryFilterTest extends AbstractTaxonomyTest {
 
         EditableCategory topItem = taxonomy.getCategoryByKey(TOP_KEY);
         List<? extends EditableCategory> children = topItem.getChildren();
-        assertEquals(1, children.size());
+        assertEquals(3, children.size());
         final EditableCategory firstLevelChild1 = children.get(0);
         assertEquals(BRANCH_NAME, firstLevelChild1.getName());
         assertEquals(BRANCH_KEY, firstLevelChild1.getKey());
 
-        final EditableCategory firstLevelChild2 = topItem.addCategory("flFoo", "foo", "en", taxonomyModel);
-        final EditableCategory firstLevelChild3 = topItem.addCategory("flBar", "bar", "en", taxonomyModel);
+        final EditableCategory firstLevelChild2 = topItem.addCategory("flFoo", "foo", Locale.ENGLISH, taxonomyModel);
+        final EditableCategory firstLevelChild3 = topItem.addCategory("flBar", "bar", Locale.ENGLISH, taxonomyModel);
 
-        final EditableCategory secondLevelChild1 = firstLevelChild1.addCategory("sclFoo", "foo", "en", taxonomyModel);
-        final EditableCategory secondLevelChild2 = firstLevelChild1.addCategory("sclBar", "bar", "en", taxonomyModel);
+        final EditableCategory secondLevelChild1 = firstLevelChild1.addCategory("sclFoo", "foo", Locale.ENGLISH, taxonomyModel);
+        final EditableCategory secondLevelChild2 = firstLevelChild1.addCategory("sclBar", "bar", Locale.ENGLISH, taxonomyModel);
 
         assertTrue(topItem.getChildren().contains(firstLevelChild2));
         assertTrue(topItem.getChildren().contains(firstLevelChild3));
@@ -95,16 +94,16 @@ public class JcrCategoryFilterTest extends AbstractTaxonomyTest {
     public void test_filtering_does_apply_when_non_editing_taxonomy() throws Exception {
         EditableCategory topItem = nonEditingTaxonomy.getCategoryByKey(TOP_KEY);
         List<? extends EditableCategory> children = topItem.getChildren();
-        assertEquals(1, children.size());
+        assertEquals(3, children.size());
         final EditableCategory firstLevelChild1 = children.get(0);
         assertEquals(BRANCH_NAME, firstLevelChild1.getName());
         assertEquals(BRANCH_KEY, firstLevelChild1.getKey());
 
-        final EditableCategory firstLevelChild2 = topItem.addCategory("flFoo", "foo", "en", taxonomyModel);
-        final EditableCategory firstLevelChild3 = topItem.addCategory("flBar", "bar", "en", taxonomyModel);
+        final EditableCategory firstLevelChild2 = topItem.addCategory("flFoo", "foo", Locale.ENGLISH, taxonomyModel);
+        final EditableCategory firstLevelChild3 = topItem.addCategory("flBar", "bar", Locale.ENGLISH, taxonomyModel);
 
-        final EditableCategory secondLevelChild1 = firstLevelChild1.addCategory("sclFoo", "foo", "en", taxonomyModel);
-        final EditableCategory secondLevelChild2 = firstLevelChild1.addCategory("sclBar", "bar", "en", taxonomyModel);
+        final EditableCategory secondLevelChild1 = firstLevelChild1.addCategory("sclFoo", "foo", Locale.ENGLISH, taxonomyModel);
+        final EditableCategory secondLevelChild2 = firstLevelChild1.addCategory("sclBar", "bar", Locale.ENGLISH, taxonomyModel);
 
         assertTrue(topItem.getChildren().contains(firstLevelChild2));
         assertFalse(topItem.getChildren().contains(firstLevelChild3));

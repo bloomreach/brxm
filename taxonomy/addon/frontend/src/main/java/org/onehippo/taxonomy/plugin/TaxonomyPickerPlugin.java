@@ -15,6 +15,16 @@
  */
 package org.onehippo.taxonomy.plugin;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -30,7 +40,11 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
-import org.apache.wicket.model.*;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -56,7 +70,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.*;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -66,13 +84,6 @@ import org.onehippo.taxonomy.plugin.model.ClassificationDao;
 import org.onehippo.taxonomy.plugin.model.ClassificationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Plugin that edits the classification for a document.  The storage implementation is delegated to a
@@ -190,13 +201,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             add(new CategoryListView("keys"));
             final ClassificationModel model = new ClassificationModel(dao, getModel());
             final IDialogFactory dialogFactory = () -> {
-                final String locale = getPreferredLocale();
-                @SuppressWarnings("deprecation")
-                AbstractDialog dialog = createPickerDialog(model, locale);
-                if (dialog == null) {
-                    dialog = createTaxonomyPickerDialog(model, locale);
-                }
-                return dialog;
+                final Locale locale = getPreferredLocaleObject();
+                return createTaxonomyPickerDialog(model, locale);
             };
             final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
             final Component ajaxLink = dialogLink.get("dialog-link");
@@ -240,7 +246,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 final Taxonomy taxonomy = getTaxonomy();
                 if (taxonomy != null) {
                     final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
-                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocale());
+                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocaleObject());
                 } else {
                     return null;
                 }
@@ -305,28 +311,53 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * If you want to provide a custom taxonomy picker plugin, you might want to
      * override this method.
      * </p>
+     * @deprecated use {@link #createTaxonomyPickerDialog(ClassificationModel, Locale)} instead
      */
+    @Deprecated
     protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
                                                                 final String preferredLocale) {
         return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
     }
 
     /**
+     * Creates and returns taxonomy picker dialog instance.
+     * <p>
+     * If you want to provide a custom taxonomy picker plugin, you might want to
+     * override this method.
+     * </p>
+     */
+    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
+                                                                final Locale preferredLocale) {
+        return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
+    }
+
+    /**
+     * Returns the translation locale of the document if exists.
+     * Otherwise, returns the user's UI locale as a fallback.
+     *
+     * @deprecated use {@link #getPreferredLocaleObject()} instead
+     */
+    @Deprecated
+    protected String getPreferredLocale() {
+        return getPreferredLocaleObject().getLanguage();
+    }
+
+    /**
      * Returns the translation locale of the document if exists.
      * Otherwise, returns the user's UI locale as a fallback.
      */
-    protected String getPreferredLocale() {
+     protected Locale getPreferredLocaleObject() {
         final Node node = getModel().getObject();
         try {
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
                     && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                return TaxonomyUtil.toLocale(node.getProperty(HippoTranslationNodeType.LOCALE).getString());
             }
         } catch (RepositoryException e) {
             log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
         }
 
-        return getLocale().getLanguage();
+        return getLocale();
     }
 
     /**
@@ -376,7 +407,12 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             return null;
         }
 
-        return service.getTaxonomy(taxonomyName);
+        if (service != null) {
+            return service.getTaxonomy(taxonomyName);
+        } else {
+            log.warn("Taxonomy service not found.");
+            return null;
+        }
     }
 
     /**
@@ -438,7 +474,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         if (taxonomy != null) {
             final Category category = taxonomy.getCategoryByKey(categoryKey);
             if (category != null) {
-                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
+                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocaleObject()));
             }
             return new ResourceModel(INVALID_TAXONOMY_CATEGORY_KEY);
         }

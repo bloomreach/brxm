@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,8 +43,11 @@ public abstract class AbstractTaxonomyTest extends PluginTest {
     public final static String TAXONOMY_NAME = "taxonomy"; // taxonomy root node name
     public final static String TOP_NAME = "top";
     public final static String BRANCH_NAME = "branch";
+    public final static String BRANCH_TWO_NAME = "branch-two";
     public final static String BRANCH_NAME_EN = "branch-name-en";
     public final static String BRANCH_SYNONYM = "branch-synonym";
+    public static final String BRANCH_NAME_THREE_EN = "branch-name-three-en";
+    public static final String BRANCH_NAME_THREE_EN_GB = "branch-name-three-en-GB";
 
     private  ITaxonomyService service;
 
@@ -66,6 +69,19 @@ public abstract class AbstractTaxonomyTest extends PluginTest {
                                 "/test/taxonomy/top/branch/" + HIPPOTAXONOMY_CATEGORYINFOS + "/en", HIPPOTAXONOMY_CATEGORYINFO,
                                 HIPPOTAXONOMY_NAME, BRANCH_NAME_EN,
                                 HIPPOTAXONOMY_SYNONYMS, BRANCH_SYNONYM,
+                        "/test/taxonomy/top/branch-two", NODETYPE_HIPPOTAXONOMY_CATEGORY,
+                            HIPPOTAXONOMY_KEY, "branch-two-key",
+                            "/test/taxonomy/top/branch-two/" + HIPPOTAXONOMY_CATEGORYINFOS, HIPPOTAXONOMY_CATEGORYINFOS,
+                                "/test/taxonomy/top/branch-two/" + HIPPOTAXONOMY_CATEGORYINFOS + "/en_GB", HIPPOTAXONOMY_CATEGORYINFO,
+                                HIPPOTAXONOMY_NAME, "branch-name-en-GB",
+                         "/test/taxonomy/top/branch-three", NODETYPE_HIPPOTAXONOMY_CATEGORY,
+                            HIPPOTAXONOMY_KEY, "branch-three-key",
+                            "/test/taxonomy/top/branch-three/" + HIPPOTAXONOMY_CATEGORYINFOS, HIPPOTAXONOMY_CATEGORYINFOS,
+                                "/test/taxonomy/top/branch-three/" + HIPPOTAXONOMY_CATEGORYINFOS + "/en", HIPPOTAXONOMY_CATEGORYINFO,
+                                HIPPOTAXONOMY_NAME, BRANCH_NAME_THREE_EN,
+                                "/test/taxonomy/top/branch-three/" + HIPPOTAXONOMY_CATEGORYINFOS + "/en_GB", HIPPOTAXONOMY_CATEGORYINFO,
+                                HIPPOTAXONOMY_NAME, BRANCH_NAME_THREE_EN_GB
+
     };
 
     protected EditableTaxonomy taxonomy;

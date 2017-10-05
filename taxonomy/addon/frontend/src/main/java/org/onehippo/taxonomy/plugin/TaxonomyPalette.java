@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +35,7 @@ import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +43,14 @@ public class TaxonomyPalette extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(TaxonomyPalette.class);
 
-    private final String preferredLocale;
+    private final Locale preferredLocale;
 
+    @Deprecated
     public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
+        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale));
+    }
+
+    public TaxonomyPalette(String id, final IModel<Classification> model, final TaxonomyModel taxonomyModel, final Locale preferredLocale) {
         super(id, model);
 
         this.preferredLocale = preferredLocale;
@@ -65,14 +72,14 @@ public class TaxonomyPalette extends Panel {
             }
 
         };
-        Map<String, String> leaves = new TreeMap<String, String>();
+        Map<String, String> leaves = new TreeMap<>();
         for (Category category : taxonomyModel.getObject().getCategories()) {
             findLeaves(leaves, category);
         }
-        LinkedList<String> options = new LinkedList<String>();
+        LinkedList<String> options = new LinkedList<>();
         options.addAll(leaves.values());
 
-        add(new Palette<String>("palette", choices, new Model<LinkedList<String>>(options),
+        add(new Palette<String>("palette", choices, new Model<>(options),
                 new IChoiceRenderer<String>() {
 
                     public Object getDisplayValue(String object) {

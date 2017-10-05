@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@ package org.onehippo.taxonomy.api;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
-public interface Taxonomy extends Serializable{
+public interface Taxonomy extends Serializable {
 
     /**
      * 
@@ -28,8 +29,12 @@ public interface Taxonomy extends Serializable{
 
     /**
      * @return the supported locales for each category from this taxonomy
+     * @deprecated use {@link #getLocaleObjects()} instead
      */
+    @Deprecated
     String [] getLocales();
+
+    List<Locale> getLocaleObjects();
 
     /**
      * Implementation should return an unmodifiable List as runtime {@link HstComponent}'s should not be able to modify this list. This also

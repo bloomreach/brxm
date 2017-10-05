@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -31,12 +32,13 @@ import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.collections.map.LazyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.Taxonomy;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,53 +51,40 @@ public class CategoryImpl extends AbstractJCRService implements Category {
 
     private Taxonomy taxonomy;
     private Category parent;
-    private List<Category> childCategories = new ArrayList<Category>();
-    private Map<String, CategoryInfo> translations = new HashMap<String, CategoryInfo>();
+    private List<Category> childCategories = new ArrayList<>();
+    private Map<Locale, CategoryInfo> translations = new HashMap<>();
     private String name;
     private String relPath;
-    private String path;
     private String key;
 
-    public CategoryImpl(Node item, Category parent, TaxonomyImpl taxonomyImpl) throws ServiceException {
+    public CategoryImpl(final Node item, final Category parent, final TaxonomyImpl taxonomyImpl) throws RepositoryException, TaxonomyException {
         super(item);
         this.taxonomy = taxonomyImpl;
         this.parent = parent;
         this.name = this.getValueProvider().getName();
-        this.path = this.getValueProvider().getPath();
-        if (!this.path.startsWith(taxonomyImpl.getPath() + "/")) {
-            throw new ServiceException("Path of a category cannot start with other path then  root taxonomy");
+        final String path = this.getValueProvider().getPath();
+        if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
+            throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
         }
         this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
-        try {
-            this.key = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
-            
-            if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
-                for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
-                    try {
-                        CategoryInfo info = new CategoryInfoImpl(infoNode);
-                        translations.put(info.getLanguage(), info);
-                    } catch (ServiceException e) {
-                        log.warn("Skipping translation because '{}', {}", e.getMessage(), e);
-                    }
-                }
-            }
+        this.key = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
 
-            // populate children
-            for (Node childItem : new NodeIterable(item.getNodes())) {
-                if (childItem.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
-                    try {
-                        Category taxonomyItem = new CategoryImpl(childItem, this, taxonomyImpl);
-                        childCategories.add(taxonomyItem);
-                    } catch (ServiceException e) {
-                        log.warn("Skipping category because '{}', {}", e.getMessage(), e);
-                    }
-                } else if (!childItem.isNodeType(HIPPOTAXONOMY_CATEGORYINFOS)) {
-                    log.warn("Skipping child nodes that are not of type '{}'. Primary node type is '{}'.", 
-                            NODETYPE_HIPPOTAXONOMY_CATEGORY, childItem.getPrimaryNodeType().getName());
-                }
+        if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
+            for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
+                CategoryInfo info = new CategoryInfoImpl(infoNode);
+                translations.put(info.getLocale(), info);
             }
-        } catch (RepositoryException e) {
-            throw new ServiceException("Error while creating category", e);
+        }
+
+        // populate children
+        for (Node childItem : new NodeIterable(item.getNodes())) {
+            if (childItem.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                Category taxonomyItem = new CategoryImpl(childItem, this, taxonomyImpl);
+                childCategories.add(taxonomyItem);
+            } else if (!childItem.isNodeType(HIPPOTAXONOMY_CATEGORYINFOS)) {
+                log.warn("Skipping child nodes that are not of type '{}'. Primary node type is '{}'.",
+                        NODETYPE_HIPPOTAXONOMY_CATEGORY, childItem.getPrimaryNodeType().getName());
+            }
         }
 
         // if no exception happened, add this item to the descendant list.
@@ -134,7 +123,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
     }
 
     public LinkedList<Category> getAncestors() {
-        LinkedList<Category> ancestors = new LinkedList<Category>();
+        LinkedList<Category> ancestors = new LinkedList<>();
         Category item = this;
         while (item.getParent() != null) {
             item = item.getParent();
@@ -143,24 +132,59 @@ public class CategoryImpl extends AbstractJCRService implements Category {
         return ancestors;
     }
 
+    /**
+     * @deprecated use {@link #getInfo(Locale)} instead
+     */
+    @Deprecated
     public CategoryInfo getInfo(String language) {
-        CategoryInfo info = translations.get(language);
+        return getInfo(TaxonomyUtil.toLocale(language));
+    }
+
+    @Override
+    public CategoryInfo getInfo(final Locale locale) {
+        final List<Locale.LanguageRange> documentLocale = Locale.LanguageRange.parse(locale.toLanguageTag());
+        final Locale matchingLocale = Locale.lookup(documentLocale, translations.keySet());
+        CategoryInfo info = translations.get(matchingLocale);
         if (info == null) {
             return new TransientCategoryInfoImpl(this);
         }
         return info;
     }
 
+    /**
+     * @deprecated use {@link #getInfosByLocale()} instead
+     */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Map<String, ? extends CategoryInfo> getInfos() {
-        final Map<String, CategoryInfo> map = new HashMap<String, CategoryInfo>();
+        final Map<String, CategoryInfo> map = new HashMap();
         
         return LazyMap.decorate(map, new Transformer() {
             @Override
-            public Object transform(Object input) {
-                return getInfo((String) input);
+            public Object transform(Object locale) {
+                if (locale instanceof Locale) {
+                    return getInfo((Locale) locale);
+                } else {
+                    return getInfo((String) locale);
+                }
             }
         });
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Locale, ? extends CategoryInfo> getInfosByLocale() {
+        final Map<Locale, CategoryInfo> map = new HashMap();
+
+        return LazyMap.decorate(map, new Transformer() {
+            @Override
+            public Object transform(Object locale) {
+                if (locale instanceof Locale) {
+                    return getInfo((Locale) locale);
+                } else {
+                    return getInfo((String) locale);
+                }
+            }
+        });
+    }
 }

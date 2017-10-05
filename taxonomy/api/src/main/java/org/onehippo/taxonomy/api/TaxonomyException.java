@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.taxonomy.plugin.model;
+package org.onehippo.taxonomy.api;
 
-import javax.jcr.Node;
+public class TaxonomyException extends Exception {
 
-import org.apache.wicket.util.io.IClusterable;
+    public TaxonomyException(String message) {
+        super(message);
+    }
 
-/**
- * Interface for a DAO that knows how to retrieve and store the classification for a document Node.
- */
-public interface ClassificationDao extends IClusterable {
+    public TaxonomyException(Throwable cause) {
+        super(cause);
+    }
 
-    String SERVICE_ID = "taxonomy.classification.dao";
-    
-    Classification getClassification(Node node);
-
-    void save(Classification classification);
+    public TaxonomyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.onehippo.taxonomy.plugin.tree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -31,16 +33,23 @@ public class TaxonomyNode extends AbstractNode {
     private IModel<Taxonomy> model;
 
     /**
-     * @deprecated Use {@link #TaxonomyNode(IModel, String, Comparator)} instead.
-     * @param model
-     * @param language
+     * @deprecated Use {@link #TaxonomyNode(IModel, Locale, Comparator)} instead.
      */
+    @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language) {
-        this(model, language, null);
+        this(model, TaxonomyUtil.toLocale(language), null);
     }
 
+    /**
+     * @deprecated use {@link #TaxonomyNode(IModel, Locale, Comparator)} instead
+     */
+    @Deprecated
     public TaxonomyNode(IModel<Taxonomy> model, String language, Comparator<Category> categoryComparator) {
-        super(model, language, categoryComparator);
+        this(model, TaxonomyUtil.toLocale(language), categoryComparator);
+    }
+
+    public TaxonomyNode(final IModel<Taxonomy> model, final Locale locale, final Comparator<Category> categoryComparator) {
+        super(model, locale, categoryComparator);
         this.model = model;
     }
 
@@ -62,7 +71,7 @@ public class TaxonomyNode extends AbstractNode {
     }
 
     public CategoryNode findCategoryNodeByKey(final String key) {
-        List<CategoryNode> categoryNodes = new ArrayList<CategoryNode>();
+        List<CategoryNode> categoryNodes = new ArrayList<>();
         findCategoryNodesByKey(this, key, categoryNodes);
         return categoryNodes.isEmpty() ? null : categoryNodes.get(0);
     }

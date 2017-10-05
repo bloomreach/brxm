@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -81,7 +82,7 @@ import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
@@ -109,7 +110,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
     private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
 
-    private LanguageSelection currentLanguageSelection;
+    private Locale currentLocaleSelection;
     private JcrTaxonomy taxonomy;
     private String key;
     private IModel<String[]> synonymModel;
@@ -136,18 +137,18 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         taxonomy = newTaxonomy(getModel(), editing, service);
 
-        final List<LanguageSelection> availableLanguageSelections = getAvailableLanguageSelections();
-        currentLanguageSelection = new LanguageSelection(getLocale(), getLocale());
+        final List<Locale> availableLocaleSelections = getAvailableLocaleSelections();
+        currentLocaleSelection = getLocale();
 
         synonymModel = new IModel<String[]>() {
 
             public String[] getObject() {
-                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLanguageSelection.getLanguageCode());
+                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
                 return info.getSynonyms();
             }
 
             public void setObject(String[] object) {
-                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLanguageSelection.getLanguageCode());
+                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
                 try {
                     info.setSynonyms(object);
                 } catch (TaxonomyException e) {
@@ -161,11 +162,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         };
 
         final IModel<Taxonomy> taxonomyModel = Model.of(taxonomy);
-        String currentLanguageCode = currentLanguageSelection.getLanguageCode();
-        final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLanguageCode);
-        treeModel = new TaxonomyTreeModel(taxonomyModel, currentLanguageCode, categoryComparator);
+        final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLocaleSelection);
+        treeModel = new TaxonomyTreeModel(taxonomyModel, currentLocaleSelection, categoryComparator);
         final ITreeNodeIconProvider treeNodeIconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
-        tree = new TaxonomyTree("tree", treeModel, currentLanguageCode, treeNodeIconProvider) {
+        tree = new TaxonomyTree("tree", treeModel, currentLocaleSelection, treeNodeIconProvider) {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
@@ -217,9 +217,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         };
 
-        ChoiceRenderer<LanguageSelection> choiceRenderer = new ChoiceRenderer<>("displayName", "languageCode");
-        DropDownChoice<LanguageSelection> languageSelectionChoice =
-                new DropDownChoice<>("language", new PropertyModel<>(this, "currentLanguageSelection"), availableLanguageSelections, choiceRenderer);
+        ChoiceRenderer<Locale> choiceRenderer = new ChoiceRenderer<>("displayName", "toString");
+        DropDownChoice<Locale> languageSelectionChoice =
+                new DropDownChoice<>("locales", new PropertyModel<>(this, "currentLocaleSelection"), availableLocaleSelections, choiceRenderer);
         languageSelectionChoice.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -227,7 +227,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         });
         languageSelectionChoice.setOutputMarkupId(true);
-        languageSelectionChoice.setEnabled(!CollectionUtils.isEmpty(availableLanguageSelections));
+        languageSelectionChoice.setEnabled(!CollectionUtils.isEmpty(availableLocaleSelections));
         container.add(languageSelectionChoice);
         // show key value key:
         final Label label = new Label("widgetKey", new KeyModel());
@@ -362,53 +362,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         response.render(CssHeaderItem.forReference(CSS));
     }
 
-    /*
-         * Copying from org.apache.commons.lang.LocaleUtils#toLocale(String str)
-         * because this utility has been added since commons-lang-2.4, but
-         * hippo-cms-engine:jar:2.22.02 is pulling commons-lang-2.1 transitively.
-         * So, instead of touching the transitive dependency, copy this utility method
-         * as deprecated. We will remove this later as soon as hippo-cms modules upgrade
-         * the dependency on commons-lang.
-         * @deprecated
-         */
-    private static Locale toLocale(String str) {
-        if (str == null) {
-            return null;
-        }
-        int len = str.length();
-        if (len != 2 && len != 5 && len < 7) {
-            throw new IllegalArgumentException("Invalid locale format: " + str);
-        }
-        char ch0 = str.charAt(0);
-        char ch1 = str.charAt(1);
-        if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
-            throw new IllegalArgumentException("Invalid locale format: " + str);
-        }
-        if (len == 2) {
-            return new Locale(str, "");
-        } else {
-            if (str.charAt(2) != '_') {
-                throw new IllegalArgumentException("Invalid locale format: " + str);
-            }
-            char ch3 = str.charAt(3);
-            if (ch3 == '_') {
-                return new Locale(str.substring(0, 2), "", str.substring(4));
-            }
-            char ch4 = str.charAt(4);
-            if (ch3 < 'A' || ch3 > 'Z' || ch4 < 'A' || ch4 > 'Z') {
-                throw new IllegalArgumentException("Invalid locale format: " + str);
-            }
-            if (len == 5) {
-                return new Locale(str.substring(0, 2), str.substring(3, 5));
-            } else {
-                if (str.charAt(5) != '_') {
-                    throw new IllegalArgumentException("Invalid locale format: " + str);
-                }
-                return new Locale(str.substring(0, 2), str.substring(3, 5), str.substring(6));
-            }
-        }
-    }
-
     /**
      * Factory method for wrapping a JCR node in a JcrTaxonomy object.  Override to customize the taxonomy repository
      * structure.
@@ -479,32 +432,32 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         return list;
     }
 
-    private List<LanguageSelection> getAvailableLanguageSelections() {
-        List<LanguageSelection> languageSelections = new ArrayList<>();
-
-        for (String locale : taxonomy.getLocales()) {
-            try {
-                Locale localeObj = toLocale(locale);
-                languageSelections.add(new LanguageSelection(localeObj, getLocale()));
-            } catch (Exception e) {
-                log.warn("Invalid locale for the taxonomy: {}", locale);
-            }
-        }
-
-        if (languageSelections.isEmpty()) {
-            LanguageSelection defaultLanguageSelection = new LanguageSelection(getLocale(), getLocale());
-            languageSelections.add(defaultLanguageSelection);
-        }
-
-        return languageSelections;
+    private List<Locale> getAvailableLocaleSelections() {
+        return taxonomy.getLocaleObjects();
     }
 
+    /**
+     * @deprecated use {@link #getCurrentLocaleSelection()} instead.
+     */
+    @Deprecated
     public LanguageSelection getCurrentLanguageSelection() {
-        return currentLanguageSelection;
+        return new LanguageSelection(currentLocaleSelection, currentLocaleSelection);
     }
 
+    /**
+     * @deprecated use {@link #setCurrentLocaleSelection(Locale)} instead.
+     */
+    @Deprecated
     public void setCurrentLanguageSelection(LanguageSelection currentLanguageSelection) {
-        this.currentLanguageSelection = currentLanguageSelection;
+        this.currentLocaleSelection = TaxonomyUtil.toLocale(currentLanguageSelection.getLanguageCode());
+    }
+
+    public Locale getCurrentLocaleSelection() {
+        return currentLocaleSelection;
+    }
+
+    public void setCurrentLocaleSelection(final Locale currentLocaleSelection) {
+        this.currentLocaleSelection = currentLocaleSelection;
     }
 
     /**
@@ -520,8 +473,17 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     /**
      * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
+     * @deprecated use {@link #getCategoryComparator(IPluginConfig, Locale)} instead
      */
+    @Deprecated
     protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
+        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
+    }
+
+    /**
+     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
+     */
+    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final Locale locale) {
         Comparator<Category> categoryComparator = null;
         final String sortOptions = config.getString("category.sort.options");
 
@@ -537,13 +499,13 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         public String getObject() {
             EditableCategory category = getCategory();
             if (category != null) {
-                return category.getInfo(currentLanguageSelection.getLanguageCode()).getDescription();
+                return category.getInfo(currentLocaleSelection).getDescription();
             }
             return null;
         }
 
         public void setObject(String object) {
-            EditableCategoryInfo info = getCategory().getInfo(currentLanguageSelection.getLanguageCode());
+            EditableCategoryInfo info = getCategory().getInfo(currentLocaleSelection);
             try {
                 info.setDescription(object);
             } catch (TaxonomyException e) {
@@ -561,14 +523,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         public String getObject() {
             EditableCategory category = getCategory();
             if (category != null) {
-                return category.getInfo(currentLanguageSelection.getLanguageCode()).getName();
+                return category.getInfo(currentLocaleSelection).getName();
             }
             return null;
         }
 
         public void setObject(String object) {
             EditableCategory category = taxonomy.getCategoryByKey(key);
-            EditableCategoryInfo info = category.getInfo(currentLanguageSelection.getLanguageCode());
+            EditableCategoryInfo info = category.getInfo(currentLocaleSelection);
             try {
                 info.setName(object);
             } catch (TaxonomyException e) {
@@ -596,6 +558,15 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
+
+
+
+
+
+    /**
+     * @deprecated use {@link java.util.Locale} instead.
+     */
+    @Deprecated
     protected final class LanguageSelection implements Serializable {
 
         private String languageCode;
@@ -607,6 +578,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
          * @param selectionLocale the locale for the actual language selection item
          * @param uiLocale        the locale by which the language name is determined
          */
+
         public LanguageSelection(Locale selectionLocale, Locale uiLocale) {
             this(selectionLocale.toString(), getDisplayLanguage(selectionLocale, uiLocale));
         }
@@ -700,6 +672,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         try {
             String stmt = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '" + key + "']/..";
+            @SuppressWarnings("deprecation")
             Query query = getModelObject().getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
             query.setLimit(maxItems);
             QueryResult result = query.execute();
@@ -765,14 +738,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     EditableCategory parentCategory = taxonomy.getCategoryByKey(key);
                     AbstractNode node;
                     if (parentCategory != null) {
-                        node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLanguageSelection.getLanguageCode(), categoryComparator);
+                        node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLocaleSelection, categoryComparator);
                     } else {
-                        node = new TaxonomyNode(taxonomyModel, currentLanguageSelection.getLanguageCode(), categoryComparator);
+                        node = new TaxonomyNode(taxonomyModel, currentLocaleSelection, categoryComparator);
                     }
                     try {
                         String newKey = getKey();
                         Category childCategory = addChildCategory(parentCategory, newKey);
-                        TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLanguageSelection.getLanguageCode(), categoryComparator);
+                        TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLocaleSelection, categoryComparator);
                         tree.getTreeState().selectNode(child, true);
                         key = newKey;
                         updateToolbarForCategory(childCategory);
@@ -786,9 +759,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
                 private Category addChildCategory(final EditableCategory category, final String newKey) throws TaxonomyException {
                     if (category != null) {
-                        return category.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode(), taxonomyModel);
+                        return category.addCategory(newKey, getName(), currentLocaleSelection, taxonomyModel);
                     } else {
-                        return taxonomy.addCategory(newKey, getName(), currentLanguageSelection.getLanguageCode());
+                        return taxonomy.addCategory(newKey, getName(), currentLocaleSelection);
                     }
                 }
             });
@@ -836,8 +809,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 return;
             }
 
-            dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel,
-                    currentLanguageSelection.getLanguageCode(), taxonomyModel, true) {
+            dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel, currentLocaleSelection,
+                    taxonomyModel, true) {
 
                 @Override
                 protected void onOk() {

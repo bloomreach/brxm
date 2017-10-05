@@ -16,7 +16,6 @@
 package org.onehippo.taxonomy.demo.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;

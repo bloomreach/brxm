@@ -16,6 +16,7 @@
 package org.onehippo.taxonomy.impl;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -23,23 +24,23 @@ import javax.jcr.Node;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.ServiceException;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo {
 
     private String name;
-    private String language;
+    private Locale locale;
     private String[] synonyms;
     private String description;
 
     private Map<String, Object> properties;
 
-    public CategoryInfoImpl(Node jcrNode) throws ServiceException {
+    public CategoryInfoImpl(Node jcrNode) {
         super(jcrNode);
 
-        this.language = getValueProvider().getName();
+        this.locale = TaxonomyUtil.toLocale(getValueProvider().getName());
         this.name = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
         this.description = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
 
@@ -56,8 +57,17 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
         return name;
     }
 
+    /**
+     * @deprecated use {@link #getLocale()} to retrieve the language code from
+     */
+    @Deprecated
     public String getLanguage() {
-        return language;
+        return getLocale().getLanguage();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
     }
 
     public String getDescription() {

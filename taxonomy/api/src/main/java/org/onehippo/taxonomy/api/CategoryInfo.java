@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.taxonomy.api;
 
+import java.util.Locale;
 import java.util.Map;
 
 public interface CategoryInfo {
@@ -26,9 +27,16 @@ public interface CategoryInfo {
     
     /**
      * @return the language of this translation
+     * @deprecated use the {@link #getLocale()} to retrieve the language code from
      */
+    @Deprecated
     String getLanguage();
-    
+
+    /**
+     * @return the Locale of this translation or null if the locale cannot be determined
+     */
+    Locale getLocale();
+
     /**
      * @return the description for the {@link Category} or <code>null</code> when no description present
      */
@@ -48,7 +56,7 @@ public interface CategoryInfo {
      *   So, please don't depend any iteration on the returned map!
      * </EM>
      * </P>
-     * @return
+     * @return the properties
      */
     Map<String, Object> getProperties();
     
@@ -63,7 +71,7 @@ public interface CategoryInfo {
      * Returns string property value
      * @param property property name
      * @param defaultValue default value which is returned in case of the property value is null
-     * @return
+     * @return the value
      */
     String getString(String property, String defaultValue);
 

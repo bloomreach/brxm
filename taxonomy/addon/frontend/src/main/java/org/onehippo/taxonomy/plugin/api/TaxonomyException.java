@@ -15,6 +15,10 @@
  */
 package org.onehippo.taxonomy.plugin.api;
 
+/**
+ * @deprecated use {@link #org.onehippo.taxonomy.api.TaxonomyException} instead
+ */
+@Deprecated
 public class TaxonomyException extends Exception {
 
     public TaxonomyException(String message) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,10 @@ import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 
 public class JcrCategoryTest extends AbstractTaxonomyTest {
 
+    /**
+     * Tests is for the functionality of the LazyMap. Now locale resolving is introduced, the LazyMap cannot be used
+     * anymore. If the now deprecated code will be removed, this test can be removed also.
+     */
     @Test
     public void testGetInfosReturningLazyMap() throws Exception {
         Node node = EasyMock.createNiceMock(Node.class);

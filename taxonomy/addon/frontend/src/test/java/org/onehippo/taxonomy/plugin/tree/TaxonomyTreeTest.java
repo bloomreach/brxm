@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class TaxonomyTreeTest extends AbstractTaxonomyTest {
         assertEquals("taxonomy", root.getTaxonomy().getName());
 
         CategoryNode top = root.children().nextElement();
-        assertEquals(1, top.getChildCount());
+        assertEquals(3, top.getChildCount());
         Category topItem = top.getCategory();
         assertEquals(TOP_KEY, topItem.getKey());
         assertEquals(TOP_NAME, topItem.getName());

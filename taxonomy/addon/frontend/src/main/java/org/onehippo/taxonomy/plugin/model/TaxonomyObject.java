@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 package org.onehippo.taxonomy.plugin.model;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -28,11 +30,11 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.JcrCategoryFilter;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +109,12 @@ public class TaxonomyObject extends JcrObject {
         return super.getNode();
     }
 
+    @Deprecated
     protected JcrCategory createCategory(Node parent, String key, String name, String locale) throws RepositoryException, TaxonomyException {
+        return createCategory(parent, key, name, TaxonomyUtil.toLocale(locale));
+    }
+
+    protected JcrCategory createCategory(Node parent, String key, String name, Locale locale) throws RepositoryException, TaxonomyException {
         if (StringUtils.isBlank(name)) {
             throw new TaxonomyException("Cannot create a new taxonomy with an empty name");
         }
@@ -137,7 +144,7 @@ public class TaxonomyObject extends JcrObject {
             } else {
                 infosNode = category.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
             }
-            final Node infoNode = infosNode.addNode(locale, HIPPOTAXONOMY_CATEGORYINFO);
+            final Node infoNode = infosNode.addNode(JcrHelper.getNodeName(locale), HIPPOTAXONOMY_CATEGORYINFO);
             infoNode.setProperty(HIPPOTAXONOMY_NAME, name);
         }
 

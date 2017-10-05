@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.taxonomy.plugin.model;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.ItemExistsException;
@@ -27,11 +28,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.commons.collections.map.LazyMap;
+import org.onehippo.taxonomy.api.TaxonomyException;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,13 +80,27 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
         }
     }
 
+    /**
+     * @deprecated use {@link #getLocale()} to get the language code from
+     */
+    @Deprecated
     public String getLanguage() {
+        final Locale locale = getLocale();
+        if (locale != null) {
+            return locale.getLanguage();
+        } else {
+            return "<unknown>";
+        }
+    }
+
+    @Override
+    public Locale getLocale() {
         try {
-            return getNode().getName();
+            return TaxonomyUtil.toLocale(getNode().getName());
         } catch (RepositoryException e) {
             log.warn("Failed to read name of category info node");
         }
-        return "<unknown>";
+        return null;
     }
 
     public String getDescription() {

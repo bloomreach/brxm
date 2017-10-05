@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -74,7 +73,7 @@ public class TaxonomyCategoryResult extends BaseHstComponent {
                     query.setFilter(filter);
                     HstQueryResult result = query.execute();
                     HippoBeanIterator beans = result.getHippoBeans();
-                    List<HippoBean> documents = new ArrayList<HippoBean>();
+                    List<HippoBean> documents = new ArrayList<>();
                     while(beans.hasNext()) {
                         HippoBean bean =  beans.nextHippoBean();
                         if(bean == null) {

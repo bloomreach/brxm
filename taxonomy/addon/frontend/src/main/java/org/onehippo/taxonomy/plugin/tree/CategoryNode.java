@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@ package org.onehippo.taxonomy.plugin.tree;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 
@@ -29,16 +31,23 @@ public class CategoryNode extends AbstractNode {
     CategoryModel model;
 
     /**
-     * @deprecated Use {@link #CategoryNode(CategoryModel, String, Comparator)} isntead.
-     * @param model
-     * @param language
+     * @deprecated Use {@link #CategoryNode(CategoryModel, Locale, Comparator)} isntead.
      */
+    @Deprecated
     public CategoryNode(CategoryModel model, String language) {
-        this(model, language, null);
+        this(model, TaxonomyUtil.toLocale(language), null);
     }
 
+    /**
+     * @deprecated Use {@link #CategoryNode(CategoryModel, Locale, Comparator)} isntead.
+     */
+    @Deprecated
     public CategoryNode(CategoryModel model, String language, Comparator<Category> categoryComparator) {
-        super(model.getTaxonomyModel(), language, categoryComparator);
+        this(model, TaxonomyUtil.toLocale(language), categoryComparator);
+    }
+
+    public CategoryNode(final CategoryModel model, final Locale locale, final Comparator<Category> categoryComparator) {
+        super(model.getTaxonomyModel(), locale, categoryComparator);
         this.model = model;
 
         final Category category = getCategory();
@@ -47,9 +56,9 @@ public class CategoryNode extends AbstractNode {
         }
         Category parentCat = category.getParent();
         if (parentCat == null) {
-            parent = new TaxonomyNode(model.getTaxonomyModel(), language, categoryComparator);
+            parent = new TaxonomyNode(model.getTaxonomyModel(), locale, categoryComparator);
         } else {
-            parent = new CategoryNode(new CategoryModel(model.getTaxonomyModel(), parentCat.getKey()), language, categoryComparator);
+            parent = new CategoryNode(new CategoryModel(model.getTaxonomyModel(), parentCat.getKey()), locale, categoryComparator);
         }
     }
 

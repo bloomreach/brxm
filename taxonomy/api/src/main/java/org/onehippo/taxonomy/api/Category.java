@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.taxonomy.api;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public interface Category {
@@ -61,14 +62,31 @@ public interface Category {
     /**
      * @param language
      * @return translation for the specified language
+     * @deprecated use {@link #getInfo(Locale)} instead.
      */
+    @Deprecated
     CategoryInfo getInfo(String language);
-    
+
+    /**
+     * Get the Category Info for a specific Locale.
+     *
+     * @param locale the Locale you want the information for.
+     * @return translation of a Category for the requested Locale
+     */
+    CategoryInfo getInfo(Locale locale);
+
     /**
      * @return returns unmodifiable translations map keyed by language names.
+     * @deprecated use {@link #getInfosByLocale()} instead
      */
+    @Deprecated
     Map<String, ? extends CategoryInfo> getInfos();
-    
+
+    /**
+     * @return returns unmodifiable translations map keyed by Locales.
+     */
+    Map<Locale, ? extends CategoryInfo> getInfosByLocale();
+
     /**
      * 
      * @return the {@link Taxonomy} that contains this item

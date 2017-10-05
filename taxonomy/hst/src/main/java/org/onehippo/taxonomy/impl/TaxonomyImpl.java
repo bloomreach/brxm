@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -27,45 +28,42 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.ServiceException;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TaxonomyImpl extends AbstractJCRService implements Taxonomy{
+public class TaxonomyImpl extends AbstractJCRService implements Taxonomy {
 
     static Logger log = LoggerFactory.getLogger(CategoryImpl.class);
 
     private String name;
     private String path;
-    private String [] locales;
-    private List<Category> childCategories = new ArrayList<Category>();
-    private List<Category> descendantCategories = new ArrayList<Category>();
+    private List<Locale> locales;
+    private List<Category> childCategories = new ArrayList<>();
+    private List<Category> descendantCategories = new ArrayList<>();
 
 
-    private Map<String, Category> descendantsByRelPath = new HashMap<String, Category>();
-    private Map<String, Category> descendantsByKey = new HashMap<String, Category>();
+    private Map<String, Category> descendantsByRelPath = new HashMap<>();
+    private Map<String, Category> descendantsByKey = new HashMap<>();
 
-    public TaxonomyImpl(Node taxonomy) throws RepositoryException {
+    public TaxonomyImpl(Node taxonomy) throws RepositoryException, TaxonomyException {
         super(taxonomy);
         this.name = this.getValueProvider().getName();
         this.path = this.getValueProvider().getPath();
-        this.locales = this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES);
+        this.locales = TaxonomyUtil.getLocalesList(this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
 
         NodeIterator nodes = taxonomy.getNodes();
         while(nodes.hasNext()) {
             Node childItem = nodes.nextNode();
             if(childItem != null) {
                 if(childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
-                    try {
-                        Category taxonomyItem = new CategoryImpl(childItem, null, this);
-                        this.childCategories.add(taxonomyItem);
-                    } catch (ServiceException e) {
-                        log.warn("Skipping category because '{}', {}", e.getMessage(),  e);
-                    }
+                    Category taxonomyItem = new CategoryImpl(childItem, null, this);
+                    this.childCategories.add(taxonomyItem);
                 } else {
                     log.warn("Skipping child node below '{}' that is not of type '{}'",
                             this.path, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY);
@@ -103,7 +101,16 @@ public class TaxonomyImpl extends AbstractJCRService implements Taxonomy{
         return this.path;
     }
 
+    /**
+     * @deprecated use {@link #getLocaleObjects()} instead
+     */
+    @Deprecated
     public String [] getLocales() {
+        return getLocaleObjects().stream().map(Locale::getLanguage).toArray(String[]::new);
+    }
+
+    @Override
+    public List<Locale> getLocaleObjects() {
         return locales;
     }
 

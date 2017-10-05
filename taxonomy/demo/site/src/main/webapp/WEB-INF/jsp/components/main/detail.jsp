@@ -1,5 +1,5 @@
 <%--
-  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -32,15 +32,19 @@
 
     <hst:link var="taxonomies" path="/taxonomies" />
     <tax:categories var="list" keys="${document.taxonomyKeys}" />
+
+    <p>Current HST locale: ${hstRequest.locale.toString()}</p>
+    <p>Current document locale: ${document.locale.toString()}</p>
+
+    <h4>Selected taxonomies:</h4>
     <c:forEach var="ancestors" items="${list}">
-      <ul>
-        <c:forEach var="category" items="${ancestors}">
-          <li>
-            <c:set var="categoryInfo" value="${category.infos[hstRequest.locale.language]}" />
-            <a href="${taxonomies}/${category.taxonomy.name}/${category.path}">${categoryInfo.name}</a>
-          </li>
+      <p>
+        <c:forEach var="category" items="${ancestors}" varStatus="status">
+          <c:set var="categoryInfo" value="${category.infosByLocale[document.locale]}" />
+          <a href="${taxonomies}/${category.taxonomy.name}/${category.path}">${categoryInfo.name}</a>
+          <c:if test="${not status.last}"> ></c:if>
         </c:forEach>
-      </ul>
+      </p>
     </c:forEach>
   </p>
 </div>

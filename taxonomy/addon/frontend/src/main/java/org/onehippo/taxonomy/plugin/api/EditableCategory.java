@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,20 +16,34 @@
 package org.onehippo.taxonomy.plugin.api;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
+import org.onehippo.taxonomy.api.TaxonomyException;
 
 public interface EditableCategory extends Category {
 
     List<? extends EditableCategory> getChildren();
 
+    /**
+     * @deprecated use {@link #getInfo(Locale)} instead
+     */
+    @Deprecated
     EditableCategoryInfo getInfo(String language);
+
+    EditableCategoryInfo getInfo(Locale locale);
 
     List<? extends EditableCategory> getAncestors();
 
+    /**
+     * @deprecated use {@link #addCategory(String, String, Locale, IModel)} instead
+     */
+    @Deprecated
     EditableCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException;
+
+    EditableCategory addCategory(String key, String name, Locale locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException;
 
     void remove() throws TaxonomyException;
 

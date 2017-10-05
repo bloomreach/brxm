@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin.model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,6 +27,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.onehippo.taxonomy.api.TaxonomyException;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,7 +38,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
-import org.onehippo.taxonomy.plugin.api.TaxonomyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,19 +53,30 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
         super(nodeModel, editable, service);
     }
 
+    /**
+     * @deprecated use {@link #getLocaleObjects()} instead.
+     */
     @Override
+    @Deprecated
     public String[] getLocales() {
-        List<String> locales = new ArrayList<>();
+        return getLocaleObjects().stream().map(Locale::getLanguage).toArray(String[]::new);
+    }
+
+    @Override
+    public List<Locale> getLocaleObjects() {
+        List<Locale> locales = new ArrayList<>();
 
         try {
             Node node = getNode();
 
             if (node.hasProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES)) {
                 for (Value value : node.getProperty(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES).getValues()) {
-                    String locale = StringUtils.trim(value.getString());
-
-                    if (!StringUtils.isEmpty(locale)) {
-                        locales.add(locale);
+                    final String localeString = StringUtils.trim(value.getString());
+                    if (!StringUtils.isEmpty(localeString)) {
+                        final Locale locale = TaxonomyUtil.toLocale(localeString);
+                        if (locale != null) {
+                            locales.add(locale);
+                        }
                     }
                 }
             }
@@ -71,7 +84,7 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
             log.error(ex.getMessage(), ex);
         }
 
-        return locales.toArray(new String[locales.size()]);
+        return locales;
     }
 
     @Override
@@ -133,7 +146,13 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
     }
 
     @Override
+    @Deprecated
     public JcrCategory addCategory(String key, String name, String locale) throws TaxonomyException {
+        return addCategory(key, name, TaxonomyUtil.toLocale(locale));
+    }
+
+    @Override
+    public JcrCategory addCategory(final String key, final String name, final Locale locale) throws TaxonomyException {
         try {
             final JcrCategory category = createCategory(getNode(), key, name, locale);
             detach();

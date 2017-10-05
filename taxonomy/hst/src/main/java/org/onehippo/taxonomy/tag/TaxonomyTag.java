@@ -114,7 +114,6 @@ public class TaxonomyTag extends TagSupport {
     /**
      * Sets the var property.
      * @param var The var to set
-     * @return void
      */
     public void setVar(String var) {
         this.var = var;
@@ -123,7 +122,6 @@ public class TaxonomyTag extends TagSupport {
     /**
      * Sets the uuid property.
      * @param keys The uuid to set
-     * @return void
      */
     public void setKeys(String[] keys) {
         this.keys = keys;
