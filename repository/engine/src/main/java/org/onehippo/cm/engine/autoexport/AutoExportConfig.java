@@ -198,7 +198,7 @@ public class AutoExportConfig extends ExportConfig {
             // if there is no path, this is the special case of registering a module to update existing definitions only
             if (offset == -1) {
                 if (logChanges) {
-                    log.info("Module {} registered to update existing definitions via auto-export without mapping to a repository path", moduleEntry);
+                    log.info("Module at '{}' registered to update existing definitions via auto-export without mapping to a repository path", moduleEntry);
                 }
                 addRepositoryPath(moduleEntry, null, modules, logChanges);
             }

@@ -43,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -78,6 +79,7 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
@@ -256,9 +258,9 @@ public class ConfigurationBaselineService {
         ResourceInputProvider rip = module.getConfigResourceInputProvider();
 
         // store the content action sequence number
-        final Double sequenceNumber = module.getSequenceNumber();
-        if (sequenceNumber != null) {
-            moduleNode.setProperty(HCM_MODULE_SEQUENCE, sequenceNumber);
+        final String lastExecutedAction = module.getLastExecutedAction();
+        if (StringUtils.isNotBlank(lastExecutedAction)) {
+            moduleNode.setProperty(HCM_LAST_EXECUTED_ACTION, lastExecutedAction);
         }
 
         // create descriptor node, if necessary
@@ -619,19 +621,15 @@ public class ConfigurationBaselineService {
         Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
 
         // if descriptor exists
-        // TODO when demo project is restructured, we should assume this exists
         final String descriptor = descriptorNode.getProperty(HCM_YAML).getString();
         if (StringUtils.isNotEmpty(descriptor)) {
             // parse descriptor with ModuleDescriptorParser
-            // todo switch to single-module alternate parser
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
 
-            final double sequenceNumber = moduleNode.hasProperty(HCM_MODULE_SEQUENCE)
-                    ? moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble()
-                    : 0.0;
-            module.setSequenceNumber(sequenceNumber);
+            final String lastExecutedAction = getLastExecutedAction(moduleNode);
+            module.setLastExecutedAction(lastExecutedAction);
 
             log.debug("Building module from descriptor: {}/{}/{}",
                     module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
@@ -652,6 +650,18 @@ public class ConfigurationBaselineService {
 
         // accumulate all groups
         groups.add(module.getProject().getGroup());
+    }
+
+    private String getLastExecutedAction(final Node moduleNode) throws RepositoryException {
+        if (moduleNode.hasProperty(HCM_LAST_EXECUTED_ACTION)) {
+            return moduleNode.getProperty(HCM_LAST_EXECUTED_ACTION).getString();
+        }
+        // backwards compatibility with baselines stored during v12-beta
+        else if (moduleNode.hasProperty(HCM_MODULE_SEQUENCE)) {
+            return Double.toString(moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -891,18 +901,19 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Updates and session saves a module's stored sequence number to indicate that all content actions have been processed
-     * Note: will <em>always</em> save the outstanding session changes, even if the module didn't have a sequence number to store.
+     * Updates and session saves a module's stored last-executed-action string to indicate that all content actions have been processed
+     * Note: will <em>always</em> save the outstanding session changes, even if the module didn't have an action string to store.
      */
     void updateModuleSequenceNumber(final ModuleImpl module, final Session session) throws RepositoryException {
-        final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
-        if (latestVersion.isPresent()) {
+        final Optional<String> latestAction = module.getActionsMap().keySet().stream().map(MavenComparableVersion::new)
+                .max(MavenComparableVersion::compareTo).map(Object::toString);
+        if (latestAction.isPresent() && StringUtils.isNotBlank(latestAction.get())) {
             // TODO: JCR encode this properly!
             final String moduleNodePath = HCM_BASELINE_PATH + "/" + module.getFullName();
 
-            module.setSequenceNumber(latestVersion.get());
+            module.setLastExecutedAction(latestAction.get());
 
-            session.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
+            session.getNode(moduleNodePath).setProperty(HCM_LAST_EXECUTED_ACTION, latestAction.get());
         }
         session.save();
     }

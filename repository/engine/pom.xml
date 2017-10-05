@@ -49,7 +49,6 @@
     <dependency>
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms</groupId>

@@ -47,6 +47,7 @@ public final class Constants {
     public static final String HCM_LAST_UPDATED = "hcm:lastupdated";
     public static final String HCM_MODULE_DESCRIPTOR = HCM_MODULE_YAML;
     public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";
+    public static final String HCM_LAST_EXECUTED_ACTION = "hcm:lastexecutedaction";
     public static final String HCM_ACTIONS = ACTIONS_YAML;
     public static final String HCM_CONTENT_PATHS_APPLIED = "hcm:contentPathsApplied";
     public static final String HCM_BUNDLES_DIGESTS = "hcm:bundlesDigest";
