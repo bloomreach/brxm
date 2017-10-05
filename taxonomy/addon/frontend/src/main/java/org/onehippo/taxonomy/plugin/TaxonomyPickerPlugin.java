@@ -27,9 +27,11 @@ import javax.jcr.RepositoryException;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -203,6 +205,10 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 return createTaxonomyPickerDialog(model, locale);
             };
             final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
+            final Component ajaxLink = dialogLink.get("dialog-link");
+            if (ajaxLink != null) {
+                ajaxLink.add(new AttributeAppender("class", new Model<>("btn btn-default btn-sm")));
+            }
             add(dialogLink);
             setEnabled(getTaxonomy() != null);
         } else if (dao != null && mode == Mode.COMPARE && config.containsKey("model.compareTo")) {
@@ -310,18 +316,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     @Deprecated
     protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
                                                                 final String preferredLocale) {
-        return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
-    }
-
-    /**
-     * Creates and returns taxonomy picker dialog instance.
-     * <p>
-     * If you want to provide a custom taxonomy picker plugin, you might want to
-     * override this method.
-     * </p>
-     */
-    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
-                                                                final Locale preferredLocale) {
         return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
     }
 
