@@ -17,14 +17,19 @@
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../../material/material.module';
 import { BrowserModule } from '@angular/platform-browser';
+import { CreateContentComponent } from './createContentForm/create-content.component';
 
 @NgModule({
   imports: [
     MaterialModule,
     BrowserModule
   ],
-  declarations: [],
-  entryComponents: []
+  declarations: [
+    CreateContentComponent
+  ],
+  entryComponents: [
+    CreateContentComponent
+  ]
 })
 export class RightSidePanelModule {}
 
