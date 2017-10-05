@@ -46,10 +46,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -96,6 +92,10 @@ import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
@@ -421,6 +421,9 @@ public class DefinitionMergeService {
     static List<JcrPathSegment> getIncorrectlyOrdered(final ImmutableList<JcrPathSegment> expected,
                                                       final List<JcrPathSegment> intermediate) {
 
+        if (intermediate.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<JcrPathSegment> incorrectlyOrdered = new ArrayList<>();
         int lastCorrectIndex = expected.indexOf(intermediate.get(0));
         for (int i = 1; i < intermediate.size(); i++) {
