@@ -57,4 +57,16 @@ public class SourceImplTest {
 
     }
 
+    @Test
+    public void testGetFolderPath() {
+        final ProjectImpl project = new ProjectImpl("project", new GroupImpl("group"));
+        final ModuleImpl module = new ModuleImpl("module", project);
+
+        final ConfigSourceImpl source = new ConfigSourceImpl("path/to/content.yaml", module);
+        assertEquals("path/to", source.getFolderPath());
+
+        assertEquals("/path/to/resource/path", source.toModulePath("resource/path"));
+
+    }
+
 }
