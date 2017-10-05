@@ -34,6 +34,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.cm.engine.impl.ContentDefinitionSorter;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
@@ -129,8 +130,7 @@ public class ConfigurationContentService {
         // TODO: below processing contains a small bug, see REPO-1833
         // TODO: a path with an append and a later delete action always is applied
 
-        final double moduleSequenceNumber = module.getSequenceNumber() != null ? module.getSequenceNumber() : Double.MIN_VALUE;
-        final List<ActionItem> actionsToProcess = collectNewActions(moduleSequenceNumber, module.getActionsMap());
+        final List<ActionItem> actionsToProcess = collectNewActions(module.getLastExecutedAction(), module.getActionsMap());
         processItemsToDelete(actionsToProcess, model, session, isUpgradeTo12);
         session.save();
 
@@ -194,9 +194,13 @@ public class ConfigurationContentService {
      * @param actionsMap     Action items per version map
      * @return New action items
      */
-    public static List<ActionItem> collectNewActions(final double currentVersion,
-                                                     final Map<Double, Set<ActionItem>> actionsMap) {
-        return actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
+    public static List<ActionItem> collectNewActions(final String currentVersion,
+                                                     final Map<String, Set<ActionItem>> actionsMap) {
+        final MavenComparableVersion parsedCurrentVersion =
+                currentVersion == null? null: new MavenComparableVersion(currentVersion);
+
+        return actionsMap.entrySet().stream().filter(e -> currentVersion == null
+                || new MavenComparableVersion(e.getKey()).compareTo(parsedCurrentVersion) > 0)
                 .flatMap(e -> e.getValue().stream()).collect(toList());
     }
 

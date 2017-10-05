@@ -523,7 +523,7 @@ public class DefinitionMergeService {
         // See also REPO-1833
 
         final List<ActionItem> actionItems =
-                ConfigurationContentService.collectNewActions(Double.MIN_VALUE, module.getActionsMap());
+                ConfigurationContentService.collectNewActions(null, module.getActionsMap());
 
         for (final ActionItem actionItem : actionItems) {
             final JcrPath actionItemJcrPath = JcrPaths.getPath(actionItem.getPath());
@@ -1143,7 +1143,7 @@ public class DefinitionMergeService {
     /**
      * Get or create a definition in the local modules to contain data for jcrPath.
      * Note: this method performs a three-step check for what module to use similar to
-     * {@link #createNewContentSource(JcrPath)}.
+     * {@link #createNewContentSource(JcrPath, SortedMap)}.
      * @param path the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root and may or not may be
      * empty
@@ -1851,6 +1851,14 @@ public class DefinitionMergeService {
             }
         }
 
+        // find allContentSourcesByNodePath (in reverse lexical order of node path, so deeper paths are before ancestor paths)
+        // but use the full set of Modules, not just the toExport modules
+        final SortedMap<JcrPath, ContentDefinitionImpl> allContentSourcesByNodePath =
+                // except only do the work if we actually plan to use it
+                !contentChangesByPath.isEmpty()?
+                collectContentSourcesByNodePath(false):
+                Collections.emptySortedMap();
+
         for (final String changePath : contentChangesByPath) {
             // is there an existing source for this exact path? if so, use that
             final JcrPath changeNodePath = JcrPaths.getPath(changePath);
@@ -1864,8 +1872,11 @@ public class DefinitionMergeService {
             // if LocationMapper tells us we should have a new source file...
             if (shouldPathCreateNewSource(changeNodePath)) {
                 // create a new source file
-                existingSourcesByNodePath.put(changeNodePath,
-                        createNewContentSource(changeNodePath));
+                final ContentDefinitionImpl newDef = createNewContentSource(changeNodePath, allContentSourcesByNodePath);
+
+                // keep our internal data structures up to date
+                existingSourcesByNodePath.put(changeNodePath, newDef);
+                allContentSourcesByNodePath.put(changeNodePath, newDef);
 
                 // REPO-1715 We have a potential for a race condition where child nodes can be accidentally
                 //           exported to source files for an ancestor node before we process the add events
@@ -1892,8 +1903,11 @@ public class DefinitionMergeService {
                     // otherwise, create a new source file
                     // REPO-1715 We don't have to walk up the tree in this case, since we know there's
                     //           no source on an ancestor path that might have picked up these changes.
-                    existingSourcesByNodePath.put(changeNodePath,
-                            createNewContentSource(changeNodePath));
+                    final ContentDefinitionImpl newDef = createNewContentSource(changeNodePath, allContentSourcesByNodePath);
+
+                    // keep our internal data structures up to date
+                    existingSourcesByNodePath.put(changeNodePath, newDef);
+                    allContentSourcesByNodePath.put(changeNodePath, newDef);
                 }
             }
         }
@@ -1989,20 +2003,17 @@ public class DefinitionMergeService {
      * Note: this method performs a three-step check for what module to use similar to
      * {@link #getOrCreateLocalDef(JcrPath, ModuleImpl)}.
      * @param changePath the path whose content we want to store in the new source
+     * @param allContentSourcesByNodePath all existing content sources in the full model, not just in toExport modules
      */
-    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath) {
+    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath,
+                                                           final SortedMap<JcrPath, ContentDefinitionImpl> allContentSourcesByNodePath) {
 
         // what module does the auto-export config tell us to use?
         final ModuleImpl defaultModule = getModuleByAutoExportConfig(changePath);
 
-        // find existingSourcesByNodePath (in reverse lexical order of node path, so deeper paths are before ancestor paths)
-        // but use the full set of Modules, not just the toExport modules as used in #mergeContentDefinitions
-        final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
-                collectContentSourcesByNodePath(false);
-
         // where is the nearest ancestor node defined?
-        // we should scan existingSourcesByNodePath first, and then possibly the config model
-        final Optional<ModuleImpl> maybeAncestorModule = existingSourcesByNodePath.entrySet().stream()
+        // we should scan allContentSourcesByNodePath first, and then possibly the config model
+        final Optional<ModuleImpl> maybeAncestorModule = allContentSourcesByNodePath.entrySet().stream()
                 .filter(entry -> changePath.startsWith(entry.getKey())).findFirst()
                 .map(entry -> entry.getValue().getSource().getModule());
 

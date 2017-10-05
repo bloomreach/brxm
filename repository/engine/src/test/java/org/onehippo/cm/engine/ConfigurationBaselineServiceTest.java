@@ -38,9 +38,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
+import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
@@ -178,7 +177,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         final ConfigurationModelImpl baseline = applyDefinitions(baselineSource);
         final ModuleImpl module = baseline.getModulesStream().findFirst().get();
 
-        assertEquals(null, module.getSequenceNumber());
+        assertEquals(null, module.getLastExecutedAction());
 
         baselineService.updateModuleSequenceNumber(module, session);
     }
@@ -214,11 +213,11 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 + "    /content/path2: reload";
         actionListParser.parse(new ByteArrayInputStream(actionList.getBytes()), "String", module);
 
-        assertEquals(null, module.getSequenceNumber());
+        assertEquals(null, module.getLastExecutedAction());
 
         baselineService.updateModuleSequenceNumber(module, session);
 
-        assertEquals(Double.valueOf(1.1), module.getSequenceNumber());
-        assertTrue(moduleBaseline.getProperty(HCM_MODULE_SEQUENCE).getDouble() == 1.1);
+        assertEquals("1.1", module.getLastExecutedAction());
+        assertTrue("1.1".equals(moduleBaseline.getProperty(HCM_LAST_EXECUTED_ACTION).getString()));
     }
 }
