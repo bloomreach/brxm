@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected HstComponent component;
     protected HstComponentMetadata componentMetadata;
     protected String componentName;
+    protected String parametersInfoClassName;
     protected String renderPath;
     protected String namedRenderer;
     protected String serveResourcePath;
@@ -72,13 +73,15 @@ public class HstComponentWindowImpl implements HstComponentWindow {
                                   final HstComponent component,
                                   final HstComponentMetadata componentMetadata,
                                   final HstComponentWindow parentWindow,
-                                  final String referenceNamespace) {
+                                  final String referenceNamespace,
+                                  final String parametersInfoClassName) {
         this.hstComponentConfiguration = hstComponentConfiguration;
         this.componentName = componentName;
         this.component = component;
         this.componentMetadata = componentMetadata;
         this.parentWindow = parentWindow;
         this.referenceNamespace = referenceNamespace;
+        this.parametersInfoClassName = parametersInfoClassName;
     }
     
     public HstComponent getComponent() {
@@ -92,7 +95,11 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     public String getComponentName() {
         return componentName;
     }
-    
+
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
     public boolean hasComponentExceptions() {
         return (this.componentExceptions != null && !this.componentExceptions.isEmpty());
     }
