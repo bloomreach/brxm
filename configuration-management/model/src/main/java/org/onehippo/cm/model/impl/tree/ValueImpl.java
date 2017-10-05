@@ -15,10 +15,12 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 
 import org.onehippo.cm.model.definition.DefinitionType;
@@ -27,13 +29,14 @@ import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
 
 public class ValueImpl implements Value, Cloneable {
 
     protected Object value;
     protected final ValueType valueType;
-    protected final boolean isResource;
+    protected boolean isResource;
     protected final boolean isPath;
     protected DefinitionPropertyImpl parent = null;
 
@@ -42,8 +45,9 @@ public class ValueImpl implements Value, Cloneable {
      * resource values into a different context.
      */
     private SourceImpl resourceSource;
-    private String internalResourcePath;
+    private String internalResource;
     private boolean isNewResource;
+    private boolean isStringResource;
 
     private NamespaceDefinitionImpl namespaceDefinition;
 
@@ -149,12 +153,36 @@ public class ValueImpl implements Value, Cloneable {
     }
 
     /**
+     * Converts a String value to resource value which will provide an InputStream to export the value to a (candidate)
+     * resource path.
+     * After the convertion the {@link #getString) will return the resourcePath instead, and {@link #getInputStream)
+     * a ByteArrayInputStream wrapped around the original String value.
+     * Note also that the provided resourcePath parameter is (to be) used as a candidate, e.g. {@link #isNewResource}
+     * will return true.
+     * @param resourcePath
+     */
+    public void makeStringResourceValue(final String resourcePath) {
+        if (getType() != ValueType.STRING) {
+            throw new ValueFormatException("Value is not of type "+ValueType.STRING.toString());
+        } else if (isResource) {
+            throw new ValueFormatException("Value is already a resource");
+        } else {
+            isResource = true;
+            isNewResource = true;
+            isStringResource = true;
+            internalResource = (String)value;
+            value = resourcePath;
+        }
+    }
+    /**
      * Detaches a {@link #clone() cloned} resource Value from its original Source. Should be called after
      * retrieving and processing (serializing) through {@link #getResourceInputStream()}.
      */
     // todo: this is apparently never called, and it seems like it should be
     public void detach() {
-        internalResourcePath = null;
+        if (!isStringResource) {
+            internalResource = null;
+        }
         resourceSource = null;
         isNewResource = false;
     }
@@ -191,15 +219,21 @@ public class ValueImpl implements Value, Cloneable {
     /**
      * Optional internal resource path for resources requiring a different resource path mapping for accessing their
      * actual data through {@link #getResourceInputStream()} like in case of a JCR backed ResourceInputProvider.
-     * @param internalResourcePath
+     * @param internalResource
      */
-    public void setInternalResourcePath(final String internalResourcePath) {
-        this.internalResourcePath = internalResourcePath;
+    public void setInternalResourcePath(final String internalResource) {
+        if (isStringResource) {
+            throw new ValueFormatException("Value does not have an internal resource provider");
+        }
+        this.internalResource = internalResource;
     }
 
     // TODO: this should be removed when writing of JCR-backed values is refactored
     public String getInternalResourcePath() {
-        return internalResourcePath;
+        if (isStringResource) {
+            return null;
+        }
+        return internalResource;
     }
 
     // get access to the RIP backing this value -- used to compare src and dest when writing
@@ -223,10 +257,14 @@ public class ValueImpl implements Value, Cloneable {
             throw new IllegalStateException("Cannot get an InputStream for a Value that is not a Resource!");
         }
 
+        if (isStringResource) {
+            return new ByteArrayInputStream(internalResource.getBytes(StandardCharsets.UTF_8));
+        }
+
         // If we have a "foreign" source, use that to find the RIP instead of the local Source
         SourceImpl source = (resourceSource != null)? resourceSource: getDefinition().getSource();
 
-        String resourcePath = internalResourcePath != null ? internalResourcePath : getString();
+        String resourcePath = internalResource != null ? internalResource : getString();
 
         return getResourceInputProvider().getResourceInputStream(source, resourcePath);
     }
