@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     private String canonicalIdentifier;
     private Type componentType;
     private String xType;
+    private String parametersInfoClassName;
 
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         return parameters.get(name);
@@ -149,5 +150,13 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     public List<String> getParameterNames() {
         return new ArrayList<String>(parameters.values());
     }
-    
+
+    @Override
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
+    public void setParametersInfoClassName(String parametersInfoClassName) {
+        this.parametersInfoClassName = parametersInfoClassName;
+    }
 }

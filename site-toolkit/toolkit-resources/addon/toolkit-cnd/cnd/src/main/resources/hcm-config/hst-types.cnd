@@ -54,6 +54,7 @@
 - hst:template (string)
 - hst:resourcetemplate (string)
 - hst:componentclassname (string)
+- hst:parametersinfoclassname (string)
 - hst:referencename (string)
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
