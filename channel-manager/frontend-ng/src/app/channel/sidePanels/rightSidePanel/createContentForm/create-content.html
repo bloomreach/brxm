@@ -28,7 +28,7 @@
 
     <!-- Document URL field -->
     <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="documentUrl" placeholder="URL" required>
+      <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
       <mat-hint align="start"
                 class="hint-invalid-field"
                 *ngIf="form.controls.documentUrl && form.controls.documentUrl.invalid && form.controls.documentUrl.touched">

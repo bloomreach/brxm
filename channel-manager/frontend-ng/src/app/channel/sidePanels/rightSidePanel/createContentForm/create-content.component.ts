@@ -14,24 +14,38 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, AfterViewInit, Output, ViewChild } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/debounceTime';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-export class CreateContentComponent implements OnInit {
+export class CreateContentComponent implements AfterViewInit, OnDestroy {
+  urlInputSubscription: Subscription;
   docTypes: any;
+
+  @ViewChild('input') input: ElementRef;
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
+      .debounceTime(1000)
+      .subscribe(e => this.validateUrl(this.input.nativeElement.value));
     this.docTypes = ['Product', 'Event'];
+  }
+
+  validateUrl(input: string) {
+    console.log(input);
   }
 
   close() {
@@ -40,5 +54,9 @@ export class CreateContentComponent implements OnInit {
 
   submit(form: NgForm) {
     this.onContinue.emit(form.value);
+  }
+
+  ngOnDestroy() {
+    this.urlInputSubscription.unsubscribe();
   }
 }
