@@ -218,7 +218,7 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object start() throws WorkflowException {
-        return start(Collections.emptyMap());
+        return start(null);
     }
 
 

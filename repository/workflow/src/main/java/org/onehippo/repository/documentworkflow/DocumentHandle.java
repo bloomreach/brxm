@@ -27,6 +27,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.scxml.PayloadReceivable;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 /**
  * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
  */
-public class DocumentHandle implements SCXMLWorkflowData {
+public class DocumentHandle implements SCXMLWorkflowData, PayloadReceivable {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
 
@@ -45,7 +46,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending = false;
     private boolean initialized;
-    private Map<String, Object> initialPayload = Collections.emptyMap();
+    private Map<String, Object> initialPayload;
 
     public DocumentHandle(Node handle) throws WorkflowException {
         this.handle = handle;
