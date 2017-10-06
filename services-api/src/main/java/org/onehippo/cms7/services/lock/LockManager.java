@@ -19,6 +19,50 @@ import java.util.List;
 
 import org.onehippo.cms7.services.SingletonService;
 
+/**
+ * <p>
+ *     This class is a manager to obtain cluster wide locks. A lock is tied to the {@link Thread} that obtained the
+ *     {@link Lock} and can only be unlocked by the same {@link Thread}. The number of invocations on {@link #lock(String)}
+ *     must be balanced with {@link #unlock(String)} since calling {@link Lock} multiple times increases the hold count: Only
+ *     when the hold count is 0, the lock is really freed.
+ * </p>
+ * <p>
+ *     An example usage is as follows:
+ *     <code>
+ *         <pre>
+ *             public void run() {
+ *                boolean locked = false;
+ *                try {
+ *                   try (LockResource lock = lockManager.lock(key)){
+ *                   // Do work
+ *                } catch (LockException e) {
+ *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
+ *                }
+ *              }
+ *         </pre>
+ *     </code>
+ *     or without using {@link AutoCloseable} concept of {@link LockResource}:
+ *     <code>
+ *         <pre>
+ *             public void run() {
+ *                boolean locked = false;
+ *                try {
+ *                   lockManager.lock(key);
+ *                   locked = true;
+ *                   // Do work
+ *                } catch (LockException e) {
+ *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
+ *                } finally {
+ *                   if (locked) {
+ *                     lockManager.unlock(key);
+ *                   }
+ *                }
+ *              }
+ *         </pre>
+ *     </code>
+ * </p>
+ *
+ */
 @SingletonService
 public interface LockManager {
 
@@ -29,9 +73,10 @@ public interface LockManager {
      *     returned, otherwise a {@link LockException} is thrown.
      * </p>
      * <p>
-     *     Invoking this method multiple times with the same {@code key} and the same thread results in the hold count
+     *     Invoking this method multiple times with the same {@code key} and the same {@link Thread} results in the hold count
      *     being incremented. To unlock the lock, {@link #unlock(String)} must be invoked an equal amount of times as
-     *     {@link #lock(String)} was invoked.
+     *     {@link #lock(String)} was invoked and the unlock must be invoked with the same {@link Thread} as the one that
+     *     obtained the {@link Lock}.
      * </p>
      * <p>
      *      A lock is released when a successful {@link #unlock(String)} is invoked as many times as
@@ -52,11 +97,12 @@ public interface LockManager {
      *     which in general should contain the {@link #unlock(String)} logic.
      * </p>
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
+     * @return {@link LockResource} such that this {@link #lock(String)} method can be used in a try-with-resources statement
+     *         where the {@link LockResource#close()} results in the lock being freed.
      * @throws LockException in case there is already a {@link Lock} for {@code key} or the lock could not be created
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
      */
-    void lock(String key) throws LockException;
-
+    LockResource lock(String key) throws LockException;
 
     /**
      * @param key the key to unlock where {@code key} is at most 256 chars. If the {@link Thread} that invokes
