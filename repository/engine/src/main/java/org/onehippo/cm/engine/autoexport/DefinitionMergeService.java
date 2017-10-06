@@ -536,7 +536,7 @@ public class DefinitionMergeService {
         }
 
         final List<ContentDefinitionImpl> sortedDefinitions =
-                ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions());
+                ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions(), false);
 
         for (final ContentDefinitionImpl contentDefinition : sortedDefinitions) {
             if (isRelevantContentDefinition(contentDefinition.getNode().getJcrPath(), path)) {
