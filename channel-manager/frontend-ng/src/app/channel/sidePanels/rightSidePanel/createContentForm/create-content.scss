@@ -13,16 +13,15 @@
 // limitations under the License.
 
 @import 'variables';
-.create-content {
+.create-content-container {
   background: $grey-100;
-  &-container {
-    padding-left: 12px;
-    .mat-input-container {
-      width: 100%;
-    }
-    .hint-invalid-field {
-      color: $red-500;
-    }
+  padding-left: 12px;
+  .mat-input-container {
+    margin: 5px 0;
+    width: 100%;
+  }
+  .hint-invalid-field {
+    color: $red-500;
   }
   &-actions {
     padding: 10px 0 5px;

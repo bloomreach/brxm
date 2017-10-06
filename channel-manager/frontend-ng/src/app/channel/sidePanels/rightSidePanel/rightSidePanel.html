@@ -99,23 +99,18 @@
       </md-button>
     </div>
 
-    <form novalidate ng-if="$ctrl.editing || $ctrl.createContent"
+    <form novalidate ng-if="$ctrl.editing"
           name="$ctrl.form"
-          ng-class="{'create-content': $ctrl.createContent}"
           class="form-dense-layout">
-      <document-fields ng-if="$ctrl.editing"
-                       class="top-level"
+      <document-fields class="top-level"
                        field-types="$ctrl.docType.fields"
                        field-values="$ctrl.doc.fields">
       </document-fields>
-      <div ng-if="$ctrl.createContent">
-        <!-- Angular 4 create content -->
-        <hippo-create-content (on-close)="$ctrl.close()"
-                              (on-continue)="$ctrl.saveNewDocument($event)">
-        </hippo-create-content>
-        <!-- / Angular 4 create content -->
-      </div>
     </form>
+    <hippo-create-content ng-if="$ctrl.createContent"
+                          (on-close)="$ctrl.close()"
+                          (on-continue)="$ctrl.saveNewDocument($event)">
+    </hippo-create-content>
   </md-content>
 
   <md-toolbar ng-hide="$ctrl.createContent">
