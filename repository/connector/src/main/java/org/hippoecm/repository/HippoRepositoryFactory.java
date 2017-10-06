@@ -152,16 +152,25 @@ public class HippoRepositoryFactory {
         } catch(IllegalAccessException ex) {
             throw new RepositoryException(ex);
         } catch(InvocationTargetException ex) {
-            if (ex.getCause() instanceof RepositoryException) {
-                throw (RepositoryException) ex.getCause();
-            } else if (ex.getCause() instanceof IllegalArgumentException) {
-                throw new RepositoryException("Invalid data: " + ex.getCause(), ex);
+            final Throwable cause = unwindInvocationTargetException(ex);
+            if (cause instanceof RepositoryException) {
+                throw (RepositoryException) cause;
+            } else if (cause instanceof IllegalArgumentException) {
+                throw new RepositoryException("Invalid data: " + cause, cause);
             } else {
-                throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                throw new RepositoryException("unchecked exception: " + cause.getClass().getName() + ": " + cause.getMessage(), cause);
             }
         }
 
         return repository;
+    }
+
+    private static Throwable unwindInvocationTargetException(final InvocationTargetException e) {
+        Throwable cause = e.getCause();
+        if (cause != null && cause instanceof InvocationTargetException) {
+            return unwindInvocationTargetException((InvocationTargetException)cause);
+        }
+        return cause == null ? e : cause;
     }
 
     static void unregister(HippoRepository repository) {
