@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, AfterViewInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, AfterViewInit, Output, ViewChild } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-export class CreateContentComponent implements AfterViewInit, OnDestroy {
-  urlInputSubscription: Subscription;
+export class CreateContentComponent implements AfterViewInit {
   docTypes: any;
 
   @ViewChild('input') input: ElementRef;
@@ -38,15 +35,16 @@ export class CreateContentComponent implements AfterViewInit, OnDestroy {
   constructor() {}
 
   ngAfterViewInit() {
-    this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
-      .debounceTime(1000)
-      .subscribe(e => this.validateUrl(this.input.nativeElement.value));
+    // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
+    //   .debounceTime(1000)
+    //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
     this.docTypes = ['Product', 'Event'];
   }
 
-  validateUrl(input: string) {
-    console.log(input);
-  }
+  // TODO: Apply this function along with the observable when relevant
+  // validateUrl(input: string) {
+  //   console.log(input);
+  // }
 
   close() {
     this.onClose.emit();
@@ -56,7 +54,7 @@ export class CreateContentComponent implements AfterViewInit, OnDestroy {
     this.onContinue.emit(form.value);
   }
 
-  ngOnDestroy() {
-    this.urlInputSubscription.unsubscribe();
-  }
+  // ngOnDestroy() {
+  //   this.urlInputSubscription.unsubscribe();
+  // }
 }
