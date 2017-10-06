@@ -35,6 +35,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.modules.DaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
@@ -142,19 +143,13 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
         @Override
         public void run() {
-            boolean locked = false;
-            try {
-                lockManager.lock(UPDATE_PATH);
-                locked = true;
+            try (LockResource lock = lockManager.lock(UPDATE_PATH)){
                 executeUpdatersInQueue();
             } catch (LockException e) {
                 log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
             } finally {
                 synchronized (monitor) {
                     task = null;
-                }
-                if (locked) {
-                    lockManager.unlock(UPDATE_PATH);
                 }
             }
         }
