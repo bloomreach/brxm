@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -51,6 +50,7 @@ import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 /**
  * TaxonomyBrowser panel which is rendered in the right panel in the taxonomy picker dialog.
@@ -98,7 +98,6 @@ public class TaxonomyBrowser extends Panel {
     public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel,
                            final Locale preferredLocale, final boolean detailsReadOnly, final ITreeNodeIconProvider iconProvider) {
         super(id, model);
-
         this.taxonomyModel = taxonomyModel;
         setPreferredLocale(preferredLocale);
         this.detailsReadOnly = detailsReadOnly;
@@ -170,6 +169,7 @@ public class TaxonomyBrowser extends Panel {
                         } else {
                             keys.remove(getModelObject());
                         }
+                        TaxonomyBrowser.this.modelChanged();
                         target.add(container);
                     }
                 });
@@ -361,6 +361,7 @@ public class TaxonomyBrowser extends Panel {
                     if (keys.size()==1 && isCanonised()) {
                         setCanonicalKey(key);
                     }
+                    TaxonomyBrowser.this.modelChanged();
                     target.add(container);
                 }
 
@@ -376,7 +377,7 @@ public class TaxonomyBrowser extends Panel {
                 public void onClick(AjaxRequestTarget target) {
                     String key = getModelObject().getKey();
                     setCanonicalKey(key);
-
+                    TaxonomyBrowser.this.modelChanged();
                     target.add(container);
                 }
 
