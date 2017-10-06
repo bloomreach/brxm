@@ -36,6 +36,7 @@ import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.cms7.services.lock.LockManagerException;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
 import org.onehippo.repository.lock.db.DbLockManager;
 import org.onehippo.repository.lock.memory.MemoryLockManager;
@@ -88,6 +89,58 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         // now we should be able to lock again
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
+        lockManager.unlock(key);
+    }
+
+    @Test
+    public void lock_try_with_resource_construct() throws Exception {
+        String key = "123";
+        try (LockResource lock = lockManager.lock(key)) {
+            dbRowAssertion(key, "RUNNING");
+        }
+        assertDbRowDoesExist(key);
+        dbRowAssertion(key, "FREE");
+    }
+
+    @Test
+    public void lock_nested_try_with_resource_construct() throws Exception {
+        String key = "123";
+        try (LockResource lock = lockManager.lock(key)) {
+            try (LockResource lock2 = lockManager.lock(key)) {
+                dbRowAssertion(key, "RUNNING");
+            }
+            dbRowAssertion(key, "RUNNING");
+        }
+        assertDbRowDoesExist(key);
+        dbRowAssertion(key, "FREE");
+    }
+
+    @Test
+    public void lock_nested_try_on_unavailable_lock() throws Exception {
+        String key = "123";
+        final LockRunnable runnable = new LockRunnable(key, true);
+        final Thread lockThread = new Thread(runnable);
+
+        lockThread.start();
+        // give lockThread time to lock
+        Thread.sleep(100);
+
+        try (LockResource lock = lockManager.lock(key)) {
+            fail("should not be able to lock");
+        } catch (LockException e) {
+            // expected
+        }
+        assertDbRowDoesExist(key);
+        dbRowAssertion(key, "RUNNING");
+
+        runnable.keepAlive = false;
+
+        // after the thread is finished, the lock manager should have no locks any more
+        lockThread.join();
+
+        if (runnable.e != null) {
+            fail(runnable.e.toString());
+        }
     }
 
     private void assertDbRowDoesExist(final String key) throws SQLException {
@@ -195,8 +248,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         @Override
         public void run() {
-            try {
-                lockManager.lock(key);
+            try (LockResource lock = lockManager.lock(key)){
                 while (keepAlive) {
                     Thread.sleep(25);
                 }
@@ -278,6 +330,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         lockManager.lock(key);
         assertEquals(key, lockManager.getLocks().iterator().next().getLockKey());
         assertEquals(Thread.currentThread().getName(), lockManager.getLocks().iterator().next().getLockThread());
+        lockManager.unlock(key);
     }
 
 
@@ -295,7 +348,10 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         dbRowAssertion("c", "RUNNING");
         dbRowAssertion("d", "RUNNING");
 
-        lockManager.clear();
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            lockManager.clear();
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by 'default' was never")));
+        }
 
         dbRowAssertion("a", "FREE");
         dbRowAssertion("b", "FREE");
@@ -340,6 +396,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
             assertEquals(4, locks.size());
         }
+        lockManager.unlock("a");
+        lockManager.unlock("b");
     }
 
     @Test
@@ -356,6 +414,9 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
             assertTrue(lockManager.isLocked("c"));
             assertTrue(lockManager.isLocked("d"));
         }
+        lockManager.unlock("a");
+        lockManager.unlock("b");
     }
+
 
 }

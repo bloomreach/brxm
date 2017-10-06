@@ -27,6 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManagerException;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.slf4j.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -70,14 +71,14 @@ public abstract class AbstractLockManager implements InternalLockManager {
     }
 
     @Override
-    public synchronized void lock(final String key) throws LockException {
+    public synchronized LockResource lock(final String key) throws LockException {
         checkLive();
         validateKey(key);
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
             getLogger().debug("Create lock '{}' for thread '{}'", key, Thread.currentThread().getName());
             localLocks.put(key, createLock(key, Thread.currentThread().getName()));
-            return;
+            return new LockResourceImpl(key);
         }
         final Thread lockThread = lock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
@@ -85,15 +86,27 @@ public abstract class AbstractLockManager implements InternalLockManager {
                     "now gets the lock", lock.getLockThread(), key, Thread.currentThread().getName());
             unlock(key);
             localLocks.put(key, createLock(key, Thread.currentThread().getName()));
-            return;
+            return new LockResourceImpl(key);
         }
         if (lockThread == Thread.currentThread()) {
             getLogger().debug("Thread '{}' already contains lock '{}', increase hold count", Thread.currentThread().getName(), key);
             lock.increment();
-            return;
+            return new LockResourceImpl(key);
         }
         throw new LockException(String.format("This thread '%s' cannot lock '%s' : already locked by thread '%s'",
                 Thread.currentThread().getName(), key, lockThread.getName()));
+    }
+
+    private class LockResourceImpl implements LockResource {
+        private String key;
+        LockResourceImpl(final String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void close() {
+            unlock(key);
+        }
     }
 
     @Override
