@@ -154,7 +154,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public Map<String, Serializable> hints(Map<String, Object> initializationPayload) throws WorkflowException {
+    public Map<String, Serializable> hints(final Map<String, Object> initializationPayload) throws WorkflowException {
         workflowExecutor.start(initializationPayload);
         Map<String, Serializable> hints = super.hints();
         hints.putAll(workflowExecutor.getContext().getFeedback());
