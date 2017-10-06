@@ -23,13 +23,7 @@
   z-index: $z-index-mask;
 
   &.masked {
-    cursor: not-allowed;
     pointer-events: auto;
-  }
-
-  &.mask-add-component {
-    // IE only knows 'copy', but 'grabbing' looks nicer
-    cursor: copy;
   }
 }
 
