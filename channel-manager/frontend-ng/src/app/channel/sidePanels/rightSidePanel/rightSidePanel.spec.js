@@ -372,6 +372,14 @@ describe('RightSidePanel', () => {
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE', { });
   });
 
+  it('initialises new content if no document id is passed', () => {
+    spyOn($ctrl, '_initNewContent');
+    sidePanelHandlers.onOpen();
+    $rootScope.$digest();
+
+    expect($ctrl._initNewContent).toHaveBeenCalled();
+  });
+
   it('ignores a non-existing form when opening a document', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
