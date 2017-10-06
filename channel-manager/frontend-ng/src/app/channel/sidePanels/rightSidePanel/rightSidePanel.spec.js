@@ -1003,5 +1003,22 @@ describe('RightSidePanel', () => {
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
   });
+
+  it('creates new content', () => {
+    spyOn($ctrl, '_resetState');
+    $ctrl._initNewContent();
+
+    expect($ctrl._resetState).toHaveBeenCalled();
+    expect($ctrl.createContent).toEqual(true);
+    expect($ctrl.title).toEqual('NEW_CONTENT');
+  });
+
+  it('processes new content and saves', () => {
+    spyOn($ctrl, '_loadDocument');
+    $ctrl.saveNewDocument({});
+
+    expect($ctrl.createContent).toEqual(false);
+    expect($ctrl._loadDocument).toHaveBeenCalledWith(null);
+  });
 });
 
