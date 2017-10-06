@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -91,19 +93,41 @@ public class DoubleFieldTypeTest {
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
     }
 
-//    @Test
-//    public void writeIncorrectValue() throws Exception {
-//        final Node node = MockNode.root();
-//        final PrimitiveFieldType fieldType = new LongFieldType();
-//        final Long oldValue = 1l;
-//        final String invalidValue = "foo";
-//
-//        fieldType.setId(PROPERTY);
-//        node.setProperty(PROPERTY, new String[]{"" + oldValue}, PropertyType.LONG);
-//
-//        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
-//        assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + oldValue));
-//    }
+    @Test
+    public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
+        final Node node = MockNode.root();
+        final PrimitiveFieldType fieldType = new DoubleFieldType();
+        final Double oldValue = 1.0;
+        final String invalidValue = "foo";
+
+        fieldType.setId(PROPERTY);
+        node.setProperty(PROPERTY, oldValue);
+
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
+        assertThat(node.getProperty(PROPERTY).getDouble(), equalTo(oldValue));
+    }
+
+    @Test
+    public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
+        final Node node = MockNode.root();
+        final PrimitiveFieldType fieldType = new DoubleFieldType();
+
+        fieldType.setId(PROPERTY);
+        fieldType.setMultiple(true);
+        fieldType.setMaxValues(2);
+
+        final Double oldValue1 = 1.0;
+        final Double oldValue2 = 2.0;
+        node.setProperty(PROPERTY, new String[] {oldValue1 + "", oldValue2 + ""}, PropertyType.DOUBLE);
+
+        final String invalidValue1 = "foo";
+        final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
+        fieldType.writeTo(node, Optional.of(es));
+
+        final Value[] values = node.getProperty(PROPERTY).getValues();
+        assertThat(values[0].getDouble(), equalTo(oldValue1));
+        assertThat(values[1].getDouble(), equalTo(oldValue2));
+    }
 
     private static List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);

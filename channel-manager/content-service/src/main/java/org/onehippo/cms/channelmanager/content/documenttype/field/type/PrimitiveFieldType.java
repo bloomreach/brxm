@@ -96,7 +96,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
                 for (int i = 0; i < strings.length; i++) {
                     final Optional<String> value = processedValues.get(i).findValue();
 
-                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(getDefault());
+                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(null);
 
                     if (validateValues) {
                         fieldSpecificValidations(strings[i]);
@@ -126,11 +126,18 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         }
     }
 
-    protected String convertToSpecificType(final String input) {
+    protected String fieldSpecificConversion(final String input) {
         return input;
     }
 
-    private String[] convertToSpecificTypeArray(final String[] strings) {
+    private String convertToSpecificType(final String input) throws ValueFormatException {
+        if(input != null) {
+            return fieldSpecificConversion(input);
+        }
+        throw new ValueFormatException("Trying to convert null value");
+    }
+
+    private String[] convertToSpecificTypeArray(final String[] strings) throws ValueFormatException {
         final List<String> convertedStrings = new ArrayList<>();
         for (final String element : strings) {
             convertedStrings.add(convertToSpecificType(element));
