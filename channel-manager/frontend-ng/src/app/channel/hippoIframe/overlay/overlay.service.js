@@ -51,7 +51,7 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
+    this.manageContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -59,8 +59,20 @@ class OverlayService {
     PageStructureService.registerChangeListener(() => this.sync());
 
     this.dialButtonsConfig = [
-      { svg: plusSvg, callback: angular.noop, tooltip: this.$translate.instant('CREATE_DOCUMENT') },
-      { svg: searchSvg, callback: angular.noop, tooltip: this.$translate.instant('SELECT_DOCUMENT') },
+      {
+        svg: plusSvg,
+        callback: () => {
+          this.$rootScope.$apply(() => {
+            this.manageContentHandler();
+          });
+        },
+        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+      },
+      {
+        svg: searchSvg,
+        callback: () => {},
+        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+      },
     ];
   }
 
@@ -73,8 +85,8 @@ class OverlayService {
     this.editMenuHandler = callback;
   }
 
-  onEditContent(callback) {
-    this.editContentHandler = callback;
+  onManageContent(callback) {
+    this.manageContentHandler = callback;
   }
 
   _onLoad() {
@@ -388,7 +400,7 @@ class OverlayService {
       const button = config[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
         .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
-        .on('click', () => button.callback(i));
+        .on('click', button.callback);
       buttons.push(tpl);
     });
     return buttons;
@@ -427,7 +439,7 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.manageContentHandler(structureElement.getUuid());
       });
     });
   }

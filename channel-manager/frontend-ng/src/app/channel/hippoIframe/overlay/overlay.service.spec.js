@@ -520,16 +520,16 @@ describe('OverlayService', () => {
   });
 
   it('calls the edit content handler to edit a document', (done) => {
-    const editContentHandler = jasmine.createSpy('editContentHandler');
+    const manageContentHandler = jasmine.createSpy('manageContentHandler');
 
-    OverlayService.onEditContent(editContentHandler);
+    OverlayService.onManageContent(manageContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(manageContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
 
       done();
     });

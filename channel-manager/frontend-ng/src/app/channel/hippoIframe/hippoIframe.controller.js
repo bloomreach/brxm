@@ -75,8 +75,8 @@ class HippoIframeCtrl {
       this.onEditMenu({ menuUuid });
     });
 
-    this.OverlayService.onEditContent((contentUuid) => {
-      this.onEditContent({ contentUuid });
+    this.OverlayService.onManageContent((contentUuid) => {
+      this.onManageContent({ contentUuid });
     });
 
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');

@@ -50,6 +50,7 @@
       <md-button class="md-icon-button qa-edit-in-content-perspective"
                  aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
+                 ng-hide="$ctrl.createContent"
                  ng-click="$ctrl.openContentEditor('edit', false)"
                  title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
         <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
@@ -57,6 +58,7 @@
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ ::'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
+                 ng-hide="$ctrl.createContent"
                  ng-click="$ctrl.openContentEditor('view')"
                  title="{{ ::'PUBLISH' | translate }}">
         <md-icon md-svg-icon="publish"></md-icon>
@@ -97,7 +99,7 @@
       </md-button>
     </div>
 
-    <form ng-if="$ctrl.editing"
+    <form ng-if="$ctrl.editing || $ctrl.createContentMode"
           name="$ctrl.form"
           class="form-dense-layout">
       <document-fields class="top-level"
@@ -119,7 +121,7 @@
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
                  ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
-        {{ ::'SAVE' | translate }}
+        {{ $ctrl.createContent ? 'CREATE' : 'SAVE' | translate }}
       </md-button>
     </div>
   </md-toolbar>
