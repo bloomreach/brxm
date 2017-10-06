@@ -191,14 +191,6 @@ class RightSidePanelCtrl {
     this.title = this.$translate.instant('NEW_CONTENT');
   }
 
-  saveNewDocument(createContentForm) {
-    angular.noop(createContentForm);
-    this.createContent = false;
-    const documentId = null;
-    this._loadDocument(documentId); // If document UUID is received we can use openDocument and just pretend to edit
-  }
-
-
   _showFeedbackDraftInvalid() {
     this.feedback = {
       title: 'FEEDBACK_DRAFT_INVALID_TITLE',

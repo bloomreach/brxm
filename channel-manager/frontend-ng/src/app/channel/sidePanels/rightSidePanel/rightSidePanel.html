@@ -109,7 +109,7 @@
     </form>
     <hippo-create-content ng-if="$ctrl.createContent"
                           (on-close)="$ctrl.close()"
-                          (on-continue)="$ctrl.saveNewDocument($event)">
+                          (on-continue)="angular.noop()">
     </hippo-create-content>
   </md-content>
 

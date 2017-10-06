@@ -13,17 +13,23 @@
 // limitations under the License.
 
 @import 'variables';
-.create-content-container {
-  background: $grey-100;
-  padding-left: 12px;
-  .mat-input-container {
-    margin: 5px 0;
-    width: 100%;
-  }
-  .hint-invalid-field {
-    color: $red-500;
+.create-content {
+  &-container {
+    background: $grey-100;
+    padding-left: 16px;
+    .mat-input-container {
+      margin: 5px 0;
+      width: 100%;
+    }
+    .hint-invalid-field {
+      color: $red-500;
+    }
+
   }
   &-actions {
-    padding: 10px 0 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 10px 0;
   }
 }
