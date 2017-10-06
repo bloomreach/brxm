@@ -8,7 +8,7 @@
       jcr:primaryType: hippotaxonomy:taxonomy
       jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
       jcr:uuid: 683c4f9d-87fd-4fbb-8931-63c2ad7b158e
-      hippo:availability: [live]
+      hippo:availability: [live,preview]
       hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
@@ -79,6 +79,17 @@
             /en_GB:
               jcr:primaryType: hippotaxonomy:categoryinfo
               hippotaxonomy:name: Flavour
+        /fantasie:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: fantasy
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Fantasy
+            /nl:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Fantasie
       /level-1:
         jcr:primaryType: hippotaxonomy:category
         hippotaxonomy:key: level-1
@@ -111,213 +122,1011 @@
                 /en:
                   jcr:primaryType: hippotaxonomy:categoryinfo
                   hippotaxonomy:name: Level 4
-    /exampletaxonomy[2]:
-      jcr:primaryType: hippotaxonomy:taxonomy
-      jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable', 'mix:versionable']
-      jcr:uuid: 84a8818a-a223-46a2-886b-383d4776d916
-      hippo:availability: [preview]
-      hippostd:state: unpublished
-      hippostdpubwf:createdBy: admin
-      hippostdpubwf:creationDate: 2010-02-04T09:32:28.068-05:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:14:53.486+02:00
-      hippostdpubwf:lastModifiedBy: admin
-      hippotaxonomy:locales: [en, en-GB, nl]
-      /our-words:
+      /Transport_and_infrastructure:
         jcr:primaryType: hippotaxonomy:category
-        hippotaxonomy:key: our-words
+        hippotaxonomy:key: key_3d25266f-c316-4fa0-b28a-55483718058b
+        /Air_transport:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_a5985f1a-3f6f-4ee0-b5c8-19d3e2372e18
+          /Heliports:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7afa2ea1-8d3e-4a15-950b-f349759bf87c
+          /Airports:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_bb090c2e-4b42-4930-9eee-b6ca6822d784
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Air_transport
+        /Public_transport:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_4630aa34-bccb-4b4d-bf4a-d026b3f84a3a
+          /Train_services:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_395b625f-d258-4565-bdb2-70f108ae289f
+          /Bus_services:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a6eb4fd9-dedf-4250-a35a-1e5f2110a93b
+          /Trams_and_light_rail:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ffe3282e-e2c7-41fb-8755-76136f95987a
+          /Boat_services:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e8168e83-d3bc-4ebe-a8a2-5b0610b81795
+          /Metro_services:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_0b320ebe-c9b9-43ce-b307-14344727e4d8
+          /Community_transport:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c5782cd7-d9d9-440a-836b-373093610a80
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Public_transport
+        /Roads_and_road_transport:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_ebdcefb0-2942-4009-8bf2-0caa2999b0de
+          /Cycle_routes:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_d56799e0-ed05-42f8-baf3-5d5baf124f32
+          /Pavements:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e3cfe8ec-d760-455d-89dc-2dd2761f2d50
+          /Parking:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_86016f80-5098-473b-a449-f18f8c9ee2d7
+          /Vehicles:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ca2f3ea5-485c-4647-a3af-3295e6d0f448
+          /Traffic_management:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_d90534f9-b0c9-415b-82a9-9f518485c502
+          /Road_maintenance:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_330dbc58-f182-44a1-9151-544a37cb1734
+          /Road_safety:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_988fdae4-3da6-413e-96c7-c29850f34208
+          /Road_charging:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_784cbcdf-f194-4adf-9faf-5b101dee3c6b
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Roads_and_road_transport
+        /Technical_infrastructure:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_ee4dcf3e-e893-4791-9e8c-846604ddef6c
+          /Collective_heating_systems:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_214304c6-7726-42be-8e2b-ae3e615a5ecd
+          /Electricity:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_b9bb1744-0612-42f5-a6f6-290c73880884
+          /Sewage_disposal:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ace473ad-6576-419d-9807-b0a0b36e9726
+          /Water_supply:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c4b4411e-adb3-46e3-9e68-030384a92ab2
+          /Waste_collection:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_11ba5f54-90fd-4a47-aec4-db6d44742297
+          /ICT_infrastructure:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_d365f3bb-9d20-4dea-96b7-c6a7798ce65b
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Technical_infrastructure
+        /Water_transport:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_5d958606-b8a3-4a88-a028-c7e5ad0a1505
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Water_transport
+        /Services_and_amenities:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_54358136-625a-4d07-9e50-8766fe9a3648
+          /Amenities:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_faca8f4c-395e-46cf-9c09-67b30ecd90f1
+            /Shops:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_12ec6d31-9afd-4894-be4e-76220cbdc391
+            /Libraries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_21e904e2-7911-460b-94cc-d88135602329
+            /Banks:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_ce7a50c5-e346-4e16-a72f-9a2dc0261a02
+            /Post_offices:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_c4b1d34b-d7a8-4989-aa17-97087725f506
+            /Leisure_centres:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_99a35932-9e64-4225-8c4f-7e3f75bf1744
+            /Health_services:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_502a1f16-2d06-4980-8a80-a61a5a384bac
+            /Restaurants:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_2fb68cbe-2aef-4e14-a7f2-3ad464521fe6
+            /Community_centres:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_b4a721df-7efe-44ab-8b29-09eacfac5a63
+            /Social_services:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5b6a50bf-ab3d-4783-b2ec-8c967d508432
+          /Public_space:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_0b873b41-41bd-41ad-826c-d7c1907c6a00
+            /Sports_areas:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_aa36eff4-c2e2-4a57-b16c-e483fbbc0e85
+            /Parks:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_a5faafd8-e66b-4621-b5e9-27166829bd57
+            /Communal_gardens:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_8b8bfcf3-5f9d-427e-9f5b-df9eefd4689b
+            /Squares:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_89e9060c-0366-4e2b-ae77-74574d90911f
+            /Children_s_play_areas:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_acab6c41-c6d8-43ad-81b6-b972f488cbae
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Services_and_amenities
         /hippotaxonomy:categoryinfos:
           jcr:primaryType: hippotaxonomy:categoryinfos
           /en:
             jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Different spelling between American and British
-              English.
-            hippotaxonomy:name: Our Words
-          /en_GB:
+            hippotaxonomy:name: Transport_and_infrastructure
+      /Urban_environment:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: key_9b620864-86a7-44dd-a05e-07195320a40d
+        /Environmental_sustainability:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_baa9cdd2-d9a0-4fbc-a5be-379bc98f8e9a
+          /Air_quality:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_53c7ab63-895c-49b7-9ce7-c523b449005c
+          /Noise:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_f1144665-6ff0-419d-9ecd-7235460985a4
+          /Environmental_education:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_8bfab5c4-9746-4a7f-ab5c-bdfb70961bc3
+          /Water_quality:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a9c390fe-47a6-403f-b59a-fc0fe51c69b2
+          /Renewable_energy_supplies:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_216ab420-d384-4a56-abcd-9d2c92bf54de
+          /Energy_efficiency:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c4aaa9b9-3989-4052-b354-c1457214d988
+          /Biodiversity:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e740e0b8-1915-499e-92fd-1398e2fe3a98
+          /Green_public_procurement:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_fdb3787d-fbd5-4233-aa37-ea34f7bf8c97
+          /Waste_management_and_recycling:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_035b40bc-5dd0-4327-aaff-918fa699ac12
+          /Soil_contamination:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a057f31d-b776-453a-a8e3-db7f62f3c7b2
+          /Greenhouse_gas_emissions:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4b1caedd-fec2-405a-ae0e-20077a5b4297
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Environmental_sustainability
+        /Land_use:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_f940c93f-6c26-4c93-af0b-f705f76ceacd
+          /Urban_sprawl:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c2843ec1-a44a-4bee-bb4d-c0dc5d1e32f6
+          /Urbanisation:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_3d9201b4-1608-4c2b-811e-5962d50ed9d1
+          /Zoning:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_2d697041-26e4-436d-a9d6-85d2a6e4d6d2
+          /Urban_rural_relationship:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_8833b3db-281f-4c8e-9b2b-2439ee26f283
+          /Suburbanisation:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_f51bf88c-fc69-4239-91cd-f045cdfee0f4
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Land_use
+        /Urban_renewal:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_cabea3b9-4136-4181-8531-96cfa7533dc3
+          /City_centre_development:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_006f4d38-4330-48b6-abb6-d0b98a15c1cd
+          /Housing_estate_redevelopment:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_3140c8a3-4b98-4a5e-a085-d935533ecbf4
+          /Urban_restructuring:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_48e6a35d-0711-4f0f-9c07-b68b39865e35
+          /Waterside_development:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_2d1a7c08-04ef-4e38-b8b5-3751161f2828
+          /Brownfield_development:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_5b25bf34-c9aa-44ba-b6aa-37181cb3fd48
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Urban_renewal
+        /Cultural_heritage:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_ce67c579-dd78-4ea8-92ee-f3531fdbb633
+          /Preservation_of_historic_city_quarters:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_53bc8b17-ade6-4bc6-8b8c-c03168495c81
+          /Conservation_of_historic_buildings:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7aab70e3-05ee-4412-ba89-667e5b43211b
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Cultural_heritage
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
             jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Different spelling between American and British
-              English.
-            hippotaxonomy:name: Our words
+            hippotaxonomy:name: Urban_environment
+      /Economy_knowledge_and_employment:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: key_77536ad5-c640-451d-b663-c10f55a94317
+        /Research_and_innovation:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_8fe3d1ff-6455-475b-a545-55e377624dc5
+          /Universities_and_spin_offs:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_b14b95e1-b089-44ec-b7ca-2e8845f79c5e
+            /Support_for_spin_offs:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_66a58007-5058-42f4-9b45-4ff73887fba4
+            /University_research_environment:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_4206c804-fe73-467c-ad6b-995542774430
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Universities_and_spin_offs
+          /Implementation_and_production:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ad293060-ad3c-4f3b-bb92-5863f1f8cce9
+            /Knowledge_and_technology_transfer:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_51d3ed5f-b9ca-4d4b-8419-de042ee5546b
+            /Production_and_manufacture:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_20c8f29d-fb15-45c6-96af-5586c9311f5f
+            /Implementation_of_ideas:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_363b2355-b7d6-4255-b98c-d17709416596
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Implementation_and_production
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Research_and_innovation
+        /Working_patterns:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_7fac4f20-5aaa-4b4d-9382-3166365938d8
+          /Commuting:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4c0e0e45-183d-43ab-91b2-1d43fe746505
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Commuting
+          /Remote_working:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_8d647784-9fd2-462a-885b-8eba9bc37cb8
+            /Teleworking:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_d9b9625c-4ebd-4188-9fcd-81b9d5e5f908
+            /Home_working:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_f5834084-f387-447d-b31f-f457676840da
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Remote_working
+          /Flexible_working:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ca0a8c2f-1667-4189-94e8-53ed624f4c16
+            /Work_life_balance:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_03c93503-7ee0-4d80-916a-5632e7a09d13
+            /Flexible_hours:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_8560a2ec-6749-42e6-b93b-bf22aded6af5
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Flexible_working
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Working_patterns
+        /Urban_economy:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_bfee8c4f-f438-4212-836e-4ab8716c7381
+          /Employment:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_98c2f154-85eb-4447-b666-30d440abdbb2
+            /Job_market:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_c485777a-5889-45ca-b13a-a36691566ed3
+            /Workforce:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_c408f324-8945-4502-b8d9-c8dd0f1aa603
+            /Unemployment:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_b8f38ed7-9f87-4b00-af21-92411220f177
+            /Skills_mismatch:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_565fc0e8-f2cf-4491-94be-9b560321cf8d
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Employment
+          /Specific_sectors:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7f50fd04-cf49-4c4c-9dfb-d6b5021b83a0
+            /Retail_industries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_2927f5da-ecc9-4ab8-8af3-672a2b0531d9
+            /Distribution:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_908c6c4c-d50f-469e-9b88-3dd10952b703
+            /Social_enterprise:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_dd79f816-1bf0-44fa-8500-650fb7ae82fd
+            /Service_industries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_d3246724-5338-4a8e-8440-ab52c4c093bb
+            /Tourism__recreation_and_culture:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_436a04e6-6ca7-4531-8f26-1ac44ed8b026
+            /Manufacturing_industries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_6cf2b968-027c-4091-8657-58f9bb2453c2
+            /Knowledge_industries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_0ab4eb4a-3edd-41eb-b6c8-11862af585c5
+            /Creative_industries:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_f6b9d3d2-faed-4726-bc0f-52503e12f6d2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Specific_sectors
+          /Business_support:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_175f5a4b-09ad-4e79-96ec-087eeedd5e5d
+            /Encouraging_entrepreneurship:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_bbb5a34f-94fe-4166-8e86-899242971ce8
+            /Economic_opportunity_zones:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_cd1d051d-efea-48bd-b73c-9cb85bb3f3d8
+            /EU_Funding:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_50d95a47-f856-4418-893a-c40ad25ac771
+            /Support_for_SMEs:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_e0e38f41-de46-4fa8-a713-f2ada3af180d
+            /Business_parks:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_aa39da7e-3e7c-499b-ad30-2b6cd6a5cb41
+            /Government_aid:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_2dbbef18-a018-4aff-8c8b-a487f17bc984
+            /Business_advice:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_6fa93eec-1da7-4cc7-ba6c-17519d2e1d9e
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Business_support
+          /Competitiveness:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_39849b1c-3765-4423-b106-da3fd37217d5
+            /City_marketing:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_1992b404-e310-4e29-b964-fd2d589eb6d7
+            /Productivity:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_252f20a9-1534-4171-84af-3018cbc242fe
+            /Connectivity:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_dbe49860-8528-4a99-bb00-8b2ff11bc087
+            /Human_capital:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_cee3f52e-638a-4529-994d-74f5187544f3
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Competitiveness
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Urban_economy
+        /Training:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_615455c6-402d-49bb-8f5d-62ba3bcc111d
+          /Vocational_training:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_f36e8e62-e681-47e8-92c3-fee525ce1125
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Vocational_training
+          /Coaching:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_77a9e437-3ba1-4faf-bf8d-030610b8444a
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Coaching
+          /Training_for_new_professions:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4479e78a-2899-4df4-a6b6-c5c019c7ab38
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Training_for_new_professions
+          /Lifelong_learning:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_d848a5d6-1784-4d8e-aa74-e7ea2d09c94d
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Lifelong_learning
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Training
+        /Digital_services:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_49adf60a-c317-4527-9d39-cb427214c0d8
+          /Internet_access:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_597722c9-3212-48b1-9a89-af96d1ba5d3a
+            /Broadband:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_9f1bd427-ee06-4943-9ff4-5f0ddf9b81e5
+            /Dial_up:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_0176195a-8c45-42c3-b4d6-dab56b4f035a
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Internet_access
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Digital_services
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:description: Category of Economy knowledge and employment
+            hippotaxonomy:fulldescription: This is a Category of Economy knowledge
+              and employment
+            hippotaxonomy:name: Economy knowledge and employment
           /nl:
             jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Vooral interessant vanwege de verschillende
-              maniere van spellen in de Engelse taal.
-            hippotaxonomy:name: our-words
-        /humor:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: humor
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humor
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humour
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humor
-        /color:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: color
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Color
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Kleur
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Colour
-        /flavor:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: flavor
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Flavor
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Smaak
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Flavour
-      /level-1:
+            hippotaxonomy:description: Categorie voor kennis economie en werkgelegenheid
+            hippotaxonomy:fulldescription: Dit is een categorie voor kennis economie
+              en werkgelegenheid
+            hippotaxonomy:name: Kennis economie en werkgelegenheid
+      /Housing:
         jcr:primaryType: hippotaxonomy:category
-        hippotaxonomy:key: level-1
-        /hippotaxonomy:categoryinfos:
-          jcr:primaryType: hippotaxonomy:categoryinfos
-          /en:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:name: Level 1
-        /level-2:
+        hippotaxonomy:key: key_471efec8-e782-48ac-9ab3-93ab97a21859
+        /Housing_quality:
           jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: level-2
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Level 2
-          /level-3:
+          hippotaxonomy:key: key_fcd7f530-b5b5-4231-9fb8-d73fdf32a926
+          /Housing_improvement:
             jcr:primaryType: hippotaxonomy:category
-            hippotaxonomy:key: level-3
-            /hippotaxonomy:categoryinfos:
-              jcr:primaryType: hippotaxonomy:categoryinfos
-              /en:
-                jcr:primaryType: hippotaxonomy:categoryinfo
-                hippotaxonomy:name: Level 3
-            /level-4:
-              jcr:primaryType: hippotaxonomy:category
-              hippotaxonomy:key: level-4
-              /hippotaxonomy:categoryinfos:
-                jcr:primaryType: hippotaxonomy:categoryinfos
-                /en:
-                  jcr:primaryType: hippotaxonomy:categoryinfo
-                  hippotaxonomy:name: Level 4
-    /exampletaxonomy[3]:
-      jcr:primaryType: hippotaxonomy:taxonomy
-      jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
-      jcr:uuid: 203ebd99-631b-4b22-8382-e55a33488df5
-      hippo:availability: []
-      hippostd:state: draft
-      hippostdpubwf:createdBy: admin
-      hippostdpubwf:creationDate: 2010-02-04T09:32:28.068-05:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:11:23.841+02:00
-      hippostdpubwf:lastModifiedBy: admin
-      hippotaxonomy:locales: [en, en-GB, nl]
-      /our-words:
-        jcr:primaryType: hippotaxonomy:category
-        hippotaxonomy:key: our-words
-        /hippotaxonomy:categoryinfos:
-          jcr:primaryType: hippotaxonomy:categoryinfos
-          /en:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Different spelling between American and British
-              English.
-            hippotaxonomy:name: Our Words
-          /en_GB:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Different spelling between American and British
-              English.
-            hippotaxonomy:name: Our words
-          /nl:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Vooral interessant vanwege de verschillende
-              maniere van spellen in de Engelse taal.
-            hippotaxonomy:name: our-words
-        /humor:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: humor
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humor
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humour
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Humor
-        /color:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: color
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Color
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Kleur
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Colour
-        /flavor:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: flavor
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Flavor
-            /nl:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Smaak
-            /en_GB:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Flavour
-      /level-1:
-        jcr:primaryType: hippotaxonomy:category
-        hippotaxonomy:key: level-1
-        /hippotaxonomy:categoryinfos:
-          jcr:primaryType: hippotaxonomy:categoryinfos
-          /en:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:name: Level 1
-        /level-2:
-          jcr:primaryType: hippotaxonomy:category
-          hippotaxonomy:key: level-2
-          /hippotaxonomy:categoryinfos:
-            jcr:primaryType: hippotaxonomy:categoryinfos
-            /en:
-              jcr:primaryType: hippotaxonomy:categoryinfo
-              hippotaxonomy:name: Level 2
-          /level-3:
+            hippotaxonomy:key: key_d9ab96ea-5be1-4ba3-94d1-a62174e4e962
+          /Energy_efficiency:
             jcr:primaryType: hippotaxonomy:category
-            hippotaxonomy:key: level-3
-            /hippotaxonomy:categoryinfos:
-              jcr:primaryType: hippotaxonomy:categoryinfos
-              /en:
-                jcr:primaryType: hippotaxonomy:categoryinfo
-                hippotaxonomy:name: Level 3
-            /level-4:
+            hippotaxonomy:key: key_5b9addb7-1fa6-4f7f-920d-48160d2669d7
+          /Housing_design_and_standards:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_0ceebc4a-1ef2-420d-b926-8e1b0c39280a
+            /Building_regulations:
               jcr:primaryType: hippotaxonomy:category
-              hippotaxonomy:key: level-4
-              /hippotaxonomy:categoryinfos:
-                jcr:primaryType: hippotaxonomy:categoryinfos
-                /en:
-                  jcr:primaryType: hippotaxonomy:categoryinfo
-                  hippotaxonomy:name: Level 4
+              hippotaxonomy:key: key_4983f2b2-7e20-4680-bb8c-90cae65a69df
+            /Design_and_architecture:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_e1daebca-5a6e-4861-b22d-553444edf750
+            /Sustainable_construction_methods:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_fa802fc7-326f-495f-929e-d451fdcd4f9e
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Housing_quality
+        /Housing_policy:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_b13745e5-7192-4301-81c9-db5c3fc2bcd7
+          /Privately_owned_housing:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_fa6311bb-1f28-421c-8c6b-7ce2b55b8ac8
+          /Social_housing:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_6d92e383-ce6e-4bec-ac80-8a15ed68a2cf
+          /Housing_need:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a4efec8c-b858-4830-9788-4d12ff6dca9a
+          /Social_mix:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_66e3a440-1505-4125-9d14-75da94e14e63
+            /Housing_segregation:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_680baa4f-9a7c-413d-9607-2e8edfb66ebb
+            /Mixed_tenure:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_cb3dfe36-bf99-462d-b309-5ecb836430d3
+          /Housing_market:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_ed2f3cf6-d1b1-4548-8c1d-36f4be80a364
+          /Collective_housing:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e82e2bf1-abee-4254-b296-422b9490d301
+          /Homelessness:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_aa95c3ff-dd09-423b-9570-fa1916e0da6c
+            /Temporary_housing:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_99f6bdd5-0815-4133-91b0-bd47ec756989
+            /Shelters:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_7575c68a-32a4-44cb-a9de-1e50bb65110b
+          /Private_rented_housing:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_312b2f69-a557-49b7-be96-3c579101dbe7
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Housing_policy
+        /Housing_management:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_88c636c3-cde8-4cc6-be81-727e49b44a5b
+          /Housing_maintenance:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_03688d07-d16b-481c-b41c-f2c3d93c88df
+            /Repairs:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_1c73d9eb-1d5e-407e-aecb-710a27c0db03
+            /Heating__plumbing__electricity__water:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_f3860bb9-d182-46b9-acbc-9830f06111eb
+            /Gardens_maintenance:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5de56b03-da3f-4373-8b98-722f0353a4e2
+            /Disabled_access:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5c299bf4-4f1e-45c2-8003-471b5d1f80d1
+          /Tenant_management:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a631072d-4e00-42df-830b-05e4d1009196
+            /Rent_arrears:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_f1925af8-8d21-4d38-b809-bfc54b85b9b5
+            /Evictions:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_df4ae7e1-d2f5-4532-a09d-bf9538e12ea0
+            /Tenant_participation:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_6c06e278-4bdf-4ad8-b468-8e77a2370239
+            /Squatters:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_7e499066-541f-4f66-8da2-032b16bb436e
+            /Landlords:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_9ab66d1d-fed4-4ef4-bcaa-773fb49c9f6a
+          /Housing_finance:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_02a8af94-f1fe-4b19-8e9e-3c3a9808698e
+            /Grants:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_01f3c7f7-3b3a-484d-a922-b1b71501eca7
+            /Aid_and_incentives:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_e808877f-35e5-48aa-b204-377be2f29433
+            /House_prices:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_96d4f812-3e56-471b-bc7c-6118b59fd414
+            /Taxes:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_cf4d40a2-9a81-42b9-ac20-695f366139bb
+            /Loans:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_be6ed8ed-018c-45a1-afc3-3e237f799389
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Housing_management
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:name: Housing
+      /Security_and_crime_prevention:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: key_b88adb86-7204-4374-9561-502e372d6a0b
+        /Anti_crime_policy:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_4a6ba69d-eb36-4b1e-82fd-f5f9982a11d6
+          /Burglary_and_theft:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_0e49d149-a372-43e3-b092-41b789e17fcc
+          /Riots:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_b76ae44c-15db-495d-8433-8d9eeb388e92
+          /Gender_and_domestic_violence:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_1579faf8-9465-4b87-bac4-3f45533abd46
+          /Transport_and_vehicle_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_9d2f1c6b-4163-4812-b52a-1e0efc9ad97f
+          /Race_crime_and_harassment:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_72b2a19c-3916-4d17-88a8-aaaa5a6204f5
+          /Anti_social_behaviour_and_vandalism:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_de98af6d-bc53-4b4c-8d0d-74dd1f592f06
+          /Cross_border_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_195fc374-58a3-4880-a2fd-2fa9a09cb224
+          /Extremism:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e6d6b653-b00f-4cd8-aa69-a68f35103650
+          /Youth_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_3dc9260d-3784-46e3-a2d3-82d20294938f
+          /Drug_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_df238ae6-03b0-4b9d-9ec7-0a9920e909b1
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Anti_crime_policy
+        /Tackling_crime:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_48f6d482-904f-4ba7-b384-f6968256afff
+          /Enforcement_and_civil_intervention:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_b2ffe884-fb3c-40c0-bffc-14edc744d71a
+            /Neighbourhood_wardens:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_e131bca7-e075-49cf-86ef-84ce001adc84
+            /Community_groups:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_879ffa52-3817-49fa-8892-a065013aaf28
+            /Street_social_workers:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_7fb37518-b393-4e3b-80aa-898aa9daffc2
+            /Policing:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_52cbaa00-8ada-499c-a6f0-6358bb948c9f
+            /Courts_and_justice:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5253b289-548e-4cf8-ace5-bd5019dc69c0
+          /Working_with_offenders:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e599f19d-bdd8-4a0b-a12e-5f73b7938d68
+            /Restorative_justice:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_9b0ca47a-653c-468b-8237-515f2395f4bd
+            /Youth_offenders:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_c43e955b-f397-4fad-96fa-1c684c3dbd60
+            /Adult_offenders:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_a88ebdce-b7b9-4ed2-a085-ba3d03583822
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Tackling_crime
+        /Crime_prevention:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_65338dad-c563-462a-b4d9-e0cfdf175afe
+          /Mediation:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_63a2d4a2-79d7-413d-a342-6eef7444400b
+          /Camera_surveillance:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_bc5a7a05-88e5-4852-9de6-dc801efb1395
+          /Designing_out_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_da1ce436-7a89-4432-999f-9547b8d8df84
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Crime_prevention
+        /Sense_of_insecurity:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_1863b2a4-f84f-4709-8557-7b657fe0905a
+          /Crime_hotspots:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_0dd62665-33ed-43fa-9086-dca90f8d1222
+          /Vulnerable_groups:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_f0ac255f-71e9-4f06-be62-7a1e3818e235
+            /Women:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_b4770561-b481-473f-901e-6a9400da8872
+            /Gay__lesbian__transgender:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_1c11dcd4-6f18-451b-9245-f6b48e86f6d6
+            /Ethnic_minorities:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_57140fa3-f328-4b69-9cf4-7a3122ab8b27
+            /Older_people:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_0cc7bf5d-97b0-4cb6-a9c8-f0b6cbf18753
+          /Victims_of_crime:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_fcf53b92-8ab9-4b36-99ff-f178c24d6cda
+            /Support:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_3098d302-7b5f-4d00-a29a-bb2b1bc76d79
+            /Self_defence_training:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_e6088488-c9a8-4abc-9f57-69fee4a55370
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Sense_of_insecurity
+        /Risk_management:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_a76a1e49-a7d6-4427-b4ab-fc4df22dd212
+          /Terrorist_attacks:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7f7dba68-93ae-4a7f-9ada-9d038426d9b7
+          /Industrial_disasters:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_611558d2-25de-4a7e-9f31-39c43b12c1c4
+          /Civil_disorder:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7ffda166-eeab-4a66-a549-0f22f13d7464
+          /Natural_disasters:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4df19f6d-e2a8-4685-9bc3-97841b656cbf
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Risk_management
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:name: Security_and_crime_prevention
+      /Social_inclusion_and_integration:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: key_f8af5b98-6db5-4968-9c2e-ac47c1f6567f
+        /Equality:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_9f1cdb72-313d-4509-9aa7-c4ba74a8e813
+          /Gender_Equality:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_191bef7c-a67d-4b40-9e2e-9acbe4db7baa
+          /Employment_Equality:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_2865c7b7-7642-4dd0-bf70-4abc7edafb73
+          /Racial_Equality:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_531ea673-fc80-4d4a-85d5-65632bfd56c3
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Equality
+        /Quality_of_life:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_82460888-315b-40ea-929c-04928a443363
+          /Health:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_a871027c-fe71-4575-a5c1-315ccd552575
+            /Sport_and_recreation:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5bd51db3-04dd-498e-9d13-fa109fe42017
+            /Health_education:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_34563d1e-e065-4bf3-b718-ad613577c750
+            /Parenting:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_9fd0f3f7-f86f-4919-b8b9-6cf64f25e863
+            /Diet_and_nutrition:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_6ff415c6-a3fb-436c-8b26-896478a2250e
+            /Informal_care:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_a56ba344-bdb5-4d4c-8a81-15e7007db9d9
+          /Social_services:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_98fe1373-66e9-43c1-b306-25ccdc344d1c
+            /Care_for_the_homeless:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_de7187fe-9606-4a0d-932f-356f800bcc9b
+            /Care_services_for_drug_addicts:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_ce200416-3b20-41e6-9324-0e173b5cd421
+            /Support_services:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_5f0b61d9-0e10-4bc3-8d12-c9c3ad628528
+            /Elderly_care:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_4a8e5db3-173e-4f65-beef-247b9fe10d48
+            /Benefits:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_9c883305-739d-4343-aeb3-66ca880d7cb2
+            /Child_care:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_38162f59-d463-402b-b888-dac51faf0c30
+          /Skills_improvement:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_7ca0ef10-de15-4296-89e8-cbce34b83544
+            /Literacy_and_numeracy:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_a551df9c-f054-495c-a512-8072bc33c23f
+            /Digital_skills:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_077ed588-c363-473b-8086-8b06e10421c9
+            /Life_skills:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_ec871688-6420-40c9-b707-5ca4dff3e07a
+            /Language_skills:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_4626d6fe-cf71-47fa-9e37-458d0aa4dcd4
+          /Financial_inclusion:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4537e349-dd0c-4a73-aaeb-f75af191ed1a
+            /Affordable_credit:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_63393c6f-1090-4bcb-91f8-f3be8dd40c21
+            /Financial_education:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_f3de6023-67df-4e36-97c1-0e99d73e8f88
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Quality_of_life
+        /Community_development:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_6e0edc12-b525-4305-b593-1aa7e0b62370
+          /Community_websites:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_9f98c39d-3b55-416a-a7bb-40ea9608c2f0
+          /Citizens__participation:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_1aa028dd-3a8d-4ac6-a03c-cddabe5c6448
+          /Support_for_local_groups:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_08cd95c4-ffea-48e2-934f-145b01df1886
+          /Capacity_building:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_17afd08a-714d-4865-a41a-175b31c1edb4
+          /Mediation:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4d589979-2f09-4bd5-a604-d4e9748e5391
+          /Citizenship:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_4dadcdf5-f533-47de-8490-9100cad32790
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Community_development
+        /Integration_of_social_groups:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_5e42c2ac-cdeb-411f-a1b9-b44be87f5b93
+          /Young_people:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_78182c8c-d1ff-49f7-b79f-79a4809f5308
+          /Older_people:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_5a15b8f5-b1f0-48ab-a5f8-d612c2d518b2
+          /Ethnic_minorities:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_5aa213cb-6f10-4563-9b6d-af2023cd9f33
+          /Refugees:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_499ec5f9-4b14-402b-b8fc-1ecdc0adf320
+          /Disabled_people:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_738495a5-b981-463f-9c5e-23a5e7645e57
+          /Asylum_seekers:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_99fcfaca-0d1b-4b27-a8d1-f8cd20672bf8
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Integration_of_social_groups
+        /Education:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: key_c1643fe9-d2a4-4f0e-9bb5-11b2e2d3726f
+          /Higher_education:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_e0a827ec-50d1-4112-8e3d-604f7c3f6993
+          /Primary_education:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c74f341d-65d9-4e2d-be49-df2e889fc13e
+          /Secondary_education:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: key_c9c28dae-f22c-41ee-bcac-f1e7ba3aa2ce
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Education
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:name: Social_inclusion_and_integration
