@@ -104,7 +104,7 @@ class RightSidePanelCtrl {
         if (documentId) {
           this.openDocument(documentId);
         } else {
-          this._createContent();
+          this._initNewContent();
         }
         this._onOpen();
       },
@@ -185,12 +185,11 @@ class RightSidePanelCtrl {
       .finally(() => delete this.loading);
   }
 
-  _createContent() {
+  _initNewContent() {
+    this._resetState();
     this.createContent = true;
-    this.title = 'Create new content';
-    this._onLoadSuccess({}, { allFieldsIncluded: true });
+    this.title = this.$translate.instant('NEW_CONTENT');
   }
-
 
   _showFeedbackDraftInvalid() {
     this.feedback = {

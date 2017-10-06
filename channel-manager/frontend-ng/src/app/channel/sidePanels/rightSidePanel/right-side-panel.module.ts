@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,23 @@
  */
 
 import { NgModule } from '@angular/core';
+import { MaterialModule } from '../../../material/material.module';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { UpgradeModule  } from '@angular/upgrade/static';
-
-import { MaterialModule } from './material/material.module';
-import ng1Module from './hippo-cm.ng1.module.js';
-import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
+import { CreateContentComponent } from './createContentForm/create-content.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
-    UpgradeModule,
     MaterialModule,
-    RightSidePanelModule
+    FormsModule
   ],
+  declarations: [
+    CreateContentComponent
+  ],
+  entryComponents: [
+    CreateContentComponent
+  ]
 })
-export class AppModule {
-  constructor(private upgrade: UpgradeModule) {}
-
-  ngDoBootstrap() {
-    this.upgrade.bootstrap(document.body, [ng1Module], { strictDi: true });
-  }
-}
+export class RightSidePanelModule {}
 

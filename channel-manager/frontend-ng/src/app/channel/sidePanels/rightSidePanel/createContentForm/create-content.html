@@ -1,0 +1,74 @@
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<div layout="column" class="create-content-container">
+  <form (ngSubmit)="submit(form)" #form="ngForm">
+
+    <!-- Document name field -->
+    <mat-input-container class="create-content-field">
+      <input mdInput ngModel name="documentName" placeholder="Document name" required>
+      <mat-hint align="start"
+                class="hint-invalid-field"
+                *ngIf="form.controls.documentName && form.controls.documentName.invalid && form.controls.documentName.touched">
+        This is required.
+      </mat-hint>
+    </mat-input-container>
+
+    <!-- Document URL field -->
+    <mat-input-container class="create-content-field">
+      <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
+      <mat-hint align="start"
+                class="hint-invalid-field"
+                *ngIf="form.controls.documentUrl && form.controls.documentUrl.invalid && form.controls.documentUrl.touched">
+        This is required.
+      </mat-hint>
+    </mat-input-container>
+
+    <!-- Document type field -->
+    <div class="mat-input-wrapper">
+      <div class="mat-input-flex">
+        <div class="mat-input-infix">
+          <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
+            <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document location field -->
+    <mat-input-container class="create-content-field">
+      <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
+      <mat-hint align="start"
+                class="hint-invalid-field"
+                *ngIf="form.controls.documentLocation && form.controls.documentLocation.invalid && form.controls.documentLocation.touched">
+        This is required.
+      </mat-hint>
+    </mat-input-container>
+
+    <!-- Buttons -->
+    <div class="create-content-actions">
+      <button mat-button class="qa-create-content-close"
+              (click)="close()">
+        CANCEL
+      </button>
+
+      <button mat-button class="qa-create-content-continue"
+              type="submit"
+              [disabled]="form.invalid">
+        CONTINUE
+      </button>
+    </div>
+  </form>
+</div>

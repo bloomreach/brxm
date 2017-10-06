@@ -16,10 +16,12 @@
 
 import { NgModule } from '@angular/core';
 import {
+  MATERIAL_SANITY_CHECKS,
   NoConflictStyleCompatibilityMode,
   MdListModule,
   MdButtonModule,
-  MATERIAL_SANITY_CHECKS,
+  MdInputModule,
+  MdSelectModule,
 } from '@angular/material';
 import './material.scss';
 
@@ -28,6 +30,9 @@ import './material.scss';
     NoConflictStyleCompatibilityMode,
     MdListModule,
     MdButtonModule,
+    MdInputModule,
+    MdButtonModule,
+    MdSelectModule,
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},
