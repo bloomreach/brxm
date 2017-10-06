@@ -24,7 +24,7 @@ class TestFormHintsComponent {
 /*
   Test Scenarios
  */
-fdescribe('form-hints directive', () => {
+describe('form-hints directive', () => {
   let component: TestFormHintsComponent;
   let fixture: ComponentFixture<TestFormHintsComponent>;
   let hintsElement: DebugElement;
