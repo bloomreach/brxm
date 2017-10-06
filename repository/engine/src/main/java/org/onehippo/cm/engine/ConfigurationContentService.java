@@ -51,6 +51,12 @@ import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -135,7 +141,7 @@ public class ConfigurationContentService {
         session.save();
 
         final Collection<String> failedPaths = new ArrayList<>();
-        List<ContentDefinitionImpl> sortedDefinitions = getSortedDefinitions(module.getContentDefinitions());
+        List<ContentDefinitionImpl> sortedDefinitions = getSortedDefinitions(module.getContentDefinitions(), true);
         for (final ContentDefinitionImpl contentDefinition : sortedDefinitions) {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
@@ -209,7 +215,8 @@ public class ConfigurationContentService {
      * Item A that has order before on item B in this list then item B should be applied before item A, i.e.
      * in reverse order
      */
-    public static List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions) {
+    public static List<ContentDefinitionImpl> getSortedDefinitions(final List<ContentDefinitionImpl> contentDefinitions,
+                                                                   final boolean warnOnDupOrderBefore) {
 
         final Function<ContentDefinitionImpl, JcrPath> getParentPath = (cdi) -> cdi.getNode().getJcrPath().getParent();
 
@@ -219,7 +226,9 @@ public class ConfigurationContentService {
 
         for (JcrPath path : itemsPerPath.keySet()) {
             final List<ContentDefinitionSorter.Item> siblings = itemsPerPath.get(path);
-            warnForDuplicateOrderBefores(siblings);
+            if (warnOnDupOrderBefore) {
+                warnForDuplicateOrderBefores(siblings);
+            }
             final ContentDefinitionSorter contentDefinitionSorter = new ContentDefinitionSorter();
             contentDefinitionSorter.sort(siblings);
         }
@@ -233,10 +242,10 @@ public class ConfigurationContentService {
                 .map(s -> s.getDefinition().getNode().getOrderBefore()).filter(Objects::nonNull).collect(toList());
         final String orderBeforeDuplicates = siblings.stream()
                 .filter(i -> Collections.frequency(orderBeforeList, i.getDefinition().getNode().getOrderBefore()) > 1)
-                .distinct().map(i -> i.getDefinition().getNode().getPath() + " in " + i.getDefinition().getSource())
-                .collect(Collectors.joining(", "));
+                .distinct().map(i -> i.getDefinition().getNode().getPath() + " in " + i.getDefinition().getSource().getOrigin())
+                .collect(Collectors.joining(", \n    "));
         if (StringUtils.isNotEmpty(orderBeforeDuplicates)) {
-            log.warn("Following node(s) are referenced multiple times in order before: {}", orderBeforeDuplicates);
+            log.warn("Following node(s) reference the same node multiple times in order before:\n    {}", orderBeforeDuplicates);
         }
     }
 
