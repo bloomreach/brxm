@@ -23,7 +23,12 @@
   z-index: $z-index-mask;
 
   &.masked {
+    cursor: not-allowed;
     pointer-events: auto;
+  }
+
+  &.mask-add-component {
+    cursor: default;
   }
 }
 
