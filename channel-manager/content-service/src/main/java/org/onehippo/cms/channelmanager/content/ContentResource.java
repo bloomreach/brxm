@@ -39,6 +39,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
 
 @Produces("application/json")
@@ -105,6 +106,13 @@ public class ContentResource {
     public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
+    }
+
+    @GET
+    @Path("templatequery/{id}")
+    public Response getDocumentTypesOfTemplateQuery(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK, NO_CACHE,
+                (session, locale) -> TemplateQueryService.get().getDocumentTypeInfos(id, session, locale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,

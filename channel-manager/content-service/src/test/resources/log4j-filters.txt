@@ -56,3 +56,6 @@ Failed to commit changes for user 'bla'.
 Failed to read rich text field 'test:richtextfield'
 Failed to write rich text field 'test:richtextfield'
 Failed to read property 'prop' from node '/'
+Node '/hippo:configuration/hippo:queries/hippo:templates/new-document' is not of type nt:query
+Failed to execute templatequery 'new-document'
+Node '/hipposysedit:prototype' has primary nodetype 'hipposysedit:document' which is not a valid prototype
