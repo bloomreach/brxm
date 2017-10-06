@@ -148,7 +148,7 @@ public class DocumentHandle implements SCXMLWorkflowData, PayloadReceivable {
             requests.clear();
             requestPending = false;
             initialized = false;
-            initialPayload = Collections.emptyMap();
+            //Do NOT clear initialPayload
         }
     }
 
