@@ -19,6 +19,7 @@ import { MaterialModule } from '../../../material/material.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { CreateContentComponent } from './createContentForm/create-content.component';
 import { FormsModule } from '@angular/forms';
+import { HippoHintsDirective } from '../../../shared/components/hippo-hints.directive';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { FormsModule } from '@angular/forms';
     FormsModule
   ],
   declarations: [
-    CreateContentComponent
+    CreateContentComponent,
+    HippoHintsDirective
   ],
   entryComponents: [
     CreateContentComponent

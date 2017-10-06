@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+import ng1Module from './hippo-cm.ng1.module.js';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UpgradeModule  } from '@angular/upgrade/static';
 
 import { MaterialModule } from './material/material.module';
-import ng1Module from './hippo-cm.ng1.module.js';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
+import { NgxErrorsModule } from '@ultimate/ngxerrors';
 
 @NgModule({
   imports: [
@@ -29,8 +30,9 @@ import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-
     BrowserAnimationsModule,
     UpgradeModule,
     MaterialModule,
-    RightSidePanelModule
-  ],
+    RightSidePanelModule,
+    NgxErrorsModule
+  ]
 })
 export class AppModule {
   constructor(private upgrade: UpgradeModule) {}

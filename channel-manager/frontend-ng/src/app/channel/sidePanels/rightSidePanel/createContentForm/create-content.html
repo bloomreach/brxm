@@ -14,17 +14,19 @@
   limitations under the License.
   -->
 <div layout="column" class="create-content-container">
+
   <form (ngSubmit)="submit(form)" #form="ngForm">
     <!-- Document name field -->
 
     <mat-input-container class="create-content-field">
       <input mdInput ngModel name="documentName" placeholder="Document name" required>
-      <mat-hint align="start"
-                class="hint-invalid-field"
-                *ngIf="form.controls.documentName && form.controls.documentName.invalid && form.controls.documentName.touched">
-        Invalid bye
-      </mat-hint>
     </mat-input-container>
+    <div [hippoHints]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
+      <div hippoHint="required">This field is required</div>
+      <div hippoHint="minlength">This field is required</div>
+    </div>
+
+    <button (click)="getForm(form)">GET FORM</button>
 
     <!-- Document type field -->
     <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type mat-input-container">

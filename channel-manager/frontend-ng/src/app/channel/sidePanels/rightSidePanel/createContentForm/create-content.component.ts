@@ -11,12 +11,14 @@ export class CreateContentComponent implements OnInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
-  constructor() {
-    console.log('createContent init');
-  }
+
 
   ngOnInit() {
     console.log(this);
+  }
+
+  getForm(form) {
+    console.log(form);
   }
 
   close() {

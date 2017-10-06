@@ -34,6 +34,7 @@
     "@angular/router": "4.3.6",
     "@angular/upgrade": "4.3.6",
     "@bloomreach/dragula": "3.7.2-br.3",
+    "@ultimate/ngxerrors": "^1.3.0",
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
     "angular-aria": "1.5.11",
