@@ -22,7 +22,6 @@ import { UpgradeModule  } from '@angular/upgrade/static';
 
 import { MaterialModule } from './material/material.module';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
-import { NgxErrorsModule } from '@ultimate/ngxerrors';
 
 @NgModule({
   imports: [
@@ -31,7 +30,6 @@ import { NgxErrorsModule } from '@ultimate/ngxerrors';
     UpgradeModule,
     MaterialModule,
     RightSidePanelModule,
-    NgxErrorsModule
   ]
 })
 export class AppModule {
