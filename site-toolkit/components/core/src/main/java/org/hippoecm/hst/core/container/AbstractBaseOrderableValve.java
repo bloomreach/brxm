@@ -275,7 +275,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
                     componentExceptions = new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
                 }
 
-                HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo(), window.getComponentName());
+                HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo(), window.getComponentName(), window.getParametersInfoClassName());
                 KeyValue<HstComponentInfo, Collection<HstComponentException>> pair =
                     new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(componentInfo, new ArrayList<HstComponentException>(window.getComponentExceptions()));
                 componentExceptions.add(pair);

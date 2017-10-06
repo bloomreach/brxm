@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,17 +82,17 @@ public class HstRequestIT extends AbstractSpringTestCase {
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("name", "news");
         props.put("referenceName", "news");
-        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "");
+        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "", null);
         
         props = new HashMap<String, Object>();
         props.put("name", "head");
         props.put("referenceName", "h");
-        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "h");
+        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "h", null);
         
         props = new HashMap<String, Object>();
         props.put("body", "body");
         props.put("referenceName", "b");
-        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "b");
+        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "b", null);
         
         HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow, HstRequest.RENDER_PHASE);
         HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow, HstRequest.RENDER_PHASE);
