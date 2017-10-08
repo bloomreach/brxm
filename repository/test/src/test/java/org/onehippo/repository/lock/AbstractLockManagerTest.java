@@ -70,6 +70,11 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        tearDown(false);
+    }
+
+    @Override
+    public void tearDown(boolean clearRepository) throws Exception {
         lockManager.clear();
         // DELETE ALL ROWS if there are any present
         if (dataSource != null) {
@@ -81,7 +86,7 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
                 fail("Failed to delete rows : " + e.toString());
             }
         }
-        super.tearDown();
+        super.tearDown(clearRepository);
     }
 
     protected void dbRowAssertion(final String key, final String expectedStatus) throws SQLException {
