@@ -54,27 +54,27 @@ public class LockManagerCleanupTest extends AbstractLockManagerTest {
         long dayAgoTime = now - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
         long halfDayAgoTime = now - TimeUnit.MILLISECONDS.convert(12, TimeUnit.HOURS);
 
-        addManualLockToDatabase("LockManagerCleanupTest1", "otherClusterNode", "threadName", dayAgoTime, now + 60_000, dayAgoTime);
-        addManualLockToDatabase("LockManagerCleanupTest2", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,dayAgoTime);
+        addManualLockToDatabase("1", "otherClusterNode", "threadName", dayAgoTime, now + 60_000, dayAgoTime);
+        addManualLockToDatabase("2", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,dayAgoTime);
 
 
-        addManualLockToDatabase("LockManagerCleanupTest3", "otherClusterNode", "threadName", dayAgoTime, now + 60_000,halfDayAgoTime);
-        addManualLockToDatabase("LockManagerCleanupTest4", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,halfDayAgoTime);
+        addManualLockToDatabase("3", "otherClusterNode", "threadName", dayAgoTime, now + 60_000,halfDayAgoTime);
+        addManualLockToDatabase("4", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,halfDayAgoTime);
 
-        addManualLockToDatabase("LockManagerCleanupTest5", "otherClusterNode", "threadName", dayAgoTime, now + 60_000,now);
-        addManualLockToDatabase("LockManagerCleanupTest6", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,now);
+        addManualLockToDatabase("5", "otherClusterNode", "threadName", dayAgoTime, now + 60_000,now);
+        addManualLockToDatabase("6", getClusterNodeId(session), "threadName", dayAgoTime, now + 60_000,now);
 
         Thread.sleep(10_000);
 
         // d,e,f,g should still be there because last modified not a day ago
-        dbRowAssertion("LockManagerCleanupTest3", "RUNNING");
-        dbRowAssertion("LockManagerCleanupTest4", "RUNNING");
-        dbRowAssertion("LockManagerCleanupTest5", "RUNNING");
-        dbRowAssertion("LockManagerCleanupTest6", "RUNNING");
+        dbRowAssertion("3", "RUNNING");
+        dbRowAssertion("4", "RUNNING");
+        dbRowAssertion("5", "RUNNING");
+        dbRowAssertion("6", "RUNNING");
 
         // a, b, have lastmodified older than a day and should had been removed
-        assertKeyMissing("LockManagerCleanupTest1");
-        assertKeyMissing("LockManagerCleanupTest2");
+        assertKeyMissing("1");
+        assertKeyMissing("2");
     }
 
 
