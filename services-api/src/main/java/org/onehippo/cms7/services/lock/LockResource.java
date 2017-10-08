@@ -19,4 +19,15 @@ package org.onehippo.cms7.services.lock;
 public interface LockResource extends AutoCloseable {
     @Override
     void close();
+
+    /**
+     * @return the {@link Lock} for ths {@link LockResource}
+     */
+    Lock getLock();
+
+    /**
+     * @return the {@link Thread} that holds this {@link LockResource} or {@code null} in case the {@link Thread}
+     * that created this lock has already stopped and been GC-ed
+     */
+    Thread getHolder();
 }
