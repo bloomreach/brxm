@@ -85,14 +85,6 @@ public class LockManagerDestroyTest extends AbstractLockManagerTest {
         unstoppableLockThread.join();
     }
 
-    private String getClusterNodeId(final Session session) {
-        String clusterNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
-        if (clusterNodeId == null) {
-            clusterNodeId = "default";
-        }
-        return clusterNodeId;
-    }
-
     protected class LockRunnable implements Runnable {
 
         private String key;

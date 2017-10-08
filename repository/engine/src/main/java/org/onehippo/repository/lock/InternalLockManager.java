@@ -28,4 +28,6 @@ public interface InternalLockManager extends LockManager {
      */
     void clear();
 
+    void addJob(final Runnable runnable, final long initialDelaySeconds, final long periodSeconds);
+
 }

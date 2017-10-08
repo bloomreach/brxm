@@ -53,18 +53,16 @@ public class DbLockRefresher implements Runnable {
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
             final PreparedStatement refreshStatement = connection.prepareStatement(REFRESH_LOCK_STATEMENT);
-            refreshStatement.setString(1, clusterNodeId);
+            long currentTime = System.currentTimeMillis();
+            refreshStatement.setLong(1, currentTime);
+            refreshStatement.setString(2, clusterNodeId);
             // select all rows that have less than 20 seconds to live
-            refreshStatement.setLong(2, System.currentTimeMillis() + 20000);
+            refreshStatement.setLong(3, currentTime + 20000);
             int updated = refreshStatement.executeUpdate();
             log.info("Refreshed {} locks", updated);
             refreshStatement.close();
         } catch (SQLException e) {
-            if (log.isDebugEnabled()) {
-                log.info("Exception in {} happened. Possibly another cluster node did already reset some lock rows:", this.getClass().getName(), e);
-            } else {
-                log.info("Exception in {} happened.  Possibly another cluster node did already reset some lock rows: {}", this.getClass().getName(), e.toString());
-            }
+            log.error("Error while trying to refresh locks", e);
         } finally {
             close(connection, originalAutoCommit);
         }

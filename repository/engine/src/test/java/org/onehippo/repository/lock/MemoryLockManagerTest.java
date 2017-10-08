@@ -16,6 +16,7 @@
 package org.onehippo.repository.lock;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class MemoryLockManagerTest {
 
     @Test
     public void same_thread_can_lock_same_key_multiple_times() throws Exception {
+
         memoryLockManager.lock("123");
         memoryLockManager.lock("123");
         assertEquals(1, memoryLockManager.getLocks().size());

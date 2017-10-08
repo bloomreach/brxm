@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 public class LockManagerRefreshTest extends AbstractLockManagerTest {
@@ -50,6 +51,7 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
 
         setExpireTime(key, 10);
         long expires = getExpireTime(key);
+        long lastModified = getLastModifiedTime(key);
         assertTrue("Expires time expected to be in the future", expires > System.currentTimeMillis());
 
         // within 5 seconds the DbLockRefresher must have refreshed the expires time
@@ -64,6 +66,9 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
         // assert expires time got exactly bumped 60000 millis, see org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT
         // at 'SET expirationTime=expirationTime+"+ REFRESH_RATE_SECONDS * 1000'
         assertEquals(expires+60_000, getExpireTime(key));
+
+        // assert the lastModified is also bumped:
+        assertTrue(getLastModifiedTime(key) > lastModified);
 
         runnable.keepAlive = false;
         // after the thread is finished, the lock manager should have no locks any more
@@ -131,18 +136,25 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
         lockThread2.join();
     }
 
-
-
-    public static final String GET_EXPIRE_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK  + " WHERE lockKey=?";
     public static final String SET_EXPIRE_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET expirationTime=? WHERE lockKey=?";
 
     private long getExpireTime(final String key) throws SQLException {
         try (Connection connection = dataSource.getConnection()){
-            final PreparedStatement getExpireStatement = connection.prepareStatement(GET_EXPIRE_STATEMENT);
+            final PreparedStatement getExpireStatement = connection.prepareStatement(SELECT_STATEMENT);
             getExpireStatement.setString(1, key);
             ResultSet resultSet = getExpireStatement.executeQuery();
             assertTrue("Should had one db result",resultSet.next());
             return resultSet.getLong("expirationTime");
+        }
+    }
+
+    private long getLastModifiedTime(final String key) throws SQLException {
+        try (Connection connection = dataSource.getConnection()){
+            final PreparedStatement getExpireStatement = connection.prepareStatement(SELECT_STATEMENT);
+            getExpireStatement.setString(1, key);
+            ResultSet resultSet = getExpireStatement.executeQuery();
+            assertTrue("Should had one db result",resultSet.next());
+            return resultSet.getLong("lastModified");
         }
     }
 

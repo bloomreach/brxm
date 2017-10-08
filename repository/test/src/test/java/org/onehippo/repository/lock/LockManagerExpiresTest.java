@@ -15,18 +15,7 @@
  */
 package org.onehippo.repository.lock;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.junit.Test;
-import org.onehippo.cms7.services.lock.LockException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.ABORT_STATEMENT;
 
 public class LockManagerExpiresTest extends AbstractLockManagerTest {
 

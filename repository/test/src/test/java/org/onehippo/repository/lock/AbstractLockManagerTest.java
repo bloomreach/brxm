@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.jcr.Repository;
+import javax.jcr.Session;
 import javax.sql.DataSource;
 
 import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
@@ -114,8 +115,29 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
         }
     }
 
+    protected void assertKeyMissing(final String key) throws SQLException {
+        if (dataSource == null) {
+            // not a clustered db test
+            return;
+        }
+
+        try (Connection connection = dataSource.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+            selectStatement.setString(1, key);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                fail(String.format("Key '%s' not expected to be present in database", key));
+            }
+        }
+    }
+
     protected void addManualLockToDatabase(final String key, final String clusterNodeId,
                                            final String threadName) throws LockException {
+        addManualLockToDatabase(key, clusterNodeId, threadName, 0L, 0L,  0L);
+    }
+
+    protected void addManualLockToDatabase(final String key, final String clusterNodeId,
+                                           final String threadName, long lockTime, long expirationTime, long lastModified) throws LockException {
         if (dataSource != null) {
             try (Connection connection = dataSource.getConnection()) {
 
@@ -123,9 +145,12 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
                 createStatement.setString(1, key);
                 createStatement.setString(2, clusterNodeId);
                 createStatement.setString(3, threadName);
-                long lockTime = System.currentTimeMillis();
+                lockTime = (lockTime == 0L) ? System.currentTimeMillis() : lockTime;
                 createStatement.setLong(4, lockTime);
-                createStatement.setLong(5, lockTime + REFRESH_RATE_SECONDS * 1000);
+                expirationTime = (expirationTime ==0) ? lockTime + REFRESH_RATE_SECONDS * 1000 : expirationTime;
+                createStatement.setLong(5, expirationTime);
+                lastModified = (lastModified == 0L) ? lockTime : lastModified;
+                createStatement.setLong(6, lastModified);
                 try {
                     createStatement.execute();
                 } catch (SQLException e) {
@@ -148,9 +173,16 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
             createStatement.setString(3, threadName);
             createStatement.setLong(4, lockTime);
             createStatement.setLong(5, expirationTime);
+            createStatement.setLong(6, lockTime);
             createStatement.execute();
         }
     }
 
-
+    protected String getClusterNodeId(final Session session) {
+        String clusterNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+        if (clusterNodeId == null) {
+            clusterNodeId = "default";
+        }
+        return clusterNodeId;
+    }
 }

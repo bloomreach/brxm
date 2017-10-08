@@ -48,12 +48,13 @@ public class DbLockManager extends AbstractLockManager {
             "lockThread VARCHAR(256)," +
             "status VARCHAR(256) NOT NULL," +
             "lockTime BIGINT," +
-            "expirationTime BIGINT" +
+            "expirationTime BIGINT," +
+            "lastModified BIGINT" +
             ")";
 
-    public static final String CREATE_STATEMENT = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?,?,?,'RUNNING',?,?)";
+    public static final String CREATE_STATEMENT = "INSERT INTO " + TABLE_NAME_LOCK + " VALUES(?,?,?,'RUNNING',?,?,?)";
     public static final String SELECT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=?";
-    public static final String LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET status='RUNNING', lockTime=?, expirationTime=?, lockOwner=?, lockThread=? WHERE lockKey=? AND status='FREE'";
+    public static final String LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET status='RUNNING', lockTime=?, lastModified=?, expirationTime=?, lockOwner=?, lockThread=? WHERE lockKey=? AND status='FREE'";
 
     public static final String ALL_LOCKED_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='RUNNING' OR status='ABORT'";
 
@@ -62,22 +63,26 @@ public class DbLockManager extends AbstractLockManager {
             "lockThread=NULL, " +
             "status='FREE', " +
             "lockTime=0, " +
-            "expirationTime=0 " +
+            "expirationTime=0, " +
+            "lastModified=? " +
             "WHERE lockKey=? AND lockOwner=? AND lockThread=?";
 
 
-    public static final String RESET_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
+    public static final String RESET_EXPIRED_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET " +
             "lockOwner=NULL, " +
             "lockThread=NULL, " +
             "status='FREE', " +
             "lockTime=0, " +
-            "expirationTime=0 " +
+            "expirationTime=0, " +
+            "lastModified=? " +
             "WHERE expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
-    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT' WHERE lockKey=? AND status='RUNNING'";
+    public static final String REMOVE_OUTDATED_LOCKS = "DELETE FROM " + TABLE_NAME_LOCK + " WHERE lastModified<?";
+
+    public static final String ABORT_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET status='ABORT', lastModified=? WHERE lockKey=? AND status='RUNNING'";
 
     // only refreshes its own cluster locks
-    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET expirationTime=expirationTime+"+ REFRESH_RATE_SECONDS * 1000 +
+    public static final String REFRESH_LOCK_STATEMENT = "UPDATE " + TABLE_NAME_LOCK + " SET lastModified=?, expirationTime=expirationTime+"+ REFRESH_RATE_SECONDS * 1000 +
             " WHERE lockOwner=? AND expirationTime<? AND (status='RUNNING' OR status='ABORT')";
 
     public static final String SELECT_ABORT_STATEMENT = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE status='ABORT' AND lockOwner=?";
@@ -92,6 +97,8 @@ public class DbLockManager extends AbstractLockManager {
 
         addJob(new UnlockStoppedThreadJanitor());
         addJob(new DbResetExpiredLocksJanitor(dataSource));
+        final int oneDaySeconds = 24 * 60 * 60;
+        addJob(new DbLockCleanupJanitor(dataSource), 60, oneDaySeconds);
         addJob(new DbLockRefresher(dataSource, clusterNodeId));
         addJob(new LockThreadInterrupter(dataSource, clusterNodeId, this));
     }
@@ -114,10 +121,11 @@ public class DbLockManager extends AbstractLockManager {
             final long expirationTime = lockTime + REFRESH_RATE_SECONDS * 1000;
             final PreparedStatement lockStatement = connection.prepareStatement(LOCK_STATEMENT);
             lockStatement.setLong(1, lockTime);
-            lockStatement.setLong(2, expirationTime);
-            lockStatement.setString(3, clusterNodeId);
-            lockStatement.setString(4, threadName);
-            lockStatement.setString(5, key);
+            lockStatement.setLong(2, lockTime);
+            lockStatement.setLong(3, expirationTime);
+            lockStatement.setString(4, clusterNodeId);
+            lockStatement.setString(5, threadName);
+            lockStatement.setString(6, key);
             int changed = lockStatement.executeUpdate();
             lockStatement.close();
 
@@ -130,6 +138,7 @@ public class DbLockManager extends AbstractLockManager {
                 createStatement.setString(3, threadName);
                 createStatement.setLong(4, lockTime);
                 createStatement.setLong(5, expirationTime);
+                createStatement.setLong(6, lockTime);
                 try {
                     createStatement.execute();
                     createStatement.close();
@@ -161,9 +170,10 @@ public class DbLockManager extends AbstractLockManager {
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
             final PreparedStatement resetLockStatement = connection.prepareStatement(RESET_LOCK_STATEMENT);
-            resetLockStatement.setString(1, key);
-            resetLockStatement.setString(2, clusterNodeId);
-            resetLockStatement.setString(3, threadName);
+            resetLockStatement.setLong(1, System.currentTimeMillis());
+            resetLockStatement.setString(2, key);
+            resetLockStatement.setString(3, clusterNodeId);
+            resetLockStatement.setString(4, threadName);
             int changed = resetLockStatement.executeUpdate();
             resetLockStatement.close();
             if (changed == 0) {
@@ -203,7 +213,8 @@ public class DbLockManager extends AbstractLockManager {
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
             final PreparedStatement abortStatement = connection.prepareStatement(ABORT_STATEMENT);
-            abortStatement.setString(1, key);
+            abortStatement.setLong(1, System.currentTimeMillis());
+            abortStatement.setString(2, key);
             int changed = abortStatement.executeUpdate();
             abortStatement.close();
 

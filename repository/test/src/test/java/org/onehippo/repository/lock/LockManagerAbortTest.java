@@ -87,7 +87,8 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
     private void abortDataRowLock(final String key) throws SQLException {
         try (Connection connection = dataSource.getConnection()){
             final PreparedStatement abortStatement = connection.prepareStatement(ABORT_STATEMENT);
-            abortStatement.setString(1, key);
+            abortStatement.setLong(1, System.currentTimeMillis());
+            abortStatement.setString(2, key);
             int changed = abortStatement.executeUpdate();
             assertEquals("Abort should had modified 1 row", 1, changed);
         }

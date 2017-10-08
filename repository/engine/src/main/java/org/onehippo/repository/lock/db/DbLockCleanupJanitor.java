@@ -18,6 +18,7 @@ package org.onehippo.repository.lock.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -25,18 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.RESET_EXPIRED_STATEMENT;
+import static org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT;
+import static org.onehippo.repository.lock.db.DbLockManager.REMOVE_OUTDATED_LOCKS;
 
 /**
- * Resets expired locks to 'FREE' if they are in state 'RUNNING' or 'ABORT'
+ * Removes all locks that are free for longer than a day
  */
-public class DbResetExpiredLocksJanitor implements Runnable {
+public class DbLockCleanupJanitor implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(DbResetExpiredLocksJanitor.class);
+    private static final Logger log = LoggerFactory.getLogger(DbLockCleanupJanitor.class);
 
     private final DataSource dataSource;
 
-    public DbResetExpiredLocksJanitor(final DataSource dataSource) {
+    public DbLockCleanupJanitor(final DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -48,15 +50,15 @@ public class DbResetExpiredLocksJanitor implements Runnable {
             connection = dataSource.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement resetStatement = connection.prepareStatement(RESET_EXPIRED_STATEMENT);
-            long currentTime = System.currentTimeMillis();
-            resetStatement.setLong(1, currentTime);
-            resetStatement.setLong(2, currentTime);
-            int updated = resetStatement.executeUpdate();
-            log.info("Expired {} locks", updated);
-            resetStatement.close();
+
+            final PreparedStatement removeStatement = connection.prepareStatement(REMOVE_OUTDATED_LOCKS);
+            long dayAgoTime = System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+            removeStatement.setLong(1, dayAgoTime);
+            int updated = removeStatement.executeUpdate();
+            log.info("Removed {} outdated locks", updated);
+            removeStatement.close();
         } catch (SQLException e) {
-            log.error("Error while trying to reset locks", e);
+            log.error("Error while trying remove outdated locks", e);
         } finally {
             close(connection, originalAutoCommit);
         }

@@ -22,36 +22,20 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.jcr.Repository;
-import javax.sql.DataSource;
-
-import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
-import org.hippoecm.repository.impl.RepositoryDecorator;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
-import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.cms7.services.lock.LockResource;
-import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
 import org.onehippo.repository.lock.db.DbLockManager;
 import org.onehippo.repository.lock.memory.MemoryLockManager;
-import org.onehippo.repository.testutils.RepositoryTestCase;
-import org.onehippo.repository.lock.InternalLockManager;
-import org.onehippo.repository.lock.MutableLock;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
 import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
@@ -350,7 +334,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
             lockManager.clear();
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by 'default' was never")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by '"+getClusterNodeId(session)+"' was never")));
         }
 
         dbRowAssertion("a", "FREE");
