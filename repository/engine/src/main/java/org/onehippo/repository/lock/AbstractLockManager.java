@@ -77,35 +77,48 @@ public abstract class AbstractLockManager implements InternalLockManager {
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
             getLogger().debug("Create lock '{}' for thread '{}'", key, Thread.currentThread().getName());
-            localLocks.put(key, createLock(key, Thread.currentThread().getName()));
-            return new LockResourceImpl(key);
+            MutableLock newLock = createLock(key, Thread.currentThread().getName());
+            localLocks.put(key, newLock);
+            return new LockResourceImpl(newLock);
         }
         final Thread lockThread = lock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
             getLogger().warn("Thread '{}' that created lock for '{}' has stopped without releasing the lock. Thread '{}' " +
                     "now gets the lock", lock.getLockThread(), key, Thread.currentThread().getName());
             unlock(key);
-            localLocks.put(key, createLock(key, Thread.currentThread().getName()));
-            return new LockResourceImpl(key);
+            MutableLock newLock = createLock(key, Thread.currentThread().getName());
+            localLocks.put(key, newLock);
+            return new LockResourceImpl(newLock);
         }
         if (lockThread == Thread.currentThread()) {
             getLogger().debug("Thread '{}' already contains lock '{}', increase hold count", Thread.currentThread().getName(), key);
             lock.increment();
-            return new LockResourceImpl(key);
+            return new LockResourceImpl(lock);
         }
         throw new LockException(String.format("This thread '%s' cannot lock '%s' : already locked by thread '%s'",
                 Thread.currentThread().getName(), key, lockThread.getName()));
     }
 
     private class LockResourceImpl implements LockResource {
-        private String key;
-        LockResourceImpl(final String key) {
-            this.key = key;
+        private MutableLock lock;
+
+        LockResourceImpl(final MutableLock lock) {
+            this.lock = lock;
         }
 
         @Override
         public void close() {
-            unlock(key);
+            unlock(lock.getLockKey());
+        }
+
+        @Override
+        public Lock getLock() {
+            return lock;
+        }
+
+        @Override
+        public Thread getHolder() {
+            return lock.getThread().get();
         }
     }
 

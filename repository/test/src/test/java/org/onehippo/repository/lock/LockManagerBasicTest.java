@@ -33,6 +33,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -92,6 +93,9 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         try (LockResource lock = lockManager.lock(key)) {
             try (LockResource lock2 = lockManager.lock(key)) {
                 dbRowAssertion(key, "RUNNING");
+                assertFalse(lock == lock2);
+                assertTrue(lock.getLock() == lock2.getLock());
+                assertTrue(lock.getHolder() == lock2.getHolder());
             }
             dbRowAssertion(key, "RUNNING");
         }
