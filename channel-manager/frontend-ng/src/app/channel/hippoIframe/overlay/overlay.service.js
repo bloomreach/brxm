@@ -289,7 +289,7 @@ class OverlayService {
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'manage-content-link':
-        this._initManageContentLink(structureElement, overlayElement, addContentSvg, clearSvg);
+        this._initManageContentLink(structureElement, overlayElement);
         break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
@@ -335,11 +335,22 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _initManageContentLink(structureElement, overlayElement, icon, closeIcon) {
+  _initManageContentLink(structureElement, overlayElement) {
+    const uuid = structureElement.getUuid();
+    const allowCreateContent = false;
+    let buttonIcon;
+    let closeIcon;
+    if (uuid) {
+      buttonIcon = contentLinkSvg;
+      closeIcon = contentLinkSvg;
+    } else {
+      buttonIcon = addContentSvg;
+      closeIcon = clearSvg;
+    }
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${icon}</button>`)
+      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${buttonIcon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('#hippo-fab-btn');
@@ -363,9 +374,7 @@ class OverlayService {
       if (!overlayElement.hasClass('is-showing-options')) {
         optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
         fabBtn.addClass('hippo-fab-btn-open');
-        if (closeIcon) {
-          fabBtn.html(closeIcon);
-        }
+        fabBtn.html(closeIcon);
         overlayElement.addClass('is-showing-options');
         return true;
       }
@@ -373,9 +382,7 @@ class OverlayService {
     };
     const hideOptions = () => {
       fabBtn.removeClass('hippo-fab-btn-open');
-      if (closeIcon) {
-        fabBtn.html(icon);
-      }
+      fabBtn.html(buttonIcon);
       overlayElement.removeClass('is-showing-options');
     };
     const showOptionsIfLeft = () => {
@@ -389,9 +396,15 @@ class OverlayService {
       overlayElement.addClass('is-left');
     };
 
-    overlayElement.on('click', () => showOptions() || hideOptions());
-    overlayElement.on('mouseenter', showOptionsIfLeft);
-    overlayElement.on('mouseleave', hideOptionsAndLeave);
+    if (uuid) {
+      fabBtn.on('click', () => this.manageContentHandler(uuid));
+    } else {
+      overlayElement.on('click', () => showOptions() || hideOptions());
+    }
+    if (allowCreateContent) {
+      overlayElement.on('mouseenter', showOptionsIfLeft);
+      overlayElement.on('mouseleave', hideOptionsAndLeave);
+    }
   }
 
   _initManageContentLinkOptions(config) {
