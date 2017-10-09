@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CreateContentComponent } from "./create-content.component";
-import { TestBed } from "@angular/core/testing";
+import { CreateContentComponent } from './create-content.component';
+import { TestBed } from '@angular/core/testing';
 
 describe('Create content component', () => {
 
