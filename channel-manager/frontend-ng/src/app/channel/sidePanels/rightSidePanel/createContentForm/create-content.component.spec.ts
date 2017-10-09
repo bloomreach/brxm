@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import template from './createContentForm.html';
-import controller from './createContentForm.controller';
+import { CreateContentComponent } from "./create-content.component";
+import { TestBed } from "@angular/core/testing";
 
-const createContentForm = {
-  bindings: {
-    document: '=',
-  },
-  controller,
-  template,
-  require: {
-    form: '^^form',
-  },
-};
+describe('Create content component', () => {
 
-export default createContentForm;
+  let component;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [ CreateContentComponent ], // declare the test component
+    });
+
+    component = TestBed.createComponent(CreateContentComponent);
+  });
+});

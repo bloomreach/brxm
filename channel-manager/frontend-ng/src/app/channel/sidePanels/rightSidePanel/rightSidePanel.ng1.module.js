@@ -16,7 +16,6 @@
 import { downgradeComponent } from '@angular/upgrade/static';
 import { CreateContentComponent } from './createContentForm/create-content.component.ts';
 import rightSidePanelComponent from './rightSidePanel.component';
-import createContentForm from './createContentForm/ng1/createContentForm.component';
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
@@ -25,7 +24,6 @@ const rightSidePanelModule = angular
     fieldsModule,
     resizeHandleModule,
   ])
-  .component('createContentForm', createContentForm)
   .component('rightSidePanel', rightSidePanelComponent)
   .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }));
 

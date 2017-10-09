@@ -12,13 +12,13 @@ export class CreateContentComponent implements OnInit {
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
 
+  constructor() {}
 
-  ngOnInit() {
-    console.log(this);
-  }
-
-  getForm(form) {
-    console.log(form);
+  ngAfterViewInit() {
+    // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
+    //   .debounceTime(1000)
+    //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
+    this.docTypes = ['Product', 'Event'];
   }
 
   close() {
