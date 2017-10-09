@@ -293,8 +293,14 @@ public class ConfigurationContentServiceTest {
         c4.getNode().setOrderBefore("c2");
         c5.getNode().setOrderBefore("");
 
-        List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions(), true);
-        assertEquals("[c2, c4, c3, c1, c5]", sortedNames(sortedDefinitions));
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(ConfigurationContentService.class).build()) {
+            List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions(), true);
+            assertEquals("[c2, c4, c3, c1, c5]", sortedNames(sortedDefinitions));
+            assertTrue(listener.messages().anyMatch(m ->
+                    m.contains("Following node(s) reference the same node multiple times in order before:")
+                    && m.contains("/c3 in stubGroup/stubProject/stubModule [content: s3],")
+                    && m.contains("/c5 in stubGroup/stubProject/stubModule [content: s5]")));
+        }
     }
 
     private static String sortedNames(List<ContentDefinitionImpl> definitions) {
