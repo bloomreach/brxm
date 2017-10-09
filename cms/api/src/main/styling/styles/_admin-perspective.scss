@@ -264,48 +264,27 @@
   height: 100%;
   width: 100%;
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
   overflow: hidden;
 
   > * {
     display: flex;
+    flex-flow: column;
   }
 
   .updater-left {
-    min-width: 200px;
-    max-width: 750px;
     border-right: 1px solid $dark-gray;
+    overflow: auto;
     resize: horizontal;
-  }
-
-  .updater-editor-top > .updater-left {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-bottom: 1px solid $dark-gray;
-
-    > input {
-      flex: 1 1 auto;
-      margin: 0 8px;
-    }
-  }
-
-  .updater-editor-top-right {
-    padding: 8px;
-
-    h2 {
-      margin: 0;
-    }
-  }
-
-  > .updater-editor-main {
-    height: calc(100% - 32px);
+    width: 200px;
 
     .updater-tree {
-      overflow: auto;
-      border-right: 1px solid $dark-gray;
+      height: calc(100% - 32px);
+
+      border-top: 1px solid $dark-gray;
+
       padding: 4px 0 0 0;
+      flex: 1 0 auto;
 
       > div.hippo-tree > div.wicket-tree {
         .row {
@@ -316,8 +295,33 @@
         }
       }
     }
+  }
 
+  .updater-left-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > input {
+      flex: 1 1 auto;
+      margin: 6px 8px;
+    }
+  }
+
+  .updater-right-top {
+    padding: 8px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  > .updater-right {
+    width: 100%;
+    
     .updater-details {
+      height: calc(100% - 32px);
+
       display: flex;
       overflow-y: auto;
 
