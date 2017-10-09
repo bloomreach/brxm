@@ -102,7 +102,7 @@
         <sv:value>/contact</sv:value>
       </sv:property>
       <sv:property sv:name="urlrewriter:ruleto" sv:type="String">
-        <sv:value>http://www.onehippo.org</sv:value>
+        <sv:value>https://www.onehippo.org</sv:value>
       </sv:property>
       <sv:property sv:name="urlrewriter:ruletype" sv:type="String">
         <sv:value>temporary-redirect</sv:value>
@@ -170,7 +170,7 @@
         <sv:value>/about</sv:value>
       </sv:property>
       <sv:property sv:name="urlrewriter:ruleto" sv:type="String">
-        <sv:value>http://www.onehippo.com</sv:value>
+        <sv:value>https://www.bloomreach.com</sv:value>
       </sv:property>
       <sv:property sv:name="urlrewriter:ruletype" sv:type="String">
         <sv:value>permanent-redirect</sv:value>
