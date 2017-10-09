@@ -2,7 +2,7 @@ import { Component, Input, ElementRef, OnInit } from '@angular/core';
 import { Hint } from './hints';
 
 @Component({
-  selector: 'hints',
+  selector: 'hippo-hints',
   templateUrl: './hints.html'
 })
 export class HintsComponent implements OnInit {
