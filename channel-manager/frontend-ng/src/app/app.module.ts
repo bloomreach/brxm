@@ -22,6 +22,7 @@ import { UpgradeModule  } from '@angular/upgrade/static';
 import { MaterialModule } from './material/material.module';
 import ng1Module from './hippo-cm.ng1.module.js';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
+import { ContentServiceProvider } from './services/content.service.provider';
 
 @NgModule({
   imports: [
@@ -31,6 +32,9 @@ import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-
     MaterialModule,
     RightSidePanelModule
   ],
+  providers: [
+    ContentServiceProvider,
+  ]
 })
 export class AppModule {
   constructor(private upgrade: UpgradeModule) {}
