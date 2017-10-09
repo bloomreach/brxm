@@ -57,23 +57,6 @@ class OverlayService {
     this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
-
-    this.dialButtonsConfig = [
-      {
-        svg: plusSvg,
-        callback: () => {
-          this.$rootScope.$apply(() => {
-            this.manageContentHandler();
-          });
-        },
-        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
-      },
-      {
-        svg: searchSvg,
-        callback: () => {},
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-      },
-    ];
   }
 
   init(iframeJQueryElement) {
@@ -336,11 +319,15 @@ class OverlayService {
   }
 
   _initManageContentLink(structureElement, overlayElement) {
-    const uuid = structureElement.getUuid();
-    const allowCreateContent = false;
+    const config = { // each property should be filled with the method that will extract the data from the HST comment
+      edit_content: structureElement.getUuid(),
+      create_content: true,
+      change_parameter: false,
+    };
+
     let buttonIcon;
     let closeIcon;
-    if (uuid) {
+    if (config.edit_content) {
       buttonIcon = contentLinkSvg;
       closeIcon = contentLinkSvg;
     } else {
@@ -369,10 +356,12 @@ class OverlayService {
       }
     };
 
+    const buttons = this._initManageContentLinkOptions(config);
+
     const showOptions = () => {
       adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
+        optionButtonsContainer.html(buttons);
         fabBtn.addClass('hippo-fab-btn-open');
         fabBtn.html(closeIcon);
         overlayElement.addClass('is-showing-options');
@@ -396,21 +385,41 @@ class OverlayService {
       overlayElement.addClass('is-left');
     };
 
-    if (uuid) {
-      fabBtn.on('click', () => this.manageContentHandler(uuid));
+    if (config.edit_content) {
+      fabBtn.on('click', () => this.manageContentHandler(config.edit_content));
     } else {
       overlayElement.on('click', () => showOptions() || hideOptions());
     }
-    if (allowCreateContent) {
+    if (config.create_content || config.change_parameter) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }
   }
 
   _initManageContentLinkOptions(config) {
+    const optionButtons = {
+      create_content: {
+        svg: plusSvg,
+        callback: () => {
+          this.$rootScope.$apply(() => {
+            this.manageContentHandler();
+          });
+        },
+        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+      },
+      change_parameter: {
+        svg: searchSvg,
+        callback: () => {},
+        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+      },
+    };
     const buttons = [];
-    Object.keys(config).forEach((i) => {
-      const button = config[i];
+    Object.keys(optionButtons).forEach((i) => {
+      if (!config[i] || i === 'edit_content') {
+        return;
+      }
+      console.log(i);
+      const button = optionButtons[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
         .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
         .on('click', button.callback);
