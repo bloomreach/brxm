@@ -15,6 +15,9 @@
  */
 package org.onehippo.repository.lock;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.jcr.RepositoryException;
 import javax.sql.DataSource;
 
@@ -22,7 +25,9 @@ import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.db.DbLockManager;
+import org.onehippo.repository.lock.db.OracleDbLockManager;
 import org.onehippo.repository.lock.memory.MemoryLockManager;
 
 public class LockManagerFactory {
@@ -45,9 +50,30 @@ public class LockManagerFactory {
         if (journalConnectionHelper != null) {
             final DataSource dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelper);
             String clusterNodeId = repositoryImpl.getDescriptor("jackrabbit.cluster.id");
-            return new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
+
+            String dbProductName;
+            try (Connection connection = dataSource.getConnection()) {
+                dbProductName = connection.getMetaData().getDatabaseProductName();
+            } catch (SQLException e) {
+                throw new RepositoryException("Failed to retrieve SQL Lock Manager database metadata", e);
+            }
+            switch (dbProductName) {
+                case "MySQL":
+                    return new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
+                case "PostgreSQL":
+                    return new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
+                case "Oracle":
+                    return new OracleDbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
+                case "H2":
+                    return new DbLockManager(dataSource, clusterNodeId == null ? "default" : clusterNodeId);
+                default:
+                    throw new RepositoryException("Unsupported Database engine. Product name: " + dbProductName);
+            }
+
         } else {
             return new MemoryLockManager();
         }
     }
+
+
 }

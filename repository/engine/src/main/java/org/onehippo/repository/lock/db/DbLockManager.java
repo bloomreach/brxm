@@ -29,6 +29,7 @@ import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.repository.lock.AbstractLockManager;
 import org.onehippo.repository.lock.MutableLock;
+import org.onehippo.repository.lock.db.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,7 @@ public class DbLockManager extends AbstractLockManager {
 
     public final static String TABLE_NAME_LOCK = "hippo_lock";
 
-    // TODO for oracle it must be NUMBER instead of BIGINT
-    final static String CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
+    private final static String CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
             "lockKey VARCHAR(256) NOT NULL, " +
             "lockOwner VARCHAR(256), " +
             "lockThread VARCHAR(256)," +
@@ -93,7 +93,7 @@ public class DbLockManager extends AbstractLockManager {
     public DbLockManager(final DataSource dataSource, final String clusterNodeId) {
         this.dataSource = dataSource;
         this.clusterNodeId = clusterNodeId;
-        DbHelper.createTableIfNeeded(dataSource, CREATE_LOCK_TABLE_STATEMENT, TABLE_NAME_LOCK, "lockKey");
+        org.onehippo.repository.lock.db.DbHelper.createTableIfNeeded(dataSource, getCreateLockTableStatement(), TABLE_NAME_LOCK, "lockKey");
 
         addJob(new UnlockStoppedThreadJanitor());
         addJob(new DbResetExpiredLocksJanitor(dataSource));
@@ -101,6 +101,10 @@ public class DbLockManager extends AbstractLockManager {
         addJob(new DbLockCleanupJanitor(dataSource), 60, oneDaySeconds);
         addJob(new DbLockRefresher(dataSource, clusterNodeId));
         addJob(new LockThreadInterrupter(dataSource, clusterNodeId, this));
+    }
+
+    protected String getCreateLockTableStatement() {
+        return CREATE_LOCK_TABLE_STATEMENT;
     }
 
     @Override
