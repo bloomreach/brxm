@@ -15,21 +15,19 @@
  */
 
 import { NgModule } from '@angular/core';
-import { MaterialModule } from '../../../material/material.module';
-import { BrowserModule } from '@angular/platform-browser';
 import { CreateContentComponent } from './createContentForm/create-content.component';
 import { FormsModule } from '@angular/forms';
-import { HippoHintsDirective } from '../../../shared/components/hippo-hints.directive';
+import { SharedModule } from '../../../shared/shared.module';
+import { HintsComponent } from '../../../shared/components/hints/hints.component';
 
 @NgModule({
   imports: [
-    BrowserModule,
-    MaterialModule,
+    SharedModule,
     FormsModule
   ],
   declarations: [
     CreateContentComponent,
-    HippoHintsDirective
+    HintsComponent
   ],
   entryComponents: [
     CreateContentComponent
