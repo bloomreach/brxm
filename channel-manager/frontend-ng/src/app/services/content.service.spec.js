@@ -210,17 +210,4 @@ describe('ContentService', () => {
     expect(successCallback.calls.argsFor(2)).toEqual(['delete']);
     expect(successCallback.calls.argsFor(3)).toEqual(['updateField']);
   });
-
-  it('can get document types by template query', (done) => {
-    const docType = {
-      id: 'test',
-    };
-
-    $httpBackend.expectGET('/test/ws/content/templatequery/testquery').respond(200, docType);
-    ContentService.getDocumentTypesFromTemplateQuery('testquery').then((returned) => {
-      expect(returned).toEqual(docType);
-      done();
-    });
-    $httpBackend.flush();
-  });
 });

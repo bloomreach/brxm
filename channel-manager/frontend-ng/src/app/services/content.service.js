@@ -49,10 +49,6 @@ class ContentService {
     return this._send('GET', ['documenttypes', id], null, true);
   }
 
-  getDocumentTypesFromTemplateQuery(id) {
-    return this._send('GET', ['templatequery', id], null, true);
-  }
-
   _send(method, pathElements, data = null, async = false) {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const url = encodeURI(path);

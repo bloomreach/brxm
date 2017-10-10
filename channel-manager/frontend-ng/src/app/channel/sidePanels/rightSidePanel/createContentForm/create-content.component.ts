@@ -20,34 +20,31 @@ import { NgForm } from '@angular/forms';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 
-import ContentService from '../../../../services/content.service';
-
-interface DocumentTypeInfo {
-  id: string;
-  displayName: string;
-}
+import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
 
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
 export class CreateContentComponent implements AfterViewInit {
-  docTypes: DocumentTypeInfo;
+  docTypes: DocumentTypeInfo[];
 
   @ViewChild('input') input: ElementRef;
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
-  constructor(private contentService: ContentService) { }
+  constructor(private createContentService: CreateContentService) { }
 
   ngAfterViewInit() {
     // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
     //   .debounceTime(1000)
     //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
-    this.contentService.getDocumentTypesFromTemplateQuery('new-document').then((docTypes) => {
-      this.docTypes = docTypes;
-    });
+
+    this.createContentService.getDocumentTypesFromTemplateQuery('new-document')
+      .subscribe((docTypes) => {
+        this.docTypes = docTypes;
+      });
   }
 
   // TODO: Apply this function along with the observable when relevant

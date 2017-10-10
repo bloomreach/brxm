@@ -23,6 +23,7 @@ import { MaterialModule } from './material/material.module';
 import ng1Module from './hippo-cm.ng1.module.js';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
 import { ContentServiceProvider } from './services/content.service.provider';
+import { CreateContentService } from './services/create-content.service';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { ContentServiceProvider } from './services/content.service.provider';
   ],
   providers: [
     ContentServiceProvider,
+    CreateContentService
   ]
 })
 export class AppModule {
