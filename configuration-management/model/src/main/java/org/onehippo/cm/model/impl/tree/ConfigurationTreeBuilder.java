@@ -708,8 +708,7 @@ public class ConfigurationTreeBuilder {
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())
                         // suppress warning for translations special case, which would be verbose and difficult to avoid
-                        && !property.getJcrPath().startsWith("/hippo:configuration/hippo:translations/")
-                        && !property.getDefinitions().contains(definitionProperty)) {
+                        && !property.getJcrPath().startsWith("/hippo:configuration/hippo:translations/")) {
                     logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
                             definitionProperty.getJcrPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
