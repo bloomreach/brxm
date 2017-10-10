@@ -310,7 +310,6 @@
   }
   .hippo-fab-dial-options {
     bottom: 100%;
-    margin-bottom: 10px;
     position: absolute;
     width: 100%;
     z-index: $z-index-overlay-dial-options;
@@ -319,6 +318,9 @@
     bottom: initial;
     padding-top: 5px;
     top: 100%;
+  }
+  &.hippo-top .hippo-fab-dial-options {
+    padding-bottom: 15px;
   }
   .hippo-fab-dial-options button {
     display: none;
