@@ -23,7 +23,7 @@ import java.util.Map;
  * {@link SCXMLWorkflowExecutor#start(Map)} sets the initial payload
  * if the instance of {@link SCXMLWorkflowData} implements this interface.
  */
-public interface PayloadReceivable {
+public interface PayloadAware {
 
     Map<String,Object> getInitialPayload();
 

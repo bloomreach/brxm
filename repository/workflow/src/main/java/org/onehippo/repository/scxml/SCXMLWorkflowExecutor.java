@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.scxml;
 
-import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -235,7 +234,7 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      * Optionally, the state machine might have set a result in the {@link SCXMLWorkflowContext#getResult()}, which
      * for convenience is also returned directly by this method.
      * </p>
-     * @param initialPayload  supplied to {@link #data} if it implements {@link PayloadReceivable} with {@link PayloadReceivable#setInitialPayload(Map)}
+     * @param initialPayload  supplied to {@link #data} if it implements {@link PayloadAware} with {@link PayloadAware#setInitialPayload(Map)}
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object start(Map<String,Object> initialPayload) throws WorkflowException {
@@ -244,8 +243,8 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
         }
         context.initialize();
         if (data != null) {
-            if (data instanceof PayloadReceivable){
-                ((PayloadReceivable) data).setInitialPayload(initialPayload);
+            if (data instanceof PayloadAware){
+                ((PayloadAware) data).setInitialPayload(initialPayload);
             }
             data.initialize();
         }

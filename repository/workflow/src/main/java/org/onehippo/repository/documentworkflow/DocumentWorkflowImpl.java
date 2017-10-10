@@ -65,6 +65,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
      * @see #createDocumentHandle(javax.jcr.Node)
      */
     public static final String DOCUMENT_HANDLE_FACTORY_CLASS_KEY = "documentHandleFactoryClass";
+    public static final String UNSUPPORTED = "unsupported";
 
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
@@ -227,12 +228,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
-        throw new WorkflowException("unsupported");
+        throw new WorkflowException(UNSUPPORTED);
     }
 
     @Override
     public void requestPublicationDepublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        throw new WorkflowException("unsupported");
+        throw new WorkflowException(UNSUPPORTED);
     }
 
     // FullReviewedActionsWorkflow implementation
@@ -294,7 +295,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
-        throw new WorkflowException("unsupported");
+        throw new WorkflowException(UNSUPPORTED);
     }
 
     // Request Workflow on Document handle level
