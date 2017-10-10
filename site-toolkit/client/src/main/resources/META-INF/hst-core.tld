@@ -710,7 +710,7 @@
   </tag>
 
   <tag>
-    <description>This tag can be used to create a HTML comment snippet that contains information about
+    <description>This tag can be used to create an HTML comment snippet that contains information about
       the manage content link in the cms. Only in preview mode, the tag can output something. In live, it will be ignored.
     </description>
     <name>manageContent</name>
