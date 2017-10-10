@@ -490,29 +490,24 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     private Icon getTransitionIconByName(final String name) {
-        String lookup;
-        if (name.contains(" ")) {
+        if (name != null) {
             final String[] split = StringUtils.split(name, " ");
-            lookup = split[split.length-1];
-        } else {
-            lookup = name;
-        }
-        switch (lookup) {
-            case "up": {
-                return Icon.CHEVRON_UP_CIRCLE;
-            }
-            case "down": {
-                return Icon.CHEVRON_DOWN_CIRCLE;
-            }
-            case "left": {
-                return Icon.CHEVRON_LEFT_CIRCLE;
-            }
-            case "right": {
-                return Icon.CHEVRON_RIGHT_CIRCLE;
-            }
-            default : {
-                return Icon.EXCLAMATION_CIRCLE;
+            switch (split[split.length - 1]) {
+                case "up": {
+                    return Icon.CHEVRON_UP_CIRCLE;
+                }
+                case "down": {
+                    return Icon.CHEVRON_DOWN_CIRCLE;
+                }
+                case "left": {
+                    return Icon.CHEVRON_LEFT_CIRCLE;
+                }
+                case "right": {
+                    return Icon.CHEVRON_RIGHT_CIRCLE;
+                }
             }
         }
+        log.warn("Unknown transition \"{}\". Returning default icon.", name);
+        return Icon.EXCLAMATION_CIRCLE;
     }
 }
