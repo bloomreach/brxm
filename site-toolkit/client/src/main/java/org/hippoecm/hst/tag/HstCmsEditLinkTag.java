@@ -59,7 +59,7 @@ import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
  *    <li> <b>Without</b> a <code>var</code> attribute specified: Then, directly to the output a cms edit url and html comment is written.
  *    </li>
  * </ol>
- *  Deprecated, use <code>HstManageContentTag</code> instead.
+ *  @deprecated use <code>HstManageContentTag</code> instead.
  */
 @Deprecated
 public class HstCmsEditLinkTag extends TagSupport  {

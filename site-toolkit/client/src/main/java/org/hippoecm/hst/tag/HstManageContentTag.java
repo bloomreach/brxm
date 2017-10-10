@@ -24,7 +24,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
@@ -36,7 +35,7 @@ import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
 /**
- * This tag creates a cms manage content link for a template query or a root path.
+ * This tag creates a manage content button in the channel manager.
  */
 public class HstManageContentTag extends TagSupport {
 
@@ -48,52 +47,30 @@ public class HstManageContentTag extends TagSupport {
     private String rootPath;
     private String templateQuery;
 
-    /**
-     * @return Tag.EVAL_BODY_INCLUDE
-     * @throws JspException should never be thrown
-     * @see TagSupport#doStartTag()
-     */
     @Override
     public int doStartTag() throws JspException {
         return EVAL_BODY_INCLUDE;
     }
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
-     */
     @Override
     public int doEndTag() throws JspException {
         try {
             final HstRequestContext requestContext = RequestContextProvider.get();
 
-            if (StringUtils.isEmpty(templateQuery) && StringUtils.isEmpty(rootPath)) {
-                log.info("Cannot create a manage content url if both template query and root path are empty.");
-                return EVAL_PAGE;
-            }
-
             if (requestContext == null) {
-                log.warn("Cannot create a manage content url outside the hst request processing for '{}'");
+                log.warn("Cannot create a manage content button outside the hst request.");
                 return EVAL_PAGE;
             }
 
             if (!requestContext.isCmsRequest()) {
-                log.debug("Skipping manage content url because not cms preview.");
-                return EVAL_PAGE;
-            }
-
-            final Mount mount = requestContext.getResolvedMount().getMount();
-
-            // cmsBaseUrl is something like : http://localhost:8080
-            // try to find find the best cms location in case multiple ones are configured
-            if (mount.getCmsLocations().isEmpty()) {
-                log.warn("Skipping manage content url since no cms locations are configured in hst hostgroup configuration");
+                log.debug("Skipping manage content tag because not in cms preview.");
                 return EVAL_PAGE;
             }
 
             try {
                 write();
             } catch (final IOException ignore) {
-                throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
+                throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
             return EVAL_PAGE;
         } finally {
@@ -117,28 +94,34 @@ public class HstManageContentTag extends TagSupport {
 
     private Map<?, ?> getAttributeMap() {
         final Map<String, Object> result = new HashMap<>();
-        result.put(ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
-        result.put("templateQuery", templateQuery);
-        result.put("rootPath", rootPath);
-        result.put("defaultPath", defaultPath);
-        result.put("componentParameter", componentParameter);
+        writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
+        writeToMap(result, "templateQuery", templateQuery);
+        writeToMap(result, "rootPath", rootPath);
+        writeToMap(result, "defaultPath", defaultPath);
+        writeToMap(result, "componentParameter", componentParameter);
         return result;
+    }
+
+    private static void writeToMap(final Map<String, Object> result, final String key, final String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            result.put(key, value);
+        }
+    }
+
+    public void setComponentParameter(final String componentParameter) {
+        this.componentParameter = componentParameter;
+    }
+
+    public void setDefaultPath(final String defaultPath) {
+        this.defaultPath = defaultPath;
     }
 
     public void setDocument(final HippoBean document) {
         this.document = document;
     }
 
-    public String getRootPath() {
-        return rootPath;
-    }
-
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
-    }
-
-    public String getTemplateQuery() {
-        return templateQuery;
     }
 
     public void setTemplateQuery(final String templateQuery) {
