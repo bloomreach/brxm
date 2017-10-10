@@ -386,12 +386,10 @@ class OverlayService {
       }
     };
 
-    const buttons = this._initManageContentLinkOptions(optionsSet.buttons);
-
     const showOptions = () => {
       adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(buttons);
+        optionButtonsContainer.html(this._initManageContentLinkOptions(optionsSet.buttons));
         fabBtn.addClass('hippo-fab-btn-open');
         fabBtn.html(optionsSet.close_icon);
         overlayElement.addClass('is-showing-options');
@@ -432,7 +430,7 @@ class OverlayService {
       const button = optionButtons[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
         .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
-        .on('click', () => button.callback());
+        .on('click', button.callback);
       buttons.push(tpl);
     });
     return buttons;
