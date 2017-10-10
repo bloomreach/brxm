@@ -343,14 +343,14 @@ class OverlayService {
     };
 
     if (config.edit_content) {
-      optionsSet.buttonIcon = contentLinkSvg;
+      optionsSet.fabBtn_icon = contentLinkSvg;
       optionsSet.close_icon = contentLinkSvg;
     }
     Object.keys(config).forEach((i) => {
-      if (!config[i] || i === 'edit_content') {
+      if (!config[i] || !optionButtons[i]) {
         return;
       }
-      optionsSet.buttons[i] = optionButtons[i];
+      optionsSet.buttons.push(optionButtons[i]);
     });
 
     return optionsSet;
@@ -360,7 +360,7 @@ class OverlayService {
     const config = { // each property should be filled with the method that will extract the data from the HST comment
       edit_content: structureElement.getUuid(),
       create_content: true,
-      change_parameter: false,
+      change_parameter: true,
     };
     const optionsSet = this._getDialOptions(config);
 
@@ -432,7 +432,7 @@ class OverlayService {
       const button = optionButtons[i];
       const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
         .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
-        .on('click', button.callback);
+        .on('click', () => button.callback());
       buttons.push(tpl);
     });
     return buttons;

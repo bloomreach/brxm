@@ -586,4 +586,20 @@ describe('OverlayService', () => {
       done();
     });
   });
+
+  it('returns correct configuration out of config object', () => {
+    const config = { // each property should be filled with the method that will extract the data from the HST comment
+      edit_content: true,
+      create_content: true,
+      change_parameter: true,
+    };
+    const returnedConfigurations = OverlayService._getDialOptions(config);
+
+    expect(returnedConfigurations.fabBtn_icon).toBeDefined();
+    expect(returnedConfigurations.close_icon).toBeDefined();
+    expect(returnedConfigurations.close_icon).toEqual(returnedConfigurations.fabBtn_icon);
+    expect(returnedConfigurations.buttons).toBeDefined();
+    expect(returnedConfigurations.buttons.length).toEqual(2);
+    expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+  });
 });
