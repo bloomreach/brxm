@@ -56,7 +56,12 @@ public class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final String WORKFLOW_CATEGORY_EDIT = "editing";
 
-    private final EditingUtils editingUtils = new EditingUtils();
+    private final EditingUtils editingUtils;
+
+    public DocumentsServiceImpl(final EditingUtils editingUtils) {
+        this.editingUtils = editingUtils;
+    }
+
 
     @Override
     public Document createDraft(final String uuid, final Session session, final Locale locale)

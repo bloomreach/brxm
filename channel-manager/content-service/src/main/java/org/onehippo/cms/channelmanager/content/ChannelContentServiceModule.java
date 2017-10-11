@@ -16,9 +16,13 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
@@ -35,6 +39,8 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
  */
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
+    private EditingUtils editingUtils;
+
     public ChannelContentServiceModule() {
         addEventListener(new HippoNamespacesEventListener() {
             @Override
@@ -45,8 +51,20 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     }
 
     @Override
+    protected void doInitialize(final Session session) throws RepositoryException {
+        super.doInitialize(session);
+
+        final String editingUtilsClassName = JcrUtils.getStringProperty(session, moduleConfigPath + "/editingUtilsClass", EditingUtils.class.getName());
+        try {
+            this.editingUtils = (EditingUtils) Class.forName(editingUtilsClassName).newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
     protected Object getRestResource(final ManagedUserSessionInvoker managedUserSessionInvoker) {
-        final DocumentsServiceImpl documentsService = new DocumentsServiceImpl();
+        final DocumentsServiceImpl documentsService = new DocumentsServiceImpl(editingUtils);
         return new ContentResource(managedUserSessionInvoker, documentsService);
     }
 

@@ -74,7 +74,7 @@ import static org.junit.Assert.fail;
 public class DocumentsServiceImplTest {
     private Session session;
     private Locale locale;
-    private DocumentsServiceImpl documentsService = new DocumentsServiceImpl();
+    private DocumentsService documentsService;
     private EditingUtils editingUtils;
 
     @Before
@@ -82,6 +82,7 @@ public class DocumentsServiceImplTest {
         session = createMock(Session.class);
         locale = new Locale("en");
         editingUtils = createMock(EditingUtils.class);
+        documentsService = new DocumentsServiceImpl(editingUtils);
 
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
@@ -429,7 +430,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(WorkflowUtils.Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
         expect(docType.getFields()).andReturn(fields);
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
-        expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
+        expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
         PowerMock.replayAll(docType);
         EasyMock.replay(editingUtils);
