@@ -1,7 +1,5 @@
 definitions:
   config:
-    /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
-      /contentblocksdemo:
-        jcr:primaryType: hst:site
-        hst:content: /content/documents/contentblocksdemo
+    /hst:hst/hst:sites/contentblocksdemo:
+      jcr:primaryType: hst:site
+      hst:content: /content/documents/contentblocksdemo
