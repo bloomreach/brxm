@@ -13,15 +13,15 @@ export class HintsComponent implements OnInit {
 
   constructor(private elementRef: ElementRef) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.el = this.elementRef.nativeElement;
     const children: NodeListOf<Element> = this.el.querySelectorAll('*');
 
     this.hints = [...children].map((child: Element) => {
       const hint = {
         key: child.getAttribute('hint'),
-        text: child.innerHTML,
-        classList: child.className ? child.className.split('/\\s+/') : [],
+        content: child.innerHTML,
+        classList: child.className ? child.className.split(/\s+/) : [],
       };
 
       child.remove();

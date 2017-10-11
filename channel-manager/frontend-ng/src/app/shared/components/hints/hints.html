@@ -5,8 +5,7 @@
     <div *ngIf="data[hint.key]"
          class="hippo-hint"
          [ngClass]="hint.classList"
-         [style]="hint.style">
-      {{ hint.text }}
+         [innerHTML]="hint.content">
     </div>
   </ng-container>
 </ng-container>

@@ -1,5 +1,5 @@
 export interface Hint {
   key: string,
-  text: string,
+  content: string,
   classList: Array<string>
 }
