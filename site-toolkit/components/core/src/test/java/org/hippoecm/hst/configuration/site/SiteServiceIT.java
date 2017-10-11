@@ -42,7 +42,6 @@ import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -621,37 +620,4 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         }
     }
 
-    private CmsSessionContext mockCmsSessionContext(final Channel branch) {
-        return new CmsSessionContext() {
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public String getCmsContextServiceId() {
-                return null;
-            }
-
-            @Override
-            public Object get(final String s) {
-                return null;
-            }
-
-            @Override
-            public Object getAttribute(final String s) {
-                return branch.getBranchId();
-            }
-
-            @Override
-            public Object setAttribute(final String s, final Object o) {
-                return null;
-            }
-
-            @Override
-            public Object removeAttribute(final String s) {
-                return null;
-            }
-        };
-    }
 }
