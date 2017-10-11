@@ -23,6 +23,7 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.document.util.EditingUtilsImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
@@ -56,7 +57,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         super.doInitialize(session);
 
         final String propertyPath = moduleConfigPath + "/editingUtilsClass";
-        final String defaultValue = EditingUtils.class.getName();
+        final String defaultValue = EditingUtilsImpl.class.getName();
         final String editingUtilsClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
             documentsService.setEditingUtils((EditingUtils) Class.forName(editingUtilsClassName).newInstance());
