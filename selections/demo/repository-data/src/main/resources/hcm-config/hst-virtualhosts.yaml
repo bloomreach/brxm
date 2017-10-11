@@ -1,8 +1,6 @@
 definitions:
   config:
     /hst:hst/hst:hosts:
-      jcr:primaryType: hst:virtualhosts
-      hst:defaultcontextpath: /site
       hst:defaulthostname: localhost
       hst:diagnosticsenabled: false
       hst:homepage: root
