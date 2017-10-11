@@ -1,0 +1,11 @@
+<ng-content></ng-content>
+
+<ng-container *ngIf="data">
+  <ng-container *ngFor="let hint of hints">
+    <div *ngIf="data[hint.key]"
+         class="hippo-hint"
+         [ngClass]="hint.classList"
+         [innerHTML]="hint.content">
+    </div>
+  </ng-container>
+</ng-container>
