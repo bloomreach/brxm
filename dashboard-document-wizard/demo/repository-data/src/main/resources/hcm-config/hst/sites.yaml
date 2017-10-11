@@ -1,7 +1,5 @@
 definitions:
   config:
-    /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
-      /dashboarddocumentwizarddemo:
-        jcr:primaryType: hst:site
-        hst:content: /content/documents/dashboarddocumentwizarddemo
+    /hst:hst/hst:sites/dashboarddocumentwizarddemo:
+      jcr:primaryType: hst:site
+      hst:content: /content/documents/dashboarddocumentwizarddemo
