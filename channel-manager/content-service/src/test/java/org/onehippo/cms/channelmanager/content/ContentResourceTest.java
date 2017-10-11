@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
+import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -77,14 +78,12 @@ public class ContentResourceTest extends CXFTest {
         expect(sessionDataProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
         replay(sessionDataProvider);
 
-        PowerMock.mockStaticPartial(DocumentsService.class, "get");
-        expect(DocumentsService.get()).andReturn(documentsService).anyTimes();
         PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
         PowerMock.replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionDataProvider));
+        config.addServerSingleton(new ContentResource(sessionDataProvider, documentsService));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);

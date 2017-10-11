@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content;
 
 import javax.jcr.observation.EventIterator;
 
+import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
@@ -45,7 +46,8 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected Object getRestResource(final ManagedUserSessionInvoker managedUserSessionInvoker) {
-        return new ContentResource(managedUserSessionInvoker);
+        final DocumentsServiceImpl documentsService = new DocumentsServiceImpl();
+        return new ContentResource(managedUserSessionInvoker, documentsService);
     }
 
     private abstract static class HippoNamespacesEventListener extends JcrEventListener {

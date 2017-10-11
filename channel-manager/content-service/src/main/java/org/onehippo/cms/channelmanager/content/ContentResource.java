@@ -51,16 +51,18 @@ public class ContentResource {
     }
 
     private final SessionDataProvider sessionDataProvider;
+    private DocumentsService documentService;
 
-    public ContentResource(final SessionDataProvider userSessionProvider) {
+    public ContentResource(final SessionDataProvider userSessionProvider, final DocumentsService documentsService) {
         this.sessionDataProvider = userSessionProvider;
+        this.documentService = documentsService;
     }
 
     @POST
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> DocumentsService.get().createDraft(id, session, locale));
+                (session, locale) -> documentService.createDraft(id, session, locale));
     }
 
     @PUT
@@ -68,7 +70,7 @@ public class ContentResource {
     public Response updateDraftDocument(@PathParam("id") String id, Document document,
                                         @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> DocumentsService.get().updateDraft(id, document, session, locale));
+                (session, locale) -> documentService.updateDraft(id, document, session, locale));
     }
 
     @PUT
@@ -78,7 +80,7 @@ public class ContentResource {
                                      List<FieldValue> fieldValues,
                                      @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            DocumentsService.get().updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
+            documentService.updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
             return null;
         });
     }
@@ -87,17 +89,18 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response deleteDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            DocumentsService.get().deleteDraft(id, session, locale);
+            documentService.deleteDraft(id, session, locale);
             return null;
         });
     }
 
     // for easy debugging:
+
     @GET
     @Path("documents/{id}")
     public Response getPublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> DocumentsService.get().getPublished(id, session, locale));
+                (session, locale) -> documentService.getPublished(id, session, locale));
     }
 
     @GET
@@ -117,11 +120,11 @@ public class ContentResource {
      * Shared logic for providing the EndPointTask with contextual input and handling the packaging of its response
      * (which may be an error, encapsulated in an Exception).
      *
-     * @param servletRequest  current HTTP servlet request to derive contextual input
-     * @param successStatus   HTTP status code in case of success
-     * @param cacheControl    HTTP Cache-Control response header
-     * @param task            the EndPointTask to execute
-     * @return                a JAX-RS response towards the client
+     * @param servletRequest current HTTP servlet request to derive contextual input
+     * @param successStatus  HTTP status code in case of success
+     * @param cacheControl   HTTP Cache-Control response header
+     * @param task           the EndPointTask to execute
+     * @return a JAX-RS response towards the client
      */
     private Response executeTask(final HttpServletRequest servletRequest,
                                  final Status successStatus,

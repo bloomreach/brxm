@@ -51,23 +51,12 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DocumentsServiceImpl implements DocumentsService {
-    
+public class DocumentsServiceImpl implements DocumentsService {
+
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final String WORKFLOW_CATEGORY_EDIT = "editing";
-    private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
-    private EditingUtils editingUtils = new EditingUtils();
-
-    static DocumentsService getInstance() {
-        return INSTANCE;
-    }
-
-    private DocumentsServiceImpl() { }
-
-    public void setEditingUtils(final EditingUtils editingUtils) {
-        this.editingUtils = editingUtils;
-    }
+    private final EditingUtils editingUtils = new EditingUtils();
 
     @Override
     public Document createDraft(final String uuid, final Session session, final Locale locale)

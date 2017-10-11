@@ -74,7 +74,7 @@ import static org.junit.Assert.fail;
 public class DocumentsServiceImplTest {
     private Session session;
     private Locale locale;
-    private DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
+    private DocumentsServiceImpl documentsService = new DocumentsServiceImpl();
     private EditingUtils editingUtils;
 
     @Before
@@ -82,7 +82,6 @@ public class DocumentsServiceImplTest {
         session = createMock(Session.class);
         locale = new Locale("en");
         editingUtils = createMock(EditingUtils.class);
-        documentsService.setEditingUtils(editingUtils);
 
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);

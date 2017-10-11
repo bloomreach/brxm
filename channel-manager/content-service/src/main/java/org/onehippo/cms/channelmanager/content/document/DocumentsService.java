@@ -31,10 +31,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
  */
 public interface DocumentsService {
 
-    static DocumentsService get() {
-        return DocumentsServiceImpl.getInstance();
-    }
-
     /**
      * Creates a draft version of a document and locks it for editing by the current CMS user.
      *
