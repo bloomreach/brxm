@@ -44,6 +44,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class EditingUtilsTest {
+    
+    private final EditingUtils editingUtils = new EditingUtils();
 
     @Test
     public void canCreateDraft() throws Exception {
@@ -53,13 +55,13 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canCreateDraft(workflow));
+        assertFalse(editingUtils.canCreateDraft(workflow));
 
         hints.put("obtainEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canCreateDraft(workflow));
+        assertFalse(editingUtils.canCreateDraft(workflow));
 
         hints.put("obtainEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canCreateDraft(workflow));
+        assertTrue(editingUtils.canCreateDraft(workflow));
     }
 
     @Test
@@ -70,13 +72,13 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(editingUtils.canUpdateDraft(workflow));
 
         hints.put("commitEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(editingUtils.canUpdateDraft(workflow));
 
         hints.put("commitEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canUpdateDraft(workflow));
+        assertTrue(editingUtils.canUpdateDraft(workflow));
     }
 
     @Test
@@ -86,7 +88,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andThrow(new WorkflowException("bla"));
         replay(workflow);
 
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(editingUtils.canUpdateDraft(workflow));
     }
 
     @Test
@@ -97,13 +99,13 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canDeleteDraft(workflow));
+        assertFalse(editingUtils.canDeleteDraft(workflow));
 
         hints.put("disposeEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canDeleteDraft(workflow));
+        assertFalse(editingUtils.canDeleteDraft(workflow));
 
         hints.put("disposeEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canDeleteDraft(workflow));
+        assertTrue(editingUtils.canDeleteDraft(workflow));
     }
 
     @Test
@@ -114,7 +116,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andThrow(new RepositoryException());
         replay(workflow);
 
-        assertFalse(EditingUtils.determineEditingFailure(workflow, session).isPresent());
+        assertFalse(editingUtils.determineEditingFailure(workflow, session).isPresent());
 
         verify(workflow);
     }
@@ -128,7 +130,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints);
         replay(workflow);
 
-        assertFalse(EditingUtils.determineEditingFailure(workflow, session).isPresent());
+        assertFalse(editingUtils.determineEditingFailure(workflow, session).isPresent());
 
         verify(workflow);
     }
@@ -143,7 +145,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints);
         replay(workflow);
 
-        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
         assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
         assertNull(errorInfo.getParams());
 
@@ -168,7 +170,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(" Doe ");
         replay(workflow, session, workspace, securityService, user);
 
-        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
         assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
         assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
         assertThat(errorInfo.getParams().get("userName"), equalTo("John Doe"));
@@ -189,7 +191,7 @@ public class EditingUtilsTest {
         expect(workspace.getSecurityService()).andThrow(new RepositoryException());
         replay(workflow, session, workspace);
 
-        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
         assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
         assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
         assertNull(errorInfo.getParams().get("userName"));
@@ -211,7 +213,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(" Doe ");
         replay(session, workspace, securityService, user);
 
-        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("Doe"));
+        assertThat(editingUtils.getUserName("admin", session).get(), equalTo("Doe"));
 
         verify(session, workspace, securityService, user);
     }
@@ -230,7 +232,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(null);
         replay(session, workspace, securityService, user);
 
-        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("John"));
+        assertThat(editingUtils.getUserName("admin", session).get(), equalTo("John"));
 
         verify(session, workspace, securityService, user);
     }
@@ -246,7 +248,7 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(EditingUtils.createDraft(workflow, session).get(), equalTo(draft));
+        assertThat(editingUtils.createDraft(workflow, session).get(), equalTo(draft));
 
         verify(workflow, document);
     }
@@ -260,7 +262,7 @@ public class EditingUtilsTest {
         expect(session.getUserID()).andReturn("bla");
         replay(workflow, session);
 
-        assertFalse(EditingUtils.createDraft(workflow, session).isPresent());
+        assertFalse(editingUtils.createDraft(workflow, session).isPresent());
 
         verify(workflow, session);
     }
@@ -274,7 +276,7 @@ public class EditingUtilsTest {
         expect(session.getUserID()).andReturn("bla");
         replay(workflow, session);
 
-        assertFalse(EditingUtils.copyToPreviewAndKeepEditing(workflow, session).isPresent());
+        assertFalse(editingUtils.copyToPreviewAndKeepEditing(workflow, session).isPresent());
 
         verify(workflow, session);
     }
@@ -291,7 +293,7 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(EditingUtils.copyToPreviewAndKeepEditing(workflow, session).get(), equalTo(draft));
+        assertThat(editingUtils.copyToPreviewAndKeepEditing(workflow, session).get(), equalTo(draft));
 
         verify(workflow, document);
     }

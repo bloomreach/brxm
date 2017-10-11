@@ -49,15 +49,13 @@ public class EditingUtils {
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     private static final String HINT_REQUESTS = "requests";
 
-    private EditingUtils() { }
-
     /**
      * Check if a workflow indicates that editing of a document can be started.
      *
      * @param workflow workflow for the current user on a specific document
      * @return true/false.
      */
-    public static boolean canCreateDraft(final EditableWorkflow workflow) {
+    public boolean canCreateDraft(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
@@ -67,7 +65,7 @@ public class EditingUtils {
      * @param workflow editable workflow of a document
      * @return         true if document can be updated, false otherwise
      */
-    public static boolean canUpdateDraft(final EditableWorkflow workflow) {
+    public boolean canUpdateDraft(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
@@ -77,11 +75,11 @@ public class EditingUtils {
      * @param workflow editable workflow of a document
      * @return         true if document can be updated, false otherwise
      */
-    public static boolean canDeleteDraft(final EditableWorkflow workflow) {
+    public boolean canDeleteDraft(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
-    private static boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
+    boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
         try {
             Map<String, Serializable> hints = workflow.hints();
             return hints.containsKey(action) && ((Boolean)hints.get(action));
@@ -99,7 +97,7 @@ public class EditingUtils {
      * @param session  current user's JCR session
      * @return         Specific reason or nothing (unknown), wrapped in an Optional
      */
-    public static Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
+    public Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
         try {
             final Map<String, Serializable> hints = workflow.hints();
             if (hints.containsKey(HINT_IN_USE_BY)) {
@@ -127,7 +125,7 @@ public class EditingUtils {
      * @param session current user's JCR session
      * @return        name of the user or nothing, wrapped in an Optional
      */
-    public static Optional<String> getUserName(final String userId, final Session session) {
+    public Optional<String> getUserName(final String userId, final Session session) {
         try {
             final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             final User user =  workspace.getSecurityService().getUser(userId);
@@ -156,7 +154,7 @@ public class EditingUtils {
      * @param session  JCR session for obtaining the draft node
      * @return         JCR draft node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
+    public Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
         try {
             final Document document = workflow.obtainEditableInstance();
             return Optional.of(document.getNode(session));
@@ -173,7 +171,7 @@ public class EditingUtils {
      * @param session  JCR session for re-obtaining the draft node
      * @return         JCR draft node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session)
+    public Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session)
             throws InternalServerErrorException {
         try {
             workflow.commitEditableInstance();

@@ -52,9 +52,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DocumentsServiceImpl implements DocumentsService {
+    
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final String WORKFLOW_CATEGORY_EDIT = "editing";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
+
+    private EditingUtils editingUtils = new EditingUtils();
 
     static DocumentsService getInstance() {
         return INSTANCE;
@@ -62,15 +65,19 @@ class DocumentsServiceImpl implements DocumentsService {
 
     private DocumentsServiceImpl() { }
 
+    public void setEditingUtils(final EditingUtils editingUtils) {
+        this.editingUtils = editingUtils;
+    }
+
     @Override
     public Document createDraft(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getWorkflow(handle);
 
-        if (!EditingUtils.canCreateDraft(workflow)) {
+        if (!editingUtils.canCreateDraft(workflow)) {
             throw new ForbiddenException(
-                    withDocumentName(EditingUtils.determineEditingFailure(workflow, session).orElse(null), handle)
+                    withDocumentName(editingUtils.determineEditingFailure(workflow, session).orElse(null), handle)
             );
         }
 
@@ -81,7 +88,7 @@ class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
+        final Node draft = editingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -106,7 +113,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (!EditingUtils.canUpdateDraft(workflow)) {
+        if (!editingUtils.canUpdateDraft(workflow)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
         }
 
@@ -130,7 +137,7 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
+        editingUtils.copyToPreviewAndKeepEditing(workflow, session)
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
@@ -147,7 +154,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (!EditingUtils.canUpdateDraft(workflow)) {
+        if (!editingUtils.canUpdateDraft(workflow)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
         }
 
@@ -174,7 +181,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getWorkflow(handle);
 
-        if (!EditingUtils.canDeleteDraft(workflow)) {
+        if (!editingUtils.canDeleteDraft(workflow)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
         }
 
@@ -258,7 +265,7 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     private ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
-        return EditingUtils.determineEditingFailure(workflow, session)
+        return editingUtils.determineEditingFailure(workflow, session)
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
 }

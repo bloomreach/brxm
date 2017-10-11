@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.easymock.EasyMock;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -74,15 +75,17 @@ public class DocumentsServiceImplTest {
     private Session session;
     private Locale locale;
     private DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
+    private EditingUtils editingUtils;
 
     @Before
     public void setup() throws RepositoryException {
         session = createMock(Session.class);
         locale = new Locale("en");
+        editingUtils = createMock(EditingUtils.class);
+        documentsService.setEditingUtils(editingUtils);
 
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
-        PowerMock.mockStatic(EditingUtils.class);
         PowerMock.mockStatic(FieldTypeUtils.class);
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(WorkflowUtils.class);
@@ -178,10 +181,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -204,10 +208,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -229,9 +234,10 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -254,13 +260,14 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
 
         expect(handle.getSession()).andThrow(new RepositoryException());
 
         PowerMock.replayAll(handle);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -283,7 +290,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
 
@@ -291,6 +298,7 @@ public class DocumentsServiceImplTest {
         expect(documentTypesService.getDocumentType(variantType, session, locale)).andThrow(new NotFoundException());
 
         PowerMock.replayAll(handle, documentTypesService);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -312,11 +320,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -340,12 +349,13 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.createDraft(workflow, session)).andReturn(Optional.empty());
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -370,8 +380,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -384,6 +394,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
@@ -407,8 +418,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        expect(editingUtils.canCreateDraft(workflow)).andReturn(true);
+        expect(editingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -422,6 +433,7 @@ public class DocumentsServiceImplTest {
         expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
@@ -512,10 +524,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -543,10 +556,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -571,9 +585,10 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -597,11 +612,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -626,7 +642,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall().andThrow(badRequest);
 
@@ -634,6 +650,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -657,7 +674,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
@@ -667,6 +684,7 @@ public class DocumentsServiceImplTest {
         expectLastCall().andThrow(new RepositoryException());
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -690,7 +708,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(false);
@@ -701,6 +719,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -724,9 +743,9 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.empty());
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
@@ -737,6 +756,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -763,8 +783,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
@@ -779,6 +799,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
 
@@ -800,8 +821,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
-        expect(EditingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
@@ -816,6 +837,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
 
@@ -910,10 +932,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -942,10 +965,11 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
-        expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(false);
+        expect(editingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -971,9 +995,10 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
 
         PowerMock.replayAll();
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -998,11 +1023,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1029,13 +1055,14 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andThrow(badRequest);
 
         PowerMock.replayAll(docType);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1061,12 +1088,13 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(false);
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
 
@@ -1087,7 +1115,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
@@ -1096,6 +1124,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
 
@@ -1116,7 +1145,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
+        expect(editingUtils.canUpdateDraft(workflow)).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
@@ -1125,6 +1154,7 @@ public class DocumentsServiceImplTest {
         expectLastCall().andThrow(new RepositoryException());
 
         PowerMock.replayAll(docType, session);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1187,7 +1217,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canDeleteDraft(workflow)).andReturn(false);
+        expect(editingUtils.canDeleteDraft(workflow)).andReturn(false);
 
         PowerMock.replayAll();
 
@@ -1212,11 +1242,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canDeleteDraft(workflow)).andReturn(true);
+        expect(editingUtils.canDeleteDraft(workflow)).andReturn(true);
 
         expect(workflow.disposeEditableInstance()).andThrow(new WorkflowException("bla"));
 
         PowerMock.replayAll(workflow);
+        EasyMock.replay(editingUtils);
 
         try {
             documentsService.deleteDraft(uuid, session, locale);
@@ -1237,11 +1268,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canDeleteDraft(workflow)).andReturn(true);
+        expect(editingUtils.canDeleteDraft(workflow)).andReturn(true);
 
         expect(workflow.disposeEditableInstance()).andReturn(null);
 
         PowerMock.replayAll(workflow);
+        EasyMock.replay(editingUtils);
 
         documentsService.deleteDraft(uuid, session, locale);
 
