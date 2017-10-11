@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, AfterViewInit } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
@@ -6,13 +6,12 @@ import { NgForm } from '@angular/forms';
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-export class CreateContentComponent implements OnInit {
+export class CreateContentComponent implements AfterViewInit {
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
-
-  constructor() {}
+  docTypes: Array<string> = [];
 
   ngAfterViewInit() {
     // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
