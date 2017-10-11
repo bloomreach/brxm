@@ -39,9 +39,10 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
  */
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
-    private EditingUtils editingUtils;
+    private final DocumentsServiceImpl documentsService;
 
     public ChannelContentServiceModule() {
+        this.documentsService = new DocumentsServiceImpl();
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {
@@ -54,9 +55,11 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     protected void doInitialize(final Session session) throws RepositoryException {
         super.doInitialize(session);
 
-        final String editingUtilsClassName = JcrUtils.getStringProperty(session, moduleConfigPath + "/editingUtilsClass", EditingUtils.class.getName());
+        final String propertyPath = moduleConfigPath + "/editingUtilsClass";
+        final String defaultValue = EditingUtils.class.getName();
+        final String editingUtilsClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
-            this.editingUtils = (EditingUtils) Class.forName(editingUtilsClassName).newInstance();
+            documentsService.setEditingUtils((EditingUtils) Class.forName(editingUtilsClassName).newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
@@ -64,7 +67,6 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected Object getRestResource(final ManagedUserSessionInvoker managedUserSessionInvoker) {
-        final DocumentsServiceImpl documentsService = new DocumentsServiceImpl(editingUtils);
         return new ContentResource(managedUserSessionInvoker, documentsService);
     }
 
