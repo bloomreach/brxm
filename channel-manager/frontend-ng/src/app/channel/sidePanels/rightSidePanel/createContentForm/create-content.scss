@@ -17,12 +17,20 @@
   &-container {
     background: $grey-100;
     padding-left: 16px;
-    .mat-input-container {
-      margin: 5px 0;
+
+    .mat-input-container,
+    .mat-input-wrapper {
       width: 100%;
     }
-    .hint-invalid-field {
+
+    .field {
+      margin-bottom: 5px;
+    }
+
+    hippo-hints div {
       color: $red-500;
+      font-size: 12px;
+      margin-top: -15px;
     }
 
   }

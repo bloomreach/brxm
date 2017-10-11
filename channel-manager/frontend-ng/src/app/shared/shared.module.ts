@@ -7,7 +7,7 @@ import { MaterialModule } from '../material/material.module';
     BrowserModule,
     MaterialModule
   ],
-  exports:[
+  exports: [
     BrowserModule,
     MaterialModule
   ]

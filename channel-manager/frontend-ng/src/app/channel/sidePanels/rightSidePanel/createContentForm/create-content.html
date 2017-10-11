@@ -14,56 +14,55 @@
   limitations under the License.
   -->
 <div layout="column" class="create-content-container">
-
   <form (ngSubmit)="submit(form)" #form="ngForm">
 
     <!-- Document name field -->
+    <div class="field">
+      <mat-input-container class="create-content-field">
+        <input mdInput ngModel name="documentName" placeholder="Document name" required>
+      </mat-input-container>
 
-    <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="documentName" placeholder="Document name" required>
-      <mat-hint align="start"
-                class="hint-invalid-field"
-                *ngIf="form.controls.documentName && form.controls.documentName.invalid && form.controls.documentName.touched">
-        This is required.
-      </mat-hint>
-    </mat-input-container>
-
-    <!-- Document URL field -->
-    <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
-      <mat-hint align="start"
-                class="hint-invalid-field"
-                *ngIf="form.controls.documentUrl && form.controls.documentUrl.invalid && form.controls.documentUrl.touched">
-        This is required.
-      </mat-hint>
-    </mat-input-container>
-    <div [hippoHints]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
-      <div hippoHint="required">This field is required</div>
-      <div hippoHint="minlength">This field is required</div>
+      <hippo-hints [data]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
+        <div hint="required">This field is required</div>
+      </hippo-hints>
     </div>
 
-    <button (click)="getForm(form)">GET FORM</button>
+
+    <!-- Document URL field -->
+    <div class="field">
+      <mat-input-container class="create-content-field">
+        <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
+      </mat-input-container>
+
+      <hippo-hints [data]="form.controls.documentUrl.errors" *ngIf="form.controls.documentUrl && form.controls.documentUrl.touched">
+        <div hint="required">This field is required</div>
+      </hippo-hints>
+    </div>
+
 
     <!-- Document type field -->
-    <div class="mat-input-wrapper">
-      <div class="mat-input-flex">
-        <div class="mat-input-infix">
-          <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
-            <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
-          </mat-select>
+    <div class="field">
+      <div class="mat-input-wrapper">
+        <div class="mat-input-flex">
+          <div class="mat-input-infix">
+            <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
+              <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
+            </mat-select>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Document location field -->
-    <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
-      <mat-hint align="start"
-                class="hint-invalid-field"
-                *ngIf="form.controls.documentLocation && form.controls.documentLocation.invalid && form.controls.documentLocation.touched">
-        This is required.
-      </mat-hint>
-    </mat-input-container>
+    <div class="form">
+      <mat-input-container class="create-content-field">
+        <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
+      </mat-input-container>
+
+      <hippo-hints [data]="form.controls.documentLocation.errors" *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
+        <div hint="required">This field is required</div>
+      </hippo-hints>
+    </div>
 
     <!-- Buttons -->
     <div class="create-content-actions">
@@ -79,38 +78,4 @@
       </button>
     </div>
   </form>
-<!--  <mat-input-container>
-    <input mdInput [(ngModel)]="document.title" placeholder="Document name" required>
-    &lt;!&ndash;<div ng-messages="$ctrl.form.$error">&ndash;&gt;
-      &lt;!&ndash;<div ng-message="required">This is required.</div>&ndash;&gt;
-    &lt;!&ndash;</div>&ndash;&gt;
-  </mat-input-container>
-
-  <!--<mat-input-container>-->
-    <!--<label>URL</label>-->
-    <!--<input ng-model="$ctrl.document.url" type="text" required>-->
-    <!--<div ng-messages="$ctrl.form.$error">-->
-      <!--<div ng-message="required">This is required.</div>-->
-    <!--</div>-->
-  <!--</mat-input-container>-->
-
-  <!--<mat-input-container>-->
-    <!--<label>Document type</label>-->
-    <!--<mat-select ng-model="$ctrl.document.docType" required>-->
-      <!--<mat-option ng-repeat="doctype in $ctrl.doctypes" ng-value="doctype">-->
-        <!--{{doctype}}-->
-      <!--</mat-option>-->
-    <!--</mat-select>-->
-    <!--<div ng-messages="$ctrl.form.$error">-->
-      <!--<div ng-message="required">This is required.</div>-->
-    <!--</div>-->
-  <!--</mat-input-container>-->
-
-  <!--<mat-input-container>-->
-    <!--<label>Document location</label>-->
-    <!--<input ng-model="$ctrl.document.location" type="text" required>-->
-    <!--<div ng-messages="$ctrl.form.$error">-->
-      <!--<div ng-message="required">This is required.</div>-->
-    <!--</div>-->
-  <!--</mat-input-container>-->
 </div>
