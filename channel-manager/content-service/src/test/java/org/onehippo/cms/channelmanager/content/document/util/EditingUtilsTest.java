@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class EditingUtilsTest {
-    
+
     private final EditingUtils editingUtils = new EditingUtils();
 
     @Test
@@ -197,44 +197,6 @@ public class EditingUtilsTest {
         assertNull(errorInfo.getParams().get("userName"));
 
         verify(workflow, session, workspace);
-    }
-
-    @Test
-    public void getUserNameNoFirstName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
-        final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
-        expect(user.getFirstName()).andReturn(null);
-        expect(user.getLastName()).andReturn(" Doe ");
-        replay(session, workspace, securityService, user);
-
-        assertThat(editingUtils.getUserName("admin", session).get(), equalTo("Doe"));
-
-        verify(session, workspace, securityService, user);
-    }
-
-    @Test
-    public void getUserNameNoLastName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
-        final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
-        expect(user.getFirstName()).andReturn(" John ");
-        expect(user.getLastName()).andReturn(null);
-        replay(session, workspace, securityService, user);
-
-        assertThat(editingUtils.getUserName("admin", session).get(), equalTo("John"));
-
-        verify(session, workspace, securityService, user);
     }
 
     @Test

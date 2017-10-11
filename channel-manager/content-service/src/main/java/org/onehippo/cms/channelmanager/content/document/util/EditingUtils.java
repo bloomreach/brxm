@@ -27,13 +27,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +52,7 @@ public class EditingUtils {
      * @param workflow workflow for the current user on a specific document
      * @return true/false.
      */
-    public boolean canCreateDraft(final EditableWorkflow workflow) {
+    public boolean canCreateDraft(final Workflow workflow) {
         return isActionAvailable(workflow, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
@@ -63,9 +60,9 @@ public class EditingUtils {
      * Check if a document can be updated, given its workflow.
      *
      * @param workflow editable workflow of a document
-     * @return         true if document can be updated, false otherwise
+     * @return true if document can be updated, false otherwise
      */
-    public boolean canUpdateDraft(final EditableWorkflow workflow) {
+    public boolean canUpdateDraft(final Workflow workflow) {
         return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
@@ -73,16 +70,16 @@ public class EditingUtils {
      * Check if a document can be updated, given its workflow.
      *
      * @param workflow editable workflow of a document
-     * @return         true if document can be updated, false otherwise
+     * @return true if document can be updated, false otherwise
      */
-    public boolean canDeleteDraft(final EditableWorkflow workflow) {
+    public boolean canDeleteDraft(final Workflow workflow) {
         return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
-    boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
+    private boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
             Map<String, Serializable> hints = workflow.hints();
-            return hints.containsKey(action) && ((Boolean)hints.get(action));
+            return hints.containsKey(action) && ((Boolean) hints.get(action));
 
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             log.warn("Failed reading hints from workflow", e);
@@ -95,7 +92,7 @@ public class EditingUtils {
      *
      * @param workflow workflow for the current user on a specific document
      * @param session  current user's JCR session
-     * @return         Specific reason or nothing (unknown), wrapped in an Optional
+     * @return Specific reason or nothing (unknown), wrapped in an Optional
      */
     public Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
         try {
@@ -104,7 +101,7 @@ public class EditingUtils {
                 final Map<String, Serializable> params = new HashMap<>();
                 final String userId = (String) hints.get(HINT_IN_USE_BY);
                 params.put("userId", userId);
-                getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
+                UserUtils.getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
 
                 return Optional.of(new ErrorInfo(ErrorInfo.Reason.OTHER_HOLDER, params));
             }
@@ -119,40 +116,11 @@ public class EditingUtils {
     }
 
     /**
-     * Look up the real user name pertaining to a user ID
-     *
-     * @param userId  ID of some user
-     * @param session current user's JCR session
-     * @return        name of the user or nothing, wrapped in an Optional
-     */
-    public Optional<String> getUserName(final String userId, final Session session) {
-        try {
-            final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-            final User user =  workspace.getSecurityService().getUser(userId);
-            final String firstName = user.getFirstName();
-            final String lastName = user.getLastName();
-
-            StringBuilder sb = new StringBuilder();
-            if (firstName != null) {
-                sb.append(firstName.trim());
-                sb.append(" ");
-            }
-            if (lastName != null) {
-                sb.append(lastName.trim());
-            }
-            return Optional.of(sb.toString().trim());
-        } catch (RepositoryException e) {
-            log.debug("Unable to determine displayName of user '{}'.", userId, e);
-        }
-        return Optional.empty();
-    }
-
-    /**
      * Create a draft variant node for a document represented by handle node.
      *
      * @param workflow Editable workflow for the desired document
      * @param session  JCR session for obtaining the draft node
-     * @return         JCR draft node or nothing, wrapped in an Optional
+     * @return JCR draft node or nothing, wrapped in an Optional
      */
     public Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
         try {
@@ -169,10 +137,9 @@ public class EditingUtils {
      *
      * @param workflow Editable workflow for the desired document
      * @param session  JCR session for re-obtaining the draft node
-     * @return         JCR draft node or nothing, wrapped in an Optional
+     * @return JCR draft node or nothing, wrapped in an Optional
      */
-    public Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session)
-            throws InternalServerErrorException {
+    public Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
         try {
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
