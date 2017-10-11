@@ -1,26 +1,23 @@
 definitions:
   config:
-    /hst:hst/hst:hosts:
-      jcr:primaryType: hst:virtualhosts
-      hst:defaultcontextpath: /site
-      /dev-localhost:
-        jcr:primaryType: hst:virtualhostgroup
-        hst:cmslocation: http://localhost:8080/cms
-        /localhost:
-          jcr:primaryType: hst:virtualhost
-          /hst:root:
+    /hst:hst/hst:hosts/dev-localhost:
+      jcr:primaryType: hst:virtualhostgroup
+      hst:cmslocation: http://localhost:8080/cms
+      /localhost:
+        jcr:primaryType: hst:virtualhost
+        /hst:root:
+          jcr:primaryType: hst:mount
+          hst:alias: site
+          hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-en
+          /fr:
             jcr:primaryType: hst:mount
-            hst:alias: site
-            hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-en
-            /fr:
-              jcr:primaryType: hst:mount
-              hst:alias: site-fr
-              hst:locale: fr
-              hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-fr
-              hst:showport: true
-            /nl:
-              jcr:primaryType: hst:mount
-              hst:alias: site-nl
-              hst:locale: nl
-              hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-nl
-              hst:showport: true
+            hst:alias: site-fr
+            hst:locale: fr
+            hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-fr
+            hst:showport: true
+          /nl:
+            jcr:primaryType: hst:mount
+            hst:alias: site-nl
+            hst:locale: nl
+            hst:mountpoint: /hst:hst/hst:sites/taxonomydemo-nl
+            hst:showport: true
