@@ -21,8 +21,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Optional;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -41,10 +44,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
-
-import com.google.common.base.Optional;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
@@ -495,8 +496,12 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null because
             // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
             // nonetheless because the mount can have valid child mounts
-            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/unittestproject-branchid-000");
-            assertNull(resolvedMount.getMount().getHstSite());
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MountService.class).build()) {
+                final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/unittestproject-branchid-000");
+                assertNull(resolvedMount.getMount().getHstSite());
+                // assert we had a warning about incorrectly configured channel
+                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Configured Mount '/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000' is incorrect")));
+            }
         } finally {
             restoreHstConfigBackup(session);
             session.logout();
@@ -540,9 +545,13 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void render_different_hst_site_for_channel_manager() throws Exception {
+    public void render_different_hst_site_for_custom_channel_manager_site_provider() throws Exception {
         Session session = createSession();
         try {
+            HstServices.getComponentManager()
+                    .getComponent(DelegatingHstSiteProvider.class)
+                    .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
+
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             session.save();
@@ -557,20 +566,16 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
             ctx.setServletRequest(servletRequest);
 
-            MockHttpSession httpSession = new MockHttpSession();
-            httpSession.setAttribute(CmsSessionContext.SESSION_KEY, mockCmsSessionContext(branch));
-            servletRequest.setSession(httpSession);
             ModifiableRequestContextProvider.set(ctx);
 
-            // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null because
-            // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
-            // nonetheless because the mount can have valid child mounts
             final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "");
             Channel channel = resolvedMount.getMount().getChannel();
             assertSame(channel, resolvedMount.getMount().getHstSite().getChannel());
-            assertSame("Expected that the branch channel would be matched because it is a cms request with the mount id " +
-                    "mapped to the branch id", channel, branch);
+            assertSame("Expected that the branch channel would be matched returned due to custom channel mngr hst site provider",
+                    channel, branch);
         } finally {
+            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class)
+                    .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
             restoreHstConfigBackup(session);
             session.logout();
             ModifiableRequestContextProvider.clear();
@@ -608,7 +613,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             assertSame("Expected that the branch channel would be matched", channel, branch);
         } finally {
-            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class).setWebsiteHstSiteProvider(null);
+            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class)
+                    .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
             restoreHstConfigBackup(session);
             session.logout();
             ModifiableRequestContextProvider.clear();

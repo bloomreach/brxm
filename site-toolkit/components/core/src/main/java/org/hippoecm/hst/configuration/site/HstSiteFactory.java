@@ -68,7 +68,7 @@ public class HstSiteFactory {
         if (masterConfiguration.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
             throw new ModelLoadingException(String.format("Invalid HST configuration for '%s' : It should be a master " +
                     "branch because directly referenced by an hst:site but '%s' does have the property '%s' which is " +
-                    "only alowed on branches. Correct the configuration.", masterConfigPath, masterConfigPath, BRANCH_PROPERTY_BRANCH_OF));
+                    "only allowed on branches. Correct the configuration.", masterConfigPath, masterConfigPath, BRANCH_PROPERTY_BRANCH_OF));
         }
 
         HstNode configurationsNode = masterConfiguration.getParent();

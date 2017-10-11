@@ -21,13 +21,6 @@ import org.onehippo.cms7.services.hst.Channel;
 @FunctionalInterface
 public interface HstSiteProvider {
 
-    /**
-     * This key is used to store active project id on the http session of the webmaster in the channel mngr. If it is
-     * not null then and thre is a channel with {@link Channel#getBranchId()} equal to projectId then that branch will
-     * be used for rendering.
-     */
-    String ATTRIBUTE_ACTIVE_PROJECT_ID = "com.onehippo.cms7.services.wpm.project.active_project_id";
-
     HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
 
 }
