@@ -495,6 +495,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
             // add any folder nodes that do not yet exist
             HippoNode folderHippoNode = (HippoNode) folderNode;
+            Collections.reverse(notExistingFolders);
             for (String newFolder : notExistingFolders) {
                 folderHippoNode = createFolder(folderHippoNode, newFolder);
             }
