@@ -44,6 +44,12 @@ public interface CmsSessionContext {
      */
     String LOCALE = "locale";
 
+
+    /**
+     * Key to retrieve the initial payload for the documentworkflow.
+     */
+    String CMS_SESSION_CONEXT_PAYLOAD_KEY = CmsSessionContext.class.getName() + ".initialPayload";
+
     /**
      * Static method to retrieve the CmsSessionContext from a HttpSession
      *
