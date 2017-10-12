@@ -202,7 +202,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
                     if (getModel().getNode().isNodeType("hippogallery:imageset")
                             || getModel().getNode().isNodeType("hippogallery:exampleAssetSet")) {
-                        createNewNodeNameWithSuffix(nodeName);
+                        createNewFileNodeNameWithBaseNameSuffix(nodeName);
                     } else {
                         String locale = CodecUtils.getLocaleFromNode(getFolder().getNode());
                         IModel<StringCodec> codec = CodecUtils.getNodeNameCodecModel(context, locale);
@@ -237,12 +237,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
              * @param nodeName The node name
              * @throws RepositoryException Thrown when it cannot retrieve the node from the repository
              */
-            private void createNewNodeNameWithSuffix(final String nodeName) throws RepositoryException {
+            private void createNewFileNodeNameWithBaseNameSuffix(final String nodeName) throws RepositoryException {
                 name = nodeName;
                 Node gallery = destination.getChainedModel().getObject();
                 if (gallery.hasNode(name)) {
-                    name = addOrIncrementNodeNameSuffix(name);
-                    createNewNodeNameWithSuffix(name);
+                    name = addOrIncrementFileNodeNameBaseNameSuffix(name);
+                    createNewFileNodeNameWithBaseNameSuffix(name);
                 }
             }
 
@@ -259,7 +259,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
              * @return A node name with a '-1' as suffix attached to the base name or a node name which already has
              * such a suffix (-n) with an incremented (n+1) number of this suffix.
              */
-            private String addOrIncrementNodeNameSuffix(final String nodeName) {
+            private String addOrIncrementFileNodeNameBaseNameSuffix(final String nodeName) {
                 final String baseName = getBaseName(nodeName);
                 final String extension = getExtension(nodeName);
 
