@@ -27,12 +27,8 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor
 
 import javax.jcr.Node
 import javax.jcr.version.Version
-import javax.jcr.version.VersionManager
 import javax.jcr.version.VersionHistory
-
-import java.util.ArrayList
-import java.util.Collections
-import java.util.List
+import javax.jcr.version.VersionManager
 
 /**
  * Truncates the version history, retaining only the latest
@@ -85,7 +81,7 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
     }
     // remove versions
     int removeCount = versions.size() - retainCount
-    boolean remove = removeCount &gt; 0
+    boolean remove = removeCount > 0
     if (remove) {
       log.info "Removing ${removeCount} versions of node ${node.path}"
     }

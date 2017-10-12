@@ -1008,15 +1008,15 @@ public class DefinitionMergeService {
                 final List<DefinitionNodeImpl> newDefs = new ArrayList<>();
                 recursiveAdd(incomingDefNode, parentDefNode, newDefs);
 
-                // update model -- the first def was already merged to the configNode tree, so it needs special handling
-                final DefinitionNodeImpl newChildOfExistingDef = newDefs.get(0);
+                // update model -- the existing parent def was already merged to the configNode tree, so it needs special handling
+                final DefinitionNodeImpl newChildOfExistingDef = parentDefNode.getNode(incomingDefNode.getName());
                 final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder(model.getConfigurationRootNode());
                 final ConfigurationNodeImpl newConfigNode =
                         builder.createChildNode(existingParent, newChildOfExistingDef.getName(), newChildOfExistingDef);
                 builder.mergeNode(newConfigNode, newChildOfExistingDef);
 
                 // now update all the other (possible) defs that were split off into new source files
-                for (final DefinitionNodeImpl newDef : newDefs.subList(1, newDefs.size())) {
+                for (final DefinitionNodeImpl newDef : newDefs) {
                     builder.push(newDef.getDefinition());
                 }
             }
@@ -1270,7 +1270,6 @@ public class DefinitionMergeService {
             to = toParent.addNode(from.getName());
         }
 
-        newDefs.add(to);
         recursiveCopy(from, to, newDefs);
     }
 
