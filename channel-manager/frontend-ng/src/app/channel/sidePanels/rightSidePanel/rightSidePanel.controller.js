@@ -104,7 +104,7 @@ class RightSidePanelCtrl {
         if (type === 'edit') {
           this.openDocument(options);
         } else {
-          this._initCreate(options);
+          this._initCreateContent(options);
         }
         this._onOpen();
       },
@@ -187,7 +187,7 @@ class RightSidePanelCtrl {
       .finally(() => delete this.loading);
   }
 
-  _initCreate(options) {
+  _initCreateContent(options) {
     this._resetState();
     this.options = options;
     this.create = true;

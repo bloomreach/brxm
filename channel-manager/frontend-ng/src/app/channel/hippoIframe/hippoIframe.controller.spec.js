@@ -81,16 +81,16 @@ describe('hippoIframeCtrl', () => {
     spyOn(DragDropService, 'init');
     spyOn(OverlayService, 'init');
     spyOn(OverlayService, 'onEditMenu');
-    spyOn(OverlayService, 'onManageContent');
+    spyOn(OverlayService, 'onEditContent');
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
-    scope.onManageContent = jasmine.createSpy('onManageContent');
+    scope.onEditContent = jasmine.createSpy('onEditContent');
 
     const el = angular.element(
       `<hippo-iframe show-components-overlay="false"
                      show-content-overlay="true"
-                     on-manage-content="onManageContent(contentUuid)"
+                     on-edit-content="onEditContent(contentUuid)"
                      on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);
@@ -238,9 +238,9 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('opens right side panel when clicking the edit content button', () => {
-    const callback = OverlayService.onManageContent.calls.mostRecent().args[0];
+    const callback = OverlayService.onEditContent.calls.mostRecent().args[0];
     callback('document-uuid');
-    expect(scope.onManageContent).toHaveBeenCalledWith('document-uuid');
+    expect(scope.onEditContent).toHaveBeenCalledWith('document-uuid');
   });
 
   it('resets overlay toggles', () => {
