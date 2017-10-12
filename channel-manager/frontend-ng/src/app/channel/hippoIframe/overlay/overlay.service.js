@@ -357,7 +357,8 @@ class OverlayService {
   }
 
   _initManageContentLink(structureElement, overlayElement) {
-    const config = { // each property should be filled with the method that will extract the data from the HST comment
+    // each property should be filled with the method that will extract the data from the HST comment
+    const config = {
       editContent: structureElement.getUuid(),
       createContent: structureElement.getTemplateQuery(),
       changeParameter: structureElement.getComponentParameter(),
