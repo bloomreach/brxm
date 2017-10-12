@@ -267,6 +267,7 @@
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>**/target/**/*</exclude>
 
                 <!-- repository content XML -->
                 <exclude>content-service/src/main/resources/**/*.xml</exclude>
