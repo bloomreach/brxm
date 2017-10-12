@@ -1,12 +1,2 @@
 definitions:
-  config:
-    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
-      watchedModules: [intranet-bootstrap/webfiles]
-
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:modules:
-        operation: add
-        type: string
-        value: ['intranet-bootstrap/webfiles']
-
   webfilebundle: intranet
