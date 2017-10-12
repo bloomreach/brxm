@@ -473,6 +473,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final String folderPath = getFolderPath();
             if (folderPath == null) {
                 log.error("Could not create path to target folder.");
+                return null;
             }
             return getOrCreateFolder(folderPath);
         }
