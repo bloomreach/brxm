@@ -359,8 +359,8 @@ class OverlayService {
   _initManageContentLink(structureElement, overlayElement) {
     const config = { // each property should be filled with the method that will extract the data from the HST comment
       editContent: structureElement.getUuid(),
-      createContent: true,
-      changeParameter: true,
+      createContent: structureElement.getTemplateQuery(),
+      changeParameter: structureElement.getComponentParameter(),
     };
     const optionsSet = this._getDialOptions(config);
 
