@@ -320,7 +320,7 @@ class OverlayService {
 
   _getDialOptions(config) {
     const optionButtons = {
-      createContent: {
+      templateQuery: {
         svg: plusSvg,
         callback: () => {
           this.$rootScope.$apply(() => {
@@ -329,7 +329,7 @@ class OverlayService {
         },
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
       },
-      changeParameter: {
+      componentParameter: {
         svg: searchSvg,
         callback: () => {},
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
@@ -342,7 +342,7 @@ class OverlayService {
       buttons: [],
     };
 
-    if (config.editContent) {
+    if (config.documentUuid) {
       optionsSet.mainButtonIcon = contentLinkSvg;
       optionsSet.mainButtonCloseIcon = contentLinkSvg;
     }
@@ -359,9 +359,9 @@ class OverlayService {
   _initManageContentLink(structureElement, overlayElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     const config = {
-      editContent: structureElement.getUuid(),
-      createContent: structureElement.getTemplateQuery(),
-      changeParameter: structureElement.getComponentParameter(),
+      documentUuid: structureElement.getUuid(),
+      templateQuery: structureElement.getTemplateQuery(),
+      componentParameter: structureElement.getComponentParameter(),
     };
     const optionsSet = this._getDialOptions(config);
 
@@ -414,12 +414,12 @@ class OverlayService {
       overlayElement.addClass('is-left');
     };
 
-    if (config.editContent) {
-      fabBtn.on('click', () => this.manageContentHandler(config.editContent));
+    if (config.documentUuid) {
+      fabBtn.on('click', () => this.manageContentHandler(config.documentUuid));
     } else {
       overlayElement.on('click', () => showOptions() || hideOptions());
     }
-    if (config.createContent || config.changeParameter) {
+    if (config.templateQuery || config.componentParameter) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }

@@ -589,9 +589,9 @@ describe('OverlayService', () => {
 
   it('returns correct configuration out of config object', () => {
     const config = { // each property should be filled with the method that will extract the data from the HST comment
-      editContent: true,
-      createContent: true,
-      changeParameter: true,
+      documentUuid: true,
+      templateQuery: true,
+      componentParameter: true,
     };
     const returnedConfigurations = OverlayService._getDialOptions(config);
 
