@@ -114,6 +114,27 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return workflowExecutor;
     }
 
+    /**
+     * @deprecated since 5.1.0 Do not use this method any more to create a Map: Create it yourself
+     */
+    @Deprecated
+    protected final Map<String, Object> createPayload(String var, Object val) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(var, val);
+        return map;
+    }
+
+
+    /**
+     * @deprecated since 5.1.0 Do not use this method any more to create a Map: Create it yourself
+     */
+    @Deprecated
+    protected final Map<String, Object> createPayload(String var1, Object val1, String var2, Object val2) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(var1, val1);
+        map.put(var2, val2);
+        return map;
+    }
 
     @SuppressWarnings("unchecked")
     protected Map<String, Boolean> getRequestActionActions(String requestIdentifier, String action) throws WorkflowException {

@@ -17,6 +17,7 @@
 
 package org.onehippo.repository.documentworkflow;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class DocumentWorkflowTransition {
 
     private final String requestIdentifier;
     private Map<String, Object> eventPayload = new HashMap<>();
-    private final Map<String, Object> initializationPayload;
+    private final Map<String, Serializable> initializationPayload;
     private final String action;
     private Map<String, Boolean> actionsMap;
 
@@ -32,7 +33,7 @@ public class DocumentWorkflowTransition {
         return actionsMap;
     }
 
-    public Map<String, Object> getInitializationPayload() {
+    public Map<String, Serializable> getInitializationPayload() {
         return initializationPayload;
     }
 
@@ -50,45 +51,50 @@ public class DocumentWorkflowTransition {
 
     public static class Builder {
         private final Map<String, Object> eventPayload = new HashMap<>();
-        private Map<String, Object> initializationPayload;
+        private Map<String, Serializable> initializationPayload;
         private String action;
         private Map<String, Boolean> actionsMap;
         private String requestIdentifier;
 
-        public Builder actionsMap(Map<String, Boolean> actionsMap) {
+        public Builder actionsMap(final Map<String, Boolean> actionsMap) {
             this.actionsMap = actionsMap;
             return this;
         }
 
-        public Builder eventPayload(Map<String, Object> eventPayload) {
+        public Builder eventPayload(final Map<String, Object> eventPayload) {
             this.eventPayload.putAll(eventPayload);
             return this;
         }
 
-        public Builder eventPayload(String key, Object value){
+        public Builder eventPayload(final String key, final Object value){
             this.eventPayload.put(key,value);
             return this;
         }
 
-        public Builder eventPayload(String key1, Object value1, String key2, Object value2){
+        public Builder eventPayload(final String key1, final Object value1, final String key2, final Object value2){
             this.eventPayload.put(key1,value1);
             this.eventPayload.put(key2,value2);
             return this;
         }
 
-
-        public Builder initializationPayload(Map<String, Object> initializationPayload) {
+        /**
+         * Sets the initialization payload. Note that the argument does not get cloned meaning that if you change it
+         * after invoking this menthod, the {@code initializationPayload} object in this {@link Builder} changes
+         * @param initializationPayload the initial payload to set
+         * @return this {@link Builder}
+         */
+        public Builder initializationPayload(final Map<String, Serializable> initializationPayload) {
             this.initializationPayload = initializationPayload;
             return this;
         }
 
 
-        public Builder action(String action){
+        public Builder action(final String action){
             this.action = action;
             return this;
         }
 
-        public Builder action(DocumentWorkflowAction action){
+        public Builder action(final DocumentWorkflowAction action){
             this.action = action.getAction();
             return this;
         }
@@ -103,7 +109,7 @@ public class DocumentWorkflowTransition {
         }
     }
 
-    private DocumentWorkflowTransition(Builder b) {
+    private DocumentWorkflowTransition(final Builder b) {
         this.action = b.action;
         this.actionsMap = b.actionsMap;
         this.initializationPayload = b.initializationPayload;

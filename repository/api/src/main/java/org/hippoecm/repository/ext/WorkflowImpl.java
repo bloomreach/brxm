@@ -28,12 +28,13 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 
+import static java.lang.Boolean.TRUE;
+
 /**
  * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
 public abstract class WorkflowImpl implements Remote, Workflow
 {
-    public static final Boolean TRUE = Boolean.TRUE;
     private Node node;
 
     /**
@@ -45,7 +46,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * @param context the new context that should be used
      */
-    public final void setWorkflowContext(WorkflowContext context) {
+    public final void setWorkflowContext(final WorkflowContext context) {
         this.context = context;
     }
 
@@ -53,7 +54,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * <b>This call is not part of the public API</b><p/>
      * @param node the backing Node for this workflow
      */
-    public void setNode(Node node) throws RepositoryException {
+    public void setNode(final Node node) throws RepositoryException {
         this.node = node;
     }
 
