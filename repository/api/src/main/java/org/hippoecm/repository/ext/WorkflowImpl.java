@@ -28,6 +28,8 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 
+import static java.lang.Boolean.TRUE;
+
 /**
  * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
@@ -61,7 +63,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     public Map<String,Serializable> hints() throws WorkflowException {
         Map<String,Serializable> map = new TreeMap<>();
-        map.put("hints", Boolean.valueOf(true));
+        map.put("hints", TRUE);
         return map;
     }
 
