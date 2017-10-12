@@ -100,11 +100,11 @@ class RightSidePanelCtrl {
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
       // onOpen
-      (documentId) => {
-        if (documentId) {
-          this.openDocument(documentId);
+      (type, options) => {
+        if (type === 'edit') {
+          this.openDocument(options);
         } else {
-          this._initNewContent();
+          this._initCreate(options);
         }
         this._onOpen();
       },
@@ -153,7 +153,9 @@ class RightSidePanelCtrl {
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
-    delete this.createContent;
+
+    delete this.create;
+    delete this.options;
 
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
@@ -185,9 +187,10 @@ class RightSidePanelCtrl {
       .finally(() => delete this.loading);
   }
 
-  _initNewContent() {
+  _initCreate(options) {
     this._resetState();
-    this.createContent = true;
+    this.options = options;
+    this.create = true;
     this.title = this.$translate.instant('NEW_CONTENT');
   }
 

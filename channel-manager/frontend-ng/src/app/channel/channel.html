@@ -75,7 +75,8 @@
                   ng-show="channelCtrl.isChannelLoaded()"
                   show-components-overlay="channelCtrl.isComponentsOverlayDisplayed"
                   show-content-overlay="channelCtrl.isContentOverlayDisplayed"
-                  on-manage-content="channelCtrl.manageContent(contentUuid)"
+                  on-create-content="channelCtrl.createContent(options)"
+                  on-edit-content="channelCtrl.editContent(contentUuid)"
                   on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 

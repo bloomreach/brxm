@@ -107,7 +107,8 @@
                        field-values="$ctrl.doc.fields">
       </document-fields>
     </form>
-    <hippo-create-content ng-if="$ctrl.createContent"
+    <hippo-create-content ng-if="$ctrl.create"
+                          [options]="$ctrl.options"
                           (on-close)="$ctrl.close()"
                           (on-continue)="angular.noop()">
     </hippo-create-content>

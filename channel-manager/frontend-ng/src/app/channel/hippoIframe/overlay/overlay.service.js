@@ -51,7 +51,8 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.manageContentHandler = angular.noop;
+    this.createContentHandler = angular.noop;
+    this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -61,9 +62,9 @@ class OverlayService {
     this.dialButtonsConfig = [
       {
         svg: plusSvg,
-        callback: () => {
+        callback: (options) => {
           this.$rootScope.$apply(() => {
-            this.manageContentHandler();
+            this.createContentHandler(options);
           });
         },
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
@@ -85,8 +86,12 @@ class OverlayService {
     this.editMenuHandler = callback;
   }
 
-  onManageContent(callback) {
-    this.manageContentHandler = callback;
+  onCreateContent(callback) {
+    this.createContentHandler = callback;
+  }
+
+  onEditContent(callback) {
+    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -361,7 +366,7 @@ class OverlayService {
     const showOptions = () => {
       adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(this._initManageContentLinkOptions(this.dialButtonsConfig));
+        optionButtonsContainer.html(this._createButtonsHtml(this.dialButtonsConfig, structureElement));
         fabBtn.addClass('hippo-fab-btn-open');
         if (closeIcon) {
           fabBtn.html(closeIcon);
@@ -394,16 +399,18 @@ class OverlayService {
     overlayElement.on('mouseleave', hideOptionsAndLeave);
   }
 
-  _initManageContentLinkOptions(config) {
-    const buttons = [];
-    Object.keys(config).forEach((i) => {
-      const button = config[i];
-      const tpl = $(`<button title="${button.tooltip}">${button.svg}</button>`)
-        .addClass(`hippo-fab-option-btn hippo-fab-option-${i}`)
-        .on('click', button.callback);
-      buttons.push(tpl);
-    });
-    return buttons;
+  _createButtonsHtml(buttons, structureElement) {
+    const options = {
+      uuid: structureElement.getUuid(),
+      templateQuery: structureElement.getTemplateQuery(),
+    };
+    return buttons.map((button, index) => this._createButtonTemplate(button, index, options));
+  }
+
+  _createButtonTemplate(button, index, options) {
+    return $(`<button title="${button.tooltip}">${button.svg}</button>`)
+      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
+      .on('click', () => button.callback(options));
   }
 
   _getElementPositionObject(boxElement) {
@@ -439,7 +446,7 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.manageContentHandler(structureElement.getUuid());
+        this.editContentHandler(structureElement.getUuid());
       });
     });
   }

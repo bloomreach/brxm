@@ -104,8 +104,13 @@ class ChannelCtrl {
     this.showSubpage('menu-editor');
   }
 
-  manageContent(contentUuid) {
-    this.SidePanelService.open('right', contentUuid);
+  createContent(options) {
+    this.SidePanelService.open('right', 'create', options);
+    this.CmsService.reportUsageStatistic('CMSChannelsCreateContent');
+  }
+
+  editContent(contentUuid) {
+    this.SidePanelService.open('right', 'edit', contentUuid);
     this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 

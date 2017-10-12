@@ -1,3 +1,4 @@
+import { log } from 'util';
 /*
  * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
@@ -31,6 +32,7 @@ export class CreateContentComponent implements AfterViewInit {
 
   @ViewChild('input') input: ElementRef;
   @Input() document: any;
+  @Input() options: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
@@ -40,11 +42,8 @@ export class CreateContentComponent implements AfterViewInit {
     // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
     //   .debounceTime(1000)
     //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
-
-    this.createContentService.getDocumentTypesFromTemplateQuery('new-document')
-      .subscribe((docTypes) => {
-        this.docTypes = docTypes;
-      });
+    this.createContentService.getDocumentTypesFromTemplateQuery(this.options.templateQuery)
+      .subscribe((docTypes) => this.docTypes = docTypes);
   }
 
   // TODO: Apply this function along with the observable when relevant

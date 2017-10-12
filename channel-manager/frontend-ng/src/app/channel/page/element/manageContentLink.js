@@ -20,6 +20,10 @@ class ManageContentLink extends EmbeddedLink {
   constructor(commentElement, metaData) {
     super('manage-content-link', commentElement, metaData);
   }
+
+  getTemplateQuery() {
+    return this.metaData.templateQuery;
+  }
 }
 
 export default ManageContentLink;
