@@ -473,6 +473,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final String folderPath = getFolderPath();
             if (folderPath == null) {
                 log.error("Could not create path to target folder.");
+                return null;
             }
             return getOrCreateFolder(folderPath);
         }
@@ -495,6 +496,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
             // add any folder nodes that do not yet exist
             HippoNode folderHippoNode = (HippoNode) folderNode;
+            Collections.reverse(notExistingFolders);
             for (String newFolder : notExistingFolders) {
                 folderHippoNode = createFolder(folderHippoNode, newFolder);
             }
