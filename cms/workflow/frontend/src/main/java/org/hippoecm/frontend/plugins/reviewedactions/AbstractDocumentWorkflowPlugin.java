@@ -181,9 +181,9 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
 
 
-    protected Map<String, Object> getInitializationPayload() {
+    protected Map<String, Serializable> getInitializationPayload() {
         HttpServletRequest request = ((HttpServletRequest) getRequest().getContainerRequest());
         final CmsSessionContext context = CmsSessionContext.getContext(request.getSession());
-        return (Map<String, Object>) context.getAttribute(CmsSessionContext.CMS_SESSION_CONEXT_PAYLOAD_KEY);
+        return (Map<String, Serializable>) context.getAttribute(CmsSessionContext.CMS_SESSION_CONEXT_PAYLOAD_KEY);
     }
 }
