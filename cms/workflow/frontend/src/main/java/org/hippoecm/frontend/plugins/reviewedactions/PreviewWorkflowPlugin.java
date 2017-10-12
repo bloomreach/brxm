@@ -35,11 +35,11 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
         inUseBy = getHint("inUseBy");
     }
 
-    boolean getInfoEditActionVisibility() {
+    protected boolean getInfoEditActionVisibility() {
         return StringUtils.isNotEmpty(inUseBy);
     }
 
-    StdWorkflow getInfoEditAction() {
+    protected StdWorkflow getInfoEditAction() {
         return new StdWorkflow("infoEdit", "infoEdit") {
 
             @Override
