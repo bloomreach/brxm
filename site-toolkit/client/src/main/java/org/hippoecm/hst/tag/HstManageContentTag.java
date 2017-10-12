@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -28,6 +30,8 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +71,33 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            String documentId = null;
+            if (document != null) {
+                final HippoNode documentNode = (HippoNode) document.getNode();
+                try {
+                    final Node editNode = documentNode.getCanonicalNode();
+                    if (editNode == null) {
+                        log.debug("Cannot create a manage-content link, cannot find canonical node of '{}'",
+                                documentNode.getPath());
+                        return EVAL_PAGE;
+                    }
+
+                    final Node handleNode = getHandleNodeIfIsAncestor(editNode);
+                    if (handleNode == null) {
+                        log.warn("Could not find handle node of {}", editNode.getPath());
+                        return EVAL_PAGE;
+                    }
+
+                    log.debug("The node path for the manage content link is '{}'", handleNode.getPath());
+                    documentId = handleNode.getIdentifier();
+                } catch (RepositoryException e) {
+                    log.error("Exception while trying to retrieve the node path for the edit location", e);
+                    return EVAL_PAGE;
+                }
+            }
+
             try {
-                write();
+                write(documentId);
             } catch (final IOException ignore) {
                 throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
@@ -86,15 +115,17 @@ public class HstManageContentTag extends TagSupport {
         document = null;
     }
 
-    private void write() throws IOException {
+    private void write(final String documentId) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final String comment = encloseInHTMLComment(toJSONMap(getAttributeMap()));
+        final Map<?, ?> attributeMap = getAttributeMap(documentId);
+        final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
-    private Map<?, ?> getAttributeMap() {
+    private Map<?, ?> getAttributeMap(final String documentId) {
         final Map<String, Object> result = new HashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
+        writeToMap(result, "uuid", documentId);
         writeToMap(result, "templateQuery", templateQuery);
         writeToMap(result, "rootPath", rootPath);
         writeToMap(result, "defaultPath", defaultPath);
@@ -106,6 +137,25 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.isNotEmpty(value)) {
             result.put(key, value);
         }
+    }
+
+    /*
+     * when a currentNode is of type hippo:handle, we return this node, else we check the parent, until we are at the jcr root node.
+     * When we hit the jcr root node, we return null;
+     */
+    private Node getHandleNodeIfIsAncestor(final Node currentNode) throws RepositoryException {
+        final Node rootNode = currentNode.getSession().getRootNode();
+        return getHandleNodeIfIsAncestor(currentNode, rootNode);
+    }
+
+    private Node getHandleNodeIfIsAncestor(final Node currentNode, final Node rootNode) throws RepositoryException {
+        if (currentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return currentNode;
+        }
+        if (currentNode.isSame(rootNode)) {
+            return null;
+        }
+        return getHandleNodeIfIsAncestor(currentNode.getParent(), rootNode);
     }
 
     public void setComponentParameter(final String componentParameter) {
