@@ -58,7 +58,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
 
-    AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
+    protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
@@ -156,7 +156,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         infoEditAction.setVisible(getInfoEditActionVisibility());
     }
 
-    final String getHint(final String key){
+    protected final String getHint(final String key){
         final Serializable serializable = info.get(key);
         if (serializable instanceof String) {
             return (String) serializable;
@@ -165,8 +165,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     }
 
 
-    abstract boolean getInfoEditActionVisibility();
+    protected abstract boolean getInfoEditActionVisibility();
 
-    abstract StdWorkflow getInfoEditAction();
+    protected abstract StdWorkflow getInfoEditAction();
 
 }
