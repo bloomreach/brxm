@@ -36,7 +36,28 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.*;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.ACCEPT_REQUEST;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.CANCEL_REQUEST;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.CHECK_MODIFIED;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.COPY;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DELETE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DEPUBLISH;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.LIST_VERSIONS;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.MOVE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.PUBLISH;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REJECT_REQUEST;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RENAME;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_DELETE;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_DEPUBLICATION;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_PUBLICATION;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RESTORE_VERSION;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RETRIEVE_VERSION;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.UNLOCK;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.VERSION;
+import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.VERSION_RESTORE_TO;
 
 /**
  * DocumentWorkflow implementation which delegates the document workflow state management and action processing
@@ -69,9 +90,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
-
-    public DocumentWorkflowImpl() throws RemoteException {
-    }
 
     @SuppressWarnings("unchecked")
     protected DocumentHandle createDocumentHandle(Node node) throws WorkflowException {

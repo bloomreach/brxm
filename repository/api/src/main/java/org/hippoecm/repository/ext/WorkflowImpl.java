@@ -16,9 +16,7 @@
 package org.hippoecm.repository.ext;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.rmi.Remote;
-import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -43,17 +41,10 @@ public abstract class WorkflowImpl implements Remote, Workflow
     protected WorkflowContext context;
 
     /**
-     * All implementations of a work-flow must provide a single, no-argument constructor.
-     * @throws RemoteException mandatory exception that must be thrown by all Remote objects
-     */
-    public WorkflowImpl() throws RemoteException {
-    }
-
-    /**
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * @param context the new context that should be used
      */
-    final public void setWorkflowContext(WorkflowContext context) {
+    public final void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
 
@@ -63,6 +54,15 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     public void setNode(Node node) throws RepositoryException {
         this.node = node;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String,Serializable> hints() throws WorkflowException {
+        Map<String,Serializable> map = new TreeMap<>();
+        map.put("hints", Boolean.valueOf(true));
+        return map;
     }
 
     /**
@@ -82,17 +82,10 @@ public abstract class WorkflowImpl implements Remote, Workflow
         return node;
     }
 
-    final protected WorkflowContext getWorkflowContext() {
+    protected final WorkflowContext getWorkflowContext() {
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String,Serializable> hints() throws WorkflowException {
-        Map<String,Serializable> map = new TreeMap<>();
-        map.put("hints", new Boolean(true));
-        return map;
-    }
+
 
 }
