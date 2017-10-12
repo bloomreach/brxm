@@ -114,7 +114,7 @@
     </hippo-create-content>
   </md-content>
 
-  <md-toolbar ng-hide="$ctrl.createContent">
+  <md-toolbar ng-hide="$ctrl.create">
     <div class="md-toolbar-tools">
       <span flex></span>
 
@@ -126,7 +126,7 @@
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
                  ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
-        {{ $ctrl.createContent ? 'CREATE' : 'SAVE' | translate }}
+        {{ $ctrl.create ? 'CREATE' : 'SAVE' | translate }}
       </md-button>
     </div>
   </md-toolbar>
