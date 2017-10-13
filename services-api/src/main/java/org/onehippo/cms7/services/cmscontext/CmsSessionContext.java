@@ -46,9 +46,9 @@ public interface CmsSessionContext {
 
 
     /**
-     * Key to retrieve the initial payload for the documentworkflow.
+     * Key to retrieve the context payload
      */
-    String CMS_SESSION_CONTEXT_PAYLOAD_KEY = CmsSessionContext.class.getName() + ".initialPayload";
+    String CMS_SESSION_CONTEXT_PAYLOAD_KEY = CmsSessionContext.class.getName() + ".contextPayload";
 
     /**
      * Static method to retrieve the CmsSessionContext from a HttpSession
