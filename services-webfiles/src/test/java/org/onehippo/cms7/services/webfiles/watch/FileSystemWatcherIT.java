@@ -18,12 +18,10 @@ package org.onehippo.cms7.services.webfiles.watch;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class FileSystemWatcherIT extends AbstractFileSystemObserverIT {
 
     private FileSystemWatcher fileSystemWatcher;
