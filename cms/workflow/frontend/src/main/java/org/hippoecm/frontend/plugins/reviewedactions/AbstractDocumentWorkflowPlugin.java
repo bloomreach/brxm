@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -39,12 +38,12 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,19 +170,11 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         DocumentWorkflow workflow = getWorkflow();
         if (workflow != null) {
             try {
-                return workflow.hints(getInitializationPayload());
+                return workflow.hints(InitializationPayload.get());
             } catch (WorkflowException | RemoteException | RepositoryException e) {
                 log.error("Unable to retrieve workflow hints", e);
             }
         }
         return Collections.emptyMap();
-    }
-
-
-
-    protected Map<String, Serializable> getInitializationPayload() {
-        HttpServletRequest request = ((HttpServletRequest) getRequest().getContainerRequest());
-        final CmsSessionContext context = CmsSessionContext.getContext(request.getSession());
-        return (Map<String, Serializable>) context.getAttribute(CmsSessionContext.CMS_SESSION_CONEXT_PAYLOAD_KEY);
     }
 }

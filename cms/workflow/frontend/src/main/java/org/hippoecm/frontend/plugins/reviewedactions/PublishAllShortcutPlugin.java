@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -57,11 +58,11 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(PublishAllShortcutPlugin.class);
 
-    private final static String QUERY_LANGUAGE_PUBLISH = Query.SQL;
-    private final static String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '/content/%' AND hippostd:state='unpublished'";
-    private final static String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
-    private final static String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '/content/%' AND hippostd:state='published'";
-    private final static String WORKFLOW_CATEGORY = "default";
+    private static final String QUERY_LANGUAGE_PUBLISH = Query.SQL;
+    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '/content/%' AND hippostd:state='unpublished'";
+    private static final String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
+    private static final String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '/content/%' AND hippostd:state='published'";
+    private static final String WORKFLOW_CATEGORY = "default";
 
     private final static String MODE_PUBLISH = "publish";
     private final static String MODE_DEPUBLISH = "depublish";
@@ -162,7 +163,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                             }
                         }
 
-                        Map<String, Serializable> hints = documentWorkflow.hints();
+                        Map<String, Serializable> hints = documentWorkflow.hints(InitializationPayload.get());
                         if (mode.equals(MODE_PUBLISH) && Boolean.TRUE.equals(hints.get("publish"))) {
                             ((DocumentWorkflow) workflow).publish();
                         } else if (mode.equals(MODE_DEPUBLISH) && Boolean.TRUE.equals(hints.get("depublish"))) {

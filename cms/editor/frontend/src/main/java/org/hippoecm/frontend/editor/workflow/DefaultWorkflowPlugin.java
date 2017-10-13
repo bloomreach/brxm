@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -499,7 +500,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             if (workflowDescriptor != null) {
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
-                info = workflow.hints();
+                info = workflow.hints(InitializationPayload.get());
             }
         } catch (RepositoryException | WorkflowException | RemoteException ex) {
             log.error(ex.getMessage());
@@ -524,6 +525,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     /**
      * @deprecated replaced by {@link org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog} since version 3.2.0.
      */
+    @Deprecated
     public class RenameDocumentDialog extends WorkflowDialog<Void> {
 
         private final IModel<String> nameModel;

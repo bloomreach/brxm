@@ -44,6 +44,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -230,7 +231,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     WorkflowManager workflowManager = ((HippoWorkspace) folder.getSession().getWorkspace()).getWorkflowManager();
                     Workflow workflow = workflowManager.getWorkflow(WORKFLOW_CATEGORY, child);
                     if (workflow != null) {
-                        Serializable hint = workflow.hints().get(workflowAction);
+                        Serializable hint = workflow.hints(InitializationPayload.get()).get(workflowAction);
                         if (hint instanceof Boolean && (Boolean) hint) {
                             documents.add(child.getIdentifier());
                         }

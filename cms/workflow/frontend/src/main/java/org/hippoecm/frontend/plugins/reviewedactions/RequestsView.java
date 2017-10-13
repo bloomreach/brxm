@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -75,7 +76,7 @@ public class RequestsView extends RepeatingView {
             WorkflowDescriptorModel model = getModel();
             Workflow workflow = model.getWorkflow();
             if (workflow != null) {
-                Map<String, Serializable> info = workflow.hints();
+                Map<String, Serializable> info = workflow.hints(InitializationPayload.get());
                 if (info.containsKey("requests")) {
                     Map<String, Map<String, ?>> infoRequests = (Map<String, Map<String, ?>>) info.get("requests");
                     for (Map.Entry<String, Map<String, ?>> entry : infoRequests.entrySet()) {

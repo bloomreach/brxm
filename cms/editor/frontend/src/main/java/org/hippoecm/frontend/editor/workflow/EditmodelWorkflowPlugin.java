@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -188,7 +189,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
-                Map<String, Serializable> info = workflow.hints();
+                Map<String, Serializable> info = workflow.hints(InitializationPayload.get());
                 if (info.containsKey("edit")) {
                     Object editObject = info.get("edit");
                     if (editObject instanceof Boolean) {
