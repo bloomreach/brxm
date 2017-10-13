@@ -157,7 +157,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         super.setNode(node);
         try {
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
-            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext()),      createDocumentHandle(node));
+            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext()), createDocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -337,7 +337,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                 .build());
     }
 
-       @Override
+    @Override
     public void cancelRequest(String requestIdentifier, String reason) throws WorkflowException {
         cancelRequest(requestIdentifier);
     }
@@ -425,11 +425,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return triggerAction(eventPayload, actionsMap, action);
     }
 
-    public void addRequestToEventPayload(final Map<String, Object> eventPayload, final String requestIdentifier) {
+    private void addRequestToEventPayload(final Map<String, Object> eventPayload, final String requestIdentifier) {
         eventPayload.put(REQUEST,workflowExecutor.getData().getRequests().get(requestIdentifier));
     }
 
-    public Object triggerAction(final Map<String, Object> eventPayload, final Map<String, Boolean> actionsMap, final String action) throws WorkflowException {
+    private Object triggerAction(final Map<String, Object> eventPayload, final Map<String, Boolean> actionsMap, final String action) throws WorkflowException {
         return actionsMap==null?workflowExecutor.triggerAction(action, eventPayload):workflowExecutor.triggerAction(action, actionsMap, eventPayload);
     }
 
