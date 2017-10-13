@@ -50,7 +50,7 @@
       <md-button class="md-icon-button qa-edit-in-content-perspective"
                  aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
-                 ng-hide="$ctrl.createContent"
+                 ng-hide="$ctrl.templateQuery"
                  ng-click="$ctrl.openContentEditor('edit', false)"
                  title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
         <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
@@ -58,7 +58,7 @@
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ ::'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
-                 ng-hide="$ctrl.createContent"
+                 ng-hide="$ctrl.templateQuery"
                  ng-click="$ctrl.openContentEditor('view')"
                  title="{{ ::'PUBLISH' | translate }}">
         <md-icon md-svg-icon="publish"></md-icon>
@@ -107,13 +107,13 @@
                        field-values="$ctrl.doc.fields">
       </document-fields>
     </form>
-    <hippo-create-content ng-if="$ctrl.createContent"
+    <hippo-create-content ng-if="$ctrl.templateQuery"
                           (on-close)="$ctrl.close()"
                           (on-continue)="angular.noop()">
     </hippo-create-content>
   </md-content>
 
-  <md-toolbar ng-hide="$ctrl.createContent">
+  <md-toolbar ng-hide="$ctrl.templateQuery">
     <div class="md-toolbar-tools">
       <span flex></span>
 
@@ -125,7 +125,7 @@
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
                  ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
-        {{ $ctrl.createContent ? 'CREATE' : 'SAVE' | translate }}
+        {{ $ctrl.templateQuery ? 'CREATE' : 'SAVE' | translate }}
       </md-button>
     </div>
   </md-toolbar>

@@ -1017,7 +1017,7 @@ describe('RightSidePanel', () => {
     $ctrl._initNewContent();
 
     expect($ctrl._resetState).toHaveBeenCalled();
-    expect($ctrl.createContent).toEqual(true);
+    expect($ctrl.templateQuery).toEqual(true);
     expect($ctrl.title).toEqual('NEW_CONTENT');
   });
 });

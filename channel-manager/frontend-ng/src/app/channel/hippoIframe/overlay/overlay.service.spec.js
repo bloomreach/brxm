@@ -31,16 +31,14 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((
-      _$q_,
-      _$rootScope_,
-      _DomService_,
-      _ExperimentStateService_,
-      _hstCommentsProcessorService_,
-      _OverlayService_,
-      _PageStructureService_,
-      _RenderingService_,
-    ) => {
+    inject((_$q_,
+            _$rootScope_,
+            _DomService_,
+            _ExperimentStateService_,
+            _hstCommentsProcessorService_,
+            _OverlayService_,
+            _PageStructureService_,
+            _RenderingService_,) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       DomService = _DomService_;
@@ -59,7 +57,7 @@ describe('OverlayService', () => {
     OverlayService.init($iframe);
   });
 
-  function loadIframeFixture(callback) {
+  function loadIframeFixture (callback) {
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
@@ -81,7 +79,7 @@ describe('OverlayService', () => {
     $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
-  function iframe(selector) {
+  function iframe (selector) {
     return $(selector, iframeWindow.document);
   }
 
@@ -195,11 +193,14 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
+      // Total overlay elements
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
+
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(6);
       done();
     });
   });
@@ -465,7 +466,7 @@ describe('OverlayService', () => {
     });
   });
 
-  function expectNoPropagatedClicks() {
+  function expectNoPropagatedClicks () {
     const body = iframe('body');
     body.click(() => {
       fail('click event should not propagate to the page');
@@ -587,19 +588,97 @@ describe('OverlayService', () => {
     });
   });
 
-  it('returns correct configuration out of config object', () => {
-    const config = { // each property should be filled with the method that will extract the data from the HST comment
-      editContent: true,
-      createContent: true,
-      changeParameter: true,
-    };
-    const returnedConfigurations = OverlayService._getDialOptions(config);
+  describe('Manage content dial button', () => {
+    it('returns correct configuration out of config object', () => {
+      const config = { // each property should be filled with the method that will extract the data from the HST comment
+        documentUuid: true,
+        templateQuery: true,
+        componentParameter: true,
+      };
+      const returnedConfigurations = OverlayService._getDialOptions(config);
 
-    expect(returnedConfigurations.mainButtonIcon).toBeDefined();
-    expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
-    expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
-    expect(returnedConfigurations.buttons).toBeDefined();
-    expect(returnedConfigurations.buttons.length).toEqual(2);
-    expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+      expect(returnedConfigurations.mainButtonIcon).toBeDefined();
+      expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
+      expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
+      expect(returnedConfigurations.buttons).toBeDefined();
+      expect(returnedConfigurations.buttons.length).toEqual(2);
+      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+    });
+
+    describe('Dial buttons', () => {
+      function manageContentScenario (scenarioNumber, callback) {
+        loadIframeFixture(() => {
+          const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+          callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+        });
+      }
+
+      it('Scenario 1', (done) => {
+        manageContentScenario(1, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+
+      it('Scenario 2', (done) => {
+        manageContentScenario(2, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 3', (done) => {
+        manageContentScenario(3, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 4', (done) => {
+        manageContentScenario(4, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 5', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 6', (done) => {
+        manageContentScenario(6, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+    });
   });
 });

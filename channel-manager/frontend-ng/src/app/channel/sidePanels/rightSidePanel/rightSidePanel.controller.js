@@ -153,7 +153,7 @@ class RightSidePanelCtrl {
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
-    delete this.createContent;
+    delete this.templateQuery;
 
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
@@ -187,7 +187,7 @@ class RightSidePanelCtrl {
 
   _initNewContent() {
     this._resetState();
-    this.createContent = true;
+    this.templateQuery = true;
     this.title = this.$translate.instant('NEW_CONTENT');
   }
 
