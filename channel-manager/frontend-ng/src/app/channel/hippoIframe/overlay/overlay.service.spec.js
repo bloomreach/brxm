@@ -31,16 +31,14 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((
-      _$q_,
-      _$rootScope_,
-      _DomService_,
-      _ExperimentStateService_,
-      _hstCommentsProcessorService_,
-      _OverlayService_,
-      _PageStructureService_,
-      _RenderingService_,
-    ) => {
+    inject((_$q_,
+            _$rootScope_,
+            _DomService_,
+            _ExperimentStateService_,
+            _hstCommentsProcessorService_,
+            _OverlayService_,
+            _PageStructureService_,
+            _RenderingService_,) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       DomService = _DomService_;
@@ -59,7 +57,7 @@ describe('OverlayService', () => {
     OverlayService.init($iframe);
   });
 
-  function loadIframeFixture(callback) {
+  function loadIframeFixture (callback) {
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
@@ -81,7 +79,7 @@ describe('OverlayService', () => {
     $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
-  function iframe(selector) {
+  function iframe (selector) {
     return $(selector, iframeWindow.document);
   }
 
@@ -196,13 +194,13 @@ describe('OverlayService', () => {
   fit('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(12);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(2);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(6);
       done();
     });
   });
@@ -468,7 +466,7 @@ describe('OverlayService', () => {
     });
   });
 
-  function expectNoPropagatedClicks() {
+  function expectNoPropagatedClicks () {
     const body = iframe('body');
     body.click(() => {
       fail('click event should not propagate to the page');
@@ -608,24 +606,79 @@ describe('OverlayService', () => {
     });
 
     describe('Dial buttons', () => {
-      function getMainButton (container) { return $(container).find('.hippo-fab-btn'); }
-      function getOptionButtons (container) { return $(container).find('.hippo-fab-dial-options').find('.hippo-fab-option-btn'); }
-
-      it('Scenario 1 (index 0)', (done) => {
+      function manageContentScenario (scenarioNumber, callback) {
         loadIframeFixture(() => {
-          const scenarios = iframe('.hippo-overlay-element-manage-content-link');
-          const container = scenarios[0];
-          const optionButtons = getOptionButtons(container);
-          const mainButton = getMainButton(container);
-          expect(mainButton.html().trim()).toBe(OverlayService.contentLinkSvg.trim());
-          expect(optionButtons.length).toBe(0);
+          const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+          callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+        });
+      }
 
-          // const mainButton = container.find('.hippo-fab-btn');
-          // const optionButtons = container.find('.hippo-fab-dial-options').children;
+      it('Scenario 1', (done) => {
+        manageContentScenario(1, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
 
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(0);
           done();
         });
-      })
+      });
+
+      it('Scenario 2', (done) => {
+        manageContentScenario(2, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 3', (done) => {
+        manageContentScenario(3, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 4', (done) => {
+        manageContentScenario(4, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 5', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 6', (done) => {
+        manageContentScenario(6, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+
+          mainButton.trigger('mouseenter');
+          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
     });
   });
 });

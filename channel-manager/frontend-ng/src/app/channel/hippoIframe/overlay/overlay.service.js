@@ -373,7 +373,7 @@ class OverlayService {
 
     const fabBtn = overlayElement.find('#hippo-fab-btn');
     const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
-    
+
     if (config.documentUuid) {
       fabBtn.addClass('qa-edit-content');
     }
