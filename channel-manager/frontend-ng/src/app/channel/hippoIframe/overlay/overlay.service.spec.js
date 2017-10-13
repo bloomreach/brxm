@@ -191,7 +191,7 @@ describe('OverlayService', () => {
     });
   });
 
-  fit('generates overlay elements', (done) => {
+  it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
@@ -588,7 +588,7 @@ describe('OverlayService', () => {
     });
   });
 
-  fdescribe('Manage content dial button', () => {
+  describe('Manage content dial button', () => {
     it('returns correct configuration out of config object', () => {
       const config = { // each property should be filled with the method that will extract the data from the HST comment
         documentUuid: true,
