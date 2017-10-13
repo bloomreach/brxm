@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DocumentWorkflowImplTest {
 
-    public static final String DOCUMENTWORKFLOW = "documentworkflow";
+    public static final String DOCUMENTWORKFLOW = "customworkflow";
 
     /**
      * Test extension of  {@link DocumentWorkflowImpl#getScxmlId()}
