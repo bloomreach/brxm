@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 
@@ -33,7 +34,7 @@ import static java.lang.Boolean.TRUE;
 /**
  * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
-public abstract class WorkflowImpl implements Remote, Workflow
+public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextAware
 {
     private Node node;
 
@@ -70,7 +71,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
     /**
      * @return the backing Node of this workflow
      */
-    protected Node getNode() {
+    public Node getNode() {
         return node;
     }
 
@@ -84,7 +85,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
         return node;
     }
 
-    protected final WorkflowContext getWorkflowContext() {
+    public final WorkflowContext getWorkflowContext() {
         return context;
     }
 

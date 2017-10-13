@@ -42,6 +42,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -292,10 +293,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } else {
             throw new RepositoryException("Class is not of type Workflow [" + clazz.getName() + "]");
         }
-        if (WorkflowImpl.class.isAssignableFrom(clazz)) {
+        if (WorkflowContextAware.class.isAssignableFrom(clazz)) {
             Node rootSessionNode = workflowSession.getNodeByIdentifier(uuid);
-            ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextImpl(workflowDefinition, item.getSession(), item));
-            ((WorkflowImpl) workflow).setNode(rootSessionNode);
+            ((WorkflowContextAware)workflow).setWorkflowContext(new WorkflowContextImpl(workflowDefinition, item.getSession(), item));
+            ((WorkflowContextAware)workflow).setNode(rootSessionNode);
         }
         return workflow;
     }

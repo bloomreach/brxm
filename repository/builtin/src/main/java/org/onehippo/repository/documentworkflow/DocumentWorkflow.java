@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -42,7 +43,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * <p> The -Request- and VersionWorkflows operations have been re-defined to be able to use different parameters
  * (and methodNames) as needed to be functional on Document handle level </p>
  */
-public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow {
+public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, WorkflowContextAware {
 
     String TARGET_DATE = "targetDate";
     String NAME = "name";
