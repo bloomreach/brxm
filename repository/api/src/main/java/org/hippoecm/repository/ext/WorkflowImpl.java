@@ -17,6 +17,7 @@ package org.hippoecm.repository.ext;
 
 import java.io.Serializable;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -66,6 +67,14 @@ public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextA
         Map<String,Serializable> map = new TreeMap<>();
         map.put("hints", TRUE);
         return map;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Serializable> hints(final Map<String, Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException {
+        return hints();
     }
 
     /**

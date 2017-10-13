@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
@@ -36,6 +38,29 @@ public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
     }
 
     public Map<String,Serializable> hints() {
-        return new TreeMap<String,Serializable>();
+        return new TreeMap<>();
+    }
+
+    /**
+     * The hints method is not an actual workflow call, but a method by which information can be retrieved from the
+     * workflow.  All implementations must implement this call as a pure function, no modification may be made, nor no
+     * state may be maintained and and in principle no additional lookups of data is allowed.  This allows for caching
+     * the result as long as the document on which the workflow operates isn't modified. By convention, keys that are
+     * names or signatures of methods implemented by the workflow provide information to the application program whether
+     * the workflow method is available this time, or will result in a WorkflowException.  The value for these keys will
+     * often be a {@link Boolean} to indicate the enabled status of the method.<p/> Non-standard keys in this map should
+     * be prefixed with the implementation package name using dot seperations.
+     *
+     * @param initializationPayload a map containing user context information relevant for the workflow
+     * @return a map containing hints given by the workflow, the data in this map may be considered valid until the
+     * document itself changes
+     * @throws WorkflowException   thrown in case the implementing workflow encounters an error, this exception should
+     *                             normally never be thrown by implementations for the hints method.
+     * @throws RemoteException     a connection error with the repository
+     * @throws RepositoryException a generic error communicating with the repository
+     */
+    @Override
+    public Map<String, Serializable> hints(final Map<String, Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException {
+        return hints();
     }
 }
