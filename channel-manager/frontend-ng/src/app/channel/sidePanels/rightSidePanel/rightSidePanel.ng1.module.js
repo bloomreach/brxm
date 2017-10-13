@@ -16,6 +16,7 @@
 import { downgradeComponent } from '@angular/upgrade/static';
 import { CreateContentComponent } from './createContentForm/create-content.component.ts';
 import rightSidePanelComponent from './rightSidePanel.component';
+import editContentComponent from './editContent/editContent.component';
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
@@ -25,6 +26,7 @@ const rightSidePanelModule = angular
     resizeHandleModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
+  .component('hippoEditContent', editContentComponent)
   .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }));
 
 export default rightSidePanelModule.name;

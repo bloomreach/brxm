@@ -14,46 +14,6 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
-
-const ERROR_MAP = {
-  NO_CONTENT: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-    linkToContentEditor: true,
-  },
-  NOT_A_DOCUMENT: {
-    title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
-  },
-  NOT_FOUND: {
-    title: 'FEEDBACK_NOT_FOUND_TITLE',
-    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
-    disableContentButtons: true,
-  },
-  OTHER_HOLDER: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
-    hasUser: true,
-  },
-  REQUEST_PENDING: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
-  },
-  UNAVAILABLE: { // default catch-all
-    title: 'FEEDBACK_DEFAULT_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
-  },
-  UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-  },
-};
-
 class RightSidePanelCtrl {
   constructor(
     $scope,
@@ -101,28 +61,17 @@ class RightSidePanelCtrl {
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
       // onOpen
       (documentId) => {
-        if (documentId) {
-          this.openDocument(documentId);
-        } else {
-          this._initNewContent();
-        }
+        this.openEditor(documentId);
         this._onOpen();
       },
       // onClose
-      () => this._releaseDocument());
+      () => $q.resolve());
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
     $element.on('keydown', (e) => {
       if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
         e.stopImmediatePropagation();
-        this.close();
-      }
-    });
-
-    CmsService.subscribe('kill-editor', (documentId) => {
-      if (this.documentId === documentId) {
-        this.deleteDraftOnClose = false;
         this._closePanel();
       }
     });
@@ -132,281 +81,28 @@ class RightSidePanelCtrl {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
-  openDocument(documentId) {
+  openEditor(documentId) {
     if (this.documentId === documentId) {
       return;
     }
+
+    this._resetState();
     if (documentId) {
-      this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
-        this._deleteDraft().finally(() => {
-          this._resetState();
-          this._loadDocument(documentId);
-        });
-      });
+      this.documentId = documentId;
+      this.editing = true;
+    } else {
+      this.createContent = true;
     }
   }
 
   _resetState() {
-    delete this.doc;
     delete this.documentId;
-    delete this.docType;
     delete this.editing;
-    delete this.feedback;
-    delete this.disableContentButtons;
     delete this.createContent;
-
-    this.title = this.defaultTitle;
-    this.deleteDraftOnClose = true;
-
-    this._resetForm();
-  }
-
-  _resetForm() {
-    if (this.form) {
-      this.form.$setPristine();
-    }
-  }
-
-  _loadDocument(id) {
-    this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
-    this.loading = true;
-    this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
-        .then((doc) => {
-          if (this._hasFields(doc)) {
-            return this.ContentService.getDocumentType(doc.info.type.id)
-              .then(docType => this._onLoadSuccess(doc, docType));
-          }
-          return this.$q.reject(this._noContentResponse(doc));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._showFeedbackDraftInvalid())
-      .finally(() => delete this.loading);
-  }
-
-  _initNewContent() {
-    this._resetState();
-    this.createContent = true;
-    this.title = this.$translate.instant('NEW_CONTENT');
-  }
-
-  _showFeedbackDraftInvalid() {
-    this.feedback = {
-      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
-      linkToContentEditor: true,
-    };
-  }
-
-  _hasFields(doc) {
-    return doc.fields && Object.keys(doc.fields).length > 0;
-  }
-
-  _noContentResponse(doc) {
-    return {
-      data: {
-        reason: 'NO_CONTENT',
-        params: {
-          displayName: doc.displayName,
-        },
-      },
-    };
-  }
-  _onLoadSuccess(doc, docType) {
-    this.doc = doc;
-    this.docType = docType;
-    this.editing = true;
-
-    if (this.doc.displayName) {
-      this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
-    }
-    this._resizeTextareas();
-  }
-
-  _onLoadFailure(response) {
-    let errorKey;
-    let params = {};
-
-    if (this._isErrorInfo(response.data)) {
-      const errorInfo = response.data;
-      errorKey = errorInfo.reason;
-      if (errorInfo.params) {
-        params = this._extractErrorParams(errorInfo);
-        if (errorInfo.params.displayName) {
-          this.title = this.$translate.instant('EDIT_DOCUMENT', errorInfo.params);
-        }
-      }
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
-    } else {
-      errorKey = 'UNAVAILABLE';
-    }
-    this._handleErrorResponse(errorKey, params);
-  }
-
-  _extractErrorParams(errorInfo) {
-    const params = {};
-    if (errorInfo.reason === 'OTHER_HOLDER') {
-      params.user = errorInfo.params.userName || errorInfo.params.userId;
-    }
-    return params;
-  }
-
-  _handleErrorResponse(errorKey, params) {
-    const error = ERROR_MAP[errorKey];
-
-    if (error) {
-      this.feedback = {
-        title: error.title,
-        message: this.$translate.instant(error.messageKey, params),
-        linkToContentEditor: error.linkToContentEditor,
-      };
-      this.disableContentButtons = error.disableContentButtons;
-    }
-  }
-
-  _resizeTextareas() {
-    // Set initial size of textareas (see Angular Material issue #9745).
-    // Use $timeout to ensure that the sidenav has become visible.
-    this.$timeout(() => {
-      this.$scope.$broadcast('md-resize-textarea');
-    });
   }
 
   isLockedOpen() {
     return this.SidePanelService.isOpen('right');
-  }
-
-  saveDocument() {
-    return this._saveDraft()
-      .then((savedDoc) => {
-        this.doc = savedDoc;
-        this._resetForm();
-        this.HippoIframeService.reload();
-        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      })
-      .catch((response) => {
-        let params = {};
-        let errorKey = 'ERROR_UNABLE_TO_SAVE';
-
-        if (this._isErrorInfo(response.data)) {
-          errorKey = `ERROR_${response.data.reason}`;
-          params = this._extractErrorParams(response.data);
-        } else if (this._isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
-        }
-
-        this.FeedbackService.showError(errorKey, params);
-
-        return this.$q.reject(); // tell the caller that saving has failed.
-      });
-  }
-
-  _isDocument(obj) {
-    return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
-  }
-
-  _isErrorInfo(obj) {
-    return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
-  }
-
-  _reloadDocumentType() {
-    this.ContentService.getDocumentType(this.doc.info.type.id)
-      .then((docType) => {
-        this.docType = docType;
-      })
-      .catch((response) => {
-        this._onLoadFailure(response);
-      });
-  }
-
-  openContentEditor(mode, isPromptUnsavedChanges = true) {
-    this.deleteDraftOnClose = false;
-
-    if (!isPromptUnsavedChanges) {
-      this._closePanelAndOpenContent(mode);
-      return;
-    }
-    const messageKey = mode === 'view'
-      ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
-      : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';
-
-    this._dealWithPendingChanges(messageKey, () => {
-      if (mode === 'view') {
-        this._deleteDraft().finally(() => this._closePanelAndOpenContent(mode));
-      } else {
-        this._closePanelAndOpenContent(mode);
-      }
-    });
-  }
-
-  _dealWithPendingChanges(messageKey, done) {
-    this._confirmSaveOrDiscardChanges(messageKey)
-      .then((action) => {
-        if (action === 'SAVE') {
-          // don't return the result of saveDocument so a failing save does not invoke the 'done' function
-          this.saveDocument().then(done);
-        } else {
-          done(); // discard
-        }
-      });
-  }
-
-  _confirmSaveOrDiscardChanges(messageKey) {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve('DISCARD'); // No pending changes, no dialog, continue normally.
-    }
-
-    const message = this.$translate.instant(messageKey, { documentName: this.doc.displayName });
-    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
-
-    return this.DialogService.show({
-      template: multiActionDialogTemplate,
-      controller: MultiActionDialogCtrl,
-      controllerAs: '$ctrl',
-      locals: {
-        title,
-        message,
-        actions: ['DISCARD', 'SAVE'],
-      },
-      bindToController: true,
-    });
-  }
-
-  _closePanelAndOpenContent(mode) {
-    // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
-    // It will will unlock the document if needed, so don't delete the draft here.
-    this._closePanel();
-
-    // mode can be 'view' or 'edit', so the event names can be 'view-content' and 'edit-content'
-    this.CmsService.publish('open-content', this.documentId, mode);
-
-    if (mode === 'view') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
-    } else if (mode === 'edit') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
-    }
-  }
-
-  _saveDraft() {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve();
-    }
-    return this.ContentService.saveDraft(this.doc);
-  }
-
-  closeButtonLabel() {
-    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
-  }
-
-  isDocumentDirty() {
-    return (this.doc && this.doc.info && this.doc.info.dirty) || this._isFormDirty();
-  }
-
-  _isFormDirty() {
-    return this.form && this.form.$dirty;
   }
 
   _onOpen() {
@@ -415,50 +111,9 @@ class RightSidePanelCtrl {
     this.$element.css('max-width', this.lastSavedWidth);
   }
 
-  close() {
-    return this._releaseDocument()
-      .then(() => {
-        this.deleteDraftOnClose = false;
-        this._closePanel();
-      });
-  }
-
-  _releaseDocument() {
-    if (this.deleteDraftOnClose) {
-      return this._confirmDiscardChanges()
-        .then(() => {
-          // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
-          this._deleteDraft();
-        });
-    }
-    return this.$q.resolve();
-  }
-
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
     this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
-  }
-
-  _confirmDiscardChanges() {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve();
-    }
-    const messageParams = {
-      documentName: this.doc.displayName,
-    };
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
-      .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.cancelLabel);
-
-    return this.DialogService.show(confirm);
-  }
-
-  _deleteDraft() {
-    if (this.editing) {
-      return this.ContentService.deleteDraft(this.documentId);
-    }
-    return this.$q.resolve();
   }
 
   _closePanel() {

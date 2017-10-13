@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import './rightSidePanel.scss';
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+import controller from './editContent.controller';
+import template from './editContent.html';
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
+const editContentComponent = {
+  controller,
   template,
-  controllerAs: 'RightSidePanelCtrl',
+  bindings: {
+    documentId: '=',
+    onFullWidth: '&',
+    onClose: '&',
+  },
 };
 
-export default rightSidePanelComponent;
+export default editContentComponent;

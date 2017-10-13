@@ -14,68 +14,127 @@
   limitations under the License.
   -->
 <div layout="column" class="create-content-container">
-  <form (ngSubmit)="submit(form)" #form="ngForm">
 
-    <!-- Document name field -->
-    <div class="field">
-      <mat-input-container class="create-content-field">
-        <input mdInput ngModel name="documentName" placeholder="Document name" required>
-      </mat-input-container>
+  <!----------------------------------TODO: Implement the angular4 version of the below------------------------------->
+  <!--<md-toolbar class="edit-title-toolbar">-->
+    <!--<div class="md-toolbar-tools">-->
+      <!--<h1 class="md-title text-truncate" title="{{ $ctrl.doc.displayName }}">-->
+        <!--{{ $ctrl.title }}-->
+      <!--</h1>-->
 
-      <hippo-hints [data]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
-        <div hint="required">This field is required</div>
-      </hippo-hints>
-    </div>
+      <!--<span flex></span>-->
+
+      <!--<md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"-->
+                 <!--aria-label="{{ ::'FULL_WIDTH' | translate }}"-->
+                 <!--ng-click="$ctrl.setFullWidth(true)"-->
+                 <!--ng-show="!$ctrl.isFullWidth"-->
+                 <!--title="{{ ::'FULL_WIDTH' | translate }}">-->
+        <!--<md-icon md-svg-icon="maximize-sidepanel"></md-icon>-->
+      <!--</md-button>-->
+      <!--<md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"-->
+                 <!--aria-label="{{ ::'RESTORE_WIDTH' | translate }}"-->
+                 <!--ng-click="$ctrl.setFullWidth(false)"-->
+                 <!--ng-show="$ctrl.isFullWidth"-->
+                 <!--title="{{ ::'RESTORE_WIDTH' | translate }}">-->
+        <!--<md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>-->
+      <!--</md-button>-->
+    <!--</div>-->
+  <!--</md-toolbar>-->
+  <!--<sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>-->
+
+  <!----------------------------------md-content as seen in editContent.html------------------------------->
+  <div class="md-content"
+       flex="grow"
+       layout="column"
+       id="rightSidePanel-content">
+    <!--<md-subheader class="md-no-sticky"-->
+                  <!--ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"-->
+                  <!--md-colors="{background: 'hippo-grey-200'}">-->
+      <!--<div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>-->
+      <!--&lt;!&ndash; use double quotes in the click action expression so we can use single quotes in the translation value &ndash;&gt;-->
+      <!--<div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>-->
+    <!--</md-subheader>-->
+
+    <!--<div ng-if="$ctrl.feedback"-->
+         <!--class="md-padding feedback qa-feedback"-->
+         <!--md-colors="{background: 'hippo-red-50'}">-->
+      <!--<h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>-->
+
+      <!--<p class="qa-feedback-message">-->
+        <!--{{::$ctrl.feedback.message }}-->
+      <!--</p>-->
+
+      <!--<md-button ng-if="::$ctrl.feedback.linkToContentEditor"-->
+                 <!--ng-click="$ctrl.openContentEditor('edit')">-->
+        <!--<md-icon md-svg-icon="switch-to-content-editor"></md-icon>-->
+        <!--{{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}-->
+      <!--</md-button>-->
+    <!--</div>-->
+
+    <form (ngSubmit)="submit(form)" #form="ngForm">
+
+      <!-- Document name field -->
+      <div class="field">
+        <mat-input-container class="create-content-field">
+          <input mdInput ngModel name="documentName" placeholder="Document name" required>
+        </mat-input-container>
+
+        <hippo-hints [data]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
+          <div hint="required">This field is required</div>
+        </hippo-hints>
+      </div>
 
 
-    <!-- Document URL field -->
-    <div class="field">
-      <mat-input-container class="create-content-field">
-        <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
-      </mat-input-container>
+      <!-- Document URL field -->
+      <div class="field">
+        <mat-input-container class="create-content-field">
+          <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
+        </mat-input-container>
 
-      <hippo-hints [data]="form.controls.documentUrl.errors" *ngIf="form.controls.documentUrl && form.controls.documentUrl.touched">
-        <div hint="required">This field is required</div>
-      </hippo-hints>
-    </div>
+        <hippo-hints [data]="form.controls.documentUrl.errors" *ngIf="form.controls.documentUrl && form.controls.documentUrl.touched">
+          <div hint="required">This field is required</div>
+        </hippo-hints>
+      </div>
 
 
-    <!-- Document type field -->
-    <div class="field">
-      <div class="mat-input-wrapper">
-        <div class="mat-input-flex">
-          <div class="mat-input-infix">
-            <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
-              <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
-            </mat-select>
+      <!-- Document type field -->
+      <div class="field">
+        <div class="mat-input-wrapper">
+          <div class="mat-input-flex">
+            <div class="mat-input-infix">
+              <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
+                <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
+              </mat-select>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Document location field -->
-    <div class="form">
-      <mat-input-container class="create-content-field">
-        <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
-      </mat-input-container>
+      <!-- Document location field -->
+      <div class="form">
+        <mat-input-container class="create-content-field">
+          <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
+        </mat-input-container>
 
-      <hippo-hints [data]="form.controls.documentLocation.errors" *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-        <div hint="required">This field is required</div>
-      </hippo-hints>
-    </div>
+        <hippo-hints [data]="form.controls.documentLocation.errors" *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
+          <div hint="required">This field is required</div>
+        </hippo-hints>
+      </div>
 
-    <!-- Buttons -->
-    <div class="create-content-actions">
-      <button mat-button class="qa-create-content-close"
-              (click)="close()">
-        CANCEL
-      </button>
 
-      <button mat-button class="qa-create-content-continue"
-              type="submit"
-              [disabled]="form.invalid">
-        CONTINUE
-      </button>
-    </div>
-  </form>
+    </form>
+  </div>
+  <!-- Buttons -->
+  <div class="create-content-actions">
+    <button mat-button class="qa-create-content-close"
+            (click)="close()">
+      CANCEL
+    </button>
+
+    <button mat-button class="qa-create-content-continue"
+            type="submit"
+            [disabled]="form.invalid">
+      CONTINUE
+    </button>
+  </div>
 </div>
