@@ -193,13 +193,16 @@ describe('OverlayService', () => {
     });
   });
 
-  it('generates overlay elements', (done) => {
+  fit('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
+      // Total overlay elements
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(12);
+
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(2);
       done();
     });
   });
@@ -587,19 +590,42 @@ describe('OverlayService', () => {
     });
   });
 
-  it('returns correct configuration out of config object', () => {
-    const config = { // each property should be filled with the method that will extract the data from the HST comment
-      documentUuid: true,
-      templateQuery: true,
-      componentParameter: true,
-    };
-    const returnedConfigurations = OverlayService._getDialOptions(config);
+  fdescribe('Manage content dial button', () => {
+    it('returns correct configuration out of config object', () => {
+      const config = { // each property should be filled with the method that will extract the data from the HST comment
+        documentUuid: true,
+        templateQuery: true,
+        componentParameter: true,
+      };
+      const returnedConfigurations = OverlayService._getDialOptions(config);
 
-    expect(returnedConfigurations.mainButtonIcon).toBeDefined();
-    expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
-    expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
-    expect(returnedConfigurations.buttons).toBeDefined();
-    expect(returnedConfigurations.buttons.length).toEqual(2);
-    expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+      expect(returnedConfigurations.mainButtonIcon).toBeDefined();
+      expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
+      expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
+      expect(returnedConfigurations.buttons).toBeDefined();
+      expect(returnedConfigurations.buttons.length).toEqual(2);
+      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+    });
+
+    describe('Dial buttons', () => {
+      function getMainButton (container) { return $(container).find('.hippo-fab-btn'); }
+      function getOptionButtons (container) { return $(container).find('.hippo-fab-dial-options').find('.hippo-fab-option-btn'); }
+
+      it('Scenario 1 (index 0)', (done) => {
+        loadIframeFixture(() => {
+          const scenarios = iframe('.hippo-overlay-element-manage-content-link');
+          const container = scenarios[0];
+          const optionButtons = getOptionButtons(container);
+          const mainButton = getMainButton(container);
+          expect(mainButton.html().trim()).toBe(OverlayService.contentLinkSvg.trim());
+          expect(optionButtons.length).toBe(0);
+
+          // const mainButton = container.find('.hippo-fab-btn');
+          // const optionButtons = container.find('.hippo-fab-dial-options').children;
+
+          done();
+        });
+      })
+    });
   });
 });
