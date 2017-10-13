@@ -16,31 +16,28 @@
 <div layout="column" class="create-content-container">
 
   <!----------------------------------TODO: Implement the angular4 version of the below------------------------------->
-  <!--<md-toolbar class="edit-title-toolbar">-->
-    <!--<div class="md-toolbar-tools">-->
-      <!--<h1 class="md-title text-truncate" title="{{ $ctrl.doc.displayName }}">-->
-        <!--{{ $ctrl.title }}-->
-      <!--</h1>-->
+  <mat-toolbar class="edit-title-toolbar">
+    <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate" title="{{ title }}">
+        {{ title }}
+      </h1>
 
       <!--<span flex></span>-->
 
-      <!--<md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"-->
-                 <!--aria-label="{{ ::'FULL_WIDTH' | translate }}"-->
-                 <!--ng-click="$ctrl.setFullWidth(true)"-->
-                 <!--ng-show="!$ctrl.isFullWidth"-->
-                 <!--title="{{ ::'FULL_WIDTH' | translate }}">-->
-        <!--<md-icon md-svg-icon="maximize-sidepanel"></md-icon>-->
-      <!--</md-button>-->
-      <!--<md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"-->
-                 <!--aria-label="{{ ::'RESTORE_WIDTH' | translate }}"-->
-                 <!--ng-click="$ctrl.setFullWidth(false)"-->
-                 <!--ng-show="$ctrl.isFullWidth"-->
-                 <!--title="{{ ::'RESTORE_WIDTH' | translate }}">-->
-        <!--<md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>-->
-      <!--</md-button>-->
-    <!--</div>-->
-  <!--</md-toolbar>-->
-  <!--<sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>-->
+      <button mat-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+                 (click)="setFullWidth(true)"
+                 [hidden]="isFullWidth"
+                 title="{{ 'FULL_WIDTH' }}">
+        <mat-icon md-svg-icon="maximize-sidepanel"></mat-icon>
+      </button>
+      <button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+                 (click)="setFullWidth(false)"
+                 [hidden]="!isFullWidth"
+                 title="{{ 'RESTORE_WIDTH' }}">
+        <mat-icon md-svg-icon="un-maximize-sidepanel"></mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
 
   <!----------------------------------md-content as seen in editContent.html------------------------------->
   <div class="md-content"
@@ -71,7 +68,9 @@
       <!--</md-button>-->
     <!--</div>-->
 
-    <form (ngSubmit)="submit(form)" #form="ngForm">
+    <form (ngSubmit)="submit(form)"
+          #form="ngForm"
+          class="form-dense-layout">
 
       <!-- Document name field -->
       <div class="field">

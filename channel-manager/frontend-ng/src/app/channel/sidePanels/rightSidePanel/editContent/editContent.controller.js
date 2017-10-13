@@ -103,12 +103,7 @@ class editContentController {
   }
 
   $onInit() {
-    console.log('init');
     this.openDocument(this.documentId);
-  }
-
-  $onDestroy() {
-    console.log('gone');
   }
 
   openDocument(documentId) {

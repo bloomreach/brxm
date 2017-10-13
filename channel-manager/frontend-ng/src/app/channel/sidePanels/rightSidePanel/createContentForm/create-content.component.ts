@@ -10,14 +10,22 @@ export class CreateContentComponent implements AfterViewInit {
   @Input() document: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
+  @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
 
   docTypes: Array<string> = [];
+  isFullWidth: boolean;
+  title = 'Create new content';
 
   ngAfterViewInit() {
     // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
     //   .debounceTime(1000)
     //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
     this.docTypes = ['Product', 'Event'];
+  }
+
+  setFullWidth(state) {
+    this.isFullWidth = state;
+    this.onFullWidth.emit(state);
   }
 
   close() {
