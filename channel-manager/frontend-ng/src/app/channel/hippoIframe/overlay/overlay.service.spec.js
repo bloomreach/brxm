@@ -32,13 +32,14 @@ describe('OverlayService', () => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
     inject((_$q_,
-            _$rootScope_,
-            _DomService_,
-            _ExperimentStateService_,
-            _hstCommentsProcessorService_,
-            _OverlayService_,
-            _PageStructureService_,
-            _RenderingService_,) => {
+      _$rootScope_,
+      _DomService_,
+      _ExperimentStateService_,
+      _hstCommentsProcessorService_,
+      _OverlayService_,
+      _PageStructureService_,
+      _RenderingService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       DomService = _DomService_;
@@ -57,7 +58,7 @@ describe('OverlayService', () => {
     OverlayService.init($iframe);
   });
 
-  function loadIframeFixture (callback) {
+  function loadIframeFixture(callback) {
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
@@ -79,7 +80,7 @@ describe('OverlayService', () => {
     $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
-  function iframe (selector) {
+  function iframe(selector) {
     return $(selector, iframeWindow.document);
   }
 
@@ -466,7 +467,7 @@ describe('OverlayService', () => {
     });
   });
 
-  function expectNoPropagatedClicks () {
+  function expectNoPropagatedClicks() {
     const body = iframe('body');
     body.click(() => {
       fail('click event should not propagate to the page');
@@ -606,7 +607,7 @@ describe('OverlayService', () => {
     });
 
     describe('Dial buttons', () => {
-      function manageContentScenario (scenarioNumber, callback) {
+      function manageContentScenario(scenarioNumber, callback) {
         loadIframeFixture(() => {
           const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
           callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
