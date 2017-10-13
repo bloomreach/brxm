@@ -105,7 +105,7 @@ public class WebFilesZipArchiveTest {
         archive.open(true);
         final Collection<? extends Archive.Entry> bundleRootChildren = archive.getBundleRoot().getChildren();
         assertEquals("number of children of bundle root", 4, bundleRootChildren.size());
-        assertTrue("archive contains entries 'css' and 'js'", containsNames(bundleRootChildren, "css", "js", "ftl", "js"));
+        assertTrue("archive contains entries 'css' and 'js'", containsNames(bundleRootChildren, "css", "empty", "ftl", "js"));
     }
 
     @Test
@@ -144,8 +144,9 @@ public class WebFilesZipArchiveTest {
 
         // plain alphabetical sorting on file name puts "style-extra.css" before "style.css",
         // but we want alphabetical sorting on the base name (i.e. the file name without the extension)
-        assertEquals("style.css", cssEntries[0].getName());
-        assertEquals("style-extra.css", cssEntries[1].getName());
+        assertEquals("__style_extra.css", cssEntries[0].getName());
+        assertEquals("style.css", cssEntries[1].getName());
+        assertEquals("style-extra.css", cssEntries[2].getName());
     }
 
     @Test
@@ -158,18 +159,6 @@ public class WebFilesZipArchiveTest {
         assertEquals("empty", archiveChildren[1].getName());
         assertEquals("ftl", archiveChildren[2].getName());
         assertEquals("js", archiveChildren[3].getName());
-    }
-
-    @Test
-    public void files_are_returned_in_alphabetical_order_without_extension() throws IOException {
-        archive.open(true);
-        final Collection<? extends Archive.Entry> cssChildren = archive.getBundleRoot().getChild("css").getChildren();
-        final Archive.Entry[] cssEntries = cssChildren.toArray(new Archive.Entry[0]);
-
-        // plain alphabetical sorting on file name puts "style-extra.css" before "style.css",
-        // but we want alphabetical sorting without the extension
-        assertEquals("style.css", cssEntries[0].getName());
-        assertEquals("style-extra.css", cssEntries[1].getName());
     }
 
     @Test

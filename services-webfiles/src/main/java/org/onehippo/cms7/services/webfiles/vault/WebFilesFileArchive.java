@@ -153,7 +153,7 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
         }
 
         public String getName() {
-            return file.getName();
+            return defeatNamespaceMangling(file.getName());
         }
 
         public boolean isDirectory() {

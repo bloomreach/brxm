@@ -17,6 +17,9 @@ package org.onehippo.cms7.services.webfiles.watch;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
+
+@Ignore
 public class SubDirectoriesWatcherWithFileSystemWatcherIT extends AbstractSubDirectoriesWatcherWithFileSystemObserverIT {
 
     @Override

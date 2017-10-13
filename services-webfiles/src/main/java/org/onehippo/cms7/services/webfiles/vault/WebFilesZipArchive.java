@@ -178,16 +178,16 @@ public class WebFilesZipArchive extends AbstractWebFilesArchive {
 
     private static class JarEntry implements Entry {
 
-        public final String name;
+        private final String name;
 
         private String zipEntryName;
 
-        public final boolean isDirectory;
+        private final boolean isDirectory;
 
-        public Map<String, JarEntry> children;
+        private Map<String, JarEntry> children;
 
         public JarEntry(String name, boolean directory) {
-            this.name = name;
+            this.name = defeatNamespaceMangling(name);
             isDirectory = directory;
         }
 

@@ -57,4 +57,20 @@ public abstract class AbstractWebFilesArchive implements Archive {
                 "/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/@maxFileLengthKb");
     }
 
+    /**
+     * If the raw file name matches the "_prefix_nodename" pattern, we need to simulate an extra
+     * leading underscore to avoid FileVault mangling, like so "__prefix_nodename".
+     * NOTE: we don't currently export webfiles again, so there's no current need to reverse this.
+     * @param rawName unmangled name that we want to keep unmangled
+     * @return rawName or rawName with an extra leading underscore to defeat FileVault's default namespace mangling
+     */
+    public static String defeatNamespaceMangling(final String rawName) {
+        if (rawName.matches("_(.+)_(.+)")) {
+            return "_"+rawName;
+        }
+        else {
+            return rawName;
+        }
+    }
+
 }

@@ -34,6 +34,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.webfiles.vault.AbstractWebFilesArchive.defeatNamespaceMangling;
 import static org.onehippo.cms7.services.webfiles.vault.FileNameComparatorUtils.FILE_BASE_NAME_COMPARATOR;
 import static org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig.DEFAULT_MAX_FILE_LENGTH_KB;
 
@@ -112,8 +113,9 @@ public class WebFilesFileArchiveTest {
 
         // plain alphabetical sorting on file name puts "style-extra.css" before "style.css",
         // but we want alphabetical sorting on the base name (i.e. the file name without the extension)
-        assertEquals("style.css", cssEntries[0].getName());
-        assertEquals("style-extra.css", cssEntries[1].getName());
+        assertEquals("__style_extra.css", cssEntries[0].getName());
+        assertEquals("style.css", cssEntries[1].getName());
+        assertEquals("style-extra.css", cssEntries[2].getName());
     }
 
     @Test
@@ -143,7 +145,7 @@ public class WebFilesFileArchiveTest {
         }
         final Archive.Entry[] archiveChildren = bundleRootChildren.toArray(new Archive.Entry[0]);
         for (int i = 0; i < bundleChildren.length; i++) {
-            assertEquals(bundleChildren[i].getName(), archiveChildren[i].getName());
+            assertEquals(defeatNamespaceMangling(bundleChildren[i].getName()), archiveChildren[i].getName());
         }
         for (File bundleChild : bundleChildren) {
             if (bundleChild.isDirectory()) {
