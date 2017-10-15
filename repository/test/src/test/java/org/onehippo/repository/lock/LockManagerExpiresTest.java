@@ -22,7 +22,7 @@ public class LockManagerExpiresTest extends AbstractLockManagerTest {
 
     @Test
     public void an_expired_lock_gets_freed() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // in memory test
             return;
         }

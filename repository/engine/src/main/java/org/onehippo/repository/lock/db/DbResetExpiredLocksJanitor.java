@@ -19,13 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.RESET_EXPIRED_STATEMENT;
 
 /**
  * Resets expired locks to 'FREE' if they are in state 'RUNNING' or 'ABORT'
@@ -34,10 +29,10 @@ public class DbResetExpiredLocksJanitor implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(DbResetExpiredLocksJanitor.class);
 
-    private final DataSource dataSource;
+    private final DbLockManager dbLockManager;
 
-    public DbResetExpiredLocksJanitor(final DataSource dataSource) {
-        this.dataSource = dataSource;
+    public DbResetExpiredLocksJanitor(final DbLockManager dbLockManager) {
+        this.dbLockManager = dbLockManager;
     }
 
     @Override
@@ -45,10 +40,10 @@ public class DbResetExpiredLocksJanitor implements Runnable {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
-            connection = dataSource.getConnection();
+            connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement resetStatement = connection.prepareStatement(RESET_EXPIRED_STATEMENT);
+            final PreparedStatement resetStatement = connection.prepareStatement(dbLockManager.getResetExpiredStatement());
             long currentTime = System.currentTimeMillis();
             resetStatement.setLong(1, currentTime);
             resetStatement.setLong(2, currentTime);
@@ -58,7 +53,7 @@ public class DbResetExpiredLocksJanitor implements Runnable {
         } catch (SQLException e) {
             log.error("Error while trying to reset locks", e);
         } finally {
-            close(connection, originalAutoCommit);
+            dbLockManager.close(connection, originalAutoCommit);
         }
     }
 }

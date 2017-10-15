@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 public class ConnectionHelperDataSourceAccessor {
 
     private ConnectionHelperDataSourceAccessor(){
-
     }
 
     public static DataSource getDataSource(final ConnectionHelper connectionHelper) {

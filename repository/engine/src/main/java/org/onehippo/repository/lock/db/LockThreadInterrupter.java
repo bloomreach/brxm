@@ -18,17 +18,10 @@ package org.onehippo.repository.lock.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.onehippo.repository.lock.MutableLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.SELECT_ABORT_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 /**
  * A Thread that contains a lock marked with 'ABORT' will be interrupted : In turn, that Thread should invoke #unlock itself
@@ -38,13 +31,9 @@ public class LockThreadInterrupter implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(LockThreadInterrupter.class);
 
-    private final DataSource dataSource;
-    private final String clusterNodeId;
     private final DbLockManager dbLockManager;
 
-    public LockThreadInterrupter(final DataSource dataSource, final String clusterNodeId, final DbLockManager dbLockManager) {
-        this.dataSource = dataSource;
-        this.clusterNodeId = clusterNodeId;
+    public LockThreadInterrupter(final DbLockManager dbLockManager) {
         this.dbLockManager = dbLockManager;
     }
 
@@ -53,11 +42,11 @@ public class LockThreadInterrupter implements Runnable {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
-            connection = dataSource.getConnection();
+            connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement selectAbortStatement = connection.prepareStatement(SELECT_ABORT_STATEMENT);
-            selectAbortStatement.setString(1, clusterNodeId);
+            final PreparedStatement selectAbortStatement = connection.prepareStatement(dbLockManager.getSelectAbortStatement());
+            selectAbortStatement.setString(1, dbLockManager.getClusterNodeId());
             ResultSet resultSet = selectAbortStatement.executeQuery();
             while (resultSet.next()) {
                 // interrupt the thread for this lock (if still present). Otherwise ignore.
@@ -109,7 +98,7 @@ public class LockThreadInterrupter implements Runnable {
         } catch (Exception e) {
             log.error("Exception in {} happened:", this.getClass().getName(), e);
         } finally {
-            close(connection, originalAutoCommit);
+            dbLockManager.close(connection, originalAutoCommit);
         }
     }
 }

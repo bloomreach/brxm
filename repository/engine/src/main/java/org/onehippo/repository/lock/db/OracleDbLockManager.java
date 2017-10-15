@@ -17,6 +17,8 @@ package org.onehippo.repository.lock.db;
 
 import javax.sql.DataSource;
 
+import org.apache.jackrabbit.core.util.db.ConnectionHelper;
+
 public class OracleDbLockManager extends DbLockManager {
 
     private final static String ORACLE_CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
@@ -29,8 +31,9 @@ public class OracleDbLockManager extends DbLockManager {
             "lastModified NUMBER(19)" +
             ")";
 
-    public OracleDbLockManager(final DataSource dataSource, final String clusterNodeId) {
-        super(dataSource, clusterNodeId);
+    protected OracleDbLockManager(final ConnectionHelper connectionHelper, final DataSource dataSource,
+                               final String schemaObjectPrefix, final boolean schemaCheckEnabled, final String clusterNodeId) {
+        super(connectionHelper, dataSource, schemaObjectPrefix, schemaCheckEnabled, clusterNodeId);
     }
 
     @Override

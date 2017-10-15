@@ -19,13 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT;
 
 /**
  * Refreshes all locks that are in possession by <strong>this</strong> cluster node and have less than 20 seconds to live. Note the 20
@@ -36,12 +31,10 @@ public class DbLockRefresher implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(DbLockRefresher.class);
 
-    private final DataSource dataSource;
-    private final String clusterNodeId;
+    private final DbLockManager dbLockManager;
 
-    public DbLockRefresher(final DataSource dataSource, final String clusterNodeId) {
-        this.dataSource = dataSource;
-        this.clusterNodeId = clusterNodeId;
+    public DbLockRefresher(final DbLockManager dbLockManager) {
+        this.dbLockManager = dbLockManager;
     }
 
     @Override
@@ -49,13 +42,13 @@ public class DbLockRefresher implements Runnable {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
-            connection = dataSource.getConnection();
+            connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement refreshStatement = connection.prepareStatement(REFRESH_LOCK_STATEMENT);
+            final PreparedStatement refreshStatement = connection.prepareStatement(dbLockManager.getRefreshLockStatement());
             long currentTime = System.currentTimeMillis();
             refreshStatement.setLong(1, currentTime);
-            refreshStatement.setString(2, clusterNodeId);
+            refreshStatement.setString(2, dbLockManager.getClusterNodeId());
             // select all rows that have less than 20 seconds to live
             refreshStatement.setLong(3, currentTime + 20000);
             int updated = refreshStatement.executeUpdate();
@@ -64,7 +57,7 @@ public class DbLockRefresher implements Runnable {
         } catch (SQLException e) {
             log.error("Error while trying to refresh locks", e);
         } finally {
-            close(connection, originalAutoCommit);
+            dbLockManager.close(connection, originalAutoCommit);
         }
     }
 }

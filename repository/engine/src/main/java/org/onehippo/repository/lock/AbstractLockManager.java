@@ -28,6 +28,7 @@ import org.onehippo.cms7.services.lock.Lock;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManagerException;
 import org.onehippo.cms7.services.lock.LockResource;
+import org.onehippo.cms7.services.lock.AlreadyLockedException;
 import org.slf4j.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -95,7 +96,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             lock.increment();
             return new LockResourceImpl(lock);
         }
-        throw new LockException(String.format("This thread '%s' cannot lock '%s' : already locked by thread '%s'",
+        throw new AlreadyLockedException(String.format("This thread '%s' cannot lock '%s' : already locked by thread '%s'",
                 Thread.currentThread().getName(), key, lockThread.getName()));
     }
 
@@ -178,6 +179,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
                 getLogger().info("Thread '{}' already stopped for lock '{}'.", localLock.getLockThread(), key);
                 return;
             }
+
             // signal the running thread that it should abort : This thread should then in turn call #unlock itself : That
             // won't be done here
             try {

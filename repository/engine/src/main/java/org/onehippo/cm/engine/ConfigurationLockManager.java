@@ -18,41 +18,22 @@ package org.onehippo.cm.engine;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.lock.LockException;
 
-import org.onehippo.repository.locking.HippoLock;
-import org.onehippo.repository.locking.HippoLockManager;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
-import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 
 /**
- * The ConfigurationLockManager is used to create and release a persistent {@Link HippoLock} for accessing
+ * The ConfigurationLockManager is used to lock and unlock for accessing
  * and modifying the ConfigurationModel in the repository, on LOCK_PATH.
  * <p>
- * Note the persistent lock management will be done with a separate/dedicated Session, impersonated from the Session
- * passed into the constructor, which otherwise will not be used any further.</p>
+ * The {@link #lock} and {@link #unlock()} methods can be thread reentrant</p>
  * <p>
- * A {@link HippoLock} will be created with a default timeout of 30 seconds, and be kept alive until the lock is
- * explicitly released through {@link #unlock}.</p>
- * <p>
- * The default timeout can be overridden through system parameter <b><code>hcm.lock.timeout</code></b> (seconds).</p>
- * <p>
- * Note that {@link HippoLock} requires a minimum timeout of 10 seconds to be able to keep it alive!</p>
- * <p>
- * When acquiring a {@link HippoLock} fails because of a LockException it will be re-attempted every 500 ms (indefinitely)
- * until it succeeds.</p>
- * </p>
- * <p>
- * The {@link #lock} and {@link #unlock()} methods can be thread reentrant and use an internal {@link ReentrantLock}
- * for the actual creation and releasing of the {@link HippoLock}.</p>
- * <p>
- * Therefore, like with {@link ReentrantLock} the typical usage-pattern is/should be:</p>
+ * Therefore the typical usage-pattern is/should be:</p>
  * <pre><code>
  *     lockManager.lock();
  *     try {
@@ -67,90 +48,32 @@ public class ConfigurationLockManager {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationLockManager.class);
 
     private static final long LOCK_ATTEMPT_INTERVAL = 500;
-    private static final long LOCK_TIMEOUT = Long.getLong("hcm.lock.timeout", 30);
-    public static final String LOCK_PATH = HCM_ROOT_PATH + "/" + HIPPO_LOCK;
+    public static final String LOCK_PATH = HCM_ROOT_PATH;
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
-    private final Session lockSession;
-    private final String lockOwnerId;
-    private final HippoLockManager hippoLockManager;
+    private final LockManager lockManager;
+    private boolean locked;
 
-    private HippoLock hippoLock;
-
-    public ConfigurationLockManager(final Session configurationSession) throws RepositoryException {
-        final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
-        lockSession = configurationSession.impersonate(credentials);
-        lockSession.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
-        lockOwnerId = getClusterNodeId(lockSession);
-        hippoLockManager = (HippoLockManager) lockSession.getWorkspace().getLockManager();
-    }
-
-    private void ensureIsLockable() throws RepositoryException {
-        if (!lockSession.nodeExists(LOCK_PATH)) {
-            lockSession.getNode(HCM_ROOT_PATH).addNode(HIPPO_LOCK, HIPPO_LOCK);
-            lockSession.save();
-        }
-    }
-
-    private boolean unlockHippoLock(final HippoLock lock) throws RepositoryException {
-        if (lock != null) {
-            try {
-                log.debug("Attempting to release lock");
-                lock.stopKeepAlive();
-                lockSession.refresh(false);
-                hippoLockManager.unlock(LOCK_PATH);
-                log.debug("Lock successfully released");
-            } catch (LockException e) {
-                log.warn("Current session no longer holds a lock");
-            } catch (RepositoryException e) {
-                log.error("Failed to unlock initialization processor: {}. " +
-                        "Lock will time out within {} seconds", e.toString(), LOCK_TIMEOUT);
-                return false;
-            }
-        }
-        return true;
+    public ConfigurationLockManager() {
+        lockManager = HippoServiceRegistry.getService(LockManager.class);
     }
 
     public void lock() throws RepositoryException {
-        boolean locked = false;
         reentrantLock.lock();
-        try {
-            if (hippoLock == null || !hippoLock.isLive()) {
-                ensureIsLockable();
-                while (true) {
-                    log.debug("Attempting to obtain lock");
-                    try {
-                        hippoLock = hippoLockManager.lock(LOCK_PATH, false, false, LOCK_TIMEOUT, lockOwnerId);
-                        log.debug("Lock successfully obtained");
-                        try {
-                            hippoLock.startKeepAlive();
-                            break;
-                        } catch (LockException e) {
-                            if (log.isDebugEnabled()) {
-                                log.warn("Failed to start lock keep-alive", e);
-                            } else {
-                                log.warn("Failed to start lock keep-alive: " + e);
-                            }
-                            throw new RepositoryException(e);
-                        }
-                    } catch (LockException e) {
-                        log.debug("Obtaining lock failed, reattempting in {} ms", LOCK_ATTEMPT_INTERVAL);
-                        try {
-                            Thread.sleep(LOCK_ATTEMPT_INTERVAL);
-                        } catch (InterruptedException ignore) {
-                        }
-                    }
+        if (!locked) {
+            try {
+                LockManagerUtils.waitForLock(lockManager, LOCK_PATH, LOCK_ATTEMPT_INTERVAL);
+                locked = true;
+            } catch (Exception e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
                 }
-            } else {
-                if (!hippoLock.isLive()) {
-                    throw new LockException("Lock no longer alive");
+                throw new RepositoryException(e);
+            } finally {
+                if (!locked) {
+                    // In Exception context: don't hold on to the reentrantLock
+                    reentrantLock.unlock();
                 }
-            }
-            locked = true;
-        } finally {
-            if (!locked) {
-                // In Exception context: don't hold on to the reentrantLock
-                reentrantLock.unlock();
             }
         }
     }
@@ -160,9 +83,8 @@ public class ConfigurationLockManager {
         try {
             if (reentrantLock.getHoldCount() < 3) {
                 if (reentrantLock.getHoldCount() == 2) {
-                    if (unlockHippoLock(hippoLock)) {
-                        hippoLock = null;
-                    }
+                    lockManager.unlock(LOCK_PATH);
+                    locked = false;
                 } else {
                     // Error: unlock call without balanced lock call
                     // second unlock() call below will result in IllegalMonitorStateException!
@@ -175,14 +97,8 @@ public class ConfigurationLockManager {
     }
 
     public void stop() {
-        try {
-            if (lockSession != null && lockSession.isLive()) {
-                unlockHippoLock(hippoLock);
-                hippoLock = null;
-                lockSession.logout();
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to unlock or logout during stop", e);
-        }
+        // gracefully wait for possible running locked thread to finish
+        reentrantLock.lock();
+        reentrantLock.unlock();
     }
 }

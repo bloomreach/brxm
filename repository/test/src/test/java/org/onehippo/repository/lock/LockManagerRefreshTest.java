@@ -27,15 +27,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 public class LockManagerRefreshTest extends AbstractLockManagerTest {
 
-
     @Test
     public void locks_get_refreshed_while_still_in_use() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // db test only
             return;
         }
@@ -77,7 +74,7 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
 
     @Test
     public void only_running_or_aborting_locks_for_current_cluster_node_get_refreshed() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // db test only
             return;
         }
@@ -136,11 +133,9 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
         lockThread2.join();
     }
 
-    public static final String SET_EXPIRE_STATEMENT = "UPDATE " + TABLE_NAME_LOCK  + " SET expirationTime=? WHERE lockKey=?";
-
     private long getExpireTime(final String key) throws SQLException {
-        try (Connection connection = dataSource.getConnection()){
-            final PreparedStatement getExpireStatement = connection.prepareStatement(SELECT_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()){
+            final PreparedStatement getExpireStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
             getExpireStatement.setString(1, key);
             ResultSet resultSet = getExpireStatement.executeQuery();
             assertTrue("Should had one db result",resultSet.next());
@@ -149,8 +144,8 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
     }
 
     private long getLastModifiedTime(final String key) throws SQLException {
-        try (Connection connection = dataSource.getConnection()){
-            final PreparedStatement getExpireStatement = connection.prepareStatement(SELECT_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()){
+            final PreparedStatement getExpireStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
             getExpireStatement.setString(1, key);
             ResultSet resultSet = getExpireStatement.executeQuery();
             assertTrue("Should had one db result",resultSet.next());
@@ -159,7 +154,8 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
     }
 
     private void setExpireTime(final String key, final int expireInSeconds) throws SQLException {
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = dbLockManager.getConnection()){
+            final String SET_EXPIRE_STATEMENT = "UPDATE " + dbLockManager.getTableName()  + " SET expirationTime=? WHERE lockKey=?";
             final PreparedStatement setExpireStatement = connection.prepareStatement(SET_EXPIRE_STATEMENT);
             setExpireStatement.setLong(1, System.currentTimeMillis() + expireInSeconds * 1000);
             setExpireStatement.setString(2, key);
@@ -207,7 +203,4 @@ public class LockManagerRefreshTest extends AbstractLockManagerTest {
             }
         }
     }
-
-
-
 }

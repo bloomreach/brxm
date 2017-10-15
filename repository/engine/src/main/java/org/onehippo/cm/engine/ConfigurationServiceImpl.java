@@ -132,7 +132,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
-        lockManager = new ConfigurationLockManager(session);
+        lockManager = new ConfigurationLockManager();
         baselineService = new ConfigurationBaselineService(lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
@@ -290,34 +290,15 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             autoExportService.close();
             autoExportService = null;
         }
-        boolean locked = false;
-        if (lockManager != null) {
+        if (runtimeConfigurationModel != null) {
             try {
-                lockManager.lock();
-                locked = true;
+                // Ensure configurationModel resources are cleaned up (if any)
+                runtimeConfigurationModel.close();
             } catch (Exception e) {
-                log.error("Failed to claim the configuration lock", e);
+                log.error("Error closing runtime configuration", e);
             }
         }
-        try {
-            if (runtimeConfigurationModel != null) {
-                try {
-                    // Ensure configurationModel resources are cleaned up (if any)
-                    runtimeConfigurationModel.close();
-                } catch (Exception e) {
-                    log.error("Error closing runtime configuration", e);
-                }
-            }
-            runtimeConfigurationModel = null;
-        } finally {
-            if (locked) {
-                try {
-                    lockManager.unlock();
-                } catch (Exception e) {
-                    log.error("Failed to release the configuration lock", e);
-                }
-            }
-        }
+        runtimeConfigurationModel = null;
         contentService = null;
         configService = null;
         baselineService = null;

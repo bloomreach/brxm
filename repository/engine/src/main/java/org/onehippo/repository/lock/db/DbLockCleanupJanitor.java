@@ -20,14 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.repository.lock.db.DbHelper.close;
-import static org.onehippo.repository.lock.db.DbLockManager.REFRESH_LOCK_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.REMOVE_OUTDATED_LOCKS;
 
 /**
  * Removes all locks that are free for longer than a day
@@ -36,10 +30,10 @@ public class DbLockCleanupJanitor implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(DbLockCleanupJanitor.class);
 
-    private final DataSource dataSource;
+    private final DbLockManager dbLockManager;
 
-    public DbLockCleanupJanitor(final DataSource dataSource) {
-        this.dataSource = dataSource;
+    public DbLockCleanupJanitor(final DbLockManager dbLockManager) {
+        this.dbLockManager = dbLockManager;
     }
 
     @Override
@@ -47,11 +41,11 @@ public class DbLockCleanupJanitor implements Runnable {
         Connection connection = null;
         boolean originalAutoCommit = false;
         try {
-            connection = dataSource.getConnection();
+            connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
 
-            final PreparedStatement removeStatement = connection.prepareStatement(REMOVE_OUTDATED_LOCKS);
+            final PreparedStatement removeStatement = connection.prepareStatement(dbLockManager.getRemoveOutdatedStatement());
             long dayAgoTime = System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
             removeStatement.setLong(1, dayAgoTime);
             int updated = removeStatement.executeUpdate();
@@ -60,7 +54,7 @@ public class DbLockCleanupJanitor implements Runnable {
         } catch (SQLException e) {
             log.error("Error while trying remove outdated locks", e);
         } finally {
-            close(connection, originalAutoCommit);
+            dbLockManager.close(connection, originalAutoCommit);
         }
     }
 }

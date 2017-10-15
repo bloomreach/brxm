@@ -17,19 +17,11 @@
 package org.apache.jackrabbit.core.journal;
 
 import org.apache.jackrabbit.core.util.db.ConnectionHelper;
-import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
 
-public class JournalConnectionHelperAccessorImpl implements JournalConnectionHelperAccessor {
+public class JournalConnectionHelperAccessorImpl {
 
-    private ConnectionHelper connectionHelper;
-
-    public JournalConnectionHelperAccessorImpl(final DatabaseJournal journal) {
-        if (journal != null) {
-            connectionHelper = journal.conHelper;
-        }
-    }
-
-    public ConnectionHelper getConnectionHelper() {
-        return connectionHelper;
+    public static ConnectionHelper getConnectionHelper(final DatabaseJournal journal)
+    {
+        return journal.conHelper;
     }
 }

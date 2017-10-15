@@ -20,50 +20,33 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.sql.DataSource;
 
-import org.apache.jackrabbit.core.util.db.ConnectionHelperDataSourceAccessor;
-import org.hippoecm.repository.impl.RepositoryDecorator;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.After;
-import org.junit.Before;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
-import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
+import org.onehippo.cms7.services.lock.LockManagerException;
+import org.onehippo.repository.lock.db.DbLockManager;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.onehippo.repository.lock.AbstractLockManager.REFRESH_RATE_SECONDS;
-import static org.onehippo.repository.lock.db.DbLockManager.CREATE_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
 
 public abstract class AbstractLockManagerTest extends RepositoryTestCase {
 
     protected final String CLUSTER_NODE_ID = "node1";
 
     protected InternalLockManager lockManager;
-    // dataSource is not null in case of cluster Db test
-    protected DataSource dataSource;
+    protected DbLockManager dbLockManager;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         lockManager = (InternalLockManager)HippoServiceRegistry.getService(LockManager.class);
-
-        Repository repository = server.getRepository();
-        if (repository instanceof RepositoryDecorator) {
-            repository = RepositoryDecorator.unwrap(repository);
-        }
-        if (repository instanceof RepositoryImpl) {
-            JournalConnectionHelperAccessor journalConnectionHelperAccessor = ((RepositoryImpl)repository).getJournalConnectionHelperAccessor();
-            if (journalConnectionHelperAccessor.getConnectionHelper() != null) {
-                // running a cluster db test
-                dataSource = ConnectionHelperDataSourceAccessor.getDataSource(journalConnectionHelperAccessor.getConnectionHelper());
-            }
+        if (lockManager instanceof DbLockManager) {
+            dbLockManager = (DbLockManager)lockManager;
         }
     }
 
@@ -77,9 +60,9 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     public void tearDown(boolean clearRepository) throws Exception {
         lockManager.clear();
         // DELETE ALL ROWS if there are any present
-        if (dataSource != null) {
-            try (Connection connection = dataSource.getConnection() ){
-                final PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM hippo_lock");
+        if (dbLockManager != null) {
+            try (Connection connection = dbLockManager.getConnection() ){
+                final PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM "+dbLockManager.getTableName());
                 deleteStatement.execute();
 
             } catch (SQLException e) {
@@ -94,13 +77,13 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     }
 
     protected void dbRowAssertion(final String key, final String expectedStatus, final String lockOwnerExpectation, final String lockThreadExpectation) throws SQLException {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // not a clustered db test
             return;
         }
 
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
             selectStatement.setString(1, key);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
@@ -121,13 +104,13 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     }
 
     protected void assertKeyMissing(final String key) throws SQLException {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // not a clustered db test
             return;
         }
 
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()) {
+            final PreparedStatement selectStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
             selectStatement.setString(1, key);
             ResultSet resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
@@ -143,10 +126,10 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
 
     protected void addManualLockToDatabase(final String key, final String clusterNodeId,
                                            final String threadName, long lockTime, long expirationTime, long lastModified) throws LockException {
-        if (dataSource != null) {
-            try (Connection connection = dataSource.getConnection()) {
+        if (dbLockManager != null) {
+            try (Connection connection = dbLockManager.getConnection()) {
 
-                final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
+                final PreparedStatement createStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
                 createStatement.setString(1, key);
                 createStatement.setString(2, clusterNodeId);
                 createStatement.setString(3, threadName);
@@ -159,7 +142,7 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
                 try {
                     createStatement.execute();
                 } catch (SQLException e) {
-                    throw new LockException(String.format("Cannot create lock row for '{}'", key), e);
+                    throw new LockManagerException(String.format("Cannot create lock row for '{}'", key), e);
                 }
             } catch (SQLException e) {
                 fail("Failed to delete rows : " + e.toString());
@@ -171,8 +154,8 @@ public abstract class AbstractLockManagerTest extends RepositoryTestCase {
     protected void insertDataRowLock(final String key, final String clusterId, final String threadName,
                                    final long expirationTime) throws SQLException {
         final long lockTime = System.currentTimeMillis();
-        try (Connection connection = dataSource.getConnection()){
-            final PreparedStatement createStatement = connection.prepareStatement(CREATE_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()){
+            final PreparedStatement createStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
             createStatement.setString(1, key);
             createStatement.setString(2, clusterId);
             createStatement.setString(3, threadName);

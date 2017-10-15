@@ -39,9 +39,7 @@ import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.journal.DatabaseJournal;
 import org.apache.jackrabbit.core.journal.ExternalRepositorySyncRevisionServiceImpl;
-import org.apache.jackrabbit.core.journal.JournalConnectionHelperAccessorImpl;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
@@ -61,7 +59,6 @@ import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
-import org.onehippo.repository.journal.JournalConnectionHelperAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +73,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     protected boolean isStarted = false;
 
     private ExternalRepositorySyncRevisionService externalRepositorySyncRevisionService;
-    private JournalConnectionHelperAccessor journalConnectionHelperAccessor;
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
@@ -296,19 +292,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
             externalRepositorySyncRevisionService = new ExternalRepositorySyncRevisionServiceImpl(clusterNode != null ? clusterNode.getJournal() : null);
         }
         return externalRepositorySyncRevisionService;
-    }
-
-    /**
-     * @return JournalConnectionHelperAccessor is a journal connection is available and otherwise null
-     * @throws RepositoryException
-     */
-    public synchronized JournalConnectionHelperAccessor getJournalConnectionHelperAccessor() throws RepositoryException {
-        sanityCheck();
-        if (journalConnectionHelperAccessor == null) {
-            ClusterNode clusterNode = context.getClusterNode();
-            journalConnectionHelperAccessor = new JournalConnectionHelperAccessorImpl(clusterNode == null ? null : (DatabaseJournal)clusterNode.getJournal());
-        }
-        return journalConnectionHelperAccessor;
     }
 
     @Override

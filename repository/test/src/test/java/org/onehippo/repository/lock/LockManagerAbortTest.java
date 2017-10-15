@@ -27,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.ABORT_STATEMENT;
 
 public class LockManagerAbortTest extends AbstractLockManagerTest {
 
@@ -58,7 +57,7 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
 
     @Test
     public void other_cluster_node_has_set_abort() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // in memory test
             return;
         }
@@ -85,8 +84,8 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
     }
 
     private void abortDataRowLock(final String key) throws SQLException {
-        try (Connection connection = dataSource.getConnection()){
-            final PreparedStatement abortStatement = connection.prepareStatement(ABORT_STATEMENT);
+        try (Connection connection = dbLockManager.getConnection()){
+            final PreparedStatement abortStatement = connection.prepareStatement(dbLockManager.getAbortStatement());
             abortStatement.setLong(1, System.currentTimeMillis());
             abortStatement.setString(2, key);
             int changed = abortStatement.executeUpdate();
@@ -96,7 +95,7 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
 
     @Test
     public void a_lock_set_to_abort_is_still_set_to_free_on_lockmanager_clear_but_not_being_interrupted_any_more() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // in memory test
             return;
         }
@@ -187,5 +186,4 @@ public class LockManagerAbortTest extends AbstractLockManagerTest {
             }
         }
     }
-
 }

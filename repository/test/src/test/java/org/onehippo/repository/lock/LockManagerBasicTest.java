@@ -37,8 +37,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.lock.db.DbLockManager.SELECT_STATEMENT;
-import static org.onehippo.repository.lock.db.DbLockManager.TABLE_NAME_LOCK;
 
 public class LockManagerBasicTest extends AbstractLockManagerTest {
 
@@ -132,12 +130,12 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
     }
 
     private void assertDbRowDoesExist(final String key) throws SQLException {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // not a clustered db test
             return;
         }
-        final String selectStatement = "SELECT * FROM " + TABLE_NAME_LOCK + " WHERE lockKey=?";
-        try (Connection connection = dataSource.getConnection()) {
+        final String selectStatement = "SELECT * FROM " + dbLockManager.getTableName() + " WHERE lockKey=?";
+        try (Connection connection = dbLockManager.getConnection()) {
             final PreparedStatement preparedSelectStatement = connection.prepareStatement(selectStatement);
             preparedSelectStatement.setString(1, key);
             preparedSelectStatement.setQueryTimeout(10);
@@ -346,10 +344,10 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         dbRowAssertion("c", "RUNNING");
         dbRowAssertion("d", "RUNNING");
 
-        if (dataSource != null) {
+        if (dbLockManager != null) {
             // rows are kept by clear (and destroy) but fields are made empty
-            try (Connection connection = dataSource.getConnection()) {
-                final PreparedStatement selectStatement = connection.prepareStatement(SELECT_STATEMENT);
+            try (Connection connection = dbLockManager.getConnection()) {
+                final PreparedStatement selectStatement = connection.prepareStatement(dbLockManager.getSelectStatement());
                 selectStatement.setString(1, "a");
                 ResultSet resultSet = selectStatement.executeQuery();
                 if (resultSet.next()) {
@@ -375,7 +373,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         addManualLockToDatabase("d", "otherNode", "otherThreadName");
 
         List<Lock> locks = lockManager.getLocks();
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             // in memory manager
             assertEquals(2, locks.size());
         } else {
@@ -396,7 +394,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         assertTrue(lockManager.isLocked("a"));
         assertTrue(lockManager.isLocked("b"));
-        if (dataSource != null) {
+        if (dbLockManager != null) {
             addManualLockToDatabase("c", "otherNode", "otherThreadName");
             addManualLockToDatabase("d", "otherNode", "otherThreadName");
             assertTrue(lockManager.isLocked("c"));
@@ -405,6 +403,4 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         lockManager.unlock("a");
         lockManager.unlock("b");
     }
-
-
 }

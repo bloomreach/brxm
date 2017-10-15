@@ -20,8 +20,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.repository.lock.db.DbLockCleanupJanitor;
 
 public class LockManagerCleanupTest extends AbstractLockManagerTest {
@@ -30,10 +28,12 @@ public class LockManagerCleanupTest extends AbstractLockManagerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        final InternalLockManager internalLockManager = (InternalLockManager)HippoServiceRegistry.getService(LockManager.class);
-        // Add a DbLockCleanupJanitor that runs evcery 5 secs instead of one per day to trigger it more frequently in the
+        if (dbLockManager == null) {
+            return;
+        }
+        // Add a DbLockCleanupJanitor that runs every 5 secs instead of one per day to trigger it more frequently in the
         // integration tests below
-        internalLockManager.addJob(new DbLockCleanupJanitor(dataSource), 0, 5);
+        dbLockManager.addJob(new DbLockCleanupJanitor(dbLockManager), 0, 5);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class LockManagerCleanupTest extends AbstractLockManagerTest {
 
     @Test
     public void locks_with_lastmodified_older_than_a_day_get_cleaned_even_when_status_running() throws Exception {
-        if (dataSource == null) {
+        if (dbLockManager == null) {
             return;
         }
         // reason why status running still gets cleaned is because even a running lock should get its lastmodified updated
