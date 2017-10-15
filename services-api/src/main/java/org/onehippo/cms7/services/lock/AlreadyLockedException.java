@@ -15,24 +15,25 @@
  */
 package org.onehippo.cms7.services.lock;
 
-public class LockManagerException extends LockException {
-    public LockManagerException() {
+public class AlreadyLockedException extends LockException {
+
+    public AlreadyLockedException() {
         super();
     }
 
-    public LockManagerException(final String message) {
+    public AlreadyLockedException(final String message) {
         super(message);
     }
 
-    public LockManagerException(final String message, final Throwable cause) {
+    public AlreadyLockedException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public LockManagerException(final Throwable cause) {
+    public AlreadyLockedException(final Throwable cause) {
         super(cause);
     }
 
-    protected LockManagerException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+    public AlreadyLockedException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
