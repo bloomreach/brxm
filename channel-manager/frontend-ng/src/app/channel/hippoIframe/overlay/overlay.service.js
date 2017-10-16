@@ -58,23 +58,6 @@ class OverlayService {
     this.isContentOverlayDisplayed = true;
 
     PageStructureService.registerChangeListener(() => this.sync());
-
-    this.dialButtonsConfig = [
-      {
-        svg: plusSvg,
-        callback: (options) => {
-          this.$rootScope.$apply(() => {
-            this.createContentHandler(options);
-          });
-        },
-        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
-      },
-      {
-        svg: searchSvg,
-        callback: () => {},
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-      },
-    ];
   }
 
   init(iframeJQueryElement) {
@@ -341,6 +324,8 @@ class OverlayService {
   }
 
   _getDialOptions(config) {
+    // The order of the properties in variable optionButtons defines 
+    // the order in which they will be rendered in the dial widget.
     const optionButtons = {
       templateQuery: {
         svg: plusSvg,
@@ -369,15 +354,14 @@ class OverlayService {
       optionsSet.mainButtonCloseIcon = contentLinkSvg;
     }
 
-    Object.keys(config)
-      .filter(key => config[key] && optionButtons[key])
+    Object.keys(optionButtons)
+      .filter(key => config[key])
       .forEach(key => optionsSet.buttons.push(optionButtons[key]));
 
     return optionsSet;
   }
 
   _initManageContentLink(structureElement, overlayElement) {
-    // each property should be filled with the method that will extract the data from the HST comment
     const config = {
       componentParameter: structureElement.getComponentParameter(),
       defaultPath: structureElement.getDefaultPath(),
