@@ -279,8 +279,6 @@
     width: 200px;
 
     .updater-tree {
-      height: calc(100% - 32px);
-
       border-top: 1px solid $dark-gray;
 
       padding: 4px 0 0 0;
@@ -301,6 +299,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex: 0 0 auto;
 
     > input {
       flex: 1 1 auto;
