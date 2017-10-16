@@ -99,7 +99,8 @@ public interface LockManager {
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @return {@link LockResource} such that this {@link #lock(String)} method can be used in a try-with-resources statement
      *         where the {@link LockResource#close()} results in the lock being freed.
-     * @throws LockException in case there is already a {@link Lock} for {@code key} or the lock could not be created
+     * @throws LockException in case there is already a {@link Lock} for {@code key} (throwing a {@link AlreadyLockedException})
+     *         or the lock could not be created due to some other exception (resulting in a {@link LockManagerException})
      * @throws IllegalArgumentException if the {@code key} exceeds 256 chars
      */
     LockResource lock(String key) throws LockException;
