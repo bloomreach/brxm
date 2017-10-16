@@ -263,7 +263,8 @@ public abstract class AbstractLockManager implements InternalLockManager {
         final Iterator<Map.Entry<String, MutableLock>> iterator = localLocks.entrySet().iterator();
         while (iterator.hasNext()) {
             final Map.Entry<String, MutableLock> next = iterator.next();
-            getLogger().warn("Lock '{}' owned by '{}' was never unlocked. Removing the lock now.", next.getKey(), next.getValue().getLockOwner());
+            getLogger().warn("Lock '{}' owned by cluster '{}' and thread '{}' was never unlocked. Removing the lock now.",
+                    next.getKey(), next.getValue().getLockOwner(), next.getValue().getLockThread());
             releasePersistedLock(next.getKey(), next.getValue().getLockThread());
             iterator.remove();
         }
