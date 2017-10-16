@@ -24,6 +24,18 @@ class ManageContentLink extends EmbeddedLink {
   getTemplateQuery() {
     return this.metaData.templateQuery;
   }
+
+  getDefaultPath() {
+    return this.metaData.defaultPath;
+  }
+
+  getRootPath() {
+    return this.metaData.rootPath;
+  }
+
+  getComponentParameter() {
+    return this.metaData.componentParameter;
+  }
 }
 
 export default ManageContentLink;

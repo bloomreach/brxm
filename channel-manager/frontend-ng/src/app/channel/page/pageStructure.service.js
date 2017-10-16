@@ -462,6 +462,10 @@ class PageStructureService {
             this._registerContentLink(commentDomElement, metaData);
             break;
 
+          case this.HST.TYPE_MANAGE_CONTENT_LINK:
+            this._registerManageContentLink(commentDomElement, metaData);
+            break;
+
           case this.HST.TYPE_EDIT_MENU_LINK:
             this._registerMenuLink(commentDomElement, metaData);
             break;
@@ -508,6 +512,10 @@ class PageStructureService {
 
         case this.HST.TYPE_CONTENT_LINK:
           this._registerContentLink(commentDomElement, metaData);
+          break;
+
+        case this.HST.TYPE_MANAGE_CONTENT_LINK:
+          this._registerManageContentLink(commentDomElement, metaData);
           break;
 
         case this.HST.TYPE_EDIT_MENU_LINK:
