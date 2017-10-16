@@ -15,13 +15,13 @@
  *
  */
 
-package org.onehippo.repository.documentworkflow;
+package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DocumentWorkflowTransition {
+public class WorkflowTransition {
 
     private final String requestIdentifier;
     private Map<String, Object> eventPayload = new HashMap<>();
@@ -94,13 +94,13 @@ public class DocumentWorkflowTransition {
             return this;
         }
 
-        public Builder action(final DocumentWorkflowAction action){
+        public Builder action(final ActionAware action){
             this.action = action.getAction();
             return this;
         }
 
-        public DocumentWorkflowTransition build() {
-            return new DocumentWorkflowTransition(this);
+        public WorkflowTransition build() {
+            return new WorkflowTransition(this);
         }
 
         public Builder requestIdentifier(final String requestIdentifier) {
@@ -109,7 +109,7 @@ public class DocumentWorkflowTransition {
         }
     }
 
-    private DocumentWorkflowTransition(final Builder b) {
+    private WorkflowTransition(final Builder b) {
         this.action = b.action;
         this.actionsMap = b.actionsMap;
         this.initializationPayload = b.initializationPayload;

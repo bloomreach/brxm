@@ -82,5 +82,18 @@ public interface Workflow extends Remote, Serializable {
      * @throws javax.jcr.RepositoryException                 a generic error communicating with the repository
      */
     @WorkflowAction(loggable = false, mutates = false)
-    Map<String, Serializable> hints(Map<String,Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException;
+    default Map<String, Serializable> hints(Map<String, Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException {
+        return hints();
+    }
+
+    /**
+     * Triggers workflow based on {@link WorkflowTransition}
+     *
+     * @param transition {@link WorkflowTransition} instance
+     * @return
+     * @throws WorkflowException
+     */
+    default Object transition(final WorkflowTransition transition) throws WorkflowException {
+        throw new UnsupportedOperationException("Transition has not been defined for this instance.");
+    }
 }

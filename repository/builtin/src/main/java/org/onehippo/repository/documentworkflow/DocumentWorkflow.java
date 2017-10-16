@@ -45,13 +45,6 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  */
 public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, WorkflowContextAware {
 
-    String TARGET_DATE = "targetDate";
-    String NAME = "name";
-    String DESTINATION = "destination";
-    String DATE = "date";
-    String TARGET_DOCUMENT = "target";
-    String REQUEST = "request";
-
     /**
      * <p>
      * The DocumentWorkflow hints method provides all the operational hints corresponding with the DocumentWorkflow
@@ -541,12 +534,4 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     void unlock()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
-
-    /**
-     * Triggers workflow based on {@link DocumentWorkflowTransition}
-     * @param transition {@link DocumentWorkflowTransition} instance
-     * @return
-     * @throws WorkflowException
-     */
-    Object transition(final DocumentWorkflowTransition transition) throws WorkflowException;
 }

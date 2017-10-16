@@ -30,34 +30,37 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.standardworkflow.DocumentWorkflowAction;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.ACCEPT_REQUEST;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.CANCEL_REQUEST;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.CHECK_MODIFIED;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.COPY;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DELETE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DEPUBLISH;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.LIST_VERSIONS;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.MOVE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.PUBLISH;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REJECT_REQUEST;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RENAME;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_DELETE;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_DEPUBLICATION;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.REQUEST_PUBLICATION;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RESTORE_VERSION;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.RETRIEVE_VERSION;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.UNLOCK;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.VERSION;
-import static org.onehippo.repository.documentworkflow.DocumentWorkflowAction.VERSION_RESTORE_TO;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.ACCEPT_REQUEST;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.CANCEL_REQUEST;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.CHECK_MODIFIED;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.COPY;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.DELETE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.DEPUBLISH;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.LIST_VERSIONS;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.MOVE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.PUBLISH;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.REJECT_REQUEST;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.RENAME;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.REQUEST_DELETE;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.REQUEST_DEPUBLICATION;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.REQUEST_PUBLICATION;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.RESTORE_VERSION;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.RETRIEVE_VERSION;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.UNLOCK;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.VERSION;
+import static org.hippoecm.repository.standardworkflow.DocumentWorkflowAction.VERSION_RESTORE_TO;
 
 /**
  * DocumentWorkflow implementation which delegates the document workflow state management and action processing
@@ -238,7 +241,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void requestDepublication(final Date depublicationDate) throws WorkflowException {
         transition(getBuilder()
                 .action(REQUEST_DEPUBLICATION)
-                .eventPayload(TARGET_DATE,depublicationDate)
+                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,depublicationDate)
                 .build());
     }
 
@@ -251,7 +254,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void requestPublication(final Date publicationDate) throws WorkflowException {
         transition(getBuilder()
                 .action(REQUEST_PUBLICATION)
-                .eventPayload(TARGET_DATE,publicationDate)
+                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,publicationDate)
                 .build());
     }
 
@@ -276,7 +279,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void rename(final String newName) throws WorkflowException {
         transition(getBuilder()
                 .action(RENAME)
-                .eventPayload(NAME,newName)
+                .eventPayload(DocumentWorkflowConstants.NAME,newName)
                 .build());
     }
 
@@ -284,7 +287,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void copy(final Document destination, final String newName) throws WorkflowException {
         transition(getBuilder()
                 .action(COPY)
-                .eventPayload(DESTINATION,destination, NAME,newName)
+                .eventPayload(DocumentWorkflowConstants.DESTINATION,destination, DocumentWorkflowConstants.NAME,newName)
                 .build());
     }
 
@@ -292,7 +295,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void move(final Document destination, final String newName) throws WorkflowException {
         transition(getBuilder()
                 .action(MOVE)
-                .eventPayload(DESTINATION,destination, NAME,newName)
+                .eventPayload(DocumentWorkflowConstants.DESTINATION,destination, DocumentWorkflowConstants.NAME,newName)
                 .build());
     }
 
@@ -305,7 +308,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
         transition(getBuilder()
                 .action(DEPUBLISH)
-                .eventPayload(TARGET_DATE,depublicationDate)
+                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,depublicationDate)
                 .build());
     }
 
@@ -318,7 +321,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
         transition(getBuilder()
                 .action(PUBLISH)
-                .eventPayload(TARGET_DATE,publicationDate)
+                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,publicationDate)
                 .build());
     }
 
@@ -382,7 +385,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Document versionRestoreTo(final Calendar historic, Document target) throws WorkflowException, RepositoryException {
         return (Document) transition(getBuilder()
                 .action(VERSION_RESTORE_TO)
-                .eventPayload(DATE,historic, TARGET_DOCUMENT,target)
+                .eventPayload(DocumentWorkflowConstants.DATE,historic, DocumentWorkflowConstants.TARGET_DOCUMENT,target)
                 .build());
     }
 
@@ -390,7 +393,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         return (Document) transition(getBuilder()
                 .action(RESTORE_VERSION)
-                .eventPayload(DATE,historic)
+                .eventPayload(DocumentWorkflowConstants.DATE,historic)
                 .build());
     }
 
@@ -404,12 +407,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         return (Document) transition(getBuilder()
                 .action(RETRIEVE_VERSION)
-                .eventPayload(DATE,historic)
+                .eventPayload(DocumentWorkflowConstants.DATE,historic)
                 .build());
     }
 
     @Override
-    public Object transition(DocumentWorkflowTransition transition) throws WorkflowException {
+    public Object transition(WorkflowTransition transition) throws WorkflowException {
         workflowExecutor.start();
         final Map<String, Object> eventPayload = transition.getEventPayload();
         Map<String, Boolean> actionsMap = transition.getActionsMap();
@@ -426,7 +429,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     private void addRequestToEventPayload(final Map<String, Object> eventPayload, final String requestIdentifier) {
-        eventPayload.put(REQUEST,workflowExecutor.getData().getRequests().get(requestIdentifier));
+        eventPayload.put(DocumentWorkflowConstants.REQUEST,workflowExecutor.getData().getRequests().get(requestIdentifier));
     }
 
     private Object triggerAction(final Map<String, Object> eventPayload, final Map<String, Boolean> actionsMap, final String action) throws WorkflowException {
@@ -437,8 +440,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return transition(getBuilder().action(documentWorkflowAction.getAction()).build());
     }
 
-    private DocumentWorkflowTransition.Builder getBuilder() {
-        return new DocumentWorkflowTransition.Builder();
+    private WorkflowTransition.Builder getBuilder() {
+        return new WorkflowTransition.Builder();
     }
 
 }
