@@ -25,29 +25,40 @@ import javax.servlet.http.HttpSession;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InitializationPayload {
 
-    private Map<String,Serializable> cmsSessionContextPayload;
+    private static final Logger log = LoggerFactory.getLogger(InitializationPayload.class);
+
+    private InitializationPayload(){
+    }
 
     @SuppressWarnings({"unchecked"})
-    public InitializationPayload() {
-        cmsSessionContextPayload = Collections.emptyMap();
+    public static Map<String,Serializable> get() {
+        Map<String,Serializable> result = Collections.emptyMap();
         final RequestCycle requestCycle = RequestCycle.get();
-        if (requestCycle==null){
-            return;
+        if (requestCycle!=null){
+            final ServletWebRequest request = (ServletWebRequest) requestCycle.getRequest();
+            final HttpServletRequest containerRequest = request.getContainerRequest();
+            final HttpSession session = containerRequest.getSession();
+            final CmsSessionContext context = CmsSessionContext.getContext(session);
+            final Object attribute = context.getAttribute(CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+            if (attribute!=null){
+                result = (Map<String, Serializable>) attribute;
+            }
+            else{
+                log.debug("No attribute with key {} found on CmsSessionContext. Please make sure an attribute " +
+                        "with this key is added",CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+            }
         }
-        final ServletWebRequest request = (ServletWebRequest) requestCycle.getRequest();
-        final HttpServletRequest containerRequest = request.getContainerRequest();
-        final HttpSession session = containerRequest.getSession();
-        final CmsSessionContext context = CmsSessionContext.getContext(session);
-        final Object attribute = context.getAttribute(CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
-        if (attribute!=null){
-            cmsSessionContextPayload = (Map<String, Serializable>) attribute;
+        else{
+            log.debug("Cannot get ServletWebRequest. No request cycle associated with current thread. " +
+                    "Only call this method from threads that have access.");
         }
+        return result;
     }
 
-    public static Map<String,Serializable> get(){
-        return new InitializationPayload().cmsSessionContextPayload;
-    }
+
 }
