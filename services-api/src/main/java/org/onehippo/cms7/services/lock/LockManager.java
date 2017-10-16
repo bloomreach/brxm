@@ -16,6 +16,8 @@
 package org.onehippo.cms7.services.lock;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.onehippo.cms7.services.SingletonService;
 
@@ -60,6 +62,14 @@ import org.onehippo.cms7.services.SingletonService;
  *              }
  *         </pre>
  *     </code>
+ * </p>
+ * <p>
+ *     Note that when a {@code key} is already locked, the invocation of {@link #lock(String) #lock(key)} directly results
+ *     in an {@link AlreadyLockedException} : This is thus <strong>different</strong> than
+ *     {@link java.util.concurrent.locks.ReentrantLock} behavior. If you need similar behavior to {@link ReentrantLock#lock()}
+ *     but then <strong>cluster wide</strong>, you can use {@link LockManagerUtils#waitForLock(LockManager, String, long)}
+ *     and if you need the cluster wide equivalent of {@link java.util.concurrent.locks.ReentrantLock#tryLock(long, TimeUnit)}
+ *     you can use {@link LockManagerUtils#waitForLock(LockManager, String, long, long)}.
  * </p>
  *
  */
