@@ -44,14 +44,17 @@ public class InitializationPayload {
             final HttpServletRequest containerRequest = request.getContainerRequest();
             final HttpSession session = containerRequest.getSession();
             final CmsSessionContext context = CmsSessionContext.getContext(session);
-            final Object attribute = context.getAttribute(CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
-            if (attribute!=null){
-                result = (Map<String, Serializable>) attribute;
+            if (context!=null){
+                final Object attribute = context.getAttribute(CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+                if (attribute!=null){
+                    result = (Map<String, Serializable>) attribute;
+                }
+                else{
+                    log.debug("No attribute with key {} found on CmsSessionContext. Please make sure an attribute " +
+                            "with this key is added",CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+                }
             }
-            else{
-                log.debug("No attribute with key {} found on CmsSessionContext. Please make sure an attribute " +
-                        "with this key is added",CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
-            }
+
         }
         else{
             log.debug("Cannot get ServletWebRequest. No request cycle associated with current thread. " +
