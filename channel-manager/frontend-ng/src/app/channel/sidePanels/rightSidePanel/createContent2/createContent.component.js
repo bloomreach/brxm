@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import controller from './editContent.controller';
-import template from './editContent.html';
+import controller from './createContent.controller';
+import template from './createContent.html';
 
 const editContentComponent = {
   controller,
@@ -23,6 +23,7 @@ const editContentComponent = {
   bindings: {
     documentId: '=',
     onFullWidth: '&',
+    onClose: '&',
   },
 };
 

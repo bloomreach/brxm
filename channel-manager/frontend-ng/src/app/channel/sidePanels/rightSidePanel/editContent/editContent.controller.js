@@ -17,43 +17,6 @@
 import MultiActionDialogCtrl from '../multiActionDialog/multiActionDialog.controller';
 import multiActionDialogTemplate from '../multiActionDialog/multiActionDialog.html';
 
-const ERROR_MAP = {
-  NO_CONTENT: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-    linkToContentEditor: true,
-  },
-  NOT_A_DOCUMENT: {
-    title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
-  },
-  NOT_FOUND: {
-    title: 'FEEDBACK_NOT_FOUND_TITLE',
-    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
-    disableContentButtons: true,
-  },
-  OTHER_HOLDER: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
-    hasUser: true,
-  },
-  REQUEST_PENDING: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
-  },
-  UNAVAILABLE: { // default catch-all
-    title: 'FEEDBACK_DEFAULT_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
-  },
-  UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-  },
-};
-
 class editContentController {
   constructor(
     $scope,
@@ -102,189 +65,13 @@ class editContentController {
     });
   }
 
-  $onInit() {
-    this.openDocument(this.documentId);
-  }
-
-  openDocument(documentId) {
-    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
-      this._deleteDraft().finally(() => {
-        this._resetState();
-        this._loadDocument(documentId);
-      });
-    });
-  }
-
-  _resetState() {
-    delete this.doc;
-    delete this.docType;
-    delete this.editing;
-    delete this.feedback;
-    delete this.disableContentButtons;
-
-    this.documentId = null;
-
-    this.title = this.defaultTitle;
-    this.deleteDraftOnClose = true;
-
-    this._resetForm();
+  get title() {
+    return this.$translate.instant('EDIT_DOCUMENT', this.doc);
   }
 
   setFullWidth(state) {
     this.isFullWidth = state;
     this.onFullWidth({ state });
-  }
-
-  _resetForm() {
-    if (this.form) {
-      this.form.$setPristine();
-    }
-  }
-
-  _loadDocument(id) {
-    this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
-    this.loading = true;
-    this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
-        .then((doc) => {
-          if (this._hasFields(doc)) {
-            return this.ContentService.getDocumentType(doc.info.type.id)
-              .then(docType => this._onLoadSuccess(doc, docType));
-          }
-          return this.$q.reject(this._noContentResponse(doc));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._showFeedbackDraftInvalid())
-      .finally(() => delete this.loading);
-  }
-
-  _showFeedbackDraftInvalid() {
-    this.feedback = {
-      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
-      linkToContentEditor: true,
-    };
-  }
-
-  _hasFields(doc) {
-    return doc.fields && Object.keys(doc.fields).length > 0;
-  }
-
-  _noContentResponse(doc) {
-    return {
-      data: {
-        reason: 'NO_CONTENT',
-        params: {
-          displayName: doc.displayName,
-        },
-      },
-    };
-  }
-
-  _onLoadSuccess(doc, docType) {
-    this.doc = doc;
-    this.docType = docType;
-    this.editing = true;
-
-    if (this.doc.displayName) {
-      this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
-    }
-    this._resizeTextareas();
-  }
-
-  _onLoadFailure(response) {
-    let errorKey;
-    let params = {};
-
-    if (this._isErrorInfo(response.data)) {
-      const errorInfo = response.data;
-      errorKey = errorInfo.reason;
-      if (errorInfo.params) {
-        params = this._extractErrorParams(errorInfo);
-        if (errorInfo.params.displayName) {
-          this.title = this.$translate.instant('EDIT_DOCUMENT', errorInfo.params);
-        }
-      }
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
-    } else {
-      errorKey = 'UNAVAILABLE';
-    }
-    this._handleErrorResponse(errorKey, params);
-  }
-
-  _extractErrorParams(errorInfo) {
-    const params = {};
-    if (errorInfo.reason === 'OTHER_HOLDER') {
-      params.user = errorInfo.params.userName || errorInfo.params.userId;
-    }
-    return params;
-  }
-
-  _handleErrorResponse(errorKey, params) {
-    const error = ERROR_MAP[errorKey];
-
-    if (error) {
-      this.feedback = {
-        title: error.title,
-        message: this.$translate.instant(error.messageKey, params),
-        linkToContentEditor: error.linkToContentEditor,
-      };
-      this.disableContentButtons = error.disableContentButtons;
-    }
-  }
-
-  _resizeTextareas() {
-    // Set initial size of textareas (see Angular Material issue #9745).
-    // Use $timeout to ensure that the sidenav has become visible.
-    this.$timeout(() => {
-      this.$scope.$broadcast('md-resize-textarea');
-    });
-  }
-
-  saveDocument() {
-    return this._saveDraft()
-      .then((savedDoc) => {
-        this.doc = savedDoc;
-        this._resetForm();
-        this.HippoIframeService.reload();
-        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      })
-      .catch((response) => {
-        let params = {};
-        let errorKey = 'ERROR_UNABLE_TO_SAVE';
-
-        if (this._isErrorInfo(response.data)) {
-          errorKey = `ERROR_${response.data.reason}`;
-          params = this._extractErrorParams(response.data);
-        } else if (this._isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
-        }
-
-        this.FeedbackService.showError(errorKey, params);
-
-        return this.$q.reject(); // tell the caller that saving has failed.
-      });
-  }
-
-  _isDocument(obj) {
-    return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
-  }
-
-  _isErrorInfo(obj) {
-    return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
-  }
-
-  _reloadDocumentType() {
-    this.ContentService.getDocumentType(this.doc.info.type.id)
-      .then((docType) => {
-        this.docType = docType;
-      })
-      .catch((response) => {
-        this._onLoadFailure(response);
-      });
   }
 
   openContentEditor(mode, isPromptUnsavedChanges = true) {
@@ -355,58 +142,29 @@ class editContentController {
     }
   }
 
-  _saveDraft() {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve();
-    }
-    return this.ContentService.saveDraft(this.doc);
-  }
-
-  // ds
   closeButtonLabel() {
-    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+    return 'Cancel';
+    // return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }
 
-  isDocumentDirty() {
-    return (this.doc && this.doc.info && this.doc.info.dirty) || this._isFormDirty();
+  onClose(closeCallback) {
+    this.closeHandler = closeCallback;
   }
 
-  _isFormDirty() {
-    return this.form && this.form.$dirty;
+  onSave(promiseCallback) {
+    this.saveHandler = promiseCallback;
   }
 
   close() {
-    return this._releaseDocument()
-      .then(() => {
-        this.deleteDraftOnClose = false;
-        this.onClose();
-      });
+    this.closeHandler().then(this.SidePanelService.close('right'));
   }
 
-  _releaseDocument() {
-    if (this.deleteDraftOnClose) {
-      return this._confirmDiscardChanges()
-        .then(() => {
-          // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
-          this._deleteDraft();
-        });
-    }
-    return this.$q.resolve();
+  save() {
+    this.saveHandler();
   }
 
-  _confirmDiscardChanges() {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve();
-    }
-    const messageParams = {
-      documentName: this.doc.displayName,
-    };
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
-      .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.cancelLabel);
-
-    return this.DialogService.show(confirm);
+  isSaveDisabled() {
+    return true;
   }
 
   _deleteDraft() {

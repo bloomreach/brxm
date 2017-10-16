@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import controller from './editContent.controller';
-import template from './editContent.html';
+import controller from './visualEditor.controller';
+import template from './visualEditor.html';
 
-const editContentComponent = {
+const visualEditorComponent = {
   controller,
   template,
   bindings: {
     documentId: '=',
-    onFullWidth: '&',
+    doc: '=',
+    onClose: '&',
+    onSave: '&',
   },
 };
 
-export default editContentComponent;
+export default visualEditorComponent;

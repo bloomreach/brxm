@@ -42,45 +42,11 @@
   </md-progress-linear>
 </md-toolbar>
 
-<sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>
-
-<md-content flex="grow"
-            layout="column"
-            id="rightSidePanel-content">
-
-  <md-subheader class="md-no-sticky"
-                ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
-                md-colors="{background: 'hippo-grey-200'}">
-    <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
-    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>
-  </md-subheader>
-
-  <div ng-if="$ctrl.feedback"
-       class="md-padding feedback qa-feedback"
-       md-colors="{background: 'hippo-red-50'}">
-    <h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>
-
-    <p class="qa-feedback-message">
-      {{::$ctrl.feedback.message }}
-    </p>
-
-    <md-button ng-if="::$ctrl.feedback.linkToContentEditor"
-               ng-click="$ctrl.openContentEditor('edit')">
-      <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-      {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
-    </md-button>
-  </div>
-
-  <form novalidate ng-if="$ctrl.editing"
-        name="$ctrl.form"
-        class="form-dense-layout">
-    <document-fields class="top-level"
-                     field-types="$ctrl.docType.fields"
-                     field-values="$ctrl.doc.fields">
-    </document-fields>
-  </form>
-</md-content>
+<visual-editor document-id="$ctrl.documentId"
+               doc="$ctrl.doc"
+               on-close="$ctrl.onClose(promiseCallback)"
+               on-save="$ctrl.onSave(promiseCallback)">
+</visual-editor>
 
 <md-toolbar ng-hide="$ctrl.createContent">
   <div class="md-toolbar-tools">
@@ -92,9 +58,8 @@
     </md-button>
 
     <md-button class="qa-save"
-               ng-click="$ctrl.saveDocument()"
-               ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
-      {{ $ctrl.createContent ? 'CREATE' : 'SAVE' | translate }}
+               ng-click="$ctrl.save()">
+      {{ ::'SAVE' | translate }}
     </md-button>
   </div>
 </md-toolbar>
