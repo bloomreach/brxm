@@ -23,6 +23,7 @@ const editContentComponent = {
   bindings: {
     documentId: '=',
     onFullWidth: '&',
+    onClose: '&',
   },
 };
 

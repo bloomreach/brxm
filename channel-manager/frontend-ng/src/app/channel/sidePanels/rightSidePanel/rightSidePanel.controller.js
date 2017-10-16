@@ -65,7 +65,7 @@ class RightSidePanelCtrl {
         this._onOpen();
       },
       // onClose
-      () => this._closePanel());
+      () => $q.resolve());
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
@@ -117,16 +117,17 @@ class RightSidePanelCtrl {
   }
 
   _closePanel() {
-    return this.$q.resolve(() => {
-      this._resetState();
-      this.$element.removeClass('sidepanel-open');
-      this.$element.css('max-width', '0px');
-      this.setFullWidth(false);
+    this.SidePanelService.close('right')
+      .then(() => this._resetState())
+      .finally(() => {
+        this.$element.removeClass('sidepanel-open');
+        this.$element.css('max-width', '0px');
+        this.setFullWidth(false);
+      });
 
-      if (!this.ChannelService.isToolbarDisplayed) {
-        this.ChannelService.setToolbarDisplayed(true);
-      }
-    });
+    if (!this.ChannelService.isToolbarDisplayed) {
+      this.ChannelService.setToolbarDisplayed(true);
+    }
   }
 
   setFullWidth(state) {

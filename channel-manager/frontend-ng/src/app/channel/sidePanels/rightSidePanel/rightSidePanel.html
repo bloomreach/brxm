@@ -27,7 +27,8 @@
 
   <hippo-edit-content ng-if="RightSidePanelCtrl.editing"
                       document-id="RightSidePanelCtrl.documentId"
-                      on-full-width="RightSidePanelCtrl.setFullWidth(state)">
+                      on-full-width="RightSidePanelCtrl.setFullWidth(state)"
+                      on-close="RightSidePanelCtrl._closePanel()">
   </hippo-edit-content>
   <hippo-create-content ng-if="RightSidePanelCtrl.createContent"
                         (on-close)="RightSidePanelCtrl.close()"
