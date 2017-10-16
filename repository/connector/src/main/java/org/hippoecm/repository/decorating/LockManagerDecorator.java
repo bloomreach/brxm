@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 
-
+/**
+ * @deprecated since 5.0.3
+ */
+@Deprecated
 public class LockManagerDecorator implements LockManager {
 
     protected final Session session;

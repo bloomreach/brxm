@@ -28,14 +28,19 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.core.cluster.ClusterNode;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.journal.DatabaseJournal;
+import org.apache.jackrabbit.core.journal.JournalConnectionHelperAccessorImpl;
+import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
@@ -44,7 +49,10 @@ import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.lock.memory.MemoryLockManager;
 import org.onehippo.repository.modules.ModuleManager;
+import org.onehippo.repository.lock.InternalLockManager;
+import org.onehippo.repository.lock.db.DbLockManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +88,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private String repoConfig;
 
     private ConfigurationServiceImpl configurationService;
+    protected InternalLockManager lockManager;
 
     private ModuleManager moduleManager;
 
@@ -192,7 +201,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * @return InputStream to the repository config
      * @throws RepositoryException
      */
-    private InputStream getRepositoryConfigAsStream() throws RepositoryException {
+    protected InputStream getRepositoryConfigAsStream() throws RepositoryException {
 
         String configPath = repoConfig;
 
@@ -248,12 +257,33 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     }
 
+    protected void initializeLocalRepository(final RepositoryConfig repConfig) throws RepositoryException {
+        jackrabbitRepository = new LocalRepositoryImpl(repConfig);
+    }
+
+    protected void initializeLockManager() throws RepositoryException {
+        ClusterNode clusterNode = jackrabbitRepository.getClusterNode();
+        if (clusterNode != null && clusterNode.getJournal() instanceof DatabaseJournal) {
+            DatabaseJournal dbJournal = (DatabaseJournal) clusterNode.getJournal();
+            ConnectionHelper connectionHelper =
+                    JournalConnectionHelperAccessorImpl.getConnectionHelper((DatabaseJournal) clusterNode.getJournal());
+            this.lockManager = DbLockManagerFactory.create(connectionHelper, dbJournal.getSchemaObjectPrefix(),
+                    dbJournal.isSchemaCheckEnabled(), jackrabbitRepository.getDescriptor("jackrabbit.cluster.id"));
+        } else {
+            this.lockManager = new MemoryLockManager();
+        }
+    }
+
     protected void initialize() throws RepositoryException {
         log.info("Initializing Hippo Repository");
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
-        jackrabbitRepository = new LocalRepositoryImpl(createRepositoryConfig());
+        initializeLocalRepository(createRepositoryConfig());
+        initializeLockManager();
+
+        HippoServiceRegistry.registerService(lockManager, new Class[]{LockManager.class, InternalLockManager.class});
+
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
@@ -268,7 +298,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     protected ConfigurationServiceImpl initializeConfiguration(final Session rootSession) throws RepositoryException {
-        log.info("Initializing LocalHippoRepository");
+        log.info("LocalHippoRepository initialize configuration");
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
         final Session configurationServiceSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
         migrateToV12IfNeeded(configurationServiceSession, false);
@@ -306,6 +336,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (configurationService != null) {
             HippoServiceRegistry.unregisterService(configurationService, ConfigurationService.class);
             configurationService.stop();
+        }
+        if (lockManager != null) {
+            HippoServiceRegistry.unregisterService(lockManager, LockManager.class);
+            lockManager.destroy();
         }
         if (jackrabbitRepository != null) {
             try {

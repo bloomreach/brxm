@@ -156,6 +156,10 @@
             <exclude>**/SchedulerTest.java</exclude>
             <exclude>**/MonkeyTest.java</exclude>
             <exclude>**/LockTest.java</exclude>
+            <exclude>**/LockManagerAbortTest.java</exclude>
+            <exclude>**/LockManagerBasicTest.java</exclude>
+            <exclude>**/LockManagerExpiresTest.java</exclude>
+            <exclude>**/LockManagerRefreshTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -196,6 +200,10 @@
                     <include>**/SchedulerTest.java</include>
                     <include>**/MonkeyTest.java</include>
                     <include>**/LockTest.java</include>
+                    <include>**/LockManagerAbortTest.java</include>
+                    <include>**/LockManagerBasicTest.java</include>
+                    <include>**/LockManagerExpiresTest.java</include>
+                    <include>**/LockManagerRefreshTest.java</include>
                   </includes>
                 </configuration>
               </execution>

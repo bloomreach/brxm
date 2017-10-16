@@ -30,6 +30,25 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+/**
+ * JCR locking is deprecated, use {@link org.onehippo.cms7.services.lock.LockManager} instead. Creating a (cluster wide)
+ * lock with {@link org.onehippo.cms7.services.lock.LockManager} can be achieved as follows:
+ * <code>
+ *     <pre>
+ *        final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+ *        try {
+ *            lockManager.lock(key);
+ *            // do locked work
+ *        } catch (LockException e) {
+ *            log.info("{} already locked", key);
+ *        } finally {
+ *            lockManager.unlock(key);
+ *        }
+ *     </pre>
+ * </code>
+ * @deprecated since 5.0.3
+ */
+@Deprecated
 public class LockTest extends RepositoryTestCase {
 
     private LockManager lockManager;
