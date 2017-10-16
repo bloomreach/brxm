@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-import EmbeddedLink from './embeddedLink';
-
-class ManageContentLink extends EmbeddedLink {
-  constructor(commentElement, metaData) {
-    super('manage-content-link', commentElement, metaData);
-  }
-
-  getComponentParameter() {
-    return this.metaData.componentParameter;
-  }
-
-  getDefaultPath() {
-    return this.metaData.defaultPath;
-  }
-
-  getRootPath() {
-    return this.metaData.rootPath;
-  }
-
-  getTemplateQuery() {
-    return this.metaData.templateQuery;
-  }
+export interface Hint {
+  key: string,
+  content: string,
+  classList: Array<string>
 }
-
-export default ManageContentLink;

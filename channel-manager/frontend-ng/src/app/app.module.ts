@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import ng1Module from './hippo-cm.ng1.module.js';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UpgradeModule  } from '@angular/upgrade/static';
 
 import { MaterialModule } from './material/material.module';
-import ng1Module from './hippo-cm.ng1.module.js';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
 import { ContentServiceProvider } from './services/content.service.provider';
 import { CreateContentService } from './services/create-content.service';
@@ -31,7 +31,7 @@ import { CreateContentService } from './services/create-content.service';
     BrowserAnimationsModule,
     UpgradeModule,
     MaterialModule,
-    RightSidePanelModule
+    RightSidePanelModule,
   ],
   providers: [
     ContentServiceProvider,

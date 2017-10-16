@@ -1,4 +1,3 @@
-import { log } from 'util';
 /*
  * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
@@ -15,11 +14,9 @@ import { log } from 'util';
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input, AfterViewInit, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, AfterViewInit } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
 
 import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
 
@@ -28,14 +25,12 @@ import { CreateContentService, DocumentTypeInfo } from '../../../../services/cre
   templateUrl: './create-content.html'
 })
 export class CreateContentComponent implements AfterViewInit {
-  docTypes: DocumentTypeInfo[];
-
-  @ViewChild('input') input: ElementRef;
   @Input() document: any;
   @Input() options: any;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
+  docTypes: Array<DocumentTypeInfo> = [];
   constructor(private createContentService: CreateContentService) { }
 
   ngAfterViewInit() {
@@ -46,20 +41,12 @@ export class CreateContentComponent implements AfterViewInit {
       .subscribe((docTypes) => this.docTypes = docTypes);
   }
 
-  // TODO: Apply this function along with the observable when relevant
-  // validateUrl(input: string) {
-  //   console.log(input);
-  // }
-
   close() {
     this.onClose.emit();
   }
 
   submit(form: NgForm) {
-    this.onContinue.emit(form.value);
+    console.log(form);
+    // this.onContinue.emit(form.value);
   }
-
-  // ngOnDestroy() {
-  //   this.urlInputSubscription.unsubscribe();
-  // }
 }
