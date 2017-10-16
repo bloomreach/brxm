@@ -24,8 +24,8 @@ public class LockManagerUtils {
      * @param lockManager lockManager
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @param waitInterval time in milliseconds to wait before retrying creating the lock
-     * @return {@link LockResource} such that this {@link #lock(String)} method can be used in a try-with-resources statement
-     *         where the {@link LockResource#close()} results in the lock being freed.
+     * @return {@link LockResource} such that this {@link ##waitForLock(LockManager, String, long)} method can be used
+     *         in a try-with-resources statement where the {@link LockResource#close()} results in the lock being freed.
      * @throws LockException if the lock could not be created (other then {@link AlreadyLockedException})
      * @throws InterruptedException when the thread is interrupted while waiting before retrying to create the lock
      */
@@ -34,8 +34,7 @@ public class LockManagerUtils {
         try {
             return waitForLock(lockManager, key, waitInterval, 0);
         } catch (TimeoutException ignore) {
-            // not going to happen, needed to keep the compiler happy
-            return null;
+            throw new IllegalStateException("LockManagerUtils implementation error");
         }
     }
 
@@ -45,8 +44,8 @@ public class LockManagerUtils {
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @param waitInterval time in milliseconds to wait before retrying creating the lock
      * @param maxWait maximum time in milliseconds for trying to create the lock, will throw TimeoutException when exceeded.
-     * @return {@link LockResource} such that this {@link #lock(String)} method can be used in a try-with-resources statement
-     *         where the {@link LockResource#close()} results in the lock being freed.
+     * @return {@link LockResource} such that this {@link ##waitForLock(LockManager, String, long)} method can be used
+     *         in a try-with-resources statement where the {@link LockResource#close()} results in the lock being freed.
      * @throws LockException if the lock could not be created (other then {@link AlreadyLockedException})
      * @throws TimeoutException when the maxWait time has exceeded while trying to create the lock
      * @throws InterruptedException when the thread is interrupted while waiting before retrying to create the lock
