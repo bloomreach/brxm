@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,12 +45,16 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.DocumentWorkflowAction.VERSION_RESTORE_TO;
 
 public class VersionWorkflowPlugin extends RenderPlugin {
 
@@ -138,18 +142,13 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 DocumentWorkflow documentWorkflow = model.getWorkflow();
 
                 Version versionNode = (Version) frozenNode.getParent();
-                Calendar calendar = versionNode.getCreated();
                 // create a revision to prevent loss of content from unpublished.
-                documentWorkflow.version();
-                final WorkflowTransition obtainTransition = new WorkflowTransition.Builder()
-                        .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                        .initializationPayload(InitializationPayload.get())
-                        .build();
-                Document doc = (Document) documentWorkflow.transition(obtainTransition);
+                createVersion(documentWorkflow);
+                Document doc = obtainEditableInstance(documentWorkflow);
                 try {
-                    documentWorkflow.versionRestoreTo(calendar, doc);
+                    restoreToVersion(documentWorkflow, versionNode.getCreated(), doc);
                 } finally {
-                    doc = documentWorkflow.commitEditableInstance();
+                    doc = (Document) commitEditableInstance(documentWorkflow);
                 }
 
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
@@ -166,6 +165,36 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 editor = getEditor();
                 editor.close();
                 return null;
+            }
+
+            private Object commitEditableInstance(final DocumentWorkflow documentWorkflow) throws WorkflowException {
+                return documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE));
+            }
+
+            private void restoreToVersion(final DocumentWorkflow documentWorkflow, final Calendar calendar, final Document doc) throws WorkflowException {
+                documentWorkflow.transition(getBuilder()
+                        .action(VERSION_RESTORE_TO)
+                        .eventPayload(DocumentWorkflowConstants.DATE,calendar, DocumentWorkflowConstants.TARGET_DOCUMENT,doc)
+                        .build());
+            }
+
+            private Document obtainEditableInstance(final DocumentWorkflow documentWorkflow) throws WorkflowException {
+                return (Document) documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE));
+            }
+
+            private void createVersion(final DocumentWorkflow documentWorkflow) throws WorkflowException {
+                documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.VERSION));
+            }
+
+            private WorkflowTransition getWorkflowTransition(final DocumentWorkflowAction action) {
+                return getBuilder()
+                        .action(action)
+                        .build();
+            }
+
+            private WorkflowTransition.Builder getBuilder() {
+                return new WorkflowTransition.Builder()
+                        .initializationPayload(InitializationPayload.get());
             }
         });
 
@@ -198,6 +227,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
     }
+
+
 
     @Override
     public WorkflowDescriptorModel getModel() {

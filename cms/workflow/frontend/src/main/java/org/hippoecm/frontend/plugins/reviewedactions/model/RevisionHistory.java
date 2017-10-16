@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.model;
 
-import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,7 +28,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,14 +87,18 @@ public class RevisionHistory implements IDetachable {
             try {
                 DocumentWorkflow workflow = getWorkflow();
                 if (workflow != null) {
-                    final SortedMap<Calendar, Set<String>> versions = workflow.listVersions();
+                    final WorkflowTransition listVersions = new WorkflowTransition.Builder()
+                            .initializationPayload(InitializationPayload.get())
+                            .action(DocumentWorkflowAction.LIST_VERSIONS)
+                            .build();
+                    final SortedMap<Calendar, Set<String>> versions = (SortedMap<Calendar, Set<String>>) workflow.transition(listVersions);
                     int index = versions.size();
                     for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
                         list.add(new Revision(this, entry.getKey(), entry.getValue(), --index, new JcrNodeModel(wdm.getNode())));
                     }
                 }
                 Collections.reverse(list);
-            } catch (RepositoryException | WorkflowException | RemoteException e) {
+            } catch (RepositoryException | WorkflowException e) {
                 log.error(e.getMessage(), e);
             }
         }
