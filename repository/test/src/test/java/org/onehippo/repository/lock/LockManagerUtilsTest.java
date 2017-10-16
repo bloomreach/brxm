@@ -44,7 +44,6 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
             } catch (LockException | InterruptedException ignore) {
                 // bad pattern, but OK for this test-case
             }
-            System.out.println("lock should be cleared now");
         }
     }
 
@@ -62,13 +61,12 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
         }
         try (LockResource lock = LockManagerUtils.waitForLock(lockManager, "123", 100)) {
             assertTrue(System.currentTimeMillis() > time + 500);
-            System.out.println("time: "+(System.currentTimeMillis() - time));
         }
+        lockThread.join();
     }
 
     @Test
     public void waitForLockTimeoutTest() throws Exception {
-        long time = System.currentTimeMillis();
         Thread lockThread = new Thread(new TimedLockRunnable("123", 500));
         lockThread.start();
         // give lockThread time to start
@@ -83,5 +81,6 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
         } catch (TimeoutException ignore) {
             // expected
         }
+        lockThread.join();
     }
 }
