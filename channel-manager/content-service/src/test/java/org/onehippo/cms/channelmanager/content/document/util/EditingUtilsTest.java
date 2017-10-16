@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 public class EditingUtilsTest {
 
-    private final EditingUtils editingUtils = new EditingUtilsImpl();
+    private final EditingUtils editingUtils = new EditingUtils(new HintsInspectorImpl());
 
     @Test
     public void canCreateDraft() throws Exception {

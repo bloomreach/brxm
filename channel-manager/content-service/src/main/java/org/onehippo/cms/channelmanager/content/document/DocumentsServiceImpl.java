@@ -58,7 +58,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private EditingUtils editingUtils;
 
-    public void setEditingUtils(final EditingUtils editingUtils) {
+    public void setEditingUtils(EditingUtils editingUtils) {
         this.editingUtils = editingUtils;
     }
 

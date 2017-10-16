@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,71 +13,80 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * EditingUtils provides utility methods for dealing with the workflow of a document.
- */
-public interface EditingUtils {
+public class EditingUtils {
 
-    /**
-     * Check if a workflow indicates that editing of a document can be started.
-     *
-     * @param workflow workflow for the current user on a specific document
-     * @return true/false.
-     */
-    boolean canCreateDraft(Workflow workflow);
+    private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
 
-    /**
-     * Check if a document can be updated, given its workflow.
-     *
-     * @param workflow editable workflow of a document
-     * @return true if document can be updated, false otherwise
-     */
-    boolean canUpdateDraft(Workflow workflow);
+    private final HintsInspector hintsInspector;
 
-    /**
-     * Check if a document can be updated, given its workflow.
-     *
-     * @param workflow editable workflow of a document
-     * @return true if document can be updated, false otherwise
-     */
-    boolean canDeleteDraft(Workflow workflow);
+    public EditingUtils(HintsInspector hintsInspector) {
+        this.hintsInspector = hintsInspector;
+    }
 
-    /**
-     * Determine the reason why editing failed for the present workflow.
-     *
-     * @param workflow workflow for the current user on a specific document
-     * @param session  current user's JCR session
-     * @return Specific reason or nothing (unknown), wrapped in an Optional
-     */
-    Optional<ErrorInfo> determineEditingFailure(Workflow workflow, Session session);
+    public boolean canCreateDraft(final Workflow workflow) {
+        return getHints(workflow).map(hintsInspector::canCreateDraft).orElse(false);
+    }
 
-    /**
-     * Create a draft variant node for a document represented by handle node.
-     *
-     * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
-     */
-    Optional<Node> createDraft(EditableWorkflow workflow, Session session);
+    public boolean canUpdateDraft(final Workflow workflow) {
+        return getHints(workflow).map(hintsInspector::canUpdateDraft).orElse(false);
+    }
 
-    /**
-     * Copy the (validated) draft to the preview, and re-obtain the editable instance.
-     *
-     * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for re-obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
-     */
-    Optional<Node> copyToPreviewAndKeepEditing(EditableWorkflow workflow, Session session);
+    public boolean canDeleteDraft(final Workflow workflow) {
+        return getHints(workflow).map(hintsInspector::canDeleteDraft).orElse(false);
+    }
+
+    public Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
+        return getHints(workflow).flatMap(hints -> hintsInspector.determineEditingFailure(hints, session));
+    }
+
+    public Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
+        try {
+            final Document document = workflow.obtainEditableInstance();
+            return Optional.of(document.getNode(session));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
+        try {
+            workflow.commitEditableInstance();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
+            return Optional.empty();
+        }
+
+        return createDraft(workflow, session);
+    }
+
+    private Optional<Map<String, Serializable>> getHints(Workflow workflow) {
+        try {
+            return Optional.of(workflow.hints());
+        } catch (WorkflowException | RemoteException | RepositoryException e) {
+            log.warn("Failed reading hints from workflow", e);
+        }
+        return Optional.empty();
+    }
 
 }

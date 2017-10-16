@@ -23,7 +23,8 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
-import org.onehippo.cms.channelmanager.content.document.util.EditingUtilsImpl;
+import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
+import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
@@ -33,10 +34,10 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 
 /**
  * ChannelContentServiceModule registers and manages a JAX-RS endpoint of the repository module.
- *
- * That endpoint represents the REST resource {@link ContentResource} and the resource's
- * root address (configurable, but defaulting to "content"), and it registers the
- * {@link ManagedUserSessionInvoker} to take care of authentication and authorization.
+ * <p>
+ * That endpoint represents the REST resource {@link ContentResource} and the resource's root address (configurable, but
+ * defaulting to "content"), and it registers the {@link ManagedUserSessionInvoker} to take care of authentication and
+ * authorization.
  */
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
@@ -56,11 +57,12 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     protected void doInitialize(final Session session) throws RepositoryException {
         super.doInitialize(session);
 
-        final String propertyPath = moduleConfigPath + "/editingUtilsClass";
-        final String defaultValue = EditingUtilsImpl.class.getName();
-        final String editingUtilsClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
+        final String propertyPath = moduleConfigPath + "/hintsInspectorClass";
+        final String defaultValue = HintsInspectorImpl.class.getName();
+        final String hintsInspectorClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
-            documentsService.setEditingUtils((EditingUtils) Class.forName(editingUtilsClassName).newInstance());
+            final HintsInspector hintsInspector = (HintsInspector) Class.forName(hintsInspectorClassName).newInstance();
+            documentsService.setEditingUtils(new EditingUtils(hintsInspector));
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
