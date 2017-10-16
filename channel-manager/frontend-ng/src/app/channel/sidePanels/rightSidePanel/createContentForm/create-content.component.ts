@@ -30,7 +30,9 @@ export class CreateContentComponent implements AfterViewInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
 
-  docTypes: Array<DocumentTypeInfo> = [];
+  documentType: string;
+  documentTypes: Array<DocumentTypeInfo> = [];
+
   constructor(private createContentService: CreateContentService) { }
 
   ngAfterViewInit() {
@@ -38,7 +40,12 @@ export class CreateContentComponent implements AfterViewInit {
     //   .debounceTime(1000)
     //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
     this.createContentService.getDocumentTypesFromTemplateQuery(this.options.templateQuery)
-      .subscribe((docTypes) => this.docTypes = docTypes);
+      .subscribe((documentTypes) => {
+        this.documentTypes = documentTypes;
+        if (documentTypes.length === 1) {
+          this.documentType = documentTypes[0].id;
+        }
+      });
   }
 
   close() {
