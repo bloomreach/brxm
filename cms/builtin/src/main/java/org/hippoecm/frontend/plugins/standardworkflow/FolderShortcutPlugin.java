@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
@@ -72,8 +73,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
-import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,9 +167,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
                         try {
-                            if (workflow instanceof EditableWorkflow) {
-                                EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
-                                Document editableDocument = editableWorkflow.obtainEditableInstance();
+                            if (workflow!=null) {
+                                final WorkflowTransition transition = new WorkflowTransition.Builder()
+                                        .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
+                                        .initializationPayload(InitializationPayload.get())
+                                        .build();
+                                Document editableDocument = (Document) workflow.transition(transition);
                                 if (editableDocument != null) {
                                     Session jcrSession = UserSession.get().getJcrSession();
                                     jcrSession.refresh(true);
@@ -184,7 +188,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                     editorMgr.openEditor(editNodeModel);
                                 }
                             }
-                        } catch (WorkflowException | ServiceException | RepositoryException | RemoteException ex) {
+                        } catch (WorkflowException | ServiceException | RepositoryException ex) {
                             log.error("Cannot auto-edit document", ex);
                         }
                     }

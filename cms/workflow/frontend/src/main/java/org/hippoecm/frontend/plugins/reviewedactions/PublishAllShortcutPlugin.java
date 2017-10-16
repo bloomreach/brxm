@@ -42,9 +42,9 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.InitializationPayload;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -153,7 +153,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
                         DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflow;
                         Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>)
-                                documentWorkflow.hints().get("requests");
+                                documentWorkflow.hints(InitializationPayload.get()).get("requests");
                         for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
                             Map<String, Serializable> actions = entry.getValue();
                             if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {

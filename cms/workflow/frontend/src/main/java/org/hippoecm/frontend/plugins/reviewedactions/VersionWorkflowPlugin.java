@@ -38,12 +38,15 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -138,7 +141,11 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 Calendar calendar = versionNode.getCreated();
                 // create a revision to prevent loss of content from unpublished.
                 documentWorkflow.version();
-                Document doc = documentWorkflow.obtainEditableInstance();
+                final WorkflowTransition obtainTransition = new WorkflowTransition.Builder()
+                        .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
+                        .initializationPayload(InitializationPayload.get())
+                        .build();
+                Document doc = (Document) documentWorkflow.transition(obtainTransition);
                 try {
                     documentWorkflow.versionRestoreTo(calendar, doc);
                 } finally {

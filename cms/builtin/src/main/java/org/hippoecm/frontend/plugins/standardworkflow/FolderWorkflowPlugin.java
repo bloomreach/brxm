@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -77,6 +78,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -121,7 +123,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             renameDocumentArguments.setUriName(node.getName());
                             renameDocumentArguments.setTargetName(node.getDisplayName());
                             renameDocumentArguments.setNodeType(node.getPrimaryNodeType().getName());
-                       } catch (RepositoryException ex) {
+                        } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
                             renameDocumentArguments.setUriName(StringUtils.EMPTY);
                             renameDocumentArguments.setTargetName(StringUtils.EMPTY);
@@ -299,7 +301,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                             // Try to match svgName with a built-in Icon
                             final String iconName = StringUtils.replace(svgName, "-", "_").toUpperCase();
-                            for (Icon icon: Icon.values()) {
+                            for (Icon icon : Icon.values()) {
                                 if (icon.name().equals(iconName)) {
                                     return HippoIcon.fromSprite(id, icon);
                                 }
@@ -483,14 +485,17 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 }
                 if (workflow instanceof EditableWorkflow) {
                     try {
-                        EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
-                        Document editableDocument = editableWorkflow.obtainEditableInstance();
+                        final WorkflowTransition transition = new WorkflowTransition.Builder()
+                                .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
+                                .initializationPayload(InitializationPayload.get())
+                                .build();
+                        Document editableDocument = (Document) workflow.transition(transition);
                         if (editableDocument != null) {
                             session.refresh(true);
                             final Node docNode = session.getNodeByIdentifier(editableDocument.getIdentity());
                             editNodeModel = new JcrNodeModel(docNode);
                         }
-                    } catch (WorkflowException | RemoteException | RepositoryException ex) {
+                    } catch (WorkflowException | RepositoryException ex) {
                         log.error("Cannot auto-edit document", ex);
                     }
                 }

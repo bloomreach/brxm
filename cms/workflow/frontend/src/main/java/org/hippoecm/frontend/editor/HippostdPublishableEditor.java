@@ -32,6 +32,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -42,6 +43,7 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -49,6 +51,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.util.JcrConstants;
@@ -329,15 +332,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 validate();
             }
             if (isValid) {
-                final EditableWorkflow workflow = getEditableWorkflow();
-                workflow.commitEditableInstance();
+                final Workflow workflow = getEditableWorkflow();
+                workflow.transition(getTransition(DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE));
                 session.getJcrSession().refresh(true);
-                workflow.obtainEditableInstance();
+                workflow.transition(getTransition(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE));
                 modified = false;
             } else {
                 throw new EditorException("The document is not valid");
             }
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
+        } catch (RepositoryException | WorkflowException e) {
             log.error("Unable to save the document {}: {}", docPath, e.getMessage());
             throw new EditorException("Unable to save the document", e);
         } catch (final ValidationException e) {
@@ -345,6 +348,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Unable to validate the document", e);
         }
 
+    }
+
+    private WorkflowTransition getTransition(final DocumentWorkflowAction action) {
+        return new WorkflowTransition.Builder()
+                .initializationPayload(InitializationPayload.get()).action(action).build();
     }
 
     public void revert() throws EditorException {
