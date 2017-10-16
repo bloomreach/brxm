@@ -94,6 +94,14 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
 
+    /**
+     * All implementations of a work-flow must provide a single, no-argument constructor.
+     *
+     * @throws RemoteException mandatory exception that must be thrown by all Remote objects
+     */
+    public DocumentWorkflowImpl() throws RemoteException {
+    }
+
     @SuppressWarnings("unchecked")
     protected DocumentHandle createDocumentHandle(Node node) throws WorkflowException {
         final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();

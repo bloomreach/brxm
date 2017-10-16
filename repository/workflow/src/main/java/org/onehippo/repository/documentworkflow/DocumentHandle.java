@@ -26,6 +26,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.scxml.PayloadAware;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 /**
  * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
  */
-public class DocumentHandle implements SCXMLWorkflowData {
+public class DocumentHandle implements SCXMLWorkflowData, PayloadAware {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
 
@@ -44,6 +45,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending = false;
     private boolean initialized;
+    private Map<String, Object> initialPayload;
 
     public DocumentHandle(Node handle) throws WorkflowException {
         this.handle = handle;
@@ -145,6 +147,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             requests.clear();
             requestPending = false;
             initialized = false;
+            //Do NOT clear initialPayload
         }
     }
 
@@ -172,5 +175,13 @@ public class DocumentHandle implements SCXMLWorkflowData {
             }
         }
         return count > 1;
+    }
+
+    public void setInitialPayload(final Map<String, Object> initialPayload) {
+        this.initialPayload = initialPayload;
+    }
+
+    public Map<String, Object> getInitialPayload() {
+        return initialPayload;
     }
 }

@@ -45,10 +45,17 @@ public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextA
     protected WorkflowContext context;
 
     /**
+     * All implementations of a work-flow must provide a single, no-argument constructor.
+     * @throws RemoteException mandatory exception that must be thrown by all Remote objects
+     */
+    public WorkflowImpl() throws RemoteException {
+    }
+
+    /**
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * @param context the new context that should be used
      */
-    public final void setWorkflowContext(final WorkflowContext context) {
+    public final void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
 
@@ -56,7 +63,7 @@ public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextA
      * <b>This call is not part of the public API</b><p/>
      * @param node the backing Node for this workflow
      */
-    public void setNode(final Node node) throws RepositoryException {
+    public void setNode(Node node) throws RepositoryException {
         this.node = node;
     }
 
@@ -67,14 +74,6 @@ public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextA
         Map<String,Serializable> map = new TreeMap<>();
         map.put("hints", TRUE);
         return map;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, Serializable> hints(final Map<String, Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException {
-        return hints();
     }
 
     /**
@@ -97,7 +96,6 @@ public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextA
     public final WorkflowContext getWorkflowContext() {
         return context;
     }
-
 
 
 }
