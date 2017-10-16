@@ -347,7 +347,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.upstream = upstream;
             this.subjectId = subject.getIdentifier();
             this.subjectPath = subject.getPath();
-            this.objectPersist = upstream instanceof WorkflowImpl;
+            this.objectPersist = upstream instanceof WorkflowContextAware;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
