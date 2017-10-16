@@ -200,8 +200,7 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
                 "  double: 3.1415\n" +
                 "  string: hello world";
 
-        try
-        {
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(JcrContentProcessor.class).build()) {
             applyAndSaveDefinitions(new String[]{source3});
             fail("Should fail because of missing order before node");
         } catch(RuntimeException ex) {
