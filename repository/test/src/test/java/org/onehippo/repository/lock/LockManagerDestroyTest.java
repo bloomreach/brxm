@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.lock;
 
+import java.util.function.Consumer;
+
 import javax.jcr.Session;
 
 import org.junit.After;
@@ -85,7 +87,8 @@ public class LockManagerDestroyTest extends AbstractLockManagerTest {
             lockManager.destroy();
             assertTrue("Lock Manager destroy was expected to take at least 10 seconds to wait for all interrupted threads " +
                     "holding a lock to #unlock", (System.currentTimeMillis() - start ) >= 10_000);
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '123' owned by '"+getClusterNodeId(session)+"' was never unlocked. Removing the lock now.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '123' owned by cluster '"+getClusterNodeId(session)+
+                    "' and thread '"+unstoppableLockThread.getName()+"' was never unlocked. Removing the lock now.")));
         }
 
         assertTrue("Thread containing lock 123 should had been interrupted ", unstoppable.interrupted);

@@ -336,7 +336,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
             lockManager.clear();
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by '"+getClusterNodeId(session)+"' was never")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by cluster '"+getClusterNodeId(session)+
+                    "' and thread '"+Thread.currentThread().getName()+"' was never")));
         }
 
         dbRowAssertion("a", "FREE");
