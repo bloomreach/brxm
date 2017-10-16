@@ -39,7 +39,7 @@ public enum DocumentWorkflowAction implements ActionAware {
     VERSION_RESTORE_TO("versionRestoreTo"),
     RESTORE_VERSION("restoreVersion"),
     LIST_VERSIONS("listVersions"),
-    RETRIEVE_VERSION("retrieveVersion");
+    RETRIEVE_VERSION("retrieveVersion"), NONE("None");
 
     private final String action;
 
