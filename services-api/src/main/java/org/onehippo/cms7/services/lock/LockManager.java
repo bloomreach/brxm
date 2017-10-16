@@ -23,7 +23,13 @@ import org.onehippo.cms7.services.SingletonService;
 
 /**
  * <p>
- *     This class is a manager to obtain cluster wide locks. A lock is tied to the {@link Thread} that obtained the
+ *     This LockManager is a manager to obtain cluster wide locks. To obtain the {@link LockManager} you can use
+ *     <code>
+ *         <pre>
+ *            LockManager lockManager = HippoServiceRegistry.getService(LockManager.class))
+ *         </pre>
+ *     </code>
+ *     When a {@link Lock} is obtained, that lock is tied to the {@link Thread} that obtained the
  *     {@link Lock} and can only be unlocked by the same {@link Thread}. The number of invocations on {@link #lock(String)}
  *     must be balanced with {@link #unlock(String)} since calling {@link Lock} multiple times increases the hold count: Only
  *     when the hold count is 0, the lock is really freed.
