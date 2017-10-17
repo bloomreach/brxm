@@ -46,7 +46,7 @@
         <div class="mat-input-flex">
           <div class="mat-input-infix">
             <mat-select [(ngModel)]="documentType" name="documentType" required 
-                        placeholder="Document type" 
+                        placeholder="Document type" [disabled]="documentTypes.length === 1"
                         class="input-document-type create-content-field mat-input-container">
               <mat-option *ngFor="let documentType of documentTypes" 
                           [value]="documentType.id">{{ documentType.displayName }}</mat-option>
