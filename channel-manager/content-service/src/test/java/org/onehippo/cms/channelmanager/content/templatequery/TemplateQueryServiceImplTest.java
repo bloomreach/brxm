@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.channelmanager.content.templatequery;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -131,12 +132,12 @@ public class TemplateQueryServiceImplTest {
         final Locale locale = new Locale("en");
         final Session session = createMock(Session.class);
 
-        final MockNode prototypeNode = root.addNode("hipposysedit:prototype", "hipposysedit:prototype");
-        prototypeNode.setPrimaryType("my:prototype");
+        final MockNode prototypeNode1 = root.addNode("hipposysedit:prototype", "hipposysedit:prototype");
+        prototypeNode1.setPrimaryType("my:prototype");
         final MockNode prototypeNode2 = root.addNode("prototype2", "hipposysedit:prototype");
         final MockNode prototypeNode3 = root.addNode("prototype3", "hipposysedit:prototype");
 
-        final NodeIterator mockNodes = new MockNodeIterator(Arrays.asList(prototypeNode, prototypeNode2, prototypeNode3));
+        final NodeIterator mockNodes = new MockNodeIterator(Arrays.asList(prototypeNode1, prototypeNode2, prototypeNode3));
         expectTemplateQuery(session, id).andReturn(mockNodes);
 
         expectLocalizedDisplayName(locale, "my:prototype", Optional.of("My prototype"));
@@ -149,9 +150,9 @@ public class TemplateQueryServiceImplTest {
         final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
         assertEquals(3, documentTypes.size());
 
-        final DocumentTypeInfo info = documentTypes.get(0);
-        assertEquals("my:prototype", info.getId());
-        assertEquals("My prototype", info.getDisplayName());
+        final DocumentTypeInfo info1 = documentTypes.get(0);
+        assertEquals("my:prototype", info1.getId());
+        assertEquals("My prototype", info1.getDisplayName());
 
         final DocumentTypeInfo info2 = documentTypes.get(1);
         assertEquals("prototype2", info2.getId());
@@ -183,6 +184,63 @@ public class TemplateQueryServiceImplTest {
         assertTrue(documentTypes.isEmpty());
 
         verifyAll();
+    }
+
+    @Test
+    public void testTemplateQueryIsSorted() throws Exception {
+        final String id = "new-document";
+        final Locale locale = new Locale("en");
+        final Session session = createMock(Session.class);
+
+        expectTemplateQueryToReturn(id, session, locale, "pêche", "Péché", "peach");
+
+        replayAll(session);
+
+        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        assertEquals(3, documentTypes.size());
+
+        assertEquals("peach", documentTypes.get(0).getDisplayName());
+        assertEquals("Péché", documentTypes.get(1).getDisplayName());
+        assertEquals("pêche", documentTypes.get(2).getDisplayName());
+
+        verifyAll();
+    }
+
+    /**
+     * To validate locale sorting, we use the French locale.
+     * See <a href="https://docs.oracle.com/javase/tutorial/i18n/text/locale.html"></a> for more info.
+     */
+    @Test
+    public void testTemplateQueryIsSortedForLocale() throws Exception {
+        final String id = "new-document";
+        final Locale locale = Locale.FRANCE;
+        final Session session = createMock(Session.class);
+
+        expectTemplateQueryToReturn(id, session, locale, "pêche", "Péché", "peach");
+
+        replayAll(session);
+
+        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        assertEquals(3, documentTypes.size());
+
+        assertEquals("peach", documentTypes.get(0).getDisplayName());
+        assertEquals("pêche", documentTypes.get(1).getDisplayName());
+        assertEquals("Péché", documentTypes.get(2).getDisplayName());
+
+        verifyAll();
+    }
+
+    private void expectTemplateQueryToReturn(final String id, final Session session, final Locale locale, final String... displayNames) throws RepositoryException {
+        final List<MockNode> nodes = new ArrayList<>(displayNames.length);
+        for (int i = 0; i < displayNames.length; i++) {
+            final String prototypeName = "prototype" + i;
+            nodes.add(root.addNode(prototypeName, "hipposysedit:prototype"));
+            expectLocalizedDisplayName(locale, prototypeName, Optional.of(displayNames[i]));
+        }
+
+        expectTemplateQuery(session, id).andReturn(new MockNodeIterator(nodes));
     }
 
     private static MockNode expectTemplateQueryNode(final Session session, final String nodeName, final String nodeType)

@@ -16,6 +16,7 @@
 package org.onehippo.cms.channelmanager.content.templatequery;
 
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +88,10 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
             log.warn("Failed to read documenttype info for templatequery '{}'", templateQuery, e);
             throw new InternalServerErrorException();
         }
+
+        final Collator collator = Collator.getInstance(locale);
+        documentTypes.sort((o1, o2) -> collator.compare(o1.getDisplayName(), o2.getDisplayName()));
+
         return new TemplateQuery(documentTypes);
     }
 
