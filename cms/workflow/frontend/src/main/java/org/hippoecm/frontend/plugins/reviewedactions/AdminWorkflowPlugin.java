@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,10 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -48,7 +51,10 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
-                workflow.unlock();
+                workflow.transition(new WorkflowTransition.Builder()
+                        .initializationPayload(InitializationPayload.get())
+                        .action(DocumentWorkflowAction.UNLOCK)
+                        .build());
                 return null;
             }
         });

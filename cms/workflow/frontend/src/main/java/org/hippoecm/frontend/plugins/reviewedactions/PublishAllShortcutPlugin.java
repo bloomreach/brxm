@@ -50,9 +50,13 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.DocumentWorkflowAction.CANCEL_REQUEST;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.REJECT_REQUEST;
 
 public class PublishAllShortcutPlugin extends RenderPlugin {
 
@@ -97,12 +101,16 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                 mode = config.getString("mode", MODE_PUBLISH);
             }
 
-            if (mode.equals(MODE_PUBLISH)) {
-                setOkLabel(new ResourceModel("button-publish"));
-            } else if (mode.equals(MODE_DEPUBLISH)) {
-                setOkLabel(new ResourceModel("button-depublish"));
-            } else {
-                setOkLabel(new ResourceModel("button-execute"));
+            switch (mode) {
+                case MODE_PUBLISH:
+                    setOkLabel(new ResourceModel("button-publish"));
+                    break;
+                case MODE_DEPUBLISH:
+                    setOkLabel(new ResourceModel("button-depublish"));
+                    break;
+                default:
+                    setOkLabel(new ResourceModel("button-execute"));
+                    break;
             }
 
             try {
@@ -157,9 +165,17 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                         for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
                             Map<String, Serializable> actions = entry.getValue();
                             if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
+                                documentWorkflow.transition(getBuilder()
+                                        .action(CANCEL_REQUEST)
+                                        .requestIdentifier(entry.getKey())
+                                        .build());
                                 documentWorkflow.cancelRequest(entry.getKey());
                             } else if (Boolean.TRUE.equals(actions.get("rejectRequest"))) {
-                                documentWorkflow.rejectRequest(entry.getKey(), "bulk (de)publish");
+                                documentWorkflow.transition(getBuilder()
+                                        .action(REJECT_REQUEST)
+                                        .requestIdentifier(entry.getKey())
+                                        .eventPayload("reason","bulk (de)publish")
+                                        .build());
                             }
                         }
 
@@ -185,5 +201,10 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         public IValueMap getProperties() {
             return DialogConstants.SMALL;
         }
+    }
+
+    private static WorkflowTransition.Builder getBuilder() {
+        return new WorkflowTransition.Builder()
+                .initializationPayload(InitializationPayload.get());
     }
 }

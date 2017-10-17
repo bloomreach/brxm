@@ -47,9 +47,10 @@ import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,13 +141,17 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.acceptRequest(item.getModelObject().getId());
+                wf.transition(new WorkflowTransition.Builder()
+                        .action(DocumentWorkflowAction.ACCEPT_REQUEST)
+                        .requestIdentifier(item.getModelObject().getId())
+                        .initializationPayload(InitializationPayload.get())
+                        .build());
                 return null;
             }
         });
 
         item.add(new StdWorkflow("reject", new StringResourceModel("reject-request", this, null), context, getModel()) {
+            @SuppressWarnings("unused") // reason is used in PropertyModel
             public String reason;
 
             @Override
@@ -181,8 +186,12 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.rejectRequest(item.getModelObject().getId(), reason);
+                wf.transition(new WorkflowTransition.Builder()
+                        .initializationPayload(InitializationPayload.get())
+                        .requestIdentifier(item.getModelObject().getId())
+                        .eventPayload("reason",reason)
+                        .action(DocumentWorkflowAction.REJECT_REQUEST)
+                        .build());
                 return null;
             }
         });
@@ -253,8 +262,11 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.cancelRequest(item.getModelObject().getId());
+                wf.transition(new WorkflowTransition.Builder()
+                        .initializationPayload(InitializationPayload.get())
+                        .requestIdentifier(item.getModelObject().getId())
+                        .action(DocumentWorkflowAction.CANCEL_REQUEST)
+                        .build());
                 return null;
             }
         });
