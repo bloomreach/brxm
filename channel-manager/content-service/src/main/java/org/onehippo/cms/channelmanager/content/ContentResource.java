@@ -110,9 +110,9 @@ public class ContentResource {
 
     @GET
     @Path("templatequery/{id}")
-    public Response getDocumentTypesOfTemplateQuery(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+    public Response getTemplateQuery(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> TemplateQueryService.get().getDocumentTypeInfos(id, session, locale));
+                (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,

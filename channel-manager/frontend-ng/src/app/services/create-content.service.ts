@@ -4,6 +4,9 @@ import { Injectable } from '@angular/core';
 
 import ContentService from './content.service';
 
+export interface TemplateQuery {
+  documentTypes: Array<DocumentTypeInfo>;
+}
 export interface DocumentTypeInfo {
   id: string;
   displayName: string;
@@ -14,7 +17,7 @@ export class CreateContentService {
 
   constructor(private contentService: ContentService) {}
 
-  getDocumentTypesFromTemplateQuery(id): Observable<DocumentTypeInfo[]> {
+  getTemplateQuery(id): Observable<TemplateQuery> {
     const promise = this.contentService._send('GET', ['templatequery', id], null, true);
     return Observable.fromPromise(promise);
   }

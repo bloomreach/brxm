@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { TestBed, inject, async } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import ContentService from './content.service';
-import { CreateContentService, DocumentTypeInfo } from './create-content.service';
+import { CreateContentService, TemplateQuery, DocumentTypeInfo } from './create-content.service';
 
 class MockContentService {
-  _send(): Promise<DocumentTypeInfo[]> {
-    return Promise.resolve(null);
+  _send(): Promise<TemplateQuery> {
+  return Promise.resolve(null);
   }
 }
 
@@ -41,14 +41,14 @@ describe('CreateContentService', () => {
   it('can get document types by template query',
     inject([CreateContentService], (createContentService: CreateContentService) => {
 
-      const docTypes: DocumentTypeInfo[] = [
+      const documentTypes: DocumentTypeInfo[] = [
         { id: 'doctype1', displayName: 'Doctype 1'}
       ];
-      const spy = spyOn(contentService, '_send').and.returnValue(Promise.resolve(docTypes));
-      createContentService.getDocumentTypesFromTemplateQuery('test-template-query')
-        .subscribe((resolvedDocTypes: DocumentTypeInfo[]) => {
+      const spy = spyOn(contentService, '_send').and.returnValue(Promise.resolve({ documentTypes }));
+      createContentService.getTemplateQuery('test-template-query')
+        .subscribe((templateQuery: TemplateQuery) => {
           expect(spy).toHaveBeenCalledWith('GET', ['templatequery', 'test-template-query'], null, true);
-          expect(resolvedDocTypes).toBe(docTypes);
+          expect(templateQuery.documentTypes).toBe(documentTypes);
         });
     }));
 
@@ -56,7 +56,7 @@ describe('CreateContentService', () => {
     inject([CreateContentService], (createContentService: CreateContentService) => {
 
       spyOn(contentService, '_send').and.returnValue(Promise.reject('serverError'));
-      createContentService.getDocumentTypesFromTemplateQuery('test-template-query')
+      createContentService.getTemplateQuery('test-template-query')
         .subscribe(() => { }, (error) => {
           expect(error).toBe('serverError');
         });

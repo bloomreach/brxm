@@ -15,17 +15,19 @@
  */
 package org.onehippo.cms.channelmanager.content.templatequery;
 
-import java.util.Locale;
+import java.util.List;
 
-import javax.jcr.Session;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+public class TemplateQuery {
 
-public interface TemplateQueryService {
+    private final List<DocumentTypeInfo> documentTypes;
 
-    static TemplateQueryService get() {
-        return TemplateQueryServiceImpl.getInstance();
+    public TemplateQuery(final List<DocumentTypeInfo> documentTypes) {
+        this.documentTypes= documentTypes;
     }
 
-    TemplateQuery getTemplateQuery(String templateQuery, Session session, Locale locale) throws ErrorWithPayloadException;
+    public List<DocumentTypeInfo> getDocumentTypes() {
+        return documentTypes;
+    }
 }

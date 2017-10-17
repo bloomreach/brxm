@@ -78,7 +78,7 @@ public class TemplateQueryServiceImplTest {
         final Locale locale = new Locale("en");
 
         try {
-            templateQueryService.getDocumentTypeInfos(id, session, locale);
+            templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (NotFoundException e) {
             assertNull(e.getPayload());
@@ -96,7 +96,7 @@ public class TemplateQueryServiceImplTest {
         replayAll(session);
 
         try {
-            templateQueryService.getDocumentTypeInfos(id, session, locale);
+            templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (NotFoundException e) {
             assertNull(e.getPayload());
@@ -116,7 +116,7 @@ public class TemplateQueryServiceImplTest {
         replayAll(session);
 
         try {
-            templateQueryService.getDocumentTypeInfos(id, session, locale);
+            templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (final ErrorWithPayloadException e) {
             assertEquals(INTERNAL_SERVER_ERROR, e.getStatus());
@@ -145,18 +145,19 @@ public class TemplateQueryServiceImplTest {
 
         replayAll(session);
 
-        final List<DocumentTypeInfo> documentTypeInfos = templateQueryService.getDocumentTypeInfos(id, session, locale);
-        assertEquals(3, documentTypeInfos.size());
+        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        assertEquals(3, documentTypes.size());
 
-        final DocumentTypeInfo info = documentTypeInfos.get(0);
+        final DocumentTypeInfo info = documentTypes.get(0);
         assertEquals("my:prototype", info.getId());
         assertEquals("My prototype", info.getDisplayName());
 
-        final DocumentTypeInfo info2 = documentTypeInfos.get(1);
+        final DocumentTypeInfo info2 = documentTypes.get(1);
         assertEquals("prototype2", info2.getId());
         assertEquals("Prototype 2", info2.getDisplayName());
 
-        final DocumentTypeInfo info3 = documentTypeInfos.get(2);
+        final DocumentTypeInfo info3 = documentTypes.get(2);
         assertEquals("prototype3", info3.getId());
         assertEquals("prototype3", info3.getDisplayName());
 
@@ -177,8 +178,9 @@ public class TemplateQueryServiceImplTest {
         expectTemplateQuery(session, id).andReturn(mockNodes);
 
         replayAll(session);
-        final List<DocumentTypeInfo> documentTypeInfos = templateQueryService.getDocumentTypeInfos(id, session, locale);
-        assertTrue(documentTypeInfos.isEmpty());
+        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        assertTrue(documentTypes.isEmpty());
 
         verifyAll();
     }

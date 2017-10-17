@@ -51,9 +51,9 @@ export class CreateContentComponent implements OnInit {
     }
 
     this.createContentService
-      .getDocumentTypesFromTemplateQuery(this.options.templateQuery)
+      .getTemplateQuery(this.options.templateQuery)
       .subscribe(
-        (documentTypes) => this.onLoadDocumentTypes(documentTypes),
+        (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadDocumentTypes(error),
       );
   }

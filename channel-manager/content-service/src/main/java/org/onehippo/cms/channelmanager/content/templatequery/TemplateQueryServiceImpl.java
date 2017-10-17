@@ -56,9 +56,9 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
     private TemplateQueryServiceImpl() { }
 
     @Override
-    public List<DocumentTypeInfo> getDocumentTypeInfos(final String templateQuery, final Session session,
-                                                       final Locale locale) throws ErrorWithPayloadException {
-        final List<DocumentTypeInfo> documentTypesInfo = new ArrayList<>();
+    public TemplateQuery getTemplateQuery(final String templateQuery, final Session session,
+                                                   final Locale locale) throws ErrorWithPayloadException {
+        final List<DocumentTypeInfo> documentTypes = new ArrayList<>();
         final String templateQueryPath = HIPPO_TEMPLATES_PATH + "/" + templateQuery;
         try {
             if (!session.nodeExists(templateQueryPath)) {
@@ -77,7 +77,7 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
                 final String documentTypeName = getDocumentTypeName(typeNode);
                 if (documentTypeName != null) {
                     final DocumentTypeInfo documentTypeInfo = createDocumentTypeInfo(documentTypeName, locale);
-                    documentTypesInfo.add(documentTypeInfo);
+                    documentTypes.add(documentTypeInfo);
                 }
             }
         } catch (final InvalidQueryException ex) {
@@ -87,7 +87,7 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
             log.warn("Failed to read documenttype info for templatequery '{}'", templateQuery, e);
             throw new InternalServerErrorException();
         }
-        return documentTypesInfo;
+        return new TemplateQuery(documentTypes);
     }
 
     private DocumentTypeInfo createDocumentTypeInfo(final String id, final Locale locale) {

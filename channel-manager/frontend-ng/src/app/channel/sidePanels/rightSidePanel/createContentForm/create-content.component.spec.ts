@@ -22,13 +22,13 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
 import { CreateContentComponent } from './create-content.component';
-import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
+import { CreateContentService, TemplateQuery, DocumentTypeInfo } from '../../../../services/create-content.service';
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 import { MaterialModule } from '../../../../material/material.module';
 
 class CreateContentServiceMock {
-  getDocumentTypesFromTemplateQuery(id): Observable<DocumentTypeInfo[]> {
-    return Observable.of([]);
+  getTemplateQuery(id): Observable<TemplateQuery> {
+    return Observable.of(null);
   }
 }
 
@@ -82,8 +82,8 @@ describe('Create content component', () => {
       { id: 'test-id1', displayName: 'test-name 1' },
       { id: 'test-id2', displayName: 'test-name 2' },
     ];
-    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
-      .and.returnValue(Observable.of(documentTypes));
+    const spy = spyOn(createContentService, 'getTemplateQuery')
+      .and.returnValue(Observable.of({ documentTypes }));
 
     component.options = { templateQuery: 'test-template-query' };
     fixture.detectChanges(true);
@@ -95,8 +95,8 @@ describe('Create content component', () => {
 
   it('pre-selects the documentType if only one is returned from the templateQuery', () => {
     const documentTypes: Array<DocumentTypeInfo> = [{ id: 'test-id1', displayName: 'test-name 1' }];
-    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
-      .and.returnValue(Observable.of(documentTypes));
+    const spy = spyOn(createContentService, 'getTemplateQuery')
+      .and.returnValue(Observable.of({ documentTypes }));
 
     component.options = { templateQuery: 'test-template-query' };
     fixture.detectChanges(true);
@@ -105,7 +105,7 @@ describe('Create content component', () => {
   });
 
   it('emits feedback if template query is not found', async(() => {
-    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
+    const spy = spyOn(createContentService, 'getTemplateQuery')
       .and.returnValue(Observable.throw({ status: 404 }));
 
     component.onError.subscribe((feedback) => {
