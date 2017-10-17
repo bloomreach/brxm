@@ -80,7 +80,7 @@
   </form>
 </md-content>
 
-<md-toolbar ng-hide="$ctrl.createContent">
+<md-toolbar>
   <div class="md-toolbar-tools">
     <span flex></span>
 
@@ -92,7 +92,7 @@
     <md-button class="qa-save"
                ng-click="$ctrl.saveDocument()"
                ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
-      {{ $ctrl.createContent ? 'CREATE' : 'SAVE' | translate }}
+      {{ :: 'SAVE' | translate }}
     </md-button>
   </div>
 </md-toolbar>
