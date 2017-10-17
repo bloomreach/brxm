@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms7.services.cmscontext;
 
+import java.io.Serializable;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSession;
@@ -93,31 +95,11 @@ public interface CmsSessionContext {
     }
 
     /**
-     * Retrieves the currently stored attribute value identified by key from the context and returns it.
+     * Returns a mutable map bound to the http session. It can e.g. be used to manage user specific properties.
      *
-     * @param key the key of the value to set, must not be {@code null}
-     * @return the value associated with key, or {@code null} if there is no attribute for key.
+     * @return mutable map of properties bound to the http session
      */
-    Object getAttribute(String key);
-
-    /**
-     * Stores an attribute value identified by key in the context and returns the previously stored attribute value or
-     * {@code null} if there was no attribute for the key. The CmsSessionContext is shared amongst web-apps, so make
-     * sure that the class of the attribute value is on the classpath of the web-app that will read the value.
-     *
-     * @param key   the key of the value to set, must not be {@code null}
-     * @param value the value to associate with the key, must not be {@code null}
-     * @return the previous value associated with key, or {@code null} if there was no attribute for key.
-     */
-    Object setAttribute(String key, Object value);
-
-    /**
-     * Removes an attribute value and it's key from the context and returns the currently stored attribute value or
-     * {@code null} if there was no attribute for the key.
-     *
-     * @param key the key of the value to set, must not be {@code null}
-     * @return the previous value associated with key, or {@code null} if there was no attribute for key.
-     */
-    Object removeAttribute(String key);
-
+    default Map<String, Serializable> getContextPayload() {
+        return (Map<String, Serializable>) get(CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+    }
 }
