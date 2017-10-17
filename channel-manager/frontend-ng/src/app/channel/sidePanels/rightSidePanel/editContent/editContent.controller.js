@@ -113,7 +113,7 @@ class editContentController {
   }
 
   $onInit() {
-    this.onBeforeStateChange({ callback: () => this._releaseDocument() });
+    this.onBeforeStateChange({ callback: () => this._confirmDiscardChanges() });
     this.openDocument(this.requestedDocument);
     this.$scope.$watch(() => this.requestedDocument, (newVal, oldVal) => {
       if (newVal !== oldVal && newVal) {
