@@ -250,21 +250,6 @@ public class AbstractFullRequestCycleTest {
         public Object get(final String key) {
             return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
         }
-
-        @Override
-        public Object getAttribute(final String key) {
-            return null;
-        }
-
-        @Override
-        public Object setAttribute(final String key, final Object value) {
-            return null;
-        }
-
-        @Override
-        public Object removeAttribute(final String key) {
-            return null;
-        }
     }
 
     protected void setPrivilegePropsForSecurityModel() throws RepositoryException {
