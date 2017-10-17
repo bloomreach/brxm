@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -42,7 +43,7 @@ import static org.onehippo.cms.channelmanager.content.templatequery.TemplateQuer
 
 public class TemplateQueryServiceImpl implements TemplateQueryService {
 
-    public static final Logger log = LoggerFactory.getLogger(TemplateQueryServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TemplateQueryServiceImpl.class);
 
     private static final String HIPPO_TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
     private static final List<String> INVALID_PROTOTYPES = Arrays.asList(
@@ -82,11 +83,13 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
                 }
             }
         } catch (final InvalidQueryException ex) {
-            log.warn("Failed to execute templatequery '{}'", id, ex);
-            throw new InternalServerErrorException();
+            final String message = String.format("Failed to execute template query '%s'", id);
+            log.debug(message, ex);
+            throw new InternalServerErrorException(message);
         } catch (final RepositoryException e) {
-            log.warn("Failed to read documenttype info for templatequery '{}'", id, e);
-            throw new InternalServerErrorException();
+            final String message = String.format("Failed to read document type data for template query '%s'", id);
+            log.debug(message, e);
+            throw new InternalServerErrorException(message);
         }
 
         final Collator collator = Collator.getInstance(locale);
@@ -102,9 +105,10 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
         return info;
     }
 
+    // This is the same logic as defined in org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
     private String getDocumentTypeName(final Node typeNode) throws RepositoryException, InternalServerErrorException {
         final String name = typeNode.getName();
-        if (name.equals("hipposysedit:prototype")) {
+        if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
             final String documentType = typeNode.getPrimaryNodeType().getName();
             return isValidPrototype(documentType) ? documentType : null;
         }
