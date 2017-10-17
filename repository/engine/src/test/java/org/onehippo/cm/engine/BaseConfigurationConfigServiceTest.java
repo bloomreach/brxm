@@ -53,7 +53,7 @@ import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestCase {
     protected Node testNode;
 
-    private static final String[] DEFAULT_BASELINE_SOURCES = {
+    protected static final String[] DEFAULT_BASELINE_SOURCES = {
             "definitions:\n"
                     + "  config:\n"
                     + "    /test:\n"
@@ -174,10 +174,14 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
 
     }
 
-    private ConfigurationModelImpl makeMergedModel(final String[] sources) throws Exception {
+    protected ConfigurationModelImpl makeMergedModel(final String... sources) throws Exception {
+        return makeMergedModel("test-module-", sources);
+    }
+
+    protected ConfigurationModelImpl makeMergedModel(final String modulePrefix, final String[] sources) throws Exception {
         final ConfigurationModelImpl configurationModelImpl = new ConfigurationModelImpl();
         for (int i = 0; i < sources.length; i++) {
-            final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, true);
+            final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], modulePrefix + i, true);
             assertTrue(definitions.size() > 0);
             final ModuleImpl module = definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(new TestResourceInputProvider());

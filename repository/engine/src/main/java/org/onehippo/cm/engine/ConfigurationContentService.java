@@ -51,12 +51,6 @@ import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -189,7 +183,7 @@ public class ConfigurationContentService {
             }
         }
 
-        configurationBaselineService.updateModuleSequenceNumber(module, session);
+        configurationBaselineService.updateLastExecutedActionForModule(module, session);
         return failedPaths.isEmpty();
     }
 
