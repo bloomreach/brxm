@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        removeNode("/hippo:log/default");
+        removeNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
     }
 
     @After
     public void tearDown() throws Exception {
-        removeNode("/hippo:log/default");
+        removeNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
         super.tearDown();
     }
 
@@ -45,7 +45,7 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     public void testCreateRepositoryLogger() throws Exception {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
-        assertTrue(session.itemExists("/hippo:log/default"));
+        assertTrue(session.itemExists("/hippo:log/" + RepositoryLogger.getClusterNodeId(session)));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
         event.message("message").timestamp(System.currentTimeMillis()).set("residual", true);
         repositoryLogger.logHippoEvent(event);
 
-        Node logFolder = session.getNode("/hippo:log/default");
+        Node logFolder = session.getNode("/hippo:log/" + RepositoryLogger.getClusterNodeId(session));
         Node currentNode = logFolder;
         for (int i = 0; i < 4; i++) {
             NodeIterator nodes = currentNode.getNodes();

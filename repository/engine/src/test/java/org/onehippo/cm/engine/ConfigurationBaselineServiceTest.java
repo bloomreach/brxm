@@ -76,7 +76,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         session.save();
         cndStream.close();
 
-        configurationLockManager = new ConfigurationLockManager(session);
+        configurationLockManager = new ConfigurationLockManager();
         baselineService = new ConfigurationBaselineService(configurationLockManager);
     }
 

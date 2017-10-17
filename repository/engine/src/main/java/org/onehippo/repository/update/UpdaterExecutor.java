@@ -507,7 +507,12 @@ public class UpdaterExecutor implements EventListener {
     private void throttle(long timeout) {
         try {
             Thread.sleep(timeout);
-        } catch (InterruptedException ignore) {}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // the LockManager most likely has picked up an 'abort' set for the lock of the current thread.
+            // #cancel will gracefully stop this UpdaterExecutor
+            cancel();
+        }
     }
 
     private boolean isVirtual(final Node node) throws RepositoryException {

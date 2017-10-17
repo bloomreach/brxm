@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -89,5 +89,14 @@
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
+
+  <Cluster id="node1">
+    <Journal class="org.apache.jackrabbit.core.journal.DatabaseJournal">
+      <param name="driver" value="org.h2.Driver" />
+      <param name="url" value="jdbc:h2:${rep.home}/datastore/db"/>
+      <param name="schemaObjectPrefix" value="journal_"/>
+      <param name="databaseType" value="h2"/>
+    </Journal>
+  </Cluster>
 
 </Repository>

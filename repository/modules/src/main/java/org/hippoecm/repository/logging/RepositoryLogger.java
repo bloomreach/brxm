@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class RepositoryLogger implements DaemonModule {
         if (!rootLogFolder.isNodeType("hippolog:folder")) {
             throw new RepositoryException("Root log folder is not of the expected type");
         }
-        String clusterId = getClusterNodeId();
+        String clusterId = getClusterNodeId(session);
         if (rootLogFolder.hasNode(clusterId)) {
             logFolder = rootLogFolder.getNode(clusterId);
         } else {
@@ -188,7 +188,7 @@ public class RepositoryLogger implements DaemonModule {
     }
 
 
-    private String getClusterNodeId() {
+    static String getClusterNodeId(final Session session) {
         String clusterNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
         if (clusterNodeId == null) {
             clusterNodeId = DEFAULT_CLUSTER_NODE_ID;

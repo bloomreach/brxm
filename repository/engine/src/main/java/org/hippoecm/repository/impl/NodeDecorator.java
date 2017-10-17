@@ -282,8 +282,17 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     @Override
     public String getDisplayName() throws RepositoryException {
         Node node = this;
-        if (!isNodeType(HippoNodeType.NT_NAMED)) {
-            Node parent = node.getParent();
+        if (isVirtual()) {
+            node = getCanonicalNode();
+            if (node == null) {
+                return getName();
+            }
+        }
+        if (!node.isNodeType(HippoNodeType.NT_NAMED)) {
+            if (node.equals(node.getSession().getRootNode())) {
+                return getName();
+            }
+            final Node parent = node.getParent();
             if (parent.isNodeType(HippoNodeType.NT_HANDLE) && parent.isNodeType(HippoNodeType.NT_NAMED)) {
                 node = parent;
             }
