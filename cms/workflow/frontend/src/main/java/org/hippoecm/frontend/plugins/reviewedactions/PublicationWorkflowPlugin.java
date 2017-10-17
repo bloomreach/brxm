@@ -41,8 +41,13 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.DocumentWorkflowConstants;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
@@ -99,7 +104,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                workflow.depublish();
+                transition(workflow,DocumentWorkflowAction.DEPUBLISH);
                 return null;
             }
         });
@@ -118,7 +123,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                workflow.requestDepublication();
+                transition(workflow, DocumentWorkflowAction.REQUEST_DEPUBLICATION);
                 return null;
             }
         });
@@ -146,11 +151,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                if (date != null) {
-                    workflow.depublish(date);
-                } else {
-                    workflow.depublish();
-                }
+                transitionWithTargetDate(workflow,DocumentWorkflowAction.DEPUBLISH,date);
                 return null;
             }
         });
@@ -177,11 +178,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                if (date != null) {
-                    workflow.requestDepublication(date);
-                } else {
-                    workflow.requestDepublication();
-                }
+                transitionWithTargetDate(workflow,DocumentWorkflowAction.REQUEST_DEPUBLICATION,date);
                 return null;
             }
         });
@@ -212,7 +209,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                workflow.publish();
+                transition(workflow,DocumentWorkflowAction.PUBLISH);
                 return null;
             }
         });
@@ -241,7 +238,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                workflow.requestPublication();
+                transition(workflow,DocumentWorkflowAction.REQUEST_DEPUBLICATION);
                 return null;
             }
         });
@@ -270,11 +267,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                if (date != null) {
-                    workflow.publish(date);
-                } else {
-                    workflow.publish();
-                }
+                transitionWithTargetDate(workflow,DocumentWorkflowAction.PUBLISH,date);
                 return null;
             }
         });
@@ -303,16 +296,33 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                if (date != null) {
-                    workflow.requestPublication(date);
-                } else {
-                    workflow.requestPublication();
-                }
+                transitionWithTargetDate(workflow,DocumentWorkflowAction.REQUEST_DEPUBLICATION,date);
                 return null;
             }
         });
         return workflows;
     }
+
+    private Object transition(final DocumentWorkflow workflow, final DocumentWorkflowAction action) throws WorkflowException {
+        return workflow.transition(getBuilderWithInitialPayload()
+                .action(action)
+                .build());
+    }
+
+    private Object transitionWithTargetDate(final DocumentWorkflow workflow, final DocumentWorkflowAction action
+            , final Date date) throws WorkflowException{
+        final WorkflowTransition.Builder builder = getBuilderWithInitialPayload();
+        if (date != null) {
+            builder.eventPayload(DocumentWorkflowConstants.TARGET_DATE,date);
+        }
+        return workflow.transition(builder.action(action).build());
+    }
+
+    private WorkflowTransition.Builder getBuilderWithInitialPayload() {
+        return new WorkflowTransition.Builder()
+                .initializationPayload(InitializationPayload.get());
+    }
+
 
     protected Stream<String> getActionKeys() {
         return Stream.of(PUBLISH, DEPUBLISH, REQUEST_PUBLICATION, REQUEST_DEPUBLICATION);

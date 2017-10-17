@@ -45,17 +45,20 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentArguments;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -365,7 +368,10 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.requestDeletion();
+                workflow.transition(new WorkflowTransition.Builder()
+                        .initializationPayload(InitializationPayload.get())
+                        .action(DocumentWorkflowAction.REQUEST_DELETE)
+                        .build());
                 return null;
             }
         });

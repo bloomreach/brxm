@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -45,12 +47,14 @@ import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -84,6 +88,9 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     private String name;
     private int processed;
     private Set<String> documents;
+    private static final Set<String> ALLOWED_ACTIONS = Stream.of(DocumentWorkflowAction.PUBLISH, DocumentWorkflowAction.DEPUBLISH)
+            .map(DocumentWorkflowAction::getAction)
+            .collect(Collectors.toSet());
 
     public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -155,21 +162,24 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 Node handle = session.getNodeByIdentifier(uuid);
                 if (handle.isNodeType(NT_HANDLE)) {
                     Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                    if (workflow instanceof DocumentWorkflow) {
-                        DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                        switch (action) {
-                            case "publish": docWorkflow.publish(); break;
-                            case "depublish" : docWorkflow.depublish(); break;
-                        }
+                    if (transactionAllowed(action, workflow)) {
+                        workflow.transition(new WorkflowTransition.Builder()
+                                .initializationPayload(InitializationPayload.get())
+                                .action(action)
+                                .build());
                         ++processed;
                         log.info("executed action {} on document {} ({})", action, handle.getPath(), uuid);
                     }
                 }
-            } catch (RepositoryException | RemoteException | WorkflowException e) {
+            } catch (RepositoryException | WorkflowException e) {
                 log.warn("Execution of action {} on {} failed: {}", action, uuid, e);
             }
             session.refresh(true);
         }
+    }
+
+    private boolean transactionAllowed(final String action, final Workflow workflow) {
+        return workflow instanceof DocumentWorkflow && ALLOWED_ACTIONS.contains(action);
     }
 
     @Override
