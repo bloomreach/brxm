@@ -24,6 +24,7 @@ const editContentComponent = {
     requestedDocument: '=',
     onFullWidth: '&',
     onClose: '&',
+    onBeforeStateChange: '&',
   },
 };
 

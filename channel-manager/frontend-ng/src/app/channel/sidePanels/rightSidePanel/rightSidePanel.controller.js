@@ -53,7 +53,6 @@ class RightSidePanelCtrl {
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
     this.deleteDraftOnClose = true;
-
     this.lastSavedWidth = null;
     this.isFullWidth = false;
 
@@ -64,10 +63,11 @@ class RightSidePanelCtrl {
         this._onOpen();
       },
       // onClose
-      () => $q.resolve());
+      () => this._onClose());
   }
 
   $onInit() {
+    this._resetBeforeStateChange();
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
@@ -76,19 +76,29 @@ class RightSidePanelCtrl {
       return;
     }
 
-    this._resetState();
-    if (documentId) {
-      this.documentId = documentId;
-      this.editing = true;
-    } else {
-      this.createContent = true;
-    }
+    this.beforeStateChange().then(() => {
+      this._resetState();
+      if (documentId) {
+        this.documentId = documentId;
+        this.editing = true;
+      } else {
+        this.createContent = true;
+      }
+    });
   }
 
+  onBeforeStateChange(callback) {
+    this.beforeStateChange = callback;
+  }
   _resetState() {
     delete this.documentId;
     delete this.editing;
     delete this.createContent;
+    this._resetBeforeStateChange();
+  }
+
+  _resetBeforeStateChange() {
+    this.beforeStateChange = () => this.$q.resolve();
   }
 
   isLockedOpen() {
@@ -101,12 +111,17 @@ class RightSidePanelCtrl {
     this.$element.css('max-width', this.lastSavedWidth);
   }
 
+  _onClose() {
+    this._resetBeforeStateChange();
+    return this.$q.resolve();
+  }
+
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
     this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
   }
 
-  _closePanel() {
+  closePanel() {
     this.SidePanelService.close('right')
       .then(() => this._resetState())
       .finally(() => {

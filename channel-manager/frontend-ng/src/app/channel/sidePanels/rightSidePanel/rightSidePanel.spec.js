@@ -95,10 +95,14 @@ describe('RightSidePanel', () => {
 
   describe('when upon initialization or opening the panel', () => {
     let testId;
-
+    function openEditor(documentId) {
+      $ctrl.openEditor(documentId);
+      $rootScope.$digest();
+    }
     beforeEach(() => {
       spyOn($ctrl, '_onOpen');
       testId = 'documentId';
+      $ctrl._resetBeforeStateChange();
     });
 
     it('initializes the channel right side panel service', () => {
@@ -118,17 +122,37 @@ describe('RightSidePanel', () => {
     });
 
     it('initialises editContent if documentId is passed', () => {
-      $ctrl.openEditor(testId);
-
+      openEditor(testId);
       expect($ctrl.documentId).toBe(testId);
       expect($ctrl.editing).toBeTruthy();
     });
 
     it('initialises new content if no document id is passed', () => {
-      $ctrl.openEditor(null);
-
+      openEditor(null);
       expect($ctrl.documentId).toBeFalsy();
       expect($ctrl.createContent).toBeTruthy();
+    });
+
+    it('Doesnt open a new document if beforeStateChange is rejected', () => {
+      $ctrl.documentId = 'test';
+      $ctrl.editing = true;
+      spyOn($ctrl, 'beforeStateChange');
+      $ctrl.beforeStateChange.and.returnValue($q.reject());
+      openEditor(testId);
+
+      expect($ctrl.documentId).toEqual('test');
+      expect($ctrl.editing).toBeTruthy();
+    });
+
+    it('open a new document if beforeStateChange is resolved', () => {
+      $ctrl.documentId = 'test';
+      $ctrl.editing = true;
+      spyOn($ctrl, 'beforeStateChange');
+      $ctrl.beforeStateChange.and.returnValue($q.resolve());
+      openEditor(testId);
+
+      expect($ctrl.documentId).toEqual(testId);
+      expect($ctrl.editing).toBeTruthy();
     });
   });
 
@@ -143,16 +167,18 @@ describe('RightSidePanel', () => {
   });
 
   it('closes the panel', () => {
+    spyOn($ctrl, '_resetBeforeStateChange');
     SidePanelService.close.and.returnValue($q.resolve());
-    $ctrl._closePanel();
+    $ctrl.closePanel();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
 
     $ctrl.documentId = 'test';
     $ctrl.editing = true;
-    $ctrl._closePanel();
+    $ctrl.closePanel();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
     expect($ctrl.documentId).toBeUndefined();
     expect($ctrl.editing).toBeUndefined();
     expect($ctrl.createContent).toBeUndefined();
@@ -164,11 +190,27 @@ describe('RightSidePanel', () => {
     SidePanelService.close.and.returnValue($q.resolve());
 
     ChannelService.isToolbarDisplayed = false;
-    $ctrl._closePanel();
+    $ctrl.closePanel();
     $scope.$apply();
 
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
+  });
+
+  describe('onBeforeStateChange', () => {
+    it('Should set and unset a onBeforeStateChange callback', () => {
+      const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
+
+      $ctrl.onBeforeStateChange(firstCallback);
+      $ctrl.openEditor('testId');
+      expect(firstCallback).toHaveBeenCalled();
+      SidePanelService.close.and.returnValue($q.resolve());
+      $ctrl.closePanel();
+      $rootScope.$digest();
+      firstCallback.calls.reset();
+      $ctrl.openEditor();
+      expect(firstCallback).not.toHaveBeenCalled();
+    });
   });
 });
 

@@ -26,12 +26,10 @@ describe('editContent', () => {
   let DialogService;
   let HippoIframeService;
   let FeedbackService;
-  let ChannelService;
 
   let $ctrl;
   let $scope;
   let dialog;
-  let sidePanelHandlers;
 
   const stringField = {
     id: 'ns:string',
@@ -83,13 +81,12 @@ describe('editContent', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_, _ChannelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $translate = _$translate_;
-      ChannelService = _ChannelService_;
     });
 
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
@@ -125,13 +122,8 @@ describe('editContent', () => {
     $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $ctrl.onFullWidth = () => true;
     $ctrl.onClose = () => true;
-    $ctrl.onSave = () => true;
+    $ctrl.onBeforeStateChange = () => $q.resolve();
     $rootScope.$apply();
-
-    sidePanelHandlers = {
-      onOpen: $q.resolve(),
-      onClose: $q.resolve(),
-    };
   });
 
   it('should call parent "on full width" mode on and off', () => {
