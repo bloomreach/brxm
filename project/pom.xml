@@ -84,7 +84,7 @@
     <!-- maven.plugin.assembly.version kept on 2.6. 3.0.0 shows snapshot download warnings, see CMS-10817 -->
     <maven.plugin.assembly.version>2.6</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.4</maven.plugin.buildnumber.version>
-    <maven.plugin.cargo.version>1.6.3</maven.plugin.cargo.version>
+    <maven.plugin.cargo.version>1.6.5</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.12.1</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.3</maven.plugin.changelog.version>
     <maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
@@ -121,7 +121,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>8</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>8.5.15</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>8.5.23</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
