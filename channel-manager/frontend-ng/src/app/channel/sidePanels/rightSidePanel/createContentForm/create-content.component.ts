@@ -14,38 +14,48 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Input, Output, AfterViewInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
 
+interface CreateContentOptions {
+  templateQuery: string;
+}
+
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-export class CreateContentComponent implements AfterViewInit {
+
+export class CreateContentComponent implements OnInit {
   @Input() document: any;
-  @Input() options: any;
+  @Input() options:  CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
+  @Output() onError: EventEmitter<any> = new EventEmitter();
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
 
   constructor(private createContentService: CreateContentService) { }
 
-  ngAfterViewInit() {
-    // this.urlInputSubscription = Observable.fromEvent(this.input.nativeElement, 'keyup')
-    //   .debounceTime(1000)
-    //   .subscribe(e => this.validateUrl(this.input.nativeElement.value));
-    this.createContentService.getDocumentTypesFromTemplateQuery(this.options.templateQuery)
-      .subscribe((documentTypes) => {
-        this.documentTypes = documentTypes;
-        if (documentTypes.length === 1) {
-          this.documentType = documentTypes[0].id;
-        }
-      });
+  ngOnInit() {
+    if (!this.options) {
+      throw new Error('Input "options" is required');
+    }
+
+    if (!this.options.templateQuery) {
+      throw new Error('Configuration option "templateQuery" is required');
+    }
+
+    this.createContentService
+      .getDocumentTypesFromTemplateQuery(this.options.templateQuery)
+      .subscribe(
+        (documentTypes) => this.onLoadDocumentTypes(documentTypes),
+        (error) => this.onErrorLoadDocumentTypes(error),
+      );
   }
 
   close() {
@@ -55,5 +65,22 @@ export class CreateContentComponent implements AfterViewInit {
   submit(form: NgForm) {
     console.log(form);
     // this.onContinue.emit(form.value);
+  }
+
+  private onLoadDocumentTypes(documentTypes) {
+    this.documentTypes = documentTypes;
+    if (documentTypes.length === 1) {
+      this.documentType = documentTypes[0].id;
+    }
+  }
+
+  private onErrorLoadDocumentTypes(error) {
+    const feedback = {
+      title: 'Error loading template query',
+      message: error.status === 404 ?
+        `Can not find template query with name "${this.options.templateQuery}"` :
+        error.statusText,
+    };
+    this.onError.emit(feedback);
   }
 }

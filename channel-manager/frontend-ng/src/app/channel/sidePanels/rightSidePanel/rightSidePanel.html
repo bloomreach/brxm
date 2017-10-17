@@ -110,7 +110,8 @@
     <hippo-create-content ng-if="$ctrl.create"
                           [options]="$ctrl.options"
                           (on-close)="$ctrl.close()"
-                          (on-continue)="angular.noop()">
+                          (on-continue)="angular.noop()"
+                          (on-error)="$ctrl.onError($event)">
     </hippo-create-content>
   </md-content>
 

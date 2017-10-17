@@ -269,6 +269,10 @@ class RightSidePanelCtrl {
     }
   }
 
+  onError(feedback) {
+    this.feedback = feedback;
+  }
+
   _resizeTextareas() {
     // Set initial size of textareas (see Angular Material issue #9745).
     // Use $timeout to ensure that the sidenav has become visible.
