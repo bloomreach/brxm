@@ -27,5 +27,5 @@ public interface TemplateQueryService {
         return TemplateQueryServiceImpl.getInstance();
     }
 
-    TemplateQuery getTemplateQuery(String templateQuery, Session session, Locale locale) throws ErrorWithPayloadException;
+    TemplateQuery getTemplateQuery(String id, Session session, Locale locale) throws ErrorWithPayloadException;
 }
