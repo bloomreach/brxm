@@ -21,7 +21,7 @@ const editContentComponent = {
   controller,
   template,
   bindings: {
-    documentId: '=',
+    requestedDocument: '=',
     onFullWidth: '&',
     onClose: '&',
   },

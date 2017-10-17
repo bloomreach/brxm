@@ -18,7 +18,6 @@ class RightSidePanelCtrl {
   constructor(
     $scope,
     $element,
-    $mdConstant,
     $timeout,
     $translate,
     $q,
@@ -66,15 +65,6 @@ class RightSidePanelCtrl {
       },
       // onClose
       () => $q.resolve());
-
-    // Prevent the default closing action bound to the escape key by Angular Material.
-    // We should show the "unsaved changes" dialog first.
-    $element.on('keydown', (e) => {
-      if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
-        e.stopImmediatePropagation();
-        this._closePanel();
-      }
-    });
   }
 
   $onInit() {

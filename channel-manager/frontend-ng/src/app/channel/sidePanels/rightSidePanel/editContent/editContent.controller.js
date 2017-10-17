@@ -60,6 +60,7 @@ class editContentController {
     $element,
     $timeout,
     $translate,
+    $mdConstant,
     $q,
     SidePanelService,
     ChannelService,
@@ -100,10 +101,24 @@ class editContentController {
         this.close();
       }
     });
+
+    // Prevent the default closing action bound to the escape key by Angular Material.
+    // We should show the "unsaved changes" dialog first.
+    $element.on('keydown', (e) => {
+      if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
+        e.stopImmediatePropagation();
+        this.close();
+      }
+    });
   }
 
   $onInit() {
-    this.openDocument(this.documentId);
+    this.openDocument(this.requestedDocument);
+    this.$scope.$watch(() => this.requestedDocument, (newVal, oldVal) => {
+      if (newVal !== oldVal && newVal) {
+        this.openDocument(newVal);
+      }
+    });
   }
 
   openDocument(documentId) {
@@ -117,12 +132,11 @@ class editContentController {
 
   _resetState() {
     delete this.doc;
+    delete this.documentId;
     delete this.docType;
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
-
-    this.documentId = null;
 
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
@@ -379,6 +393,7 @@ class editContentController {
     return this._releaseDocument()
       .then(() => {
         this.deleteDraftOnClose = false;
+        this._resetState();
         this.onClose();
       });
   }
