@@ -32,6 +32,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -42,6 +43,7 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -49,6 +51,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.util.JcrConstants;
@@ -213,7 +216,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 postClose(contexts);
 
                 try {
-                    if (executeWorkflowForMode(mode, workflow)) {
+                    final DocumentWorkflowAction action = executeWorkflowForMode(mode, workflow);
+                    if (!DocumentWorkflowAction.NONE.equals(action)){
+                        workflow.transition(new WorkflowTransition.Builder()
+                                .initializationPayload(InitializationPayload.get())
+                                .action(action)
+                                .build());
                         super.setMode(mode);
                     }
                 } finally {
@@ -231,29 +239,24 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
-    private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
+    private DocumentWorkflowAction executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
+        DocumentWorkflowAction action = DocumentWorkflowAction.NONE;
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
             switch (mode) {
                 case EDIT:
-                    if (!isWorkflowMethodAvailable(workflow, "obtainEditableInstance")) {
-                        return false;
-                    }
-                    workflow.obtainEditableInstance();
+                    action = DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
                     break;
                 case VIEW:
                 case COMPARE:
-                    if (!isWorkflowMethodAvailable(workflow, "commitEditableInstance")) {
-                        return false;
-                    }
-                    workflow.commitEditableInstance();
+                    action = DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
                     break;
             }
         }
-        return true;
+        return isWorkflowMethodAvailable(workflow.hints(),action)?action:DocumentWorkflowAction.NONE;
     }
 
-    private static boolean isWorkflowMethodAvailable(final Workflow workflow, final String methodName) throws RepositoryException, RemoteException, WorkflowException {
-        final Serializable hint = workflow.hints().get(methodName);
+    private static boolean isWorkflowMethodAvailable(final Map<String, Serializable> hints, final DocumentWorkflowAction action) throws RepositoryException, RemoteException, WorkflowException {
+        final Serializable hint = hints.get(action.getAction());
         return hint == null || Boolean.parseBoolean(hint.toString());
     }
 
