@@ -14,18 +14,106 @@
  * limitations under the License.
  */
 
+import { TestBed, ComponentFixture, async } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/throw';
+
 import { CreateContentComponent } from './create-content.component';
-import { TestBed } from '@angular/core/testing';
+import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
+import { HintsComponent } from '../../../../shared/components/hints/hints.component';
+import { MaterialModule } from '../../../../material/material.module';
+
+class CreateContentServiceMock {
+  getDocumentTypesFromTemplateQuery(id): Observable<DocumentTypeInfo[]> {
+    return Observable.of([]);
+  }
+}
 
 describe('Create content component', () => {
 
-  let component;
+  let component: CreateContentComponent;
+  let fixture: ComponentFixture<CreateContentComponent>;
+  let createContentService: CreateContentService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateContentComponent ], // declare the test component
+      declarations: [
+        CreateContentComponent,
+        HintsComponent,
+      ],
+      imports: [
+        BrowserAnimationsModule,
+        FormsModule,
+        MaterialModule,
+      ],
+      providers: [
+        { provide: CreateContentService, useClass: CreateContentServiceMock },
+      ]
     });
 
-    component = TestBed.createComponent(CreateContentComponent);
+    fixture = TestBed.createComponent(CreateContentComponent);
+    component = fixture.componentInstance;
+    createContentService = fixture.debugElement.injector.get(CreateContentService);
   });
+
+  it('should be defined', () => {
+    expect(component).toBeDefined();
+  });
+
+  it('throws an error if templateQuery is not set', () => {
+    expect(() => {
+      component.options = null;
+      fixture.detectChanges();
+    }).toThrowError('Input "options" is required');
+  });
+
+  it('throws an error if templateQuery is not set', () => {
+    expect(() => {
+      component.options = { templateQuery: null };
+      fixture.detectChanges();
+    }).toThrowError('Configuration option "templateQuery" is required');
+  });
+
+  it('loads documentTypes from the templateQuery', () => {
+    const documentTypes: Array<DocumentTypeInfo> = [
+      { id: 'test-id1', displayName: 'test-name 1' },
+      { id: 'test-id2', displayName: 'test-name 2' },
+    ];
+    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
+      .and.returnValue(Observable.of(documentTypes));
+
+    component.options = { templateQuery: 'test-template-query' };
+    fixture.detectChanges(true);
+
+    expect(spy).toHaveBeenCalledWith('test-template-query');
+    expect(component.documentType).toBeUndefined();
+    expect(component.documentTypes).toBe(documentTypes);
+  });
+
+  it('pre-selects the documentType if only one is returned from the templateQuery', () => {
+    const documentTypes: Array<DocumentTypeInfo> = [{ id: 'test-id1', displayName: 'test-name 1' }];
+    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
+      .and.returnValue(Observable.of(documentTypes));
+
+    component.options = { templateQuery: 'test-template-query' };
+    fixture.detectChanges(true);
+
+    expect(component.documentType).toBe('test-id1');
+  });
+
+  it('emits feedback if template query is not found', async(() => {
+    const spy = spyOn(createContentService, 'getDocumentTypesFromTemplateQuery')
+      .and.returnValue(Observable.throw({ status: 404 }));
+
+    component.onError.subscribe((feedback) => {
+      expect(feedback.title).toBe('Error loading template query');
+      expect(feedback.message).toBe('Can not find template query with name "test-template-query"');
+    });
+
+    component.options = { templateQuery: 'test-template-query' };
+    fixture.detectChanges(true);
+  }));
 });
