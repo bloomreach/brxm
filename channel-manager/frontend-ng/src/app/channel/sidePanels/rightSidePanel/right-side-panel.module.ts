@@ -15,7 +15,7 @@
  */
 
 import { NgModule } from '@angular/core';
-import { CreateContentComponent } from './createContentForm/create-content.component';
+import { CreateContentComponent } from './createContent/create-content.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
 import { HintsComponent } from '../../../shared/components/hints/hints.component';
