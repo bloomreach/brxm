@@ -1,7 +1,5 @@
 definitions:
   config:
-    /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
-      /polldemo:
-        jcr:primaryType: hst:site
-        hst:content: /content/documents/polldemo
+    /hst:hst/hst:sites/polldemo:
+      jcr:primaryType: hst:site
+      hst:content: /content/documents/polldemo
