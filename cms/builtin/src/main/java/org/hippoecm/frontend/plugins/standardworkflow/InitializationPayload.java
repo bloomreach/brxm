@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms7.services.cmscontext.CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY;
+
 public class InitializationPayload {
 
     private static final Logger log = LoggerFactory.getLogger(InitializationPayload.class);
@@ -37,7 +39,6 @@ public class InitializationPayload {
 
     @SuppressWarnings({"unchecked"})
     public static Map<String, Serializable> get() {
-        Map<String, Serializable> result = Collections.emptyMap();
         final RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
             final ServletWebRequest request = (ServletWebRequest) requestCycle.getRequest();
@@ -45,20 +46,19 @@ public class InitializationPayload {
             final HttpSession session = containerRequest.getSession();
             final CmsSessionContext context = CmsSessionContext.getContext(session);
             if (context != null) {
-                final Map<String, Serializable> attribute = context.getContextPayload();
-                if (attribute != null) {
-                    result = attribute;
+                final Map<String, Serializable> payload = context.getContextPayload();
+                if (payload != null) {
+                    return payload;
                 } else {
-                    log.debug("No attribute with key {} found on CmsSessionContext. Please make sure an attribute " +
-                            "with this key is added", CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+                    log.error("No attribute with key '{}' found on CmsSessionContext.", CMS_SESSION_CONTEXT_PAYLOAD_KEY);
                 }
             }
 
         } else {
-            log.debug("Cannot get ServletWebRequest. No request cycle associated with current thread. " +
+            log.error("Cannot get ServletWebRequest. No request cycle associated with current thread. " +
                     "Only call this method from threads that have access.");
         }
-        return result;
+        return Collections.emptyMap();
     }
 
 
