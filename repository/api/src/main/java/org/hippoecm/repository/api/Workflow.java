@@ -64,12 +64,13 @@ public interface Workflow extends Remote, Serializable {
 
     /**
      * See {@link #hints()} only now with an {@code initialPayload}
-     * @param initialPayload supplies information that is not available on the document
+     * @param contextPayload supplies information that is not available on the document but for example on the http session
+     *                       of the user invoking the workflow
      * @see #hints()
      *
      */
     @WorkflowAction(loggable = false, mutates = false)
-    default Map<String, Serializable> hints(Map<String, Serializable> initialPayload) throws WorkflowException, RemoteException, RepositoryException {
+    default Map<String, Serializable> hints(Map<String, Serializable> contextPayload) throws WorkflowException, RemoteException, RepositoryException {
         return hints();
     }
 
