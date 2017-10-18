@@ -37,6 +37,7 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
+    ChannelService,
   ) {
     'ngInject';
 
@@ -45,6 +46,7 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.ChannelService = ChannelService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
@@ -356,13 +358,35 @@ class OverlayService {
     return optionsSet;
   }
 
+  filterConfigByPrivileges(configObj) {
+    const config = angular.copy(configObj);
+    if (this.ChannelService.isEditable()) {
+      return configObj;
+    }
+
+    delete config.componentParameter;
+    if (configObj.documentUuid) { // whenever uuid is available, only edit button for authors
+      delete config.templateQuery;
+      return config;
+    }
+    if (!configObj.documentUuid && configObj.componentParameter) {
+      console.log('scenario 5');
+      return {};
+    }
+
+    return config; // when uuid doesn't exist, only templateQuery (create content option) is returned
+  }
+
   _initManageContentLink(structureElement, overlayElement) {
     // each property should be filled with the method that will extract the data from the HST comment
-    const config = {
+    // Passing the full config through privileges to adjust buttons for authors
+    const config = this.filterConfigByPrivileges({
       documentUuid: structureElement.getUuid(),
       templateQuery: structureElement.getTemplateQuery(),
       componentParameter: structureElement.getComponentParameter(),
-    };
+    });
+    if (angular.equals({}, {})) return;
+
     const optionsSet = this._getDialOptions(config);
 
     overlayElement
