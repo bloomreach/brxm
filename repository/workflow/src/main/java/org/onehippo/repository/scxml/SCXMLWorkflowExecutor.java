@@ -1,12 +1,12 @@
-/*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+/**
+ * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -217,35 +217,11 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object start() throws WorkflowException {
-        return start(null);
-    }
-
-
-    /**
-     * Starts or re-starts the SCXML state machine through {@link SCXMLExecutor#go}.
-     * <p>
-     * Starting the state machine is not possible if the state machine is terminated.
-     * That would require a {@link #reset()} first.
-     * </p>
-     * <p>
-     * After starting the state machine, it <em>might</em> be {@link #isTerminated()} already!
-     * </p>
-     * <p>
-     * Optionally, the state machine might have set a result in the {@link SCXMLWorkflowContext#getResult()}, which
-     * for convenience is also returned directly by this method.
-     * </p>
-     * @param initialPayload  supplied to {@link #data} if it implements {@link PayloadAware} with {@link PayloadAware#setInitialPayload(Map)}
-     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
-     */
-    public Object start(Map<String,Object> initialPayload) throws WorkflowException {
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
         context.initialize();
         if (data != null) {
-            if (data instanceof PayloadAware){
-                ((PayloadAware) data).setInitialPayload(initialPayload);
-            }
             data.initialize();
         }
         getSCXMLExecutor().getRootContext().set(SCXMLWorkflowContext.SCXML_CONTEXT_KEY, context);
