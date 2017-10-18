@@ -89,7 +89,7 @@
     <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>1.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>5.1.0-create-content-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>1.1.0-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
