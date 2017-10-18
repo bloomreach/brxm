@@ -96,7 +96,7 @@ public class Revision implements IDetachable {
 
     private Document retrieveVersion(final DocumentWorkflow workflow) throws WorkflowException {
         final WorkflowTransition retrieveVersion = new WorkflowTransition.Builder()
-                .initializationPayload(InitializationPayload.get())
+                .contextPayload(InitializationPayload.get())
                 .action(DocumentWorkflowAction.RETRIEVE_VERSION)
                 .eventPayload(DocumentWorkflowConstants.DATE, date)
                 .build();

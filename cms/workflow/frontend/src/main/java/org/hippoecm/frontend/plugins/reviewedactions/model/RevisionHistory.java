@@ -88,7 +88,7 @@ public class RevisionHistory implements IDetachable {
                 DocumentWorkflow workflow = getWorkflow();
                 if (workflow != null) {
                     final WorkflowTransition listVersions = new WorkflowTransition.Builder()
-                            .initializationPayload(InitializationPayload.get())
+                            .contextPayload(InitializationPayload.get())
                             .action(DocumentWorkflowAction.LIST_VERSIONS)
                             .build();
                     final SortedMap<Calendar, Set<String>> versions = (SortedMap<Calendar, Set<String>>) workflow.transition(listVersions);
