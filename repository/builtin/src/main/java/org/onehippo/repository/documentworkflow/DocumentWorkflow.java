@@ -79,34 +79,10 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
 
 
     /**
-     * <p>
-     * The DocumentWorkflow hints method provides all the operational hints corresponding with the DocumentWorkflow
-     * operational method names which are available to the current user to be invoked. However, only when the returned
-     * value is Boolean.TRUE are they <em>allowed</em> to be invoked. They might have a value of Boolean.FALSE though
-     * when the current document <em>state</em> does not allow executing the specific operation.
-     * </p>
-     * <p>
-     * The returned hints map may also provide additional information, like the current editable "status", if the
-     * document "isLive", or if currently there is a "previewAvailable".
-     * </p>
-     * <p>
-     * Separately, the hints map also returns status information about existing workflow or scheduled requests.
-     * This request status data is returned under key "requests" with as value a nested 'hints'
-     * Map&lt;String,Map&lt;String, Boolean&gt;&gt; per request node identifier,
-     * defining the allowable request operations ({@link #acceptRequest(String)}, {@link #cancelRequest(String)},
-     * {@link #rejectRequest(String, String)}) for each request node.
-     * </p>
-     *
+     * See {@link #hints()} only now with an {@code initialPayload}
      * @param initialPayload supplies information that is not available on the document
+     * @see #hints()
      *
-     * @return a map containing hints given by the workflow, the data in this map may be considered valid until the
-     * document itself changes
-     *
-     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
-     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
-     *                             repository
-     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
-     *                             repository
      */
     @WorkflowAction(loggable = false, mutates = false)
     Map<String, Serializable> hints(Map<String, Serializable> initialPayload) throws WorkflowException, RemoteException, RepositoryException;
