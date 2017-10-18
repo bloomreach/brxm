@@ -16,11 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.Workflow;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -38,11 +41,12 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param contextPayload the payload for the {@link Workflow#hints(Map)}
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If creation of the draft failed
      */
-    Document createDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document createDraft(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Update the draft version of a document, and keep it locked for further editing.
@@ -54,12 +58,14 @@ public interface DocumentsService {
      * @param document Document containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
+     * @param contextPayload the payload for the {@link Workflow#hints(Map)}
      * @param locale   Locale of the CMS user
      * @return         JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
-    Document updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document updateDraft(String uuid, Document document, Session session, Locale locale,
+                         Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Update a single field value in the draft version of a document.
@@ -72,30 +78,36 @@ public interface DocumentsService {
      * @param fieldValues Field values containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
+     * @param contextPayload the payload for the {@link Workflow#hints(Map)}
      * @param locale   Locale of the CMS user
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
-    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale) throws ErrorWithPayloadException;
+    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale,
+                          Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.
      *
      * @param uuid    UUID of the document for which to delete the draft
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param contextPayload the payload for the {@link Workflow#hints(Map)}
      * @throws ErrorWithPayloadException
      *                If deleting the draft failed
      */
-    void deleteDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    void deleteDraft(String uuid, Session session, Locale locale,
+                     Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Read the published variant of a document
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param contextPayload the payload for the {@link Workflow#hints(Map)}
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If retrieval of the live document failed
      */
-    Document getPublished(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document getPublished(String uuid, Session session, Locale locale,
+                          Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 }

@@ -19,10 +19,14 @@ package org.onehippo.cms.channelmanager.content;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -83,7 +87,13 @@ public class ContentResourceTest extends CXFTest {
         PowerMock.replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionDataProvider, documentsService));
+        final ContentResource.ContextPayloadProvider noopContextPayloadProvider = new ContentResource.ContextPayloadProvider() {
+            @Override
+            protected Map<String, Serializable> getContextPayload(final HttpServletRequest servletRequest) {
+                return Collections.emptyMap();
+            }
+        };
+        config.addServerSingleton(new ContentResource(sessionDataProvider, documentsService, noopContextPayloadProvider));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
@@ -95,7 +105,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.getPublished(requestedUuid, userSession, locale, Collections.emptyMap())).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -111,7 +121,7 @@ public class ContentResourceTest extends CXFTest {
     public void getPublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new NotFoundException());
+        expect(documentsService.getPublished(requestedUuid, userSession, locale, Collections.emptyMap())).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -126,7 +136,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.createDraft(requestedUuid, userSession, locale, Collections.emptyMap())).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -144,7 +154,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new ForbiddenException(testDocument));
+        expect(documentsService.createDraft(requestedUuid, userSession, locale, Collections.emptyMap())).andThrow(new ForbiddenException(testDocument));
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -160,7 +170,7 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new NotFoundException());
+        expect(documentsService.createDraft(requestedUuid, userSession, locale, Collections.emptyMap())).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -175,7 +185,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.updateDraft(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale))).andReturn(testDocument);
+        expect(documentsService.updateDraft(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), anyObject(Map.class))).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -194,7 +204,7 @@ public class ContentResourceTest extends CXFTest {
     public void deleteDraft() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale);
+        documentsService.deleteDraft(requestedUuid, userSession, locale, Collections.emptyMap());
         expectLastCall();
         replay(documentsService);
 
@@ -208,7 +218,7 @@ public class ContentResourceTest extends CXFTest {
     public void deleteDraftNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale);
+        documentsService.deleteDraft(requestedUuid, userSession, locale, Collections.emptyMap());
         expectLastCall().andThrow(new NotFoundException());
         replay(documentsService);
 
@@ -222,7 +232,7 @@ public class ContentResourceTest extends CXFTest {
     public void deleteDraftBadRequest() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale);
+        documentsService.deleteDraft(requestedUuid, userSession, locale, Collections.emptyMap());
         expectLastCall().andThrow(new BadRequestException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
         replay(documentsService);
 
@@ -237,7 +247,7 @@ public class ContentResourceTest extends CXFTest {
     public void deleteDraftServerError() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale);
+        documentsService.deleteDraft(requestedUuid, userSession, locale, Collections.emptyMap());
         expectLastCall().andThrow(new InternalServerErrorException());
         replay(documentsService);
 

@@ -28,10 +28,15 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
 
 public class EditingUtils {
 
@@ -43,46 +48,46 @@ public class EditingUtils {
         this.hintsInspector = hintsInspector;
     }
 
-    public boolean canCreateDraft(final Workflow workflow) {
-        return getHints(workflow).map(hintsInspector::canCreateDraft).orElse(false);
+    public boolean canCreateDraft(final WorkflowContext workflowContext) {
+        return getHints(workflowContext).map(hintsInspector::canCreateDraft).orElse(false);
     }
 
-    public boolean canUpdateDraft(final Workflow workflow) {
-        return getHints(workflow).map(hintsInspector::canUpdateDraft).orElse(false);
+    public boolean canUpdateDraft(final WorkflowContext workflowContext) {
+        return getHints(workflowContext).map(hintsInspector::canUpdateDraft).orElse(false);
     }
 
-    public boolean canDeleteDraft(final Workflow workflow) {
-        return getHints(workflow).map(hintsInspector::canDeleteDraft).orElse(false);
+    public boolean canDeleteDraft(final WorkflowContext workflowContext) {
+        return getHints(workflowContext).map(hintsInspector::canDeleteDraft).orElse(false);
     }
 
-    public Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
-        return getHints(workflow).flatMap(hints -> hintsInspector.determineEditingFailure(hints, session));
+    public Optional<ErrorInfo> determineEditingFailure(final WorkflowContext workflowContext) {
+        return getHints(workflowContext).flatMap(hints -> hintsInspector.determineEditingFailure(hints, workflowContext.getSession()));
     }
 
-    public Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
+    public Optional<Node> createDraft(final WorkflowContext workflowContext) {
         try {
-            final Document document = workflow.obtainEditableInstance();
-            return Optional.of(document.getNode(session));
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);
+            final Document document = (Document)workflowContext.getWorkflow().transition(workflowContext.createWorkflowTransition(OBTAIN_EDITABLE_INSTANCE));
+            return Optional.of(document.getNode(workflowContext.getSession()));
+        } catch (WorkflowException | RepositoryException e) {
+            log.warn("Failed to obtain draft for user '{}'.", workflowContext.getSession().getUserID(), e);
         }
         return Optional.empty();
     }
 
-    public Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
+    public Optional<Node> copyToPreviewAndKeepEditing(final WorkflowContext workflowContext) {
         try {
-            workflow.commitEditableInstance();
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
+            workflowContext.getWorkflow().transition(workflowContext.createWorkflowTransition(COMMIT_EDITABLE_INSTANCE));
+        } catch (WorkflowException e) {
+            log.warn("Failed to commit changes for user '{}'.", workflowContext.getSession().getUserID(), e);
             return Optional.empty();
         }
 
-        return createDraft(workflow, session);
+        return createDraft(workflowContext);
     }
 
-    private Optional<Map<String, Serializable>> getHints(Workflow workflow) {
+    private Optional<Map<String, Serializable>> getHints(final WorkflowContext workflowContext) {
         try {
-            return Optional.of(workflow.hints());
+            return Optional.of(workflowContext.getWorkflow().hints(workflowContext.getContextPayload()));
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             log.warn("Failed reading hints from workflow", e);
         }
