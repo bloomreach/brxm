@@ -72,7 +72,7 @@ class RightSidePanelCtrl {
   }
 
   openEditor(documentId) {
-    if (this.documentId === documentId) {
+    if (this.documentId === documentId && documentId !== undefined) {
       return;
     }
 

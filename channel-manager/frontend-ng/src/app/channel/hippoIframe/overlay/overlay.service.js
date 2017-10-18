@@ -370,7 +370,6 @@ class OverlayService {
       return config;
     }
     if (!configObj.documentUuid && configObj.componentParameter) {
-      console.log('scenario 5');
       return {};
     }
 
@@ -385,7 +384,8 @@ class OverlayService {
       templateQuery: structureElement.getTemplateQuery(),
       componentParameter: structureElement.getComponentParameter(),
     });
-    if (angular.equals({}, {})) return;
+    // if the config is empty, create no button
+    if (angular.equals(config, {})) return;
 
     const optionsSet = this._getDialOptions(config);
 
@@ -447,16 +447,34 @@ class OverlayService {
       hideOptions();
       overlayElement.addClass('is-left');
     };
-
-    if (config.documentUuid) {
-      fabBtn.on('click', () => this.manageContentHandler(config.documentUuid));
+    const fabButtonCallback = this.fabButtonCallback(config, optionsSet);
+    if (fabButtonCallback) {
+      fabBtn.on('click', () => fabButtonCallback(config.documentUuid));
     } else {
       overlayElement.on('click', () => showOptions() || hideOptions());
     }
-    if (config.templateQuery || config.componentParameter) {
+
+    if (this.isHoverEnabled(config)) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }
+  }
+
+  fabButtonCallback(config, optionsSet) {
+    if (config.documentUuid) {
+      return this.manageContentHandler;
+    }
+    if (config.templateQuery && !config.componentParameter) {
+      return optionsSet.buttons[0].callback;
+    }
+    return null;
+  }
+
+  isHoverEnabled(config) {
+    if (config.documentUuid) {
+      return config.templateQuery || config.componentParameter;
+    }
+    return config.templateQuery && config.componentParameter;
   }
 
   _initManageContentLinkOptions(optionButtons) {
