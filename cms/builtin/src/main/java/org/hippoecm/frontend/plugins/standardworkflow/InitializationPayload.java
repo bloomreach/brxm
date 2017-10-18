@@ -44,8 +44,10 @@ public class InitializationPayload {
             final ServletWebRequest request = (ServletWebRequest) requestCycle.getRequest();
             final HttpServletRequest containerRequest = request.getContainerRequest();
             final HttpSession session = containerRequest.getSession();
-            final CmsSessionContext context = CmsSessionContext.getContext(session);
-            if (context != null) {
+            final CmsSessionContext context;
+            if (session == null || (context = CmsSessionContext.getContext(session)) == null) {
+                log.error("HttpSession should not be null and CmsSessionContext should be present");
+            } else {
                 final Map<String, Serializable> payload = context.getContextPayload();
                 if (payload != null) {
                     return payload;
