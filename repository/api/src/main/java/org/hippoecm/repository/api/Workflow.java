@@ -63,26 +63,13 @@ public interface Workflow extends Remote, Serializable {
     Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 
     /**
-     * The hints method is not an actual workflow call, but a method by which information can be retrieved from the
-     * workflow.  All implementations must implement this call as a pure function, no modification may be made, nor no
-     * state may be maintained and and in principle no additional lookups of data is allowed.  This allows for caching
-     * the result as long as the document on which the workflow operates isn't modified. By convention, keys that are
-     * names or signatures of methods implemented by the workflow provide information to the application program whether
-     * the workflow method is available this time, or will result in a WorkflowException.  The value for these keys will
-     * often be a {@link java.lang.Boolean} to indicate the enabled status of the method.<p/> Non-standard keys in this
-     * map should be prefixed with the implementation package name using dot seperations.
+     * See {@link #hints()} only now with an {@code initialPayload}
+     * @param initialPayload supplies information that is not available on the document
+     * @see #hints()
      *
-     * @param initializationPayload a map containing user context information relevant for the workflow
-     * @return a map containing hints given by the workflow, the data in this map may be considered valid until the
-     * document itself changes
-     * @throws org.hippoecm.repository.api.WorkflowException thrown in case the implementing workflow encounters an
-     *                                                       error, this exception should normally never be thrown by
-     *                                                       implementations for the hints method.
-     * @throws java.rmi.RemoteException                      a connection error with the repository
-     * @throws javax.jcr.RepositoryException                 a generic error communicating with the repository
      */
     @WorkflowAction(loggable = false, mutates = false)
-    default Map<String, Serializable> hints(Map<String, Serializable> initializationPayload) throws WorkflowException, RemoteException, RepositoryException {
+    default Map<String, Serializable> hints(Map<String, Serializable> initialPayload) throws WorkflowException, RemoteException, RepositoryException {
         return hints();
     }
 

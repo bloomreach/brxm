@@ -77,18 +77,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     @Override
     Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 
-
-    /**
-     * See {@link #hints()} only now with an {@code initialPayload}
-     * @param initialPayload supplies information that is not available on the document
-     * @see #hints()
-     *
-     */
-    @WorkflowAction(loggable = false, mutates = false)
-    default Map<String, Serializable> hints(Map<String, Serializable> initialPayload) throws WorkflowException, RemoteException, RepositoryException {
-        return hints();
-    }
-
     // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
 
     /**
