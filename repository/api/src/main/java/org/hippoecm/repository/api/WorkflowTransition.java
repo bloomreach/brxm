@@ -25,7 +25,7 @@ public class WorkflowTransition {
 
     private final String requestIdentifier;
     private Map<String, Object> eventPayload = new HashMap<>();
-    private final Map<String, Serializable> initializationPayload;
+    private final Map<String, Serializable> contextPayload;
     private final String action;
     private Map<String, Boolean> actionsMap;
 
@@ -33,8 +33,8 @@ public class WorkflowTransition {
         return actionsMap;
     }
 
-    public Map<String, Serializable> getInitializationPayload() {
-        return initializationPayload;
+    public Map<String, Serializable> getContextPayload() {
+        return contextPayload;
     }
 
     public Map<String, Object> getEventPayload() {
@@ -51,7 +51,7 @@ public class WorkflowTransition {
 
     public static class Builder {
         private final Map<String, Object> eventPayload = new HashMap<>();
-        private Map<String, Serializable> initializationPayload;
+        private Map<String, Serializable> contextPayload;
         private String action;
         private Map<String, Boolean> actionsMap;
         private String requestIdentifier;
@@ -79,12 +79,12 @@ public class WorkflowTransition {
 
         /**
          * Sets the initialization payload. Note that the argument does not get cloned meaning that if you change it
-         * after invoking this menthod, the {@code initializationPayload} object in this {@link Builder} changes
-         * @param initializationPayload the initial payload to set
+         * after invoking this menthod, the {@code contextPayload} object in this {@link Builder} changes
+         * @param contextPayload the initial payload to set
          * @return this {@link Builder}
          */
-        public Builder initializationPayload(final Map<String, Serializable> initializationPayload) {
-            this.initializationPayload = initializationPayload;
+        public Builder contextPayload(final Map<String, Serializable> contextPayload) {
+            this.contextPayload = contextPayload;
             return this;
         }
 
@@ -112,7 +112,7 @@ public class WorkflowTransition {
     private WorkflowTransition(final Builder b) {
         this.action = b.action;
         this.actionsMap = b.actionsMap;
-        this.initializationPayload = b.initializationPayload;
+        this.contextPayload = b.contextPayload;
         this.eventPayload = b.eventPayload;
         this.requestIdentifier = b.requestIdentifier;
     }
