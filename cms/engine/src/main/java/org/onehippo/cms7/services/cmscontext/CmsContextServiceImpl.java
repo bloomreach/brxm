@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.cmscontext;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +40,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         private CmsSessionContextImpl cmsCtx;
         private Map<String, CmsSessionContextImpl> sharedContextsMap;
         private Map<String, Object> dataMap;
-        private Map<String, Object> attributeMap;
 
         private HttpSession session;
 
@@ -48,14 +48,13 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
-            attributeMap = new ConcurrentHashMap<>();
+            dataMap.put(CMS_SESSION_CONTEXT_PAYLOAD_KEY, new HashMap<>());
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
             this.service = service;
             cmsCtx = ctx.cmsCtx;
             dataMap = ctx.dataMap;
-            attributeMap = ctx.attributeMap;
             sharedContextsMap = ctx.sharedContextsMap;
             sharedContextsMap.put(id, this);
         }
@@ -74,22 +73,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         public synchronized Object get(final String key) {
             return dataMap.get(key);
         }
-
-        @Override
-        public synchronized Object setAttribute(String key, Object value) {
-            return attributeMap.put(key, value);
-        }
-
-        @Override
-        public synchronized Object getAttribute(String key) {
-            return attributeMap.get(key);
-        }
-
-        @Override
-        public synchronized Object removeAttribute(final String key) {
-            return attributeMap.remove(key);
-        }
-
 
         private synchronized void detach() {
             if (service != null) {
@@ -123,7 +106,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
                 dataMap = Collections.emptyMap();
-                attributeMap = Collections.emptyMap();
             }
         }
 

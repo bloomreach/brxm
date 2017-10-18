@@ -32,31 +32,29 @@ public class InitializationPayload {
 
     private static final Logger log = LoggerFactory.getLogger(InitializationPayload.class);
 
-    private InitializationPayload(){
+    private InitializationPayload() {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static Map<String,Serializable> get() {
-        Map<String,Serializable> result = Collections.emptyMap();
+    public static Map<String, Serializable> get() {
+        Map<String, Serializable> result = Collections.emptyMap();
         final RequestCycle requestCycle = RequestCycle.get();
-        if (requestCycle!=null){
+        if (requestCycle != null) {
             final ServletWebRequest request = (ServletWebRequest) requestCycle.getRequest();
             final HttpServletRequest containerRequest = request.getContainerRequest();
             final HttpSession session = containerRequest.getSession();
             final CmsSessionContext context = CmsSessionContext.getContext(session);
-            if (context!=null){
-                final Object attribute = context.getAttribute(CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
-                if (attribute!=null){
-                    result = (Map<String, Serializable>) attribute;
-                }
-                else{
+            if (context != null) {
+                final Map<String, Serializable> attribute = context.getContextPayload();
+                if (attribute != null) {
+                    result = attribute;
+                } else {
                     log.debug("No attribute with key {} found on CmsSessionContext. Please make sure an attribute " +
-                            "with this key is added",CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+                            "with this key is added", CmsSessionContext.CMS_SESSION_CONTEXT_PAYLOAD_KEY);
                 }
             }
 
-        }
-        else{
+        } else {
             log.debug("Cannot get ServletWebRequest. No request cycle associated with current thread. " +
                     "Only call this method from threads that have access.");
         }

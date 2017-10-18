@@ -17,9 +17,7 @@ package org.hippoecm.frontend.editor.workflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -71,7 +69,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.io.FilenameUtils.EXTENSION_SEPARATOR_STR;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
-import static org.apache.commons.io.FilenameUtils.isExtension;
 
 public class DefaultWorkflowPlugin extends RenderPlugin {
 
@@ -87,7 +84,6 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     private final StdWorkflow whereUsedAction;
 
     private static final String NUMBER_EXPRESSION = "[0-9]*";
-    private static final List<String> KNOWN_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "gif", "png");
 
     public DefaultWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -205,8 +201,9 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 try {
                     String nodeName = getDisplayName().getObject().toLowerCase();
 
-                    if (isExtension(nodeName, KNOWN_IMAGE_EXTENSIONS)) {
-                        createNewNodeNameForImage(nodeName);
+                    if (getModel().getNode().isNodeType("hippogallery:imageset")
+                            || getModel().getNode().isNodeType("hippogallery:exampleAssetSet")) {
+                        createNewFileNodeNameWithBaseNameSuffix(nodeName);
                     } else {
                         String locale = CodecUtils.getLocaleFromNode(getFolder().getNode());
                         IModel<StringCodec> codec = CodecUtils.getNodeNameCodecModel(context, locale);
@@ -241,12 +238,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
              * @param nodeName The node name
              * @throws RepositoryException Thrown when it cannot retrieve the node from the repository
              */
-            private void createNewNodeNameForImage(final String nodeName) throws RepositoryException {
+            private void createNewFileNodeNameWithBaseNameSuffix(final String nodeName) throws RepositoryException {
                 name = nodeName;
                 Node gallery = destination.getChainedModel().getObject();
                 if (gallery.hasNode(name)) {
-                    name = addOrIncrementNodeNameSuffixForImage(name);
-                    createNewNodeNameForImage(name);
+                    name = addOrIncrementFileNodeNameBaseNameSuffix(name);
+                    createNewFileNodeNameWithBaseNameSuffix(name);
                 }
             }
 
@@ -263,7 +260,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
              * @return A node name with a '-1' as suffix attached to the base name or a node name which already has
              * such a suffix (-n) with an incremented (n+1) number of this suffix.
              */
-            private String addOrIncrementNodeNameSuffixForImage(final String nodeName) {
+            private String addOrIncrementFileNodeNameBaseNameSuffix(final String nodeName) {
                 final String baseName = getBaseName(nodeName);
                 final String extension = getExtension(nodeName);
 
