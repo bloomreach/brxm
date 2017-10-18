@@ -204,13 +204,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return Collections.unmodifiableMap(hints);
     }
 
-    @Override
-    public Map<String, Serializable> hints(final Map<String, Serializable> initializationPayload) throws WorkflowException {
-        return hints();
-    }
-
-
-
     // EditableWorkflow implementation
 
     @Override
