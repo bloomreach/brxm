@@ -205,6 +205,6 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
     private static WorkflowTransition.Builder getBuilder() {
         return new WorkflowTransition.Builder()
-                .initializationPayload(InitializationPayload.get());
+                .contextPayload(InitializationPayload.get());
     }
 }

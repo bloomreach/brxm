@@ -153,7 +153,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     wf.transition(new WorkflowTransition.Builder()
-                            .initializationPayload(InitializationPayload.get())
+                            .contextPayload(InitializationPayload.get())
                             .action(DocumentWorkflowAction.RENAME)
                             .build());
                 }
@@ -306,7 +306,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 String nodeName = document.getName();
                 wf.transition(new WorkflowTransition.Builder()
                         .action(MOVE)
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .eventPayload(DocumentWorkflowConstants.DESTINATION,new Document(folder), DocumentWorkflowConstants.NAME,nodeName)
                         .build());
                 browseTo(new JcrNodeModel(folder.getPath() + "/" + nodeName));
@@ -348,7 +348,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 wf.transition(new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .action(DocumentWorkflowAction.DELETE)
                         .build());
                 return null;
@@ -380,7 +380,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.transition(new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .action(DocumentWorkflowAction.REQUEST_DELETE)
                         .build());
                 return null;

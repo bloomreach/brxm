@@ -349,7 +349,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private Object transition(final EditableWorkflow workflow, final DocumentWorkflowAction action) throws WorkflowException {
         return workflow.transition(new WorkflowTransition.Builder()
-                .initializationPayload(InitializationPayload.get())
+                .contextPayload(InitializationPayload.get())
                 .action(action)
                 .build());
     }

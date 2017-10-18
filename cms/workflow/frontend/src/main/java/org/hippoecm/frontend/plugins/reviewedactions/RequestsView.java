@@ -144,7 +144,7 @@ public class RequestsView extends RepeatingView {
                 wf.transition(new WorkflowTransition.Builder()
                         .action(DocumentWorkflowAction.ACCEPT_REQUEST)
                         .requestIdentifier(item.getModelObject().getId())
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .build());
                 return null;
             }
@@ -187,7 +187,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 wf.transition(new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .requestIdentifier(item.getModelObject().getId())
                         .eventPayload("reason",reason)
                         .action(DocumentWorkflowAction.REJECT_REQUEST)
@@ -263,7 +263,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 wf.transition(new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .requestIdentifier(item.getModelObject().getId())
                         .action(DocumentWorkflowAction.CANCEL_REQUEST)
                         .build());

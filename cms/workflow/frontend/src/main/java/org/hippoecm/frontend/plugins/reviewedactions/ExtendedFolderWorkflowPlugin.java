@@ -164,7 +164,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                     if (transactionAllowed(action, workflow)) {
                         workflow.transition(new WorkflowTransition.Builder()
-                                .initializationPayload(InitializationPayload.get())
+                                .contextPayload(InitializationPayload.get())
                                 .action(action)
                                 .build());
                         ++processed;

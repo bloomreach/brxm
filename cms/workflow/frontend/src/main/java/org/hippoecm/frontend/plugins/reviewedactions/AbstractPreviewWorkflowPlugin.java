@@ -112,7 +112,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             protected String execute(Workflow wf) throws Exception {
                 final WorkflowTransition obtainTransition = new WorkflowTransition.Builder()
                         .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .build();
                 Document docRef = (Document) wf.transition(obtainTransition);
                 Session session = UserSession.get().getJcrSession();

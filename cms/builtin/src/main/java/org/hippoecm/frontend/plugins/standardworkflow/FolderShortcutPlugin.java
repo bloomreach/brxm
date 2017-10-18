@@ -170,7 +170,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                             if (workflow!=null) {
                                 final WorkflowTransition transition = new WorkflowTransition.Builder()
                                         .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                                        .initializationPayload(InitializationPayload.get())
+                                        .contextPayload(InitializationPayload.get())
                                         .build();
                                 Document editableDocument = (Document) workflow.transition(transition);
                                 if (editableDocument != null) {

@@ -320,7 +320,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private WorkflowTransition.Builder getBuilderWithInitialPayload() {
         return new WorkflowTransition.Builder()
-                .initializationPayload(InitializationPayload.get());
+                .contextPayload(InitializationPayload.get());
     }
 
 

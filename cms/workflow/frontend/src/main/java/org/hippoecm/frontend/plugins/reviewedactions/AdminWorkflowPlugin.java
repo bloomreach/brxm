@@ -52,7 +52,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.transition(new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get())
+                        .contextPayload(InitializationPayload.get())
                         .action(DocumentWorkflowAction.UNLOCK)
                         .build());
                 return null;

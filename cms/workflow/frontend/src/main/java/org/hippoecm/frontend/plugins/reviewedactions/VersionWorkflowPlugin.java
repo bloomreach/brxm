@@ -194,7 +194,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             private WorkflowTransition.Builder getBuilder() {
                 return new WorkflowTransition.Builder()
-                        .initializationPayload(InitializationPayload.get());
+                        .contextPayload(InitializationPayload.get());
             }
         });
 
