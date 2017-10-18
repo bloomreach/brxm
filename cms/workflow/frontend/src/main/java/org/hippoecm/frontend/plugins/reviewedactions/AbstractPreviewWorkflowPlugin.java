@@ -35,7 +35,7 @@ import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
@@ -112,7 +112,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             protected String execute(Workflow wf) throws Exception {
                 final WorkflowTransition obtainTransition = new WorkflowTransition.Builder()
                         .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                        .contextPayload(InitializationPayload.get())
+                        .contextPayload(ContextPayloadProvider.get())
                         .build();
                 Document docRef = (Document) wf.transition(obtainTransition);
                 Session session = UserSession.get().getJcrSession();

@@ -44,7 +44,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
@@ -189,7 +189,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
-                Map<String, Serializable> info = workflow.hints(InitializationPayload.get());
+                Map<String, Serializable> info = workflow.hints(ContextPayloadProvider.get());
                 if (info.containsKey("edit")) {
                     Object editObject = info.get("edit");
                     if (editObject instanceof Boolean) {

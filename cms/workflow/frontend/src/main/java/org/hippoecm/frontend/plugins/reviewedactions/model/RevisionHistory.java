@@ -28,7 +28,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowTransition;
@@ -88,7 +88,7 @@ public class RevisionHistory implements IDetachable {
                 DocumentWorkflow workflow = getWorkflow();
                 if (workflow != null) {
                     final WorkflowTransition listVersions = new WorkflowTransition.Builder()
-                            .contextPayload(InitializationPayload.get())
+                            .contextPayload(ContextPayloadProvider.get())
                             .action(DocumentWorkflowAction.LIST_VERSIONS)
                             .build();
                     final SortedMap<Calendar, Set<String>> versions = (SortedMap<Calendar, Set<String>>) workflow.transition(listVersions);

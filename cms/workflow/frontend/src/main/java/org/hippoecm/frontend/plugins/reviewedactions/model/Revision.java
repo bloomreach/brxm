@@ -26,7 +26,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
@@ -96,7 +96,7 @@ public class Revision implements IDetachable {
 
     private Document retrieveVersion(final DocumentWorkflow workflow) throws WorkflowException {
         final WorkflowTransition retrieveVersion = new WorkflowTransition.Builder()
-                .contextPayload(InitializationPayload.get())
+                .contextPayload(ContextPayloadProvider.get())
                 .action(DocumentWorkflowAction.RETRIEVE_VERSION)
                 .eventPayload(DocumentWorkflowConstants.DATE, date)
                 .build();

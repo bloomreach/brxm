@@ -41,7 +41,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
@@ -320,7 +320,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private WorkflowTransition.Builder getBuilderWithInitialPayload() {
         return new WorkflowTransition.Builder()
-                .contextPayload(InitializationPayload.get());
+                .contextPayload(ContextPayloadProvider.get());
     }
 
 

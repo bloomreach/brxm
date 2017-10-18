@@ -32,7 +32,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -349,7 +349,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private Object transition(final EditableWorkflow workflow, final DocumentWorkflowAction action) throws WorkflowException {
         return workflow.transition(new WorkflowTransition.Builder()
-                .contextPayload(InitializationPayload.get())
+                .contextPayload(ContextPayloadProvider.get())
                 .action(action)
                 .build());
     }

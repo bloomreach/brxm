@@ -43,7 +43,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.Request;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RequestModel;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -77,7 +77,7 @@ public class RequestsView extends RepeatingView {
             WorkflowDescriptorModel model = getModel();
             Workflow workflow = model.getWorkflow();
             if (workflow != null) {
-                Map<String, Serializable> info = workflow.hints(InitializationPayload.get());
+                Map<String, Serializable> info = workflow.hints(ContextPayloadProvider.get());
                 if (info.containsKey("requests")) {
                     Map<String, Map<String, ?>> infoRequests = (Map<String, Map<String, ?>>) info.get("requests");
                     for (Map.Entry<String, Map<String, ?>> entry : infoRequests.entrySet()) {
@@ -144,7 +144,7 @@ public class RequestsView extends RepeatingView {
                 wf.transition(new WorkflowTransition.Builder()
                         .action(DocumentWorkflowAction.ACCEPT_REQUEST)
                         .requestIdentifier(item.getModelObject().getId())
-                        .contextPayload(InitializationPayload.get())
+                        .contextPayload(ContextPayloadProvider.get())
                         .build());
                 return null;
             }
@@ -187,7 +187,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 wf.transition(new WorkflowTransition.Builder()
-                        .contextPayload(InitializationPayload.get())
+                        .contextPayload(ContextPayloadProvider.get())
                         .requestIdentifier(item.getModelObject().getId())
                         .eventPayload("reason",reason)
                         .action(DocumentWorkflowAction.REJECT_REQUEST)
@@ -263,7 +263,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 wf.transition(new WorkflowTransition.Builder()
-                        .contextPayload(InitializationPayload.get())
+                        .contextPayload(ContextPayloadProvider.get())
                         .requestIdentifier(item.getModelObject().getId())
                         .action(DocumentWorkflowAction.CANCEL_REQUEST)
                         .build());

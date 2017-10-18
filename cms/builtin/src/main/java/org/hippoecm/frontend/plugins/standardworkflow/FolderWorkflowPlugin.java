@@ -487,7 +487,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     try {
                         final WorkflowTransition transition = new WorkflowTransition.Builder()
                                 .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                                .contextPayload(InitializationPayload.get())
+                                .contextPayload(ContextPayloadProvider.get())
                                 .build();
                         Document editableDocument = (Document) workflow.transition(transition);
                         if (editableDocument != null) {

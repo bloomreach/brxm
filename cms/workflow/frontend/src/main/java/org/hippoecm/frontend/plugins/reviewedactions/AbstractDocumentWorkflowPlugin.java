@@ -32,7 +32,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -170,7 +170,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         DocumentWorkflow workflow = getWorkflow();
         if (workflow != null) {
             try {
-                return workflow.hints(InitializationPayload.get());
+                return workflow.hints(ContextPayloadProvider.get());
             } catch (WorkflowException | RemoteException | RepositoryException e) {
                 log.error("Unable to retrieve workflow hints", e);
             }

@@ -42,7 +42,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -161,7 +161,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
                         DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflow;
                         Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>)
-                                documentWorkflow.hints(InitializationPayload.get()).get("requests");
+                                documentWorkflow.hints(ContextPayloadProvider.get()).get("requests");
                         for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
                             Map<String, Serializable> actions = entry.getValue();
                             if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
@@ -179,7 +179,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                             }
                         }
 
-                        Map<String, Serializable> hints = documentWorkflow.hints(InitializationPayload.get());
+                        Map<String, Serializable> hints = documentWorkflow.hints(ContextPayloadProvider.get());
                         if (mode.equals(MODE_PUBLISH) && Boolean.TRUE.equals(hints.get("publish"))) {
                             ((DocumentWorkflow) workflow).publish();
                         } else if (mode.equals(MODE_DEPUBLISH) && Boolean.TRUE.equals(hints.get("depublish"))) {
@@ -205,6 +205,6 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
     private static WorkflowTransition.Builder getBuilder() {
         return new WorkflowTransition.Builder()
-                .contextPayload(InitializationPayload.get());
+                .contextPayload(ContextPayloadProvider.get());
     }
 }

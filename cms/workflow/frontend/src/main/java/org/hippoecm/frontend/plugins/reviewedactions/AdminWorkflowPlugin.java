@@ -24,7 +24,7 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowTransition;
@@ -52,7 +52,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.transition(new WorkflowTransition.Builder()
-                        .contextPayload(InitializationPayload.get())
+                        .contextPayload(ContextPayloadProvider.get())
                         .action(DocumentWorkflowAction.UNLOCK)
                         .build());
                 return null;

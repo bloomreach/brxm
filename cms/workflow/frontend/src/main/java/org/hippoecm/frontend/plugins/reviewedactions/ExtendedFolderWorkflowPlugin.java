@@ -43,7 +43,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -164,7 +164,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                     if (transactionAllowed(action, workflow)) {
                         workflow.transition(new WorkflowTransition.Builder()
-                                .contextPayload(InitializationPayload.get())
+                                .contextPayload(ContextPayloadProvider.get())
                                 .action(action)
                                 .build());
                         ++processed;
@@ -241,7 +241,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     WorkflowManager workflowManager = ((HippoWorkspace) folder.getSession().getWorkspace()).getWorkflowManager();
                     Workflow workflow = workflowManager.getWorkflow(WORKFLOW_CATEGORY, child);
                     if (workflow != null) {
-                        Serializable hint = workflow.hints(InitializationPayload.get()).get(workflowAction);
+                        Serializable hint = workflow.hints(ContextPayloadProvider.get()).get(workflowAction);
                         if (hint instanceof Boolean && (Boolean) hint) {
                             documents.add(child.getIdentifier());
                         }

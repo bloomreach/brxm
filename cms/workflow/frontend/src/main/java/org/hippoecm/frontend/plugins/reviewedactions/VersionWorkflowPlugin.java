@@ -38,7 +38,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
-import org.hippoecm.frontend.plugins.standardworkflow.InitializationPayload;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
@@ -194,7 +194,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             private WorkflowTransition.Builder getBuilder() {
                 return new WorkflowTransition.Builder()
-                        .contextPayload(InitializationPayload.get());
+                        .contextPayload(ContextPayloadProvider.get());
             }
         });
 
