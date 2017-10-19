@@ -296,7 +296,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
-                transitionWithTargetDate(workflow,DocumentWorkflowAction.REQUEST_DEPUBLICATION,date);
+                transitionWithTargetDate(workflow,DocumentWorkflowAction.REQUEST_PUBLICATION,date);
                 return null;
             }
         });
