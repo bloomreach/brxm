@@ -162,7 +162,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 Node handle = session.getNodeByIdentifier(uuid);
                 if (handle.isNodeType(NT_HANDLE)) {
                     Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                    if (transactionAllowed(action, workflow)) {
+                    if (transitionAllowed(action, workflow)) {
                         workflow.transition(new WorkflowTransition.Builder()
                                 .contextPayload(ContextPayloadProvider.get())
                                 .action(action)
@@ -178,7 +178,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    private boolean transactionAllowed(final String action, final Workflow workflow) {
+    private boolean transitionAllowed(final String action, final Workflow workflow) {
         return workflow instanceof DocumentWorkflow && ALLOWED_ACTIONS.contains(action);
     }
 
