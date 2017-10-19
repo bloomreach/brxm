@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockNodeIterator;
@@ -44,13 +44,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.INVALID_TEMPLATE_QUERY;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.TEMPLATE_QUERY_NOT_FOUND;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
@@ -81,8 +81,8 @@ public class TemplateQueryServiceImplTest {
         try {
             templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (InternalServerErrorException e) {
+            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "templateQuery", "new-document");
         }
     }
 
@@ -99,8 +99,8 @@ public class TemplateQueryServiceImplTest {
         try {
             templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (InternalServerErrorException e) {
+            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "templateQuery", "new-document");
         }
 
         verifyAll();
@@ -119,8 +119,8 @@ public class TemplateQueryServiceImplTest {
         try {
             templateQueryService.getTemplateQuery(id, session, locale);
             fail("No exception");
-        } catch (final ErrorWithPayloadException e) {
-            assertEquals(INTERNAL_SERVER_ERROR, e.getStatus());
+        } catch (final InternalServerErrorException e) {
+            assertErrorPayload(e, INVALID_TEMPLATE_QUERY, "templateQuery", "new-document");
         }
 
         verifyAll();
@@ -230,6 +230,18 @@ public class TemplateQueryServiceImplTest {
         assertEquals("Péché", documentTypes.get(2).getDisplayName());
 
         verifyAll();
+    }
+
+    private void assertErrorPayload(final InternalServerErrorException e, final ErrorInfo.Reason reason,
+                                    final String key, final String value) {
+        final Object payload = e.getPayload();
+        assertTrue(payload instanceof ErrorInfo);
+
+        final ErrorInfo errorInfo = (ErrorInfo) payload;
+        assertEquals(reason, errorInfo.getReason());
+        assertEquals(1, errorInfo.getParams().size());
+        assertEquals(value, errorInfo.getParams().get(key));
+
     }
 
     private void expectTemplateQueryToReturn(final String id, final Session session, final Locale locale, final String... displayNames) throws RepositoryException {

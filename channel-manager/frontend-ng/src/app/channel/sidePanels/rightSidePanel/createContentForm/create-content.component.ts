@@ -19,6 +19,7 @@ import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
+import FeedbackService from '../../../../services/feedback.service';
 
 interface CreateContentOptions {
   templateQuery: string;
@@ -28,18 +29,16 @@ interface CreateContentOptions {
   selector: 'hippo-create-content',
   templateUrl: './create-content.html'
 })
-
 export class CreateContentComponent implements OnInit {
   @Input() document: any;
   @Input() options:  CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
-  @Output() onError: EventEmitter<any> = new EventEmitter();
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
 
-  constructor(private createContentService: CreateContentService) { }
+  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -54,7 +53,7 @@ export class CreateContentComponent implements OnInit {
       .getTemplateQuery(this.options.templateQuery)
       .subscribe(
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
-        (error) => this.onErrorLoadDocumentTypes(error),
+        (error) => this.onErrorLoadingTemplateQuery(error),
       );
   }
 
@@ -74,13 +73,12 @@ export class CreateContentComponent implements OnInit {
     }
   }
 
-  private onErrorLoadDocumentTypes(error) {
-    const feedback = {
-      title: 'Error loading template query',
-      message: error.status === 404 ?
-        `Can not find template query with name "${this.options.templateQuery}"` :
-        error.statusText,
-    };
-    this.onError.emit(feedback);
+  private onErrorLoadingTemplateQuery(error) {
+    if (error.data && error.data.reason) {
+      const errorKey = 'ERROR_' + error.data.reason;
+      this.feedbackService.showError(errorKey, error.data.params);
+    } else {
+      console.error('Unknown error loading template query', error);
+    }
   }
 }

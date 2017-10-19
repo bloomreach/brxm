@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.error;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,6 +35,10 @@ public class ErrorInfo {
 
     public ErrorInfo(Reason reason) {
         this(reason, null);
+    }
+
+    public ErrorInfo(Reason reason, String key, String value) {
+        this(reason, Collections.singletonMap(key, value));
     }
 
     public ErrorInfo(Reason reason, Map<String, Serializable> params) {
@@ -61,7 +66,9 @@ public class ErrorInfo {
         NOT_A_DOCUMENT,
         OTHER_HOLDER,
         REQUEST_PENDING,
-        UNKNOWN_VALIDATOR
+        UNKNOWN_VALIDATOR,
+        INVALID_TEMPLATE_QUERY,
+        TEMPLATE_QUERY_NOT_FOUND
         // add more specific failure reasons here.
     }
 }

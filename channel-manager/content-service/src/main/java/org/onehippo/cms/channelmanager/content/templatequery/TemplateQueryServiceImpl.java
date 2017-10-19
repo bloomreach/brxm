@@ -32,13 +32,15 @@ import javax.jcr.query.InvalidQueryException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.INVALID_TEMPLATE_QUERY;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.TEMPLATE_QUERY_NOT_FOUND;
 import static org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryUtils.executeQuery;
 
 public class TemplateQueryServiceImpl implements TemplateQueryService {
@@ -64,13 +66,13 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
         final String templateQueryPath = HIPPO_TEMPLATES_PATH + "/" + id;
         try {
             if (!session.nodeExists(templateQueryPath)) {
-                throw new NotFoundException();
+                throw new InternalServerErrorException(new ErrorInfo(TEMPLATE_QUERY_NOT_FOUND, "templateQuery", id));
             }
 
             final Node templateQueryNode = session.getNode(templateQueryPath);
             if (!templateQueryNode.isNodeType("nt:query")) {
                 log.warn("Node '{}' is not of type nt:query", templateQueryPath);
-                throw new NotFoundException();
+                throw new InternalServerErrorException(new ErrorInfo(TEMPLATE_QUERY_NOT_FOUND, "templateQuery", id));
             }
 
             final NodeIterator nodes = executeQuery(session, templateQueryNode);
@@ -82,14 +84,12 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
                     documentTypes.add(documentTypeInfo);
                 }
             }
-        } catch (final InvalidQueryException ex) {
-            final String message = String.format("Failed to execute template query '%s'", id);
-            log.debug(message, ex);
-            throw new InternalServerErrorException(message);
+        } catch (final InvalidQueryException e) {
+            log.debug("Failed to execute template query '{}'", id, e);
+            throw new InternalServerErrorException(new ErrorInfo(INVALID_TEMPLATE_QUERY, "templateQuery", id));
         } catch (final RepositoryException e) {
-            final String message = String.format("Failed to read document type data for template query '%s'", id);
-            log.debug(message, e);
-            throw new InternalServerErrorException(message);
+            log.debug("Failed to read document type data for template query '{}'", id, e);
+            throw new InternalServerErrorException(new ErrorInfo(INVALID_TEMPLATE_QUERY, "templateQuery", id));
         }
 
         final Collator collator = Collator.getInstance(locale);

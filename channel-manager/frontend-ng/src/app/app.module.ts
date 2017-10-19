@@ -24,6 +24,7 @@ import { MaterialModule } from './material/material.module';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
 import { ContentServiceProvider } from './services/content.service.provider';
 import { CreateContentService } from './services/create-content.service';
+import { FeedbackServiceProvider } from './services/feedback.service.provider';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { CreateContentService } from './services/create-content.service';
   ],
   providers: [
     ContentServiceProvider,
-    CreateContentService
+    CreateContentService,
+    FeedbackServiceProvider,
   ]
 })
 export class AppModule {

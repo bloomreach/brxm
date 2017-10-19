@@ -23,6 +23,7 @@ import 'rxjs/add/observable/throw';
 
 import { CreateContentComponent } from './create-content.component';
 import { CreateContentService, TemplateQuery, DocumentTypeInfo } from '../../../../services/create-content.service';
+import FeedbackService from '../../../../services/feedback.service';
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 import { MaterialModule } from '../../../../material/material.module';
 
@@ -32,11 +33,16 @@ class CreateContentServiceMock {
   }
 }
 
+class FeedbackServiceMock {
+  showError(key: string, params: Map<string, any>): void {}
+}
+
 describe('Create content component', () => {
 
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
+  let feedbackService: FeedbackService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -51,12 +57,14 @@ describe('Create content component', () => {
       ],
       providers: [
         { provide: CreateContentService, useClass: CreateContentServiceMock },
+        { provide: FeedbackService, useClass: FeedbackServiceMock },
       ]
     });
 
     fixture = TestBed.createComponent(CreateContentComponent);
     component = fixture.componentInstance;
     createContentService = fixture.debugElement.injector.get(CreateContentService);
+    feedbackService = fixture.debugElement.injector.get(FeedbackService);
   });
 
   it('should be defined', () => {
@@ -104,16 +112,21 @@ describe('Create content component', () => {
     expect(component.documentType).toBe('test-id1');
   });
 
-  it('emits feedback if template query is not found', async(() => {
-    const spy = spyOn(createContentService, 'getTemplateQuery')
-      .and.returnValue(Observable.throw({ status: 404 }));
-
-    component.onError.subscribe((feedback) => {
-      expect(feedback.title).toBe('Error loading template query');
-      expect(feedback.message).toBe('Can not find template query with name "test-template-query"');
-    });
+  it('sends feedback as error when server returns 500', async(() => {
+    const feedbackSpy = spyOn(feedbackService, 'showError');
+    spyOn(createContentService, 'getTemplateQuery')
+      .and.returnValue(Observable.throw({
+        status: 500,
+        data: {
+          'reason': 'INVALID_TEMPLATE_QUERY',
+          'params': {
+            'templateQuery': 'new-document' }
+          }
+        }));
 
     component.options = { templateQuery: 'test-template-query' };
     fixture.detectChanges(true);
+
+    expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { 'templateQuery': 'new-document' });
   }));
 });
