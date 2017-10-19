@@ -271,6 +271,14 @@
     border: 0;
     fill: $overlay-link-shadow-color;
     padding-top: 7px;
+
+    &:active {
+      background-color: darken($white, 12%);
+      box-shadow: 0 6px 9px 0 $overlay-link-shadow-color;
+    }
+    &:hover {
+      box-shadow: 0 4px 7px 0 $overlay-link-shadow-color;
+    }
   }
   .hippo-fab-btn {
     @extend %hippo-material-btn;
@@ -278,7 +286,13 @@
     height: 100%;
     padding: 8px 0 0 5px;
     width: 100%;
-
+    &:active {
+      background-color: darken($overlay-link-bgcolor, 12%);
+      box-shadow: 0 8px 11px 0 $overlay-link-shadow-color;
+    }
+    &:hover {
+      box-shadow: 0 4px 7px 0 $overlay-link-shadow-color;
+    }
     &-open {
       padding: 7px 0 0;
       svg { fill: $white; }
