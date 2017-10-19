@@ -93,7 +93,7 @@ describe('RightSidePanel', () => {
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 
-  describe('when upon initialization or opening the panel', () => {
+  describe('Upon initialization or opening the panel', () => {
     let testId;
     function openEditor(documentId) {
       $ctrl.openEditor(documentId);
@@ -133,15 +133,11 @@ describe('RightSidePanel', () => {
       expect($ctrl.createContent).toBeTruthy();
     });
 
-    it('Doesnt open a new document if beforeStateChange is rejected', () => {
+    it('Doesnt call beforeStateChange and lets editor handle pending changes', () => {
       $ctrl.documentId = 'test';
       $ctrl.editing = true;
       spyOn($ctrl, 'beforeStateChange');
-      $ctrl.beforeStateChange.and.returnValue($q.reject());
-      openEditor(testId);
-
-      expect($ctrl.documentId).toEqual('test');
-      expect($ctrl.editing).toBeTruthy();
+      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
     });
 
     it('open a new document if beforeStateChange is resolved', () => {
@@ -201,7 +197,7 @@ describe('RightSidePanel', () => {
     it('Should set and unset a onBeforeStateChange callback', () => {
       const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
       $ctrl.onBeforeStateChange(firstCallback);
-      $ctrl.openEditor('testId');
+      $ctrl.openEditor(null);
       expect(firstCallback).toHaveBeenCalled();
       SidePanelService.close.and.returnValue($q.resolve());
       $ctrl.closePanel();

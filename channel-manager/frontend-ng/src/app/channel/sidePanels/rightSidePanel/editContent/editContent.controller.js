@@ -113,7 +113,6 @@ class editContentController {
   }
 
   $onInit() {
-    this.onBeforeStateChange({ callback: () => this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => this._deleteDraft()) });
     this.openDocument(this.requestedDocument);
     this.$scope.$watch(() => this.requestedDocument, (newVal, oldVal) => {
       if (newVal !== oldVal && newVal) {
@@ -123,8 +122,17 @@ class editContentController {
   }
 
   openDocument(documentId) {
-    this._resetState();
-    this._loadDocument(documentId);
+    this._resetBeforeStateChange();
+    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
+      this._deleteDraft().finally(() => {
+        this._resetState();
+        this._loadDocument(documentId);
+      });
+    });
+  }
+
+  _resetBeforeStateChange() {
+    this.onBeforeStateChange({ callback: () => this._releaseDocument() });
   }
 
   _resetState() {
@@ -134,10 +142,9 @@ class editContentController {
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
-
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
-
+    this._resetBeforeStateChange();
     this._resetForm();
   }
 

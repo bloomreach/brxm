@@ -76,15 +76,16 @@ class RightSidePanelCtrl {
       return;
     }
 
-    this.beforeStateChange().then(() => {
+    if (documentId) {
       this._resetState();
-      if (documentId) {
-        this.documentId = documentId;
-        this.editing = true;
-      } else {
+      this.documentId = documentId;
+      this.editing = true;
+    } else {
+      this.beforeStateChange().then(() => {
+        this._resetState();
         this.createContent = true;
-      }
-    });
+      });
+    }
   }
 
   onBeforeStateChange(callback) {
@@ -112,8 +113,10 @@ class RightSidePanelCtrl {
   }
 
   _onClose() {
-    this._resetBeforeStateChange();
-    return this.$q.resolve();
+    return this.beforeStateChange().then(() => {
+      this._resetBeforeStateChange();
+      return this.$q.resolve();
+    });
   }
 
   onResize(newWidth) {
