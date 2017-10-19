@@ -34,9 +34,12 @@ export class CreateContentComponent implements OnInit {
   @Input() options:  CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
+  @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
+  isFullWidth: boolean;
+  title = 'Create new content';
 
   constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
 
@@ -55,6 +58,11 @@ export class CreateContentComponent implements OnInit {
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadingTemplateQuery(error),
       );
+  }
+
+  setFullWidth(state) {
+    this.isFullWidth = state;
+    this.onFullWidth.emit(state);
   }
 
   close() {

@@ -16,7 +16,6 @@
 .create-content {
   &-container {
     background: $grey-100;
-    padding-left: 16px;
 
     .mat-input-container,
     .mat-input-wrapper {
@@ -33,6 +32,9 @@
       margin-top: -15px;
     }
 
+    form {
+      padding-left: 16px;
+    }
   }
   &-actions {
     display: flex;
