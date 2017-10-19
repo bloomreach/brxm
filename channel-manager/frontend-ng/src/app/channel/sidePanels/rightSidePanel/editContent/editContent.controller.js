@@ -113,7 +113,7 @@ class editContentController {
   }
 
   $onInit() {
-    this.onBeforeStateChange({ callback: () => this._confirmDiscardChanges() });
+    this.onBeforeStateChange({ callback: () => this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => this._deleteDraft()) });
     this.openDocument(this.requestedDocument);
     this.$scope.$watch(() => this.requestedDocument, (newVal, oldVal) => {
       if (newVal !== oldVal && newVal) {
@@ -123,12 +123,8 @@ class editContentController {
   }
 
   openDocument(documentId) {
-    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
-      this._deleteDraft().finally(() => {
-        this._resetState();
-        this._loadDocument(documentId);
-      });
-    });
+    this._resetState();
+    this._loadDocument(documentId);
   }
 
   _resetState() {
@@ -323,7 +319,7 @@ class editContentController {
   }
 
   _dealWithPendingChanges(messageKey, done) {
-    this._confirmSaveOrDiscardChanges(messageKey)
+    return this._confirmSaveOrDiscardChanges(messageKey)
       .then((action) => {
         if (action === 'SAVE') {
           // don't return the result of saveDocument so a failing save does not invoke the 'done' function
