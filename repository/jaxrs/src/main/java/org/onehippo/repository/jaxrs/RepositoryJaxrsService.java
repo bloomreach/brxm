@@ -29,13 +29,17 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
@@ -190,6 +194,11 @@ public final class RepositoryJaxrsService {
             endpointFactory.setAddress(address);
             endpointFactory.setDestinationFactory(destinationFactory);
 
+            // don't print entire stacktraces
+            final WebApplicationExceptionLogger webApplicationExceptionLogger = new WebApplicationExceptionLogger();
+            webApplicationExceptionLogger.setPrintStackTrace(false);
+            endpointFactory.setProvider(webApplicationExceptionLogger);
+
             CXFRepositoryJaxrsEndpoint cxfEndpoint =
                     endpoint instanceof CXFRepositoryJaxrsEndpoint ? (CXFRepositoryJaxrsEndpoint)endpoint : null;
 
@@ -274,6 +283,20 @@ public final class RepositoryJaxrsService {
                     bus = null;
                 }
             }
+        }
+    }
+
+
+    private static class WebApplicationExceptionLogger extends WebApplicationExceptionMapper {
+
+        @Override
+        public Response toResponse(final WebApplicationException exception) {
+            if (log.isDebugEnabled()) {
+                log.warn(exception.toString(), exception);
+            } else {
+                log.warn(exception.toString());
+            }
+            return super.toResponse(exception);
         }
     }
 }
