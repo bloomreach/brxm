@@ -4,7 +4,7 @@ How to generate a demo project for the Polls feature
 
 1) Generate a project from the archetype.
 
-2) In essentials/pom.xml, add:
+2) To demo a custom poll document with title and poll compound, add to essentials/pom.xml:
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -14,8 +14,8 @@ How to generate a demo project for the Polls feature
 	
 3) Build && run locally.
 
-- With Essentials, set up with the default settings.
-  JSP for templating language is not supported for the Polls Demo feature.
+- With Essentials, set up the project with the default settings.
+  Note that JSP for templating language is not supported for the Polls Demo feature.
 
 - With Essentials, install Polls feature, then rebuild && run twice ((boarding, installing).
 
