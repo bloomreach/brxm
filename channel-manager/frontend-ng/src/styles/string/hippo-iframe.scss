@@ -264,6 +264,9 @@
   }
 }
 
+$overlay-link-shadow-color: rgba(0,0,0,0.3);
+$shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
+$shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
 .hippo-fab-dial-container {
   .hippo-fab-option-btn {
     @extend %hippo-material-btn;
@@ -272,12 +275,13 @@
     fill: $overlay-link-shadow-color;
     padding-top: 7px;
 
-    &:active {
-      background-color: darken($white, 12%);
-      box-shadow: 0 6px 9px 0 $overlay-link-shadow-color;
-    }
     &:hover {
-      box-shadow: 0 4px 7px 0 $overlay-link-shadow-color;
+      background-color: darken($white, 10%);
+      box-shadow: $shadow-hover !important;
+    }
+    &:active {
+      background-color: darken($white, 10%);
+      box-shadow: $shadow-active !important;
     }
   }
   .hippo-fab-btn {
@@ -286,12 +290,13 @@
     height: 100%;
     padding: 8px 0 0 5px;
     width: 100%;
+    &:hover {
+      background-color: darken($overlay-link-bgcolor, 12%);
+      box-shadow: $shadow-hover !important;
+    }
     &:active {
       background-color: darken($overlay-link-bgcolor, 12%);
-      box-shadow: 0 8px 11px 0 $overlay-link-shadow-color;
-    }
-    &:hover {
-      box-shadow: 0 4px 7px 0 $overlay-link-shadow-color;
+      box-shadow: $shadow-active !important;
     }
     &-open {
       padding: 7px 0 0;
