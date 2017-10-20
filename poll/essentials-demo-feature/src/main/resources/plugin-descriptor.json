@@ -1,6 +1,6 @@
 {
   "@type": "plugin",
-  "id": "hippo-essentials-plugin-poll-demoId",
+  "id": "hippo-plugin-poll-essentials-demoId",
   "name": "Polls Demo",
   "icon": "",
   "introduction": "This plugin shows how you can extend the Poll plugin and use it in a custom document. NOTE: the Poll feature must be installed BEFORE this one for this feature to work.",

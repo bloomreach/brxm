@@ -162,7 +162,7 @@
     <module>addon-cms</module>
     <module>addon-repository</module>
     <module>hst-client</module>
-    <module>hippo-essentials-plugin-poll-demo</module>
+    <module>essentials-demo-feature</module>
   </modules>
 
 </project>

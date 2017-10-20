@@ -1,73 +1,27 @@
-Running locally
-===============
 
-This project uses the Maven Cargo plugin to run Essentials, the CMS and site locally in Tomcat.
-From the project root folder, execute:
+How to generate a demo project for the Polls feature
+----------------------------------------------------
 
-  mvn clean verify
-  mvn -P cargo.run
+1) Generate a project from the archetype.
 
-Access the Hippo Essentials at http://localhost:8080/essentials.
-After your project is set up, access the CMS at http://localhost:8080/cms and the site at http://localhost:8080/site.
-Logs are located in target/tomcat7x/logs
+2) In essentials/pom.xml, add:
 
-Building distribution
-=====================
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-poll-essentials-demo-feature</artifactId>
+      <version>${hippo.plugin.poll.version}</version>
+    </dependency>
+	
+3) Build && run locally.
 
-To build a Tomcat distribution tarball containing only deployable artifacts:
+- With Essentials, set up with the default settings.
+  JSP for templating language is not supported for the Polls Demo feature.
 
-  mvn clean verify
-  mvn -P dist
+- With Essentials, install Polls feature, then rebuild && run twice ((boarding, installing).
 
-See also src/main/assembly/distribution.xml if you need to customize the distribution.
+- With Essentials, install Polls Demo feature, then rebuild && run.
 
-Using JRebel
-============
+4) Demo
 
-Set the environment variable REBEL_HOME to the directory containing jrebel.jar.
-
-Build with:
-
-  mvn clean verify -Djrebel
-
-Start with:
-
-  mvn -P cargo.run -Djrebel
-
-Best Practice for development
-=============================
-
-Use the option -Drepo.path=/some/path/to/repository during start up. This will avoid
-your repository to be cleared when you do a mvn clean.
-
-For example start your project with:
-
-  mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
-
-or with jrebel:
-
-  mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
-
-Hot deploy
-==========
-
-To hot deploy, redeploy or undeploy the CMS or site:
-
-  cd cms (or site)
-  mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
-
-Automatic Export
-================
-
-Automatic export of repository changes to the filesystem is turned on by default. To control this behavior, log into
-http://localhost:8080/cms/console and press the "Enable/Disable Auto Export" button at the top right. To set this
-as the default for your project edit the file
-./bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml
-
-Monitoring with JMX Console
-===========================
-You may run the following command:
-
-  jconsole
-
-Now open the local process org.apache.catalina.startup.Bootstrap start
+Visit http://localhost:8080/site/custompoll to see the custom poll directly in the site, or show it in the Channel
+Manager preview. The standard poll component is first to be dragged onto a page (e.g. home) to become visible.
