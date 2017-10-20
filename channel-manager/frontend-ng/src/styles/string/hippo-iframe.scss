@@ -301,6 +301,10 @@
     }
   }
   &.is-showing-options {
+    .hippo-fab-btn {
+      background-color: darken($overlay-link-bgcolor, 12%);
+      box-shadow: $overlay-link-shadow-active !important;
+    }
     .hippo-fab-dial-options {
       display: flex;
       button {
