@@ -29,7 +29,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 /**
  * String codec factory that delegates the lookup of codecs to the {@link StringCodecService}.
  */
-public class ServicedStringCodecFactory extends StringCodecFactory {
+class ServicedStringCodecFactory extends StringCodecFactory {
 
     private static final Map<String, Encoding> ENCODINGS = initEncodings();
 
