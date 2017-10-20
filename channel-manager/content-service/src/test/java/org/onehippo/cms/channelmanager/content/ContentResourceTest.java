@@ -37,6 +37,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
 import org.powermock.api.easymock.PowerMock;
@@ -54,10 +55,11 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"javax.management.*","javax.net.ssl.*"})
-@PrepareForTest({DocumentsService.class, DocumentTypesService.class})
+@PrepareForTest({DocumentsService.class, DocumentTypesService.class, SlugFactory.class})
 public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
@@ -81,7 +83,7 @@ public class ContentResourceTest extends CXFTest {
         expect(DocumentsService.get()).andReturn(documentsService).anyTimes();
         PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
-        PowerMock.replayAll();
+        replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
         config.addServerSingleton(new ContentResource(sessionDataProvider));
@@ -281,6 +283,40 @@ public class ContentResourceTest extends CXFTest {
                 .get("/documenttypes/" + requestedId)
         .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void createSlugWithoutLocale() {
+        PowerMock.mockStaticPartial(SlugFactory.class, "createSlug");
+
+        expect(SlugFactory.createSlug(eq("some content name"))).andReturn("some-content-name");
+        replayAll();
+
+        given()
+                .body("some content name")
+                .contentType("application/json")
+        .when()
+                .post("/slugs")
+        .then()
+                .statusCode(200)
+                .body(equalTo("some-content-name"));
+    }
+
+    @Test
+    public void createSlugWithLocale() {
+        PowerMock.mockStaticPartial(SlugFactory.class, "createSlug");
+
+        expect(SlugFactory.createSlug(eq("some content name"), eq("de"))).andReturn("some-content-name");
+        replayAll();
+
+        given()
+                .body("some content name")
+                .contentType("application/json")
+        .when()
+                .post("/slugs?locale=de")
+        .then()
+                .statusCode(200)
+                .body(equalTo("some-content-name"));
     }
 
     private String normalizeJsonResource(final String resourcePath) {
