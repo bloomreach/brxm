@@ -92,7 +92,7 @@ public class TemplateQueryServiceImplTest {
         final Locale locale = new Locale("en");
         final Session session = createMock(Session.class);
 
-        expectTemplateQueryNode(session, id, "nt:unstructed");
+        expectTemplateQueryNode(session, id, "nt:unstructured");
 
         replayAll(session);
 
@@ -127,7 +127,7 @@ public class TemplateQueryServiceImplTest {
     }
 
     @Test
-    public void testTemplateQuery() throws Exception {
+    public void testTemplateQueryWithDisplayName() throws Exception {
         final String id = "new-document";
         final Locale locale = new Locale("en");
         final Session session = createMock(Session.class);
@@ -135,20 +135,18 @@ public class TemplateQueryServiceImplTest {
         final MockNode prototypeNode1 = root.addNode("hipposysedit:prototype", "hipposysedit:prototype");
         prototypeNode1.setPrimaryType("my:prototype");
         final MockNode prototypeNode2 = root.addNode("prototype2", "hipposysedit:prototype");
-        final MockNode prototypeNode3 = root.addNode("prototype3", "hipposysedit:prototype");
 
-        final NodeIterator mockNodes = new MockNodeIterator(Arrays.asList(prototypeNode1, prototypeNode2, prototypeNode3));
+        final NodeIterator mockNodes = new MockNodeIterator(Arrays.asList(prototypeNode1, prototypeNode2));
         expectTemplateQuery(session, id).andReturn(mockNodes);
 
         expectLocalizedDisplayName(locale, "my:prototype", Optional.of("My prototype"));
         expectLocalizedDisplayName(locale, "prototype2", Optional.of("Prototype 2"));
-        expectLocalizedDisplayName(locale, "prototype3", Optional.empty());
 
         replayAll(session);
 
         final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
         final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
-        assertEquals(3, documentTypes.size());
+        assertEquals(2, documentTypes.size());
 
         final DocumentTypeInfo info1 = documentTypes.get(0);
         assertEquals("my:prototype", info1.getId());
@@ -158,9 +156,38 @@ public class TemplateQueryServiceImplTest {
         assertEquals("prototype2", info2.getId());
         assertEquals("Prototype 2", info2.getDisplayName());
 
-        final DocumentTypeInfo info3 = documentTypes.get(2);
-        assertEquals("prototype3", info3.getId());
-        assertEquals("prototype3", info3.getDisplayName());
+        verifyAll();
+    }
+
+    @Test
+    public void testTemplateQueryWithoutDisplayName() throws Exception {
+        final String id = "new-document";
+        final Locale locale = new Locale("en");
+        final Session session = createMock(Session.class);
+
+        final MockNode prototypeNode1 = root.addNode("hipposysedit:prototype", "hipposysedit:prototype");
+        prototypeNode1.setPrimaryType("my:prototype");
+        final MockNode prototypeNode2 = root.addNode("prototype2", "hipposysedit:prototype");
+
+        final NodeIterator mockNodes = new MockNodeIterator(Arrays.asList(prototypeNode1, prototypeNode2));
+        expectTemplateQuery(session, id).andReturn(mockNodes);
+
+        expectLocalizedDisplayName(locale, "my:prototype", Optional.empty());
+        expectLocalizedDisplayName(locale, "prototype2", Optional.empty());
+
+        replayAll(session);
+
+        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        assertEquals(2, documentTypes.size());
+
+        final DocumentTypeInfo info1 = documentTypes.get(0);
+        assertEquals("my:prototype", info1.getId());
+        assertEquals("my:prototype", info1.getDisplayName());
+
+        final DocumentTypeInfo info2 = documentTypes.get(1);
+        assertEquals("prototype2", info2.getId());
+        assertEquals("prototype2", info2.getDisplayName());
 
         verifyAll();
     }
