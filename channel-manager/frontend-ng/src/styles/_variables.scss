@@ -174,6 +174,10 @@ $overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
 $overlay-link-hover-bgcolor: #e06717;
 $overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
 $overlay-link-clicked-bgcolor: $orange-a200;
+$overlay-link-shadow-color: rgba(0, 0, 0, .3);
+
+$overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
+$overlay-link-shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
 
 $overlay-icon-fill: $grey-600;
 $overlay-icon-size: 36px;
