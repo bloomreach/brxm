@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /polldata:
-      /polldemo:
-        jcr:primaryType: poll:polldata
-        jcr:mixinTypes: ['mix:lockable']

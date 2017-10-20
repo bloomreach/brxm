@@ -1,8 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/polldemo/hst:workspace/hst:channel:
-      jcr:primaryType: hst:channel
-      hst:name: Hippo Plugin Poll Demo
-      hst:type: website
-      /hst:channelinfo:
-        jcr:primaryType: hst:channelinfo

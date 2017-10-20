@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/hst:default/hst:catalog:
-      /essentials-catalog:
-        jcr:primaryType: hst:containeritempackage

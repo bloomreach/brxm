@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/polldemo/hst:workspace/hst:sitemenus:
-      jcr:primaryType: hst:sitemenus
-      /main:
-        jcr:primaryType: hst:sitemenu
-        /home:
-          jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: root

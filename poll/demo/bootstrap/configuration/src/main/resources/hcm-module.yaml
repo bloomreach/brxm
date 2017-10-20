@@ -1,5 +1,0 @@
-group:
-  name: hippo-cms-test
-  after: hippo-cms
-project: hippo-plugin-poll
-module: hippo-plugin-poll-demo-bootstrap-configuration

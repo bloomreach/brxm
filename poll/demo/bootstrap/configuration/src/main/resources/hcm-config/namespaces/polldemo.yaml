@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hippo:namespaces/polldemo:
-      jcr:primaryType: hipposysedit:namespace
-      jcr:mixinTypes: ['mix:referenceable']

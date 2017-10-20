@@ -1,6 +1,0 @@
-/content/gallery/polldemo:
-  jcr:primaryType: hippogallery:stdImageGallery
-  jcr:mixinTypes: ['mix:referenceable']
-  jcr:uuid: a62d5ba7-424f-4b8e-870e-4493aa74f619
-  hippostd:foldertype: [new-image-folder]
-  hippostd:gallerytype: ['hippogallery:imageset']

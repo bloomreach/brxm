@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/polldemo/hst:workspace/hst:sitemap:
-      jcr:primaryType: hst:sitemap
