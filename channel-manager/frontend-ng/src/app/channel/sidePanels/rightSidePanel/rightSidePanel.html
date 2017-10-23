@@ -25,12 +25,12 @@
                  ng-if="!RightSidePanelCtrl.isFullWidth">
   </resize-handle>
   <hippo-edit-content ng-if="RightSidePanelCtrl.editing" flex layout="column"
-                      requested-document="RightSidePanelCtrl.documentId"
+                      requested-document="RightSidePanelCtrl.options"
                       on-full-width="RightSidePanelCtrl.setFullWidth(state)"
                       on-close="RightSidePanelCtrl.closePanel()"
                       on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
   </hippo-edit-content>
-  <hippo-create-content ng-if="RightSidePanelCtrl.create"
+  <hippo-create-content ng-if="RightSidePanelCtrl.creating"
                         [options]="RightSidePanelCtrl.options"
                         (on-close)="RightSidePanelCtrl.closePanel()"
                         (on-continue)="angular.noop()">
