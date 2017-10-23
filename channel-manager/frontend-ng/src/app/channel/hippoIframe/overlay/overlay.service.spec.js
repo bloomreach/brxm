@@ -681,5 +681,87 @@ describe('OverlayService', () => {
         });
       });
     });
+
+    describe('setting fab button callback and enabling hover', () => {
+      function fetchButtonCallbackAndHover(config) {
+        const optionsSet = OverlayService._getDialOptions(config);
+        return {
+          callback: OverlayService.fabButtonCallback(config, optionsSet),
+          isHoverEnabled: OverlayService.isHoverEnabled(config),
+        }
+      }
+
+      it('Scenario 1', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: false,
+          componentParameter: false,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returned_configuration.isHoverEnabled).toBe(false);
+      });
+
+      it('Scenario 2', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: true,
+          componentParameter: false,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toBeDefined();
+        expect(returned_configuration.isHoverEnabled).toBe(false);
+      });
+
+      it('Scenario 3', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: true,
+          componentParameter: false,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returned_configuration.isHoverEnabled).toBe(true);
+      });
+
+      it('Scenario 4', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: false,
+          componentParameter: true,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returned_configuration.isHoverEnabled).toBe(true);
+      });
+
+      it('Scenario 5', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: true,
+          componentParameter: true,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toEqual(null);
+        expect(returned_configuration.isHoverEnabled).toBe(true);
+      });
+
+      it('Scenario 6', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: true,
+          componentParameter: true,
+        };
+
+        const returned_configuration = fetchButtonCallbackAndHover(config);
+        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returned_configuration.isHoverEnabled).toBe(true);
+      });
+    });
   });
 });
