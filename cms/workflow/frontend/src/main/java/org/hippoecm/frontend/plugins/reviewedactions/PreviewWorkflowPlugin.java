@@ -35,12 +35,22 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
         inUseBy = getHint("inUseBy");
     }
 
-    protected boolean getInfoEditActionVisibility() {
-        return StringUtils.isNotEmpty(inUseBy);
-    }
-
     protected StdWorkflow getInfoEditAction() {
         return new StdWorkflow("infoEdit", "infoEdit") {
+
+            /**
+             * Gets whether this component and any children are visible.
+             * <p>
+             * WARNING: this method can be called multiple times during a request. If you override this method, it is a good
+             * idea to keep it cheap in terms of processing. Alternatively, you can call {@link #setVisible(boolean)}.
+             * <p>
+             *
+             * @return True if component and any children are visible
+             */
+            @Override
+            public boolean isVisible() {
+                return StringUtils.isNotEmpty(inUseBy);
+            }
 
             @Override
             public String getSubMenu() {

@@ -46,14 +46,10 @@ import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.util.NodeIterable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractPreviewWorkflowPlugin.class);
 
     private final StdWorkflow infoAction;
     private final StdWorkflow infoEditAction;
@@ -158,7 +154,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private void hideInvalidActions() {
         hideIfNotAllowed(info, "obtainEditableInstance", editAction);
         hideOrDisable(info, "status", infoAction);
-        infoEditAction.setVisible(getInfoEditActionVisibility());
     }
 
     protected final String getHint(final String key){
@@ -168,9 +163,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         }
         return StringUtils.EMPTY;
     }
-
-
-    protected abstract boolean getInfoEditActionVisibility();
 
     protected abstract StdWorkflow getInfoEditAction();
 
