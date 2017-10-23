@@ -25,6 +25,7 @@ describe('OverlayService', () => {
   let OverlayService;
   let PageStructureService;
   let RenderingService;
+  let ChannelService;
   let $iframe;
   let iframeWindow;
 
@@ -39,6 +40,7 @@ describe('OverlayService', () => {
       _OverlayService_,
       _PageStructureService_,
       _RenderingService_,
+      _ChannelService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -48,6 +50,7 @@ describe('OverlayService', () => {
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
+      ChannelService = _ChannelService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
@@ -590,6 +593,10 @@ describe('OverlayService', () => {
   });
 
   describe('Manage content dial button', () => {
+    beforeEach(() => {
+      ChannelService.isEditable = () => true;
+    });
+
     it('returns correct configuration out of config object', () => {
       const config = { // each property should be filled with the method that will extract the data from the HST comment
         documentUuid: true,
@@ -629,8 +636,7 @@ describe('OverlayService', () => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
 
           mainButton.trigger('mouseenter');
-          expect(optionButtons.children().length).toBe(1);
-          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children().length).toBe(0);
           done();
         });
       });
@@ -688,7 +694,7 @@ describe('OverlayService', () => {
         return {
           callback: OverlayService.fabButtonCallback(config, optionsSet),
           isHoverEnabled: OverlayService.isHoverEnabled(config),
-        }
+        };
       }
 
       it('Scenario 1', () => {
@@ -698,9 +704,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
-        expect(returned_configuration.isHoverEnabled).toBe(false);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.isHoverEnabled).toBe(false);
       });
 
       it('Scenario 2', () => {
@@ -710,9 +716,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toBeDefined();
-        expect(returned_configuration.isHoverEnabled).toBe(false);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toBeDefined();
+        expect(returnedConfiguration.isHoverEnabled).toBe(false);
       });
 
       it('Scenario 3', () => {
@@ -722,9 +728,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
-        expect(returned_configuration.isHoverEnabled).toBe(true);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
       it('Scenario 4', () => {
@@ -734,9 +740,9 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
-        expect(returned_configuration.isHoverEnabled).toBe(true);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
       it('Scenario 5', () => {
@@ -746,9 +752,9 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toEqual(null);
-        expect(returned_configuration.isHoverEnabled).toBe(true);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toEqual(null);
+        expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
       it('Scenario 6', () => {
@@ -758,9 +764,9 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returned_configuration = fetchButtonCallbackAndHover(config);
-        expect(returned_configuration.callback).toEqual(OverlayService.manageContentHandler);
-        expect(returned_configuration.isHoverEnabled).toBe(true);
+        const returnedConfiguration = fetchButtonCallbackAndHover(config);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
     });
   });

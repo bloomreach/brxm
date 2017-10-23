@@ -165,7 +165,7 @@ describe('RightSidePanel', () => {
       expect($ctrl.$element.hasClass('sidepanel-open')).toEqual(true);
       expect($ctrl.$element.css('width')).toEqual('5px');
       expect($ctrl.$element.css('max-width')).toEqual('5px');
-    })
+    });
   });
 
   it('knows when it is locked open', () => {
