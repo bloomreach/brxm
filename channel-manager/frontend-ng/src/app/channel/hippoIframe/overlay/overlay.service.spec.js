@@ -31,7 +31,8 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_,
+    inject((
+      _$q_,
       _$rootScope_,
       _DomService_,
       _ExperimentStateService_,
