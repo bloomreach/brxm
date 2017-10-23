@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -203,7 +202,7 @@ public final class RepositoryJaxrsService {
                     endpoint instanceof CXFRepositoryJaxrsEndpoint ? (CXFRepositoryJaxrsEndpoint)endpoint : null;
 
             JAXRSInvoker invoker = cxfEndpoint != null ? cxfEndpoint.getInvoker() : null;
-            
+
             if (invoker == null) {
                 if (endpoint.getAuthorizationNodePath() == null) {
                     invoker = jaxrsInvoker;
@@ -294,7 +293,11 @@ public final class RepositoryJaxrsService {
             if (log.isDebugEnabled()) {
                 log.warn(exception.toString(), exception);
             } else {
-                log.warn(exception.toString());
+                if (exception.getCause() != null) {
+                    log.warn(exception.toString() + ". cause: " + exception.getCause().toString());
+                } else {
+                    log.warn(exception.toString());
+                }
             }
             return super.toResponse(exception);
         }
