@@ -50,12 +50,12 @@ public class SlugFactoryTest {
         final StringCodec codec = createMock(StringCodec.class);
 
         expect(HippoServiceRegistry.getService(StringCodecService.class)).andReturn(codecService);
-        expect(codecService.getStringCodec(eq(StringCodecService.Encoding.NODE_NAME))).andReturn(codec);
+        expect(codecService.getStringCodec(eq(StringCodecService.Encoding.NODE_NAME), eq(null))).andReturn(codec);
         expect(codec.encode("a document name")).andReturn("a-document-name");
 
         replayAll(codecService, codec);
 
-        assertThat(SlugFactory.createSlug("a document name"), equalTo("a-document-name"));
+        assertThat(SlugFactory.createSlug("a document name", null), equalTo("a-document-name"));
 
         verifyAll();
     }

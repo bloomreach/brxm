@@ -22,18 +22,6 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 public class SlugFactory {
 
     /**
-     * Creates a slug for a piece of content (a document, a folder, etc).
-     *
-     * @param name the name of the piece of content
-     * @return the slug
-     */
-    public static String createSlug(final String name) {
-        final StringCodecService service = HippoServiceRegistry.getService(StringCodecService.class);
-        final StringCodec codec = service.getStringCodec(StringCodecService.Encoding.NODE_NAME);
-        return codec.encode(name);
-    }
-
-    /**
      * Creates a slug for a piece of content (a document, a folder, etc) in a certain locale.
      *
      * @param name the name of the piece of content

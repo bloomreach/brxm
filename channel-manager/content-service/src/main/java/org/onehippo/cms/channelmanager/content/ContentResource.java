@@ -113,13 +113,7 @@ public class ContentResource {
     @Path("slugs")
     public Response createSlug(String contentName, @QueryParam("locale") String contentLocale, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, userLocale) -> {
-                    if (contentLocale == null) {
-                        return SlugFactory.createSlug(contentName);
-                    } else {
-                        return SlugFactory.createSlug(contentName, contentLocale);
-                    }
-                });
+                (session, userLocale) -> SlugFactory.createSlug(contentName, contentLocale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,

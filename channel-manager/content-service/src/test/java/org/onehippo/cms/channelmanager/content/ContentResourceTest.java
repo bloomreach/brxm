@@ -289,7 +289,7 @@ public class ContentResourceTest extends CXFTest {
     public void createSlugWithoutLocale() {
         PowerMock.mockStaticPartial(SlugFactory.class, "createSlug");
 
-        expect(SlugFactory.createSlug(eq("some content name"))).andReturn("some-content-name");
+        expect(SlugFactory.createSlug(eq("some content name"), eq(null))).andReturn("some-content-name");
         replayAll();
 
         given()
