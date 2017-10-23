@@ -28,6 +28,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -39,6 +40,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
 
 @Produces("application/json")
@@ -105,6 +107,13 @@ public class ContentResource {
     public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
+    }
+
+    @POST
+    @Path("slugs")
+    public Response createSlug(String contentName, @QueryParam("locale") String contentLocale, @Context HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                (session, userLocale) -> SlugFactory.createSlug(contentName, contentLocale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,
