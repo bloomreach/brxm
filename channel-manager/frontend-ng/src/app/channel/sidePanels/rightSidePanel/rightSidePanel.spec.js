@@ -100,7 +100,7 @@ describe('RightSidePanel', () => {
       $rootScope.$digest();
     }
     beforeEach(() => {
-      spyOn($ctrl, '_onOpen');
+      spyOn($ctrl, '_onOpen').and.callThrough();
       testId = 'documentId';
       $ctrl._resetBeforeStateChange();
     });
@@ -150,6 +150,22 @@ describe('RightSidePanel', () => {
       expect($ctrl.documentId).toEqual(testId);
       expect($ctrl.editing).toBeTruthy();
     });
+
+    it('doesnt call beforeStateChange when changing between one createContent to another', () => {
+      $ctrl.createContent = true;
+      $ctrl.openEditor(null);
+      spyOn($ctrl, 'beforeStateChange');
+      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
+    });
+
+    it('adds required view classes', () => {
+      $ctrl.lastSavedWidth = '5px';
+      $ctrl._onOpen();
+      $rootScope.$digest();
+      expect($ctrl.$element.hasClass('sidepanel-open')).toEqual(true);
+      expect($ctrl.$element.css('width')).toEqual('5px');
+      expect($ctrl.$element.css('max-width')).toEqual('5px');
+    })
   });
 
   it('knows when it is locked open', () => {
@@ -178,6 +194,14 @@ describe('RightSidePanel', () => {
     expect($ctrl.documentId).toBeUndefined();
     expect($ctrl.editing).toBeUndefined();
     expect($ctrl.createContent).toBeUndefined();
+  });
+
+  it('reset right side panel properties and returns a promise', () => {
+    spyOn($ctrl, '_resetState');
+    const promise = $ctrl._onClose();
+
+    expect($ctrl._resetState).toHaveBeenCalled();
+    expect(promise).toEqual($q.resolve());
   });
 
   it('should close right side panel', () => {

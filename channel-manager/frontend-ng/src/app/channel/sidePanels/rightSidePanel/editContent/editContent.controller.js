@@ -116,14 +116,19 @@ class editContentController {
     this.openDocument(this.requestedDocument);
     this.$scope.$watch(() => this.requestedDocument, (newVal, oldVal) => {
       if (newVal !== oldVal && newVal) {
-        this.openDocument(newVal);
+        this.openDocument(this.requestedDocument);
       }
     });
   }
 
   openDocument(documentId) {
+    // TODO: click on the same document after cancel transition to it, will kill the button
+    if (this.documentId === documentId) {
+      return angular.noop();
+    }
+
     this._resetBeforeStateChange();
-    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
+    return this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
       this._deleteDraft().finally(() => {
         this._resetState();
         this._loadDocument(documentId);
@@ -132,7 +137,15 @@ class editContentController {
   }
 
   _resetBeforeStateChange() {
-    this.onBeforeStateChange({ callback: () => this._releaseDocument() });
+    this.onBeforeStateChange({ callback: message => this.dealWithPendingChanges(message) });
+  }
+
+  dealWithPendingChanges(message) {
+    return this._dealWithPendingChanges(message, () => {
+      this._deleteDraft().finally(() => {
+        this._resetState();
+      });
+    });
   }
 
   _resetState() {
@@ -144,7 +157,7 @@ class editContentController {
     delete this.disableContentButtons;
     this.title = this.defaultTitle;
     this.deleteDraftOnClose = true;
-    this._resetBeforeStateChange();
+    this.requestedDocument = null;
     this._resetForm();
   }
 
@@ -398,7 +411,7 @@ class editContentController {
       .then(() => {
         this.deleteDraftOnClose = false;
         this._resetState();
-        this.onClose();
+        this.SidePanelService.close('right');
       });
   }
 

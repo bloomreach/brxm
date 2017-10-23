@@ -27,11 +27,10 @@
   <hippo-edit-content ng-if="RightSidePanelCtrl.editing" flex layout="column"
                       requested-document="RightSidePanelCtrl.documentId"
                       on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                      on-close="RightSidePanelCtrl.closePanel()"
+                      on-close="RightSidePanelCtrl.onClose"
                       on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
   </hippo-edit-content>
   <hippo-create-content ng-if="RightSidePanelCtrl.createContent"
-                        (on-close)="RightSidePanelCtrl.close()"
                         (on-continue)="angular.noop()">
   </hippo-create-content>
 </md-sidenav>

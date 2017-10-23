@@ -195,7 +195,7 @@ describe('editContent', () => {
       $ctrl.$onInit('test');
       $rootScope.$digest();
       $ctrl.editing = false;
-      spyOn($ctrl, 'onClose');
+
       $ctrl.close();
       $rootScope.$digest();
       expect(ContentService.deleteDraft).not.toHaveBeenCalled();
@@ -205,13 +205,11 @@ describe('editContent', () => {
       $ctrl.requestedDocument = 'test';
       $ctrl.$onInit();
       $rootScope.$digest();
-      spyOn($ctrl, 'onClose');
 
       $ctrl.editing = true;
       $ctrl.close();
       $rootScope.$digest();
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
-      expect($ctrl.onClose).toHaveBeenCalledWith();
       expect($ctrl.doc).toBeUndefined();
       expect($ctrl.documentId).toBeUndefined();
       expect($ctrl.docType).toBeUndefined();

@@ -23,7 +23,6 @@ const editContentComponent = {
   bindings: {
     requestedDocument: '=',
     onFullWidth: '&',
-    onClose: '&',
     onBeforeStateChange: '&',
   },
 };
