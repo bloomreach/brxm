@@ -16,7 +16,7 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -32,6 +32,7 @@ import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,10 +89,11 @@ public class HstManageContentTag extends TagSupport {
                         return EVAL_PAGE;
                     }
 
-                    log.debug("The node path for the manage content link is '{}'", handleNode.getPath());
+                    log.debug("The node path for the manage content tag is '{}'", handleNode.getPath());
                     documentId = handleNode.getIdentifier();
                 } catch (RepositoryException e) {
-                    log.error("Exception while trying to retrieve the node path for the edit location", e);
+                    log.warn("Error while retrieving the document handle of '{}', skipping manage content tag",
+                            JcrUtils.getNodePathQuietly(document.getNode()), e);
                     return EVAL_PAGE;
                 }
             }
@@ -123,7 +125,7 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private Map<?, ?> getAttributeMap(final String documentId) {
-        final Map<String, Object> result = new HashMap<>();
+        final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
         writeToMap(result, "templateQuery", templateQuery);
