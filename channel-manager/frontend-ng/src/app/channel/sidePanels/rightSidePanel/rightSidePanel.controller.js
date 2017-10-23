@@ -63,7 +63,7 @@ class RightSidePanelCtrl {
         this._onOpen();
       },
       // onClose
-      () => this.beforeStateChange('SAVE_CHANGES_ON_CLOSE_CHANNEL').then(() => this._onClose()));
+      () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
   }
 
   $onInit() {
@@ -91,6 +91,7 @@ class RightSidePanelCtrl {
         this.editing = true;
       });
     }
+    this.closeChannelMessage = 'SAVE_CHANGES_ON_CLOSE_CHANNEL';
   }
 
   setCreateState() {
