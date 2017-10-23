@@ -15,8 +15,9 @@
  */
 
 import { TestBed, inject } from '@angular/core/testing';
-import ContentService from './content.service';
-import { CreateContentService, TemplateQuery, DocumentTypeInfo } from './create-content.service';
+import ContentService from '../../../../services/content.service';
+import { CreateContentService } from './create-content.service';
+import { TemplateQuery, DocumentTypeInfo } from './create-content';
 
 class MockContentService {
   _send(): Promise<TemplateQuery> {

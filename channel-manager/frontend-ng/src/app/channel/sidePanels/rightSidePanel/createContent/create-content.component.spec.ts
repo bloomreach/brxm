@@ -21,8 +21,9 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
+import { TemplateQuery, DocumentTypeInfo } from './create-content';
 import { CreateContentComponent } from './create-content.component';
-import { CreateContentService, TemplateQuery, DocumentTypeInfo } from '../../../../services/create-content.service';
+import { CreateContentService } from './create-content.service';
 import FeedbackService from '../../../../services/feedback.service';
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 import { MaterialModule } from '../../../../material/material.module';
@@ -67,11 +68,7 @@ describe('Create content component', () => {
     feedbackService = fixture.debugElement.injector.get(FeedbackService);
   });
 
-  it('should be defined', () => {
-    expect(component).toBeDefined();
-  });
-
-  it('throws an error if templateQuery is not set', () => {
+  it('throws an error if options is not set', () => {
     expect(() => {
       component.options = null;
       fixture.detectChanges();
@@ -94,7 +91,7 @@ describe('Create content component', () => {
       .and.returnValue(Observable.of({ documentTypes }));
 
     component.options = { templateQuery: 'test-template-query' };
-    fixture.detectChanges(true);
+    fixture.detectChanges();
 
     expect(spy).toHaveBeenCalledWith('test-template-query');
     expect(component.documentType).toBeUndefined();
@@ -107,7 +104,7 @@ describe('Create content component', () => {
       .and.returnValue(Observable.of({ documentTypes }));
 
     component.options = { templateQuery: 'test-template-query' };
-    fixture.detectChanges(true);
+    fixture.detectChanges();
 
     expect(component.documentType).toBe('test-id1');
   });
@@ -125,7 +122,7 @@ describe('Create content component', () => {
         }));
 
     component.options = { templateQuery: 'test-template-query' };
-    fixture.detectChanges(true);
+    fixture.detectChanges();
 
     expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { 'templateQuery': 'new-document' });
   }));

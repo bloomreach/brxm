@@ -18,12 +18,9 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
-import { CreateContentService, DocumentTypeInfo } from '../../../../services/create-content.service';
+import { CreateContentService } from './create-content.service';
+import { CreateContentOptions, DocumentTypeInfo } from './create-content';
 import FeedbackService from '../../../../services/feedback.service';
-
-interface CreateContentOptions {
-  templateQuery: string;
-}
 
 @Component({
   selector: 'hippo-create-content',
@@ -31,7 +28,7 @@ interface CreateContentOptions {
 })
 export class CreateContentComponent implements OnInit {
   @Input() document: any;
-  @Input() options:  CreateContentOptions;
+  @Input() options: CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
@@ -83,7 +80,7 @@ export class CreateContentComponent implements OnInit {
 
   private onErrorLoadingTemplateQuery(error) {
     if (error.data && error.data.reason) {
-      const errorKey = 'ERROR_' + error.data.reason;
+      const errorKey = `ERROR_${error.data.reason}`;
       this.feedbackService.showError(errorKey, error.data.params);
     } else {
       console.error('Unknown error loading template query', error);

@@ -2,15 +2,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { Injectable } from '@angular/core';
 
-import ContentService from './content.service';
-
-export interface TemplateQuery {
-  documentTypes: Array<DocumentTypeInfo>;
-}
-export interface DocumentTypeInfo {
-  id: string;
-  displayName: string;
-}
+import { TemplateQuery } from './create-content';
+import ContentService from '../../../../services/content.service';
 
 @Injectable()
 export class CreateContentService {

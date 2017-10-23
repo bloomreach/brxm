@@ -23,7 +23,7 @@ import { UpgradeModule  } from '@angular/upgrade/static';
 import { MaterialModule } from './material/material.module';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
 import { ContentServiceProvider } from './services/content.service.provider';
-import { CreateContentService } from './services/create-content.service';
+import { CreateContentService } from './channel/sidePanels/rightSidePanel/createContent/create-content.service';
 import { FeedbackServiceProvider } from './services/feedback.service.provider';
 
 @NgModule({
