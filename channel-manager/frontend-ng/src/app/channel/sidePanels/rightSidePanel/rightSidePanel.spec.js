@@ -45,8 +45,8 @@ describe('RightSidePanel', () => {
     $ctrl = $componentController('rightSidePanel', {
       $scope,
       $element,
-      SidePanelService,
       CmsService,
+      SidePanelService,
     });
     $rootScope.$apply();
 
@@ -95,67 +95,78 @@ describe('RightSidePanel', () => {
 
   describe('when initializing or opening the panel', () => {
     let testId;
+    let testOptions;
 
     beforeEach(() => {
-      spyOn($ctrl, '_onOpen');
+      spyOn($ctrl, '_onOpen').and.callThrough();
       testId = 'documentId';
+      testOptions = { templateQuery: 'test-query' };
       $ctrl._resetBeforeStateChange();
     });
 
     it('initializes the channel right side panel service', () => {
       expect(SidePanelService.initialize).toHaveBeenCalled();
-      expect($ctrl.documentId).not.toBeDefined();
+      expect($ctrl.options).not.toBeDefined();
       expect($ctrl.editing).not.toBeDefined();
-      expect($ctrl.createContent).not.toBeDefined();
+      expect($ctrl.creating).not.toBeDefined();
+    });
+
+    it('resets state if beforeStateChange resolves', () => {
+      spyOn($ctrl, '_resetState');
+      sidePanelHandlers.onOpen('edit');
+      $rootScope.$digest();
+
+      sidePanelHandlers.onOpen('create');
+      $rootScope.$digest();
+
+      expect($ctrl._resetState).toHaveBeenCalledTimes(2);
     });
 
     it('initialises editContent when calling onOpen with type "edit"', () => {
-      spyOn($ctrl, '_openEditContent');
+      spyOn($ctrl, '_openEditContent').and.callThrough();
       sidePanelHandlers.onOpen('edit', testId);
       $rootScope.$digest();
 
+      expect($ctrl._onOpen).toHaveBeenCalledWith('edit', testId);
       expect($ctrl._openEditContent).toHaveBeenCalledWith(testId);
-      expect($ctrl._onOpen).toHaveBeenCalled();
-    });
-
-    it('initialises editContent if documentId is passed', () => {
-      $ctrl._openEditContent(testId);
-      $rootScope.$digest();
-
-      expect($ctrl.documentId).toBe(testId);
+      expect($ctrl.options).toBe(testId);
       expect($ctrl.editing).toBeTruthy();
     });
 
-    it('initialises createContent if no document id is passed', () => {
-      $ctrl._openEditContent(null);
+    it('initialises createContent when calling onOpen with type "edit"', () => {
+      spyOn($ctrl, '_openCreateContent').and.callThrough();
+      sidePanelHandlers.onOpen('create', testOptions);
       $rootScope.$digest();
 
-      expect($ctrl.documentId).toBeFalsy();
-      expect($ctrl.createContent).toBeTruthy();
+      expect($ctrl._onOpen).toHaveBeenCalledWith('create', testOptions);
+      expect($ctrl._openCreateContent).toHaveBeenCalledWith(testOptions);
+      expect($ctrl.options).toBe(testOptions);
+      expect($ctrl.creating).toBeTruthy();
+      expect($ctrl.title).toEqual('NEW_CONTENT');
     });
 
     it('Doesnt open a new document if beforeStateChange is rejected', () => {
-      $ctrl.documentId = 'test';
+      $ctrl.options = 'test';
       $ctrl.editing = true;
       spyOn($ctrl, 'beforeStateChange');
       $ctrl.beforeStateChange.and.returnValue($q.reject());
-      $ctrl._openEditContent(testId);
+
+      sidePanelHandlers.onOpen('edit', testId);
       $rootScope.$digest();
 
-
-      expect($ctrl.documentId).toEqual('test');
+      expect($ctrl.options).toEqual('test');
       expect($ctrl.editing).toBeTruthy();
     });
 
     it('open a new document if beforeStateChange is resolved', () => {
-      $ctrl.documentId = 'test';
+      $ctrl.options = 'test';
       $ctrl.editing = true;
       spyOn($ctrl, 'beforeStateChange');
       $ctrl.beforeStateChange.and.returnValue($q.resolve());
       $ctrl._openEditContent(testId);
       $rootScope.$digest();
 
-      expect($ctrl.documentId).toEqual(testId);
+      expect($ctrl.options).toEqual(testId);
       expect($ctrl.editing).toBeTruthy();
     });
   });
@@ -177,15 +188,15 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
 
-    $ctrl.documentId = 'test';
+    $ctrl.options = 'test';
     $ctrl.editing = true;
     $ctrl.closePanel();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
-    expect($ctrl.documentId).toBeUndefined();
+    expect($ctrl.options).toBeUndefined();
     expect($ctrl.editing).toBeUndefined();
-    expect($ctrl.create).toBeUndefined();
+    expect($ctrl.creating).toBeUndefined();
   });
 
   it('should close right side panel', () => {
@@ -201,30 +212,17 @@ describe('RightSidePanel', () => {
     expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
   });
 
-  describe('create', () => {
-    it('initialises create content', () => {
-      spyOn($ctrl, '_resetState');
-      const options = {};
-      $ctrl._openCreateContent(options);
-
-      expect($ctrl._resetState).toHaveBeenCalled();
-      expect($ctrl.create).toEqual(true);
-      expect($ctrl.title).toEqual('NEW_CONTENT');
-      expect($ctrl.options).toBe(options);
-    });
-  });
-
   describe('onBeforeStateChange', () => {
     it('Should set and unset a onBeforeStateChange callback', () => {
       const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
       $ctrl.onBeforeStateChange(firstCallback);
-      $ctrl._openEditContent('testId');
+      $ctrl._onOpen('edit', 'testId');
       expect(firstCallback).toHaveBeenCalled();
       SidePanelService.close.and.returnValue($q.resolve());
       $ctrl.closePanel();
       $rootScope.$digest();
       firstCallback.calls.reset();
-      $ctrl._openEditContent('anotherTestId');
+      $ctrl._onOpen('edit', 'anotherTestId');
       expect(firstCallback).not.toHaveBeenCalled();
     });
   });
