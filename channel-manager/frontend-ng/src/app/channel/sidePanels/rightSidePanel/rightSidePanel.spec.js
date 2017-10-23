@@ -93,14 +93,14 @@ describe('RightSidePanel', () => {
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 
-  describe('when upon initialization or opening the panel', () => {
+  describe('Upon initialization or opening the panel', () => {
     let testId;
     function openEditor(documentId) {
       $ctrl.openEditor(documentId);
       $rootScope.$digest();
     }
     beforeEach(() => {
-      spyOn($ctrl, '_onOpen');
+      spyOn($ctrl, '_onOpen').and.callThrough();
       testId = 'documentId';
       $ctrl._resetBeforeStateChange();
     });
@@ -133,15 +133,11 @@ describe('RightSidePanel', () => {
       expect($ctrl.createContent).toBeTruthy();
     });
 
-    it('Doesnt open a new document if beforeStateChange is rejected', () => {
+    it('Doesnt call beforeStateChange and lets editor handle pending changes', () => {
       $ctrl.documentId = 'test';
       $ctrl.editing = true;
       spyOn($ctrl, 'beforeStateChange');
-      $ctrl.beforeStateChange.and.returnValue($q.reject());
-      openEditor(testId);
-
-      expect($ctrl.documentId).toEqual('test');
-      expect($ctrl.editing).toBeTruthy();
+      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
     });
 
     it('open a new document if beforeStateChange is resolved', () => {
@@ -154,6 +150,22 @@ describe('RightSidePanel', () => {
       expect($ctrl.documentId).toEqual(testId);
       expect($ctrl.editing).toBeTruthy();
     });
+
+    it('doesnt call beforeStateChange when changing between one createContent to another', () => {
+      $ctrl.createContent = true;
+      $ctrl.openEditor(null);
+      spyOn($ctrl, 'beforeStateChange');
+      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
+    });
+
+    it('adds required view classes', () => {
+      $ctrl.lastSavedWidth = '5px';
+      $ctrl._onOpen();
+      $rootScope.$digest();
+      expect($ctrl.$element.hasClass('sidepanel-open')).toEqual(true);
+      expect($ctrl.$element.css('width')).toEqual('5px');
+      expect($ctrl.$element.css('max-width')).toEqual('5px');
+    })
   });
 
   it('knows when it is locked open', () => {
@@ -184,6 +196,14 @@ describe('RightSidePanel', () => {
     expect($ctrl.createContent).toBeUndefined();
   });
 
+  it('reset right side panel properties and returns a promise', () => {
+    spyOn($ctrl, '_resetState');
+    const promise = $ctrl._onClose();
+
+    expect($ctrl._resetState).toHaveBeenCalled();
+    expect(promise).toEqual($q.resolve());
+  });
+
   it('should close right side panel', () => {
     spyOn(ChannelService, 'setToolbarDisplayed');
     spyOn($ctrl, 'setFullWidth');
@@ -201,7 +221,7 @@ describe('RightSidePanel', () => {
     it('Should set and unset a onBeforeStateChange callback', () => {
       const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
       $ctrl.onBeforeStateChange(firstCallback);
-      $ctrl.openEditor('testId');
+      $ctrl.openEditor(null);
       expect(firstCallback).toHaveBeenCalled();
       SidePanelService.close.and.returnValue($q.resolve());
       $ctrl.closePanel();

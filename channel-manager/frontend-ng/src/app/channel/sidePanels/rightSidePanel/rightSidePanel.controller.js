@@ -63,7 +63,7 @@ class RightSidePanelCtrl {
         this._onOpen();
       },
       // onClose
-      () => this._onClose());
+      () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
   }
 
   $onInit() {
@@ -72,24 +72,45 @@ class RightSidePanelCtrl {
   }
 
   openEditor(documentId) {
-    if (this.documentId === documentId) {
-      return;
+    if (documentId) {
+      this.setEditState(documentId);
+    } else {
+      this.setCreateState();
     }
+  }
 
-    this.beforeStateChange().then(() => {
+  setEditState(documentId) {
+    if (this.editing) {
       this._resetState();
-      if (documentId) {
+      this.documentId = documentId;
+      this.editing = true;
+    } else {
+      this.beforeStateChange().then(() => {
+        this._resetState();
         this.documentId = documentId;
         this.editing = true;
-      } else {
+      });
+    }
+    this.closeChannelMessage = 'SAVE_CHANGES_ON_CLOSE_CHANNEL';
+  }
+
+  setCreateState() {
+    const message = this.editing ? 'SAVE_CHANGES_ON_CREATE_DOCUMENT' : 'SAVE_CHANGES_GENERIC';
+    if (this.createContent) {
+      this._resetState();
+      this.createContent = true;
+    } else {
+      this.beforeStateChange(message).then(() => {
+        this._resetState();
         this.createContent = true;
-      }
-    });
+      });
+    }
   }
 
   onBeforeStateChange(callback) {
     this.beforeStateChange = callback;
   }
+
   _resetState() {
     delete this.documentId;
     delete this.editing;
@@ -98,7 +119,7 @@ class RightSidePanelCtrl {
   }
 
   _resetBeforeStateChange() {
-    this.beforeStateChange = () => this.$q.resolve();
+    this.onBeforeStateChange(() => this.$q.resolve());
   }
 
   isLockedOpen() {
@@ -112,7 +133,7 @@ class RightSidePanelCtrl {
   }
 
   _onClose() {
-    this._resetBeforeStateChange();
+    this._resetState();
     return this.$q.resolve();
   }
 
