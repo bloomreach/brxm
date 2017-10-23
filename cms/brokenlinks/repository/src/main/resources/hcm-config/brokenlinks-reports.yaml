@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:frontend/cms/hippo-reports/broken-links:
-      jcr:primaryType: frontend:plugin
-      plugin.class: org.onehippo.cms7.reports.layout.panel.BrokenLinksPanelPlugin
