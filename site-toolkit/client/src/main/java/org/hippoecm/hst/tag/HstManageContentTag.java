@@ -72,6 +72,17 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            if (templateQuery == null && document == null && componentParameter == null) {
+                log.debug("Skipping manage content tag because neither 'templateQuery', 'document' or 'componentParameter' attribute specified.");
+                return EVAL_PAGE;
+            }
+
+            if ((templateQuery == null || document == null) && componentParameter != null) {
+                log.warn("Ignoring 'manageContent' tag with 'componentParameter' attribute set to '"
+                        + componentParameter + "': 'document' and/or 'templateQuery' attribute required");
+                return EVAL_PAGE;
+            }
+
             String documentId = null;
             if (document != null) {
                 final HippoNode documentNode = (HippoNode) document.getNode();

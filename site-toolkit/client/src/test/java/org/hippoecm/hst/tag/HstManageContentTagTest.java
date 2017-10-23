@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockJspWriter;
@@ -43,6 +44,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HstManageContentTagTest {
 
@@ -78,17 +80,34 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void noHstRequestOutputsNothing() throws Exception {
+    public void noHstRequestOutputsNothingAndLogsWarning() throws Exception {
         ModifiableRequestContextProvider.set(null);
-        assertEquals(EVAL_PAGE, tag.doEndTag());
-        assertEquals("", response.getContentAsString());
+
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            assertEquals(EVAL_PAGE, tag.doEndTag());
+            assertEquals("", response.getContentAsString());
+            assertLogged(listener, "Cannot create a manage content button outside the hst request.");
+        }
     }
 
     @Test
-    public void noCmsRequestOutputsNothing() throws Exception {
+    public void noCmsRequestOutputsNothingAndLogsDebug() throws Exception {
         hstRequestContext.setCmsRequest(false);
-        assertEquals(EVAL_PAGE, tag.doEndTag());
-        assertEquals("", response.getContentAsString());
+
+        try (Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(HstManageContentTag.class).build()) {
+            assertEquals(EVAL_PAGE, tag.doEndTag());
+            assertEquals("", response.getContentAsString());
+            assertLogged(listener, "Skipping manage content tag because not in cms preview.");
+        }
+    }
+
+    @Test
+    public void noParametersOutputsNothingAndDoesNotLogWarnings() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            assertEquals(EVAL_PAGE, tag.doEndTag());
+            assertEquals("", response.getContentAsString());
+            assertEquals(0, listener.getEvents().size());
+        }
     }
 
     @Test
@@ -181,6 +200,18 @@ public class HstManageContentTagTest {
     }
 
     @Test
+    public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setComponentParameter("test");
+
+            tag.doEndTag();
+
+            assertLogged(listener, "Ignoring 'manageContent' tag with 'componentParameter' attribute set to 'test': 'document' and/or 'templateQuery' attribute required");
+            assertEquals("", response.getContentAsString());
+        }
+    }
+
+    @Test
     public void allParameters() throws Exception {
         tag.setTemplateQuery("new-newsdocument");
         tag.setRootPath("news/amsterdam");
@@ -210,8 +241,15 @@ public class HstManageContentTagTest {
 
     @Test(expected = JspException.class)
     public void exceptionWhileWritingToJspOutputsNothing() throws Exception {
+        tag.setTemplateQuery("new-document");
         tag.setPageContext(new BrokenPageContext());
         assertEquals(EVAL_PAGE, tag.doEndTag());
+    }
+
+    private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
+        assertTrue("expected log message '" + expectedMessage + "'",
+                listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)));
+        assertEquals(1, listener.getEvents().size());
     }
 
     private static class BrokenPageContext extends MockPageContext {
