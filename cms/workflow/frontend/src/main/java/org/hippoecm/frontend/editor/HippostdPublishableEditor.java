@@ -271,7 +271,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final Workflow workflow = getWorkflow();
-                final Map<String, Serializable> hints = workflow.hints();
+                final Map<String, Serializable> hints = workflow.hints(ContextPayloadProvider.get());
                 if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = (boolean) transition(workflow, DocumentWorkflowAction.CHECK_MODIFIED);
                     return modified;
