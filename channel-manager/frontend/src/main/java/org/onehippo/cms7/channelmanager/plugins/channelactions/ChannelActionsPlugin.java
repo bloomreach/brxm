@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -87,7 +88,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                        if (Boolean.TRUE.equals(workflow.hints().get("previewAvailable"))) {
+                        if (Boolean.TRUE.equals(workflow.hints(ContextPayloadProvider.get()).get("previewAvailable"))) {
                             addMenuDescription(model);
                         }
                     }
@@ -153,12 +154,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
             final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
-            restProxyJobs.add(new Callable<List<ChannelDocument>>() {
-                @Override
-                public List<ChannelDocument> call() throws Exception {
-                    return documentService.getChannels(documentUuid).getChannelDocuments();
-                }
-            });
+            restProxyJobs.add(() -> documentService.getChannels(documentUuid).getChannelDocuments());
         }
 
         final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
@@ -174,9 +170,9 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                 }
             }
         }
-        Collections.sort(combinedChannelDocuments, getChannelDocumentComparator());
+        combinedChannelDocuments.sort(getChannelDocumentComparator());
 
-        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<>();
         for (final ChannelDocument channelDocument : combinedChannelDocuments) {
             idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
         }
@@ -188,7 +184,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                 if (!idToChannelMap.isEmpty()) {
                     return new ArrayList<>(idToChannelMap.keySet());
                 } else {
-                    return Arrays.asList("<empty>");
+                    return Collections.singletonList("<empty>");
                 }
             }
 
