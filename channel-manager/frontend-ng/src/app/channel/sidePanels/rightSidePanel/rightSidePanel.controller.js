@@ -41,10 +41,22 @@ class RightSidePanelCtrl {
 
     this.lastSavedWidth = null;
     this.isFullWidth = false;
+    this.components = {
+      edit: {
+        closeChannelMessage: 'SAVE_CHANGES_ON_CLOSE_CHANNEL',
+        openMessage: null,
+        switchToMessage: 'SAVE_CHANGES_ON_CREATE_DOCUMENT',
+      },
+      create: {
+        closeChannelMessage: null,
+        openMessage: 'SAVE_CHANGES_GENERIC',
+        switchToMessage: null,
+      },
+    };
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
       // onOpen
-      (type, options) => this._onOpen(type, options),
+      (id, options) => this._onOpen(id, options),
       // onClose
       () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
   }
@@ -54,43 +66,12 @@ class RightSidePanelCtrl {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
-  _openEditContent(options) {
-    if (this.editing) {
-      this._resetState();
-      this.editing = true;
-      this.options = options;
-    } else {
-      this.beforeStateChange().then(() => {
-        this._resetState();
-        this.editing = true;
-        this.options = options;
-      });
-    }
-    this.closeChannelMessage = 'SAVE_CHANGES_ON_CLOSE_CHANNEL';
-  }
-
-  _openCreateContent(options) {
-    const message = this.editing ? 'SAVE_CHANGES_ON_CREATE_DOCUMENT' : 'SAVE_CHANGES_GENERIC';
-    if (this.creating) {
-      this._resetState();
-      this.creating = true;
-      this.options = options;
-    } else {
-      this.beforeStateChange(message).then(() => {
-        this._resetState();
-        this.creating = true;
-        this.options = options;
-      });
-    }
-  }
-
   onBeforeStateChange(callback) {
     this.beforeStateChange = callback;
   }
 
   _resetState() {
-    delete this.editing;
-    delete this.creating;
+    delete this.component;
     delete this.options;
     this._resetBeforeStateChange();
   }
@@ -103,18 +84,33 @@ class RightSidePanelCtrl {
     return this.SidePanelService.isOpen('right');
   }
 
-  _onOpen(type, options) {
-    if (type === 'edit') {
-      this._openEditContent(options);
-    } else if (type === 'create') {
-      this._openCreateContent(options);
-    } else {
-      throw new Error(`Failed to open rightside panel component with type ${type}`);
+  _setComponent(component, options) {
+    this._resetState();
+    this.component = component;
+    this.options = options;
+    this.closeChannelMessage = component.closeChannelMessage;
+  }
+
+  _openComponent(component, options) {
+    if (this.component === component) {
+      this._setComponent(component, options);
+      return this.$q.resolve();
+    }
+    const message = this.component ? this.component.switchToMessage : component.openMessage;
+    return this.beforeStateChange(message)
+      .then(() => this._setComponent(component, options));
+  }
+
+  _onOpen(id, options) {
+    if (!this.components[id]) {
+      throw new Error(`Failed to open rightside panel component with id ${id}`);
     }
 
-    this.$element.addClass('sidepanel-open');
-    this.$element.css('width', this.lastSavedWidth);
-    this.$element.css('max-width', this.lastSavedWidth);
+    this._openComponent(this.components[id], options).then(() => {
+      this.$element.addClass('sidepanel-open');
+      this.$element.css('width', this.lastSavedWidth);
+      this.$element.css('max-width', this.lastSavedWidth);
+    });
   }
 
   _onClose() {

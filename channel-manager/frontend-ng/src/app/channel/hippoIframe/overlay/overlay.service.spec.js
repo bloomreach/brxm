@@ -706,7 +706,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(false);
       });
 
@@ -730,7 +730,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -742,7 +742,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -766,7 +766,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
     });
