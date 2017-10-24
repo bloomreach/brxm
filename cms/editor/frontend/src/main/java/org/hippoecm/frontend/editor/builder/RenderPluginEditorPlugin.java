@@ -507,7 +507,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 }
             }
         }
-        log.warn("Unknown transition \"{}\". Returning default icon.", name);
+        log.warn("Undetermined transition icon by name '{}'; the name should be, or have as last word: 'up', 'down', 'left' or 'right'. Returning default icon.", name);
         return Icon.EXCLAMATION_CIRCLE;
     }
 }
