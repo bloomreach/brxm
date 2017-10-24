@@ -41,7 +41,7 @@ class RightSidePanelCtrl {
 
     this.lastSavedWidth = null;
     this.isFullWidth = false;
-    this.components = {
+    this.modes = {
       edit: {
         closeChannelMessage: 'SAVE_CHANGES_ON_CLOSE_CHANNEL',
         openMessage: null,
@@ -58,7 +58,7 @@ class RightSidePanelCtrl {
       // onOpen
       (id, options) => this._onOpen(id, options),
       // onClose
-      () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
+      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage).then(() => this._onClose()));
   }
 
   $onInit() {
@@ -71,7 +71,7 @@ class RightSidePanelCtrl {
   }
 
   _resetState() {
-    delete this.component;
+    delete this.mode;
     delete this.options;
     this._resetBeforeStateChange();
   }
@@ -84,29 +84,28 @@ class RightSidePanelCtrl {
     return this.SidePanelService.isOpen('right');
   }
 
-  _setComponent(component, options) {
+  _setMode(component, options) {
     this._resetState();
-    this.component = component;
+    this.mode = component;
     this.options = options;
-    this.closeChannelMessage = component.closeChannelMessage;
   }
 
-  _openComponent(component, options) {
-    if (this.component === component) {
-      this._setComponent(component, options);
+  _openInMode(mode, options) {
+    if (this.mode === mode) {
+      this._setMode(mode, options);
       return this.$q.resolve();
     }
-    const message = this.component ? this.component.switchToMessage : component.openMessage;
+    const message = this.mode ? this.mode.switchToMessage : mode.openMessage;
     return this.beforeStateChange(message)
-      .then(() => this._setComponent(component, options));
+      .then(() => this._setMode(mode, options));
   }
 
   _onOpen(id, options) {
-    if (!this.components[id]) {
-      throw new Error(`Failed to open rightside panel component with id ${id}`);
+    if (!this.modes[id]) {
+      throw new Error(`Failed to open rightside panel in mode ${id}`);
     }
 
-    this._openComponent(this.components[id], options).then(() => {
+    this._openInMode(this.modes[id], options).then(() => {
       this.$element.addClass('sidepanel-open');
       this.$element.css('width', this.lastSavedWidth);
       this.$element.css('max-width', this.lastSavedWidth);
