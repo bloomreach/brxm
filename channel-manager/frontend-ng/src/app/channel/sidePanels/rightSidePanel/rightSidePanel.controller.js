@@ -46,7 +46,7 @@ class RightSidePanelCtrl {
       // onOpen
       (type, options) => this._onOpen(type, options),
       // onClose
-      () => this._onClose());
+      () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
   }
 
   $onInit() {
@@ -55,14 +55,33 @@ class RightSidePanelCtrl {
   }
 
   _openEditContent(options) {
-    this.editing = true;
-    this.options = options;
+    if (this.editing) {
+      this._resetState();
+      this.editing = true;
+      this.options = options;
+    } else {
+      this.beforeStateChange().then(() => {
+        this._resetState();
+        this.editing = true;
+        this.options = options;
+      });
+    }
+    this.closeChannelMessage = 'SAVE_CHANGES_ON_CLOSE_CHANNEL';
   }
 
   _openCreateContent(options) {
-    this.creating = true;
-    this.options = options;
-    this.title = this.$translate.instant('NEW_CONTENT');
+    const message = this.editing ? 'SAVE_CHANGES_ON_CREATE_DOCUMENT' : 'SAVE_CHANGES_GENERIC';
+    if (this.creating) {
+      this._resetState();
+      this.creating = true;
+      this.options = options;
+    } else {
+      this.beforeStateChange(message).then(() => {
+        this._resetState();
+        this.creating = true;
+        this.options = options;
+      });
+    }
   }
 
   onBeforeStateChange(callback) {
@@ -77,7 +96,7 @@ class RightSidePanelCtrl {
   }
 
   _resetBeforeStateChange() {
-    this.beforeStateChange = () => this.$q.resolve();
+    this.onBeforeStateChange(() => this.$q.resolve());
   }
 
   isLockedOpen() {
@@ -85,24 +104,21 @@ class RightSidePanelCtrl {
   }
 
   _onOpen(type, options) {
-    this.beforeStateChange().then(() => {
-      this._resetState();
-      if (type === 'edit') {
-        this._openEditContent(options);
-      } else if (type === 'create') {
-        this._openCreateContent(options);
-      } else {
-        throw new Error(`Failed to open rightside panel component with type ${type}`);
-      }
+    if (type === 'edit') {
+      this._openEditContent(options);
+    } else if (type === 'create') {
+      this._openCreateContent(options);
+    } else {
+      throw new Error(`Failed to open rightside panel component with type ${type}`);
+    }
 
-      this.$element.addClass('sidepanel-open');
-      this.$element.css('width', this.lastSavedWidth);
-      this.$element.css('max-width', this.lastSavedWidth);
-    });
+    this.$element.addClass('sidepanel-open');
+    this.$element.css('width', this.lastSavedWidth);
+    this.$element.css('max-width', this.lastSavedWidth);
   }
 
   _onClose() {
-    this._resetBeforeStateChange();
+    this._resetState();
     return this.$q.resolve();
   }
 

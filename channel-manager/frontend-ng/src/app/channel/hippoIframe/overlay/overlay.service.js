@@ -37,6 +37,7 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
+    ChannelService,
   ) {
     'ngInject';
 
@@ -45,6 +46,7 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.ChannelService = ChannelService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
@@ -324,7 +326,7 @@ class OverlayService {
   }
 
   _getDialOptions(config) {
-    // The order of the properties in variable optionButtons defines 
+    // The order of the properties in variable optionButtons defines
     // the order in which they will be rendered in the dial widget.
     const optionButtons = {
       templateQuery: {
@@ -361,14 +363,38 @@ class OverlayService {
     return optionsSet;
   }
 
+  filterConfigByPrivileges(configObj) {
+    const config = angular.copy(configObj);
+    if (this.ChannelService.isEditable()) {
+      return configObj;
+    }
+
+    delete config.componentParameter;
+    if (configObj.documentUuid) { // whenever uuid is available, only edit button for authors
+      delete config.templateQuery;
+      return config;
+    }
+    if (!configObj.documentUuid && configObj.componentParameter) {
+      return {};
+    }
+
+    return config; // when uuid doesn't exist, only templateQuery (create content option) is returned
+  }
+
   _initManageContentLink(structureElement, overlayElement) {
-    const config = {
+    // each property should be filled with the method that will extract the data from the HST comment
+    // Passing the full config through privileges to adjust buttons for authors
+    const config = this.filterConfigByPrivileges({
       componentParameter: structureElement.getComponentParameter(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid: structureElement.getUuid(),
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
-    };
+    });
+
+    // if the config is empty, create no button
+    if (angular.equals(config, {})) return;
+
     const optionsSet = this._getDialOptions(config);
 
     overlayElement
@@ -429,13 +455,14 @@ class OverlayService {
       hideOptions();
       overlayElement.addClass('is-left');
     };
-
-    if (config.documentUuid) {
-      fabBtn.on('click', () => this.editContentHandler(config.documentUuid));
+    const fabButtonCallback = this.fabButtonCallback(config, optionsSet);
+    if (fabButtonCallback) {
+      fabBtn.on('click', () => fabButtonCallback(config.documentUuid));
     } else {
       overlayElement.on('click', () => showOptions() || hideOptions());
     }
-    if (config.templateQuery || config.componentParameter) {
+
+    if (this.isHoverEnabled(config)) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }
@@ -449,6 +476,23 @@ class OverlayService {
     return $(`<button title="${button.tooltip}">${button.svg}</button>`)
       .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
       .on('click', button.callback);
+  }
+
+  fabButtonCallback(config, optionsSet) {
+    if (config.documentUuid) {
+      return this.editContentHandler;
+    }
+    if (config.templateQuery && !config.componentParameter) {
+      return optionsSet.buttons[0].callback;
+    }
+    return null;
+  }
+
+  isHoverEnabled(config) {
+    if (config.documentUuid) {
+      return config.templateQuery || config.componentParameter;
+    }
+    return config.templateQuery && config.componentParameter;
   }
 
   _getElementPositionObject(boxElement) {
