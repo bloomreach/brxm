@@ -40,6 +40,12 @@
     float: right;
   }
 
+  .col40 {
+    padding-right: 16px;
+    width: 40%;
+    float: left;
+  }
+
   .col70 {
     padding-right: 16px;
     width: 70%;
@@ -54,6 +60,7 @@
 
   .col20,
   .col30,
+  .col40,
   .col70,
   .col80 {
     box-sizing: border-box;
