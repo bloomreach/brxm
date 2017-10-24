@@ -125,6 +125,10 @@ class RightSidePanelCtrl {
     return this.$q.resolve();
   }
 
+  closePanel() {
+    this.SidePanelService.close('right').then(() => this._onClose());
+  }
+
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
     this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
