@@ -14,28 +14,18 @@
  * limitations under the License.
  */
 
-import EmbeddedLink from './embeddedLink';
-
-class ManageContentLink extends EmbeddedLink {
-  constructor(commentElement, metaData) {
-    super('manage-content-link', commentElement, metaData);
-  }
-
-  getComponentParameter() {
-    return this.metaData.componentParameter;
-  }
-
-  getDefaultPath() {
-    return this.metaData.defaultPath;
-  }
-
-  getRootPath() {
-    return this.metaData.rootPath;
-  }
-
-  getTemplateQuery() {
-    return this.metaData.templateQuery;
-  }
+ export interface TemplateQuery {
+  documentTypes: Array<DocumentTypeInfo>;
 }
 
-export default ManageContentLink;
+export interface DocumentTypeInfo {
+  id: string;
+  displayName: string;
+}
+
+export interface CreateContentOptions {
+  componentParameter?: string
+  defaultPath?: string,
+  rootPath?: string,
+  templateQuery?: string
+}

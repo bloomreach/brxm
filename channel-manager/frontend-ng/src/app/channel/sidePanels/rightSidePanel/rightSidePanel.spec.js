@@ -29,7 +29,7 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_, _ChannelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -45,8 +45,8 @@ describe('RightSidePanel', () => {
     $ctrl = $componentController('rightSidePanel', {
       $scope,
       $element,
-      SidePanelService,
       CmsService,
+      SidePanelService,
     });
     $rootScope.$apply();
 
@@ -93,74 +93,92 @@ describe('RightSidePanel', () => {
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 
-  describe('Upon initialization or opening the panel', () => {
+  describe('when initializing or opening the panel', () => {
     let testId;
-    function openEditor(documentId) {
-      $ctrl.openEditor(documentId);
-      $rootScope.$digest();
-    }
+    let testOptions;
+
     beforeEach(() => {
       spyOn($ctrl, '_onOpen').and.callThrough();
       testId = 'documentId';
+      testOptions = { templateQuery: 'test-query' };
       $ctrl._resetBeforeStateChange();
     });
 
     it('initializes the channel right side panel service', () => {
       expect(SidePanelService.initialize).toHaveBeenCalled();
-      expect($ctrl.documentId).not.toBeDefined();
+      expect($ctrl.options).not.toBeDefined();
       expect($ctrl.editing).not.toBeDefined();
-      expect($ctrl.createContent).not.toBeDefined();
+      expect($ctrl.creating).not.toBeDefined();
     });
 
-    it('calls 2 initialization functions on oepn', () => {
-      spyOn($ctrl, 'openEditor');
-      sidePanelHandlers.onOpen(testId);
+    it('resets state if beforeStateChange resolves', () => {
+      spyOn($ctrl, '_resetState');
+      sidePanelHandlers.onOpen('edit');
       $rootScope.$digest();
 
-      expect($ctrl.openEditor).toHaveBeenCalledWith(testId);
-      expect($ctrl._onOpen).toHaveBeenCalled();
+      sidePanelHandlers.onOpen('create');
+      $rootScope.$digest();
+
+      expect($ctrl._resetState).toHaveBeenCalledTimes(2);
     });
 
-    it('initialises editContent if documentId is passed', () => {
-      openEditor(testId);
-      expect($ctrl.documentId).toBe(testId);
-      expect($ctrl.editing).toBeTruthy();
+    it('initialises "edit" component when calling onOpen with id "edit"', () => {
+      spyOn($ctrl, '_openInMode').and.callThrough();
+      spyOn($ctrl, '_setMode').and.callThrough();
+      sidePanelHandlers.onOpen('edit', testId);
+      $rootScope.$digest();
+
+      expect($ctrl._onOpen).toHaveBeenCalledWith('edit', testId);
+      expect($ctrl._openInMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
+      expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
+      expect($ctrl.mode).toBe($ctrl.modes.edit);
+      expect($ctrl.options).toBe(testId);
     });
 
-    it('initialises new content if no document id is passed', () => {
-      openEditor(null);
-      expect($ctrl.documentId).toBeFalsy();
-      expect($ctrl.createContent).toBeTruthy();
+    it('initialises "create" component when calling onOpen with id "create"', () => {
+      spyOn($ctrl, '_openInMode').and.callThrough();
+      spyOn($ctrl, '_setMode').and.callThrough();
+      sidePanelHandlers.onOpen('create', testOptions);
+      $rootScope.$digest();
+
+      expect($ctrl._onOpen).toHaveBeenCalledWith('create', testOptions);
+      expect($ctrl._openInMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
+      expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
+      expect($ctrl.mode).toBe($ctrl.modes.create);
+      expect($ctrl.options).toBe(testOptions);
     });
 
     it('Doesnt call beforeStateChange and lets editor handle pending changes', () => {
-      $ctrl.documentId = 'test';
-      $ctrl.editing = true;
-      spyOn($ctrl, 'beforeStateChange');
-      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
+      $ctrl.options = 'test';
+      $ctrl.mode = $ctrl.modes.edit;
+      const spy = spyOn($ctrl, 'beforeStateChange');
+
+      $ctrl._onOpen('edit', testId);
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('open a new document if beforeStateChange is resolved', () => {
-      $ctrl.documentId = 'test';
-      $ctrl.editing = true;
+      $ctrl.options = 'test';
+      $ctrl.mode = $ctrl.modes.edit;
       spyOn($ctrl, 'beforeStateChange');
       $ctrl.beforeStateChange.and.returnValue($q.resolve());
-      openEditor(testId);
+      $ctrl._onOpen('edit', testId);
+      $rootScope.$digest();
 
-      expect($ctrl.documentId).toEqual(testId);
-      expect($ctrl.editing).toBeTruthy();
+      expect($ctrl.mode).toBe($ctrl.modes.edit);
+      expect($ctrl.options).toEqual(testId);
     });
 
     it('doesnt call beforeStateChange when changing between one createContent to another', () => {
-      $ctrl.createContent = true;
-      $ctrl.openEditor(null);
+      $ctrl.mode = $ctrl.modes.create;
+      $ctrl._onOpen('edit');
       spyOn($ctrl, 'beforeStateChange');
       expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
     });
 
     it('adds required view classes', () => {
       $ctrl.lastSavedWidth = '5px';
-      $ctrl._onOpen();
+      $ctrl._onOpen('edit');
       $rootScope.$digest();
       expect($ctrl.$element.hasClass('sidepanel-open')).toEqual(true);
       expect($ctrl.$element.css('width')).toEqual('5px');
@@ -185,15 +203,14 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
 
-    $ctrl.documentId = 'test';
-    $ctrl.editing = true;
+    $ctrl.mode = $ctrl.modes.edit;
+    $ctrl.options = 'test';
     $ctrl.closePanel();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
-    expect($ctrl.documentId).toBeUndefined();
-    expect($ctrl.editing).toBeUndefined();
-    expect($ctrl.createContent).toBeUndefined();
+    expect($ctrl.mode).toBeUndefined();
+    expect($ctrl.options).toBeUndefined();
   });
 
   it('reset right side panel properties and returns a promise', () => {
@@ -221,15 +238,14 @@ describe('RightSidePanel', () => {
     it('Should set and unset a onBeforeStateChange callback', () => {
       const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
       $ctrl.onBeforeStateChange(firstCallback);
-      $ctrl.openEditor(null);
+      $ctrl._onOpen('edit', null);
       expect(firstCallback).toHaveBeenCalled();
       SidePanelService.close.and.returnValue($q.resolve());
       $ctrl.closePanel();
       $rootScope.$digest();
       firstCallback.calls.reset();
-      $ctrl.openEditor();
+      $ctrl._onOpen('edit', 'anotherTestId');
       expect(firstCallback).not.toHaveBeenCalled();
     });
   });
 });
-

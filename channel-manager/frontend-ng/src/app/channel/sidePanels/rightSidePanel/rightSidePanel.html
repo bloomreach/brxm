@@ -24,13 +24,14 @@
                  on-resize="RightSidePanelCtrl.onResize(newWidth)"
                  ng-if="!RightSidePanelCtrl.isFullWidth">
   </resize-handle>
-  <hippo-edit-content ng-if="RightSidePanelCtrl.editing" flex layout="column"
-                      requested-document="RightSidePanelCtrl.documentId"
+  <hippo-edit-content ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.edit" flex layout="column"
+                      requested-document="RightSidePanelCtrl.options"
                       on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                      on-close="RightSidePanelCtrl.onClose"
                       on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
   </hippo-edit-content>
-  <hippo-create-content ng-if="RightSidePanelCtrl.createContent"
+  <hippo-create-content ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
+                        [options]="RightSidePanelCtrl.options"
+                        (on-close)="RightSidePanelCtrl.closePanel()"
                         (on-continue)="angular.noop()">
   </hippo-create-content>
 </md-sidenav>

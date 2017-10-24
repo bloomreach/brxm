@@ -24,12 +24,7 @@ class RightSidePanelCtrl {
     SidePanelService,
     ChannelService,
     CmsService,
-    ContentService,
-    DialogService,
-    HippoIframeService,
-    FeedbackService,
     localStorageService,
-    FieldService,
   ) {
     'ngInject';
 
@@ -42,28 +37,28 @@ class RightSidePanelCtrl {
     this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-    this.ContentService = ContentService;
-    this.DialogService = DialogService;
-    this.HippoIframeService = HippoIframeService;
-    this.FeedbackService = FeedbackService;
     this.localStorageService = localStorageService;
-    this.FieldService = FieldService;
 
-    this.defaultTitle = $translate.instant('EDIT_CONTENT');
-    this.closeLabel = $translate.instant('CLOSE');
-    this.cancelLabel = $translate.instant('CANCEL');
-    this.deleteDraftOnClose = true;
     this.lastSavedWidth = null;
     this.isFullWidth = false;
+    this.modes = {
+      edit: {
+        closeChannelMessage: 'SAVE_CHANGES_ON_CLOSE_CHANNEL',
+        openMessage: null,
+        switchToMessage: 'SAVE_CHANGES_ON_CREATE_DOCUMENT',
+      },
+      create: {
+        closeChannelMessage: null,
+        openMessage: 'SAVE_CHANGES_GENERIC',
+        switchToMessage: null,
+      },
+    };
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
       // onOpen
-      (documentId) => {
-        this.openEditor(documentId);
-        this._onOpen();
-      },
+      (id, options) => this._onOpen(id, options),
       // onClose
-      () => this.beforeStateChange(this.closeChannelMessage).then(() => this._onClose()));
+      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage).then(() => this._onClose()));
   }
 
   $onInit() {
@@ -71,50 +66,13 @@ class RightSidePanelCtrl {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
-  openEditor(documentId) {
-    if (documentId) {
-      this.setEditState(documentId);
-    } else {
-      this.setCreateState();
-    }
-  }
-
-  setEditState(documentId) {
-    if (this.editing) {
-      this._resetState();
-      this.documentId = documentId;
-      this.editing = true;
-    } else {
-      this.beforeStateChange().then(() => {
-        this._resetState();
-        this.documentId = documentId;
-        this.editing = true;
-      });
-    }
-    this.closeChannelMessage = 'SAVE_CHANGES_ON_CLOSE_CHANNEL';
-  }
-
-  setCreateState() {
-    const message = this.editing ? 'SAVE_CHANGES_ON_CREATE_DOCUMENT' : 'SAVE_CHANGES_GENERIC';
-    if (this.createContent) {
-      this._resetState();
-      this.createContent = true;
-    } else {
-      this.beforeStateChange(message).then(() => {
-        this._resetState();
-        this.createContent = true;
-      });
-    }
-  }
-
   onBeforeStateChange(callback) {
     this.beforeStateChange = callback;
   }
 
   _resetState() {
-    delete this.documentId;
-    delete this.editing;
-    delete this.createContent;
+    delete this.mode;
+    delete this.options;
     this._resetBeforeStateChange();
   }
 
@@ -126,10 +84,32 @@ class RightSidePanelCtrl {
     return this.SidePanelService.isOpen('right');
   }
 
-  _onOpen() {
-    this.$element.addClass('sidepanel-open');
-    this.$element.css('width', this.lastSavedWidth);
-    this.$element.css('max-width', this.lastSavedWidth);
+  _setMode(component, options) {
+    this._resetState();
+    this.mode = component;
+    this.options = options;
+  }
+
+  _openInMode(mode, options) {
+    if (this.mode === mode) {
+      this._setMode(mode, options);
+      return this.$q.resolve();
+    }
+    const message = this.mode ? this.mode.switchToMessage : mode.openMessage;
+    return this.beforeStateChange(message)
+      .then(() => this._setMode(mode, options));
+  }
+
+  _onOpen(id, options) {
+    if (!this.modes[id]) {
+      throw new Error(`Failed to open rightside panel in mode ${id}`);
+    }
+
+    this._openInMode(this.modes[id], options).then(() => {
+      this.$element.addClass('sidepanel-open');
+      this.$element.css('width', this.lastSavedWidth);
+      this.$element.css('max-width', this.lastSavedWidth);
+    });
   }
 
   _onClose() {
@@ -166,8 +146,6 @@ class RightSidePanelCtrl {
       this.ChannelService.setToolbarDisplayed(true);
     }
     this.isFullWidth = state;
-
-    // this.FieldService.triggerInputFocus();
   }
 }
 

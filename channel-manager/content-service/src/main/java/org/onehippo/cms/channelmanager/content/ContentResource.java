@@ -41,6 +41,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
+import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
 
 @Produces("application/json")
@@ -114,6 +115,13 @@ public class ContentResource {
     public Response createSlug(String contentName, @QueryParam("locale") String contentLocale, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
                 (session, userLocale) -> SlugFactory.createSlug(contentName, contentLocale));
+    }
+
+    @GET
+    @Path("templatequery/{id}")
+    public Response getTemplateQuery(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK, NO_CACHE,
+                (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,

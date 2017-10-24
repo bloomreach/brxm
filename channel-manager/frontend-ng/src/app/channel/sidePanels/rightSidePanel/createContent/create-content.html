@@ -83,7 +83,6 @@
         </hippo-hints>
       </div>
 
-
       <!-- Document URL field -->
       <div class="field">
         <mat-input-container class="create-content-field">
@@ -95,14 +94,17 @@
         </hippo-hints>
       </div>
 
-
+      <!-- Document type field -->
       <!-- Document type field -->
       <div class="field">
         <div class="mat-input-wrapper">
           <div class="mat-input-flex">
             <div class="mat-input-infix">
-              <mat-select ngModel name="documentType" required placeholder="Document type" class="input-document-type create-content-field mat-input-container">
-                <mat-option *ngFor="let docType of docTypes" value="docType">{{ docType }}</mat-option>
+              <mat-select [(ngModel)]="documentType" name="documentType" required
+                          placeholder="Document type" [disabled]="documentTypes.length === 1"
+                          class="input-document-type create-content-field mat-input-container">
+                <mat-option *ngFor="let documentType of documentTypes"
+                            [value]="documentType.id">{{ documentType.displayName }}</mat-option>
               </mat-select>
             </div>
           </div>
@@ -132,6 +134,7 @@
 
     <button mat-button class="qa-create-content-continue"
             type="submit"
+            (click)="submit(form)"
             [disabled]="form.invalid">
       CONTINUE
     </button>

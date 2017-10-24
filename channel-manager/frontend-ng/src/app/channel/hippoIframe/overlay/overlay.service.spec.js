@@ -32,7 +32,8 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_,
+    inject((
+      _$q_,
       _$rootScope_,
       _DomService_,
       _ExperimentStateService_,
@@ -525,16 +526,16 @@ describe('OverlayService', () => {
   });
 
   it('calls the edit content handler to edit a document', (done) => {
-    const manageContentHandler = jasmine.createSpy('manageContentHandler');
+    const editContentHandler = jasmine.createSpy('editContentHandler');
 
-    OverlayService.onManageContent(manageContentHandler);
+    OverlayService.onEditContent(editContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(manageContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
 
       done();
     });
@@ -705,7 +706,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(false);
       });
 
@@ -729,7 +730,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -741,7 +742,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -765,7 +766,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.manageContentHandler);
+        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
     });
