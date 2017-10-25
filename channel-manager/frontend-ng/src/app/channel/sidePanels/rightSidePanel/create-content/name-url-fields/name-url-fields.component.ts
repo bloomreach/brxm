@@ -55,16 +55,5 @@ export class NameUrlFieldsComponent implements OnInit {
   cancelUrlEditing() {
     this.urlField = this.urlEditMode.oldValue;
     this.setDocumentUrlEditable(false);
-    this.form.controls.url.setErrors({ 'invalidUrl': false });
-  }
-
-  validateUrl() {
-    // TODO: back-end validation
-    const isValid = true;
-    if (isValid) {
-      this.setDocumentUrlEditable(false);
-    } else {
-      this.form.controls.url.setErrors({ 'invalidUrl': true });
-    }
   }
 }

@@ -47,7 +47,7 @@
               matSuffix
               type="button"
               [disabled]="!urlField || urlField === urlEditMode.oldValue"
-              (click)="validateUrl()">
+              (click)="setDocumentUrlEditable(false)">
         <mat-icon>done</mat-icon>
       </button>
 
