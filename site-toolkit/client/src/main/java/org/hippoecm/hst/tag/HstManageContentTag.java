@@ -80,13 +80,8 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            if (templateQuery == null && document == null) {
-                if (componentParameter == null) {
-                    log.debug("Skipping manage content tag because neither 'templateQuery', 'document' or 'componentParameter' attribute specified.");
-                } else {
-                    log.warn("Ignoring 'manageContent' tag with 'componentParameter' attribute set to '"
-                            + componentParameter + "': 'document' and/or 'templateQuery' attribute required");
-                }
+            if (templateQuery == null && document == null && componentParameter == null) {
+                log.debug("Skipping manage content tag because neither 'templateQuery', 'document' or 'componentParameter' attribute specified.");
                 return EVAL_PAGE;
             }
 

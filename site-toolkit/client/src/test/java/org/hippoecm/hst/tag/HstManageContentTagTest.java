@@ -278,14 +278,16 @@ public class HstManageContentTagTest {
 
     @Test
     public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
-        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            tag.setComponentParameter("test");
+        tag.setComponentParameter("test");
 
-            tag.doEndTag();
+        tag.doEndTag();
 
-            assertLogged(listener, "Ignoring 'manageContent' tag with 'componentParameter' attribute set to 'test': 'document' and/or 'templateQuery' attribute required");
-            assertEquals("", response.getContentAsString());
-        }
+        assertEquals("<!-- "
+                + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"componentParameter\":\"test\","
+                + "\"componentParameterIsRelativePath\":\"false\""
+                + "} -->",
+                response.getContentAsString());
     }
 
     @Test
