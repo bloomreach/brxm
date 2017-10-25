@@ -4,7 +4,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml"/>
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml"/>
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-content-pipeline.xml"/>
@@ -44,12 +43,23 @@
     <property name="printStackTrace" value="false" />
   </bean>
 
-  <bean id="essentialsRestAllEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="essentialsRestEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <ref bean="jaxrsRestJsonProvider"/>
         <ref bean="jaxrsHippoContextProvider"/>
         <ref bean="jaxrsRestExceptionMapper"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="essentialsRestAllEntityProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="jaxrsRestDefaultEntityProviders" />
+        <ref bean="essentialsRestEntityProviders" />
       </list>
     </property>
   </bean>
