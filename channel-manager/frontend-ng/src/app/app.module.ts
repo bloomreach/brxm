@@ -15,20 +15,16 @@
  */
 
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from './shared/shared.module';
 import { UpgradeModule  } from '@angular/upgrade/static';
 
-import { MaterialModule } from './material/material.module';
 import ng1Module from './hippo-cm.ng1.module.js';
 
 @NgModule({
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
+    SharedModule,
     UpgradeModule,
-    MaterialModule,
-  ],
+  ]
 })
 export class AppModule {
   constructor(private upgrade: UpgradeModule) {}
