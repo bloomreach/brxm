@@ -13,7 +13,7 @@
 // limitations under the License.
 
 @import 'variables';
-@import '~@angular/material/theming';
+@import '../../../../node_modules/@angular/material/theming';
 @include mat-core;
 
 $hippo-blue: (
