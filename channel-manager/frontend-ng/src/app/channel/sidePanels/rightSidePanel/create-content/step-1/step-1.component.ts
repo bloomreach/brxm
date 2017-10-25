@@ -15,16 +15,16 @@
  */
 
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import './create-content.scss';
+import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
-import { CreateContentService } from './create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from './create-content';
-import FeedbackService from '../../../../services/feedback.service';
+import { CreateContentService } from '../create-content.service';
+import { CreateContentOptions, DocumentTypeInfo } from '../create-content';
+import FeedbackService from '../../../../../services/feedback.service';
 
 @Component({
   selector: 'hippo-create-content',
-  templateUrl: './create-content.html'
+  templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
   @Input() document: any;
