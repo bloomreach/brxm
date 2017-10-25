@@ -22,6 +22,8 @@
   "CORE": "Core",
   "CREATE": "Create",
   "CREATE_DOCUMENT": "Create document",
+  "CREATE_NEW_CONTENT": "Create new content",
+  "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
   "DELETE": "Delete",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
   "DISCARD": "Discard",

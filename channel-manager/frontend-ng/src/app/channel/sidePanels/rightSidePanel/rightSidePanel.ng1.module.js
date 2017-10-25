@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { downgradeComponent } from '@angular/upgrade/static';
+import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
 import { CreateContentComponent } from './createContent/create-content.component.ts';
+
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
+import createContentStep2 from './createContentStep2/createContentStep2.component';
+import { CreateContentService } from './createContent/create-content.service.ts';
+
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
@@ -27,7 +31,9 @@ const rightSidePanelModule = angular
   ])
   .component('rightSidePanel', rightSidePanelComponent)
   .component('hippoEditContent', editContentComponent)
-  .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }));
+  .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }))
+  .service('CreateContentService', downgradeInjectable(CreateContentService))
+  .component('hippoCreateContentStep2', createContentStep2);
 
 export default rightSidePanelModule.name;
 

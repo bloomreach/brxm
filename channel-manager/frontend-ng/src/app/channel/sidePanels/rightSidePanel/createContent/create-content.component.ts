@@ -21,6 +21,7 @@ import { NgForm } from '@angular/forms';
 import { CreateContentService } from './create-content.service';
 import { CreateContentOptions, DocumentTypeInfo } from './create-content';
 import FeedbackService from '../../../../services/feedback.service';
+import SidePanelService from '../../sidePanel.service.js';
 
 @Component({
   selector: 'hippo-create-content',
@@ -36,9 +37,11 @@ export class CreateContentComponent implements OnInit {
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
+  // TODO: Add i18n translation
   title = 'Create new content';
 
-  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
+  constructor(private createContentService: CreateContentService,
+              private feedbackService: FeedbackService, private sidePanelService: SidePanelService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -63,12 +66,12 @@ export class CreateContentComponent implements OnInit {
   }
 
   close() {
-    this.onClose.emit();
+    this.sidePanelService.close('right');
   }
 
   submit(form: NgForm) {
-    console.log(form);
-    // this.onContinue.emit(form.value);
+    this.createContentService.documentType = this.documentType;
+    this.onContinue.emit(form.value);
   }
 
   private onLoadDocumentTypes(documentTypes) {

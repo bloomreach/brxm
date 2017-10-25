@@ -20,6 +20,7 @@ import { CreateContentComponent } from './createContent/create-content.component
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
 import { HintsComponent } from '../../../shared/components/hints/hints.component';
+import { SidePanelServiceProvider } from '../side-panel.service';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { HintsComponent } from '../../../shared/components/hints/hints.component
     CreateContentComponent
   ],
   providers: [
-    CreateContentService
+    CreateContentService,
+    SidePanelServiceProvider
   ]
 })
 export class RightSidePanelModule {}

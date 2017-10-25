@@ -51,6 +51,7 @@ class RightSidePanelCtrl {
         closeChannelMessage: null,
         openMessage: 'SAVE_CHANGES_GENERIC',
         switchToMessage: null,
+        step: 1,
       },
     };
 
@@ -110,6 +111,14 @@ class RightSidePanelCtrl {
       this.$element.css('width', this.lastSavedWidth);
       this.$element.css('max-width', this.lastSavedWidth);
     });
+  }
+
+  switchCreateContentState() {
+    if (this.mode !== this.modes.create || this.mode.step !== 1) {
+      throw new Error('Could not switch to Create content step 2 from the current mode');
+    }
+
+    this.mode.step = 2;
   }
 
   _onClose() {
