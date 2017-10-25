@@ -24,7 +24,7 @@ import 'rxjs/add/observable/throw';
 import { TemplateQuery, DocumentTypeInfo } from '../create-content';
 import { CreateContentComponent } from './step-1.component';
 import { CreateContentService } from '../create-content.service';
-import FeedbackService from '../../../../services/feedback.service';
+import FeedbackService from '../../../../../services/feedback.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { MaterialModule } from '../../../../../material/material.module';
 
