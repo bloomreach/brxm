@@ -15,6 +15,7 @@
  */
 
 import { NgModule } from '@angular/core';
+import { CreateContentService } from './createContent/create-content.service';
 import { CreateContentComponent } from './createContent/create-content.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
@@ -31,6 +32,9 @@ import { HintsComponent } from '../../../shared/components/hints/hints.component
   ],
   entryComponents: [
     CreateContentComponent
+  ],
+  providers: [
+    CreateContentService
   ]
 })
 export class RightSidePanelModule {}

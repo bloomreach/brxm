@@ -1,4 +1,4 @@
-import ContentService from './content.service.js';
+import ContentService from '../../services/content.service.js';
 
 export function contentServiceFactory(i: any) {
   return i.get('ContentService');

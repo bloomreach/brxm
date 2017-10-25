@@ -16,28 +16,15 @@
 
 import ng1Module from './hippo-cm.ng1.module.js';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from './shared/shared.module';
 import { UpgradeModule  } from '@angular/upgrade/static';
-
-import { MaterialModule } from './material/material.module';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
-import { ContentServiceProvider } from './services/content.service.provider';
-import { CreateContentService } from './channel/sidePanels/rightSidePanel/createContent/create-content.service';
-import { FeedbackServiceProvider } from './services/feedback.service.provider';
 
 @NgModule({
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
+    SharedModule,
     UpgradeModule,
-    MaterialModule,
     RightSidePanelModule,
-  ],
-  providers: [
-    ContentServiceProvider,
-    CreateContentService,
-    FeedbackServiceProvider,
   ]
 })
 export class AppModule {

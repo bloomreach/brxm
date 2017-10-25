@@ -1,4 +1,4 @@
-import FeedbackService from './feedback.service.js';
+import FeedbackService from '../../services/feedback.service.js';
 
 export function feedbackServiceFactory(i: any) {
   return i.get('FeedbackService');
