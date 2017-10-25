@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ public interface ContainerConstants {
      * The key used to bind the <code>HstResponse</code> to the underlying <code>HttpServletRequest</code>.
      */
     String HST_RESPONSE = "org.hippoecm.hst.container.response";
+
+    /**
+     * The key used to bind the <code>HstComponentWindow</code> to the underlying <code>HttpServletRequest</code>.
+     */
+    String HST_COMPONENT_WINDOW = "org.hippoecm.hst.core.container.HstComponentWindow";
 
     /**
      * The attribute name used to set the request context object into the servlet request.

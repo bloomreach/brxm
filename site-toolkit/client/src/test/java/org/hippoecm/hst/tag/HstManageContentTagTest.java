@@ -24,6 +24,12 @@ import javax.servlet.jsp.JspWriter;
 
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -61,6 +67,11 @@ public class HstManageContentTagTest {
 
         MockServletContext servletContext = new MockServletContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final MockHstComponentWindow window = new MockHstComponentWindow();
+        window.setComponent(new TestComponent());
+        request.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
+
         response = new MockHttpServletResponse();
         pageContext = new MockPageContext(servletContext, request, response);
 
@@ -200,6 +211,72 @@ public class HstManageContentTagTest {
     }
 
     @Test
+    public void componentParameterWithAbsoluteJcrPath() throws Exception {
+        tag.setTemplateQuery("new-document");
+        tag.setComponentParameter("absPath");
+
+        assertEquals(EVAL_PAGE, tag.doEndTag());
+
+        assertEquals("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"templateQuery\":\"new-document\","
+                + "\"componentParameter\":\"absPath\","
+                + "\"componentParameterIsRelativePath\":\"false\""
+                + "} -->",
+                response.getContentAsString());
+    }
+
+    @Test
+    public void componentParameterWithRelativeJcrPath() throws Exception {
+        tag.setTemplateQuery("new-document");
+        tag.setComponentParameter("relPath");
+
+        assertEquals(EVAL_PAGE, tag.doEndTag());
+
+        assertEquals("<!-- {"
+                        + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                        + "\"templateQuery\":\"new-document\","
+                        + "\"componentParameter\":\"relPath\","
+                        + "\"componentParameterIsRelativePath\":\"true\""
+                        + "} -->",
+                response.getContentAsString());
+    }
+
+    @Test
+    public void componentParameterWithoutJcrPathIsAbsolute() throws Exception {
+        tag.setTemplateQuery("new-document");
+        tag.setComponentParameter("string");
+
+        assertEquals(EVAL_PAGE, tag.doEndTag());
+
+        assertEquals("<!-- {"
+                        + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                        + "\"templateQuery\":\"new-document\","
+                        + "\"componentParameter\":\"string\","
+                        + "\"componentParameterIsRelativePath\":\"false\""
+                        + "} -->",
+                response.getContentAsString());
+    }
+
+    @Test
+    public void componentParameterWithAbsoluteJcrPathAndRelativeRootPath() throws Exception {
+        tag.setTemplateQuery("new-document");
+        tag.setComponentParameter("relPath");
+        tag.setRootPath("/some/absolute/path");
+
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            assertEquals(EVAL_PAGE, tag.doEndTag());
+
+            assertEquals("", response.getContentAsString());
+            assertLogged(listener, "Ignoring manage content tag for component parameter 'relPath': the @JcrPath annotation of the parameter"
+                    + " makes it store a relative path to the content root of the channel while the 'rootPath'"
+                    + " attribute of the manage content tag points to the absolute path '/some/absolute/path'."
+                    + " Either make the root path relative to the channel content root,"
+                    + " or make the component parameter store an absolute path.");
+        }
+    }
+
+    @Test
     public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             tag.setComponentParameter("test");
@@ -234,7 +311,8 @@ public class HstManageContentTagTest {
                         + "\"templateQuery\":\"new-newsdocument\","
                         + "\"rootPath\":\"news/amsterdam\","
                         + "\"defaultPath\":\"2018/09/23\","
-                        + "\"componentParameter\":\"newsDocument\""
+                        + "\"componentParameter\":\"newsDocument\","
+                        + "\"componentParameterIsRelativePath\":\"false\""
                         + "} -->",
                     response.getContentAsString());
     }
@@ -263,5 +341,23 @@ public class HstManageContentTagTest {
                 }
             };
         }
+    }
+
+    @ParametersInfo(type=TestComponentInfo.class)
+    public class TestComponent extends GenericHstComponent {
+    }
+
+    private interface TestComponentInfo {
+
+        @Parameter(name = "absPath")
+        @JcrPath
+        String getAbsPath();
+
+        @Parameter(name = "relPath")
+        @JcrPath(isRelative = true)
+        String getRelPath();
+
+        @Parameter(name = "string")
+        String getString();
     }
 }
