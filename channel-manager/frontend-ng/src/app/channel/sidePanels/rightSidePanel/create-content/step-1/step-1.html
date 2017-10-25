@@ -70,29 +70,10 @@
 
     <form (ngSubmit)="submit(form)"
           #form="ngForm"
-          class="form-dense-layout">
+          class="form-dense-layout create-content-form">
 
-      <!-- Document name field -->
-      <div class="field">
-        <mat-input-container class="create-content-field">
-          <input mdInput ngModel name="documentName" placeholder="Document name" required>
-        </mat-input-container>
-
-        <hippo-hints [data]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
-          <div hint="required">This field is required</div>
-        </hippo-hints>
-      </div>
-
-      <!-- Document URL field -->
-      <div class="field">
-        <mat-input-container class="create-content-field">
-          <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
-        </mat-input-container>
-
-        <hippo-hints [data]="form.controls.documentUrl.errors" *ngIf="form.controls.documentUrl && form.controls.documentUrl.touched">
-          <div hint="required">This field is required</div>
-        </hippo-hints>
-      </div>
+      <!-- Name and URL fields (as a separate component) -->
+      <hippo-name-url-fields></hippo-name-url-fields>
 
       <!-- Document type field -->
       <!-- Document type field -->
@@ -135,7 +116,7 @@
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid">
+            [disabled]="form.invalid || nameUrlFields.form.invalid || nameUrlFields.urlEditMode.state">
       CONTINUE
     </button>
   </div>

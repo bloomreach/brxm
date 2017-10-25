@@ -1,0 +1,69 @@
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<form #form="ngForm">
+  <!-- Document name field -->
+  <div class="field">
+    <mat-input-container class="create-content-field">
+      <input mdInput ngModel name="name" placeholder="Document name" required #nameInputElement>
+    </mat-input-container>
+
+    <hippo-hints [data]="form.controls.name.errors" *ngIf="form.controls.name && form.controls.name.touched">
+      <div hint="required">This field is required</div>
+    </hippo-hints>
+  </div>
+
+  <!-- Document URL field -->
+  <div class="field">
+    <mat-input-container class="create-content-field" floatPlaceholder="never">
+      <input mdInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!urlEditMode.state">
+
+      <!-- Edit button -->
+      <button *ngIf="!urlEditMode.state"
+              mat-icon-button
+              matSuffix
+              type="button"
+              [disabled]="!urlField"
+              (click)="setDocumentUrlEditable(true)">
+        <mat-icon>mode_edit</mat-icon>
+      </button>
+
+      <!-- Validate URL button -->
+      <button *ngIf="urlEditMode.state"
+              mat-icon-button
+              matSuffix
+              type="button"
+              [disabled]="!urlField || urlField === urlEditMode.oldValue"
+              (click)="validateUrl()">
+        <mat-icon>done</mat-icon>
+      </button>
+
+      <!-- Cancel editing button -->
+      <button *ngIf="urlEditMode.state"
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="cancelUrlEditing()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-input-container>
+
+    <hippo-hints [data]="form.controls.url.errors" *ngIf="form.controls.url && form.controls.url.touched">
+      <div hint="required">This field is required</div>
+      <div hint="invalidUrl">This URL is invalid</div>
+    </hippo-hints>
+  </div>
+</form>

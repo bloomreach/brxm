@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
 import { CreateContentOptions, DocumentTypeInfo } from '../create-content';
 import FeedbackService from '../../../../../services/feedback.service';
+import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 
 @Component({
   selector: 'hippo-create-content',
@@ -32,6 +33,8 @@ export class CreateContentComponent implements OnInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
+  @ViewChild('form') form: HTMLFormElement;
+  @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
