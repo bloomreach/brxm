@@ -57,6 +57,11 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE',
     hasUser: true,
   },
+  CORE_PROJECT: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
+    hasUser: true,
+  },
 };
 
 class RightSidePanelCtrl {
