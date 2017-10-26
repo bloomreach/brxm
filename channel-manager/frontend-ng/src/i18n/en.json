@@ -90,6 +90,7 @@
   "FEEDBACK_DRAFT_INVALID_TITLE": "Invalid pending changes found",
   "FEEDBACK_DRAFT_INVALID_MESSAGE": "The document has some invalid pending changes. Please resolve them first.",
   "FEEDBACK_HELD_BY_OTHER_USER_MESSAGE": "The document is locked by {{user}}.",
+  "FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE": "Document is linked to project '{{projectName}}'",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "This document can only be edited in the content editor.",
   "FEEDBACK_NOT_A_DOCUMENT_MESSAGE": "Only documents can be edited here.",
   "FEEDBACK_NOT_A_DOCUMENT_TITLE": "Content not editable",

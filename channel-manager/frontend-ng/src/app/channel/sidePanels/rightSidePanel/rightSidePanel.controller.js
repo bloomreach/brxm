@@ -52,6 +52,11 @@ const ERROR_MAP = {
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
+  OTHER_PROJECT: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE',
+    hasUser: true,
+  },
 };
 
 class RightSidePanelCtrl {
@@ -236,6 +241,9 @@ class RightSidePanelCtrl {
     const params = {};
     if (errorInfo.reason === 'OTHER_HOLDER') {
       params.user = errorInfo.params.userName || errorInfo.params.userId;
+    }
+    if (errorInfo.reason === 'OTHER_PROJECT') {
+      params.projectName = errorInfo.params.projectName;
     }
     return params;
   }

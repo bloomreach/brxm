@@ -60,6 +60,7 @@ public class ErrorInfo {
         NO_HOLDER,
         NOT_A_DOCUMENT,
         OTHER_HOLDER,
+        OTHER_PROJECT,
         REQUEST_PENDING,
         UNKNOWN_VALIDATOR
         // add more specific failure reasons here.
