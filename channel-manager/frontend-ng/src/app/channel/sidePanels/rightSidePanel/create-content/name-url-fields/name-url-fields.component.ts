@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/rx';
 
 @Component({
@@ -25,10 +25,9 @@ import { Observable } from 'rxjs/rx';
 export class NameUrlFieldsComponent implements OnInit {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
-  @Input() NameUrlForm: Object;
-  @Output() NameUrlFormChange: EventEmitter<any> = new EventEmitter();
   public urlField: string;
   public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
+  public dummy: string;
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
@@ -36,13 +35,11 @@ export class NameUrlFieldsComponent implements OnInit {
       .subscribe(() => this.setDocumentUrlByName(this.form.controls.name.value));
   }
 
-  private setDocumentUrlByName(name: string) {
+  setDocumentUrlByName(name: string) {
     // TODO: back-end call
-    setTimeout(() => {
-      name = name.toLowerCase();
-      name = name.replace(/\s+/g, '-').toLowerCase();
-      this.urlField = name;
-    }, 500);
+    name = name.toLowerCase();
+    name = name.replace(/\s+/g, '-').toLowerCase();
+    this.urlField = name;
   }
 
   setDocumentUrlEditable(state: boolean) {

@@ -39,7 +39,7 @@ class FeedbackServiceMock {
   showError(key: string, params: Map<string, any>): void {}
 }
 
-fdescribe('Create content component', () => {
+describe('Create content component', () => {
 
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;

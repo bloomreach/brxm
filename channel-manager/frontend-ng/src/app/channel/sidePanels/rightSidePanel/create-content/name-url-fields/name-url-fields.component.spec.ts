@@ -14,118 +14,91 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture, async } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { DebugElement } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
+import { NameUrlFieldsComponent } from "./name-url-fields.component";
+import { HintsComponent } from "../../../../../shared/components/hints/hints.component";
+import { SharedModule } from "../../../../../shared/shared.module";
 
-import { TemplateQuery, DocumentTypeInfo } from '../create-content';
-import { CreateContentComponent } from './step-1.component';
-import { CreateContentService } from '../create-content.service';
-import FeedbackService from '../../../../../services/feedback.service';
-import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { MaterialModule } from '../../../../../shared/material/material.module';
-import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
+describe('NameUrlFields Component', () => {
 
-class CreateContentServiceMock {
-  getTemplateQuery(id): Observable<TemplateQuery> {
-    return Observable.of(null);
-  }
-}
-
-class FeedbackServiceMock {
-  showError(key: string, params: Map<string, any>): void {}
-}
-
-fdescribe('Create content component', () => {
-
-  let component: CreateContentComponent;
-  let fixture: ComponentFixture<CreateContentComponent>;
-  let createContentService: CreateContentService;
-  let feedbackService: FeedbackService;
+  let component: NameUrlFieldsComponent;
+  let fixture: ComponentFixture<NameUrlFieldsComponent>;
+  let de: DebugElement;
+  let el: HTMLElement;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        CreateContentComponent,
         HintsComponent,
         NameUrlFieldsComponent
       ],
       imports: [
         BrowserAnimationsModule,
         FormsModule,
-        MaterialModule,
-      ],
-      providers: [
-        { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
+        SharedModule
       ]
     });
 
-    fixture = TestBed.createComponent(CreateContentComponent);
+    fixture = TestBed.createComponent(NameUrlFieldsComponent);
     component = fixture.componentInstance;
-    createContentService = fixture.debugElement.injector.get(CreateContentService);
-    feedbackService = fixture.debugElement.injector.get(FeedbackService);
-  });
 
-  it('throws an error if options is not set', () => {
-    expect(() => {
-      component.options = null;
-      fixture.detectChanges();
-    }).toThrowError('Input "options" is required');
-  });
-
-  it('throws an error if templateQuery is not set', () => {
-    expect(() => {
-      component.options = { templateQuery: null };
-      fixture.detectChanges();
-    }).toThrowError('Configuration option "templateQuery" is required');
-  });
-
-  it('loads documentTypes from the templateQuery', () => {
-    const documentTypes: Array<DocumentTypeInfo> = [
-      { id: 'test-id1', displayName: 'test-name 1' },
-      { id: 'test-id2', displayName: 'test-name 2' },
-    ];
-    const spy = spyOn(createContentService, 'getTemplateQuery')
-      .and.returnValue(Observable.of({ documentTypes }));
-
-    component.options = { templateQuery: 'test-template-query' };
+    component.ngOnInit();
     fixture.detectChanges();
-
-    expect(spy).toHaveBeenCalledWith('test-template-query');
-    expect(component.documentType).toBeUndefined();
-    expect(component.documentTypes).toBe(documentTypes);
   });
 
-  it('pre-selects the documentType if only one is returned from the templateQuery', () => {
-    const documentTypes: Array<DocumentTypeInfo> = [{ id: 'test-id1', displayName: 'test-name 1' }];
-    const spy = spyOn(createContentService, 'getTemplateQuery')
-      .and.returnValue(Observable.of({ documentTypes }));
+  describe('ngOnInit', () => {
+    it('calls setDocumentUrlByName 1 second after keyup was triggered on nameInputElement', fakeAsync(() => {
+      spyOn(component, 'setDocumentUrlByName').and.callThrough();
 
-    component.options = { templateQuery: 'test-template-query' };
-    fixture.detectChanges();
-
-    expect(component.documentType).toBe('test-id1');
+      const nameInput = component.nameInputElement.nativeElement;
+      component.form.controls['name'] = { value: 'test val' };
+      nameInput.dispatchEvent(new Event('keyup'));
+      tick(1000);
+      expect(component.setDocumentUrlByName).toHaveBeenCalledWith('test val');
+    }));
   });
 
-  it('sends feedback as error when server returns 500', async(() => {
-    const feedbackSpy = spyOn(feedbackService, 'showError');
-    spyOn(createContentService, 'getTemplateQuery')
-      .and.returnValue(Observable.throw({
-        status: 500,
-        data: {
-          'reason': 'INVALID_TEMPLATE_QUERY',
-          'params': {
-            'templateQuery': 'new-document' }
-          }
-        }));
+  describe('setDocumentUrlByName', () => {
+    it('should set the url field with lowercase and replace spaces with dashes', fakeAsync(() => {
+      component.setDocumentUrlByName('test');
+      expect(component.urlField).toEqual('test');
 
-    component.options = { templateQuery: 'test-template-query' };
-    fixture.detectChanges();
+      component.setDocumentUrlByName('test val');
+      expect(component.urlField).toEqual('test-val');
+    }));
+  });
 
-    expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { 'templateQuery': 'new-document' });
-  }));
+  describe('setDocumentUrlEditable', () => {
+    it('should set the urlEditMode state', () => {
+      component.setDocumentUrlEditable(true);
+      expect(component.urlEditMode.state).toEqual(true);
+    });
+
+    it('should set the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
+      component.setDocumentUrlByName('test val');
+      component.setDocumentUrlEditable(true);
+      expect(component.urlEditMode.oldValue).toEqual('test-val');
+    });
+
+    it('should NOT set the urlEditMode oldValue to the current urlField if the passed FALSE', () => {
+      component.setDocumentUrlByName('test val');
+      component.setDocumentUrlEditable(false);
+      expect(component.urlEditMode.oldValue).not.toEqual('test-val');
+    });
+  });
+
+  describe('cancelUrlEditing', () => {
+    it('should set the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
+      spyOn(component, 'setDocumentUrlEditable');
+      component.urlEditMode.oldValue = 'test-val';
+      component.cancelUrlEditing();
+      expect(component.urlField).toEqual('test-val');
+      expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
+    });
+  });
 });
