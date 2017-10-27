@@ -176,8 +176,7 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
         if (node.isNodeType(NT_HANDLE)) {
             final Node document = JcrUtils.getNodeIfExists(node, node.getName());
-            if (document != null &&
-                    (document.isNodeType(NT_PUBLISHABLESUMMARY) || document.isNodeType(NT_PUBLISHABLESUMMARY))) {
+            if (document != null && document.isNodeType(NT_PUBLISHABLESUMMARY)) {
                 setState(document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString());
             }
             setType(Type.DOCUMENT.getName());
