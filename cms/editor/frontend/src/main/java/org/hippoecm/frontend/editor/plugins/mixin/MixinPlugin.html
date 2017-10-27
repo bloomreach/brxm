@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-     <div class="hippo-editor-mixin" wicket:id="mixins">
+     <div class="hippo-editor-field" wicket:id="mixins">
        <h3 class="hippo-editor-field-title"><wicket:message key="mixins" /></h3>
-       <input type="checkbox" wicket:id="mixin"/><label wicket:id="label">[ mixin ]</label>
+       <div class="hippo-editor-field-boolean">
+         <input type="checkbox" wicket:id="mixin"/><label wicket:id="label">[ mixin ]</label>
+       </div>
      </div>
   </wicket:panel>
 </html>
