@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
-import { CreateContentComponent } from './createContent/create-content.component.ts';
+import { CreateContentComponent } from './create-content/step-1/create-content.component.ts';
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
-import createContentStep2 from './createContentStep2/createContentStep2.component';
-import { CreateContentService } from './createContent/create-content.service.ts';
+import createContentStep2Component from './create-content/step-2/step2.component';
+import { CreateContentService } from './create-content/step-1/create-content.service.ts';
 
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
@@ -33,7 +33,7 @@ const rightSidePanelModule = angular
   .component('hippoEditContent', editContentComponent)
   .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }))
   .service('CreateContentService', downgradeInjectable(CreateContentService))
-  .component('hippoCreateContentStep2', createContentStep2);
+  .component('hippoCreateContentStep2', createContentStep2Component);
 
 export default rightSidePanelModule.name;
 

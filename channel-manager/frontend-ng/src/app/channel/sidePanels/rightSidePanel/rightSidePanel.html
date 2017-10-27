@@ -32,7 +32,7 @@
   <hippo-create-content ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create && RightSidePanelCtrl.mode.step === 1"
                         [options]="RightSidePanelCtrl.options"
                         (on-close)="RightSidePanelCtrl.closePanel()"
-                        (on-continue)="RightSidePanelCtrl.switchCreateContentState()">
+                        (on-continue)="RightSidePanelCtrl.switchCreateContentStep()">
   </hippo-create-content>
   <hippo-create-content-step-2 flex layout="column"
                                ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create && RightSidePanelCtrl.mode.step === 2">

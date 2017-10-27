@@ -113,7 +113,8 @@ class RightSidePanelCtrl {
     });
   }
 
-  switchCreateContentState() {
+  switchCreateContentStep() {
+    console.log('called');
     if (this.mode !== this.modes.create || this.mode.step !== 1) {
       throw new Error('Could not switch to Create content step 2 from the current mode');
     }

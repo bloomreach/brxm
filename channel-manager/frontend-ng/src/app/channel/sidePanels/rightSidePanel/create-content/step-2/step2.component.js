@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import controller from './createContentStep2.controller';
-import template from './createContentStep2.html';
-import './createContentStep2.scss';
+import controller from './step2.controller';
+import template from './step2.html';
+import './step2.scss';
 
 const createContentStep2Component = {
   controller,

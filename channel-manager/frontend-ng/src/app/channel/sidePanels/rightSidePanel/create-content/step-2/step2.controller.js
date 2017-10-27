@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from '../multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from '../multiActionDialog/multiActionDialog.html';
+import MultiActionDialogCtrl from '../../multiActionDialog/multiActionDialog.controller';
+import multiActionDialogTemplate from '../../multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
   NO_CONTENT: {
@@ -116,6 +116,18 @@ class createContentStep2Controller {
 
   $onInit() {
     this._tempLoadDoc(this.documentId);
+  }
+
+  openEditUrlDialog() {
+    this.DialogService.show({
+      template: multiActionDialogTemplate,
+      controller: MultiActionDialogCtrl,
+      controllerAs: '$ctrl',
+      locals: {
+        actions: ['CANCEL', 'CHANGE'],
+      },
+      bindToController: true,
+    });
   }
 
   _resetBeforeStateChange() {

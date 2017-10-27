@@ -3,7 +3,7 @@ import 'rxjs/add/observable/fromPromise';
 import { Injectable } from '@angular/core';
 
 import { TemplateQuery } from './create-content';
-import ContentService from '../../../../services/content.service';
+import ContentService from '../../../../../services/content.service';
 
 @Injectable()
 export class CreateContentService {

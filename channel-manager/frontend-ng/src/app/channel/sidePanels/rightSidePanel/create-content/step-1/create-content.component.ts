@@ -20,8 +20,8 @@ import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from './create-content.service';
 import { CreateContentOptions, DocumentTypeInfo } from './create-content';
-import FeedbackService from '../../../../services/feedback.service';
-import SidePanelService from '../../sidePanel.service.js';
+import FeedbackService from '../../../../../services/feedback.service';
+import SidePanelService from '../../../sidePanel.service.js';
 
 @Component({
   selector: 'hippo-create-content',
