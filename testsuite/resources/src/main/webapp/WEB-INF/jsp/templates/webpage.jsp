@@ -24,6 +24,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <hst:headContributions categoryExcludes="jsInline,jsExternal,scripts" />
+    <script type="text/javascript">
+    // Example custom asynchronous components rendering callback function.
+    function registerAsyncComponentsRenderingCallback(cb) {
+      var cf = confirm("Custom Asynchronous Component Windows Rendering call example\nWill you proceed to load Asynchronous components?");
+      if (cf) {
+        cb();
+      }
+    }
+    </script>
   </head>
   <body>
       <div id="custom-doc" class="yui-t6">
