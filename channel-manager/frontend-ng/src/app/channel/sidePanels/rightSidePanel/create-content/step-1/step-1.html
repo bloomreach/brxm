@@ -15,14 +15,11 @@
   -->
 <div layout="column" class="create-content-container">
 
-  <!----------------------------------TODO: Implement the angular4 version of the below------------------------------->
   <mat-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
       </h1>
-
-      <!--<span flex></span>-->
 
       <button mat-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
                  (click)="setFullWidth(true)"
@@ -39,7 +36,6 @@
     </div>
   </mat-toolbar>
 
-  <!----------------------------------md-content as seen in editContent.html------------------------------->
   <div class="md-content"
        flex="grow"
        layout="column"
@@ -52,7 +48,6 @@
       <!-- Name and URL fields (as a separate component) -->
       <hippo-name-url-fields></hippo-name-url-fields>
 
-      <!-- Document type field -->
       <!-- Document type field -->
       <div class="field">
         <div class="mat-input-wrapper">
