@@ -22,6 +22,7 @@ import {
   MdButtonModule,
   MdInputModule,
   MdSelectModule,
+  MdIconModule
 } from '@angular/material';
 import './material.scss';
 
@@ -33,6 +34,7 @@ import './material.scss';
     MdInputModule,
     MdButtonModule,
     MdSelectModule,
+    MdIconModule
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},

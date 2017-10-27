@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import ng1Module from './hippo-cm.ng1.module.js';
 import { NgModule } from '@angular/core';
-import { SharedModule } from './shared/shared.module';
 import { UpgradeModule  } from '@angular/upgrade/static';
+
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
+import { SharedModule } from './shared/shared.module';
+
+import ng1Module from './hippo-cm.ng1.module.js';
 
 @NgModule({
   imports: [
