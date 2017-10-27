@@ -17,9 +17,11 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -52,6 +54,16 @@ public class AjaxAsynchronousComponentWindowRenderer extends AbstractAsynchronou
     // no need to be volatile : worst case it is created twice
     private static String obfuscatedScript = null;
 
+    private String asyncLoadJavaScriptFragmentTemplate;
+
+    public String getAsyncLoadJavaScriptFragmentTemplate() {
+        return asyncLoadJavaScriptFragmentTemplate;
+    }
+
+    public void setAsyncLoadJavaScriptFragmentTemplate(String asyncLoadJavaScriptFragmentTemplate) {
+        this.asyncLoadJavaScriptFragmentTemplate = asyncLoadJavaScriptFragmentTemplate;
+    }
+
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstURL url = createAsyncComponentRenderingURL(request, response);
@@ -70,7 +82,19 @@ public class AjaxAsynchronousComponentWindowRenderer extends AbstractAsynchronou
             Element endBodyScript = response.createElement("script");
             endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
             endBodyScript.setAttribute("type", "text/javascript");
-            endBodyScript.setTextContent(OBFUSCATED_HIPPO_HST_VAR + ".AsyncPage.load();");
+
+            String asyncLoadJavaScriptFragment = OBFUSCATED_HIPPO_HST_VAR + ".AsyncPage.load();";
+            if (StringUtils.isNotBlank(asyncLoadJavaScriptFragmentTemplate)) {
+                try {
+                    asyncLoadJavaScriptFragment = MessageFormat.format(asyncLoadJavaScriptFragmentTemplate,
+                            asyncLoadJavaScriptFragment);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid message format for 'ajax.asynchronous.component.windows.load.js.fragment.template'"
+                            + "property in the configuration: '{}'. Did you follow java.text.MessageFormat format?",
+                            asyncLoadJavaScriptFragmentTemplate);
+                }
+            }
+            endBodyScript.setTextContent(asyncLoadJavaScriptFragment);
             response.addHeadElement(endBodyScript, "asyncLoad");
         }
     }
