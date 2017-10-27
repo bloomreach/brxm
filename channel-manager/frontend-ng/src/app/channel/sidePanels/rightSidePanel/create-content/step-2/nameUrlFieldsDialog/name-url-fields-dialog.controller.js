@@ -15,14 +15,19 @@
  */
 
 class NameUrlFieldsDialogCtrl {
-  constructor($mdDialog) {
+  constructor($mdDialog, locals) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
+    this.name = locals.name;
+    this.url = locals.url;
   }
 
-  submit(form) {
-    this.$mdDialog.hide(form);
+  submit() {
+    this.$mdDialog.hide({
+      name: this.name,
+      url: this.url,
+    });
   }
 
   cancel() {

@@ -125,16 +125,21 @@ class createContentStep2Controller {
       template: nameUrlFieldsTemplate,
       controller: NameUrlFieldsDialogCtrl,
       controllerAs: '$ctrl',
+      locals: {
+        name: this.doc.displayName,
+        url: '',
+      },
       bindToController: true,
     });
   }
 
-  _submitEditNameUrl() {
-    console.log('name-url-submitted');
+  _submitEditNameUrl(nameUrlObj) {
+    console.log(nameUrlObj);
+    this.doc.displayName = nameUrlObj.name;
   }
 
   editNameUrl() {
-    this._openEditNameUrlDialog().then(nameUrl => this._submitEditNameUrl(nameUrl));
+    this._openEditNameUrlDialog().then(nameUrlObj => this._submitEditNameUrl(nameUrlObj));
   }
 
   _resetBeforeStateChange() {

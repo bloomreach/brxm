@@ -1,7 +1,7 @@
 <md-dialog flex="30" aria-label="{{ 'CHANGE_DOCUMENT_NAME' | translate }}">
   <md-dialog-content>
     <div class="md-dialog-content name-url-fields-dialog">
-      <hippo-name-url-fields></hippo-name-url-fields>
+      <hippo-name-url-fields [(name-field)]="$ctrl.name" [(url-field)]="$ctrl.url"></hippo-name-url-fields>
     </div>
   </md-dialog-content>
   <md-dialog-actions>

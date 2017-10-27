@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/rx';
 
 @Component({
@@ -25,14 +25,20 @@ import { Observable } from 'rxjs/rx';
 export class NameUrlFieldsComponent implements OnInit {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
-  public urlField: string;
+  @Input('nameField') nameField: string;
+  @Input('urlField') urlField: string;
+  @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
+  @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
   public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
-  public dummy: string;
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .debounceTime(1000)
-      .subscribe(() => this.setDocumentUrlByName(this.form.controls.name.value));
+      .subscribe(() => {
+        this.setDocumentUrlByName(this.nameField);
+        this.nameFieldChange.next(this.nameField);
+        this.urlFieldChange.next(this.urlField);
+      });
   }
 
   setDocumentUrlByName(name: string) {

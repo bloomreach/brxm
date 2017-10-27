@@ -18,7 +18,7 @@
   <!-- Document name field -->
   <div class="field">
     <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="name" placeholder="Document name" required #nameInputElement>
+      <input mdInput [(ngModel)]="nameField" name="name" placeholder="Document name" required #nameInputElement>
     </mat-input-container>
 
     <hippo-hints [data]="form.controls.name.errors" *ngIf="form.controls.name && form.controls.name.touched">
