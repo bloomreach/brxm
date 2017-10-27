@@ -15,29 +15,17 @@
  */
 
 import { NgModule } from '@angular/core';
-import { CreateContentService } from './create-content/step-1/create-content.service';
-import { CreateContentComponent } from './create-content/step-1/create-content.component';
+import { CreateContentModule } from './create-content/create-content.module';
+import { CreateContentService } from './create-content/create-content.service';
+import { CreateContentComponent } from './create-content/step-1/step-1.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
 import { HintsComponent } from '../../../shared/components/hints/hints.component';
-import { SidePanelServiceProvider } from '../side-panel.service';
 
 @NgModule({
   imports: [
-    SharedModule,
-    FormsModule
+    CreateContentModule
   ],
-  declarations: [
-    CreateContentComponent,
-    HintsComponent
-  ],
-  entryComponents: [
-    CreateContentComponent
-  ],
-  providers: [
-    CreateContentService,
-    SidePanelServiceProvider
-  ]
 })
 export class RightSidePanelModule {}
 

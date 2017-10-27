@@ -15,14 +15,11 @@
   -->
 <div layout="column" class="create-content-container">
 
-  <!----------------------------------TODO: Implement the angular4 version of the below------------------------------->
   <mat-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
       </h1>
-
-      <!--<span flex></span>-->
 
       <button mat-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
                  (click)="setFullWidth(true)"
@@ -39,62 +36,18 @@
     </div>
   </mat-toolbar>
 
-  <!----------------------------------md-content as seen in editContent.html------------------------------->
   <div class="md-content"
        flex="grow"
        layout="column"
        id="rightSidePanel-content">
-    <!--<md-subheader class="md-no-sticky"-->
-                  <!--ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"-->
-                  <!--md-colors="{background: 'hippo-grey-200'}">-->
-      <!--<div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>-->
-      <!--&lt;!&ndash; use double quotes in the click action expression so we can use single quotes in the translation value &ndash;&gt;-->
-      <!--<div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>-->
-    <!--</md-subheader>-->
-
-    <!--<div ng-if="$ctrl.feedback"-->
-         <!--class="md-padding feedback qa-feedback"-->
-         <!--md-colors="{background: 'hippo-red-50'}">-->
-      <!--<h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>-->
-
-      <!--<p class="qa-feedback-message">-->
-        <!--{{::$ctrl.feedback.message }}-->
-      <!--</p>-->
-
-      <!--<md-button ng-if="::$ctrl.feedback.linkToContentEditor"-->
-                 <!--ng-click="$ctrl.openContentEditor('edit')">-->
-        <!--<md-icon md-svg-icon="switch-to-content-editor"></md-icon>-->
-        <!--{{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}-->
-      <!--</md-button>-->
-    <!--</div>-->
 
     <form (ngSubmit)="submit(form)"
           #form="ngForm"
-          class="form-dense-layout">
+          class="form-dense-layout create-content-form">
 
-      <!-- Document name field -->
-      <div class="field">
-        <mat-input-container class="create-content-field">
-          <input mdInput ngModel name="documentName" placeholder="Document name" required>
-        </mat-input-container>
+      <!-- Name and URL fields (as a separate component) -->
+      <hippo-name-url-fields></hippo-name-url-fields>
 
-        <hippo-hints [data]="form.controls.documentName.errors" *ngIf="form.controls.documentName && form.controls.documentName.touched">
-          <div hint="required">This field is required</div>
-        </hippo-hints>
-      </div>
-
-      <!-- Document URL field -->
-      <div class="field">
-        <mat-input-container class="create-content-field">
-          <input mdInput ngModel name="documentUrl" placeholder="URL" required #input>
-        </mat-input-container>
-
-        <hippo-hints [data]="form.controls.documentUrl.errors" *ngIf="form.controls.documentUrl && form.controls.documentUrl.touched">
-          <div hint="required">This field is required</div>
-        </hippo-hints>
-      </div>
-
-      <!-- Document type field -->
       <!-- Document type field -->
       <div class="field">
         <div class="mat-input-wrapper">
@@ -135,7 +88,7 @@
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid">
+            [disabled]="form.invalid || nameUrlFields.form.invalid || nameUrlFields.urlEditMode.state">
       CONTINUE
     </button>
   </div>

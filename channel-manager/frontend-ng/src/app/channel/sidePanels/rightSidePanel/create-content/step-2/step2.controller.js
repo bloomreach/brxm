@@ -16,6 +16,8 @@
 
 import MultiActionDialogCtrl from '../../multiActionDialog/multiActionDialog.controller';
 import multiActionDialogTemplate from '../../multiActionDialog/multiActionDialog.html';
+import nameUrlFieldsTemplate from './nameUrlFieldsDialog/name-url-fields-dialog.html';
+import NameUrlFieldsDialogCtrl from './nameUrlFieldsDialog/name-url-fields-dialog.controller';
 
 const ERROR_MAP = {
   NO_CONTENT: {
@@ -118,16 +120,21 @@ class createContentStep2Controller {
     this._tempLoadDoc(this.documentId);
   }
 
-  openEditUrlDialog() {
-    this.DialogService.show({
-      template: multiActionDialogTemplate,
-      controller: MultiActionDialogCtrl,
+  _openEditNameUrlDialog() {
+    return this.DialogService.show({
+      template: nameUrlFieldsTemplate,
+      controller: NameUrlFieldsDialogCtrl,
       controllerAs: '$ctrl',
-      locals: {
-        actions: ['CANCEL', 'CHANGE'],
-      },
       bindToController: true,
     });
+  }
+
+  _submitEditNameUrl() {
+    console.log('name-url-submitted');
+  }
+
+  editNameUrl() {
+    this._openEditNameUrlDialog().then(nameUrl => this._submitEditNameUrl(nameUrl));
   }
 
   _resetBeforeStateChange() {

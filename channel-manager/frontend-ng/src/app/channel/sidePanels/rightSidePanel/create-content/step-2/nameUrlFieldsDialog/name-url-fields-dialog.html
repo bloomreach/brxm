@@ -1,0 +1,17 @@
+<md-dialog flex="30" aria-label="{{ 'CHANGE_DOCUMENT_NAME' | translate }}">
+  <md-dialog-content>
+    <div class="md-dialog-content name-url-fields-dialog">
+      <hippo-name-url-fields></hippo-name-url-fields>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="$ctrl.cancel()"
+               class="qa-cancel">
+      {{ ::'CANCEL' | translate }}
+    </md-button>
+    <md-button ng-click="$ctrl.submit()"
+               class="qa-submit-name-url">
+      {{ ::'CHANGE' | translate }}
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

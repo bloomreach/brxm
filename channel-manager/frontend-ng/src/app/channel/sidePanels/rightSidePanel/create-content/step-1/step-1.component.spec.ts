@@ -21,12 +21,13 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { TemplateQuery, DocumentTypeInfo } from './create-content';
-import { CreateContentComponent } from './create-content.component';
-import { CreateContentService } from './create-content.service';
-import FeedbackService from '../../../../services/feedback.service';
+import { TemplateQuery, DocumentTypeInfo } from '../create-content';
+import { CreateContentComponent } from './step-1.component';
+import { CreateContentService } from '../create-content.service';
+import FeedbackService from '../../../../../services/feedback.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { MaterialModule } from '../../../../../material/material.module';
+import { MaterialModule } from '../../../../../shared/material/material.module';
+import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
 
 class CreateContentServiceMock {
   getTemplateQuery(id): Observable<TemplateQuery> {
@@ -50,6 +51,7 @@ describe('Create content component', () => {
       declarations: [
         CreateContentComponent,
         HintsComponent,
+        NameUrlFieldsComponent
       ],
       imports: [
         BrowserAnimationsModule,

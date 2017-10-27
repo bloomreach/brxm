@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import './create-content.scss';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
-import { CreateContentService } from './create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from './create-content';
+import { CreateContentService } from '../create-content.service';
+import { CreateContentOptions, DocumentTypeInfo } from '../create-content';
 import FeedbackService from '../../../../../services/feedback.service';
-import SidePanelService from '../../../sidePanel.service.js';
+import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 
 @Component({
   selector: 'hippo-create-content',
-  templateUrl: './create-content.html'
+  templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
   @Input() document: any;
@@ -33,15 +33,15 @@ export class CreateContentComponent implements OnInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
+  @ViewChild('form') form: HTMLFormElement;
+  @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
-  // TODO: Add i18n translation
   title = 'Create new content';
 
-  constructor(private createContentService: CreateContentService,
-              private feedbackService: FeedbackService, private sidePanelService: SidePanelService) { }
+  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -66,11 +66,10 @@ export class CreateContentComponent implements OnInit {
   }
 
   close() {
-    this.sidePanelService.close('right');
+    this.onClose.emit();
   }
 
   submit(form: NgForm) {
-    this.createContentService.documentType = this.documentType;
     this.onContinue.emit(form.value);
   }
 
