@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -145,7 +146,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
     }
 
     @Test
-    public void same_thread_can_unlock_() throws Exception {
+    public void same_thread_can_unlock() throws Exception {
         final String key = "123";
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
@@ -153,6 +154,21 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         dbRowAssertion(key, "FREE");
         assertDbRowDoesExist(key);
         assertEquals(0, lockManager.getLocks().size());
+    }
+
+    @Test
+    public void manually_unlock_when_using_lock_resource() throws Exception {
+        final String key = "123";
+        final LockResource lockResource = lockManager.lock(key);
+        dbRowAssertion(key, "RUNNING");
+        lockManager.unlock(key);
+        dbRowAssertion(key, "FREE");
+        assertDbRowDoesExist(key);
+        assertEquals(0, lockManager.getLocks().size());
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            lockResource.close();
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '"+key+"' already manually unlocked in thread '"+Thread.currentThread().getName()+"'. This is a coding error!")));
+        }
     }
 
     @Test
@@ -164,7 +180,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
     }
 
     @Test
-    public void other_thread_cannot_unlock_() throws Exception {
+    public void other_thread_cannot_unlock() throws Exception {
         final String key = "123";
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
@@ -199,6 +215,78 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         dbRowAssertion(key, "RUNNING");
         lockManager.unlock(key);
         dbRowAssertion(key, "FREE");
+    }
+
+    @Test
+    public void other_thread_can_unlock_using_lock_resource() throws Exception {
+        final String key = "123";
+        final LockResource lockResource = lockManager.lock(key);
+        dbRowAssertion(key, "RUNNING");
+        Thread lockThread = new Thread(() -> {
+            try {
+                assertTrue(lockManager.isLocked(key));
+            } catch (LockManagerException e) {
+                fail("#isLocked should not fail : " +  e.toString());
+            }
+            try {
+                dbRowAssertion(key, "RUNNING");
+            } catch (SQLException e1) {
+                fail(e1.toString());
+            }
+            lockResource.close();
+            try {
+                assertFalse(lockManager.isLocked(key));
+            } catch (LockManagerException e) {
+                fail("#isLocked should not fail : " +  e.toString());
+            }
+            try {
+                dbRowAssertion(key, "FREE");
+            } catch (SQLException e1) {
+                fail(e1.toString());
+            }
+        });
+
+        lockThread.start();
+        lockThread.join();
+        assertEquals(0, lockManager.getLocks().size());
+    }
+
+    @Test
+    public void cannot_close_lock_resource_after_already_unlocked_before_AND_locked_again() throws Exception {
+        final String key = "123";
+        final LockResource lockResource = lockManager.lock(key);
+        dbRowAssertion(key, "RUNNING");
+        final CountDownLatch lockLatch = new CountDownLatch(1);
+        final CountDownLatch testLatch = new CountDownLatch(1);
+        final CountDownLatch unlockLatch = new CountDownLatch(1);
+        // bad pattern (to be tested): manually unlock while also using a lockResource
+        lockManager.unlock(key);
+        Thread lockThread = new Thread(() -> {
+            try {
+                lockLatch.await();
+                try (LockResource ignore = lockManager.lock(key)) {
+                    // surprise: another thread stole the lock
+                    testLatch.countDown();
+                    unlockLatch.await();
+                }
+            } catch (Exception ignore) {
+            }
+        });
+        lockThread.start();
+        // let other thread steal the lock
+        lockLatch.countDown();
+        // wait for the lock to be stolen
+        testLatch.await();
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+            // no try to close the lockResource
+            lockResource.close();
+            // surprise: lock stolen (error message only)
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '"+key+"' already unlocked before AND locked again. This is a coding error!")));
+        }
+        // now also have the stolen lock closed
+        unlockLatch.countDown();
+        lockThread.join();
+        assertEquals(0, lockManager.getLocks().size());
     }
 
     @Test

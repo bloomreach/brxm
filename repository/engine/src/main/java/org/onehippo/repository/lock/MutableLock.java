@@ -21,7 +21,7 @@ import org.onehippo.cms7.services.lock.Lock;
 
 public class MutableLock extends Lock {
 
-    private WeakReference<Thread> thread;
+    private final WeakReference<Thread> thread;
 
     private int holdCount;
 
