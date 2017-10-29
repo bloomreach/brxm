@@ -52,10 +52,12 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     private final Session session;
     private final JCRScheduler scheduler;
+    private final String moduleConfigPath;
 
-    RepositorySchedulerImpl(Session session, JCRScheduler scheduler) {
+    RepositorySchedulerImpl(final Session session, final JCRScheduler scheduler, final String moduleConfigPath) {
         this.session = session;
         this.scheduler = scheduler;
+        this.moduleConfigPath = moduleConfigPath;
     }
 
     @Override
@@ -153,7 +155,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     private Node newJobNode(final RepositoryJobInfo info) throws RepositoryException {
         final String name = info.getName();
         final String group = info.getGroup();
-        final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
+        final Node moduleConfig = session.getNode(moduleConfigPath);
         final Node jobGroup;
         if (moduleConfig.hasNode(group)) {
             jobGroup = moduleConfig.getNode(group);
@@ -168,7 +170,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     private Node getJobNode(final String jobName, final String groupName) throws RepositoryException {
         synchronized (session) {
-            final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
+            final Node moduleConfig = session.getNode(moduleConfigPath);
             final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, getGroupName(groupName));
             if (groupNode != null) {
                 return JcrUtils.getNodeIfExists(groupNode, jobName);
