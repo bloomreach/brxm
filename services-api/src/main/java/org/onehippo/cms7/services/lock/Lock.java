@@ -19,15 +19,15 @@ package org.onehippo.cms7.services.lock;
 
 public class Lock {
 
-    String lockKey;
+    private final String lockKey;
 
-    String lockOwner;
+    private final String lockOwner;
 
-    String lockThread;
+    private final String lockThread;
 
-    long lockTime;
+    private final long lockTime;
 
-    String status;
+    private final String status;
 
     public Lock(final String lockKey, final String lockOwner, final String lockThread, final long lockTime,
                 final String status) {

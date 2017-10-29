@@ -83,6 +83,11 @@ import org.onehippo.cms7.services.SingletonService;
 public interface LockManager {
 
     /**
+     * Maximum number of chars for a {@link #lock(String)} key.
+     */
+    int LOCK_KEY_MAX_LENGTH = 256;
+
+    /**
      * <p>
      *     Tries to create a {@link Lock} for {@code key}. The {@code key} is not allowed to exceed 256 chars. If there
      *     is already a {@code Lock} for {@code key} then in case the current {@link Thread} has the lock, void is
@@ -90,14 +95,15 @@ public interface LockManager {
      * </p>
      * <p>
      *     Invoking this method multiple times with the same {@code key} and the same {@link Thread} results in the hold count
-     *     being incremented. To unlock the lock, {@link #unlock(String)} must be invoked an equal amount of times as
-     *     {@link #lock(String)} was invoked and the unlock must be invoked with the same {@link Thread} as the one that
-     *     obtained the {@link Lock}.
+     *     being incremented. To unlock the lock, {@link #unlock(String)} or {@link LockResource#close()} must be invoked
+     *     an equal amount of times as {@link #lock(String)} was invoked and the unlock must be invoked with the
+     *     same {@link Thread} as the one that obtained the {@link Lock}. Note that the {@link LockResource#close()} may
+     *     be invoked by a different {@link Thread}!
      * </p>
      * <p>
-     *      A lock is released when a successful {@link #unlock(String)} is invoked as many times as
-     *     {@link #lock(String)}. Alternatively, when the {@link LockManager} implementation detects that the Thread
-     *     that held the lock is not live any more, the {@link LockManager} implementation can also release the lock.
+     *      A lock is released when a successful {@link #unlock(String)} or {@link LockResource#close()} is invoked as
+     *      many times as {@link #lock(String)}. Alternatively, when the {@link LockManager} implementation detects that
+     *      the Thread that held the lock is not live any more, the {@link LockManager} implementation can also release the lock.
      * </p>
      * <p>
      *     In a clustered setup, a lock will be released (in the database) when it has not been refreshed for more than
