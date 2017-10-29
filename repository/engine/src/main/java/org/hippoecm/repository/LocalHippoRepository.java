@@ -239,14 +239,17 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private class LocalRepositoryImpl extends RepositoryImpl {
-        LocalRepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
+    protected class LocalRepositoryImpl extends RepositoryImpl {
+
+        protected LocalRepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
             super(repConfig);
         }
+
         @Override
         public Session getRootSession(String workspaceName) throws RepositoryException {
             return super.getRootSession(workspaceName);
         }
+
         void enableVirtualLayer(boolean enabled) throws RepositoryException {
             isStarted = enabled;
         }
@@ -254,11 +257,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         protected FileSystem getFileSystem() {
             return super.getFileSystem();
         }
-
     }
 
-    protected void initializeLocalRepository(final RepositoryConfig repConfig) throws RepositoryException {
-        jackrabbitRepository = new LocalRepositoryImpl(repConfig);
+    protected LocalRepositoryImpl createLocalRepository(final RepositoryConfig repConfig) throws RepositoryException {
+        return new LocalRepositoryImpl(repConfig);
     }
 
     protected void initializeLockManager() throws RepositoryException {
@@ -279,7 +281,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
-        initializeLocalRepository(createRepositoryConfig());
+        jackrabbitRepository = createLocalRepository(createRepositoryConfig());
         initializeLockManager();
 
         HippoServiceRegistry.registerService(lockManager, new Class[]{LockManager.class, InternalLockManager.class});
