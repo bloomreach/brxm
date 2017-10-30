@@ -37,7 +37,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 /**
  * Registers a JsonResource with as endpoint the value of the {@link #ENDPOINT_ADDRESS} property.
  *
- * Custom implementations should implement {@link #getRestResource(ManagedUserSessionInvoker)} to provide their own
+ * Custom implementations should implement {@link #getRestResource(SessionRequestContextProvider)} to provide their own
  * Resource.
  */
 public abstract class JsonResourceServiceModule extends AbstractReconfigurableDaemonModule {
