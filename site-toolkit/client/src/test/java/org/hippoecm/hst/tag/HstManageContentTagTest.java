@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
+import org.hamcrest.CoreMatchers;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -34,8 +35,11 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -49,7 +53,10 @@ import static javax.servlet.jsp.tagext.Tag.EVAL_PAGE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class HstManageContentTagTest {
@@ -65,8 +72,8 @@ public class HstManageContentTagTest {
         hstRequestContext.setCmsRequest(true);
         ModifiableRequestContextProvider.set(hstRequestContext);
 
-        MockServletContext servletContext = new MockServletContext();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockServletContext servletContext = new MockServletContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
 
         final MockHstComponentWindow window = new MockHstComponentWindow();
         window.setComponent(new TestComponent());
@@ -86,8 +93,8 @@ public class HstManageContentTagTest {
 
     @Test
     public void startTagDoesNothing() throws Exception {
-        assertEquals(EVAL_BODY_INCLUDE, tag.doStartTag());
-        assertEquals("", response.getContentAsString());
+        assertThat(tag.doStartTag(), is(EVAL_BODY_INCLUDE));
+        assertThat(response.getContentAsString(), is(""));
     }
 
     @Test
@@ -95,8 +102,8 @@ public class HstManageContentTagTest {
         ModifiableRequestContextProvider.set(null);
 
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            assertEquals(EVAL_PAGE, tag.doEndTag());
-            assertEquals("", response.getContentAsString());
+            assertThat(tag.doEndTag(), is(EVAL_PAGE));
+            assertThat(response.getContentAsString(), is(""));
             assertLogged(listener, "Cannot create a manage content button outside the hst request.");
         }
     }
@@ -106,8 +113,8 @@ public class HstManageContentTagTest {
         hstRequestContext.setCmsRequest(false);
 
         try (Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(HstManageContentTag.class).build()) {
-            assertEquals(EVAL_PAGE, tag.doEndTag());
-            assertEquals("", response.getContentAsString());
+            assertThat(tag.doEndTag(), is(EVAL_PAGE));
+            assertThat(response.getContentAsString(), is(""));
             assertLogged(listener, "Skipping manage content tag because not in cms preview.");
         }
     }
@@ -115,9 +122,9 @@ public class HstManageContentTagTest {
     @Test
     public void noParametersOutputsNothingAndDoesNotLogWarnings() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            assertEquals(EVAL_PAGE, tag.doEndTag());
-            assertEquals("", response.getContentAsString());
-            assertEquals(0, listener.getEvents().size());
+            assertThat(tag.doEndTag(), is(EVAL_PAGE));
+            assertThat(response.getContentAsString(), is(""));
+            assertThat(listener.getEvents().size(), is(0));
         }
     }
 
@@ -125,10 +132,9 @@ public class HstManageContentTagTest {
     public void templateQuery() throws Exception {
         tag.setTemplateQuery("new-document");
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"templateQuery\":\"new-document\"} -->",
-                response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"templateQuery\":\"new-document\"} -->"));
     }
 
     @Test
@@ -141,10 +147,9 @@ public class HstManageContentTagTest {
         expect(document.getNode()).andReturn(handle);
         replay(document);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->",
-                response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->"));
     }
 
     @Test
@@ -158,10 +163,9 @@ public class HstManageContentTagTest {
         expect(document.getNode()).andReturn(variant);
         replay(document);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->",
-                response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->"));
     }
 
     @Test
@@ -175,9 +179,9 @@ public class HstManageContentTagTest {
         expect(handle.getPath()).andReturn("/some-document");
         replay(document, handle);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("", response.getContentAsString());
+        assertThat(response.getContentAsString(), is(""));
     }
 
     @Test
@@ -189,9 +193,9 @@ public class HstManageContentTagTest {
         expect(document.getNode()).andReturn(root);
         replay(document);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("", response.getContentAsString());
+        assertThat(response.getContentAsString(), is(""));
     }
 
     @Test
@@ -205,9 +209,9 @@ public class HstManageContentTagTest {
         expect(brokenNode.getPath()).andReturn("/broken");
         replay(document, brokenNode);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("", response.getContentAsString());
+        assertThat(response.getContentAsString(), is(""));
     }
 
     @Test
@@ -215,15 +219,14 @@ public class HstManageContentTagTest {
         tag.setTemplateQuery("new-document");
         tag.setComponentParameter("absPath");
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {"
+        assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"componentParameter\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\""
-                + "} -->",
-                response.getContentAsString());
+                + "} -->"));
     }
 
     @Test
@@ -231,15 +234,14 @@ public class HstManageContentTagTest {
         tag.setTemplateQuery("new-document");
         tag.setComponentParameter("relPath");
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {"
-                        + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                        + "\"templateQuery\":\"new-document\","
-                        + "\"componentParameter\":\"relPath\","
-                        + "\"componentParameterIsRelativePath\":\"true\""
-                        + "} -->",
-                response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"templateQuery\":\"new-document\","
+                + "\"componentParameter\":\"relPath\","
+                + "\"componentParameterIsRelativePath\":\"true\""
+                + "} -->"));
     }
 
     @Test
@@ -247,15 +249,14 @@ public class HstManageContentTagTest {
         tag.setTemplateQuery("new-document");
         tag.setComponentParameter("string");
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {"
-                        + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                        + "\"templateQuery\":\"new-document\","
-                        + "\"componentParameter\":\"string\","
-                        + "\"componentParameterIsRelativePath\":\"false\""
-                        + "} -->",
-                response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"templateQuery\":\"new-document\","
+                + "\"componentParameter\":\"string\","
+                + "\"componentParameterIsRelativePath\":\"false\""
+                + "} -->"));
     }
 
     @Test
@@ -265,9 +266,9 @@ public class HstManageContentTagTest {
         tag.setRootPath("/some/absolute/path");
 
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            assertEquals(EVAL_PAGE, tag.doEndTag());
+            assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-            assertEquals("", response.getContentAsString());
+            assertThat(response.getContentAsString(), is(""));
             assertLogged(listener, "Ignoring manage content tag for component parameter 'relPath': the @JcrPath annotation of the parameter"
                     + " makes it store a relative path to the content root of the channel while the 'rootPath'"
                     + " attribute of the manage content tag points to the absolute path '/some/absolute/path'."
@@ -282,12 +283,11 @@ public class HstManageContentTagTest {
 
         tag.doEndTag();
 
-        assertEquals("<!-- "
+        assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"componentParameter\":\"test\","
                 + "\"componentParameterIsRelativePath\":\"false\""
-                + "} -->",
-                response.getContentAsString());
+                + "} -->"));
     }
 
     @Test
@@ -305,38 +305,102 @@ public class HstManageContentTagTest {
         expect(document.getNode()).andReturn(handle);
         replay(document);
 
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertEquals("<!-- {"
-                        + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                        + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                        + "\"templateQuery\":\"new-newsdocument\","
-                        + "\"rootPath\":\"news/amsterdam\","
-                        + "\"defaultPath\":\"2018/09/23\","
-                        + "\"componentParameter\":\"newsDocument\","
-                        + "\"componentParameterIsRelativePath\":\"false\""
-                        + "} -->",
-                    response.getContentAsString());
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\","
+                + "\"templateQuery\":\"new-newsdocument\","
+                + "\"rootPath\":\"news/amsterdam\","
+                + "\"defaultPath\":\"2018/09/23\","
+                + "\"componentParameter\":\"newsDocument\","
+                + "\"componentParameterIsRelativePath\":\"false\""
+                + "} -->"));
     }
 
     @Test(expected = JspException.class)
     public void exceptionWhileWritingToJspOutputsNothing() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setPageContext(new BrokenPageContext());
-        assertEquals(EVAL_PAGE, tag.doEndTag());
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+    }
+
+    @Test
+    public void setComponentParameterToNull() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setComponentParameter(null);
+            tag.doEndTag();
+
+            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to 'null'." +
+                    " Expected the name of an HST component parameter instead.");
+        }
+    }
+
+    @Test
+    public void setComponentParameterToEmpty() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setComponentParameter("");
+            tag.doEndTag();
+
+            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to ''." +
+                    " Expected the name of an HST component parameter instead.");
+        }
+    }
+
+    @Test
+    public void setComponentParameterToSpaces() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setComponentParameter("  ");
+            tag.doEndTag();
+
+            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to '  '." +
+                    " Expected the name of an HST component parameter instead.");
+        }
+    }
+
+    @Test
+    public void setTemplateQueryToNull() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setTemplateQuery(null);
+            tag.doEndTag();
+
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to 'null'." +
+                    " Expected the name of a template query instead.");
+        }
+    }
+
+    @Test
+    public void setTemplateQueryToEmpty() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setTemplateQuery("");
+            tag.doEndTag();
+
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to ''." +
+                    " Expected the name of a template query instead.");
+        }
+    }
+
+    @Test
+    public void setTemplateQueryToSpaces() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setTemplateQuery("  ");
+            tag.doEndTag();
+
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to '  '." +
+                    " Expected the name of a template query instead.");
+        }
     }
 
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
-        assertTrue("expected log message '" + expectedMessage + "'",
-                listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)));
-        assertEquals(1, listener.getEvents().size());
+        assertThat("expected log message '" + expectedMessage + "'", listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)), is(true));
+        assertThat(listener.getEvents().size(), is(1));
     }
 
     private static class BrokenPageContext extends MockPageContext {
 
         @Override
         public JspWriter getOut() {
-            return new MockJspWriter((Writer)null) {
+            return new MockJspWriter((Writer) null) {
                 @Override
                 public void print(final String value) throws IOException {
                     throw new IOException();
@@ -345,7 +409,7 @@ public class HstManageContentTagTest {
         }
     }
 
-    @ParametersInfo(type=TestComponentInfo.class)
+    @ParametersInfo(type = TestComponentInfo.class)
     public class TestComponent extends GenericHstComponent {
     }
 

@@ -114,10 +114,10 @@ public class HstManageContentTag extends TagSupport {
             boolean isRelativePathParameter = isRelativePathParameter();
             if (isRelativePathParameter && StringUtils.startsWith(rootPath, "/")) {
                 log.warn("Ignoring manage content tag for component parameter '{}': the @{} annotation of the parameter"
-                        + " makes it store a relative path to the content root of the channel while the 'rootPath'"
-                        + " attribute of the manage content tag points to the absolute path '{}'."
-                        + " Either make the root path relative to the channel content root,"
-                        + " or make the component parameter store an absolute path.",
+                                + " makes it store a relative path to the content root of the channel while the 'rootPath'"
+                                + " attribute of the manage content tag points to the absolute path '{}'."
+                                + " Either make the root path relative to the channel content root,"
+                                + " or make the component parameter store an absolute path.",
                         componentParameter, JcrPath.class.getSimpleName(), rootPath);
                 return EVAL_PAGE;
             }
@@ -204,6 +204,10 @@ public class HstManageContentTag extends TagSupport {
     }
 
     public void setComponentParameter(final String componentParameter) {
+        if (StringUtils.isBlank(componentParameter)) {
+            log.warn("The componentParameter attribute of a manageContent tag is set to '{}'."
+                    + " Expected the name of an HST component parameter instead.", componentParameter);
+        }
         this.componentParameter = componentParameter;
     }
 
@@ -220,6 +224,10 @@ public class HstManageContentTag extends TagSupport {
     }
 
     public void setTemplateQuery(final String templateQuery) {
+        if (StringUtils.isBlank(templateQuery)) {
+            log.warn("The templateQuery attribute of a manageContent tag is set to '{}'."
+                    + " Expected the name of a template query instead.", templateQuery);
+        }
         this.templateQuery = templateQuery;
     }
 
