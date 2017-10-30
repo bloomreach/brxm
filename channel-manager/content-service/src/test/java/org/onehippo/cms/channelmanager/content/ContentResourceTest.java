@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
-import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -43,7 +42,7 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.jaxrs.cxf.CXFTest;
-import org.onehippo.repository.jaxrs.api.SessionDataProvider;
+import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -77,10 +76,10 @@ public class ContentResourceTest extends CXFTest {
         documentsService = createMock(DocumentsService.class);
         documentTypesService = createMock(DocumentTypesService.class);
 
-        final SessionDataProvider sessionDataProvider = createMock(SessionDataProvider.class);
-        expect(sessionDataProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
-        expect(sessionDataProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
-        replay(sessionDataProvider);
+        final SessionRequestContextProvider sessionRequestContextProvider = createMock(SessionRequestContextProvider.class);
+        expect(sessionRequestContextProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
+        expect(sessionRequestContextProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
+        replay(sessionRequestContextProvider);
 
         PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
@@ -93,7 +92,7 @@ public class ContentResourceTest extends CXFTest {
                 return Collections.emptyMap();
             }
         };
-        config.addServerSingleton(new ContentResource(sessionDataProvider, documentsService, noopContextPayloadProvider));
+        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, noopContextPayloadProvider));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);

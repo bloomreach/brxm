@@ -44,7 +44,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.repository.jaxrs.api.SessionDataProvider;
+import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,17 +60,17 @@ public class ContentResource {
         NO_CACHE.setNoCache(true);
     }
 
-    private final SessionDataProvider sessionDataProvider;
+    private final SessionRequestContextProvider sessionRequestContextProvider;
     private final DocumentsService documentService;
     private final ContextPayloadProvider contextPayloadProvider;
 
-    public ContentResource(final SessionDataProvider userSessionProvider, final DocumentsService documentsService) {
-        this(userSessionProvider, documentsService, new ContextPayloadProvider());
+    public ContentResource(final SessionRequestContextProvider sessionRequestContextProvider, final DocumentsService documentsService) {
+        this(sessionRequestContextProvider, documentsService, new ContextPayloadProvider());
     }
 
-    ContentResource(final SessionDataProvider userSessionProvider, final DocumentsService documentsService,
+    ContentResource(final SessionRequestContextProvider sessionRequestContextProvider, final DocumentsService documentsService,
                     final ContextPayloadProvider contextPayloadProvider) {
-        this.sessionDataProvider = userSessionProvider;
+        this.sessionRequestContextProvider = sessionRequestContextProvider;
         this.documentService = documentsService;
         this.contextPayloadProvider = contextPayloadProvider;
     }
@@ -147,8 +147,8 @@ public class ContentResource {
                                  final Status successStatus,
                                  final CacheControl cacheControl,
                                  final EndPointTask task) {
-        final Session session = sessionDataProvider.getJcrSession(servletRequest);
-        final Locale locale = sessionDataProvider.getLocale(servletRequest);
+        final Session session = sessionRequestContextProvider.getJcrSession(servletRequest);
+        final Locale locale = sessionRequestContextProvider.getLocale(servletRequest);
         try {
             final Object result = task.execute(session, locale, contextPayloadProvider.getContextPayload(servletRequest));
             return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
