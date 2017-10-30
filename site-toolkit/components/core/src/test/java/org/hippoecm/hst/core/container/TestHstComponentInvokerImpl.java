@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -46,7 +47,11 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_COMPONENT_WINDOW;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_RESPONSE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestHstComponentInvokerImpl {
@@ -96,8 +101,6 @@ public class TestHstComponentInvokerImpl {
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
-
-
     }
 
     @Test
@@ -166,6 +169,30 @@ public class TestHstComponentInvokerImpl {
         verify(mocks);
     }
 
+    @Test
+    public void invoke_sets_request_attributes() throws ContainerException {
+
+        expect(requestContext.getParameterInfoProxyFactory()).andReturn(hstParameterInfoProxyFactory).anyTimes();
+
+        Object[] mocks = {hstContainerConfig, hstUrlFactory, hstContainerURLProvider, hstComponent, componentWindow,
+                responseState, componentConfiguration, resolvedSiteMapItem, requestContext};
+        replay(mocks);
+
+        invokeDispatchResult = new InvokeDispatchResult();
+        invokeComponentInvoker(invokeDispatchResult);
+
+        assertTrue(invokeDispatchResult.requestAttributeRequest instanceof HstRequest);
+        assertTrue(invokeDispatchResult.requestAttributeResponse instanceof HstResponse);
+        assertTrue(invokeDispatchResult.requestAttributeComponentWindow instanceof HstComponentWindow);
+
+        // request attributes should be cleared after the invocation
+        assertNull(request.getAttribute(HST_REQUEST));
+        assertNull(request.getAttribute(HST_RESPONSE));
+        assertNull(request.getAttribute(HST_COMPONENT_WINDOW));
+
+        verify(mocks);
+    }
+
     class CustomParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
         @Override
         protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HstRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
@@ -182,6 +209,10 @@ public class TestHstComponentInvokerImpl {
     class InvokeDispatchResult {
         boolean invoked;
         String dispatchUrl;
+
+        Object requestAttributeRequest;
+        Object requestAttributeResponse;
+        Object requestAttributeComponentWindow;
     }
 
     private void invokeComponentInvoker(final InvokeDispatchResult invokeDispatchResult) throws ContainerException {
@@ -199,6 +230,9 @@ public class TestHstComponentInvokerImpl {
 
                 invokeDispatchResult.invoked = true;
                 invokeDispatchResult.dispatchUrl = dispatchUrl;
+                invokeDispatchResult.requestAttributeRequest = servletRequest.getAttribute(HST_REQUEST);
+                invokeDispatchResult.requestAttributeResponse = servletRequest.getAttribute(HST_RESPONSE);
+                invokeDispatchResult.requestAttributeComponentWindow = servletRequest.getAttribute(HST_COMPONENT_WINDOW);
             }
         };
 

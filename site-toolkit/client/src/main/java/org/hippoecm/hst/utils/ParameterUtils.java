@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.utils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +29,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConversionException;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
@@ -125,5 +128,33 @@ public class ParameterUtils {
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
 
         return parametersInfo;
+    }
+
+    /**
+     * Returns an annotation on a 'parameter method' in a parameters info class, i.e. a method that is annotated
+     * with {@link @Parameter}.
+     *
+     * @param parametersInfo the parameters info class to analyze
+     * @param parameterName the name of the parameter as returned by {@link Parameter#name()}
+     * @param annotationClass the class of the annotation to find
+     * @param <A> the annotation, or null if the annotation could not be found
+     * @return
+     */
+    public static <A extends Annotation> A getParameterAnnotation(final ParametersInfo parametersInfo,
+                                                                  final String parameterName,
+                                                                  final Class<A> annotationClass) {
+        if (parametersInfo == null || parameterName == null || annotationClass == null) {
+            return null;
+        }
+
+        final Class<?> paramsInfoClass = parametersInfo.type();
+        for (Method method: paramsInfoClass.getMethods()) {
+            final Parameter parameter = method.getAnnotation(Parameter.class);
+            if (parameter != null && parameter.name().equals(parameterName)) {
+                return method.getAnnotation(annotationClass);
+            }
+        }
+
+        return null;
     }
 }

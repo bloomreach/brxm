@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -243,7 +243,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
 
         try {
-            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse, window);
 
             if (!StringUtils.isBlank(dispatchUrl)) {
                 invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
@@ -271,7 +271,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             logComponentException(window, e);
         } finally {
-            removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            removeHstObjectAttributesForServlet(wrappedRequest);
         }
 
         if (window.hasComponentExceptions()) {
@@ -357,7 +357,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
 
         try {
-            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse, window);
 
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
 
@@ -382,7 +382,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
             }
         } finally {
-            removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            removeHstObjectAttributesForServlet(wrappedRequest);
         }
 
         if (window.hasComponentExceptions()) {
@@ -471,18 +471,21 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
     }
 
-    private void setHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
+    private void setHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest,
+                                                  HstResponse hstResponse, HstComponentWindow window) {
         // Needs to set hst request/response into attribute map
         // because hst request/response can be wrapped so it's not possible to use casting
         // in the servlet side such as tag library.
         servletRequest.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
         servletRequest.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
+        servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
     }
 
-    private void removeHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
-        // Removes hst request/response into attribute map after dispatching
+    private void removeHstObjectAttributesForServlet(ServletRequest servletRequest) {
+        // Removes hst request/response/componentWindow from attribute map after dispatching
         servletRequest.removeAttribute(ContainerConstants.HST_REQUEST);
         servletRequest.removeAttribute(ContainerConstants.HST_RESPONSE);
+        servletRequest.removeAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
     }
 
     private StackTraceElement getFirstStackTraceElement(final Throwable th) {
