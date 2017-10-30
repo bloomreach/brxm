@@ -27,15 +27,11 @@
   <artifactId>hippo-plugin-robotstxt-l10n</artifactId>
   <version>4.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.plugin.robotstxt.version>4.1.0-SNAPSHOT</hippo.plugin.robotstxt.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-robotstxt-addon-repository</artifactId>
-      <version>${hippo.plugin.robotstxt.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

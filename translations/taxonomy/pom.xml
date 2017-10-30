@@ -27,21 +27,17 @@
   <artifactId>hippo-plugin-taxonomy-l10n</artifactId>
   <version>4.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.plugin.taxonomy.version>4.1.0-SNAPSHOT</hippo.plugin.taxonomy.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-taxonomy-addon-frontend</artifactId>
-      <version>${hippo.plugin.taxonomy.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
-      <version>${hippo.plugin.taxonomy.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

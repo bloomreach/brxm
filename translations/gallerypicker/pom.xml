@@ -27,15 +27,11 @@
   <artifactId>hippo-plugin-gallerypicker-l10n</artifactId>
   <version>4.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.plugin.gallerypicker.version>4.1.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-gallerypicker</artifactId>
-      <version>${hippo.plugin.gallerypicker.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

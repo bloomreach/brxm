@@ -27,15 +27,11 @@
   <artifactId>hippo-plugin-seo-support-l10n</artifactId>
   <version>4.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.plugin.seo-support.version>4.1.0-SNAPSHOT</hippo.plugin.seo-support.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-seo-support-repository</artifactId>
-      <version>${hippo.plugin.seo-support.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -27,204 +27,186 @@
   <artifactId>hippo-cms-l10n</artifactId>
   <version>5.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
-  </properties>
-  
   <dependencies>
-    
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-workflowmenu</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-builtin</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-workflow-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-brokenlinks-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-ckeditor-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-perspectives</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gotolink</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-jquery</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-automatic-export-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-config</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-workflow-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-brokenlinks-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-automatic-export-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-common</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-brokenlinks-common</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
   </dependencies>
 
 </project>

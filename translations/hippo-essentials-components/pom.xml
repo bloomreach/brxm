@@ -27,15 +27,11 @@
   <artifactId>hippo-essentials-components-l10n</artifactId>
   <version>4.1.0-SNAPSHOT</version>
   
-  <properties>
-    <hippo.essentials-components.version>4.1.0-SNAPSHOT</hippo.essentials-components.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-components-repository</artifactId>
-      <version>${hippo.essentials-components.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
