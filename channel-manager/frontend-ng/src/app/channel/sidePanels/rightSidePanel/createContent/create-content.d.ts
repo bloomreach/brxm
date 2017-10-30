@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- export interface TemplateQuery {
+export interface TemplateQuery {
   documentTypes: Array<DocumentTypeInfo>;
 }
 
@@ -24,8 +24,8 @@ export interface DocumentTypeInfo {
 }
 
 export interface CreateContentOptions {
-  componentParameter?: string
-  defaultPath?: string,
-  rootPath?: string,
-  templateQuery?: string
+  componentParameter?: string;
+  defaultPath?: string;
+  rootPath?: string;
+  templateQuery?: string;
 }
