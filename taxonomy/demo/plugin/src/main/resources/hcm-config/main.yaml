@@ -2,3 +2,8 @@ definitions:
   config:
     /hippo:namespaces/hippotaxonomy/taxonomy/editor:templates/_default_/root:
       plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyEditorPlugin
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:modules:
+        operation: add
+        type: string
+        value: ['plugin']
