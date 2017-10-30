@@ -81,7 +81,7 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
         listeners.forEach(listener -> listener.attach(observationManager));
     }
 
-    protected abstract Object getRestResource(final ManagedUserSessionInvoker sessionInvoker);
+    protected abstract Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider);
 
     @Override
     protected void doShutdown() {
