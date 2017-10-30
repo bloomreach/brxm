@@ -3,3 +3,6 @@ definitions:
     hippotaxonomy:
       uri: http://www.hippoecm.org/hippotaxonomy/nt/1.2
       cnd: hippotaxonomy.cnd
+  config:
+    /content/taxonomies:
+      .meta:category: content
