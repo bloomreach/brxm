@@ -21,7 +21,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { TemplateQuery, DocumentTypeInfo } from './create-content.d';
+import { TemplateQuery, DocumentTypeInfo } from './create-content.types';
 import { CreateContentComponent } from './create-content.component';
 import { CreateContentService } from './create-content.service';
 import FeedbackService from '../../../../services/feedback.service';

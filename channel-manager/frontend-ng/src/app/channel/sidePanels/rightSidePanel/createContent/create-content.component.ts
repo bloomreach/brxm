@@ -19,7 +19,7 @@ import './create-content.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from './create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from './create-content.d';
+import { CreateContentOptions, DocumentTypeInfo } from './create-content.types';
 import FeedbackService from '../../../../services/feedback.service';
 
 @Component({

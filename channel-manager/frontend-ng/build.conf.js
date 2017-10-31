@@ -88,7 +88,7 @@ const customConfig = {
       '@angular/upgrade',
       'rxjs',
       'zone.js'],
-    vendors: [
+    vendor: [
       '@bloomreach/dragula',
       'jquery',
       'mutation-summary'],

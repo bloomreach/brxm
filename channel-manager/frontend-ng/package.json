@@ -18,7 +18,8 @@
     "startDist": "gulp startDist",
     "test": "gulp test",
     "testDebug": "gulp testDebug",
-    "testOnce": "gulp testOnce"
+    "testOnce": "gulp testOnce",
+    "buildDll": "gulp buildDll"
   },
   "dependencies": {
     "@angular/animations": "4.3.6",
