@@ -21,7 +21,6 @@ const leftSidePanelComponent = {
   bindings: {
     componentsVisible: '=',
     isConfigurationLocked: '<',
-    isEditable: '<',
   },
   controller: LeftSidePanelCtrl,
   template,
