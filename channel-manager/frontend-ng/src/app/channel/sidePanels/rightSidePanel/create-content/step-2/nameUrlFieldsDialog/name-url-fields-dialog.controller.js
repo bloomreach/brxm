@@ -21,6 +21,7 @@ class NameUrlFieldsDialogCtrl {
     this.$mdDialog = $mdDialog;
     this.name = locals.name;
     this.url = locals.url;
+    this.title = locals.title;
   }
 
   submit() {

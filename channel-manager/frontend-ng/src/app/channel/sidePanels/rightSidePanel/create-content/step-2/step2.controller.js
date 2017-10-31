@@ -126,6 +126,7 @@ class createContentStep2Controller {
       controller: NameUrlFieldsDialogCtrl,
       controllerAs: '$ctrl',
       locals: {
+        title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
         name: this.doc.displayName,
         url: '',
       },
