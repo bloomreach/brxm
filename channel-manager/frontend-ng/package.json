@@ -11,6 +11,7 @@
   "scripts": {
     "build": "gulp build",
     "buildDev": "gulp buildDev",
+    "buildDll": "gulp buildDll",
     "buildProfile": "gulp buildProfile",
     "clean": "gulp clean",
     "gulp": "gulp",
@@ -18,8 +19,7 @@
     "startDist": "gulp startDist",
     "test": "gulp test",
     "testDebug": "gulp testDebug",
-    "testOnce": "gulp testOnce",
-    "buildDll": "gulp buildDll"
+    "testOnce": "gulp testOnce"
   },
   "dependencies": {
     "@angular/animations": "4.3.6",
