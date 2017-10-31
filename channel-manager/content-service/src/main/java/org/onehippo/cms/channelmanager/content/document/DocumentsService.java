@@ -22,8 +22,9 @@ import java.util.Locale;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
@@ -42,6 +43,7 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If creation of the draft failed
@@ -87,6 +89,7 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the document for which to delete the draft
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @throws ErrorWithPayloadException
      *                If deleting the draft failed
      */
@@ -97,9 +100,20 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If retrieval of the live document failed
      */
     Document getPublished(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+
+    /**
+     * Creates a new document
+     *
+     * @param newDocumentInfo the information about the new document to create
+     * @param session  user-authenticated, invocation-scoped JCR session.
+     *                 In case of a bad request, changes may be pending.
+     * @return the created document
+     */
+    Document createDocument(NewDocumentInfo newDocumentInfo, Session session) throws ErrorWithPayloadException;
 }

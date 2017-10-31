@@ -36,13 +36,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -65,11 +68,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({WorkflowUtils.class, DocumentUtils.class, DocumentTypesService.class,
-        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class})
+        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class})
 public class DocumentsServiceImplTest {
     private Session session;
     private Locale locale;
@@ -84,6 +89,7 @@ public class DocumentsServiceImplTest {
         PowerMock.mockStatic(DocumentUtils.class);
         PowerMock.mockStatic(EditingUtils.class);
         PowerMock.mockStatic(FieldTypeUtils.class);
+        PowerMock.mockStatic(FolderUtils.class);
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(WorkflowUtils.class);
     }
@@ -92,7 +98,7 @@ public class DocumentsServiceImplTest {
     public void createDraftNotAHandle() throws Exception {
         final String uuid = "uuid";
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -101,7 +107,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -112,7 +118,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -121,7 +127,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -132,7 +138,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("hippo:deleted"));
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -141,7 +147,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -154,7 +160,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -166,7 +172,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -181,7 +187,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canCreateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -190,7 +196,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -207,7 +213,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canCreateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -216,7 +222,7 @@ public class DocumentsServiceImplTest {
             assertThat(e.getPayload(), equalTo(errorInfo));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -231,7 +237,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -240,7 +246,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -260,7 +266,7 @@ public class DocumentsServiceImplTest {
 
         expect(handle.getSession()).andThrow(new RepositoryException());
 
-        PowerMock.replayAll(handle);
+        replayAll(handle);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -269,7 +275,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -290,7 +296,7 @@ public class DocumentsServiceImplTest {
         expect(handle.getSession()).andReturn(session);
         expect(documentTypesService.getDocumentType(variantType, session, locale)).andThrow(new NotFoundException());
 
-        PowerMock.replayAll(handle, documentTypesService);
+        replayAll(handle, documentTypesService);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -299,7 +305,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -316,7 +322,7 @@ public class DocumentsServiceImplTest {
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -328,7 +334,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -345,7 +351,7 @@ public class DocumentsServiceImplTest {
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -354,7 +360,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -383,7 +389,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall();
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
@@ -391,7 +397,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(false));
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -421,7 +427,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
@@ -429,7 +435,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(true));
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -439,7 +445,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -448,7 +454,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -462,7 +468,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -473,7 +479,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -488,7 +494,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -497,7 +503,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -515,7 +521,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -527,7 +533,7 @@ public class DocumentsServiceImplTest {
             assertNull(errorInfo.getParams());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -546,7 +552,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -555,7 +561,7 @@ public class DocumentsServiceImplTest {
             assertThat(e.getPayload(), equalTo(errorInfo));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -573,7 +579,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -582,7 +588,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -601,7 +607,7 @@ public class DocumentsServiceImplTest {
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -610,7 +616,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -633,7 +639,7 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -642,7 +648,7 @@ public class DocumentsServiceImplTest {
             assertThat(e, equalTo(badRequest));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -666,7 +672,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall().andThrow(new RepositoryException());
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -675,7 +681,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -700,7 +706,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -709,7 +715,7 @@ public class DocumentsServiceImplTest {
             assertThat(e.getPayload(), equalTo(document));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -736,7 +742,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -748,7 +754,7 @@ public class DocumentsServiceImplTest {
             assertNull(errorInfo.getParams());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -778,12 +784,12 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
 
         assertThat(persistedDocument, equalTo(document));
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -815,7 +821,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
 
@@ -823,7 +829,7 @@ public class DocumentsServiceImplTest {
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
         assertThat(persistedDocument.getFields(), equalTo(document.getFields()));
         assertThat(persistedDocument.getInfo().isDirty(), equalTo(false));
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -834,7 +840,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -843,7 +849,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -858,7 +864,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -869,7 +875,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -885,7 +891,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -894,7 +900,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -913,7 +919,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -925,7 +931,7 @@ public class DocumentsServiceImplTest {
             assertNull(errorInfo.getParams());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -945,7 +951,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.of(errorInfo));
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -954,7 +960,7 @@ public class DocumentsServiceImplTest {
             assertThat(e.getPayload(), equalTo(errorInfo));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -973,7 +979,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDraft(workflow)).andReturn(true);
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -982,7 +988,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1002,7 +1008,7 @@ public class DocumentsServiceImplTest {
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1011,7 +1017,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1035,7 +1041,7 @@ public class DocumentsServiceImplTest {
 
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andThrow(badRequest);
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1044,7 +1050,7 @@ public class DocumentsServiceImplTest {
             assertThat(e, equalTo(badRequest));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1066,11 +1072,11 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(false);
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1095,11 +1101,11 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1124,7 +1130,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall().andThrow(new RepositoryException());
 
-        PowerMock.replayAll(docType, session);
+        replayAll(docType, session);
 
         try {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
@@ -1133,7 +1139,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1142,7 +1148,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.deleteDraft(uuid, session, locale);
@@ -1151,7 +1157,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1164,7 +1170,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.deleteDraft(uuid, session, locale);
@@ -1175,7 +1181,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1189,7 +1195,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canDeleteDraft(workflow)).andReturn(false);
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentsService.deleteDraft(uuid, session, locale);
@@ -1200,7 +1206,7 @@ public class DocumentsServiceImplTest {
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.ALREADY_DELETED));
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1216,7 +1222,7 @@ public class DocumentsServiceImplTest {
 
         expect(workflow.disposeEditableInstance()).andThrow(new WorkflowException("bla"));
 
-        PowerMock.replayAll(workflow);
+        replayAll(workflow);
 
         try {
             documentsService.deleteDraft(uuid, session, locale);
@@ -1225,7 +1231,7 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -1241,11 +1247,11 @@ public class DocumentsServiceImplTest {
 
         expect(workflow.disposeEditableInstance()).andReturn(null);
 
-        PowerMock.replayAll(workflow);
+        replayAll(workflow);
 
         documentsService.deleteDraft(uuid, session, locale);
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
 
@@ -1265,15 +1271,93 @@ public class DocumentsServiceImplTest {
         expect(docType.getId()).andReturn("document:type");
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
-        PowerMock.replayAll(docType);
+        replayAll(docType);
 
         Document document = documentsService.getPublished(uuid, session, locale);
 
         assertThat(document.getDisplayName(), equalTo("Document Display Name"));
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
+    @Test(expected = BadRequestException.class)
+    public void createDocumentWithoutName() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("  ");
+        info.setSlug("new-document");
+        info.setDocumentTypeId("project:news");
+        info.setFolderPath("/content/documents/channel");
+        documentsService.createDocument(info, session);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void createDocumentWithoutSlug() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("New Document");
+        info.setSlug("");
+        info.setDocumentTypeId("project:news");
+        info.setFolderPath("/content/documents/channel");
+        documentsService.createDocument(info, session);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void createDocumentWithoutDocumentTypeId() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("New Document");
+        info.setSlug("new-document");
+        info.setFolderPath("/content/documents/channel");
+        documentsService.createDocument(info, session);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void createDocumentWithoutFolderPath() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("New Document");
+        info.setSlug("new-document");
+        info.setDocumentTypeId("project:news");
+        info.setFolderPath("");
+        documentsService.createDocument(info, session);
+    }
+
+    @Test
+    public void createExistingDocument() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("New Document");
+        info.setSlug("new-document");
+        info.setDocumentTypeId("project:news");
+        info.setFolderPath("/content/documents/channel/2017/10/31");
+
+        final Node folderNode = createMock(Node.class);
+        expect(FolderUtils.getOrCreateFolder(eq("/content/documents/channel/2017/10/31"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("new-document"))).andReturn(true);
+        replayAll(folderNode);
+
+        try {
+            documentsService.createDocument(info, session);
+            fail("No Exception");
+        } catch (ConflictException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.ALREADY_EXISTS));
+        }
+    }
+
+    @Test
+    public void createDocument() throws Exception {
+        final NewDocumentInfo info = new NewDocumentInfo();
+        info.setName("New Document");
+        info.setSlug("new-document");
+        info.setDocumentTypeId("project:news");
+        info.setFolderPath("/content/documents/channel/2017/10/31");
+
+        final Node folderNode = createMock(Node.class);
+        expect(FolderUtils.getOrCreateFolder(eq("/content/documents/channel/2017/10/31"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("new-document"))).andReturn(false);
+        replayAll(folderNode);
+
+        documentsService.createDocument(info, session);
+
+        verifyAll();
+    }
 
     private DocumentType provideDocumentType(final Node handle) throws Exception {
         final String variantType = "variant:type";

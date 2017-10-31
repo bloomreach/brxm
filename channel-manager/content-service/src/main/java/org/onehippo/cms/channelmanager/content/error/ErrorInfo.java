@@ -68,7 +68,9 @@ public class ErrorInfo {
         REQUEST_PENDING,
         UNKNOWN_VALIDATOR,
         INVALID_TEMPLATE_QUERY,
-        TEMPLATE_QUERY_NOT_FOUND
+        TEMPLATE_QUERY_NOT_FOUND,
+        NOT_A_FOLDER,
+        ALREADY_EXISTS,
         // add more specific failure reasons here.
     }
 }

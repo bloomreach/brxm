@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -36,12 +37,15 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
@@ -196,6 +200,33 @@ class DocumentsServiceImpl implements DocumentsService {
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
                 .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
         return document;
+    }
+
+    @Override
+    public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session) throws ErrorWithPayloadException {
+        if (StringUtils.isBlank(newDocumentInfo.getName())) {
+            throw new BadRequestException("Document name is required");
+        }
+        final String slug = newDocumentInfo.getSlug();
+        if (StringUtils.isBlank(slug)) {
+            throw new BadRequestException("Document slug is required");
+        }
+        if (StringUtils.isBlank(newDocumentInfo.getDocumentTypeId())) {
+            throw new BadRequestException("Document type ID is required");
+        }
+        final String folderPath = newDocumentInfo.getFolderPath();
+        if (StringUtils.isBlank(folderPath)) {
+            throw new BadRequestException("Folder path is required");
+        }
+
+        final Node folderNode = FolderUtils.getOrCreateFolder(folderPath, session);
+        if (FolderUtils.nodeExists(folderNode, slug)) {
+            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.ALREADY_EXISTS));
+        }
+
+        // TODO: create document
+
+        return null;
     }
 
     private Node getHandle(final String uuid, final Session session) throws ErrorWithPayloadException {

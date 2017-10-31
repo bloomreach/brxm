@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response.Status;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -124,6 +125,13 @@ public class ContentResource {
     public Response getTemplateQuery(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
+    }
+
+    @POST
+    @Path("documents")
+    public Response createDocument(NewDocumentInfo newDocumentInfo, @Context HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.CREATED,
+                (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,
