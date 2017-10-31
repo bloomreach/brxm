@@ -57,7 +57,7 @@
     "zone.js": "0.8.17"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "git+https://code.onehippo.org/cms-community/hippo-frontend-build.git#feature/FEBUILD-121",
+    "@bloomreach/frontend-build": "7.0.0-beta.0",
     "@types/jasmine": "2.5.54",
     "@types/node": "8.0.28",
     "@types/webpack-env": "1.13.1",
