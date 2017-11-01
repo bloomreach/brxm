@@ -70,7 +70,7 @@ export class CreateContentComponent implements OnInit {
   }
 
   submit(form: NgForm) {
-    this.onContinue.emit(form.value);
+    this.createContentService.createDraft(form.value).then(() => this.onContinue.emit());
   }
 
   private onLoadDocumentTypes(documentTypes) {

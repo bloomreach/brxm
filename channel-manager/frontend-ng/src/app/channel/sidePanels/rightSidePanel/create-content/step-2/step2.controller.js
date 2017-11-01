@@ -91,7 +91,6 @@ class createContentStep2Controller {
     this.CreateContentService = CreateContentService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
-    this.documentId = '64ab4648-0c20-40d2-9f18-d7a394f0334b';
 
     CmsService.subscribe('kill-editor', (documentId) => {
       if (this.documentId === documentId) {
@@ -111,7 +110,7 @@ class createContentStep2Controller {
   }
 
   $onInit() {
-    this._tempLoadDoc(this.documentId);
+    this.loadNewDocument();
   }
 
   _openEditNameUrlDialog() {
@@ -161,19 +160,8 @@ class createContentStep2Controller {
     }
   }
 
-  _tempLoadDoc(id) {
-    this.FieldService.setDocumentId(this.documentId);
-    this.loading = true;
-    this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
-        .then(doc => this.loadNewDocument(doc)));
-  }
-
-  // ////////////////////////////////////////////////////////
-  // FUTURE IMPLEMENTATION OF LOADING NEWLY CREATED DOCUMENT
-  // DRAFT HAS ALREADY BEEN CREATED.
-  loadNewDocument(doc) {
-    // const doc = this.CreateContentService.getNewDocument(); To be implemented
+  loadNewDocument() {
+    const doc = this.CreateContentService.getDocument();
     this.FieldService.setDocumentId(doc.id);
     this.loading = true;
 
@@ -183,7 +171,6 @@ class createContentStep2Controller {
     }
     return this.$q.reject(this._noContentResponse(doc));
   }
-  // ////////////////////////////////////////////////////////
 
   _onLoadSuccess(doc, docType) {
     this.doc = doc;
