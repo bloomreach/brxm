@@ -1,52 +1,79 @@
 Tests are divided between regular tests and integration tests,
 the difference being the amount of time they take to execute.
 
-Running 'mvn clean install' runs only the regular tests. Run
-'mvn clean install -Pintegration' to run the integration tests
-as well.
+Running 'mvn clean install' runs only the regular tests.
+Run:
+
+  mvn clean install -Pintegration
+
+to run the integration tests as well.
 
 Tests can be run against different databases using profiles.
-There are two predefined profiles for h2 and mysql. Run
-'mvn test -Ph2' to run the regular tests against h2. Run
-'mvn verify -Pintegration,h2 to run both regular
-and integration tests against h2.
+There are predefined profiles for h2, mysql, mssql, postgresql
+and oracle.
+Run:
 
-The mysql configuration assumes a mysql database is running
-on port 3306, a database called jcr exists in that server,
-and user root without a password has read/write privileges.
-edit config/mysql-repository.xml to adjust according to your
-local setup.
+  mvn test -Ph2
 
-When running the tests against different databases make sure
-you do a 'mvn clean' before switching databases each time
-so that the repository storage directory gets wiped. Otherwise
-you will continue to run with the previous configuration.
+to run the regular tests against h2.
+Run:
+
+  mvn verify -Pintegration,h2
+
+to run both regular and integration tests against h2.
+
+Besides the h2 database profile, the other database profiles
+use a predefined database host, port, name, user and password
+all of which can be overridden on the commandline using one or
+a combination of the following parameters:
+  -Ddb.host=<host>
+  -Ddb.port=<port>
+  -Ddb.name=<name>
+  -Ddb.user=<user>
+  -Ddb.password=<password
+
+The mysql configuration assumes a mysql database called jcr
+running on localhost, port 3306, and uses user root without
+a password which has read/write privileges.
+The mysql profile also will drop and recreate this database
+when executing: mvn clean -Pmysql
+
+For other database, please create/drop (clean) the used
+database manually between executions.
+
+For Oracle, the jdbc driver cannot automatically be downloaded
+from Maven Central but needs to be manually downloaded from
+Oracle technetwork to accept their licence terms, e.g. from:
+
+  http://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html
+
+and thereafter installed in your local repository, using:
+
+  mvn install:install-file -Dfile={Path/to/your/ojdbc8.jar} -DgroupId=com.oracle.jdbc -DartifactId=ojdbc8 -Dversion=12.2.0.1 -Dpackaging=jar
 
 Note on StampedeTest:
 StampedeTest is a load test on the repository. It starts
 a bunch of threads that execute a random set of actions
 on the repository continually for a configured amount of time.
-For instance 'mvn test -Dtest=StampedeTest -Ph2
--Dstampede.minutes=3 -Dstampede.threads=5' executes the
-StampedeTest against h2 for a period of 3 minutes with 5
+For instance:
+
+  mvn test -Dtest=StampedeTest -Ph2 -Dstampede.minutes=3 -Dstampede.threads=5
+
+executes the StampedeTest against h2 for a period of 3 minutes with 5
 concurrent threads.
 
 Note on running StampedeTest clustered:
 There are two predefined profiles for running the StampedeTest
-in a clustered setup using mysql as the backing database.
+in a clustered setup using (only) mysql as the backing database.
 Open two console windows for the current directory.
 
-In the one run:
+In the one run with profile -Pclusternode1:
 
-'mvn test -Dtest=StampedeTest -Pclusternode1
--Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
--Dstampede.prompt=true'
+  mvn test -Dtest=StampedeTest -Pclusternode1 -Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none -Dstampede.prompt=true
 
-In the other run the other profile:
+In the other run with profile -Pclusternode2:
 
-'mvn test -Dtest=StampedeTest -Pclusternode2
--Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
--Dstampede.prompt=true'
+  mvn test -Dtest=StampedeTest -Pclusternode2 -Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none -Dstampede.prompt=true
 
 After the test case setup phase you will be prompted to press
 enter to continue. This is to make sure the tests run concurrently

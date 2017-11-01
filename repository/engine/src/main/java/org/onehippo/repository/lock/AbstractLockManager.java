@@ -170,7 +170,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
         final Thread lockThread = localLock.getThread().get();
         if (lockThread == null || !lockThread.isAlive()) {
             getLogger().error("Thread '{}' that created lock for '{}' has stopped without releasing the lock. The Thread " +
-                            "should had invoked #unlock. Removing lock now",
+                            "should have invoked #unlock. Removing lock now",
                     localLock.getLockThread(), key, Thread.currentThread().getName());
             releasePersistedLock(key, localLock.getLockThread());
             localLocks.remove(key);

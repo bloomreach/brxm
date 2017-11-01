@@ -102,7 +102,11 @@
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
     <h2.version>1.3.175</h2.version>
-    <mysql.version>5.1.34</mysql.version>
+    <mysql.version>5.1.44</mysql.version>
+    <mssql.version>6.2.2.jre8</mssql.version>
+    <postgresql.version>42.1.4</postgresql.version>
+    <oracle.version>12.2.0.1</oracle.version>
+    <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
   </properties>
 
   <scm>

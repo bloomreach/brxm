@@ -32,6 +32,11 @@
     <repo.path>${project.build.directory}/storage</repo.path>
     <repo.config />
     <surefire.forkmode>once</surefire.forkmode>
+    <db.host/>
+    <db.port/>
+    <db.name/>
+    <db.user/>
+    <db.password/>
   </properties>
 
   <dependencies>
@@ -140,6 +145,11 @@
             <repo.path>${repo.path}</repo.path>
             <repo.config>${repo.config}</repo.config>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+            <db.host>${db.host}</db.host>
+            <db.port>${db.port}</db.port>
+            <db.name>${db.name}</db.name>
+            <db.user>${db.user}</db.user>
+            <db.password>${db.password}</db.password>
           </systemPropertyVariables>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>
@@ -222,6 +232,11 @@
       <id>mysql</id>
       <properties>
         <repo.config>file://${project.basedir}/config/mysql-repository.xml</repo.config>
+        <db.host>localhost</db.host>
+        <db.port>3306</db.port>
+        <db.name>jcr</db.name>
+        <db.user>root</db.user>
+        <db.password></db.password>
       </properties>
       <dependencies>
         <dependency>
@@ -236,6 +251,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>sql-maven-plugin</artifactId>
+            <version>${sql-maven-plugin.version}</version>
             <dependencies>
               <dependency>
                 <groupId>mysql</groupId>
@@ -245,9 +261,9 @@
             </dependencies>
             <configuration>
               <driver>com.mysql.jdbc.Driver</driver>
-              <url>jdbc:mysql://localhost:3306/mysql?autoReconnect=true</url>
-              <username>root</username>
-              <password />
+              <url>jdbc:mysql://${db.host}:${db.port}?useSSL=false</url>
+              <username>${db.user}</username>
+              <password>${db.password}</password>
             </configuration>
             <executions>
               <execution>
@@ -279,10 +295,72 @@
       </build>
     </profile>
     <profile>
+      <id>mssql</id>
+      <properties>
+        <repo.config>file://${project.basedir}/config/mssql-repository.xml</repo.config>
+        <db.host>localhost</db.host>
+        <db.port>1433</db.port>
+        <db.name>jcr</db.name>
+        <db.user>jcr</db.user>
+        <db.password>jcr</db.password>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>com.microsoft.sqlserver</groupId>
+          <artifactId>mssql-jdbc</artifactId>
+          <version>${mssql.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>postgresql</id>
+      <properties>
+        <repo.config>file://${project.basedir}/config/postgresql-repository.xml</repo.config>
+        <db.host>localhost</db.host>
+        <db.port>5432</db.port>
+        <db.name>jcr</db.name>
+        <db.user>jcr</db.user>
+        <db.password>jcr</db.password>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <version>${postgresql.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>oracle</id>
+      <properties>
+        <repo.config>file://${project.basedir}/config/oracle-repository.xml</repo.config>
+        <db.host>0.0.0.0</db.host>
+        <db.port>1521</db.port>
+        <db.name>orcl12c</db.name>
+        <db.user>jcr</db.user>
+        <db.password>jcr</db.password>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>com.oracle.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>${oracle.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>clusternode1</id>
       <properties>
-        <repo.config>file://${project.basedir}/config/mysql-repository-clusternode1.xml</repo.config>
+        <repo.config>file://${project.basedir}/config/mysql-repository.xml</repo.config>
         <repo.path>${project.build.directory}/storage1</repo.path>
+        <db.host>localhost</db.host>
+        <db.port>3306</db.port>
+        <db.name>jcr</db.name>
+        <db.user>root</db.user>
+        <db.password></db.password>
       </properties>
       <dependencies>
         <dependency>
@@ -296,8 +374,13 @@
     <profile>
       <id>clusternode2</id>
       <properties>
-        <repo.config>file://${project.basedir}/config/mysql-repository-clusternode2.xml</repo.config>
+        <repo.config>file://${project.basedir}/config/mysql-repository-node2.xml</repo.config>
         <repo.path>${project.build.directory}/storage2</repo.path>
+        <db.host>localhost</db.host>
+        <db.port>3306</db.port>
+        <db.name>jcr</db.name>
+        <db.user>root</db.user>
+        <db.password></db.password>
       </properties>
       <dependencies>
         <dependency>
