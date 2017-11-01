@@ -16,8 +16,10 @@
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -36,8 +38,8 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,10 @@ public class FolderUtils {
     private static final String HIPPOSTD_FOLDERTYPE = "hippostd:foldertype";
     private static final Logger log = LoggerFactory.getLogger(FolderUtils.class);
 
-    public static boolean nodeExists(final Node parentNode, final String name) throws ErrorWithPayloadException {
+    private FolderUtils() {
+    }
+
+    public static boolean nodeExists(final Node parentNode, final String name) throws InternalServerErrorException {
         if (StringUtils.isEmpty(name)) {
             return false;
         }
@@ -58,20 +63,52 @@ public class FolderUtils {
         }
     }
 
-    public static Node getOrCreateFolder(final String absPath, final Session session) throws ErrorWithPayloadException {
+    public static String getLocale(final Node folderNode) {
         try {
-            if (session.nodeExists(absPath)) {
-                return getFolder(absPath, session);
-            } else {
-                return createFolder(absPath, session);
+            if (folderNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                return folderNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to get or create folder '{}'", absPath, e);
+            log.warn("Failed to determine locale of folder '{}', assuming no locale", JcrUtils.getNodePathQuietly(folderNode));
+        }
+        return null;
+    }
+
+    public static Node getFolder(final String absPath, final Session session) throws NotFoundException, BadRequestException, InternalServerErrorException {
+        try {
+            if (!session.nodeExists(absPath)) {
+                throw new NotFoundException();
+            }
+            return getExistingFolder(absPath, session);
+        } catch (RepositoryException e) {
+            log.warn("Failed to get folder '{}'", absPath, e);
             throw new InternalServerErrorException();
         }
     }
 
-    private static Node getFolder(final String absPath, final Session session) throws RepositoryException, BadRequestException {
+    public static Node getOrCreateFolder(final Node parentFolder, final String relPath, final Session session) throws BadRequestException, InternalServerErrorException {
+        try {
+            if (parentFolder.hasNode(relPath)) {
+                return getExistingFolder(getAbsPath(parentFolder, relPath), session);
+            } else {
+                return createFolder(parentFolder, relPath, session);
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to get or create folder '{}' below '{}'", relPath, JcrUtils.getNodePathQuietly(parentFolder), e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    private static String getAbsPath(final Node parentNode, final String relPath) throws RepositoryException {
+        if (parentNode.getDepth() == 0) {
+            // parent is the root node
+            return "/" + relPath;
+        } else {
+            return parentNode.getPath() + "/" + relPath;
+        }
+    }
+
+    private static Node getExistingFolder(final String absPath, final Session session) throws BadRequestException, RepositoryException {
         final Node folderNode = session.getNode(absPath);
 
         if (!folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)) {
@@ -81,33 +118,36 @@ public class FolderUtils {
         return folderNode;
     }
 
-    private static Node createFolder(final String absPath, final Session session) throws RepositoryException, InternalServerErrorException {
-        final LinkedList<String> newFolderNames = new LinkedList<>();
+    private static Node createFolder(final Node parentFolder, final String relPath, final Session session) throws RepositoryException, InternalServerErrorException {
+        final List<String> newFolderNames = new ArrayList<>();
+        Node folderNode = parentFolder;
 
-        String checkPath = absPath;
-        Node folderNode = null;
+        final StringTokenizer pathElements = new StringTokenizer(relPath, "/");
 
-        // navigate up the tree to find the lowest already existing node in the path
-        while (folderNode == null) {
-            if (session.nodeExists(checkPath)) {
-                folderNode = session.getNode(checkPath);
+        // drill down into existing parent folders
+        while (pathElements.hasMoreTokens()) {
+            final String pathElement = pathElements.nextToken();
+            if (newFolderNames.isEmpty() && folderNode.hasNode(pathElement)) {
+                folderNode = folderNode.getNode(pathElement);
             } else {
-                newFolderNames.addFirst(StringUtils.substringAfterLast(checkPath, "/"));
-                checkPath = StringUtils.substringBeforeLast(checkPath, "/");
-                if (StringUtils.isEmpty(checkPath)) {
-                    folderNode = session.getRootNode();
-                }
+                newFolderNames.add(pathElement);
             }
         }
 
-        // add all (parent) folders that do not exist yet
-        final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-        final WorkflowManager workflowMgr = workspace.getWorkflowManager();
-        for (String folderName : newFolderNames) {
-            folderNode = createFolder(folderName, folderNode, workflowMgr);
+        // create new (parent) folders
+        if (!newFolderNames.isEmpty()) {
+            final WorkflowManager workflowMgr = getWorkflowManager(session);
+            for (String newFolderName : newFolderNames) {
+                folderNode = createFolder(newFolderName, folderNode, workflowMgr);
+            }
         }
 
         return folderNode;
+    }
+
+    private static WorkflowManager getWorkflowManager(final Session session) throws RepositoryException {
+        final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+        return workspace.getWorkflowManager();
     }
 
     private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr) throws RepositoryException, InternalServerErrorException {

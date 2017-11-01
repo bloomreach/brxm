@@ -19,8 +19,10 @@ public class NewDocumentInfo {
 
     private String name;
     private String slug;
+    private String templateQuery;
     private String documentTypeId;
-    private String folderPath;
+    private String rootPath;
+    private String defaultPath;
 
     public String getName() {
         return name;
@@ -38,6 +40,14 @@ public class NewDocumentInfo {
         this.slug = slug;
     }
 
+    public String getTemplateQuery() {
+        return templateQuery;
+    }
+
+    public void setTemplateQuery(final String templateQuery) {
+        this.templateQuery = templateQuery;
+    }
+
     public String getDocumentTypeId() {
         return documentTypeId;
     }
@@ -46,11 +56,19 @@ public class NewDocumentInfo {
         this.documentTypeId = documentTypeId;
     }
 
-    public String getFolderPath() {
-        return folderPath;
+    public String getRootPath() {
+        return rootPath;
     }
 
-    public void setFolderPath(final String folderPath) {
-        this.folderPath = folderPath;
+    public void setRootPath(final String rootPath) {
+        this.rootPath = rootPath;
+    }
+
+    public String getDefaultPath() {
+        return defaultPath;
+    }
+
+    public void setDefaultPath(final String defaultPath) {
+        this.defaultPath = defaultPath;
     }
 }

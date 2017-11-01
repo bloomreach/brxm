@@ -131,7 +131,7 @@ public class ContentResource {
     @Path("documents")
     public Response createDocument(NewDocumentInfo newDocumentInfo, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session));
+                (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session, locale));
     }
 
     private Response executeTask(final HttpServletRequest servletRequest,

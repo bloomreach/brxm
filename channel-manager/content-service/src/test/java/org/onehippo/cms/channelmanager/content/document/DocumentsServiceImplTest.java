@@ -28,6 +28,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -37,6 +38,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -74,17 +76,20 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({WorkflowUtils.class, DocumentUtils.class, DocumentTypesService.class,
-        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class})
+        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class, DisplayNameUtils.class})
 public class DocumentsServiceImplTest {
+
     private Session session;
     private Locale locale;
     private DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
+    private NewDocumentInfo info;
 
     @Before
     public void setup() throws RepositoryException {
         session = createMock(Session.class);
         locale = new Locale("en");
 
+        PowerMock.mockStatic(DisplayNameUtils.class);
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
         PowerMock.mockStatic(EditingUtils.class);
@@ -92,6 +97,13 @@ public class DocumentsServiceImplTest {
         PowerMock.mockStatic(FolderUtils.class);
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(WorkflowUtils.class);
+
+        info = new NewDocumentInfo();
+        info.setName("Breaking News");
+        info.setSlug("breaking-news");
+        info.setTemplateQuery("new-news-document");
+        info.setDocumentTypeId("project:newsdocument");
+        info.setRootPath("/content/documents/channel/news");
     }
 
     @Test
@@ -252,7 +264,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDraftNoSession() throws Exception {
         final String uuid = "uuid";
-        final String variantType = "variant:type";
+        final String variantType = "project:newsdocument";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
@@ -281,7 +293,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDraftNoDocumentType() throws Exception {
         final String uuid = "uuid";
-        final String variantType = "variant:type";
+        final String variantType = "project:newsdocument";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
@@ -1282,85 +1294,210 @@ public class DocumentsServiceImplTest {
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutName() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("  ");
-        info.setSlug("new-document");
-        info.setDocumentTypeId("project:news");
-        info.setFolderPath("/content/documents/channel");
-        documentsService.createDocument(info, session);
+        info.setName("");
+        documentsService.createDocument(info, session, locale);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutSlug() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("New Document");
         info.setSlug("");
-        info.setDocumentTypeId("project:news");
-        info.setFolderPath("/content/documents/channel");
-        documentsService.createDocument(info, session);
+        documentsService.createDocument(info, session, locale);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void createDocumentWithoutTemplateQuery() throws Exception {
+        info.setTemplateQuery("");
+        documentsService.createDocument(info, session, locale);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutDocumentTypeId() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("New Document");
-        info.setSlug("new-document");
-        info.setFolderPath("/content/documents/channel");
-        documentsService.createDocument(info, session);
+        info.setDocumentTypeId("");
+        documentsService.createDocument(info, session, locale);
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutFolderPath() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("New Document");
-        info.setSlug("new-document");
-        info.setDocumentTypeId("project:news");
-        info.setFolderPath("");
-        documentsService.createDocument(info, session);
+    public void createDocumentWithoutRootPath() throws Exception {
+        info.setRootPath("");
+        documentsService.createDocument(info, session, locale);
     }
 
     @Test
     public void createExistingDocument() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("New Document");
-        info.setSlug("new-document");
-        info.setDocumentTypeId("project:news");
-        info.setFolderPath("/content/documents/channel/2017/10/31");
-
         final Node folderNode = createMock(Node.class);
-        expect(FolderUtils.getOrCreateFolder(eq("/content/documents/channel/2017/10/31"), eq(session))).andReturn(folderNode);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("new-document"))).andReturn(true);
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(true);
         replayAll(folderNode);
 
         try {
-            documentsService.createDocument(info, session);
+            documentsService.createDocument(info, session, locale);
             fail("No Exception");
         } catch (ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.ALREADY_EXISTS));
         }
+
+        verifyAll();
     }
 
     @Test
-    public void createDocument() throws Exception {
-        final NewDocumentInfo info = new NewDocumentInfo();
-        info.setName("New Document");
-        info.setSlug("new-document");
-        info.setDocumentTypeId("project:news");
-        info.setFolderPath("/content/documents/channel/2017/10/31");
-
+    public void createDocumentNoWorkflow() throws Exception {
         final Node folderNode = createMock(Node.class);
-        expect(FolderUtils.getOrCreateFolder(eq("/content/documents/channel/2017/10/31"), eq(session))).andReturn(folderNode);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("new-document"))).andReturn(false);
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(false);
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
+        expect(DocumentUtils.getDisplayName(folderNode)).andReturn(Optional.of("News"));
         replayAll(folderNode);
 
-        documentsService.createDocument(info, session);
+        try {
+            documentsService.createDocument(info, session, locale);
+            fail("No Exception");
+        } catch (MethodNotAllowed e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_FOLDER));
+            assertThat(errorInfo.getParams().get("displayName"), equalTo("News"));
+        }
+
+        verifyAll();
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void createDocumentWorkflowThrowsException() throws Exception {
+        final Node folderNode = createMock("folder", Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+                .andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
+
+        replayAll(folderNode, folderWorkflow);
+
+        documentsService.createDocument(info, session, locale);
+    }
+
+    @Test
+    public void createDocumentInRootPath() throws Exception {
+        final Node folderNode = createMock("folder", Node.class);
+        final Node documentHandle = createMock("documentHandle", Node.class);
+        final Node documentDraft = createMock("documentDraft", Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+                .andReturn("/content/documents/channel/news/breaking-news");
+        expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
+                .andReturn(documentHandle);
+        expect(DisplayNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+
+        DisplayNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
+        expectLastCall();
+
+        expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(WorkflowUtils.Variant.DRAFT)))
+                .andReturn(Optional.of(documentDraft));
+
+        expect(documentHandle.getIdentifier()).andReturn("uuid");
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.getId()).andReturn("project:newsdocument");
+        expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
+
+        session.save();
+        expectLastCall();
+
+        final List<FieldType> fields = Collections.emptyList();
+        expect(docType.getFields()).andReturn(fields);
+        FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        replayAll(folderNode, documentDraft, folderWorkflow, docType, session);
+
+        final Document document = documentsService.createDocument(info, session, locale);
+
+        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
+        assertThat(document.getFields().size(), equalTo(0));
+
+        verifyAll();
+    }
+
+    @Test
+    public void createDocumentInDefaultPath() throws Exception {
+        final Node rootFolderNode = createMock("rootFolder", Node.class);
+        final Node folderNode = createMock("folder", Node.class);
+        final Node documentHandle = createMock("documentHandle", Node.class);
+        final Node documentDraft = createMock("documentDraft", Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        info.setDefaultPath("2017/11");
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(rootFolderNode);
+        expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+                .andReturn("/content/documents/channel/news/breaking-news");
+        expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
+                .andReturn(documentHandle);
+        expect(DisplayNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+
+        DisplayNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
+        expectLastCall();
+
+        expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(WorkflowUtils.Variant.DRAFT)))
+                .andReturn(Optional.of(documentDraft));
+
+        expect(documentHandle.getIdentifier()).andReturn("uuid");
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.getId()).andReturn("project:newsdocument");
+        expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
+
+        session.save();
+        expectLastCall();
+
+        final List<FieldType> fields = Collections.emptyList();
+        expect(docType.getFields()).andReturn(fields);
+        FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        replayAll(folderNode, documentDraft, folderWorkflow, docType, session);
+
+        final Document document = documentsService.createDocument(info, session, locale);
+
+        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
+        assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
     }
 
     private DocumentType provideDocumentType(final Node handle) throws Exception {
-        final String variantType = "variant:type";
+        final String variantType = "project:newsdocument";
         final DocumentType docType = createMock(DocumentType.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 

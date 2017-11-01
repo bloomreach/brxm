@@ -31,20 +31,21 @@ import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockSession;
 
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 public class FolderUtilsTest {
 
@@ -55,6 +56,11 @@ public class FolderUtilsTest {
     public void setUp() throws RepositoryException {
         root = MockNode.root();
         session = root.getSession();
+    }
+
+    @Test(expected = IllegalAccessException.class)
+    public void cannotCreateInstance() throws Exception {
+        FolderUtils.class.newInstance();
     }
 
     @Test
@@ -71,24 +77,47 @@ public class FolderUtilsTest {
         final Node mockNode = createMock(Node.class);
         expect(mockNode.hasNode("test")).andThrow(new RepositoryException());
         expect(mockNode.getPath()).andThrow(new RepositoryException());
-        replay(mockNode);
+        replayAll();
         FolderUtils.nodeExists(mockNode, "test");
+    }
+
+    @Test
+    public void getLocaleOfTranslatedFolder() throws Exception {
+        root.addMixin("hippotranslation:translated");
+        root.setProperty("hippotranslation:locale", "en_GB");
+        assertThat(FolderUtils.getLocale(root), equalTo("en_GB"));
+    }
+
+    @Test
+    public void getLocaleOfNonTranslatedFolder() {
+        assertThat(FolderUtils.getLocale(root), equalTo(null));
+    }
+
+    @Test
+    public void getLocaleThrowsException() throws Exception {
+        final Node brokenNode = createMock(Node.class);
+        expect(brokenNode.isNodeType(eq("hippotranslation:translated"))).andThrow(new RepositoryException());
+        expect(brokenNode.getPath()).andThrow(new RepositoryException());
+        replayAll();
+        assertThat(FolderUtils.getLocale(brokenNode), equalTo(null));
     }
 
     @Test
     public void getExistingFolder() throws Exception {
         final Node test = root.addNode("test", "hippostd:folder");
-        final Node foo = test.addNode("foo", "hippostd:folder");
+        assertThat(FolderUtils.getFolder("/test", session), equalTo(test));
+    }
 
-        assertThat(FolderUtils.getOrCreateFolder("/test", session), equalTo(test));
-        assertThat(FolderUtils.getOrCreateFolder("/test/foo", session), equalTo(foo));
+    @Test(expected = NotFoundException.class)
+    public void getMissingFolder() throws Exception {
+        FolderUtils.getFolder("/test", session);
     }
 
     @Test
-    public void getNotFolder() throws Exception {
+    public void getNonFolder() throws Exception {
         root.addNode("test", "hippo:document");
         try {
-            FolderUtils.getOrCreateFolder("/test", session);
+            FolderUtils.getFolder("/test", session);
             fail("No Exception");
         } catch (BadRequestException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -98,12 +127,44 @@ public class FolderUtilsTest {
     }
 
     @Test(expected = InternalServerErrorException.class)
-    public void repositoryFails() throws Exception {
+    public void getFolderThrowsException() throws Exception {
         final Session mockSession = createMock(Session.class);
         expect(mockSession.nodeExists("/test")).andThrow(new RepositoryException());
-        replay(mockSession);
+        replayAll();
 
-        FolderUtils.getOrCreateFolder("/test", mockSession);
+        FolderUtils.getFolder("/test", mockSession);
+    }
+
+    @Test
+    public void getOrCreateExistingFolder() throws Exception {
+        final Node test = root.addNode("test", "hippostd:folder");
+        final Node foo = test.addNode("foo", "hippostd:folder");
+
+        assertThat(FolderUtils.getOrCreateFolder(root,"test", session), equalTo(test));
+        assertThat(FolderUtils.getOrCreateFolder(root,"test/foo", session), equalTo(foo));
+    }
+
+    @Test
+    public void getOrCreateNonFolder() throws Exception {
+        root.addNode("test", "hippo:document");
+        try {
+            FolderUtils.getOrCreateFolder(root, "test", session);
+            fail("No Exception");
+        } catch (BadRequestException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_FOLDER));
+            assertThat(errorInfo.getParams(), equalTo(Collections.singletonMap("path", "/test")));
+        }
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void getOrCreateFolderThrowsException() throws Exception {
+        final Node mockNode = createMock(Node.class);
+        expect(mockNode.hasNode("test")).andThrow(new RepositoryException());
+        expect(mockNode.getPath()).andThrow(new RepositoryException());
+        replayAll();
+
+        FolderUtils.getOrCreateFolder(mockNode,"test", session);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -114,10 +175,9 @@ public class FolderUtilsTest {
         final Workflow wrongWorkflow = createMock(Workflow.class);
         expect(workflowManager.getWorkflow(eq("internal"), eq(root))).andReturn(wrongWorkflow);
 
-        final Object[] mocks = { workflowManager, wrongWorkflow };
-        replay(mocks);
+        replayAll();
 
-        FolderUtils.getOrCreateFolder("/test", session);
+        FolderUtils.getOrCreateFolder(root,"test", session);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -129,10 +189,9 @@ public class FolderUtilsTest {
         expect(workflowManager.getWorkflow(eq("internal"), eq(root))).andReturn(folderWorkflow);
         expect(folderWorkflow.add("new-folder", "hippostd:folder", "test")).andThrow(new WorkflowException("eek"));
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        FolderUtils.getOrCreateFolder("/test", session);
+        FolderUtils.getOrCreateFolder(root,"test", session);
     }
 
     @Test
@@ -140,7 +199,7 @@ public class FolderUtilsTest {
         root.setProperty("hippostd:foldertype", new String[] { "new-folder" });
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
-        root.getSession().getWorkspace().setWorkflowManager(workflowManager);
+        session.getWorkspace().setWorkflowManager(workflowManager);
 
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
         expect(workflowManager.getWorkflow(eq("internal"), eq(root))).andReturn(folderWorkflow);
@@ -148,12 +207,11 @@ public class FolderUtilsTest {
                 () -> root.addNode("test", "hippostd:folder").getPath()
         );
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        final Node test = FolderUtils.getOrCreateFolder("/test", session);
+        final Node test = FolderUtils.getOrCreateFolder(root,"test", session);
 
-        verify(mocks);
+        verifyAll();
         assertSingleChild(root);
         assertThat(test, equalTo(test));
         assertFolderTypes(test, "new-folder");
@@ -172,12 +230,11 @@ public class FolderUtilsTest {
                 () -> root.addNode("test", "hippostd:folder").getPath()
         );
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder("/test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root,"test", session);
 
-        verify(mocks);
+        verifyAll();
         assertSingleChild(root);
         assertThat(returnedNode, equalTo(root.getNode("test")));
 
@@ -202,12 +259,11 @@ public class FolderUtilsTest {
                 () -> translatedNode.addNode("test", "hippostd:folder").getPath()
         );
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder("/translated/test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root,"translated/test", session);
 
-        verify(mocks);
+        verifyAll();
         assertSingleChild(translatedNode);
         assertThat(returnedNode, equalTo(root.getNode("translated/test")));
         assertFolderTypes(returnedNode, "new-translated-folder");
@@ -233,12 +289,11 @@ public class FolderUtilsTest {
                 () -> root.getNode("one").addNode("two", "hippostd:folder").getPath()
         );
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder("/one/two", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root,"one/two", session);
 
-        verify(mocks);
+        verifyAll();
 
         assertSingleChild(root);
         final Node one = root.getNode("one");
@@ -269,12 +324,11 @@ public class FolderUtilsTest {
                 () -> root.getNode("one/two").addNode("three", "hippostd:folder").getPath()
         );
 
-        final Object[] mocks = { workflowManager, folderWorkflow };
-        replay(mocks);
+        replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder("/one/two/three", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root,"one/two/three", session);
 
-        verify(mocks);
+        verifyAll();
 
         assertSingleChild(one);
         final Node two = one.getNode("two");
