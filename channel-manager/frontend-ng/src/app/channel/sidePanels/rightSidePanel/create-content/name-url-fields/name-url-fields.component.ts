@@ -15,8 +15,10 @@
  */
 
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs/rx';
 import { CreateContentService } from '../create-content.service';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'hippo-name-url-fields',
