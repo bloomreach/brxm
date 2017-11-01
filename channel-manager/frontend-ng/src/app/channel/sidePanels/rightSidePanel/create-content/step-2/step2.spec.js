@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('editContent', () => {
+describe('createContentStep2Controller', () => {
   let $componentController;
   let $q;
   let $rootScope;
@@ -26,6 +26,7 @@ describe('editContent', () => {
   let DialogService;
   let HippoIframeService;
   let FeedbackService;
+  let CreateContentService;
 
   let $ctrl;
   let $scope;
@@ -55,6 +56,7 @@ describe('editContent', () => {
   };
   const testDocument = {
     id: 'test',
+    displayName: 'testDoc',
     info: {
       type: {
         id: 'ns:testdocument',
@@ -63,18 +65,9 @@ describe('editContent', () => {
     fields: {
       'ns:string': [
         {
-          value: 'String value',
+          value: '',
         },
       ],
-      'ns:multiplestring': [
-        {
-          value: 'One',
-        },
-        {
-          value: 'Two',
-        },
-      ],
-      'ns:emptymultiplestring': [],
     },
   };
 
@@ -89,6 +82,8 @@ describe('editContent', () => {
       $translate = _$translate_;
     });
 
+    CreateContentService = jasmine.createSpyObj('CreateContentService', ['getTemplateQuery', 'getDocument', 'createDraft', 'generateDocumentUrlByName']);
+
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
@@ -96,7 +91,7 @@ describe('editContent', () => {
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['close']);
 
     dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
@@ -108,7 +103,7 @@ describe('editContent', () => {
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
-    $ctrl = $componentController('hippoEditContent', {
+    $ctrl = $componentController('hippoCreateContentStep2', {
       $scope,
       $element,
       $timeout,
@@ -118,12 +113,26 @@ describe('editContent', () => {
       DialogService,
       HippoIframeService,
       FeedbackService,
+      CreateContentService,
     });
     $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $ctrl.onFullWidth = () => true;
-    $ctrl.onClose = () => true;
     $ctrl.onBeforeStateChange = () => $q.resolve();
     $rootScope.$apply();
+  });
+
+  it('subscribes to the kill-editor event', () => {
+    spyOn($ctrl, 'close');
+    expect(CmsService.subscribe).toHaveBeenCalled();
+    const onKillEditor = CmsService.subscribe.calls.mostRecent().args[1];
+
+    $ctrl.documentId = 'documentId';
+
+    onKillEditor('differentId');
+    expect($ctrl.close).not.toHaveBeenCalled();
+
+    onKillEditor('documentId');
+    expect($ctrl.close).toHaveBeenCalled();
   });
 
   it('should call parent "on full width" mode on and off', () => {
@@ -146,20 +155,131 @@ describe('editContent', () => {
     expect($ctrl.close).toHaveBeenCalled();
   });
 
-  it('shows the correct close button label', () => {
-    $ctrl.closeLabel = 'Close';
-    $ctrl.cancelLabel = 'Cancel';
-    expect($ctrl.closeButtonLabel()).toBe('Close');
+  it('onInit, loads the document from the createContentService', () => {
+    spyOn($ctrl,'loadNewDocument');
 
-    $ctrl.form.$dirty = true;
-    expect($ctrl.closeButtonLabel()).toBe('Cancel');
-
-    $ctrl.form.$dirty = false;
-    expect($ctrl.closeButtonLabel()).toBe('Close');
-
-    delete $ctrl.form;
-    expect($ctrl.closeButtonLabel()).toBe('Close');
+    $ctrl.$onInit();
+    expect($ctrl.loadNewDocument).toHaveBeenCalled();
   });
+
+  describe('opening a document', () => {
+    beforeEach(() => {
+      ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+      CreateContentService.getDocument.and.returnValue(testDocument);
+    });
+
+    it('gets the newly created draft document from create content service', () => {
+      $ctrl.loadNewDocument();
+      expect(CreateContentService.getDocument).toHaveBeenCalled();
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+    });
+
+    it('gets the newly created draft document from create content service', () => {
+      spyOn($ctrl, '_onLoadSuccess');
+      $ctrl.loadNewDocument();
+      $rootScope.$apply();
+      expect($ctrl._onLoadSuccess).toHaveBeenCalledWith(testDocument, testDocumentType);
+      expect($ctrl.loading).not.toBeDefined();
+    });
+  });
+
+  describe('closing the panel', () => {
+    beforeEach(() => {
+      ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+      CreateContentService.getDocument.and.returnValue(testDocument);
+      DialogService.confirm.and.callThrough();
+
+      $ctrl.$onInit();
+      $rootScope.$digest();
+    });
+
+    it('Calls discardAndClose method to confirm document discard and close the panel', () => {
+      spyOn($ctrl, '_discardAndClose').and.returnValue($q.resolve());
+
+      $ctrl.close();
+      expect($ctrl._discardAndClose).toHaveBeenCalled();
+    });
+
+    it('Discards the document when "discard" is selected', () => {
+      spyOn($ctrl, '_confirmDiscardChanges').and.returnValue($q.resolve());
+
+      $ctrl.close();
+      $rootScope.$digest();
+
+      expect($ctrl.doc).toBeUndefined();
+      expect($ctrl.documentId).toBeUndefined();
+      expect($ctrl.docType).toBeUndefined();
+      expect($ctrl.editing).toBeUndefined();
+      expect($ctrl.feedback).toBeUndefined();
+      expect($ctrl.title).toBe($ctrl.defaultTitle);
+      expect($ctrl.form.$setPristine).toHaveBeenCalled();
+    });
+
+    it('Will not discard the document when cancel is clicked', () => {
+      spyOn($ctrl, '_confirmDiscardChanges').and.returnValue($q.reject());
+
+      $ctrl.close();
+      $rootScope.$digest();
+
+      expect($ctrl.doc).not.toBeUndefined();
+      expect($ctrl.documentId).not.toBeUndefined();
+      expect($ctrl.docType).not.toBeUndefined();
+      expect($ctrl.editing).not.toBeUndefined();
+      expect($ctrl.title).not.toBe($ctrl.defaultTitle);
+      expect($ctrl.form.$setPristine).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('changing name or URL of the document', () => {
+    beforeEach(() => {
+      spyOn($ctrl, '_openEditNameUrlDialog');
+      ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+      CreateContentService.getDocument.and.returnValue(testDocument);
+      DialogService.confirm.and.callThrough();
+
+      $ctrl.$onInit();
+      $rootScope.$digest();
+    });
+    it('open a change url-name dialog', () => {
+      $ctrl._openEditNameUrlDialog.and.returnValue($q.resolve());
+      $ctrl.editNameUrl();
+
+      expect($ctrl._openEditNameUrlDialog).toHaveBeenCalled();
+    });
+
+    it('changes document title if the change is submitted in dialog', () => {
+      spyOn($ctrl, '_submitEditNameUrl');
+      $ctrl._openEditNameUrlDialog.and.returnValue($q.resolve({ name: 'docName', url: 'doc-url' }));
+      $ctrl.editNameUrl();
+      $rootScope.$apply();
+
+      expect($ctrl._submitEditNameUrl).toHaveBeenCalledWith({ name: 'docName', url: 'doc-url' });
+    });
+
+    it('takes no action if user clicks cancel on the dialog', () => {
+      spyOn($ctrl, '_submitEditNameUrl');
+      $ctrl._openEditNameUrlDialog.and.returnValue($q.reject());
+      $ctrl.editNameUrl();
+
+      expect($ctrl._submitEditNameUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  it('_openEditNameUrlDialog method open a dialog with the correct details', () => {
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+    CreateContentService.getDocument.and.returnValue(testDocument);
+    $ctrl.$onInit();
+    $rootScope.$apply();
+
+    $ctrl._openEditNameUrlDialog();
+
+    const dialogArguments = DialogService.show.calls.mostRecent().args[0];
+
+    expect(dialogArguments.locals.title).toBe('CHANGE_DOCUMENT_NAME');
+    expect(dialogArguments.locals.name).toBe('testDoc');
+  });
+
+  it('show correct dialog to change name or URL of the document', () => {});
 
   it('knows the document is dirty when the backend says so', () => {
     $ctrl.doc = {
@@ -184,756 +304,4 @@ describe('editContent', () => {
     $ctrl.form.$dirty = true;
     expect($ctrl.isDocumentDirty()).toBe(true);
   });
-
-  describe('closing the panel', () => {
-    beforeEach(() => {
-      CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-      ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-      ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-    });
-    it('when editing is not active, deleteDraft should not be called', () => {
-      $ctrl.$onInit('test');
-      $rootScope.$digest();
-      $ctrl.editing = false;
-
-      $ctrl.close();
-      $rootScope.$digest();
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    });
-
-    it('Deleted the draft when all fields were loaded and editing is active', () => {
-      $ctrl.requestedDocument = 'test';
-      $ctrl.$onInit();
-      $rootScope.$digest();
-
-      $ctrl.editing = true;
-      $ctrl.close();
-      $rootScope.$digest();
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
-      expect($ctrl.doc).toBeUndefined();
-      expect($ctrl.documentId).toBeUndefined();
-      expect($ctrl.docType).toBeUndefined();
-      expect($ctrl.editing).toBeUndefined();
-      expect($ctrl.feedback).toBeUndefined();
-      expect($ctrl.disableContentButtons).toBeUndefined();
-      expect($ctrl.title).toBe($ctrl.defaultTitle);
-      expect($ctrl.form.$setPristine).toHaveBeenCalled();
-    });
-  });
-
-  it('asks for confirmation when cancelling changes', () => {
-    DialogService.show.and.returnValue($q.resolve());
-
-    const deferClose = $q.defer();
-    SidePanelService.close.and.returnValue(deferClose.promise);
-
-    $ctrl.doc = {
-      displayName: 'test',
-    };
-    $ctrl.documentId = 'test';
-    $ctrl.form.$dirty = true;
-    $ctrl.editing = true;
-
-    $ctrl.close();
-    $rootScope.$digest();
-
-    expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
-
-    deferClose.resolve();
-    $rootScope.$digest();
-
-    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
-      documentName: 'test',
-    });
-    expect($ctrl.editing).toBeFalsy();
-    expect($ctrl.deleteDraftOnClose).toBe(true);
-  });
-
-  it('asks doesn\'t delete and close if discarding is not confirmed', () => {
-    DialogService.show.and.returnValue($q.reject());
-    $ctrl.doc = {};
-    $ctrl.documentId = 'test';
-    $ctrl.form.$dirty = true;
-    $ctrl.close();
-    $rootScope.$digest();
-
-    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(SidePanelService.close).not.toHaveBeenCalled();
-  });
-
-  it('opens a document', () => {
-    testDocument.displayName = 'Display Name';
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-    spyOn($scope, '$broadcast');
-
-    spyOn($ctrl, '_confirmSaveOrDiscardChanges').and.returnValue($q.resolve());
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    // expect($ctrl._confirmSaveOrDiscardChanges).toHaveBeenCalled();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-
-    expect($ctrl.doc).toEqual(testDocument);
-    expect($ctrl.docType).toEqual(testDocumentType);
-    expect($ctrl.form.$setPristine).toHaveBeenCalled();
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
-
-    $timeout.flush();
-    expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
-    delete testDocument.displayName;
-  });
-
-  it('opens a document with no display name', () => {
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-    spyOn($scope, '$broadcast');
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-
-    expect($ctrl.doc).toEqual(testDocument);
-    expect($ctrl.docType).toEqual(testDocumentType);
-    expect($ctrl.form.$setPristine).toHaveBeenCalled();
-    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
-
-    $timeout.flush();
-    expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
-  });
-
-  it('opens a document without content', () => {
-    const emptyDocument = {
-      id: 'test',
-      displayName: 'Display Name',
-      info: {
-        type: { id: 'ns:testdocument' },
-      },
-      fields: { },
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-
-    expect($ctrl.doc).toBeUndefined();
-    expect($ctrl.docType).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', { displayName: 'Display Name' });
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE', { });
-  });
-
-  it('ignores a non-existing form when opening a document', () => {
-    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-    delete $ctrl.form;
-
-    expect(() => {
-      $ctrl.openDocument('test');
-      $rootScope.$digest();
-    }).not.toThrow();
-  });
-
-  it('knows that a document is loading', () => {
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-
-    const deferredDraft = $q.defer();
-    ContentService.createDraft.and.returnValue(deferredDraft.promise);
-
-    const deferredDocType = $q.defer();
-    ContentService.getDocumentType.and.returnValue(deferredDocType.promise);
-
-    $ctrl._loadDocument('test');
-    expect($ctrl.loading).toBeTruthy();
-
-    $rootScope.$digest();
-    expect($ctrl.loading).toBeTruthy();
-
-    deferredDraft.resolve(testDocument);
-    $rootScope.$digest();
-    expect($ctrl.loading).toBeTruthy();
-
-    deferredDocType.resolve(testDocumentType);
-    $rootScope.$digest();
-    expect($ctrl.loading).toBeFalsy();
-  });
-
-  describe('with an existing document', () => {
-    const newDocument = {
-      id: 'newdoc',
-      info: {
-        type: {
-          id: 'ns:newdoctype',
-        },
-      },
-      fields: {
-        dummy: 'value',
-      },
-    };
-    const newDocumentType = {
-      id: 'ns:newdoctype',
-      fields: [
-        {
-          id: 'dummy',
-        },
-      ],
-    };
-
-    beforeEach(() => {
-      $ctrl.documentId = 'documentId';
-      $ctrl.doc = testDocument;
-      $ctrl.docType = testDocumentType;
-      $ctrl.editing = true;
-
-      CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
-      ContentService.createDraft.and.returnValue($q.resolve(newDocument));
-      ContentService.deleteDraft.and.returnValue($q.resolve());
-      ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
-      spyOn($scope, '$broadcast');
-    });
-
-    function expectNewDocument() {
-      expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('newdoc');
-      expect(ContentService.createDraft).toHaveBeenCalledWith('newdoc');
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:newdoctype');
-
-      expect($ctrl.doc).toEqual(newDocument);
-      expect($ctrl.docType).toEqual(newDocumentType);
-      expect($ctrl.form.$setPristine).toHaveBeenCalled();
-
-      $timeout.flush();
-      expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
-    }
-
-    it('can save pending changes before opening a new document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-
-      $ctrl.openDocument('newdoc');
-      $rootScope.$digest();
-
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveDocument');
-      expectNewDocument();
-    });
-
-    it('does not open the new document when saving pending changes in the old document failed', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.reject({}));
-
-      $ctrl.openDocument('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-      expect(ContentService.createDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-
-      expect($ctrl.doc).toEqual(testDocument);
-      expect($ctrl.docType).toEqual(testDocumentType);
-    });
-
-    it('can discard pending changes to an existing document before opening a new document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('DISCARD'));
-
-      $ctrl.openDocument('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expectNewDocument();
-    });
-
-    it('does not change state when cancelling the reload of a document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.reject()); // Say Cancel
-
-      $ctrl.openDocument('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-      expect(ContentService.createDraft).not.toHaveBeenCalled();
-    });
-
-    it('does not save pending changes when there are none', () => {
-      $ctrl.form.$dirty = false;
-
-      $ctrl.openDocument('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).not.toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expectNewDocument();
-    });
-  });
-
-  it('fails to open a document with pending invalid changes in the draft', () => {
-    CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DRAFT_INVALID_MESSAGE');
-  });
-
-  it('fails to open a document owned by another user', () => {
-    const response = {
-      reason: 'OTHER_HOLDER',
-      params: {
-        userId: 'jtester',
-        userName: 'John Tester',
-        displayName: 'Display Name',
-      },
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'John Tester' });
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response.params);
-  });
-
-  it('falls back to the user\'s id if there is no display name', () => {
-    const response = {
-      reason: 'OTHER_HOLDER',
-      params: {
-        userId: 'tester',
-      },
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'tester' });
-    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response.params);
-  });
-
-  it('fails to open a document with a publication request', () => {
-    const response = {
-      reason: 'REQUEST_PENDING',
-      params: {
-        displayName: 'Display Name',
-      },
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_REQUEST_PENDING_MESSAGE', { });
-  });
-
-  it('fails to open a document which is not a document', () => {
-    const response = {
-      reason: 'NOT_A_DOCUMENT',
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($ctrl.disableContentButtons).toBeFalsy();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_A_DOCUMENT_MESSAGE', { });
-  });
-
-  it('fails to open a non-existent document', () => {
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($ctrl.disableContentButtons).toBeTruthy();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', { });
-  });
-
-  it('fails to open a document with random data in the response', () => {
-    const response = { bla: 'test' };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
-  });
-
-  it('fails to open a document with no data in the response', () => {
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({}));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
-  });
-
-  it('fails to open a document with an unknown error reason', () => {
-    const response = {
-      reason: 'unknown',
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).not.toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
-  });
-
-  it('fails to open a document with no type', () => {
-    const doc = {
-      info: {
-        type: {
-          id: 'document:type',
-        },
-      },
-      fields: {
-        bla: 1,
-      },
-      displayName: 'Document Display Name',
-    };
-    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(doc));
-    ContentService.getDocumentType.and.returnValue($q.reject({}));
-
-    $ctrl.openDocument('test');
-    $rootScope.$digest();
-
-    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
-    expect($ctrl.doc).toBeUndefined();
-    expect($ctrl.docType).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
-  });
-
-  it('saves a document', () => {
-    const savedDoc = {
-      id: '123',
-    };
-    ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
-
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.saveDocument();
-
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-    $rootScope.$digest();
-
-    expect($ctrl.doc).toEqual(savedDoc);
-    expect($ctrl.form.$setPristine).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveDocument');
-  });
-
-  it('does not save a document when there are no changes', () => {
-    $ctrl.doc = testDocument;
-
-    $ctrl.saveDocument();
-    $rootScope.$digest();
-
-    expect(ContentService.saveDraft).not.toHaveBeenCalled();
-  });
-
-  it('shows an error when document save fails', () => {
-    const response = {
-      reason: 'TEST',
-    };
-    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.saveDocument();
-
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
-    expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-  });
-
-  it('shows an error when document save fails due to other user now being the holder', () => {
-    const response = {
-      reason: 'OTHER_HOLDER',
-      params: {
-        userId: 'tester',
-      },
-    };
-    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.saveDocument();
-
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' });
-  });
-
-  it('shows an error when document save fails due to other *named* user now being the holder', () => {
-    const response = {
-      reason: 'OTHER_HOLDER',
-      params: {
-        userId: 'tester',
-        userName: 'Joe Tester',
-      },
-    };
-    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
-
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.saveDocument();
-
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' });
-  });
-
-  describe('when document save fails because of an invalid field', () => {
-    beforeEach(() => {
-      const saveResponse = angular.copy(testDocument);
-      saveResponse.fields['ns:string'] = [
-        {
-          value: '',
-          errorInfo: {
-            code: 'REQUIRED_FIELD_EMPTY',
-          },
-        },
-      ];
-
-      ContentService.saveDraft.and.returnValue($q.reject({ data: saveResponse }));
-
-      $ctrl.doc = testDocument;
-      $ctrl.docType = testDocumentType;
-      $ctrl.form.$dirty = true;
-    });
-
-    it('shows an error and reloads the document type', () => {
-      const reloadedDocumentType = angular.copy(testDocumentType);
-      ContentService.getDocumentType.and.returnValue($q.resolve(reloadedDocumentType));
-
-      $ctrl.saveDocument();
-
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-      $rootScope.$digest();
-
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-      expect($ctrl.docType).toBe(reloadedDocumentType);
-    });
-
-    it('shows an error when reloading the document type fails', () => {
-      ContentService.getDocumentType.and.returnValue($q.reject({ status: 404 }));
-
-      $ctrl.saveDocument();
-
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-      $rootScope.$digest();
-
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-      expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', {});
-      expect($ctrl.docType).toBe(testDocumentType);
-    });
-  });
-
-  it('shows an error when document save fails and there is no data returned', () => {
-    ContentService.saveDraft.and.returnValue($q.reject({}));
-
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.saveDocument();
-
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {});
-  });
-
-  it('directly opens the content editor in a certain mode if the form is not dirty', () => {
-    $ctrl.documentId = 'test';
-    SidePanelService.close.and.returnValue($q.resolve());
-
-    const mode = 'view';
-    $ctrl.openContentEditor(mode);
-
-    expect($ctrl.deleteDraftOnClose).toBe(false);
-
-    $rootScope.$digest();
-
-    expect(ContentService.saveDraft).not.toHaveBeenCalled();
-    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', mode);
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentPublish');
-  });
-
-  it('can discard pending changes before opening the content editor', () => {
-    DialogService.show.and.returnValue($q.resolve('DISCARD'));
-    $ctrl.documentId = 'test';
-    $ctrl.doc = { displayName: 'Display Name' };
-    $ctrl.form.$dirty = true;
-
-    $ctrl.openContentEditor('edit');
-
-    expect($ctrl.deleteDraftOnClose).toBe(false);
-
-    $rootScope.$digest();
-
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(DialogService.show.calls.count()).toEqual(1);
-    expect(ContentService.saveDraft).not.toHaveBeenCalled();
-    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentEditor');
-  });
-
-  it('saves pending changes before opening the content editor', () => {
-    DialogService.show.and.returnValue($q.resolve('SAVE'));
-    $ctrl.documentId = 'test';
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
-
-    $ctrl.openContentEditor('edit');
-
-    expect($ctrl.deleteDraftOnClose).toBe(false);
-
-    $rootScope.$digest();
-
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
-    expect(CmsService.reportUsageStatistic.calls.allArgs()).toEqual([
-      ['CMSChannelsSaveDocument'],
-      ['CMSChannelsContentEditor'],
-    ]);
-  });
-
-  it('releases holdership of the document when publishing it', () => {
-    DialogService.show.and.returnValue($q.resolve('SAVE'));
-    $ctrl.documentId = 'documentId';
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.editing = true;
-    ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.deleteDraft.and.returnValue($q.resolve());
-
-    $ctrl.openContentEditor('view');
-    $rootScope.$digest();
-
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-    expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'documentId', 'view');
-  });
-
-  it('does not open the content editor if saving changes failed', () => {
-    DialogService.show.and.returnValue($q.resolve('SAVE'));
-    $ctrl.documentId = 'documentId';
-    $ctrl.doc = testDocument;
-    $ctrl.form.$dirty = true;
-    $ctrl.editing = true;
-    ContentService.saveDraft.and.returnValue($q.reject({}));
-
-    $ctrl.openContentEditor('view');
-    $rootScope.$digest();
-
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(SidePanelService.close).not.toHaveBeenCalled();
-    expect(CmsService.publish).not.toHaveBeenCalled();
-  });
-
-  it('subscribes to the kill-editor event', () => {
-    spyOn($ctrl, 'close');
-    expect(CmsService.subscribe).toHaveBeenCalled();
-    const onKillEditor = CmsService.subscribe.calls.mostRecent().args[1];
-
-    $ctrl.documentId = 'documentId';
-
-    onKillEditor('differentId');
-    expect($ctrl.deleteDraftOnClose).toBe(true);
-    expect($ctrl.close).not.toHaveBeenCalled();
-
-    onKillEditor('documentId');
-    expect($ctrl.deleteDraftOnClose).toBe(false);
-    expect($ctrl.close).toHaveBeenCalled();
-  });
 });
-

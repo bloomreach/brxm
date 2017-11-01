@@ -94,7 +94,6 @@ class createContentStep2Controller {
 
     CmsService.subscribe('kill-editor', (documentId) => {
       if (this.documentId === documentId) {
-        this.deleteDraftOnClose = false;
         this.close();
       }
     });
@@ -162,14 +161,11 @@ class createContentStep2Controller {
 
   loadNewDocument() {
     const doc = this.CreateContentService.getDocument();
+    this.documentId = doc.id;
     this.FieldService.setDocumentId(doc.id);
     this.loading = true;
-
-    if (this._hasFields(doc)) {
-      return this.ContentService.getDocumentType(doc.info.type.id)
-        .then(docType => this._onLoadSuccess(doc, docType)).finally(() => delete this.loading);
-    }
-    return this.$q.reject(this._noContentResponse(doc));
+    return this.ContentService.getDocumentType(doc.info.type.id)
+      .then(docType => this._onLoadSuccess(doc, docType)).finally(() => delete this.loading);
   }
 
   _onLoadSuccess(doc, docType) {
@@ -201,10 +197,6 @@ class createContentStep2Controller {
       errorKey = 'UNAVAILABLE';
     }
     this._handleErrorResponse(errorKey, params);
-  }
-
-  _hasFields(doc) {
-    return doc.fields && Object.keys(doc.fields).length > 0;
   }
 
   _noContentResponse(doc) {
