@@ -59,7 +59,7 @@ describe('Create content component', () => {
     feedbackService = fixture.debugElement.injector.get(FeedbackService);
   });
 
-  describe('DocumentType selection', () => {
+  describe('DocumentType', () => {
     it('throws an error if options is not set', () => {
       expect(() => {
         component.options = null;
