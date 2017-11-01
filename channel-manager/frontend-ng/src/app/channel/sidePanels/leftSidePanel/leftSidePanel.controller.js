@@ -22,6 +22,7 @@ class LeftSidePanelCtrl {
     CatalogService,
     SiteMapService,
     HippoIframeService,
+    ChannelService,
   ) {
     'ngInject';
 
@@ -31,6 +32,7 @@ class LeftSidePanelCtrl {
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapService = SiteMapService;
+    this.ChannelService = ChannelService;
 
     SidePanelService.initialize('left', $element.find('.left-side-panel'));
   }
@@ -66,6 +68,10 @@ class LeftSidePanelCtrl {
 
   isSidePanelLifted() {
     return this.SidePanelService.isSidePanelLifted;
+  }
+
+  isEditable() {
+    return this.ChannelService.isEditable();
   }
 }
 
