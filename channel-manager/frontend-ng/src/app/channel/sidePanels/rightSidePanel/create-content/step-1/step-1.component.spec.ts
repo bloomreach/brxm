@@ -21,8 +21,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { TemplateQuery, DocumentTypeInfo } from '../create-content';
-import { CreateContentComponent } from './step-1.component';
+import { TemplateQuery, DocumentTypeInfo } from '../create-content.types';
+import { CreateContentComponent } from '../step-1/step-1.component';
 import { CreateContentService } from '../create-content.service';
 import FeedbackService from '../../../../../services/feedback.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
@@ -39,7 +39,7 @@ class FeedbackServiceMock {
   showError(key: string, params: Map<string, any>): void {}
 }
 
-describe('Create content component', () => {
+fdescribe('Create content component', () => {
 
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;

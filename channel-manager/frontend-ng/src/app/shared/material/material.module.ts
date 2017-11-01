@@ -21,7 +21,8 @@ import {
   MdListModule,
   MdButtonModule,
   MdInputModule,
-  MdSelectModule, MdIconModule,
+  MdSelectModule,
+  MdIconModule
 } from '@angular/material';
 import './material.scss';
 

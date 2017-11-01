@@ -51,7 +51,7 @@ class ChannelActionsService extends MenuService {
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
-      isIconVisible: () => this.hasAnyChanges(),
+      isIconVisible: () => this._hasAnyChanges(),
       iconSvg: 'attention',
     })
       .addAction('settings', {
@@ -119,7 +119,7 @@ class ChannelActionsService extends MenuService {
     this.showSubPage('manage-changes');
   }
 
-  hasAnyChanges() {
+  _hasAnyChanges() {
     return this._hasOwnChanges() || this._hasChangesToManage();
   }
 
@@ -175,8 +175,20 @@ class ChannelActionsService extends MenuService {
   }
 
   _confirmDiscard() {
+    const channel = this.ChannelService.getChannel();
+    let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
+
+    if (this._isBranch()) {
+      const project = this.ProjectService.selectedProject;
+
+      content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE', {
+        channelName: channel.name,
+        projectName: project.name,
+      });
+    }
+
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .textContent(content)
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.$translate.instant('CANCEL'));
 

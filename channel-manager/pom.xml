@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.2-SNAPSHOT</version>
+    <version>29.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
@@ -37,9 +37,9 @@
     <hippo.repository.version>5.1.0-create-content-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.1.0-create-content-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.1.0-create-content-SNAPSHOT</hippo.hst.version>
-    <hippo.ckeditor.version>4.7.1-h2-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.7.1-h12.1.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>4.1.0-create-content-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>1.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -270,6 +270,7 @@
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>**/target/**/*</exclude>
 
                 <!-- repository content XML -->
                 <exclude>content-service/src/main/resources/**/*.xml</exclude>
