@@ -123,26 +123,26 @@ describe('RightSidePanel', () => {
     });
 
     it('initialises "edit" component when calling onOpen with id "edit"', () => {
-      spyOn($ctrl, '_openInMode').and.callThrough();
+      spyOn($ctrl, 'openInMode').and.callThrough();
       spyOn($ctrl, '_setMode').and.callThrough();
       sidePanelHandlers.onOpen('edit', testId);
       $rootScope.$digest();
 
       expect($ctrl._onOpen).toHaveBeenCalledWith('edit', testId);
-      expect($ctrl._openInMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
+      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
       expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
       expect($ctrl.mode).toBe($ctrl.modes.edit);
       expect($ctrl.options).toBe(testId);
     });
 
     it('initialises "create" component when calling onOpen with id "create"', () => {
-      spyOn($ctrl, '_openInMode').and.callThrough();
+      spyOn($ctrl, 'openInMode').and.callThrough();
       spyOn($ctrl, '_setMode').and.callThrough();
       sidePanelHandlers.onOpen('create', testOptions);
       $rootScope.$digest();
 
       expect($ctrl._onOpen).toHaveBeenCalledWith('create', testOptions);
-      expect($ctrl._openInMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
+      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
       expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
       expect($ctrl.mode).toBe($ctrl.modes.create);
       expect($ctrl.options).toBe(testOptions);

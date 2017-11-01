@@ -53,10 +53,10 @@ describe('NameUrlFields Component', () => {
 
   describe('ngOnInit', () => {
     it('calls setDocumentUrlByName 1 second after keyup was triggered on nameInputElement', fakeAsync(() => {
-      spyOn(component, 'setDocumentUrlByName').and.callThrough();
+      spyOn(component, 'setDocumentUrlByName');
 
       const nameInput = component.nameInputElement.nativeElement;
-      component.form.controls['name'] = { value: 'test val' };
+      component.nameField = 'test val';
       nameInput.dispatchEvent(new Event('keyup'));
       tick(1000);
       expect(component.setDocumentUrlByName).toHaveBeenCalledWith('test val');

@@ -51,7 +51,11 @@ class RightSidePanelCtrl {
         closeChannelMessage: null,
         openMessage: 'SAVE_CHANGES_GENERIC',
         switchToMessage: null,
-        step: 1,
+      },
+      create2: {
+        closeChannelMessage: null,
+        openMessage: 'SAVE_CHANGES_GENERIC',
+        switchToMessage: null,
       },
     };
 
@@ -117,11 +121,11 @@ class RightSidePanelCtrl {
   }
 
   switchCreateContentStep() {
-    if (this.mode !== this.modes.create || this.mode.step !== 1) {
+    if (this.mode !== this.modes.create) {
       throw new Error('Could not switch to Create content step 2 from the current mode');
     }
 
-    this.mode.step = 2;
+    this._setMode(this.modes.create2);
   }
 
   _onClose() {
