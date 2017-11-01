@@ -14,4 +14,9 @@ export class CreateContentService {
     const promise = this.contentService._send('GET', ['templatequery', id], null, true);
     return Observable.fromPromise(promise);
   }
+
+  generateDocumentUrlByName(name: string): Observable<string> {
+    const promise = this.contentService._send('POST', ['slugs'], name, true);
+    return Observable.fromPromise(promise);
+  }
 }
