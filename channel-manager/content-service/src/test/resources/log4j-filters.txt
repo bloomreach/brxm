@@ -65,6 +65,7 @@ Failed to get or create folder 'test' below 'null'
 Failed to create folder 'test'
 Failed to add category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
+Failed to determine locale of folder 'null', assuming no locale
 Failed to set display name of node '/test' to 'Test
 Property 'name' cannot be empty
 Property 'slug' cannot be empty

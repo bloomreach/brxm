@@ -1323,9 +1323,28 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createExistingDocument() throws Exception {
+    public void createDocumentWithExistingName() throws Exception {
         final Node folderNode = createMock(Node.class);
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News"))).andReturn(true);
+        replayAll(folderNode);
+
+        try {
+            documentsService.createDocument(info, session, locale);
+            fail("No Exception");
+        } catch (ConflictException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NAME_ALREADY_EXISTS));
+        }
+
+        verifyAll();
+    }
+
+    @Test
+    public void createDocumentWithExistingSlug() throws Exception {
+        final Node folderNode = createMock(Node.class);
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News"))).andReturn(false);
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(true);
         replayAll(folderNode);
 
@@ -1334,7 +1353,7 @@ public class DocumentsServiceImplTest {
             fail("No Exception");
         } catch (ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.ALREADY_EXISTS));
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.SLUG_ALREADY_EXISTS));
         }
 
         verifyAll();
@@ -1343,10 +1362,16 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDocumentNoWorkflow() throws Exception {
         final Node folderNode = createMock(Node.class);
-        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
-        expect(DocumentUtils.getDisplayName(folderNode)).andReturn(Optional.of("News"));
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
+                .andReturn(false);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.empty());
+        expect(DocumentUtils.getDisplayName(folderNode))
+                .andReturn(Optional.of("News"));
         replayAll(folderNode);
 
         try {
@@ -1368,6 +1393,8 @@ public class DocumentsServiceImplTest {
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
+                .andReturn(false);
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))
@@ -1392,6 +1419,8 @@ public class DocumentsServiceImplTest {
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
+                .andReturn(false);
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))
@@ -1451,6 +1480,8 @@ public class DocumentsServiceImplTest {
                 .andReturn(rootFolderNode);
         expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session)))
                 .andReturn(folderNode);
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
+                .andReturn(false);
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))

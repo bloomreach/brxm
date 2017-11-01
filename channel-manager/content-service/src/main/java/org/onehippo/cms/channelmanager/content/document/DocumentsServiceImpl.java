@@ -218,8 +218,11 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node rootFolder = FolderUtils.getFolder(rootPath, session);
         final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
 
+        if (FolderUtils.nodeWithDisplayNameExists(folder, name)) {
+            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.NAME_ALREADY_EXISTS));
+        }
         if (FolderUtils.nodeExists(folder, slug)) {
-            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.ALREADY_EXISTS));
+            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.SLUG_ALREADY_EXISTS));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);

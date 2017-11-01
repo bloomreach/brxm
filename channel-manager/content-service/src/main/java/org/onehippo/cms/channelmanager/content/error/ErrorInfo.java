@@ -70,7 +70,8 @@ public class ErrorInfo {
         INVALID_TEMPLATE_QUERY,
         TEMPLATE_QUERY_NOT_FOUND,
         NOT_A_FOLDER,
-        ALREADY_EXISTS,
+        NAME_ALREADY_EXISTS,
+        SLUG_ALREADY_EXISTS,
         // add more specific failure reasons here.
     }
 }

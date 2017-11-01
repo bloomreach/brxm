@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -29,6 +30,8 @@ import javax.jcr.nodetype.NodeTypeDefinition;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -59,6 +62,25 @@ public class FolderUtils {
             return parentNode.hasNode(name);
         } catch (RepositoryException e) {
             log.warn("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode));
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public static boolean nodeWithDisplayNameExists(final Node parentNode, final String displayName) throws InternalServerErrorException {
+        try {
+            for (NodeIterator children = parentNode.getNodes(); children.hasNext(); ) {
+                final Node child = children.nextNode();
+                if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    final String childName = ((HippoNode) child).getDisplayName();
+                    if (StringUtils.equals(childName, displayName)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (RepositoryException e) {
+            log.warn("Failed to check whether a node with display name '{}' exists below '{}'",
+                    displayName, JcrUtils.getNodePathQuietly(parentNode));
             throw new InternalServerErrorException();
         }
     }

@@ -82,6 +82,42 @@ public class FolderUtilsTest {
     }
 
     @Test
+    public void nodeWithDisplayNameExists() throws Exception {
+        root.addNode("a", "nt:unstructured");
+        root.addNode("b", "nt:unstructured").setProperty("hippo:name", "Not a folder");
+        root.addNode("c", "hippostd:folder");
+        root.addNode("d", "hippostd:folder").setProperty("hippo:name", "Folder");;
+        root.addNode("e", "hippo:handle").setProperty("hippo:name", "Document");
+
+        // wrong type
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, "a"));
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, "b"));
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, "Not a folder"));
+
+        // display name falls back to node name
+        assertTrue(FolderUtils.nodeWithDisplayNameExists(root, "c"));
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, "d"));
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, "e"));
+
+        // checks hippo:name property?
+        assertTrue(FolderUtils.nodeWithDisplayNameExists(root, "Folder"));
+        assertTrue(FolderUtils.nodeWithDisplayNameExists(root, "Document"));
+
+        // weird input
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, ""));
+        assertFalse(FolderUtils.nodeWithDisplayNameExists(root, null));
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void nodeWithDisplayNameExistsThrowsException() throws Exception {
+        final Node mockNode = createMock(Node.class);
+        expect(mockNode.getNodes()).andThrow(new RepositoryException());
+        expect(mockNode.getPath()).andThrow(new RepositoryException());
+        replayAll();
+        FolderUtils.nodeWithDisplayNameExists(mockNode, "test");
+    }
+
+    @Test
     public void getLocaleOfTranslatedFolder() throws Exception {
         root.addMixin("hippotranslation:translated");
         root.setProperty("hippotranslation:locale", "en_GB");
@@ -105,7 +141,9 @@ public class FolderUtilsTest {
     @Test
     public void getExistingFolder() throws Exception {
         final Node test = root.addNode("test", "hippostd:folder");
+        final Node child = test.addNode("child", "hippostd:folder");
         assertThat(FolderUtils.getFolder("/test", session), equalTo(test));
+        assertThat(FolderUtils.getFolder("/test/child", session), equalTo(child));
     }
 
     @Test(expected = NotFoundException.class)
@@ -140,8 +178,9 @@ public class FolderUtilsTest {
         final Node test = root.addNode("test", "hippostd:folder");
         final Node foo = test.addNode("foo", "hippostd:folder");
 
-        assertThat(FolderUtils.getOrCreateFolder(root,"test", session), equalTo(test));
-        assertThat(FolderUtils.getOrCreateFolder(root,"test/foo", session), equalTo(foo));
+        assertThat(FolderUtils.getOrCreateFolder(root, "test", session), equalTo(test));
+        assertThat(FolderUtils.getOrCreateFolder(root, "test/foo", session), equalTo(foo));
+        assertThat(FolderUtils.getOrCreateFolder(test, "foo", session), equalTo(foo));
     }
 
     @Test
