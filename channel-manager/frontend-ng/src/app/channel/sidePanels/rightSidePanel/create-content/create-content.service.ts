@@ -7,7 +7,6 @@ import ContentService from '../../../../services/content.service';
 
 @Injectable()
 export class CreateContentService {
-
   constructor(private contentService: ContentService) {}
 
   getTemplateQuery(id): Observable<TemplateQuery> {

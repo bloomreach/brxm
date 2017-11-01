@@ -15,20 +15,19 @@
  */
 
 import { TestBed, ComponentFixture, async } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { TemplateQuery, DocumentTypeInfo } from '../create-content.types';
-import { CreateContentComponent } from '../step-1/step-1.component';
+import { CreateContentComponent } from './step-1.component';
 import FeedbackService from '../../../../../services/feedback.service';
 import { CreateContentService } from '../create-content.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
 import { SharedModule } from '../../../../../shared/shared.module';
 import { CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
+import { DocumentTypeInfo } from '../create-content.types';
 
 describe('Create content component', () => {
   let component: CreateContentComponent;
@@ -92,8 +91,7 @@ describe('Create content component', () => {
 
     it('pre-selects the documentType if only one is returned from the templateQuery', () => {
       const documentTypes: Array<DocumentTypeInfo> = [{ id: 'test-id1', displayName: 'test-name 1' }];
-      const spy = spyOn(createContentService, 'getTemplateQuery')
-        .and.returnValue(Observable.of({ documentTypes }));
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({ documentTypes }));
 
       component.options = { templateQuery: 'test-template-query' };
       fixture.detectChanges();
