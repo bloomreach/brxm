@@ -35,13 +35,6 @@
                title="{{ ::'RESTORE_WIDTH' | translate }}">
       <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
     </md-button>
-    <md-button class="md-icon-button qa-edit-in-content-perspective"
-               aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
-               ng-disabled="$ctrl.disableContentButtons"
-               ng-click="$ctrl.openContentEditor('edit', false)"
-               title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
-      <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-    </md-button>
   </div>
   <md-progress-linear md-mode="indeterminate"
                       ng-if="$ctrl.loading">
@@ -70,13 +63,6 @@
   </md-toolbar>
 
   <sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>
-  <md-subheader class="md-no-sticky"
-                ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
-                md-colors="{background: 'hippo-grey-200'}">
-    <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
-    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>
-  </md-subheader>
 
   <div ng-if="$ctrl.feedback"
        class="md-padding feedback qa-feedback"
@@ -110,7 +96,7 @@
 
     <md-button class="qa-close"
                ng-click="$ctrl.close()">
-      {{ $ctrl.closeButtonLabel() }}
+      {{ :: 'DISCARD' | translate }}
     </md-button>
 
     <md-button class="qa-save"

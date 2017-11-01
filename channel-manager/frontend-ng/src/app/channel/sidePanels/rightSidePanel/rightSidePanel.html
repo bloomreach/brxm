@@ -35,6 +35,7 @@
                         (on-continue)="RightSidePanelCtrl.switchCreateContentStep()">
   </hippo-create-content>
   <hippo-create-content-step-2 flex layout="column"
-                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create && RightSidePanelCtrl.mode.step === 2">
+                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create && RightSidePanelCtrl.mode.step === 2"
+                               on-save="RightSidePanelCtrl.openInMode(mode, options)">
   </hippo-create-content-step-2>
 </md-sidenav>

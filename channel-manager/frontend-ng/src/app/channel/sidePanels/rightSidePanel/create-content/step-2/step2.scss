@@ -3,10 +3,10 @@
 hippo-create-content-step-2 {
   .editable-title-toolbar {
     background-color: $grey-100;
-    box-shadow: 1px 0 8px $overlay-link-shadow-color;
+    box-shadow: 0 3px 8px $overlay-link-shadow-color;
     height: 56px;
-    margin-bottom: 15px;
     min-height: 54px;
+    z-index: 3;
     h6 {
       margin: 0;
     }

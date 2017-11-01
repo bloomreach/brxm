@@ -24,6 +24,7 @@ const createContentStep2Component = {
   bindings: {
     onFullWidth: '&',
     onBeforeStateChange: '&',
+    onSave: '&',
   },
 };
 

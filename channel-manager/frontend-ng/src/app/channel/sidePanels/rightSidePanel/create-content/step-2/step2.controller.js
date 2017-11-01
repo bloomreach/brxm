@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from '../../multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from '../../multiActionDialog/multiActionDialog.html';
 import nameUrlFieldsTemplate from './nameUrlFieldsDialog/name-url-fields-dialog.html';
 import NameUrlFieldsDialogCtrl from './nameUrlFieldsDialog/name-url-fields-dialog.controller';
 
@@ -93,10 +91,6 @@ class createContentStep2Controller {
     this.CreateContentService = CreateContentService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
-    this.closeLabel = $translate.instant('CLOSE');
-    this.cancelLabel = $translate.instant('CANCEL');
-    this.deleteDraftOnClose = true;
-
     this.documentId = '64ab4648-0c20-40d2-9f18-d7a394f0334b';
 
     CmsService.subscribe('kill-editor', (documentId) => {
@@ -135,7 +129,6 @@ class createContentStep2Controller {
   }
 
   _submitEditNameUrl(nameUrlObj) {
-    console.log(nameUrlObj);
     this.doc.displayName = nameUrlObj.name;
   }
 
@@ -144,15 +137,7 @@ class createContentStep2Controller {
   }
 
   _resetBeforeStateChange() {
-    this.onBeforeStateChange({ callback: message => this.dealWithPendingChanges(message) });
-  }
-
-  dealWithPendingChanges(message) {
-    return this._dealWithPendingChanges(message, () => {
-      this._deleteDraft().finally(() => {
-        this._resetState();
-      });
-    });
+    this.onBeforeStateChange({ callback: message => this._discardAndClose(message) });
   }
 
   _resetState() {
@@ -161,10 +146,7 @@ class createContentStep2Controller {
     delete this.docType;
     delete this.editing;
     delete this.feedback;
-    delete this.disableContentButtons;
     this.title = this.defaultTitle;
-    this.deleteDraftOnClose = true;
-    this.requestedDocument = null;
     this._resetForm();
   }
 
@@ -184,29 +166,20 @@ class createContentStep2Controller {
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)
-        .then((doc) => {
-          if (this._hasFields(doc)) {
-            return this.ContentService.getDocumentType(doc.info.type.id)
-              .then(docType => this._onLoadSuccess(doc, docType));
-          }
-          return this.$q.reject(this._noContentResponse(doc));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._showFeedbackDraftInvalid())
-      .finally(() => delete this.loading);
+        .then(doc => this.loadNewDocument(doc)));
   }
 
   // ////////////////////////////////////////////////////////
   // FUTURE IMPLEMENTATION OF LOADING NEWLY CREATED DOCUMENT
   // DRAFT HAS ALREADY BEEN CREATED.
-  loadNewDocument() {
-    const doc = this.CreateContentService.getNewDocument();
+  loadNewDocument(doc) {
+    // const doc = this.CreateContentService.getNewDocument(); To be implemented
     this.FieldService.setDocumentId(doc.id);
     this.loading = true;
 
     if (this._hasFields(doc)) {
       return this.ContentService.getDocumentType(doc.info.type.id)
-        .then(docType => this._onLoadSuccess(doc, docType).finally(() => delete this.loading));
+        .then(docType => this._onLoadSuccess(doc, docType)).finally(() => delete this.loading);
     }
     return this.$q.reject(this._noContentResponse(doc));
   }
@@ -221,6 +194,7 @@ class createContentStep2Controller {
     this._resizeTextareas();
   }
 
+  // Might be removed, create draft failure will be handled elsewhere
   _onLoadFailure(response) {
     let errorKey;
     let params = {};
@@ -240,14 +214,6 @@ class createContentStep2Controller {
       errorKey = 'UNAVAILABLE';
     }
     this._handleErrorResponse(errorKey, params);
-  }
-
-  _showFeedbackDraftInvalid() {
-    this.feedback = {
-      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
-      linkToContentEditor: true,
-    };
   }
 
   _hasFields(doc) {
@@ -295,29 +261,31 @@ class createContentStep2Controller {
   }
 
   saveDocument() {
-    return this._saveDraft()
-      .then((savedDoc) => {
-        this.doc = savedDoc;
-        this._resetForm();
-        this.HippoIframeService.reload();
-        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      })
-      .catch((response) => {
-        let params = {};
-        let errorKey = 'ERROR_UNABLE_TO_SAVE';
-
-        if (this._isErrorInfo(response.data)) {
-          errorKey = `ERROR_${response.data.reason}`;
-          params = this._extractErrorParams(response.data);
-        } else if (this._isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
-        }
-
-        this.FeedbackService.showError(errorKey, params);
-
-        return this.$q.reject(); // tell the caller that saving has failed.
-      });
+    this.onSave({ mode: 'edit', options: this.documentId });
+    // return this._saveDraft()
+    //   .then((savedDoc) => {
+    //     this._resetState();
+    //     this._resetForm();
+    //     this.HippoIframeService.reload();
+    //     this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+    //     this.onSave({ id: 'edit', options: this.documentId });
+    //   })
+    //   .catch((response) => {
+    //     let params = {};
+    //     let errorKey = 'ERROR_UNABLE_TO_SAVE';
+    //
+    //     if (this._isErrorInfo(response.data)) {
+    //       errorKey = `ERROR_${response.data.reason}`;
+    //       params = this._extractErrorParams(response.data);
+    //     } else if (this._isDocument(response.data)) {
+    //       errorKey = 'ERROR_INVALID_DATA';
+    //       this._reloadDocumentType();
+    //     }
+    //
+    //     this.FeedbackService.showError(errorKey, params);
+    //
+    //     return this.$q.reject(); // tell the caller that saving has failed.
+    //   });
   }
 
   _isDocument(obj) {
@@ -338,84 +306,11 @@ class createContentStep2Controller {
       });
   }
 
-  openContentEditor(mode, isPromptUnsavedChanges = true) {
-    this.deleteDraftOnClose = false;
-
-    if (!isPromptUnsavedChanges) {
-      this._closePanelAndOpenContent(mode);
-      return;
-    }
-    const messageKey = mode === 'view'
-      ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
-      : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';
-
-    this._dealWithPendingChanges(messageKey, () => {
-      if (mode === 'view') {
-        this._deleteDraft().finally(() => this._closePanelAndOpenContent(mode));
-      } else {
-        this._closePanelAndOpenContent(mode);
-      }
-    });
-  }
-
-  _dealWithPendingChanges(messageKey, done) {
-    return this._confirmSaveOrDiscardChanges(messageKey)
-      .then((action) => {
-        if (action === 'SAVE') {
-          // don't return the result of saveDocument so a failing save does not invoke the 'done' function
-          this.saveDocument().then(done);
-        } else {
-          done(); // discard
-        }
-      });
-  }
-
-  _confirmSaveOrDiscardChanges(messageKey) {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve('DISCARD'); // No pending changes, no dialog, continue normally.
-    }
-
-    const message = this.$translate.instant(messageKey, { documentName: this.doc.displayName });
-    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
-
-    return this.DialogService.show({
-      template: multiActionDialogTemplate,
-      controller: MultiActionDialogCtrl,
-      controllerAs: '$ctrl',
-      locals: {
-        title,
-        message,
-        actions: ['DISCARD', 'SAVE'],
-      },
-      bindToController: true,
-    });
-  }
-
-  _closePanelAndOpenContent(mode) {
-    // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
-    // It will will unlock the document if needed, so don't delete the draft here.
-    this.close();
-
-    // mode can be 'view' or 'edit', so the event names can be 'view-content' and 'edit-content'
-    this.CmsService.publish('open-content', this.documentId, mode);
-
-    if (mode === 'view') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
-    } else if (mode === 'edit') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
-    }
-  }
-
   _saveDraft() {
     if (!this.isDocumentDirty()) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
-  }
-
-  // ds
-  closeButtonLabel() {
-    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }
 
   isDocumentDirty() {
@@ -427,41 +322,35 @@ class createContentStep2Controller {
   }
 
   close() {
-    return this._releaseDocument()
+    return this._discardAndClose()
       .then(() => {
-        this.deleteDraftOnClose = false;
         this._resetState();
         this.SidePanelService.close('right');
       });
   }
 
-  _releaseDocument() {
-    if (this.deleteDraftOnClose) {
-      return this._confirmDiscardChanges()
-        .then(() => {
-          // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
-          this._deleteDraft();
-        });
-    }
-    return this.$q.resolve();
+  _discardAndClose() {
+    return this._confirmDiscardChanges()
+      .then(() => {
+        // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
+        this._deleteDocument();
+      });
   }
 
   _confirmDiscardChanges() {
-    if (!this.isDocumentDirty()) {
-      return this.$q.resolve();
-    }
     const messageParams = {
       documentName: this.doc.displayName,
     };
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .title(this.$translate.instant('DISCARD_DOCUMENT', messageParams))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
       .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.cancelLabel);
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }
 
-  _deleteDraft() {
+  _deleteDocument() {
     if (this.editing) {
       return this.ContentService.deleteDraft(this.documentId);
     }
