@@ -23,24 +23,14 @@ import 'rxjs/add/observable/throw';
 
 import { TemplateQuery, DocumentTypeInfo } from '../create-content.types';
 import { CreateContentComponent } from '../step-1/step-1.component';
-import { CreateContentService } from '../create-content.service';
 import FeedbackService from '../../../../../services/feedback.service';
+import { CreateContentService } from '../create-content.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { MaterialModule } from '../../../../../shared/material/material.module';
 import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
+import { SharedModule } from '../../../../../shared/shared.module';
+import { CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
 
-class CreateContentServiceMock {
-  getTemplateQuery(id): Observable<TemplateQuery> {
-    return Observable.of(null);
-  }
-}
-
-class FeedbackServiceMock {
-  showError(key: string, params: Map<string, any>): void {}
-}
-
-fdescribe('Create content component', () => {
-
+describe('Create content component', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
@@ -54,9 +44,8 @@ fdescribe('Create content component', () => {
         NameUrlFieldsComponent
       ],
       imports: [
-        BrowserAnimationsModule,
+        SharedModule,
         FormsModule,
-        MaterialModule,
       ],
       providers: [
         { provide: CreateContentService, useClass: CreateContentServiceMock },
