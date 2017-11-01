@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { downgradeComponent } from '@angular/upgrade/static';
-import { CreateContentComponent } from './createContent/create-content.component.ts';
+import { CreateContentComponent } from './create-content/step-1/step-1.component.ts';
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
 import fieldsModule from './fields/fields.ng1.module';
