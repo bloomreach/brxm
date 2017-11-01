@@ -20,13 +20,9 @@ import 'angular-mocks';
 describe('projectToggle component', () => {
   let $ctrl;
   let $rootScope;
-  let $translate;
   let $q;
   let ProjectService;
   let CmsService;
-  let ChannelActionsService;
-  let ChannelService;
-  let DialogService;
   let $mdSelect;
   let project;
 
@@ -36,25 +32,18 @@ describe('projectToggle component', () => {
     inject((
       $componentController,
       _$rootScope_,
-      _$translate_,
       _$q_,
       _HippoIframeService_,
       _ProjectService_,
       _CmsService_,
       _ChannelActionsService_,
-      _ChannelService_,
-      _DialogService_,
       _$mdSelect_,
     ) => {
       $ctrl = $componentController('projectToggle', {});
       $rootScope = _$rootScope_;
-      $translate = _$translate_;
       $q = _$q_;
       ProjectService = _ProjectService_;
       CmsService = _CmsService_;
-      ChannelActionsService = _ChannelActionsService_;
-      ChannelService = _ChannelService_;
-      DialogService = _DialogService_;
       $mdSelect = _$mdSelect_;
     });
 
@@ -99,7 +88,6 @@ describe('projectToggle component', () => {
       // init to get core project
       $ctrl.$onInit();
       spyOn($mdSelect, 'hide').and.returnValue($q.resolve());
-      spyOn(ChannelActionsService, 'hasAnyChanges').and.returnValue(false);
       spyOn(ProjectService, 'updateSelectedProject');
       spyOn(CmsService, 'reportUsageStatistic');
     });
@@ -116,44 +104,6 @@ describe('projectToggle component', () => {
 
       expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(project.id);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
-    });
-
-    describe('if currently selected channel has unsaved changes', () => {
-      beforeEach(() => {
-        spyOn(ChannelService, 'discardOwnChanges');
-        spyOn(DialogService, 'show').and.callThrough();
-        spyOn($translate, 'instant');
-
-        ChannelActionsService.hasAnyChanges.and.returnValue(true);
-      });
-
-      it('should show confirmation dialog asking if channel changes should be discarded', () => {
-        $ctrl.selectedProject = project;
-        $rootScope.$apply();
-
-        expect(DialogService.show).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
-          documentName: $ctrl.core.name,
-        });
-      });
-
-      it('User chooses discard: should call update selectedProject on project service with the selected project id', () => {
-        DialogService.show.and.returnValue($q.resolve());
-        $ctrl.selectedProject = project;
-        $rootScope.$apply();
-
-        expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(project.id);
-        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
-      });
-
-      it('User chooses cancel: should not call any method or do any operation', () => {
-        DialogService.show.and.returnValue($q.reject());
-        $ctrl.selectedProject = project;
-        $rootScope.$apply();
-
-        expect(ProjectService.updateSelectedProject).not.toHaveBeenCalledWith(project.id);
-        expect(CmsService.reportUsageStatistic).not.toHaveBeenCalledWith('CMSChannelsProjectSwitch');
-      });
     });
   });
 });

@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -112,9 +113,10 @@ public class ContentResource {
 
     @POST
     @Path("slugs")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response createSlug(String contentName, @QueryParam("locale") String contentLocale, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.OK,
-                (session, userLocale) -> SlugFactory.createSlug(contentName, contentLocale));
+        final String slug = SlugFactory.createSlug(contentName, contentLocale);
+        return Response.status(Status.OK).entity(slug).build();
     }
 
     @GET

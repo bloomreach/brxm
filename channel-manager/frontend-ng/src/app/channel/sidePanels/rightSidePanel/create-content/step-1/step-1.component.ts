@@ -19,7 +19,7 @@ import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from '../create-content';
+import { CreateContentOptions, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 

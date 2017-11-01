@@ -17,17 +17,19 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { DebugElement } from '@angular/core';
+import { DebugElement, Injector } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import { NameUrlFieldsComponent } from "./name-url-fields.component";
 import { HintsComponent } from "../../../../../shared/components/hints/hints.component";
 import { SharedModule } from "../../../../../shared/shared.module";
+import { CreateContentService } from '../create-content.service';
+import { CreateContentServiceMock } from '../create-content.mocks.spec';
 
 describe('NameUrlFields Component', () => {
-
   let component: NameUrlFieldsComponent;
   let fixture: ComponentFixture<NameUrlFieldsComponent>;
+  let createContentService: CreateContentService;
   let de: DebugElement;
   let el: HTMLElement;
 
@@ -41,11 +43,15 @@ describe('NameUrlFields Component', () => {
         BrowserAnimationsModule,
         FormsModule,
         SharedModule
+      ],
+      providers: [
+        { provide: CreateContentService, useClass: CreateContentServiceMock },
       ]
     });
 
     fixture = TestBed.createComponent(NameUrlFieldsComponent);
     component = fixture.componentInstance;
+    createContentService = fixture.debugElement.injector.get(CreateContentService);
 
     component.ngOnInit();
     fixture.detectChanges();

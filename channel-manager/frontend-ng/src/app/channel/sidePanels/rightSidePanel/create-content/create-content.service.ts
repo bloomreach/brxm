@@ -2,12 +2,11 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { Injectable } from '@angular/core';
 
-import { TemplateQuery } from './create-content';
+import { TemplateQuery } from './create-content.types';
 import ContentService from '../../../../services/content.service';
 
 @Injectable()
 export class CreateContentService {
-
   constructor(private contentService: ContentService) {}
   private doc: any;
 
@@ -28,5 +27,10 @@ export class CreateContentService {
           resolve(doc);
         }).catch(e => reject(e));
     });
+  }
+
+  generateDocumentUrlByName(name: string): Observable<string> {
+    const promise = this.contentService._send('POST', ['slugs'], name, true);
+    return Observable.fromPromise(promise);
   }
 }

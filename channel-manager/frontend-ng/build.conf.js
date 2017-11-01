@@ -55,6 +55,44 @@ const customConfig = {
       '/scripts/dragula.min.js': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.js',
     },
   },
+
+  dlls: {
+    angularjs: [
+      'angular',
+      'angular-animate',
+      'angular-aria',
+      'angular-local-storage',
+      'angular-material',
+      'angular-messages',
+      'angular-translate',
+      'angular-translate-loader-static-files',
+      'angular-ui-router',
+      'angular-ui-tree',
+      'ng-device-detector',
+      'ng-focus-if'],
+    angular: [
+      'core-js',
+      'hammerjs',
+      'es6-shim',
+      '@angular/animations',
+      '@angular/cdk',
+      '@angular/common',
+      '@angular/compiler',
+      '@angular/core',
+      '@angular/forms',
+      '@angular/http',
+      '@angular/material',
+      '@angular/platform-browser',
+      '@angular/platform-browser-dynamic',
+      '@angular/router',
+      '@angular/upgrade',
+      'rxjs',
+      'zone.js'],
+    vendor: [
+      '@bloomreach/dragula',
+      'jquery',
+      'mutation-summary'],
+  },
 };
 
 module.exports = customConfig;

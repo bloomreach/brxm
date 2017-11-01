@@ -16,6 +16,7 @@
 
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/rx';
+import { CreateContentService } from '../create-content.service';
 
 @Component({
   selector: 'hippo-name-url-fields',
@@ -31,6 +32,8 @@ export class NameUrlFieldsComponent implements OnInit {
   @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
   public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
 
+  constructor(private createContentService: CreateContentService) {}
+
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .debounceTime(1000)
@@ -42,10 +45,8 @@ export class NameUrlFieldsComponent implements OnInit {
   }
 
   setDocumentUrlByName(name: string) {
-    // TODO: back-end call
-    name = name.toLowerCase();
-    name = name.replace(/\s+/g, '-').toLowerCase();
-    this.urlField = name;
+    this.createContentService.generateDocumentUrlByName(name)
+      .subscribe((slug) => this.urlField = slug);
   }
 
   setDocumentUrlEditable(state: boolean) {

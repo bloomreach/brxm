@@ -17,7 +17,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import ContentService from '../../../../services/content.service';
 import { CreateContentService } from './create-content.service';
-import { TemplateQuery, DocumentTypeInfo } from './create-content';
+import { TemplateQuery, DocumentTypeInfo } from './create-content.types';
 
 class MockContentService {
   _send(): Promise<TemplateQuery> {
@@ -38,28 +38,4 @@ describe('CreateContentService', () => {
       ]
     });
   });
-
-  it('can get document types by template query',
-    inject([CreateContentService], (createContentService: CreateContentService) => {
-
-      const documentTypes: DocumentTypeInfo[] = [
-        { id: 'doctype1', displayName: 'Doctype 1'}
-      ];
-      const spy = spyOn(contentService, '_send').and.returnValue(Promise.resolve({ documentTypes }));
-      createContentService.getTemplateQuery('test-template-query')
-        .subscribe((templateQuery: TemplateQuery) => {
-          expect(spy).toHaveBeenCalledWith('GET', ['templatequery', 'test-template-query'], null, true);
-          expect(templateQuery.documentTypes).toBe(documentTypes);
-        });
-    }));
-
-  it('can fail to get document types by template query',
-    inject([CreateContentService], (createContentService: CreateContentService) => {
-
-      spyOn(contentService, '_send').and.returnValue(Promise.reject('serverError'));
-      createContentService.getTemplateQuery('test-template-query')
-        .subscribe(() => { }, (error) => {
-          expect(error).toBe('serverError');
-        });
-    }));
 });
