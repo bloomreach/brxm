@@ -16,11 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content.error;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 public class ResetContentException extends ErrorWithPayloadException {
 
     public ResetContentException() {
-        super(Response.Status.RESET_CONTENT, null);
+        super(Status.RESET_CONTENT, null);
     }
 }

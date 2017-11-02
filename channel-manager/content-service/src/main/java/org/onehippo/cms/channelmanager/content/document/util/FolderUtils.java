@@ -41,6 +41,7 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class FolderUtils {
         }
         try {
             return parentNode.hasNode(name);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignore) {
             log.warn("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode));
             throw new InternalServerErrorException();
         }
@@ -68,7 +69,8 @@ public class FolderUtils {
 
     public static boolean nodeWithDisplayNameExists(final Node parentNode, final String displayName) throws InternalServerErrorException {
         try {
-            for (NodeIterator children = parentNode.getNodes(); children.hasNext(); ) {
+            final NodeIterator children = parentNode.getNodes();
+            while ( children.hasNext()) {
                 final Node child = children.nextNode();
                 if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
                     final String childName = ((HippoNode) child).getDisplayName();
@@ -78,7 +80,7 @@ public class FolderUtils {
                 }
             }
             return false;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignore) {
             log.warn("Failed to check whether a node with display name '{}' exists below '{}'",
                     displayName, JcrUtils.getNodePathQuietly(parentNode));
             throw new InternalServerErrorException();
@@ -90,7 +92,7 @@ public class FolderUtils {
             if (folderNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 return folderNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignore) {
             log.warn("Failed to determine locale of folder '{}', assuming no locale", JcrUtils.getNodePathQuietly(folderNode));
         }
         return null;
@@ -102,7 +104,7 @@ public class FolderUtils {
                 throw new NotFoundException();
             }
             return getExistingFolder(absPath, session);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to get folder '{}'", absPath, e);
             throw new InternalServerErrorException();
         }
@@ -115,7 +117,7 @@ public class FolderUtils {
             } else {
                 return createFolder(parentFolder, relPath, session);
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to get or create folder '{}' below '{}'", relPath, JcrUtils.getNodePathQuietly(parentFolder), e);
             throw new InternalServerErrorException();
         }
@@ -134,7 +136,7 @@ public class FolderUtils {
         final Node folderNode = session.getNode(absPath);
 
         if (!folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)) {
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.NOT_A_FOLDER, "path", absPath));
+            throw new BadRequestException(new ErrorInfo(Reason.NOT_A_FOLDER, "path", absPath));
         }
 
         return folderNode;
@@ -159,7 +161,7 @@ public class FolderUtils {
         // create new (parent) folders
         if (!newFolderNames.isEmpty()) {
             final WorkflowManager workflowMgr = getWorkflowManager(session);
-            for (String newFolderName : newFolderNames) {
+            for (final String newFolderName : newFolderNames) {
                 folderNode = createFolder(newFolderName, folderNode, workflowMgr);
             }
         }
@@ -181,7 +183,7 @@ public class FolderUtils {
             return newFolder;
         } else {
             log.warn("Failed to create folder '{}': workflow 'internal' of node '{}' has type {},"
-                    + " which is not an instance of FolderWorkflow",
+                            + " which is not an instance of FolderWorkflow",
                     name, JcrUtils.getNodePathQuietly(parentNode), workflow.getClass().getCanonicalName());
             throw new InternalServerErrorException();
         }

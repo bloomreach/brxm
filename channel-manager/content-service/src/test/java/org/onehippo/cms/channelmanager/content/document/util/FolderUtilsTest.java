@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.mock.MockNode;
@@ -157,9 +158,9 @@ public class FolderUtilsTest {
         try {
             FolderUtils.getFolder("/test", session);
             fail("No Exception");
-        } catch (BadRequestException e) {
+        } catch (final BadRequestException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_FOLDER));
+            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_FOLDER));
             assertThat(errorInfo.getParams(), equalTo(Collections.singletonMap("path", "/test")));
         }
     }
@@ -189,9 +190,9 @@ public class FolderUtilsTest {
         try {
             FolderUtils.getOrCreateFolder(root, "test", session);
             fail("No Exception");
-        } catch (BadRequestException e) {
+        } catch (final BadRequestException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_FOLDER));
+            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_FOLDER));
             assertThat(errorInfo.getParams(), equalTo(Collections.singletonMap("path", "/test")));
         }
     }

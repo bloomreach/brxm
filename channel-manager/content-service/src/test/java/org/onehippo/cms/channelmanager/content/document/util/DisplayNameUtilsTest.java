@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecService;
+import org.hippoecm.repository.api.StringCodecService.Encoding;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
@@ -64,7 +65,7 @@ public class DisplayNameUtilsTest {
         final StringCodec codec = createMock(StringCodec.class);
 
         expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service);
-        expect(service.getStringCodec(eq(StringCodecService.Encoding.DISPLAY_NAME), eq("en"))).andReturn(codec);
+        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(codec);
         expect(codec.encode("Some Name")).andReturn("Some Name (encoded)");
         replayAll();
 
@@ -80,7 +81,7 @@ public class DisplayNameUtilsTest {
         final StringCodec codec = createMock(StringCodec.class);
 
         expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service);
-        expect(service.getStringCodec(eq(StringCodecService.Encoding.DISPLAY_NAME), eq(null))).andReturn(codec);
+        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq(null))).andReturn(codec);
         expect(codec.encode("Some Name")).andReturn("Some Name (encoded)");
         replayAll();
 

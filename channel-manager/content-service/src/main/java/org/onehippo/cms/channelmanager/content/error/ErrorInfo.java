@@ -21,27 +21,28 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * ErrorInfo provides the client with additional information about the failure of a requested operation
- *
+ * <p>
  * By "additional", we mean information on top of the HTTP response status code.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class ErrorInfo {
 
     private final Reason reason;
     private Map<String, Serializable> params;
 
-    public ErrorInfo(Reason reason) {
+    public ErrorInfo(final Reason reason) {
         this(reason, null);
     }
 
-    public ErrorInfo(Reason reason, String key, String value) {
+    public ErrorInfo(final Reason reason, final String key, final String value) {
         this(reason, Collections.singletonMap(key, value));
     }
 
-    public ErrorInfo(Reason reason, Map<String, Serializable> params) {
+    public ErrorInfo(final Reason reason, final Map<String, Serializable> params) {
         this.reason = reason;
         this.params = params;
     }

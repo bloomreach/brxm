@@ -16,15 +16,15 @@
 
 package org.onehippo.cms.channelmanager.content.error;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 public class ConflictException extends ErrorWithPayloadException {
 
     public ConflictException() {
-        super(Response.Status.CONFLICT, null);
+        super(Status.CONFLICT, null);
     }
 
     public ConflictException(final Object payload) {
-        super(Response.Status.CONFLICT, payload);
+        super(Status.CONFLICT, payload);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -49,6 +50,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -68,7 +70,8 @@ class DocumentsServiceImpl implements DocumentsService {
         return INSTANCE;
     }
 
-    private DocumentsServiceImpl() { }
+    private DocumentsServiceImpl() {
+    }
 
     @Override
     public Document createDraft(final String uuid, final Session session, final Locale locale)
@@ -85,7 +88,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(ErrorInfo.Reason.UNKNOWN_VALIDATOR), handle)
+                    withDisplayName(new ErrorInfo(Reason.UNKNOWN_VALIDATOR), handle)
             );
         }
 
@@ -93,7 +96,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
-        boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED)
+        final boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
                 .map(unpublished -> {
                     final Map<String, List<FieldValue>> unpublishedFields = new HashMap<>();
                     FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), unpublishedFields);
@@ -111,7 +114,7 @@ class DocumentsServiceImpl implements DocumentsService {
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
-        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
         if (!EditingUtils.canUpdateDraft(workflow)) {
@@ -129,7 +132,7 @@ class DocumentsServiceImpl implements DocumentsService {
         // Persist changes to repository
         try {
             session.save();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to save changes to draft node of document {}", uuid, e);
             throw new InternalServerErrorException();
         }
@@ -152,7 +155,7 @@ class DocumentsServiceImpl implements DocumentsService {
     public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
-        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
         if (!EditingUtils.canUpdateDraft(workflow)) {
@@ -169,7 +172,7 @@ class DocumentsServiceImpl implements DocumentsService {
             // Persist changes to repository
             try {
                 session.save();
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
                 throw new InternalServerErrorException();
             }
@@ -183,7 +186,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final EditableWorkflow workflow = getEditableWorkflow(handle);
 
         if (!EditingUtils.canDeleteDraft(workflow)) {
-            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
+            throw new ForbiddenException(new ErrorInfo(Reason.ALREADY_DELETED));
         }
 
         try {
@@ -201,7 +204,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, docType);
 
-        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
+        WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
                 .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
         return document;
     }
@@ -219,10 +222,10 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
 
         if (FolderUtils.nodeWithDisplayNameExists(folder, name)) {
-            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.NAME_ALREADY_EXISTS));
+            throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
         }
         if (FolderUtils.nodeExists(folder, slug)) {
-            throw new ConflictException(new ErrorInfo(ErrorInfo.Reason.SLUG_ALREADY_EXISTS));
+            throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
@@ -253,7 +256,7 @@ class DocumentsServiceImpl implements DocumentsService {
         if (StringUtils.isEmpty(propValue)) {
             final String errorMessage = "Property '" + propName + "' cannot be empty";
             log.warn(errorMessage);
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA, "error", errorMessage));
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA, "error", errorMessage));
         }
         return propValue;
     }
@@ -265,7 +268,7 @@ class DocumentsServiceImpl implements DocumentsService {
         }
 
         final Document document = assembleDocument(handle.getIdentifier(), handle, docType);
-        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(InternalServerErrorException::new);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
@@ -286,14 +289,14 @@ class DocumentsServiceImpl implements DocumentsService {
     private EditableWorkflow getEditableWorkflow(final Node handle) throws MethodNotAllowed {
         return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT), handle)
+                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
                 ));
     }
 
     private static FolderWorkflow getFolderWorkflow(final Node folderNode) throws MethodNotAllowed {
         return WorkflowUtils.getWorkflow(folderNode, WORKFLOW_CATEGORY_INTERNAL, FolderWorkflow.class)
                 .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(ErrorInfo.Reason.NOT_A_FOLDER), folderNode)
+                        withDisplayName(new ErrorInfo(Reason.NOT_A_FOLDER), folderNode)
                 ));
     }
 
@@ -302,16 +305,16 @@ class DocumentsServiceImpl implements DocumentsService {
 
         try {
             return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to retrieve JCR session for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException();
-        } catch (ErrorWithPayloadException e) {
+        } catch (final ErrorWithPayloadException e) {
             log.debug("Failed to retrieve type of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException();
         }
     }
 
-    private Document assembleDocument(final String uuid, final Node handle, final DocumentType docType) {
+    private static Document assembleDocument(final String uuid, final Node handle, final DocumentType docType) {
         final Document document = new Document();
         document.setId(uuid);
 
@@ -336,8 +339,8 @@ class DocumentsServiceImpl implements DocumentsService {
         return errorInfo;
     }
 
-    private ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
+    private static ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
         return EditingUtils.determineEditingFailure(workflow, session)
-                .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
+                .orElseGet(() -> new ErrorInfo(Reason.NO_HOLDER));
     }
 }
