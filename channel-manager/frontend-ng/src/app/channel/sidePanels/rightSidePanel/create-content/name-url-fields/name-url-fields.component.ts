@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, SimpleChanges, OnInit, ViewChild } from '@angular/core';
 import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
@@ -25,9 +25,10 @@ import 'rxjs/add/operator/debounceTime';
   templateUrl: 'name-url-fields.html'
 })
 
-export class NameUrlFieldsComponent implements OnInit {
+export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
+  @Input() locale: string;
   public urlField: string;
   public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
   public dummy: string;
@@ -37,11 +38,17 @@ export class NameUrlFieldsComponent implements OnInit {
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .debounceTime(1000)
-      .subscribe(() => this.setDocumentUrlByName(this.form.controls.name.value));
+      .subscribe(() => this.setDocumentUrlByName());
   }
 
-  setDocumentUrlByName(name: string) {
-    this.createContentService.generateDocumentUrlByName(name)
+  ngOnChanges(changes: SimpleChanges) {
+    if(changes.hasOwnProperty('locale') && this.form.controls.name) {
+      this.setDocumentUrlByName();
+    }
+  }
+
+  setDocumentUrlByName() {
+    this.createContentService.generateDocumentUrlByName(this.form.controls.name.value, this.locale)
       .subscribe((slug) => this.urlField = slug);
   }
 

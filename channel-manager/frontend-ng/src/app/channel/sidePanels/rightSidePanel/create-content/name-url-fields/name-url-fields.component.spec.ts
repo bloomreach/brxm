@@ -17,7 +17,7 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { DebugElement, Injector } from '@angular/core';
+import { Component, DebugElement, Injector, SimpleChange, ViewChild } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import { NameUrlFieldsComponent } from "./name-url-fields.component";
@@ -26,18 +26,28 @@ import { SharedModule } from "../../../../../shared/shared.module";
 import { CreateContentService } from '../create-content.service';
 import { CreateContentServiceMock } from '../create-content.mocks.spec';
 
+@Component({
+  template: '<hippo-name-url-fields #nameUrlFields [locale]="locale"></hippo-name-url-fields>'
+})
+class TestHostComponent {
+  locale: string = 'en';
+  @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+}
+
 describe('NameUrlFields Component', () => {
+  let hostComponent: TestHostComponent;
+  let hostFixture: ComponentFixture<TestHostComponent>;
   let component: NameUrlFieldsComponent;
-  let fixture: ComponentFixture<NameUrlFieldsComponent>;
   let createContentService: CreateContentService;
-  let de: DebugElement;
-  let el: HTMLElement;
+
+  const spies: any = {};
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         HintsComponent,
-        NameUrlFieldsComponent
+        NameUrlFieldsComponent,
+        TestHostComponent
       ],
       imports: [
         BrowserAnimationsModule,
@@ -49,57 +59,86 @@ describe('NameUrlFields Component', () => {
       ]
     });
 
-    fixture = TestBed.createComponent(NameUrlFieldsComponent);
-    component = fixture.componentInstance;
-    createContentService = fixture.debugElement.injector.get(CreateContentService);
+    hostFixture = TestBed.createComponent(TestHostComponent);
+    hostComponent = hostFixture.componentInstance;
+
+    component = hostComponent.nameUrlFields;
+    component.form.controls['name'] = { value: '' };
+    createContentService = hostFixture.debugElement.injector.get(CreateContentService);
+
+    spies.generateDocumentUrlByName = spyOn(createContentService, 'generateDocumentUrlByName').and.callThrough();
+    spies.setDocumentUrlByName = spyOn(component, 'setDocumentUrlByName').and.callThrough();
 
     component.ngOnInit();
-    fixture.detectChanges();
+    hostFixture.detectChanges();
   });
+
+  function setNameInputValue(value: string) {
+    const nameInput = component.nameInputElement.nativeElement;
+    component.form.controls.name.value = value;
+    nameInput.dispatchEvent(new Event('keyup'));
+  }
 
   describe('ngOnInit', () => {
     it('calls setDocumentUrlByName 1 second after keyup was triggered on nameInputElement', fakeAsync(() => {
-      spyOn(component, 'setDocumentUrlByName').and.callThrough();
-
-      const nameInput = component.nameInputElement.nativeElement;
-      component.form.controls['name'] = { value: 'test val' };
-      nameInput.dispatchEvent(new Event('keyup'));
+      setNameInputValue('test val');
       tick(1000);
-      expect(component.setDocumentUrlByName).toHaveBeenCalledWith('test val');
+      expect(component.setDocumentUrlByName).toHaveBeenCalled();
     }));
   });
 
   describe('setDocumentUrlByName', () => {
-    it('should set the url field with lowercase and replace spaces with dashes', fakeAsync(() => {
-      component.setDocumentUrlByName('test');
+    it('sets the url field with lowercase and replace spaces with dashes', () => {
+      component.form.controls.name.value = 'test';
+      component.setDocumentUrlByName();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test', 'en');
       expect(component.urlField).toEqual('test');
 
-      component.setDocumentUrlByName('test val');
+      spies.generateDocumentUrlByName.calls.reset();
+
+      component.form.controls.name.value = 'test val';
+      component.setDocumentUrlByName();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test val', 'en');
       expect(component.urlField).toEqual('test-val');
+    });
+
+    it('sets the url with locale automatically after locale has been changed', fakeAsync(() => {
+      setNameInputValue('some val');
+      tick(1000);
+      expect(component.setDocumentUrlByName).toHaveBeenCalled();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'en');
+
+      hostComponent.locale = 'de';
+      tick(1000);
+      hostFixture.detectChanges();
+      expect(component.setDocumentUrlByName).toHaveBeenCalled();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
     }));
   });
 
   describe('setDocumentUrlEditable', () => {
-    it('should set the urlEditMode state', () => {
+    it('sets the urlEditMode state', () => {
       component.setDocumentUrlEditable(true);
       expect(component.urlEditMode.state).toEqual(true);
     });
 
-    it('should set the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
-      component.setDocumentUrlByName('test val');
+    it('sets the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
+      component.form.controls.name.value = 'test val';
+      component.setDocumentUrlByName();
       component.setDocumentUrlEditable(true);
       expect(component.urlEditMode.oldValue).toEqual('test-val');
     });
 
-    it('should NOT set the urlEditMode oldValue to the current urlField if the passed FALSE', () => {
-      component.setDocumentUrlByName('test val');
+    it('NOT set the urlEditMode oldValue to the current urlField if the passed FALSE', () => {
+      component.form.controls.name.value = 'test val';
+      component.setDocumentUrlByName();
       component.setDocumentUrlEditable(false);
       expect(component.urlEditMode.oldValue).not.toEqual('test-val');
     });
   });
 
   describe('cancelUrlEditing', () => {
-    it('should set the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
+    it('sets the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
       spyOn(component, 'setDocumentUrlEditable');
       component.urlEditMode.oldValue = 'test-val';
       component.cancelUrlEditing();

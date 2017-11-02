@@ -49,11 +49,11 @@ class ContentService {
     return this._send('GET', ['documenttypes', id], null, true);
   }
 
-  _send(method, pathElements, data = null, async = false) {
+  _send(method, pathElements, data = null, async = false, params = {}) {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const url = encodeURI(path);
     const headers = {};
-    const opts = { method, url, headers, data };
+    const opts = { method, url, headers, data, params };
     const promise = async ? this.$http(opts) : this._schedule(opts);
 
     return promise.then(result => result.data);

@@ -6,7 +6,7 @@ export class CreateContentServiceMock {
     return Observable.of(null);
   }
 
-  generateDocumentUrlByName(name): Observable<string> {
+  generateDocumentUrlByName(name, locale: string = ''): Observable<string> {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 }
