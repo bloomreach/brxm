@@ -166,7 +166,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
     }
 
     @Test
-    public void expect_sequence_number_not_updated_if_no_actions() throws Exception {
+    public void expect_last_executed_action_not_updated_if_no_actions() throws Exception {
         final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
@@ -179,11 +179,11 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
         assertEquals(null, module.getLastExecutedAction());
 
-        baselineService.updateModuleSequenceNumber(module, session);
+        baselineService.updateLastExecutedActionForModule(module, session);
     }
 
     @Test
-    public void expect_sequence_number_to_be_updated() throws Exception {
+    public void expect_last_executed_action_to_be_updated() throws Exception {
         final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
@@ -191,7 +191,16 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /foo:\n"
                 + "        jcr:primaryType: nt:unstructured";
-        final ConfigurationModelImpl baseline = applyDefinitions(baselineSource);
+
+        final ConfigurationModelImpl defaultBaseline = makeMergedModel(DEFAULT_BASELINE_SOURCES);
+        final ConfigurationModelImpl baseline =
+                // expect this crazy module name to be encoded as a safe JCR node name
+                makeMergedModel("test:module:name/encod[e]-", new String[]{baselineSource});
+
+        final ConfigurationConfigService helper = new ConfigurationConfigService();
+        helper.computeAndWriteDelta(baseline, defaultBaseline, session, false);
+        session.save();
+
         final ModuleImpl module = baseline.getModulesStream().findFirst().get();
         final ActionListParser actionListParser = new ActionListParser();
 
@@ -200,7 +209,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 .addNode(NT_HCM_BASELINE, NT_HCM_BASELINE)
                 .addNode("test-group", NT_HCM_GROUP)
                 .addNode("test-project", NT_HCM_PROJECT)
-                .addNode("test-module-0", NT_HCM_MODULE);
+                .addNode("test_x003a_module_x003a_name_x002f_encod_x005b_e_x005d_-0", NT_HCM_MODULE);
         moduleBaseline.addNode(HCM_MODULE_YAML, NT_HCM_DESCRIPTOR).setProperty(HCM_YAML, "bla");
         session.save();
 
@@ -215,7 +224,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
         assertEquals(null, module.getLastExecutedAction());
 
-        baselineService.updateModuleSequenceNumber(module, session);
+        baselineService.updateLastExecutedActionForModule(module, session);
 
         assertEquals("1.1", module.getLastExecutedAction());
         assertTrue("1.1".equals(moduleBaseline.getProperty(HCM_LAST_EXECUTED_ACTION).getString()));

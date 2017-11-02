@@ -80,8 +80,6 @@ import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
-import static org.onehippo.cm.engine.Constants.HIPPO_NAMESPACE;
-import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
@@ -137,10 +135,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
 
-        // create the /hcm:hcm node, if necessary, and acquire a write lock over the config
-        ensureInitialized();
+        // acquire a write lock for the hcm
         lockManager.lock();
         try {
+            // create the /hcm:hcm node, if necessary
+            ensureInitialized();
+
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
             ConfigurationModelImpl baselineModel = loadBaselineModel();
 
@@ -460,9 +460,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private void ensureInitialized() throws RepositoryException {
         try {
             if (isFirstHcmStartup()) {
-                if (!isNamespaceRegistered(HIPPO_PREFIX)) {
-                    session.getWorkspace().getNamespaceRegistry().registerNamespace(HIPPO_PREFIX, HIPPO_NAMESPACE);
-                }
                 if (!isNamespaceRegistered(HCM_PREFIX)) {
                     session.getWorkspace().getNamespaceRegistry().registerNamespace(HCM_PREFIX, HCM_NAMESPACE);
                 }
@@ -476,8 +473,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         BootstrapUtils.initializeNodetypes(session, is, "hcm.cnd");
                     }
                 }
-                Node hcmRootNode = session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
-                hcmRootNode.addNode(HIPPO_LOCK, HIPPO_LOCK);
+                session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
                 session.save();
             }
         } catch (RepositoryException | RuntimeException e) {

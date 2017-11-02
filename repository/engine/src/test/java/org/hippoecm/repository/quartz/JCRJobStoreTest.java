@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_JOBGROUP;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
@@ -66,13 +65,22 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         session.save();
         session.getWorkspace().getObservationManager().addEventListener(listener, ALL_EVENTS, "/test", true, null, null, false);
         storeSession = session.impersonate(new SimpleCredentials("admin", new char[]{}));
-        store = new JCRJobStore(10, storeSession, "/test");
+        store = new JCRJobStore();
+        store.init(storeSession, "/test");
         store.initialize(null, null);
     }
 
     @Override
     public void tearDown() throws Exception {
         store.shutdown();
+        // give store executor max 1 sec. to terminate running threads
+        for (int i = 0; i < 10; i++) {
+            if (!store.isTerminated()) {
+                Thread.sleep(100);
+            } else {
+                break;
+            }
+        }
         storeSession.logout();
         session.refresh(false);
         super.tearDown();
@@ -94,7 +102,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         assertNotNull(triggers);
         assertFalse(triggers.isEmpty());
         assertEquals(1, triggers.size());
-        assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+        assertTrue(store.isLocked(jobNode, jobNode.getNode("hipposched:triggers/trigger")));
         assertFalse(listener.hasTriggerUpdateEvents);
     }
 
@@ -106,7 +114,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         assumeNotNull(triggers);
         assumeTrue(!triggers.isEmpty());
         store.releaseAcquiredTrigger(triggers.get(0));
-        assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+        assertFalse(store.isLocked(jobNode, jobNode.getNode("hipposched:triggers/trigger")));
         assertFalse(listener.hasTriggerUpdateEvents);
     }
 
@@ -162,29 +170,13 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testTriggerLockKeepAlive() throws Exception {
+    public void testAquireTriggerKeepsItLocked() throws Exception {
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
-        Thread.sleep(1000*12); // sleep longer than lock timeout
-        assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+        Thread.sleep(1000); // sleep for a bit time, just to make sure
+        assertTrue(store.isLocked(jobNode, jobNode.getNode("hipposched:triggers/trigger")));
         store.releaseAcquiredTrigger(triggers.get(0));
-        assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
-    }
-
-    @Test
-    public void testTriggerLockKeepAliveIsCancelledWhenRefreshingLockFails() throws Exception {
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
-        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
-        final Node triggerNode = jobNode.getNode("hipposched:triggers/trigger");
-        triggerNode.unlock();
-        Thread.sleep(1000*12); // sleep longer than twice the refresh interval
-        for (int i = 0; i < 10; i++) {
-            if (!store.getLockKeepAlives().containsKey(triggerNode.getIdentifier())) {
-                return;
-            }
-            Thread.sleep(1000l);
-        }
-        fail("Keep alive was not cancelled");
+        assertFalse(store.isLocked(jobNode, jobNode.getNode("hipposched:triggers/trigger")));
     }
 
     @Test

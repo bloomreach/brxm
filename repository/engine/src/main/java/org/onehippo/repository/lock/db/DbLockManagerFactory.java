@@ -66,6 +66,7 @@ public class DbLockManagerFactory {
 
         switch (dbProductName) {
             case "MySQL":
+            case "Microsoft SQL Server":
             case "PostgreSQL":
             case "H2":
                 return new DbLockManager(connectionHelper, dataSource, schemaObjectPrefix, schemaCheckEnabled, clusterNodeId);

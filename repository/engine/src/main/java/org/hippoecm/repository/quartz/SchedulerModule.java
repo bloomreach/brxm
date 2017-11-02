@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,8 +51,6 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_CLASS, JCRJobStore.class.getName());
     }
 
-    private static SchedulerModule instance;
-
     private Session session;
     private JCRScheduler scheduler = null;
     private RepositoryScheduler service;
@@ -69,7 +67,6 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
 
     @Override
     public void initialize(Session session) throws RepositoryException {
-        instance = this;
         this.session = session;
         try {
             final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
@@ -84,16 +81,8 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
             log.error("Failed to initialize quartz scheduler", e);
             return;
         }
-        service = new RepositorySchedulerImpl(session, scheduler);
+        service = new RepositorySchedulerImpl(session, scheduler, moduleConfigPath);
         HippoServiceRegistry.registerService(service, RepositoryScheduler.class);
-    }
-
-    static Session getSession() {
-        return instance.session;
-    }
-
-    static String getModuleConfigPath() {
-        return instance.moduleConfigPath;
     }
 
     @Override
@@ -112,13 +101,14 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
         private static final String PROP_THREAD_POOL_THREADCOUNT = "org.quartz.threadPool.threadCount";
         private static final String PROP_THREAD_POOL_THREADPRIORITY = "org.quartz.threadPool.threadPriority";
 
-        public JcrSchedulerFactory(Properties properties) throws SchedulerException {
+        public JcrSchedulerFactory(final Properties properties) throws SchedulerException {
             super(properties);
         }
 
         @Override
         protected Scheduler instantiate(QuartzSchedulerResources rcs, QuartzScheduler qs) {
             try {
+                ((JCRJobStore)rcs.getJobStore()).init(session, moduleConfigPath);
                 qs.getSchedulerContext().put(Session.class.getName(), session);
                 return new JCRScheduler(qs);
             } catch (SchedulerException e) {

@@ -32,6 +32,7 @@ import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +97,10 @@ public class SchedulerTest extends RepositoryTestCase {
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(System.currentTimeMillis() + 2500));
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
         scheduler.deleteJob(testJobInfo.getName(), testJobInfo.getGroup());
-        if (waitUntilExecuted()) {
-            fail("Deleted job was still executed.");
+        try (Log4jInterceptor ignore = Log4jInterceptor.onError().deny(JCRJobStore.class).build()) {
+            if (waitUntilExecuted()) {
+                fail("Deleted job was still executed.");
+            }
         }
     }
 

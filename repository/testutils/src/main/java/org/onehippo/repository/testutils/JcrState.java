@@ -103,7 +103,7 @@ public class JcrState {
 
             fail("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
                     "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
-                    "Use RepositoryTestCase#setConfigurationChangeDebugPath to narrow down.");
+                    "Use RepositoryTestCase#getPathsToCheck to narrow down.");
         }
     }
 

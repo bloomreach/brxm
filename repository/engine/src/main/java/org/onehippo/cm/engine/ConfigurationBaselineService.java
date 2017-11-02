@@ -207,9 +207,7 @@ public class ConfigurationBaselineService {
                 // set lastupdated date to now
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-                Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName()));
-                Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName()));
-                Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
+                Node moduleNode = getModuleNode(baseline, module);
 
                 // do incremental update
                 storeBaselineModule(module, moduleNode, session, true);
@@ -242,6 +240,19 @@ public class ConfigurationBaselineService {
         finally {
             configurationLockManager.unlock();
         }
+    }
+
+    /**
+     * Helper to get the JCR node within the baseline for a given module, with proper JCR path encoding.
+     * @param baseline the root node of the baseline
+     * @param module the module whose baseline node we want to find
+     * @return the node representing the given module within the baseline
+     * @throws RepositoryException because always with JCR ...
+     */
+    private static Node getModuleNode(final Node baseline, final ModuleImpl module) throws RepositoryException {
+        Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName(), true));
+        Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName(), true));
+        return projectNode.getNode(NodeNameCodec.encode(module.getName(), true));
     }
 
     /**
@@ -904,16 +915,14 @@ public class ConfigurationBaselineService {
      * Updates and session saves a module's stored last-executed-action string to indicate that all content actions have been processed
      * Note: will <em>always</em> save the outstanding session changes, even if the module didn't have an action string to store.
      */
-    void updateModuleSequenceNumber(final ModuleImpl module, final Session session) throws RepositoryException {
+    void updateLastExecutedActionForModule(final ModuleImpl module, final Session session) throws RepositoryException {
         final Optional<String> latestAction = module.getActionsMap().keySet().stream().map(MavenComparableVersion::new)
                 .max(MavenComparableVersion::compareTo).map(Object::toString);
         if (latestAction.isPresent() && StringUtils.isNotBlank(latestAction.get())) {
-            // TODO: JCR encode this properly!
-            final String moduleNodePath = HCM_BASELINE_PATH + "/" + module.getFullName();
-
             module.setLastExecutedAction(latestAction.get());
 
-            session.getNode(moduleNodePath).setProperty(HCM_LAST_EXECUTED_ACTION, latestAction.get());
+            Node moduleNode = getModuleNode(session.getNode(HCM_BASELINE_PATH), module);
+            moduleNode.setProperty(HCM_LAST_EXECUTED_ACTION, latestAction.get());
         }
         session.save();
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,22 +20,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.Lock;
-import javax.jcr.lock.LockException;
-import javax.jcr.lock.LockManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -43,12 +37,17 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.api.SynchronousEventListener;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.RepoUtils;
-import org.onehippo.repository.locking.HippoLockManager;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.AlreadyLockedException;
+import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerException;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.util.JcrConstants;
 import org.quartz.Calendar;
 import org.quartz.CronTrigger;
@@ -88,38 +87,32 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_S
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
 import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
-import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
 import static org.quartz.SimpleTrigger.REPEAT_INDEFINITELY;
 
 
 public class JCRJobStore implements JobStore {
 
     private static final Logger log = LoggerFactory.getLogger(JCRJobStore.class);
-    private static final long TWO_MINUTES = 60 * 2;
 
-    private final long lockTimeout;
-    private final Session session;
-    private final String jobStorePath;
+    private static final int UUID_LENGTH = 36;
+    private static final int LOCK_KEY_TYPE_OR_NAME_PREFIX_MAX_LENGTH = (LockManager.LOCK_KEY_MAX_LENGTH - UUID_LENGTH - 2) / 2;
+
+    private Session session;
+    private String jobStorePath;
+
+    private final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
 
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    private Map<String, Future<?>> keepAlives = Collections.synchronizedMap(new HashMap<String, Future<?>>());
 
     private EventListener listener;
 
-    public JCRJobStore() {
-        this(TWO_MINUTES, null);
-    }
-
-    JCRJobStore(final Session session) {
-        this(TWO_MINUTES, session);
-    }
-
-    JCRJobStore(final long lockTimeout, final Session session) {
-        this(lockTimeout, session, SchedulerModule.getModuleConfigPath());
-    }
-
-    JCRJobStore(final long lockTimeout, final Session session, final String jobStorePath) {
-        this.lockTimeout = lockTimeout;
+    void init(final Session session, final String jobStorePath) {
+        if (session == null || jobStorePath == null) {
+            throw new IllegalStateException("Cannot initialize session or jobStorePath with null value");
+        }
+        if (this.session != null || this.jobStorePath != null) {
+            throw new IllegalStateException("Already initialized");
+        }
         this.session = session;
         this.jobStorePath = jobStorePath;
     }
@@ -133,15 +126,11 @@ public class JCRJobStore implements JobStore {
         initializeTriggers();
         try {
             getSession().getWorkspace().getObservationManager()
-                    .addEventListener(listener = new SynchronousEventListener() {
-                @Override
-                public void onEvent(final EventIterator events) {
-                    if (hasTriggerUpdateEvents(events)) {
-                        initializeTriggers();
-                    }
-                }
-
-            }, ALL_EVENTS, jobStorePath, true, null, null, true);
+                    .addEventListener(listener = (SynchronousEventListener) events -> {
+                        if (hasTriggerUpdateEvents(events)) {
+                            initializeTriggers();
+                        }
+                    }, ALL_EVENTS, jobStorePath, true, null, null, true);
         } catch (RepositoryException e) {
             log.error("Failed to register event listener for initializing triggers", e);
         }
@@ -197,19 +186,16 @@ public class JCRJobStore implements JobStore {
                 }
             }
             if (changes) {
-                executorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        final Session session = getSession();
-                        synchronized (session) {
+                executorService.submit(() -> {
+                    final Session session1 = getSession();
+                    synchronized (session1) {
+                        try {
+                            session1.save();
+                        } catch (RepositoryException e) {
+                            log.error("Failed to save ");
                             try {
-                                session.save();
-                            } catch (RepositoryException e) {
-                                log.error("Failed to save ");
-                                try {
-                                    session.refresh(false);
-                                } catch (RepositoryException ignore) {
-                                }
+                                session1.refresh(false);
+                            } catch (RepositoryException ignore) {
                             }
                         }
                     }
@@ -227,7 +213,7 @@ public class JCRJobStore implements JobStore {
         if (jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
             for (Node triggerNode : new NodeIterable(jobNode.getNode(HIPPOSCHED_TRIGGERS).getNodes())) {
                 final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
-                if (!triggerNode.isLocked()) {
+                if (!isLocked(jobNode, triggerNode)) {
                     if (jobEnabled && triggerEnabled) {
                         changes |= initializeTrigger(triggerNode);
                     }
@@ -285,6 +271,10 @@ public class JCRJobStore implements JobStore {
         if (executorService != null) {
             executorService.shutdown();
         }
+    }
+
+    public boolean isTerminated() {
+        return executorService != null ? executorService.isTerminated() : true;
     }
 
     @Override
@@ -362,11 +352,11 @@ public class JCRJobStore implements JobStore {
     }
 
     @Override
-    public void storeJob(final JobDetail newJob, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJob(final JobDetail newJob, final boolean replaceExisting) throws JobPersistenceException {
     }
 
     @Override
-    public void storeJobsAndTriggers(final Map<JobDetail, Set<? extends Trigger>> triggersAndJobs, final boolean replace) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJobsAndTriggers(final Map<JobDetail, Set<? extends Trigger>> triggersAndJobs, final boolean replace) throws JobPersistenceException {
     }
 
     @Override
@@ -399,7 +389,7 @@ public class JCRJobStore implements JobStore {
     }
 
     @Override
-    public void storeTrigger(final OperableTrigger newTrigger, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeTrigger(final OperableTrigger newTrigger, final boolean replaceExisting) throws JobPersistenceException {
     }
 
     @Override
@@ -437,7 +427,7 @@ public class JCRJobStore implements JobStore {
     }
 
     @Override
-    public void storeCalendar(final String name, final Calendar calendar, final boolean replaceExisting, final boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeCalendar(final String name, final Calendar calendar, final boolean replaceExisting, final boolean updateTriggers) throws JobPersistenceException {
     }
 
     @Override
@@ -592,25 +582,26 @@ public class JCRJobStore implements JobStore {
                     if (!JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true)) {
                         continue;
                     }
-                    if (lock(session, triggerNode.getPath())) {
+                    LockResource lockResource = lock(jobNode, triggerNode);
+                    if (lockResource != null) {
                         try {
                             // double check nextFireTime now that we have a lock
                             if (isPendingTrigger(triggerNode, noLaterThan)) {
-                                startLockKeepAlive(session, triggerNode.getIdentifier());
                                 if (triggers == null) {
                                     triggers = new ArrayList<>();
                                 }
-                                triggers.add(createTriggerFromNode(triggerNode));
+                                OperableTrigger trigger = createTriggerFromNode(triggerNode);
+                                trigger.getJobDataMap().put("lockResource", lockResource);
+                                triggers.add(trigger);
                                 if (--maxCount <= 0) {
                                     break;
                                 }
                             } else {
-                                unlock(session, triggerNode.getPath());
+                                lockResource.close();
                             }
                         } catch (RepositoryException e) {
                             log.error("Failed to recreate trigger for job {}", jobNode.getPath(), e);
-                            stopLockKeepAlive(triggerNode.getIdentifier());
-                            unlock(session, triggerNode.getPath());
+                            lockResource.close();
                         }
                     }
                 }
@@ -619,7 +610,7 @@ public class JCRJobStore implements JobStore {
                 log.error("Failed to acquire next trigger", e);
             }
         }
-        return triggers == null ? Collections.<OperableTrigger>emptyList() : triggers;
+        return triggers == null ? Collections.emptyList() : triggers;
 
     }
 
@@ -630,19 +621,9 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void releaseAcquiredTrigger(final OperableTrigger trigger) {
-        final Session session = getSession();
-        synchronized (session) {
-            try {
-                final String triggerIdentifier = trigger.getKey().getName();
-                stopLockKeepAlive(triggerIdentifier);
-                final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
-                unlock(session, triggerNode.getPath());
-            } catch (ItemNotFoundException e) {
-                log.info("Trigger no longer exists: {}", trigger.getKey().getName());
-            } catch (RepositoryException e) {
-                refreshSession(session);
-                log.error("Failed to release acquired trigger", e);
-            }
+        LockResource lockResource = (LockResource)trigger.getJobDataMap().get("lockResource");
+        if (lockResource != null) {
+            lockResource.close();
         }
     }
 
@@ -671,38 +652,39 @@ public class JCRJobStore implements JobStore {
             return;
         }
         RepositoryJobDetail repositoryJobDetail = (RepositoryJobDetail) jobDetail;
-        final Session session = getSession();
-        synchronized (session) {
-            try {
-                final String triggerIdentifier = trigger.getKey().getName();
-                stopLockKeepAlive(triggerIdentifier);
-                final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
-                final Date nextFire = trigger.getFireTimeAfter(new Date());
-                if(nextFire != null) {
-                    final java.util.Calendar nextFireTime = dateToCalendar(nextFire);
-                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
-                    if (trigger instanceof SimpleTrigger) {
-                        updateRepeatCount((SimpleTrigger) trigger, triggerNode);
-                    }
-                    session.save();
-                    unlock(session, triggerNode.getPath());
-                } else {
-                    final String jobIdentifier = repositoryJobDetail.getIdentifier();
-                    final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
-                    if (removeAfterLastFireTime(jobNode)) {
-                        JcrUtils.ensureIsCheckedOut(jobNode.getParent());
-                        jobNode.remove();
+        try {
+            final Session session = getSession();
+            synchronized (session) {
+                try {
+                    final String triggerIdentifier = trigger.getKey().getName();
+                    final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
+                    final Date nextFire = trigger.getFireTimeAfter(new Date());
+                    if(nextFire != null) {
+                        final java.util.Calendar nextFireTime = dateToCalendar(nextFire);
+                        triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
+                        if (trigger instanceof SimpleTrigger) {
+                            updateRepeatCount((SimpleTrigger) trigger, triggerNode);
+                        }
                         session.save();
+                    } else {
+                        final String jobIdentifier = repositoryJobDetail.getIdentifier();
+                        final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
+                        if (removeAfterLastFireTime(jobNode)) {
+                            JcrUtils.ensureIsCheckedOut(jobNode.getParent());
+                            jobNode.remove();
+                            session.save();
+                        }
                     }
+                } catch (ItemNotFoundException e) {
+                    log.info("Trigger no longer exists: " + trigger.getKey().getName());
+                } catch (RepositoryException e) {
+                    refreshSession(session);
+                    log.error("Failed to finalize job: " + repositoryJobDetail.getIdentifier(), e);
                 }
-            } catch (ItemNotFoundException e) {
-                log.info("Trigger no longer exists: " + trigger.getKey().getName());
-            } catch (RepositoryException e) {
-                refreshSession(session);
-                log.error("Failed to finalize job: " + repositoryJobDetail.getIdentifier(), e);
             }
+        } finally {
+            releaseAcquiredTrigger(trigger);
         }
-
     }
 
     private void updateRepeatCount(final SimpleTrigger trigger, final Node triggerNode) throws RepositoryException {
@@ -809,104 +791,45 @@ public class JCRJobStore implements JobStore {
         }
     }
 
-    private boolean lock(Session session, String nodePath) throws RepositoryException {
-        log.debug("Trying to obtain lock on {}", nodePath);
-        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
-        if (!lockManager.isLocked(nodePath) || lockManager.expireLock(nodePath)) {
-            try {
-                ensureIsLockable(session, nodePath);
-                lockManager.lock(nodePath, false, false, lockTimeout, getClusterNodeId(session));
-                log.debug("Lock successfully obtained on {}", nodePath);
-                return true;
-            } catch (LockException e) {
-                // happens when other cluster node beat us to it
-                log.debug("Failed to set lock on {}: {}", nodePath, e.getMessage());
-            }
-        } else {
-            log.debug("Already locked: {}", nodePath);
-        }
-        return false;
+    private final String getTriggerLockKey(final Node jobNode, final Node triggerNode) throws RepositoryException {
+        return new StringBuilder()
+                .append(StringUtils.left(jobNode.getPrimaryNodeType().getName(), LOCK_KEY_TYPE_OR_NAME_PREFIX_MAX_LENGTH))
+                .append("|")
+                .append(StringUtils.left(jobNode.getName(), LOCK_KEY_TYPE_OR_NAME_PREFIX_MAX_LENGTH))
+                .append("|")
+                .append(triggerNode.getIdentifier())
+                .toString();
     }
 
-    private void unlock(Session session, String nodePath) throws RepositoryException {
-        log.debug("Trying to release lock on {}", nodePath);
+    protected boolean isLocked(final Node jobNode, final Node triggerNode) throws RepositoryException {
         try {
-            final LockManager lockManager = session.getWorkspace().getLockManager();
-            if (lockManager.isLocked(nodePath)) {
-                final Lock lock = lockManager.getLock(nodePath);
-                if (lock.isLockOwningSession()) {
-                    lockManager.unlock(nodePath);
-                    log.debug("Lock successfully released on {}", nodePath);
-                } else {
-                    log.debug("We don't own the lock on {}", nodePath);
-                }
+            return lockManager.isLocked(getTriggerLockKey(jobNode, triggerNode));
+        } catch (LockManagerException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    private LockResource lock(final Node jobNode, final Node triggerNode) throws RepositoryException {
+        final String key = getTriggerLockKey(jobNode, triggerNode);
+
+        log.debug("Trying to obtain lock {}", key);
+        try {
+            // this thread *may* already have locked the triggerNode before (pending trigger execution), therefore
+            // we need to check and prevent not locking it multiple times (as unlock will *not* be called multiple times)
+            final LockResource lockResource = lockManager.lock(key);
+            if (lockResource.isNewLock()) {
+                return lockResource;
             } else {
-                log.debug("Not locked {}", nodePath);
+                // already locked (by this thread) before, release the (nested) lock and return null
+                lockResource.close();
+                return null;
             }
-        } catch (RepositoryException e) {
-            log.error("Failed to release lock on {}", nodePath, e);
+        } catch (AlreadyLockedException e) {
+            return null;
+        } catch (LockException e) {
+            throw new RepositoryException(e);
         }
     }
-
-    private void refreshLock(final Session session, String identifier) throws RepositoryException {
-        synchronized (session) {
-            final Node node = session.getNodeByIdentifier(identifier);
-            final LockManager lockManager = session.getWorkspace().getLockManager();
-            final Lock lock = lockManager.getLock(node.getPath());
-            lock.refresh();
-            log.debug("Lock successfully refreshed");
-        }
-    }
-
-    private void startLockKeepAlive(final Session session, final String identifier) {
-        final long refreshInterval = lockTimeout / 2;
-        final Future<?> future = executorService.scheduleAtFixedRate(new Runnable() {
-            private int failedAttempts = 0;
-            private boolean cancelled = false; // REPO-1268 additional check in case cancellation of future somehow did not work
-            @Override
-            public void run() {
-                if (cancelled) {
-                    return;
-                }
-                try {
-                    refreshLock(session, identifier);
-                    failedAttempts = 0;
-                } catch (RepositoryException e) {
-                    log.warn("Failed to refresh lock: {}", e.getMessage());
-                    failedAttempts++;
-                    if (failedAttempts > 1) {
-                        log.warn("Cancelling keep alive after {} attempts to refresh lock", failedAttempts);
-                        if (!stopLockKeepAlive(identifier)) {
-                            log.warn("Cancelling keep alive job failed");
-                        }
-                        cancelled = true;
-                    }
-                }
-            }
-        }, refreshInterval, refreshInterval, TimeUnit.SECONDS);
-        keepAlives.put(identifier, future);
-    }
-
-    private boolean stopLockKeepAlive(final String identifier) {
-        final Future<?> future = keepAlives.remove(identifier);
-        if (future != null) {
-            return future.cancel(true);
-        }
-        return false;
-    }
-
-    Map<String, Future<?>> getLockKeepAlives() {
-        return keepAlives;
-    }
-
-    private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
-        final Node node = session.getNode(nodePath);
-        if (!node.isNodeType(JcrConstants.MIX_LOCKABLE)) {
-            node.addMixin(JcrConstants.MIX_LOCKABLE);
-        }
-        session.save();
-    }
-
 
     private static java.util.Calendar dateToCalendar(Date date) {
         final java.util.Calendar result = java.util.Calendar.getInstance();
@@ -923,9 +846,6 @@ public class JCRJobStore implements JobStore {
     }
 
     private Session getSession() {
-        if (session != null) {
-            return session;
-        }
-        return SchedulerModule.getSession();
+        return session;
     }
 }

@@ -2,25 +2,34 @@
 <!--
   Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
-  Licensed under the Apache License, Version 2.0 (the  "License");
+  Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!DOCTYPE Repository
-          PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
-          "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
+<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.6//EN" "http://jackrabbit.apache.org/dtd/repository-2.6.dtd">
 <Repository>
 
-  <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-    <param name="path" value="${rep.home}/repository"/>
+  <DataSources>
+    <DataSource name="repositoryDS">
+      <param name="driver" value="org.h2.Driver" />
+      <param name="url" value="jdbc:h2:${rep.home}/datastore/db"/>
+      <param name="databaseType" value="h2"/>
+      <param name="validationQuery" value="select 1"/>
+      <param name="maxPoolSize" value="10"/>
+    </DataSource>
+  </DataSources>
+
+  <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
+    <param name="dataSourceName" value="repositoryDS"/>
+    <param name="schemaObjectPrefix" value="repository_"/>
   </FileSystem>
 
   <Security appName="Jackrabbit">
@@ -32,59 +41,63 @@
   <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
 
   <Workspace name="${wsp.name}">
-    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${wsp.home}"/>
+    <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
+      <param name="dataSourceName" value="repositoryDS"/>
+      <param name="schemaObjectPrefix" value="repository_${wsp.name}_"/>
     </FileSystem>
 
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
-      <param name="url" value="jdbc:h2:file:${wsp.home}/db"/>
-      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
-      <param name="minBlobSize" value="4194304"/>
+      <param name="dataSourceName" value="repositoryDS"/>
+      <param name="schemaObjectPrefix" value="repository_${wsp.name}_"/>
+      <param name="externalBLOBs" value="true"/>
+      <param name="consistencyCheck" value="false"/>
+      <param name="consistencyFix" value="false"/>
+      <param name="bundleCacheSize" value="64"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineImpl">
       <param name="indexingConfiguration" value="indexing_configuration.xml"/>
       <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
       <param name="path" value="${wsp.home}/index"/>
+      <param name="useSimpleFSDirectory" value="true"/>
       <param name="useCompoundFile" value="true"/>
-      <param name="minMergeDocs" value="1000"/>
+      <param name="minMergeDocs" value="100"/>
       <param name="volatileIdleTime" value="10"/>
-      <param name="maxMergeDocs" value="1000000000"/>
+      <param name="maxMergeDocs" value="100000"/>
       <param name="mergeFactor" value="5"/>
       <param name="maxFieldLength" value="10000"/>
       <param name="bufferSize" value="1000"/>
       <param name="cacheSize" value="1000"/>
-      <param name="forceConsistencyCheck" value="true"/>
-      <param name="enableConsistencyCheck" value="true"/>
+      <param name="onWorkspaceInconsistency" value="log"/>
+      <param name="forceConsistencyCheck" value="false"/>
+      <param name="enableConsistencyCheck" value="false"/>
       <param name="autoRepair" value="true"/>
       <param name="analyzer" value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>
       <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
       <param name="respectDocumentOrder" value="false"/>
-      <param name="resultFetchSize" value="2147483647"/>
-      <param name="extractorPoolSize" value="0"/>
+      <param name="resultFetchSize" value="1000"/>
       <param name="extractorTimeout" value="100"/>
       <param name="extractorBackLogSize" value="100"/>
-      <param name="textFilterClasses" value="org.apache.jackrabbit.extractor.PlainTextExtractor,org.apache.jackrabbit.extractor.MsWordTextExtractor,org.apache.jackrabbit.extractor.MsExcelTextExtractor,org.apache.jackrabbit.extractor.MsPowerPointTextExtractor,org.apache.jackrabbit.extractor.PdfTextExtractor,org.apache.jackrabbit.extractor.OpenOfficeTextExtractor,org.apache.jackrabbit.extractor.RTFTextExtractor,org.apache.jackrabbit.extractor.HTMLTextExtractor,org.apache.jackrabbit.extractor.XMLTextExtractor"/>
       <param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/>
-      <param name="supportHighlighting" value="true"/>
-      <param name="onWorkspaceInconsistency" value="log"/>
-      <!-- optional cache parameters for faceted engine. The default size when not configured is 1000 for both parameters -->
-      <!-- param name="bitSetCacheSize" value="1000"/>
-      <param name="facetValueCountMapCacheSize" value="1000"/-->
+      <param name="supportSimilarityOnStrings" value="true"/>
+      <param name="supportSimilarityOnBinaries" value="false"/>
     </SearchIndex>
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Workspace>
 
   <Versioning rootPath="${rep.home}/version">
-    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${rep.home}/version"/>
+    <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
+      <param name="dataSourceName" value="repositoryDS"/>
+      <param name="schemaObjectPrefix" value="repository_version_"/>
     </FileSystem>
 
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
-      <param name="url" value="jdbc:h2:file:${rep.home}/version/db"/>
-      <param name="schemaObjectPrefix" value="version_"/>
-      <param name="minBlobSize" value="4194304"/>
+      <param name="dataSourceName" value="repositoryDS"/>
+      <param name="schemaObjectPrefix" value="repository_version_"/>
+      <param name="externalBLOBs" value="true"/>
+      <param name="consistencyCheck" value="false"/>
+      <param name="consistencyFix" value="false"/>
     </PersistenceManager>
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
@@ -92,11 +105,20 @@
 
   <Cluster id="node1">
     <Journal class="org.apache.jackrabbit.core.journal.DatabaseJournal">
-      <param name="driver" value="org.h2.Driver" />
-      <param name="url" value="jdbc:h2:${rep.home}/datastore/db"/>
-      <param name="schemaObjectPrefix" value="journal_"/>
+      <param name="dataSourceName" value="repositoryDS"/>
       <param name="databaseType" value="h2"/>
+      <param name="schemaObjectPrefix" value="repository_"/>
+      <param name="revision" value="${rep.home}/revision.log"/>
     </Journal>
   </Cluster>
+
+  <DataStore class="org.apache.jackrabbit.core.data.db.DbDataStore">
+    <param name="dataSourceName" value="repositoryDS"/>
+    <param name="databaseType" value="h2"/>
+    <param name="schemaObjectPrefix" value="repository_"/>
+    <param name="minRecordLength" value="1024"/>
+    <param name="maxConnections" value="5"/>
+    <param name="copyWhenReading" value="true"/>
+  </DataStore>
 
 </Repository>
