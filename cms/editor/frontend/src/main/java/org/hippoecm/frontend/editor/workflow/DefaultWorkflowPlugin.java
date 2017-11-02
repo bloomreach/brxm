@@ -43,7 +43,6 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentArguments;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -497,7 +496,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             if (workflowDescriptor != null) {
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
-                info = workflow.hints(ContextPayloadProvider.get());
+                info = workflow.hints();
             }
         } catch (RepositoryException | WorkflowException | RemoteException ex) {
             log.error(ex.getMessage());

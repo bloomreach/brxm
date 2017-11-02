@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.model;
 
+import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
@@ -26,13 +27,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
-import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +56,7 @@ public class Revision implements IDetachable {
     }
 
     public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel,
-            JcrNodeModel handleModel) {
+                    JcrNodeModel handleModel) {
         this.history = history;
         this.date = date;
         this.labels = labels;
@@ -77,7 +74,7 @@ public class Revision implements IDetachable {
             try {
                 DocumentWorkflow workflow = history.getWorkflow();
                 if (workflow != null) {
-                    Document doc = retrieveVersion(workflow);
+                    Document doc = workflow.retrieveVersion(date);
                     if (doc != null) {
                         final Node frozenNode = UserSession.get().getJcrSession().getNodeByIdentifier(doc.getIdentity());
                         versionModel = new JcrNodeModel(frozenNode.getParent());
@@ -87,20 +84,13 @@ public class Revision implements IDetachable {
                 log.error("Could not find version", e);
             } catch (RepositoryException e) {
                 log.error("Repository error", e);
+            } catch (RemoteException e) {
+                log.error("Connection error", e);
             } catch (WorkflowException e) {
                 log.error("Workflow error", e);
             }
         }
         return versionModel;
-    }
-
-    private Document retrieveVersion(final DocumentWorkflow workflow) throws WorkflowException {
-        final WorkflowTransition retrieveVersion = new WorkflowTransition.Builder()
-                .contextPayload(ContextPayloadProvider.get())
-                .action(DocumentWorkflowAction.RETRIEVE_VERSION)
-                .eventPayload(DocumentWorkflowConstants.DATE, date)
-                .build();
-        return (Document) workflow.transition(retrieveVersion);
     }
 
     public JcrNodeModel getHandle() {

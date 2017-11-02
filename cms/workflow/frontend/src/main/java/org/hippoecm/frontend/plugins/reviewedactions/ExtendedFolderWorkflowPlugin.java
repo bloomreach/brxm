@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -43,18 +41,15 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -88,9 +83,6 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     private String name;
     private int processed;
     private Set<String> documents;
-    private static final Set<String> ALLOWED_ACTIONS = Stream.of(DocumentWorkflowAction.PUBLISH, DocumentWorkflowAction.DEPUBLISH)
-            .map(DocumentWorkflowAction::getAction)
-            .collect(Collectors.toSet());
 
     public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -162,24 +154,21 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 Node handle = session.getNodeByIdentifier(uuid);
                 if (handle.isNodeType(NT_HANDLE)) {
                     Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                    if (transitionAllowed(action, workflow)) {
-                        workflow.transition(new WorkflowTransition.Builder()
-                                .contextPayload(ContextPayloadProvider.get())
-                                .action(action)
-                                .build());
+                    if (workflow instanceof DocumentWorkflow) {
+                        DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                        switch (action) {
+                            case "publish": docWorkflow.publish(); break;
+                            case "depublish" : docWorkflow.depublish(); break;
+                        }
                         ++processed;
                         log.info("executed action {} on document {} ({})", action, handle.getPath(), uuid);
                     }
                 }
-            } catch (RepositoryException | WorkflowException e) {
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
                 log.warn("Execution of action {} on {} failed: {}", action, uuid, e);
             }
             session.refresh(true);
         }
-    }
-
-    private boolean transitionAllowed(final String action, final Workflow workflow) {
-        return workflow instanceof DocumentWorkflow && ALLOWED_ACTIONS.contains(action);
     }
 
     @Override
@@ -241,7 +230,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                     WorkflowManager workflowManager = ((HippoWorkspace) folder.getSession().getWorkspace()).getWorkflowManager();
                     Workflow workflow = workflowManager.getWorkflow(WORKFLOW_CATEGORY, child);
                     if (workflow != null) {
-                        Serializable hint = workflow.hints(ContextPayloadProvider.get()).get(workflowAction);
+                        Serializable hint = workflow.hints().get(workflowAction);
                         if (hint instanceof Boolean && (Boolean) hint) {
                             documents.add(child.getIdentifier());
                         }
@@ -262,6 +251,6 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             affectedComponent.setDefaultModel(new Model<>(Integer.toString(processed)));
             affectedComponent.setVisible(true);
             RequestCycle.get().find(AjaxRequestTarget.class).add(this);
-       }
+        }
     }
 }

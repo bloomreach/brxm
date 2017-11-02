@@ -42,7 +42,6 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -50,7 +49,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,25 +159,17 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
                         DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflow;
                         Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>)
-                                documentWorkflow.hints(ContextPayloadProvider.get()).get("requests");
+                                documentWorkflow.hints().get("requests");
                         for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
                             Map<String, Serializable> actions = entry.getValue();
-                            if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
-                                documentWorkflow.transition(getBuilder()
-                                        .action(CANCEL_REQUEST)
-                                        .requestIdentifier(entry.getKey())
-                                        .build());
+                            if (Boolean.TRUE.equals(actions.get(CANCEL_REQUEST.getAction()))) {
                                 documentWorkflow.cancelRequest(entry.getKey());
-                            } else if (Boolean.TRUE.equals(actions.get("rejectRequest"))) {
-                                documentWorkflow.transition(getBuilder()
-                                        .action(REJECT_REQUEST)
-                                        .requestIdentifier(entry.getKey())
-                                        .eventPayload("reason","bulk (de)publish")
-                                        .build());
+                            } else if (Boolean.TRUE.equals(actions.get(REJECT_REQUEST.getAction()))) {
+                                documentWorkflow.rejectRequest(entry.getKey(), "bulk (de)publish");
                             }
                         }
 
-                        Map<String, Serializable> hints = documentWorkflow.hints(ContextPayloadProvider.get());
+                        Map<String, Serializable> hints = documentWorkflow.hints();
                         if (mode.equals(MODE_PUBLISH) && Boolean.TRUE.equals(hints.get("publish"))) {
                             ((DocumentWorkflow) workflow).publish();
                         } else if (mode.equals(MODE_DEPUBLISH) && Boolean.TRUE.equals(hints.get("depublish"))) {
@@ -201,10 +191,5 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         public IValueMap getProperties() {
             return DialogConstants.SMALL;
         }
-    }
-
-    private static WorkflowTransition.Builder getBuilder() {
-        return new WorkflowTransition.Builder()
-                .contextPayload(ContextPayloadProvider.get());
     }
 }

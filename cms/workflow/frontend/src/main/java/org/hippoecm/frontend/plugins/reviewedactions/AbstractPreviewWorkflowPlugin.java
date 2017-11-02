@@ -35,17 +35,15 @@ import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -106,11 +104,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                final WorkflowTransition obtainTransition = new WorkflowTransition.Builder()
-                        .action(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE)
-                        .contextPayload(ContextPayloadProvider.get())
-                        .build();
-                Document docRef = (Document) wf.transition(obtainTransition);
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                Document docRef = workflow.obtainEditableInstance();
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
                 Node docNode = session.getNodeByIdentifier(docRef.getIdentity());

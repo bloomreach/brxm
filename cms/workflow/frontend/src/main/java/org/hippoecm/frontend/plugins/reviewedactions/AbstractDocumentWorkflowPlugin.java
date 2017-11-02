@@ -32,7 +32,6 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -166,11 +165,10 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected Map<String, Serializable> getHints() {
-
         DocumentWorkflow workflow = getWorkflow();
         if (workflow != null) {
             try {
-                return workflow.hints(ContextPayloadProvider.get());
+                return workflow.hints();
             } catch (WorkflowException | RemoteException | RepositoryException e) {
                 log.error("Unable to retrieve workflow hints", e);
             }

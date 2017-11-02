@@ -32,7 +32,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -43,7 +42,6 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -51,7 +49,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowTransition;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -207,7 +205,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         final IModel<Node> editorModel = getEditorModel();
         if (mode != getMode() && editorModel != null) {
             try {
-                final Workflow workflow = getWorkflow();
+                final EditableWorkflow workflow = getEditableWorkflow();
                 final Map<IEditorFilter, Object> contexts = preClose();
 
                 stop();
@@ -215,9 +213,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 postClose(contexts);
 
                 try {
-                    final DocumentWorkflowAction action = executeWorkflowForMode(mode, workflow);
-                    if (!DocumentWorkflowAction.NONE.equals(action)) {
-                        transition(workflow, action);
+                    if (executeWorkflowForMode(mode, workflow)) {
                         super.setMode(mode);
                     }
                 } finally {
@@ -235,24 +231,29 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
-    private DocumentWorkflowAction executeWorkflowForMode(final Mode mode, final Workflow workflow) throws RepositoryException, RemoteException, WorkflowException {
-        DocumentWorkflowAction action = DocumentWorkflowAction.NONE;
+    private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
             switch (mode) {
                 case EDIT:
-                    action = DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
+                    if (!isWorkflowMethodAvailable(workflow, "obtainEditableInstance")) {
+                        return false;
+                    }
+                    workflow.obtainEditableInstance();
                     break;
                 case VIEW:
                 case COMPARE:
-                    action = DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
+                    if (!isWorkflowMethodAvailable(workflow, "commitEditableInstance")) {
+                        return false;
+                    }
+                    workflow.commitEditableInstance();
                     break;
             }
         }
-        return isWorkflowMethodAvailable(workflow.hints(), action) ? action : DocumentWorkflowAction.NONE;
+        return true;
     }
 
-    private static boolean isWorkflowMethodAvailable(final Map<String, Serializable> hints, final DocumentWorkflowAction action) throws RepositoryException, RemoteException, WorkflowException {
-        final Serializable hint = hints.get(action.getAction());
+    private static boolean isWorkflowMethodAvailable(final Workflow workflow, final String methodName) throws RepositoryException, RemoteException, WorkflowException {
+        final Serializable hint = workflow.hints().get(methodName);
         return hint == null || Boolean.parseBoolean(hint.toString());
     }
 
@@ -270,23 +271,23 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             if (!modified) {
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
-                final Workflow workflow = getWorkflow();
-                final Map<String, Serializable> hints = workflow.hints(ContextPayloadProvider.get());
+                final EditableWorkflow workflow = getEditableWorkflow();
+                final Map<String,Serializable> hints = workflow.hints();
                 if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModified"))) {
-                    modified = (boolean) transition(workflow, DocumentWorkflowAction.CHECK_MODIFIED);
+                    modified = workflow.isModified();
                     return modified;
                 } else {
                     modified = true;
                     return true;
                 }
             }
-        } catch (EditorException | RepositoryException | RemoteException | WorkflowException e) {
+        } catch (EditorException | RepositoryException |RemoteException | WorkflowException e) {
             log.error("Could not determine whether there are pending changes for '" + path + "'", e);
         }
         return false;
     }
 
-    private Workflow getWorkflow() throws RepositoryException {
+    private EditableWorkflow getEditableWorkflow() throws RepositoryException {
         final Node handleNode = getModel().getObject();
         if (handleNode == null) {
             throw new RepositoryException("No handle node available");
@@ -294,10 +295,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         final HippoSession session = (HippoSession) handleNode.getSession();
         final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         final Workflow workflow = manager.getWorkflow("editing", handleNode);
-        if (!(workflow instanceof Workflow)) {
-            throw new RepositoryException("Editing workflow not of type Workflow");
+        if (!(workflow instanceof EditableWorkflow)) {
+            throw new RepositoryException("Editing workflow not of type EditableWorkflow");
         }
-        return workflow;
+        return (EditableWorkflow) workflow;
     }
 
     public boolean isValid() throws EditorException {
@@ -328,15 +329,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 validate();
             }
             if (isValid) {
-                final Workflow workflow = getWorkflow();
-                transition(workflow, DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE);
+                final EditableWorkflow workflow = getEditableWorkflow();
+                workflow.commitEditableInstance();
                 session.getJcrSession().refresh(true);
-                transition(workflow, DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE);
+                workflow.obtainEditableInstance();
                 modified = false;
             } else {
                 throw new EditorException("The document is not valid");
             }
-        } catch (RepositoryException | WorkflowException e) {
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.error("Unable to save the document {}: {}", docPath, e.getMessage());
             throw new EditorException("Unable to save the document", e);
         } catch (final ValidationException e) {
@@ -344,13 +345,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Unable to validate the document", e);
         }
 
-    }
-
-    private Object transition(final Workflow workflow, final DocumentWorkflowAction action) throws WorkflowException {
-        return workflow.transition(new WorkflowTransition.Builder()
-                .contextPayload(ContextPayloadProvider.get())
-                .action(action)
-                .build());
     }
 
     public void revert() throws EditorException {
@@ -386,7 +380,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             }
 
             handleNode.getSession().refresh(true);
-            transition(getWorkflow(), DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE);
+            getEditableWorkflow().disposeEditableInstance();
             session.getJcrSession().refresh(true);
 
         } catch (RepositoryException | RemoteException | WorkflowException ex) {
@@ -410,15 +404,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 jcrSession.refresh(true);
                 jcrSession.save();
 
-                final Workflow workflow = getWorkflow();
-                transition(workflow, DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE);
+                final EditableWorkflow workflow = getEditableWorkflow();
+                workflow.commitEditableInstance();
                 jcrSession.refresh(false);
                 modified = false;
             } else {
                 throw new EditorException("The document is not valid");
             }
 
-        } catch (RepositoryException | WorkflowException e) {
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.error("Unable to save the document {}: {}", docPath, e.getMessage());
             throw new EditorException("Unable to save the document", e);
         } catch (final ValidationException e) {
@@ -459,8 +453,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
             handleNode.getSession().refresh(true);
             if (getMode() == Mode.EDIT) {
-                final Workflow workflow = manager.getWorkflow("editing", handleNode);
-                transition(workflow, DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE);
+                ((EditableWorkflow) manager.getWorkflow("editing", handleNode)).disposeEditableInstance();
             }
             session.getJcrSession().refresh(true);
             modified = false;

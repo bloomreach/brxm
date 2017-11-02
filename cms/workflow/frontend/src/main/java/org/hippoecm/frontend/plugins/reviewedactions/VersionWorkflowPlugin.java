@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,23 +38,16 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
-import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.DocumentWorkflowAction.VERSION_RESTORE_TO;
 
 public class VersionWorkflowPlugin extends RenderPlugin {
 
@@ -142,13 +135,14 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 DocumentWorkflow documentWorkflow = model.getWorkflow();
 
                 Version versionNode = (Version) frozenNode.getParent();
+                Calendar calendar = versionNode.getCreated();
                 // create a revision to prevent loss of content from unpublished.
-                createVersion(documentWorkflow);
-                Document doc = obtainEditableInstance(documentWorkflow);
+                documentWorkflow.version();
+                Document doc = documentWorkflow.obtainEditableInstance();
                 try {
-                    restoreToVersion(documentWorkflow, versionNode.getCreated(), doc);
+                    documentWorkflow.versionRestoreTo(calendar, doc);
                 } finally {
-                    doc = (Document) commitEditableInstance(documentWorkflow);
+                    doc = documentWorkflow.commitEditableInstance();
                 }
 
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
@@ -165,36 +159,6 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 editor = getEditor();
                 editor.close();
                 return null;
-            }
-
-            private Object commitEditableInstance(final DocumentWorkflow documentWorkflow) throws WorkflowException {
-                return documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE));
-            }
-
-            private void restoreToVersion(final DocumentWorkflow documentWorkflow, final Calendar calendar, final Document doc) throws WorkflowException {
-                documentWorkflow.transition(getBuilder()
-                        .action(VERSION_RESTORE_TO)
-                        .eventPayload(DocumentWorkflowConstants.DATE,calendar, DocumentWorkflowConstants.TARGET_DOCUMENT,doc)
-                        .build());
-            }
-
-            private Document obtainEditableInstance(final DocumentWorkflow documentWorkflow) throws WorkflowException {
-                return (Document) documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE));
-            }
-
-            private void createVersion(final DocumentWorkflow documentWorkflow) throws WorkflowException {
-                documentWorkflow.transition(getWorkflowTransition(DocumentWorkflowAction.VERSION));
-            }
-
-            private WorkflowTransition getWorkflowTransition(final DocumentWorkflowAction action) {
-                return getBuilder()
-                        .action(action)
-                        .build();
-            }
-
-            private WorkflowTransition.Builder getBuilder() {
-                return new WorkflowTransition.Builder()
-                        .contextPayload(ContextPayloadProvider.get());
             }
         });
 
@@ -227,8 +191,6 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
     }
-
-
 
     @Override
     public WorkflowDescriptorModel getModel() {

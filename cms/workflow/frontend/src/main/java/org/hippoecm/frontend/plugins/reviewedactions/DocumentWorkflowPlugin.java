@@ -45,27 +45,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentArguments;
 import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentWorkflowAction;
-import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
-
-import static org.hippoecm.repository.api.DocumentWorkflowAction.MOVE;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -83,7 +77,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
-           private RenameDocumentArguments renameDocumentArguments;
+            private RenameDocumentArguments renameDocumentArguments;
 
             @Override
             public String getSubMenu() {
@@ -152,10 +146,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
-                    wf.transition(new WorkflowTransition.Builder()
-                            .contextPayload(ContextPayloadProvider.get())
-                            .action(DocumentWorkflowAction.RENAME)
-                            .build());
+                    ((DocumentWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
@@ -198,11 +189,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     return new ExceptionDialog(ex);
                 }
                 return new DestinationDialog(Model.of(translate("copy-title")),
-                                             Model.of(translate("copy-name")),
-                                             PropertyModel.of(this, "name"),
-                                             destination,
-                                             getPluginContext(),
-                                             getPluginConfig()) {
+                        Model.of(translate("copy-name")),
+                        PropertyModel.of(this, "name"),
+                        destination,
+                        getPluginContext(),
+                        getPluginConfig()) {
                     {
                         setOkEnabled(true);
                     }
@@ -304,11 +295,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         : new JcrNodeModel("/").getNode();
 
                 String nodeName = document.getName();
-                wf.transition(new WorkflowTransition.Builder()
-                        .action(MOVE)
-                        .contextPayload(ContextPayloadProvider.get())
-                        .eventPayload(DocumentWorkflowConstants.DESTINATION,new Document(folder), DocumentWorkflowConstants.NAME,nodeName)
-                        .build());
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                workflow.move(new Document(folder), nodeName);
                 browseTo(new JcrNodeModel(folder.getPath() + "/" + nodeName));
                 return null;
             }
@@ -347,10 +335,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                wf.transition(new WorkflowTransition.Builder()
-                        .contextPayload(ContextPayloadProvider.get())
-                        .action(DocumentWorkflowAction.DELETE)
-                        .build());
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                workflow.delete();
                 return null;
             }
         });
@@ -379,14 +365,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.transition(new WorkflowTransition.Builder()
-                        .contextPayload(ContextPayloadProvider.get())
-                        .action(DocumentWorkflowAction.REQUEST_DELETE)
-                        .build());
+                workflow.requestDeletion();
                 return null;
             }
         });
-        whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+
+        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -408,8 +392,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected String execute(Workflow wf) throws Exception {
                 return null;
             }
-        };
-        add(whereUsedAction);
+        });
 
         add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this, null), context, getModel()) {
 
