@@ -1,8 +1,12 @@
 import { Observable } from 'rxjs/Observable';
-import { TemplateQuery } from './create-content.types';
+import { DocumentDetails, TemplateQuery } from './create-content.types';
 
 export class CreateContentServiceMock {
   getTemplateQuery(id): Observable<TemplateQuery> {
+    return Observable.of(null);
+  }
+
+  createDraft(documentDetails: DocumentDetails): Observable<TemplateQuery> {
     return Observable.of(null);
   }
 

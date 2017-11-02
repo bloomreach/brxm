@@ -19,7 +19,7 @@ import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from '../create-content.types';
+import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 
@@ -28,7 +28,6 @@ import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.compo
   templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
-  @Input() document: any;
   @Input() options: CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
@@ -69,8 +68,21 @@ export class CreateContentComponent implements OnInit {
     this.onClose.emit();
   }
 
-  submit(form: NgForm) {
-    this.createContentService.createDraft(form.value).then(() => this.onContinue.emit());
+  submit() {
+    const document: DocumentDetails = {
+      name: this.nameUrlFields.nameField,
+      slug: this.nameUrlFields.urlField,
+      templateQuery: this.options.templateQuery,
+      documentTypeId: this.documentType,
+      rootPath: '/content/documents/hap/news',
+      defaultPath: '2017/11',
+    };
+    this.createContentService
+      .createDraft(document)
+      .subscribe(
+        (response) => this.onContinue.emit(),
+        (error) => this.onErrorCreatingDraft(error),
+      );
   }
 
   private onLoadDocumentTypes(documentTypes) {
@@ -86,6 +98,15 @@ export class CreateContentComponent implements OnInit {
       this.feedbackService.showError(errorKey, error.data.params);
     } else {
       console.error('Unknown error loading template query', error);
+    }
+  }
+
+  private onErrorCreatingDraft(error) {
+    if (error.data && error.data.reason) {
+      const errorKey = `ERROR_${error.data.reason}`;
+      this.feedbackService.showError(errorKey);
+    } else {
+      console.error('Unknown error creating new draft document', error);
     }
   }
 }

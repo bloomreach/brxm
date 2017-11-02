@@ -29,3 +29,12 @@ export interface CreateContentOptions {
   rootPath?: string;
   templateQuery?: string;
 }
+
+export interface DocumentDetails {
+  name: string;
+  slug: string;
+  templateQuery: string;
+  documentTypeId: string;
+  rootPath: string;
+  defaultPath: string;
+}

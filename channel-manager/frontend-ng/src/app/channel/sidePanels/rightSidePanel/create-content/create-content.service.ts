@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { Injectable } from '@angular/core';
 
-import { TemplateQuery } from './create-content.types';
+import { DocumentDetails, TemplateQuery } from './create-content.types';
 import ContentService from '../../../../services/content.service';
 
 @Injectable()
@@ -19,14 +19,9 @@ export class CreateContentService {
     return this.doc;
   }
 
-  createDraft(documentDetails) {
-    return new Promise((resolve, reject) => {
-      this.contentService.createDraft('64ab4648-0c20-40d2-9f18-d7a394f0334b')
-        .then(doc => {
-          this.doc = doc;
-          resolve(doc);
-        }).catch(e => reject(e));
-    });
+  createDraft(documentDetails: DocumentDetails) {
+    const promise = this.contentService._send('POST', ['documents'], documentDetails).then(doc => this.doc = doc);
+    return Observable.fromPromise(promise);
   }
 
   generateDocumentUrlByName(name: string): Observable<string> {
