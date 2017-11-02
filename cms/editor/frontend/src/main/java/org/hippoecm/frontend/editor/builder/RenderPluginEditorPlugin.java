@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -490,20 +490,24 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     private Icon getTransitionIconByName(final String name) {
-        switch (name) {
-            case "up": {
-                return Icon.CHEVRON_UP_CIRCLE;
-            }
-            case "down": {
-                return Icon.CHEVRON_DOWN_CIRCLE;
-            }
-            case "left": {
-                return Icon.CHEVRON_LEFT_CIRCLE;
-            }
-            case "right": {
-                return Icon.CHEVRON_RIGHT_CIRCLE;
+        if (name != null) {
+            final String[] split = StringUtils.split(name, " ");
+            switch (split[split.length - 1]) {
+                case "up": {
+                    return Icon.CHEVRON_UP_CIRCLE;
+                }
+                case "down": {
+                    return Icon.CHEVRON_DOWN_CIRCLE;
+                }
+                case "left": {
+                    return Icon.CHEVRON_LEFT_CIRCLE;
+                }
+                case "right": {
+                    return Icon.CHEVRON_RIGHT_CIRCLE;
+                }
             }
         }
-        return null;
+        log.warn("Undetermined transition icon by name '{}'; the name should be, or have as last word: 'up', 'down', 'left' or 'right'. Returning default icon.", name);
+        return Icon.EXCLAMATION_CIRCLE;
     }
 }
