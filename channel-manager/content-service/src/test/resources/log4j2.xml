@@ -16,65 +16,14 @@
 -->
 <Configuration>
   <Appenders>
-
-    <!-- console -->
     <Console name="console" target="SYSTEM_OUT">
       <StringMatchFilter/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </Console>
-
-    <!-- log4j.log -->
-    <File name="root" fileName="log4j.log">
-      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C.%M():%L] %m%n"/>
-    </File>
-
   </Appenders>
   <Loggers>
-
-    <Logger additivity="false" name="org.apache.jackrabbit.core" level="warn">
-      <AppenderRef ref="root"/>
-    </Logger>
-    <Logger additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache" level="error">
-      <AppenderRef ref="root"/>
-    </Logger>
-    <Logger additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap" level="error">
-      <AppenderRef ref="root"/>
-    </Logger>
-    <Logger additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache" level="error">
-      <AppenderRef ref="root"/>
-    </Logger>
-
-    <Logger additivity="false" name="org.hippoecm.repository" level="warn">
-      <AppenderRef ref="console"/>
-    </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.export" level="warn">
-      <AppenderRef ref="console"/>
-    </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider" level="error">
-      <AppenderRef ref="console"/>
-    </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.security.HippoAccessManager" level="warn">
-      <AppenderRef ref="root"/>
-    </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.security.HippoLoginModule" level="warn">
-      <AppenderRef ref="root"/>
-    </Logger>
-
-    <!-- surpress classcast warning in dispose() method over SPI -->
-    <Logger additivity="false" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager" level="error">
-      <AppenderRef ref="root"/>
-    </Logger>
-
-    <Logger additivity="false" name="org.hippoecm.checker" level="warn">
-      <AppenderRef ref="console"/>
-    </Logger>
-
-    <Logger name="org.quartz.core.ErrorLogger" level="off"/>
-
     <Root level="warn">
       <AppenderRef ref="console"/>
-      <AppenderRef ref="root"/>
     </Root>
-
   </Loggers>
 </Configuration>
