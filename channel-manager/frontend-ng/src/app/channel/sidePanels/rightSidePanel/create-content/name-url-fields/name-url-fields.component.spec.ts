@@ -122,25 +122,25 @@ describe('NameUrlFields Component', () => {
     });
 
     it('sets the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
-      component.form.controls.name.value = 'test val';
+      setNameInputValue('test val');
       component.setDocumentUrlByName();
       component.setDocumentUrlEditable(true);
       expect(component.urlEditMode.oldValue).toEqual('test-val');
     });
 
-    it('NOT set the urlEditMode oldValue to the current urlField if the passed FALSE', () => {
-      component.form.controls.name.value = 'test val';
+    it('does not set the urlEditMode oldValue to the current urlField if passed false', () => {
+      setNameInputValue('test-val');
       component.setDocumentUrlByName();
       component.setDocumentUrlEditable(false);
       expect(component.urlEditMode.oldValue).not.toEqual('test-val');
     });
   });
 
-  describe('cancelUrlEditing', () => {
+  describe('editCancel', () => {
     it('sets the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
       spyOn(component, 'setDocumentUrlEditable');
       component.urlEditMode.oldValue = 'test-val';
-      component.cancelUrlEditing();
+      component.editCancel();
       expect(component.urlField).toEqual('test-val');
       expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
     });
