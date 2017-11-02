@@ -89,14 +89,14 @@ describe('NameUrlFields Component', () => {
 
   describe('setDocumentUrlByName', () => {
     it('sets the url field with lowercase and replace spaces with dashes', () => {
-      component.form.controls.name.value = 'test';
+      setNameInputValue('test');
       component.setDocumentUrlByName();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test', 'en');
       expect(component.urlField).toEqual('test');
 
       spies.generateDocumentUrlByName.calls.reset();
 
-      component.form.controls.name.value = 'test val';
+      setNameInputValue('test val');
       component.setDocumentUrlByName();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test val', 'en');
       expect(component.urlField).toEqual('test-val');
@@ -109,7 +109,6 @@ describe('NameUrlFields Component', () => {
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'en');
 
       hostComponent.locale = 'de';
-      tick(1000);
       hostFixture.detectChanges();
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
