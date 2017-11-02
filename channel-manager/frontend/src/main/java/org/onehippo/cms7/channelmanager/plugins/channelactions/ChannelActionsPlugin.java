@@ -49,7 +49,6 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -88,7 +87,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                        if (Boolean.TRUE.equals(workflow.hints(ContextPayloadProvider.get()).get("previewAvailable"))) {
+                        if (Boolean.TRUE.equals(workflow.hints().get("previewAvailable"))) {
                             addMenuDescription(model);
                         }
                     }

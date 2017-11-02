@@ -29,7 +29,6 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.ContextPayloadProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -89,7 +88,7 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                     DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                    Serializable isLive = workflow.hints(ContextPayloadProvider.get()).get("isLive");
+                    Serializable isLive = workflow.hints().get("isLive");
                     isPublished = (isLive instanceof Boolean) && ((Boolean) isLive);
                 }
             } catch (RepositoryException | RemoteException | WorkflowException e) {
