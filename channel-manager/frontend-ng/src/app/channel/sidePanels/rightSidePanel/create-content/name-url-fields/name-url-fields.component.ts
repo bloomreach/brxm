@@ -72,9 +72,4 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
     this.urlEditMode.touched = true;
     this.setDocumentUrlEditable(false);
   }
-
-  editCancel() {
-    this.urlField = this.urlEditMode.oldValue;
-    this.setDocumentUrlEditable(false);
-  }
 }

@@ -68,6 +68,7 @@ fdescribe('NameUrlFields Component', () => {
 
     spies.generateDocumentUrlByName = spyOn(createContentService, 'generateDocumentUrlByName').and.callThrough();
     spies.setDocumentUrlByName = spyOn(component, 'setDocumentUrlByName').and.callThrough();
+    spies.setDocumentUrlEditable = spyOn(component, 'setDocumentUrlEditable').and.callThrough();
 
     component.ngOnInit();
     hostFixture.detectChanges();
@@ -158,12 +159,8 @@ fdescribe('NameUrlFields Component', () => {
     });
   });
 
-  describe('Edit saving and cancellation', () => {
-    beforeEach(() => {
-      spyOn(component, 'setDocumentUrlEditable').and.callThrough();
-    });
-
-    it('editDone: saves the document URL, sets touched state to true', () => {
+  describe('editDone', () => {
+    it('saves the document URL, sets touched state to true', () => {
       expect(component.urlEditMode.touched).toEqual(false);
       component.setDocumentUrlEditable(true);
       setNameInputValue('Some input value');
@@ -171,15 +168,24 @@ fdescribe('NameUrlFields Component', () => {
       expect(component.urlEditMode.touched).toEqual(true);
       expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
     });
+  });
 
-    it('editCancel: cancels editing, setting urlField to the value pre-editing', () => {
+  describe('regenerateUrl', () => {
+    it('regenerates document URL by name and sets it to the url field', fakeAsync(() => {
+      setNameInputValue('My document name');
+
+      // As if the URL was manually edited previously
+      component.urlField = 'manually-edited-url';
+      component.urlEditMode.touched = true;
+
+      component.regenerateUrl();
+      tick(1000);
+
       expect(component.urlEditMode.touched).toEqual(false);
-      component.urlField = 'Old value';
-      component.setDocumentUrlEditable(true);
-      component.urlField = 'New value';
-      component.editCancel();
-      expect(component.urlField).toEqual('Old value');
       expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
-    });
+      expect(spies.setDocumentUrlByName).toHaveBeenCalled();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('My document name', 'en');
+      expect(component.urlField).toEqual('my-document-name');
+    }));
   });
 });
