@@ -44,6 +44,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -52,9 +53,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.DocumentWorkflowAction.CANCEL_REQUEST;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.REJECT_REQUEST;
 
 public class PublishAllShortcutPlugin extends RenderPlugin {
 
@@ -162,9 +160,9 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                                 documentWorkflow.hints().get("requests");
                         for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
                             Map<String, Serializable> actions = entry.getValue();
-                            if (Boolean.TRUE.equals(actions.get(CANCEL_REQUEST.getAction()))) {
+                            if (Boolean.TRUE.equals(actions.get(DocumentWorkflowAction.cancelRequest().getAction()))) {
                                 documentWorkflow.cancelRequest(entry.getKey());
-                            } else if (Boolean.TRUE.equals(actions.get(REJECT_REQUEST.getAction()))) {
+                            } else if (Boolean.TRUE.equals(actions.get(DocumentWorkflowAction.rejectRequest().getAction()))) {
                                 documentWorkflow.rejectRequest(entry.getKey(), "bulk (de)publish");
                             }
                         }
