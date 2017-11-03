@@ -17,38 +17,159 @@
 
 package org.hippoecm.repository.api;
 
-public enum DocumentWorkflowAction implements ActionAware {
-    UNLOCK("unlock"),
-    PUBLISH("publish"),
-    CHECK_MODIFIED("checkModified"),
-    OBTAIN_EDITABLE_INSTANCE("obtainEditableInstance"),
-    COMMIT_EDITABLE_INSTANCE("commitEditableInstance"),
-    DISPOSE_EDITABLE_INSTANCE("disposeEditableInstance"),
-    REQUEST_DELETE("requestDelete"),
-    REQUEST_DEPUBLICATION("requestDepublication"),
-    REQUEST_PUBLICATION("requestPublication"),
-    DELETE("delete"),
-    RENAME("rename"),
-    COPY("copy"),
-    MOVE("move"),
-    DEPUBLISH("depublish"),
-    CANCEL_REQUEST("cancelRequest"),
-    ACCEPT_REQUEST("acceptRequest"),
-    REJECT_REQUEST("rejectRequest"),
-    VERSION("version"),
-    VERSION_RESTORE_TO("versionRestoreTo"),
-    RESTORE_VERSION("restoreVersion"),
-    LIST_VERSIONS("listVersions"),
-    RETRIEVE_VERSION("retrieveVersion"), NONE("None");
+import java.util.HashMap;
+import java.util.Map;
+
+public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
+
+    public static DocumentWorkflowAction unlock() {
+        return new DocumentWorkflowAction("unlock");
+    }
+
+    public static DocumentWorkflowAction publish() {
+        return new DocumentWorkflowAction("publish");
+    }
+
+    public static DocumentWorkflowAction checkModified() {
+        return new DocumentWorkflowAction("checkModified");
+    }
+
+    public static DocumentWorkflowAction obtainEditableInstance() {
+        return new DocumentWorkflowAction("obtainEditableInstance");
+    }
+
+    public static DocumentWorkflowAction commitEditableInstance() {
+        return new DocumentWorkflowAction("commitEditableInstance");
+    }
+
+    public static DocumentWorkflowAction disposeEditableInstance() {
+        return new DocumentWorkflowAction("disposeEditableInstance");
+    }
+
+    public static DocumentWorkflowAction requestDelete() {
+        return new DocumentWorkflowAction("requestDelete");
+    }
+
+    public static DocumentWorkflowAction requestDepublication() {
+        return new DocumentWorkflowAction("requestDepublication");
+    }
+
+    public static DocumentWorkflowAction requestPublication() {
+        return new DocumentWorkflowAction("requestPublication");
+    }
+
+    public static DocumentWorkflowAction delete() {
+        return new DocumentWorkflowAction("delete");
+    }
+
+    public static DocumentWorkflowAction rename() {
+        return new DocumentWorkflowAction("rename");
+    }
+
+    public static DocumentWorkflowAction copy() {
+        return new DocumentWorkflowAction("copy");
+    }
+
+    public static DocumentWorkflowAction move() {
+        return new DocumentWorkflowAction("move");
+    }
+
+    public static DocumentWorkflowAction depublish() {
+        return new DocumentWorkflowAction("depublish");
+    }
+
+    public static DocumentWorkflowAction cancelRequest() {
+        return new DocumentWorkflowAction("cancelRequest");
+    }
+
+    public static DocumentWorkflowAction acceptRequest() {
+        return new DocumentWorkflowAction("acceptRequest");
+    }
+
+    public static DocumentWorkflowAction rejectRequest() {
+        return new DocumentWorkflowAction("rejectRequest");
+    }
+
+    public static DocumentWorkflowAction version() {
+        return new DocumentWorkflowAction("version");
+    }
+
+    public static DocumentWorkflowAction versionRestoreTo() {
+        return new DocumentWorkflowAction("versionRestoreTo");
+    }
+
+    public static DocumentWorkflowAction restoreVersion() {
+        return new DocumentWorkflowAction("restoreVersion");
+    }
+
+    public static DocumentWorkflowAction listVersions() {
+        return new DocumentWorkflowAction("listVersions");
+    }
+
+    public static DocumentWorkflowAction retrieveVersion() {
+        return new DocumentWorkflowAction("retrieveVersion");
+    }
+
+    public static DocumentWorkflowAction none() {
+        return new DocumentWorkflowAction("None");
+    }
 
     private final String action;
+    private String requestIdentifier;
+    private final Map<String, Object> eventPayload = new HashMap<>();
 
-    DocumentWorkflowAction(final String action) {
+    public DocumentWorkflowAction(final String action) {
         this.action = action;
+    }
+
+    public String getRequestIdentifier() {
+        return requestIdentifier;
+    }
+
+    public DocumentWorkflowAction requestIdentifier(final String requestIdentifier) {
+
+        this.requestIdentifier = requestIdentifier;
+        return this;
+    }
+
+    public Map<String, Object> getEventPayload() {
+        return eventPayload;
+    }
+
+    public DocumentWorkflowAction addEventPayload(final PayloadKey key, final Object value) {
+        eventPayload.put(key.getKey(), value);
+        return this;
+    }
+
+    public DocumentWorkflowAction addEventPayload(final String key, final Object value) {
+        eventPayload.put(key, value);
+        return this;
     }
 
     public String getAction() {
         return action;
+    }
+
+    public enum DocumentPayloadKey implements PayloadKey {
+        TARGET_DATE("targetDate"),
+        NAME("name"),
+        DESTINATION("destination"),
+        DATE("date"),
+        TARGET_DOCUMENT("target"),
+        REQUEST("request"),
+        REASON("reason");
+
+        private final String key;
+
+        DocumentPayloadKey(final String key) {
+            this.key = key;
+        }
+
+
+        @Override
+        public String getKey() {
+            return key;
+        }
     }
 
 }

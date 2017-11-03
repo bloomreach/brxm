@@ -62,26 +62,4 @@ public interface Workflow extends Remote, Serializable {
     @WorkflowAction(loggable = false, mutates = false)
     Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 
-    /**
-     * See {@link #hints()} only now with an {@code initialPayload}
-     * @param contextPayload supplies information that is not available on the document but for example on the http session
-     *                       of the user invoking the workflow
-     * @see #hints()
-     *
-     */
-    @WorkflowAction(loggable = false, mutates = false)
-    default Map<String, Serializable> hints(Map<String, Serializable> contextPayload) throws WorkflowException, RemoteException, RepositoryException {
-        return hints();
-    }
-
-    /**
-     * Triggers workflow based on {@link WorkflowTransition}
-     *
-     * @param transition {@link WorkflowTransition} instance
-     * @return
-     * @throws WorkflowException
-     */
-    default Object transition(final WorkflowTransition transition) throws WorkflowException {
-        throw new UnsupportedOperationException("Transition has not been defined for this instance.");
-    }
 }

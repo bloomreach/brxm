@@ -16,9 +16,6 @@
  */
 package org.hippoecm.repository.api;
 
-/**
- * ActionAware is used by {@link WorkflowTransition.Builder#action(ActionAware)}.
- */
 public interface ActionAware {
 
     String getAction();

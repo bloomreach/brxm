@@ -31,36 +31,22 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
-import org.hippoecm.repository.api.DocumentWorkflowConstants;
 import org.hippoecm.repository.api.RepositoryMap;
+import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowTransition;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
-import static org.hippoecm.repository.api.DocumentWorkflowAction.ACCEPT_REQUEST;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.CANCEL_REQUEST;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.CHECK_MODIFIED;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.COMMIT_EDITABLE_INSTANCE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.COPY;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DELETE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DEPUBLISH;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.LIST_VERSIONS;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.MOVE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.PUBLISH;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.REJECT_REQUEST;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.RENAME;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.REQUEST_DELETE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.REQUEST_DEPUBLICATION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.REQUEST_PUBLICATION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.RESTORE_VERSION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.RETRIEVE_VERSION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.UNLOCK;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.VERSION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.VERSION_RESTORE_TO;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DESTINATION;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.NAME;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REASON;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DATE;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DOCUMENT;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.requestDelete;
 
 /**
  * DocumentWorkflow implementation which delegates the document workflow state management and action processing
@@ -208,55 +194,49 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public boolean isModified() throws WorkflowException, RepositoryException {
-        return (boolean) transition(CHECK_MODIFIED);
+        return (boolean) triggerAction(checkModified());
     }
 
     @Override
     public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
-        return (Document) transition(OBTAIN_EDITABLE_INSTANCE);
+        return (Document) triggerAction(DocumentWorkflowAction.obtainEditableInstance());
     }
 
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
-        return (Document) transition(COMMIT_EDITABLE_INSTANCE);
+        return (Document) triggerAction(DocumentWorkflowAction.commitEditableInstance());
     }
 
     @Override
     public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
-        return (Document) transition(DISPOSE_EDITABLE_INSTANCE);
+        return (Document) triggerAction(DocumentWorkflowAction.disposeEditableInstance());
     }
 
     // BasicReviewedActionsWorkflow implementation
 
     @Override
     public void requestDeletion() throws WorkflowException {
-        transition(REQUEST_DELETE);
+        triggerAction(requestDelete());
     }
 
     @Override
     public void requestDepublication() throws WorkflowException {
-        transition(REQUEST_DEPUBLICATION);
+        triggerAction(DocumentWorkflowAction.requestDepublication());
     }
 
     @Override
     public void requestDepublication(final Date depublicationDate) throws WorkflowException {
-        transition(getBuilder()
-                .action(REQUEST_DEPUBLICATION)
-                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,depublicationDate)
-                .build());
+        triggerAction(DocumentWorkflowAction.requestDepublication().addEventPayload(TARGET_DATE,depublicationDate));
     }
 
     @Override
     public void requestPublication() throws WorkflowException {
-        transition(REQUEST_PUBLICATION);
+        triggerAction(DocumentWorkflowAction.requestPublication());
     }
 
     @Override
     public void requestPublication(final Date publicationDate) throws WorkflowException {
-        transition(getBuilder()
-                .action(REQUEST_PUBLICATION)
-                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,publicationDate)
-                .build());
+        triggerAction(DocumentWorkflowAction.requestPublication().addEventPayload(TARGET_DATE,publicationDate));
     }
 
     @Override
@@ -273,57 +253,42 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void delete() throws WorkflowException {
-        transition(DELETE);
+        triggerAction(DocumentWorkflowAction.delete());
     }
 
     @Override
     public void rename(final String newName) throws WorkflowException {
-        transition(getBuilder()
-                .action(RENAME)
-                .eventPayload(DocumentWorkflowConstants.NAME,newName)
-                .build());
+        triggerAction(DocumentWorkflowAction.rename().addEventPayload(NAME,newName));
     }
 
     @Override
     public void copy(final Document destination, final String newName) throws WorkflowException {
-        transition(getBuilder()
-                .action(COPY)
-                .eventPayload(DocumentWorkflowConstants.DESTINATION,destination, DocumentWorkflowConstants.NAME,newName)
-                .build());
+        triggerAction(DocumentWorkflowAction.copy().addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName));
     }
 
     @Override
     public void move(final Document destination, final String newName) throws WorkflowException {
-        transition(getBuilder()
-                .action(MOVE)
-                .eventPayload(DocumentWorkflowConstants.DESTINATION,destination, DocumentWorkflowConstants.NAME,newName)
-                .build());
+        triggerAction(DocumentWorkflowAction.move().addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName));
     }
 
     @Override
     public void depublish() throws WorkflowException {
-        transition(DEPUBLISH);
+        triggerAction(DocumentWorkflowAction.depublish());
     }
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        transition(getBuilder()
-                .action(DEPUBLISH)
-                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,depublicationDate)
-                .build());
+        triggerAction(DocumentWorkflowAction.depublish().addEventPayload(TARGET_DATE,depublicationDate));
     }
 
     @Override
     public void publish() throws WorkflowException {
-        transition(PUBLISH);
+        triggerAction(DocumentWorkflowAction.publish());
     }
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        transition(getBuilder()
-                .action(PUBLISH)
-                .eventPayload(DocumentWorkflowConstants.TARGET_DATE,publicationDate)
-                .build());
+        triggerAction(DocumentWorkflowAction.publish().addEventPayload(TARGET_DATE,publicationDate));
     }
 
     @Override
@@ -335,10 +300,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void cancelRequest(String requestIdentifier) throws WorkflowException {
-        transition(getBuilder()
-                .action(CANCEL_REQUEST)
-                .requestIdentifier(requestIdentifier)
-                .build());
+        triggerAction(DocumentWorkflowAction.cancelRequest().requestIdentifier(requestIdentifier));
     }
 
     @Override
@@ -348,10 +310,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void acceptRequest(String requestIdentifier) throws WorkflowException {
-        transition(getBuilder()
-                .action(ACCEPT_REQUEST)
-                .requestIdentifier(requestIdentifier)
-                .build());
+        triggerAction(DocumentWorkflowAction.acceptRequest().requestIdentifier(requestIdentifier));
     }
 
     @Override
@@ -361,88 +320,62 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void rejectRequest(String requestIdentifier, final String reason) throws WorkflowException {
-        transition(getBuilder()
-                .action(REJECT_REQUEST)
-                .requestIdentifier(requestIdentifier)
-                .eventPayload("reason",reason)
-                .build());
+        triggerAction(DocumentWorkflowAction.rejectRequest().requestIdentifier(requestIdentifier).addEventPayload(REASON,reason));
     }
 
     // UnlockWorkflow implementation
 
     @Override
     public void unlock() throws WorkflowException {
-        transition(UNLOCK);
+        triggerAction(DocumentWorkflowAction.unlock());
     }
 
     // Version Workflow on Document handle level
 
     @Override
     public Document version() throws WorkflowException, RepositoryException {
-        return (Document) transition(VERSION);
+        return (Document) triggerAction(DocumentWorkflowAction.version());
     }
 
     @Override
     public Document versionRestoreTo(final Calendar historic, Document target) throws WorkflowException, RepositoryException {
-        return (Document) transition(getBuilder()
-                .action(VERSION_RESTORE_TO)
-                .eventPayload(DocumentWorkflowConstants.DATE,historic, DocumentWorkflowConstants.TARGET_DOCUMENT,target)
-                .build());
+        return (Document) triggerAction(DocumentWorkflowAction.versionRestoreTo().addEventPayload(DATE,historic).addEventPayload(TARGET_DOCUMENT,target));
     }
 
     @Override
     public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return (Document) transition(getBuilder()
-                .action(RESTORE_VERSION)
-                .eventPayload(DocumentWorkflowConstants.DATE,historic)
-                .build());
+        return (Document) triggerAction(DocumentWorkflowAction.restoreVersion().addEventPayload(DATE,historic));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public SortedMap<Calendar, Set<String>> listVersions() throws WorkflowException {
-        return (SortedMap<Calendar, Set<String>>) transition(LIST_VERSIONS);
+        return (SortedMap<Calendar, Set<String>>) triggerAction(DocumentWorkflowAction.listVersions());
     }
 
     @Override
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return (Document) transition(getBuilder()
-                .action(RETRIEVE_VERSION)
-                .eventPayload(DocumentWorkflowConstants.DATE,historic)
-                .build());
+        return (Document)triggerAction(DocumentWorkflowAction.retrieveVersion().addEventPayload(DATE,historic));
     }
 
     @Override
-    public Object transition(WorkflowTransition transition) throws WorkflowException {
-        workflowExecutor.start();
-        final Map<String, Object> eventPayload = transition.getEventPayload();
-        Map<String, Boolean> actionsMap = transition.getActionsMap();
-        final String requestIdentifier = transition.getRequestIdentifier();
-        final String action = transition.getAction();
-        if (requestIdentifier !=null){
-            addRequestToEventPayload(eventPayload, requestIdentifier);
-            if (actionsMap==null){
-                actionsMap = new HashMap<>();
-            }
-            actionsMap.putAll(getRequestActionActions(requestIdentifier, action));
+    public Object triggerAction(final WorkflowAction action) throws WorkflowException {
+        if (!(action instanceof DocumentWorkflowAction)) {
+            throw new IllegalArgumentException(String.format("action class must be of type '%s' for document workflow but " +
+                    "was of type '%s'.", DocumentWorkflowAction.class.getName(), action.getClass().getName()));
         }
-        return triggerAction(eventPayload, actionsMap, action);
-    }
-
-    private void addRequestToEventPayload(final Map<String, Object> eventPayload, final String requestIdentifier) {
-        eventPayload.put(DocumentWorkflowConstants.REQUEST,workflowExecutor.getData().getRequests().get(requestIdentifier));
-    }
-
-    private Object triggerAction(final Map<String, Object> eventPayload, final Map<String, Boolean> actionsMap, final String action) throws WorkflowException {
-        return actionsMap==null?workflowExecutor.triggerAction(action, eventPayload):workflowExecutor.triggerAction(action, actionsMap, eventPayload);
-    }
-
-    private  Object transition(DocumentWorkflowAction documentWorkflowAction) throws WorkflowException {
-        return transition(getBuilder().action(documentWorkflowAction.getAction()).build());
-    }
-
-    private WorkflowTransition.Builder getBuilder() {
-        return new WorkflowTransition.Builder();
+        DocumentWorkflowAction dwfAction = (DocumentWorkflowAction) action;
+        workflowExecutor.start();
+        final Map<String, Object> eventPayload = dwfAction.getEventPayload();
+        final String requestIdentifier = dwfAction.getRequestIdentifier();
+        if (requestIdentifier !=null){
+            dwfAction.addEventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier));
+        }
+        if (requestIdentifier == null) {
+            return workflowExecutor.triggerAction(dwfAction.getAction(), eventPayload);
+        } else {
+            return workflowExecutor.triggerAction(dwfAction.getAction(), getRequestActionActions(requestIdentifier, dwfAction.getAction()), eventPayload);
+        }
     }
 
 }
