@@ -108,7 +108,6 @@ public abstract class CommonComponent extends BaseHstComponent {
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {
         if (!Strings.isNullOrEmpty(documentPath)) {
             final HstRequestContext context = RequestContextProvider.get();
-            RequestContextProvider.get().setAttribute("cssClasses", "your-classes");
             final HippoBean root = context.getSiteContentBaseBean();
             return root.getBean(documentPath, beanMappingClass);
         }
