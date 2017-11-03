@@ -29,7 +29,7 @@ public class DefaultFileMapper extends AbstractFileMapper {
         final DefinitionProperty property = value.getParent();
         final String filePath = constructFilePathFromJcrPath(property.getPath());
         final String fileExtension = getFileExtension(property.getParent());
-        final String valueExtension = StringUtils.substringAfterLast(value.getString(), ".");
+        final String valueExtension = value.isResource() ? StringUtils.substringAfterLast(value.getString(), ".") : "";
         final String resourceExtension =
                 DEFAULT_EXTENSION.equals(fileExtension) && !StringUtils.isEmpty(valueExtension) && valueExtension.indexOf('/') == -1
                 ? valueExtension : fileExtension;
