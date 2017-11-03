@@ -53,7 +53,7 @@
       <button mat-icon-button
               matSuffix
               type="button"
-              [disabled]="!documentName || !urlEditMode.touched"
+              [disabled]="!documentName || urlEditMode.oldValue === urlField"
               (click)="regenerateUrl()">
         <mat-icon>autorenew</mat-icon>
       </button>

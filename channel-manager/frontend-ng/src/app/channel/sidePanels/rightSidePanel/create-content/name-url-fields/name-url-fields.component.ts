@@ -71,5 +71,10 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   editDone() {
     this.urlEditMode.touched = true;
     this.setDocumentUrlEditable(false);
+
+    // If done while urlField is empty, regenerate URL
+    if (!this.urlField && this.documentName) {
+      this.setDocumentUrlByName();
+    }
   }
 }
