@@ -17,7 +17,7 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { Component, DebugElement, Injector, SimpleChange, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import { NameUrlFieldsComponent } from "./name-url-fields.component";
@@ -76,6 +76,7 @@ describe('NameUrlFields Component', () => {
   function setNameInputValue(value: string) {
     const nameInput = component.nameInputElement.nativeElement;
     component.form.controls.name.value = value;
+    component.documentName = value;
     nameInput.dispatchEvent(new Event('keyup'));
   }
 
@@ -85,22 +86,6 @@ describe('NameUrlFields Component', () => {
       tick(1000);
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
     }));
-  });
-
-  describe('setDocumentUrlByName', () => {
-    it('sets the url field with lowercase and replace spaces with dashes', () => {
-      setNameInputValue('test');
-      component.setDocumentUrlByName();
-      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test', 'en');
-      expect(component.urlField).toEqual('test');
-
-      spies.generateDocumentUrlByName.calls.reset();
-
-      setNameInputValue('test val');
-      component.setDocumentUrlByName();
-      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test val', 'en');
-      expect(component.urlField).toEqual('test-val');
-    });
 
     it('sets the url with locale automatically after locale has been changed', fakeAsync(() => {
       setNameInputValue('some val');
@@ -115,34 +100,58 @@ describe('NameUrlFields Component', () => {
     }));
   });
 
-  describe('setDocumentUrlEditable', () => {
-    it('sets the urlEditMode state', () => {
-      component.setDocumentUrlEditable(true);
-      expect(component.urlEditMode.state).toEqual(true);
+  describe('setDocumentUrlByName', () => {
+    it('calls CreateContentService.generateDocumentUrlByName and applies the new url', () => {
+      setNameInputValue('test');
+      component.setDocumentUrlByName();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test', 'en');
+      expect(component.urlField).toEqual('test');
+
+      spies.generateDocumentUrlByName.calls.reset();
+
+      setNameInputValue('test val');
+      component.setDocumentUrlByName();
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test val', 'en');
+      expect(component.urlField).toEqual('test-val');
     });
 
-    it('sets the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
-      component.form.controls.name.value = 'test val';
-      component.setDocumentUrlByName();
-      component.setDocumentUrlEditable(true);
-      expect(component.urlEditMode.oldValue).toEqual('test-val');
-    });
+    it('changes the URL upon editing the name, as long as isManualUrlMode is false', fakeAsync(() => {
+      // Name editing triggers generation of URL from the back-end
+      setNameInputValue('First edit');
+      tick(1000);
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalled();
+      expect(component.urlField).toEqual('first-edit');
 
-    it('NOT set the urlEditMode oldValue to the current urlField if the passed FALSE', () => {
-      component.form.controls.name.value = 'test val';
-      component.setDocumentUrlByName();
-      component.setDocumentUrlEditable(false);
-      expect(component.urlEditMode.oldValue).not.toEqual('test-val');
-    });
+      // Manual editing of the URL
+      component.setManualUrlEditMode(true);
+      component.urlField = 'manual-edit-of-url';
+
+      spies.generateDocumentUrlByName.calls.reset();
+
+      // Until manual editing mode is disabled, URL generations should be bypassed
+      setNameInputValue('Second edit, should not change the URL');
+      tick(1000);
+      expect(spies.generateDocumentUrlByName).not.toHaveBeenCalled();
+      expect(component.urlField).toEqual('manual-edit-of-url');
+    }));
   });
 
-  describe('cancelUrlEditing', () => {
-    it('sets the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
-      spyOn(component, 'setDocumentUrlEditable');
-      component.urlEditMode.oldValue = 'test-val';
-      component.cancelUrlEditing();
-      expect(component.urlField).toEqual('test-val');
-      expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
+  describe('setManualUrlEditable', () => {
+    it('sets the urlEditMode state', () => {
+      component.setManualUrlEditMode(true);
+      expect(component.isManualUrlMode).toEqual(true);
+
+      component.setManualUrlEditMode(false);
+      expect(component.isManualUrlMode).toEqual(false);
+    });
+
+    it('regenerates URL if called with false', () => {
+      setNameInputValue('Some document name');
+      component.setManualUrlEditMode(true);
+      component.urlField = 'some-temporary-value';
+      component.setManualUrlEditMode(false);
+      expect(spies.setDocumentUrlByName).toHaveBeenCalled();
+      expect(component.urlField).toEqual('some-document-name');
     });
   });
 });

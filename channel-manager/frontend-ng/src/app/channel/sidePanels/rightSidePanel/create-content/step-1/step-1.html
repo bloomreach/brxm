@@ -89,7 +89,7 @@
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid || nameUrlFields.form.invalid || nameUrlFields.urlEditMode.state">
+            [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
       CONTINUE
     </button>
   </div>

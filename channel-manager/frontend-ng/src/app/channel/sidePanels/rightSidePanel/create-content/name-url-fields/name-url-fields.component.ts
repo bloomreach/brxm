@@ -19,6 +19,7 @@ import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'hippo-name-url-fields',
@@ -29,14 +30,15 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
   @Input() locale: string;
+  public documentName: string;
   public urlField: string;
-  public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
-  public dummy: string;
+  public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
+      .filter(() => !this.isManualUrlMode)
       .debounceTime(1000)
       .subscribe(() => this.setDocumentUrlByName());
   }
@@ -52,15 +54,12 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
       .subscribe((slug) => this.urlField = slug);
   }
 
-  setDocumentUrlEditable(state: boolean) {
+  setManualUrlEditMode(state: boolean) {
     if (state) {
-      this.urlEditMode.oldValue = this.urlField;
+      this.isManualUrlMode = true;
+    } else {
+      this.isManualUrlMode = false;
+      this.setDocumentUrlByName();
     }
-    this.urlEditMode.state = state;
-  }
-
-  cancelUrlEditing() {
-    this.urlField = this.urlEditMode.oldValue;
-    this.setDocumentUrlEditable(false);
   }
 }
