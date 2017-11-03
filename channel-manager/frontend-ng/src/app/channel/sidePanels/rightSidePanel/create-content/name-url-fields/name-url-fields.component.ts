@@ -30,6 +30,7 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
   @Input() locale: string;
+  public documentName: string;
   public urlField: string;
   public urlEditMode = { state: false, oldValue: '', touched: false };
   public dummy: string;
@@ -61,7 +62,13 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
     this.urlEditMode.state = state;
   }
 
-  editSave() {
+  regenerateUrl() {
+    this.urlEditMode.touched = false;
+    this.setDocumentUrlEditable(false);
+    this.setDocumentUrlByName();
+  }
+
+  editDone() {
     this.urlEditMode.touched = true;
     this.setDocumentUrlEditable(false);
   }

@@ -34,7 +34,7 @@ class TestHostComponent {
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 }
 
-describe('NameUrlFields Component', () => {
+fdescribe('NameUrlFields Component', () => {
   let hostComponent: TestHostComponent;
   let hostFixture: ComponentFixture<TestHostComponent>;
   let component: NameUrlFieldsComponent;
@@ -114,21 +114,25 @@ describe('NameUrlFields Component', () => {
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
     }));
 
-    it('does change the URL upon editing the name, if url.editMode.touched is true', fakeAsync(() => {
+    it('changes the URL upon editing the name, if url.editMode.touched is true', fakeAsync(() => {
       // Name editing triggers generation of URL from the back-end
       setNameInputValue('First edit');
       tick(1000);
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalled();
       expect(component.urlField).toEqual('first-edit');
 
       // Manual editing of the URL
       component.setDocumentUrlEditable(true);
       component.urlField = 'manual-edit-of-url';
-      component.editSave();
+      component.editDone();
       expect(component.urlEditMode.touched).toEqual(true);
+
+      spies.generateDocumentUrlByName.calls.reset();
 
       // From now on, URL generations should be bypassed
       setNameInputValue('Second edit, should not change the URL');
       tick(1000);
+      expect(spies.generateDocumentUrlByName).not.toHaveBeenCalled();
       expect(component.urlField).toEqual('manual-edit-of-url');
     }));
   });
@@ -159,11 +163,11 @@ describe('NameUrlFields Component', () => {
       spyOn(component, 'setDocumentUrlEditable').and.callThrough();
     });
 
-    it('editSave: saves the document URL, sets touched state to true', () => {
+    it('editDone: saves the document URL, sets touched state to true', () => {
       expect(component.urlEditMode.touched).toEqual(false);
       component.setDocumentUrlEditable(true);
       setNameInputValue('Some input value');
-      component.editSave();
+      component.editDone();
       expect(component.urlEditMode.touched).toEqual(true);
       expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
     });

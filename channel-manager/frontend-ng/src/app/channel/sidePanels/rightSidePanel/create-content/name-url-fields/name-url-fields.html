@@ -18,7 +18,7 @@
   <!-- Document name field -->
   <div class="field">
     <mat-input-container class="create-content-field">
-      <input mdInput ngModel name="name" placeholder="Document name" required #nameInputElement [disabled]="urlEditMode.state">
+      <input mdInput [(ngModel)]="documentName" name="name" placeholder="Document name" required #nameInputElement>
     </mat-input-container>
 
     <hippo-hints [data]="form.controls.name.errors" *ngIf="form.controls.name && form.controls.name.touched">
@@ -36,7 +36,6 @@
               mat-icon-button
               matSuffix
               type="button"
-              [disabled]="!urlField"
               (click)="setDocumentUrlEditable(true)">
         <mat-icon>mode_edit</mat-icon>
       </button>
@@ -46,18 +45,18 @@
               mat-icon-button
               matSuffix
               type="button"
-              [disabled]="!urlField || urlField === urlEditMode.oldValue"
-              (click)="editSave()">
-        <mat-icon>done</mat-icon>
+              (click)="editDone()">
+        <mat-icon>{{ urlField ? 'done' : 'clear' }}</mat-icon>
       </button>
 
-      <!-- Cancel editing button -->
+      <!-- Regenerate button -->
       <button *ngIf="urlEditMode.state"
               mat-icon-button
               matSuffix
               type="button"
-              (click)="editCancel()">
-        <mat-icon>clear</mat-icon>
+              [disabled]="!documentName"
+              (click)="regenerateUrl()">
+        <mat-icon>autorenew</mat-icon>
       </button>
     </mat-input-container>
 
