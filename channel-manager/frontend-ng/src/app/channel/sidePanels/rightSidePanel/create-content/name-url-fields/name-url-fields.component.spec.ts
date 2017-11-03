@@ -34,7 +34,7 @@ class TestHostComponent {
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 }
 
-fdescribe('NameUrlFields Component', () => {
+describe('NameUrlFields Component', () => {
   let hostComponent: TestHostComponent;
   let hostFixture: ComponentFixture<TestHostComponent>;
   let component: NameUrlFieldsComponent;
