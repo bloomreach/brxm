@@ -16,7 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +38,6 @@ import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.document.util.WorkflowContext;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -52,9 +51,6 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DISPOSE_EDITABLE_INSTANCE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.OBTAIN_EDITABLE_INSTANCE;
-
 public class DocumentsServiceImpl implements DocumentsService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
@@ -67,15 +63,14 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document createDraft(final String uuid, final Session session, final Locale locale,
-                                final Map<String, Serializable> contextPayload)
+    public Document createDraft(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final WorkflowContext workflowContext = getWorkflowContext(handle, contextPayload, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
 
-        if (!editingUtils.canCreateDraft(workflowContext)) {
+        if (!editingUtils.canCreateDraft(workflow)) {
             throw new ForbiddenException(
-                    withDocumentName(editingUtils.determineEditingFailure(workflowContext).orElse(null), handle)
+                    withDocumentName(editingUtils.determineEditingFailure(workflow, session).orElse(null), handle)
             );
         }
 
@@ -86,7 +81,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draft = editingUtils.createDraft(workflowContext).orElseThrow(ForbiddenException::new);
+        final Node draft = editingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -104,15 +99,15 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document updateDraft(final String uuid, final Document document, final Session session, final Locale locale,
-                                final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+    public Document updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
+            throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final WorkflowContext workflowContext = getWorkflowContext(handle, contextPayload, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (!editingUtils.canUpdateDraft(workflowContext)) {
-            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflowContext));
+        if (!editingUtils.canUpdateDraft(workflow)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
@@ -135,8 +130,8 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        editingUtils.copyToPreviewAndKeepEditing(workflowContext)
-                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflowContext)));
+        editingUtils.copyToPreviewAndKeepEditing(workflow, session)
+                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -146,15 +141,14 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues,
-                                 final Session session, final Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+    public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final WorkflowContext workflowContext = getWorkflowContext(handle, contextPayload, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (!editingUtils.canUpdateDraft(workflowContext)) {
-            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflowContext));
+        if (!editingUtils.canUpdateDraft(workflow)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
@@ -175,26 +169,26 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDraft(final String uuid, final Session session, final Locale locale,
-                            final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+    public void deleteDraft(final String uuid, final Session session, final Locale locale)
+            throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final WorkflowContext workflowContext = getWorkflowContext(handle, contextPayload, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
 
-        if (!editingUtils.canDeleteDraft(workflowContext)) {
+        if (!editingUtils.canDeleteDraft(workflow)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
         }
 
         try {
-            workflowContext.getWorkflow().transition(workflowContext.createWorkflowTransition(DISPOSE_EDITABLE_INSTANCE));
-        } catch (WorkflowException e) {
+            workflow.disposeEditableInstance();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to dispose of editable instance", e);
             throw new InternalServerErrorException();
         }
     }
 
     @Override
-    public Document getPublished(final String uuid, final Session session, final Locale locale,
-                                 final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+    public Document getPublished(final String uuid, final Session session, final Locale locale)
+            throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, docType);
@@ -216,17 +210,12 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .isPresent();
     }
 
-    private WorkflowContext getWorkflowContext(final Node handle,
-                                               final Map<String, Serializable> contextPayload,
-                                               final Session session) throws ErrorWithPayloadException {
-        final Workflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
+    private EditableWorkflow getWorkflow(final Node handle) throws ErrorWithPayloadException {
+        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(() -> new MethodNotAllowed(
                         withDocumentName(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT), handle)
                 ));
-        return new WorkflowContext(workflow, session, contextPayload);
     }
-
-
 
     private DocumentType getDocumentType(final Node handle, final Locale locale)
             throws ErrorWithPayloadException {
@@ -268,8 +257,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         return errorInfo;
     }
 
-    private ErrorInfo errorInfoFromHintsOrNoHolder(final WorkflowContext workflowContext) {
-        return editingUtils.determineEditingFailure(workflowContext)
+    private ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
+        return editingUtils.determineEditingFailure(workflow, session)
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
 }
