@@ -50,11 +50,10 @@
       </button>
 
       <!-- Regenerate button -->
-      <button *ngIf="urlEditMode.state"
-              mat-icon-button
+      <button mat-icon-button
               matSuffix
               type="button"
-              [disabled]="!documentName"
+              [disabled]="!documentName || !urlEditMode.touched"
               (click)="regenerateUrl()">
         <mat-icon>autorenew</mat-icon>
       </button>
