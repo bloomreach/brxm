@@ -32,14 +32,13 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @Input() locale: string;
   public documentName: string;
   public urlField: string;
-  public urlEditMode = { state: false, oldValue: '', touched: false };
-  public dummy: string;
+  public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
-      .filter(() => !this.urlEditMode.touched)
+      .filter(() => !this.isManualUrlMode)
       .debounceTime(1000)
       .subscribe(() => this.setDocumentUrlByName());
   }
@@ -55,25 +54,11 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
       .subscribe((slug) => this.urlField = slug);
   }
 
-  setDocumentUrlEditable(state: boolean) {
+  setManualUrlEditMode(state: boolean) {
     if (state) {
-      this.urlEditMode.oldValue = this.urlField;
-    }
-    this.urlEditMode.state = state;
-  }
-
-  regenerateUrl() {
-    this.urlEditMode.touched = false;
-    this.setDocumentUrlEditable(false);
-    this.setDocumentUrlByName();
-  }
-
-  editDone() {
-    this.urlEditMode.touched = true;
-    this.setDocumentUrlEditable(false);
-
-    // If done while urlField is empty, regenerate URL
-    if (!this.urlField && this.documentName) {
+      this.isManualUrlMode = true;
+    } else {
+      this.isManualUrlMode = false;
       this.setDocumentUrlByName();
     }
   }

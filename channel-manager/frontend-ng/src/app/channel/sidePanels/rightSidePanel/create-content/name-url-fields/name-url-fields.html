@@ -29,32 +29,23 @@
   <!-- Document URL field -->
   <div class="field">
     <mat-input-container class="create-content-field">
-      <input mdInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!urlEditMode.state">
+      <input mdInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!isManualUrlMode">
 
       <!-- Edit button -->
-      <button *ngIf="!urlEditMode.state"
+      <button *ngIf="!isManualUrlMode"
               mat-icon-button
               matSuffix
               type="button"
-              (click)="setDocumentUrlEditable(true)">
+              (click)="setManualUrlEditMode(true)">
         <mat-icon>mode_edit</mat-icon>
       </button>
 
-      <!-- Validate URL button -->
-      <button *ngIf="urlEditMode.state"
+      <!-- Regenerate button -->
+      <button *ngIf="isManualUrlMode"
               mat-icon-button
               matSuffix
               type="button"
-              (click)="editDone()">
-        <mat-icon>{{ urlField ? 'done' : 'clear' }}</mat-icon>
-      </button>
-
-      <!-- Regenerate button -->
-      <button mat-icon-button
-              matSuffix
-              type="button"
-              [disabled]="!documentName || urlEditMode.oldValue === urlField"
-              (click)="regenerateUrl()">
+              (click)="setManualUrlEditMode(false)">
         <mat-icon>autorenew</mat-icon>
       </button>
     </mat-input-container>
