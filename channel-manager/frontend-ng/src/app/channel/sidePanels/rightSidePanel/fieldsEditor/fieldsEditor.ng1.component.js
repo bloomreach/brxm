@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SharedSpaceToolbarComponent from './sharedspace-toolbar.ng1.component';
-import SharedSpaceToolbarService from './sharedspace-toolbar.service';
 
-const SharedSpaceToolbarModule = angular
-  .module('hippo-cm.channel.fieldsModule.sharedspaceToolbar', [])
-  .component('sharedspaceToolbar', SharedSpaceToolbarComponent)
-  .service('SharedSpaceToolbarService', SharedSpaceToolbarService);
+import template from './fieldsEditor.html';
+import '../create-content/step-2/step-2.scss';
 
-export default SharedSpaceToolbarModule.name;
+const fieldsEditorComponent = {
+  template,
+  bindings: {
+    fieldTypes: '=',
+    fieldValues: '=',
+  },
+};
+
+export default fieldsEditorComponent;

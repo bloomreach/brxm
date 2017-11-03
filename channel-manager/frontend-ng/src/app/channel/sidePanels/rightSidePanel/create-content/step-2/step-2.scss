@@ -1,14 +1,24 @@
 @import '../../../../../../styles/variables';
 
 hippo-create-content-step-2 {
+  #rightSidePanel-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .edit-title-toolbar {
+    background: $white;
+  }
   .editable-title-toolbar {
+    width: 100%;
     background-color: $grey-100;
-    box-shadow: 0 3px 8px $overlay-link-shadow-color;
+    box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
     height: 56px;
     min-height: 54px;
-    z-index: 3;
+    z-index: 3 !important;
+    display: flex;
     h6 {
       margin: 0;
+      flex: 1;
     }
 
     md-icon {

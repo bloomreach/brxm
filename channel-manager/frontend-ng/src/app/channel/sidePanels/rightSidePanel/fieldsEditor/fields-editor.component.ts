@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import controller from './step2.controller';
-import template from './step2.html';
-import './step2.scss';
+import { Directive, ElementRef, Injector, Input, SimpleChanges } from '@angular/core';
+import { UpgradeComponent } from '@angular/upgrade/static';
 
-const createContentStep2Component = {
-  controller,
-  template,
-  bindings: {
-    onFullWidth: '&',
-    onBeforeStateChange: '&',
-    onSave: '&',
-  },
-};
-
-export default createContentStep2Component;
+@Directive({
+  selector: 'hippo-fields-editor'
+})
+export class FieldsEditorDirective extends UpgradeComponent {
+  @Input() fieldTypes: any;
+  @Input() fieldValues: any;
+  constructor(elementRef: ElementRef, injector: Injector) {
+    super('fieldsEditor', elementRef, injector);
+  }
+}

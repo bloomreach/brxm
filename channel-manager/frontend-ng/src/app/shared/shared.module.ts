@@ -5,21 +5,27 @@ import { MaterialModule } from './material/material.module';
 
 import { FeedbackServiceProvider } from './services/feedback.service.provider';
 import { ContentServiceProvider } from './services/content.service.provider';
+import { FieldServiceProvider } from './services/field.service.provider';
+import { DialogServiceProvider } from './services/dialog.service.provider';
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    TranslateModule
   ],
   exports: [
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
+    TranslateModule
   ],
   providers: [
     ContentServiceProvider,
-    FeedbackServiceProvider
+    FeedbackServiceProvider,
+    FieldServiceProvider,
+    DialogServiceProvider,
   ]
 })
 export class SharedModule {}

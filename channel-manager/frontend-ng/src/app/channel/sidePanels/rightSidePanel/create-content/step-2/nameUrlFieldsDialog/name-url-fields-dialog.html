@@ -1,23 +1,19 @@
-<md-dialog flex="30" aria-label="{{ ::$ctrl.title }}">
+<mat-dialog-content>
+  <div class="md-dialog-content name-url-fields-dialog">
+    <h3 mat-dialog-title>{{ title }}</h3>
 
-  <md-dialog-content>
-    <div class="md-dialog-content name-url-fields-dialog">
-      <h3>{{ ::$ctrl.title }}</h3>
+    <hippo-name-url-fields [(nameField)]="name" [(urlField)]="url"></hippo-name-url-fields>
+  </div>
+</mat-dialog-content>
 
-      <hippo-name-url-fields [(name-field)]="$ctrl.name" [(url-field)]="$ctrl.url"></hippo-name-url-fields>
-    </div>
-  </md-dialog-content>
+<mat-dialog-actions class="create-content-actions">
+  <button mat-button (click)="submitDialog(false)"
+          class="qa-cancel">
+    CANCEL
+  </button>
 
-  <md-dialog-actions>
-    <md-button ng-click="$ctrl.cancel()"
-               class="qa-cancel">
-      {{ ::'CANCEL' | translate }}
-    </md-button>
-
-    <md-button ng-click="$ctrl.submit()"
-               class="qa-submit-name-url">
-      {{ ::'CHANGE' | translate }}
-    </md-button>
-  </md-dialog-actions>
-
-</md-dialog>
+  <button mat-button (click)="submitDialog(true)"
+          class="qa-submit-name-url">
+    CHANGE
+  </button>
+</mat-dialog-actions>
