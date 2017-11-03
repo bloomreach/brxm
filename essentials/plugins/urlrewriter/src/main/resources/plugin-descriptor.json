@@ -3,7 +3,7 @@
   "id": "urlrewriterPlugin",
   "name": "URL Rewriter",
   "icon": "/essentials/feature/images/urlrewriter-plugin-icon.png",
-  "introduction": "The Enterprise URL Rewriter add-on adds the capability to manage URL forwarding rules in the CMS to your project.",
+  "introduction": "The Enterprise URL Rewriter add-on adds the capability to manage URL rewriting rules in the CMS to your project.",
   "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
   "imageUrls": [
     "/essentials/feature/images/screenshots/urlrewriter01.png"
