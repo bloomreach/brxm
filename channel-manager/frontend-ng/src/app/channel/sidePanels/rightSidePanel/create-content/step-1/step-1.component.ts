@@ -85,7 +85,6 @@ export class CreateContentComponent implements OnInit {
 
   private onLoadDocumentTypes(documentTypes) {
     this.documentTypes = documentTypes;
-    this.documentTypes.push(documentTypes[0]);
 
     if (documentTypes.length === 1) {
       this.documentType = documentTypes[0].id;
