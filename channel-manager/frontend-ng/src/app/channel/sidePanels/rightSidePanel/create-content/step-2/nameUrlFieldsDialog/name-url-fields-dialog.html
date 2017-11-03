@@ -9,11 +9,11 @@
 <mat-dialog-actions class="create-content-actions">
   <button mat-button (click)="submitDialog(false)"
           class="qa-cancel">
-    CANCEL
+    {{ 'CANCEL' | translate }}
   </button>
 
   <button mat-button (click)="submitDialog(true)"
           class="qa-submit-name-url">
-    CHANGE
+    {{ 'CHANGE' | translate }}
   </button>
 </mat-dialog-actions>

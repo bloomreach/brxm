@@ -42,6 +42,9 @@ right-side-panel {
 
   .edit-title-toolbar {
     z-index: 3 !important;
+    &-tools {
+      justify-content: space-between;
+    }
   }
 }
 

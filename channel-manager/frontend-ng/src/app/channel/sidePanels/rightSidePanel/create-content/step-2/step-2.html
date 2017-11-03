@@ -14,24 +14,22 @@
   limitations under the License.
   -->
 <mat-toolbar class="edit-title-toolbar">
-  <div class="md-toolbar-tools">
+  <div class="md-toolbar-tools edit-title-toolbar-tools">
     <h1 class="md-title text-truncate" title="{{ title }}">
       {{ title }}
     </h1>
 
-    <span flex></span>
-
-    <button mat-button class="mat-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-               (click)="setFullWidth(true)"
-               ng-show="!isFullWidth"
-               title="{{ 'FULL_WIDTH' }}">
-      <mat-icon mat-svg-icon="maximize-sidepanel"></mat-icon>
+    <button mat-icon-button class="mat-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+            (click)="setFullWidth(true)"
+            *ngIf="!isFullWidth"
+            title="{{ 'FULL_WIDTH' | translate }}">
+      <mat-icon svgIcon="maximize-sidepanel"></mat-icon>
     </button>
-    <button mat-button class="mat-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-               (click)="setFullWidth(false)"
-               ng-show="isFullWidth"
-               title="{{ 'RESTORE_WIDTH' }}">
-      <mat-icon mat-svg-icon="un-maximize-sidepanel"></mat-icon>
+    <button mat-icon-button class="mat-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+            (click)="setFullWidth(false)"
+            *ngIf="isFullWidth"
+            title="{{ 'RESTORE_WIDTH' | translate }}">
+      <mat-icon svgIcon="un-maximize-sidepanel"></mat-icon>
     </button>
   </div>
   <mat-progress-bar mode="indeterminate"
@@ -84,12 +82,12 @@
 <div class="create-content-actions">
   <button mat-button class="qa-close"
           (click)="close()">
-    DISCARD
+    {{ 'DISCARD' | translate }}
   </button>
 
   <button mat-button class="qa-save"
           (click)="saveDocument()"
           ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
-    SAVE
+    {{ 'SAVE' | translate  }}
   </button>
 </div>

@@ -7,6 +7,7 @@ import { FeedbackServiceProvider } from './services/feedback.service.provider';
 import { ContentServiceProvider } from './services/content.service.provider';
 import { FieldServiceProvider } from './services/field.service.provider';
 import { DialogServiceProvider } from './services/dialog.service.provider';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [

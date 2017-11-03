@@ -1,6 +1,7 @@
 import { Inject } from '@angular/core';
 import { Component } from '@angular/core';
 import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'name-url-fields-dialog',
@@ -8,7 +9,12 @@ import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 })
 export class NameUrlFieldsDialog {
 
-  constructor(public dialogRef: MdDialogRef<NameUrlFieldsDialog>, @Inject(MD_DIALOG_DATA) public data: any) { }
+  constructor(public dialogRef: MdDialogRef<NameUrlFieldsDialog>,
+              @Inject(MD_DIALOG_DATA) public data: any,
+              private translate: TranslateService) {
+    translate.setDefaultLang('en');
+    translate.use('en');
+  }
   name: string = this.data.name;
   url: string = this.data.url;
 

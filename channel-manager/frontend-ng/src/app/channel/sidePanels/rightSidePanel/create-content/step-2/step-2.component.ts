@@ -15,9 +15,9 @@
  */
 
 import { Component, OnInit, EventEmitter, Output, ViewChild } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MdDialog } from '@angular/material';
 import './step-2.scss';
-import { NgForm } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 import { CreateContentService } from '../create-content.service';
 import DialogService from '../../../../../services/dialog.service';
@@ -52,7 +52,12 @@ export class CreateContentStep2Component implements OnInit {
   constructor(private createContentService: CreateContentService,
               private contentService: ContentService,
               private fieldService: FieldService,
-              private dialogService: DialogService, private dialog: MdDialog) { }
+              private dialogService: DialogService,
+              private dialog: MdDialog,
+              private translate: TranslateService) {
+    translate.setDefaultLang('en');
+    translate.use('en');
+  }
 
   ngOnInit() {
     // Prevent the default closing action bound to the escape key by Angular Material.
@@ -81,12 +86,11 @@ export class CreateContentStep2Component implements OnInit {
       height: '250px',
       width: '600px',
       data: {
-        title: 'CHANGE_DOCUMENT_NAME',
+        title: this.translate.instant('CHANGE_DOCUMENT_NAME'),
         name: this.doc.displayName,
         url: '',
       }
     });
-    // title this.$translate.instant('CHANGE_DOCUMENT_NAME')
   }
 
   private submitEditNameUrl(nameUrlObj) {
@@ -108,7 +112,7 @@ export class CreateContentStep2Component implements OnInit {
     this.docType = docType;
     this.editing = true;
 
-    // this.title = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docType.displayName });
+    this.title = this.translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docType.displayName });
     // this.resizeTextareas();
   }
 
@@ -118,7 +122,7 @@ export class CreateContentStep2Component implements OnInit {
   }
 
   saveDocument() {
-    this.onSave.emit({mode: 'edit', options: this.documentId});
+    this.onSave.emit({ mode: 'edit', options: this.documentId });
   }
 
   isDocumentDirty() {
@@ -149,16 +153,12 @@ export class CreateContentStep2Component implements OnInit {
     const messageParams = {
       documentName: this.doc.displayName,
     };
+
     const confirm = this.dialogService.confirm()
-      .title('DISCARD_DOCUMENT')
-      .textContent('CONFIRM_DISCARD_NEW_DOCUMENT')
-      .ok('DISCARD')
-      .cancel('CANCEL');
-    // const confirm = this.dialogService.confirm()
-    //   .title(this.$translate.instant('DISCARD_DOCUMENT', messageParams))
-    //   .textContent(this.$translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
-    //   .ok(this.$translate.instant('DISCARD'))
-    //   .cancel(this.$translate.instant('CANCEL'));
+      .title(this.translate.instant('DISCARD_DOCUMENT', messageParams))
+      .textContent(this.translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
+      .ok(this.translate.instant('DISCARD'))
+      .cancel(this.translate.instant('CANCEL'));
 
     return this.dialogService.show(confirm);
   }

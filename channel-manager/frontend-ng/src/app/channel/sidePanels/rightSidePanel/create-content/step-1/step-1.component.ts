@@ -22,6 +22,8 @@ import { CreateContentService } from '../create-content.service';
 import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
+import { TranslateService } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'hippo-create-content',
@@ -40,7 +42,12 @@ export class CreateContentComponent implements OnInit {
   isFullWidth: boolean;
   title = 'Create new content';
 
-  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
+  constructor(private createContentService: CreateContentService,
+              private feedbackService: FeedbackService,
+              private translate: TranslateService) {
+    translate.setDefaultLang('en');
+    translate.use('en');
+  }
 
   ngOnInit() {
     if (!this.options) {
@@ -59,9 +66,9 @@ export class CreateContentComponent implements OnInit {
       );
   }
 
-  setFullWidth(state) {
+  setWidthState(state) {
     this.isFullWidth = state;
-    this.onFullWidth.emit(state);
+    this.onFullWidth.emit({ state: 'dfsh' });
   }
 
   close() {
@@ -94,7 +101,7 @@ export class CreateContentComponent implements OnInit {
 
   private onErrorLoadingTemplateQuery(error) {
     if (error.data && error.data.reason) {
-      const errorKey = `ERROR_${error.data.reason}`;
+      const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
       this.feedbackService.showError(errorKey, error.data.params);
     } else {
       console.error('Unknown error loading template query', error);
@@ -103,7 +110,7 @@ export class CreateContentComponent implements OnInit {
 
   private onErrorCreatingDraft(error) {
     if (error.data && error.data.reason) {
-      const errorKey = `ERROR_${error.data.reason}`;
+      const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
       this.feedbackService.showError(errorKey);
     } else {
       console.error('Unknown error creating new draft document', error);

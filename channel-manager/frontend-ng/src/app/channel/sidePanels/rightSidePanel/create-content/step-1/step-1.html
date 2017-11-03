@@ -16,22 +16,22 @@
 <div layout="column" class="create-content-container">
 
   <mat-toolbar class="edit-title-toolbar">
-    <div class="md-toolbar-tools">
+    <div class="md-toolbar-tools edit-title-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
       </h1>
 
-      <button mat-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-                 (click)="setFullWidth(true)"
-                 [hidden]="isFullWidth"
-                 title="{{ 'FULL_WIDTH' }}">
-        <mat-icon md-svg-icon="maximize-sidepanel"></mat-icon>
+      <button mat-icon-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+              (click)="setWidthState(true)"
+              *ngIf="!isFullWidth"
+              title="{{ 'FULL_WIDTH' | translate }}">
+        <mat-icon svgIcon="maximize-sidepanel"></mat-icon>
       </button>
-      <button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-                 (click)="setFullWidth(false)"
-                 [hidden]="!isFullWidth"
-                 title="{{ 'RESTORE_WIDTH' }}">
-        <mat-icon md-svg-icon="un-maximize-sidepanel"></mat-icon>
+      <button mat-icon-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+              (click)="setWidthState(false)"
+              *ngIf="isFullWidth"
+              title="{{ 'RESTORE_WIDTH' | translate }}">
+        <mat-icon svgIcon="un-maximize-sidepanel"></mat-icon>
       </button>
     </div>
   </mat-toolbar>
@@ -71,7 +71,7 @@
         </mat-input-container>
 
         <hippo-hints [data]="form.controls.documentLocation.errors" *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-          <div hint="required">This field is required</div>
+          <div hint="required">{{ 'FIELD_REQUIRED' | translate }}</div>
         </hippo-hints>
       </div>
 
@@ -82,14 +82,14 @@
   <div class="create-content-actions">
     <button mat-button class="qa-create-content-close"
             (click)="close()">
-      CANCEL
+      {{ 'CANCEL' | translate }}
     </button>
 
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
             [disabled]="form.invalid || nameUrlFields.form.invalid || nameUrlFields.urlEditMode.state">
-      CONTINUE
+      {{ 'CONTINUE' | translate }}
     </button>
   </div>
 </div>

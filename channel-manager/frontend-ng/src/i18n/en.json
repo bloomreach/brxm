@@ -107,6 +107,7 @@
   "FEEDBACK_NOT_FOUND_TITLE": "Content not found",
   "FEEDBACK_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "FEEDBACK_SWITCH_TO_CONTENT_EDITOR": "Switch to content editor",
+  "FIELD_REQUIRED": "This field is required",
   "FULL_WIDTH": "Full width",
   "HIDE_COMPONENTS": "Hide components",
   "HIDE_CONTENT": "Hide content",
