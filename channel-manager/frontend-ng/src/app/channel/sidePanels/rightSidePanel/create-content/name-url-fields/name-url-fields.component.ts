@@ -19,6 +19,7 @@ import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'hippo-name-url-fields',
@@ -37,6 +38,7 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
+      .filter(() => !this.urlEditMode.touched)
       .debounceTime(1000)
       .subscribe(() => this.setDocumentUrlByName());
   }
@@ -48,10 +50,8 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   }
 
   setDocumentUrlByName() {
-    if(!this.urlEditMode.touched) {
-      this.createContentService.generateDocumentUrlByName(this.form.controls.name.value, this.locale)
-        .subscribe((slug) => this.urlField = slug);
-    }
+    this.createContentService.generateDocumentUrlByName(this.form.controls.name.value, this.locale)
+      .subscribe((slug) => this.urlField = slug);
   }
 
   setDocumentUrlEditable(state: boolean) {

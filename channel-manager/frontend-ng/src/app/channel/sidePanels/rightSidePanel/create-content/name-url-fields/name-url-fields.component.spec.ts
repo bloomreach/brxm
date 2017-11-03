@@ -34,7 +34,7 @@ class TestHostComponent {
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 }
 
-describe('NameUrlFields Component', () => {
+fdescribe('NameUrlFields Component', () => {
   let hostComponent: TestHostComponent;
   let hostFixture: ComponentFixture<TestHostComponent>;
   let component: NameUrlFieldsComponent;
@@ -113,6 +113,24 @@ describe('NameUrlFields Component', () => {
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
     }));
+
+    it('does change the URL upon editing the name, if url.editMode.touched is true', fakeAsync(() => {
+      // Name editing triggers generation of URL from the back-end
+      setNameInputValue('First edit');
+      tick(1000);
+      expect(component.urlField).toEqual('first-edit');
+
+      // Manual editing of the URL
+      component.setDocumentUrlEditable(true);
+      component.urlField = 'manual-edit-of-url';
+      component.editSave();
+      expect(component.urlEditMode.touched).toEqual(true);
+
+      // From now on, URL generations should be bypassed
+      setNameInputValue('Second edit, should not change the URL');
+      tick(1000);
+      expect(component.urlField).toEqual('manual-edit-of-url');
+    }));
   });
 
   describe('setDocumentUrlEditable', () => {
@@ -121,7 +139,7 @@ describe('NameUrlFields Component', () => {
       expect(component.urlEditMode.state).toEqual(true);
     });
 
-    it('sets the urlEditMode oldValue to the current urlField if the passed TRUE', () => {
+    it('sets the urlEditMode oldValue to the current urlField if passed true', () => {
       setNameInputValue('test val');
       component.setDocumentUrlByName();
       component.setDocumentUrlEditable(true);
@@ -129,19 +147,34 @@ describe('NameUrlFields Component', () => {
     });
 
     it('does not set the urlEditMode oldValue to the current urlField if passed false', () => {
-      setNameInputValue('test-val');
+      setNameInputValue('test val');
       component.setDocumentUrlByName();
       component.setDocumentUrlEditable(false);
       expect(component.urlEditMode.oldValue).not.toEqual('test-val');
     });
   });
 
-  describe('editCancel', () => {
-    it('sets the urlField to the old value (in urlEditMode.oldValue) and call setDocumentUrlEditable', () => {
-      spyOn(component, 'setDocumentUrlEditable');
-      component.urlEditMode.oldValue = 'test-val';
+  describe('Edit saving and cancellation', () => {
+    beforeEach(() => {
+      spyOn(component, 'setDocumentUrlEditable').and.callThrough();
+    });
+
+    it('editSave: saves the document URL, sets touched state to true', () => {
+      expect(component.urlEditMode.touched).toEqual(false);
+      component.setDocumentUrlEditable(true);
+      setNameInputValue('Some input value');
+      component.editSave();
+      expect(component.urlEditMode.touched).toEqual(true);
+      expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
+    });
+
+    it('editCancel: cancels editing, setting urlField to the value pre-editing', () => {
+      expect(component.urlEditMode.touched).toEqual(false);
+      component.urlField = 'Old value';
+      component.setDocumentUrlEditable(true);
+      component.urlField = 'New value';
       component.editCancel();
-      expect(component.urlField).toEqual('test-val');
+      expect(component.urlField).toEqual('Old value');
       expect(component.setDocumentUrlEditable).toHaveBeenCalledWith(false);
     });
   });
