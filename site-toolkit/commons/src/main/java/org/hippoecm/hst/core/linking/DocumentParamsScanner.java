@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.linking;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +27,11 @@ import java.util.function.Predicate;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +41,7 @@ public class DocumentParamsScanner {
 
     // simple cache to avoid class method and annotation scanning over and over. Needs to be
     // synchronized since LocationMapTreeImpl construction can be invoked concurrent
-    private final static ConcurrentMap<String, Set<String>> componentClassToDocumentParameterNamesCache = new ConcurrentHashMap<>();
-
-
+    private final static ConcurrentMap<String, Set<String>> componentDocumentParamNamesCache = new ConcurrentHashMap<>();
 
     /**
      * Returns the document paths for <code>componentConfiguration</code> including its descendant
@@ -83,22 +82,19 @@ public class DocumentParamsScanner {
             log.debug("Skip '{}' plus descendants because of predicate '{}'", config, predicate);
             return;
         }
-        final String componentClassName = config.getComponentClassName();
-        if (!isEmpty(componentClassName)) {
-            Set<String> parameterNames = getNames(componentClassName, classLoader);
+        Set<String> parameterNames = getNames(config, classLoader);
 
-            for (String param : parameterNames) {
-                String documentPath = config.getParameter(param);
-                if (!isEmpty(documentPath)) {
-                    populate.add(documentPath);
-                }
-                // add variants as well
-                for (String prefix : config.getParameterPrefixes()) {
-                    final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
-                    String variantDocumentPath = config.getParameter(prefixedParam);
-                    if (!isEmpty(variantDocumentPath)) {
-                        populate.add(variantDocumentPath);
-                    }
+        for (String param : parameterNames) {
+            String documentPath = config.getParameter(param);
+            if (!isEmpty(documentPath)) {
+                populate.add(documentPath);
+            }
+            // add variants as well
+            for (String prefix : config.getParameterPrefixes()) {
+                final String prefixedParam = ConfigurationUtils.createPrefixedParameterName(prefix, param);
+                String variantDocumentPath = config.getParameter(prefixedParam);
+                if (!isEmpty(variantDocumentPath)) {
+                    populate.add(variantDocumentPath);
                 }
             }
         }
@@ -113,53 +109,75 @@ public class DocumentParamsScanner {
     }
 
     /**
-     * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
+     * @param config the {@link HstComponentConfiguration} for which we need to return the parameter names
      * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
      * annotation
      * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
      * instantiated) or no
      * {@link ParametersInfo} is present on <code>componentClassName</code>
      */
+    public static Set<String> getNames(final HstComponentConfiguration config,
+                                       final ClassLoader classLoader) {
+        final String componentClassName = config.getComponentClassName();
+        final String parametersInfoClassName = config.getParametersInfoClassName();
+        return getParameterNames(componentClassName, parametersInfoClassName, classLoader);
+    }
+
+    /**
+     * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
+     * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
+     * annotation
+     * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
+     * instantiated) or no
+     * {@link ParametersInfo} is present on <code>componentClassName</code>
+     * @deprecated Use {{@link #getNames(HstComponentConfiguration, ClassLoader)} instead.
+     */
+    @Deprecated
     public static Set<String> getNames(final String componentClassName,
                                        final ClassLoader classLoader) {
+        return getParameterNames(componentClassName, null, classLoader);
+    }
 
-        Set<String> parameterNames = componentClassToDocumentParameterNamesCache.get(componentClassName);
+    private static Set<String> getParameterNames(final String componentClassName, final String parametersInfoClassName,
+            final ClassLoader classLoader) {
+
+        if (isEmpty(componentClassName) && isEmpty(parametersInfoClassName)) {
+            return Collections.emptySet();
+        }
+
+        final String cacheKey = new StringBuilder(128).append(componentClassName).append(':')
+                .append(parametersInfoClassName).toString();
+        Set<String> parameterNames = componentDocumentParamNamesCache.get(cacheKey);
+
         if (parameterNames != null) {
             return parameterNames;
         }
 
-        try {
+        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClassName,
+                parametersInfoClassName, classLoader);
 
-            parameterNames = new HashSet<>();
+        if (parametersInfo == null) {
+            return Collections.emptySet();
+        }
 
-            final Class<?> compClass = Class.forName(componentClassName, true, classLoader);
-            ParametersInfo parametersInfo = compClass.getAnnotation(ParametersInfo.class);
+        Class<?> parametersInfoType = parametersInfo.type();
 
-            if (parametersInfo != null) {
-                Class<?> parametersInfoType = parametersInfo.type();
+        if (!parametersInfoType.isInterface()) {
+            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
+        }
 
-                if (!parametersInfoType.isInterface()) {
-                    throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
-                }
-                for (Method method : parametersInfoType.getMethods()) {
-                    if (method.isAnnotationPresent(Parameter.class) &&
-                            (method.isAnnotationPresent(JcrPath.class) || method.isAnnotationPresent(DocumentLink.class))) {
-                        Parameter parameter = method.getAnnotation(Parameter.class);
-                        parameterNames.add(parameter.name());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Exception while finding documentLink or JcrPath annotations for {}. Return empty: ",
-                        componentClassName, e);
-            } else {
-                log.warn("Exception while finding documentLink or JcrPath annotations for {}. Return empty: {}",
-                        componentClassName, e.toString());
+        parameterNames = new HashSet<>();
+
+        for (Method method : parametersInfoType.getMethods()) {
+            if (method.isAnnotationPresent(Parameter.class) &&
+                    (method.isAnnotationPresent(JcrPath.class) || method.isAnnotationPresent(DocumentLink.class))) {
+                Parameter parameter = method.getAnnotation(Parameter.class);
+                parameterNames.add(parameter.name());
             }
         }
 
-        componentClassToDocumentParameterNamesCache.putIfAbsent(componentClassName, parameterNames);
+        componentDocumentParamNamesCache.putIfAbsent(cacheKey, parameterNames);
+
         return parameterNames;
     }
 

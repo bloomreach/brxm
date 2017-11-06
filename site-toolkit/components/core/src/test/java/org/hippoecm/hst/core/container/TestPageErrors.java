@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,18 +48,18 @@ public class TestPageErrors {
         List<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptionPairs = 
             new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
         
-        rootComponentInfo = new SimpleHstComponentInfo("root", "rootcomp", "examples.RootComponent");
+        rootComponentInfo = new SimpleHstComponentInfo("root", "rootcomp", "examples.RootComponent", null);
         List<HstComponentException> exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Root exception - 1", new ClassNotFoundException()));
         exceptions.add(new HstComponentException("Root exception - 2", new NoClassDefFoundError()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(rootComponentInfo, exceptions));
         
-        leftComponentInfo = new SimpleHstComponentInfo("left", "leftcomp", "examples.LeftComponent");
+        leftComponentInfo = new SimpleHstComponentInfo("left", "leftcomp", "examples.LeftComponent", null);
         exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Left exception - 1", new RuntimeException()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(leftComponentInfo, exceptions));
         
-        rightComponentInfo = new SimpleHstComponentInfo("right", "rightcomp", "examples.RightComponent");
+        rightComponentInfo = new SimpleHstComponentInfo("right", "rightcomp", "examples.RightComponent", null);
         exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Right exception - 1", new IllegalArgumentException()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(rightComponentInfo, exceptions));
@@ -130,11 +130,13 @@ public class TestPageErrors {
         private String id;
         private String name;
         private String className;
-        
-        private SimpleHstComponentInfo(String id, String name, String className) {
+        private String parametersInfoClassName;
+
+        private SimpleHstComponentInfo(String id, String name, String className, String parametersInfoClassName) {
             this.id = id;
             this.name = name;
             this.className = className;
+            this.parametersInfoClassName = parametersInfoClassName;
         }
         
         public String getId() {
@@ -147,6 +149,10 @@ public class TestPageErrors {
         
         public String getComponentClassName() {
             return className;
+        }
+
+        public String getParametersInfoClassName() {
+            return parametersInfoClassName;
         }
 
         @Override

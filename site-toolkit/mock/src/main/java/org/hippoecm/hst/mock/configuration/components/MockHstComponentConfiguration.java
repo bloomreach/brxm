@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String renderPath;
     private String serveResourcePath;
     private String componentClassName;
+    private String parametersInfoClassName;
     private String canonicalIdentifier;
     private Type componentType;
     private String namedRenderer;
@@ -165,6 +166,14 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     
     public void setComponentClassName(String componentClassName) {
         this.componentClassName = componentClassName;
+    }
+
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
+    public void setParametersInfoClassName(String parametersInfoClassName) {
+        this.parametersInfoClassName = parametersInfoClassName;
     }
 
     public String getId() {

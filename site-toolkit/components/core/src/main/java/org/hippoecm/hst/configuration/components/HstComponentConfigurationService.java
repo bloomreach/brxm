@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String name;
 
     private String componentClassName;
+
+    private String parametersInfoClassName;
 
     private String hstTemplate;
 
@@ -255,6 +257,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else {
             throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
+
+        this.parametersInfoClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME));
+
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
 
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
@@ -487,6 +492,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.componentClassName;
     }
 
+    @Override
+    public String getParametersInfoClassName() {
+        return parametersInfoClassName;
+    }
+
     public String getXType() {
         return this.xtype;
     }
@@ -693,6 +703,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
         copy.componentClassName = child.componentClassName;
+        copy.parametersInfoClassName = child.parametersInfoClassName;
         copy.name = child.name;
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
@@ -761,6 +772,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // get all properties that are null from the referenced component:
                 if (this.componentClassName == null) {
                     this.componentClassName = referencedComp.componentClassName;
+                }
+                if (this.parametersInfoClassName == null) {
+                    this.parametersInfoClassName = referencedComp.parametersInfoClassName;
                 }
                 if (this.name == null) {
                     this.name = referencedComp.name;
@@ -902,6 +916,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (this.componentClassName == null) {
             this.componentClassName = childToMerge.componentClassName;
+        }
+        if (this.parametersInfoClassName == null) {
+            this.parametersInfoClassName = childToMerge.parametersInfoClassName;
         }
         if (this.hstTemplate == null) {
             this.hstTemplate = childToMerge.hstTemplate;
@@ -1211,6 +1228,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         StringBuilder builder = new StringBuilder("HstComponentConfiguration [id=");
         builder.append(id).append(", stored jcr location=").append(canonicalStoredLocation)
                 .append(", className=").append(this.componentClassName)
+                .append(", parametersInfoClassName=").append(this.parametersInfoClassName)
                 .append(", template=").append(this.hstTemplate).append("]");
         return builder.toString();
     }
