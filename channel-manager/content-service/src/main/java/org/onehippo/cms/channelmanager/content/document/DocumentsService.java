@@ -112,4 +112,15 @@ public interface DocumentsService {
      * @return the created document
      */
     Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale) throws ErrorWithPayloadException;
+
+    /**
+     * Deletes a document
+     *
+     * @param uuid            UUID of the document (handle) to delete
+     * @param session         user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
+     *                        be pending.
+     * @param locale          Locale of the CMS user
+     * @throws ErrorWithPayloadException If deleting the document failed
+     */
+    void deleteDocument(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 }

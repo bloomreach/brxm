@@ -57,11 +57,13 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.error.ResetContentException;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
+    private static final String WORKFLOW_CATEGORY_DEFAULT = "default";
     private static final String WORKFLOW_CATEGORY_EDIT = "editing";
     private static final String WORKFLOW_CATEGORY_INTERNAL = "internal";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
@@ -252,6 +254,23 @@ class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
+    @Override
+    public void deleteDocument(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        if (!EditingUtils.canDeleteDocument(workflow)) {
+            throw new ForbiddenException();
+        }
+
+        try {
+            workflow.delete();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to delete document '{}'", uuid, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
     private String checkNotEmpty(final String propName, final String propValue) throws BadRequestException {
         if (StringUtils.isEmpty(propValue)) {
             final String errorMessage = "Property '" + propName + "' cannot be empty";
@@ -288,6 +307,13 @@ class DocumentsServiceImpl implements DocumentsService {
 
     private EditableWorkflow getEditableWorkflow(final Node handle) throws MethodNotAllowed {
         return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
+                .orElseThrow(() -> new MethodNotAllowed(
+                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
+                ));
+    }
+
+    private static DocumentWorkflow getDocumentWorkflow(final Node handle) throws MethodNotAllowed {
+        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_DEFAULT, DocumentWorkflow.class)
                 .orElseThrow(() -> new MethodNotAllowed(
                         withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
                 ));

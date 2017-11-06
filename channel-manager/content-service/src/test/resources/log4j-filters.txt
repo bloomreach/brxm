@@ -60,6 +60,7 @@ Node '/hippo:configuration/hippo:queries/hippo:templates/new-document' is not of
 Failed to execute template query 'new-document'
 Node '/hipposysedit:prototype' has primary nodetype 'hipposysedit:document' which is not a valid prototype
 Failed to check whether node 'test' exists below 'null'
+Failed to check whether a node with display name 'test' exists below 'null'
 Failed to get folder '/test'
 Failed to get or create folder 'test' below 'null'
 Failed to create folder 'test'
@@ -73,3 +74,4 @@ Property 'templateQuery' cannot be empty
 Property 'documentTypeId' cannot be empty
 Property 'rootPath' cannot be empty
 Failed to add document 'breaking-news' of type 'project:newsdocument' to folder '/content/documents/channel/news' using template query 'new-news-document'
+Failed to delete document 'uuid'

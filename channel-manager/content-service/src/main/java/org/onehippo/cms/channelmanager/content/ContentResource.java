@@ -135,6 +135,15 @@ public class ContentResource {
                 (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session, locale));
     }
 
+    @DELETE
+    @Path("documents/{id}")
+    public Response deleteDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+            DocumentsService.get().deleteDocument(id, session, locale);
+            return null;
+        });
+    }
+
     private Response executeTask(final HttpServletRequest servletRequest,
                                  final Status successStatus,
                                  final EndPointTask task) {

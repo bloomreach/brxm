@@ -33,6 +33,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class EditingUtils {
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
     private static final String HINT_IN_USE_BY = "inUseBy";
     private static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
+    private static final String HINT_DELETE = "delete";
     private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     private static final String HINT_REQUESTS = "requests";
@@ -81,9 +83,19 @@ public class EditingUtils {
         return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
-    private static boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
+    /**
+     * Check if a document can be deleted, given its workflow.
+     *
+     * @param workflow workflow of a document
+     * @return         true if document can be deleted, false otherwise
+     */
+    public static boolean canDeleteDocument(final DocumentWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_DELETE);
+    }
+
+    private static boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
-            Map<String, Serializable> hints = workflow.hints();
+            final Map<String, Serializable> hints = workflow.hints();
             return hints.containsKey(action) && ((Boolean)hints.get(action));
 
         } catch (WorkflowException | RemoteException | RepositoryException e) {
