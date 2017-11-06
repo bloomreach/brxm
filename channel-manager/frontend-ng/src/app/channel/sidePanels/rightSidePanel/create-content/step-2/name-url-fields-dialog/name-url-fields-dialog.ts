@@ -16,7 +16,7 @@
 import { Inject } from '@angular/core';
 import { Component } from '@angular/core';
 import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
-import { TranslateService } from '@ngx-translate/core';
+import './name-url-fields-dialog.scss';
 
 @Component({
   selector: 'name-url-fields-dialog',

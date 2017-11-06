@@ -39,6 +39,13 @@
       padding-top: 0;
       padding-bottom: 0;
     }
+
+    // TODO: shared hippo material overrides
+    .hide-select-arrow {
+      .mat-select-arrow {
+        visibility: hidden;
+      }
+    }
   }
   &-actions {
     display: flex;

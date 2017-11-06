@@ -14,52 +14,58 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'hippo-name-url-fields',
   templateUrl: 'name-url-fields.html'
 })
 
-export class NameUrlFieldsComponent implements OnInit {
+export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
   @Input('nameField') nameField: string;
   @Input('urlField') urlField: string;
   @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
   @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
-  public urlEditMode: { state: boolean, oldValue: string } = { state: false, oldValue: '' };
+  @Input() locale: string;
+  public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
 
   ngOnInit() {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
+      .filter(() => !this.isManualUrlMode)
       .debounceTime(1000)
       .subscribe(() => {
-        this.setDocumentUrlByName(this.nameField);
+        this.setDocumentUrlByName();
         this.nameFieldChange.next(this.nameField);
         this.urlFieldChange.next(this.urlField);
       });
   }
 
-  setDocumentUrlByName(name: string) {
-    this.createContentService.generateDocumentUrlByName(name)
+  ngOnChanges(changes: SimpleChanges) {
+    if(changes.hasOwnProperty('locale') && this.form.controls.name) {
+      this.setDocumentUrlByName();
+    }
+  }
+
+  setDocumentUrlByName() {
+    this.createContentService.generateDocumentUrlByName(this.form.controls.name.value, this.locale)
       .subscribe((slug) => this.urlField = slug);
   }
 
-  setDocumentUrlEditable(state: boolean) {
+  setManualUrlEditMode(state: boolean) {
     if (state) {
-      this.urlEditMode.oldValue = this.urlField;
+      this.isManualUrlMode = true;
+    } else {
+      this.isManualUrlMode = false;
+      this.setDocumentUrlByName();
     }
-    this.urlEditMode.state = state;
-  }
-
-  cancelUrlEditing() {
-    this.urlField = this.urlEditMode.oldValue;
-    this.setDocumentUrlEditable(false);
   }
 }

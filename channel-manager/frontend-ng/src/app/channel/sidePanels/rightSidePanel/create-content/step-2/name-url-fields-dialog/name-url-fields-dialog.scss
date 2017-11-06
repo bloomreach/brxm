@@ -14,42 +14,7 @@
 
 @import 'variables';
 
-hippo-create-content-step-2 {
-  #rightSidePanel-content {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .create-content-container {
-    background: $white;
-  }
-
-  .editable-title-toolbar {
-    width: 100%;
-    background-color: $grey-100;
-    box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
-    height: 56px;
-    min-height: 54px;
-    z-index: 3 !important;
-    display: flex;
-    h6 {
-      margin: 0;
-      flex: 1;
-    }
-
-    md-icon {
-      color: $grey-600;
-    }
-  }
-
-  primitive-field,
-  compound-field,
-  choice-field {
-    > .field {
-      padding-left: 0;
-    }
-  }
-
+mat-dialog-content {
   hippo-hints div {
     color: $red-500;
     font-size: 12px;
@@ -57,8 +22,3 @@ hippo-create-content-step-2 {
   }
 }
 
-.name-url-fields-dialog {
-  mat-input-container {
-    width: 100%;
-  }
-}

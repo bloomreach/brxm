@@ -61,8 +61,8 @@ public class FolderUtils {
         }
         try {
             return parentNode.hasNode(name);
-        } catch (final RepositoryException ignore) {
-            log.warn("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode));
+        } catch (final RepositoryException e) {
+            log.warn("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
@@ -70,7 +70,7 @@ public class FolderUtils {
     public static boolean nodeWithDisplayNameExists(final Node parentNode, final String displayName) throws InternalServerErrorException {
         try {
             final NodeIterator children = parentNode.getNodes();
-            while ( children.hasNext()) {
+            while (children.hasNext()) {
                 final Node child = children.nextNode();
                 if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
                     final String childName = ((HippoNode) child).getDisplayName();
@@ -80,9 +80,9 @@ public class FolderUtils {
                 }
             }
             return false;
-        } catch (final RepositoryException ignore) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to check whether a node with display name '{}' exists below '{}'",
-                    displayName, JcrUtils.getNodePathQuietly(parentNode));
+                    displayName, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
@@ -92,8 +92,8 @@ public class FolderUtils {
             if (folderNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 return folderNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
             }
-        } catch (final RepositoryException ignore) {
-            log.warn("Failed to determine locale of folder '{}', assuming no locale", JcrUtils.getNodePathQuietly(folderNode));
+        } catch (final RepositoryException e) {
+            log.warn("Failed to determine locale of folder '{}', assuming no locale", JcrUtils.getNodePathQuietly(folderNode), e);
         }
         return null;
     }
