@@ -21,6 +21,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -35,6 +36,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -100,7 +102,12 @@ public class TestHstComponentInvokerImpl {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
+        ModifiableRequestContextProvider.set(requestContext);
+    }
 
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.set(null);
     }
 
     @Test

@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.easymock.EasyMock;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
@@ -35,6 +36,7 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -62,6 +64,13 @@ public class ParameterUtilsTest {
         EasyMock.replay(request);
         EasyMock.replay(requestContext);
         EasyMock.replay(resolvedSiteMapItem);
+
+        ModifiableRequestContextProvider.set(requestContext);
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.set(null);
     }
 
     @Test

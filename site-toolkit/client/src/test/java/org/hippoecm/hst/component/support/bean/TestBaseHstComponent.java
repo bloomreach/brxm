@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.lang.reflect.Method;
 
 import org.apache.commons.proxy.Invoker;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -26,6 +27,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.proxy.ProxyFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -59,6 +61,13 @@ public class TestBaseHstComponent {
         expect(requestContext.getParameterInfoProxyFactory()).andReturn(new HstParameterInfoProxyFactoryImpl()).anyTimes();
         
         replay(requestContext);
+
+        ModifiableRequestContextProvider.set(requestContext);
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.set(null);
     }
 
     @Test

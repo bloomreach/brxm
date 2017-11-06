@@ -34,13 +34,13 @@ public class ParameterUtils {
      * ISO8601 formatter for date-time without time zone.
      * The format used is <tt>yyyy-MM-dd'T'HH:mm:ss</tt>.
      */
-    public static final String ISO_DATETIME_FORMAT = DefaultHstParameterValueConverter.ISO_DATE_FORMAT;
+    public static final String ISO_DATETIME_FORMAT = DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT;
 
     /**
      * ISO8601 formatter for date without time zone.
      * The format used is <tt>yyyy-MM-dd</tt>.
      */
-    public static final String ISO_DATE_FORMAT = DefaultHstParameterValueConverter.ISO_TIME_FORMAT;
+    public static final String ISO_DATE_FORMAT = DefaultHstParameterValueConverter.ISO_DATE_FORMAT;
 
     /**
      * ISO8601 formatter for time without time zone.

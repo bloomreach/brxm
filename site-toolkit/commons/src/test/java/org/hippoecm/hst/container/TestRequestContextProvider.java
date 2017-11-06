@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.container;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,7 +23,16 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class TestRequestContextProvider {
+
+    public static void setCurrentRequestContext(HstRequestContext hrc) {
+        RequestContextProvider.set(hrc);
+    }
 
     @Test
     public void testLifecycle() throws Exception {
@@ -37,7 +41,7 @@ public class TestRequestContextProvider {
 
         assertNull(RequestContextProvider.get());
 
-        RequestContextProvider.set(hrc);
+        setCurrentRequestContext(hrc);
 
         try {
             assertTrue(hrc == RequestContextProvider.get());

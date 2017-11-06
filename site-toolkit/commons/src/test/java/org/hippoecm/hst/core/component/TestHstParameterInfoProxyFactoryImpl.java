@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.container.TestRequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -28,6 +29,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,6 +94,13 @@ public class TestHstParameterInfoProxyFactoryImpl {
         }
 
         mocks = new Object[]{parameterConfig, request, requestContext, resolvedSiteMapItem};
+
+        TestRequestContextProvider.setCurrentRequestContext(requestContext);
+    }
+
+    @After
+    public void tearDown() {
+        TestRequestContextProvider.setCurrentRequestContext(null);
     }
 
     @Test
