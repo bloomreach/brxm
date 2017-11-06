@@ -21,16 +21,16 @@ public interface ProductResourceParamsInfo {
 
     @Parameter(name = "rest.product.siteLinkIncluded", defaultValue = "true", required = false,
             description = "Whether or not to include site link information.")
-    public boolean isSiteLinkIncluded();
+    boolean isSiteLinkIncluded();
 
     @Parameter(name = "rest.product.nodeLinkIncluded", defaultValue = "true", required = false,
             description = "Whether or not to include node link information.")
-    public boolean isNodeLinkIncluded();
+    boolean isNodeLinkIncluded();
 
     @Parameter(name = "rest.product.sortFields", defaultValue = "demosite:product,-demosite:price", required = false,
             description = "Sort fields information as a comma-separated string in a search result. "
                     + "Each item suggests sorting the result by the field name in ascending order by default. "
                     + "If prefixed by '-', it suggests sorting the result by the field name in descending order.")
-    public String getSortFields();
+    String getSortFields();
 
 }
