@@ -29,3 +29,10 @@ export interface CreateContentOptions {
   rootPath?: string;
   templateQuery?: string;
 }
+
+export interface Folder {
+  name: string;
+  displayName: string;
+  locale: string;
+  path: string;
+}
