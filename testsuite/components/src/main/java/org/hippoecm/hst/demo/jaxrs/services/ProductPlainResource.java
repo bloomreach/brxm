@@ -59,16 +59,23 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * @version $Id$
  */
 @Path("/products/")
+@Api(value = "Products")
 public class ProductPlainResource extends AbstractResource {
     
     private static Logger log = LoggerFactory.getLogger(ProductPlainResource.class);
     
     @GET
     @Path("/search/")
+    @ApiOperation(value = "Finds products",
+        response = ProductRepresentation.class,
+        responseContainer = "List")
     public List<ProductRepresentation> searchProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @QueryParam("brand") String brand,
             @QueryParam("product") String productType,
@@ -146,6 +153,7 @@ public class ProductPlainResource extends AbstractResource {
     
     @GET
     @Path("/brand/{brand}/")
+    @ApiOperation(value = "Finds product of the brand", response = ProductRepresentation.class)
     public ProductRepresentation getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("brand") String brand,
             @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {

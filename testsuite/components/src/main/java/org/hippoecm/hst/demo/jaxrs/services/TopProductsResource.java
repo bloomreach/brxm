@@ -28,7 +28,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -41,16 +40,23 @@ import org.hippoecm.hst.jaxrs.services.AbstractResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * @version $Id$
  */
 @Path("/topproducts/")
+@Api(value = "Top Products")
 public class TopProductsResource extends AbstractResource {
     
     private static Logger log = LoggerFactory.getLogger(TopProductsResource.class);
     
     @GET
     @Path("/")
+    @ApiOperation(value = "Finds top products",
+        response = ProductRepresentation.class,
+        responseContainer = "List")
     public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @MatrixParam("max") @DefaultValue("10") int max) {
         
@@ -58,15 +64,11 @@ public class TopProductsResource extends AbstractResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            HippoBean scope = null;
-            try {
-                // was there a sitemap item with a relative content path pointing to a bean. If so, use this as scope
-                scope = getRequestContentBean(requestContext);
-            } catch (ObjectBeanManagerException e) {
-                // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
-                scope = getMountContentBaseBean(requestContext);
+            HippoBean scope = requestContext.getContentBean();
+            if (scope == null) {
+                scope = requestContext.getSiteContentBaseBean();
             }
-            
+
             HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
             HstQuery hstQuery = manager.createQuery(scope, ProductBean.class, true);
             hstQuery.addOrderByDescending("demosite:price");
