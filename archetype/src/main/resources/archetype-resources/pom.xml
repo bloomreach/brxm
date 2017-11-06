@@ -281,7 +281,7 @@
                   <log4j.configurationFile>file://${dollar}{project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
                   <!-- enables auto export and web files watch: -->
                   <project.basedir>${project.basedir}</project.basedir>
-                  <send.usage.statistics.to.hippo>true</send.usage.statistics.to.hippo>                  
+                  <send.usage.statistics.to.hippo>true</send.usage.statistics.to.hippo>
                 </systemProperties>
               </container>
             </configuration>
