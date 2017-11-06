@@ -87,6 +87,8 @@ definitions:
               hst:ismapped: true
               hst:nochannelinfo: true
               hst:namedpipeline: JaxrsRestPlainPipeline
+              hst:parameternames: [rest.product.siteLinkIncluded, rest.product.nodeLinkIncluded, rest.product.sortFields]
+              hst:parametervalues: ['true', 'true', 'demosite:product,-demosite:price']
               hst:types: rest
             /preview:
               jcr:primaryType: hst:mount
