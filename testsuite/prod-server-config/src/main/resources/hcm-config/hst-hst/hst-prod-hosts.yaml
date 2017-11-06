@@ -1,11 +1,5 @@
 definitions:
   config:
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:modules:
-        operation: add
-        type: string
-        value: ['prod-server-config']
-
     /hst:hst/hst:hosts/prod-env:
       jcr:primaryType: hst:virtualhostgroup
       hst:cmslocation: http://cms.example.com

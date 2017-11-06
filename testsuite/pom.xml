@@ -22,7 +22,6 @@
     <version>12.1.0-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
@@ -59,6 +58,9 @@
     <dependency.solr.version>4.9.0</dependency.solr.version>
 
     <json-lib.version>2.4</json-lib.version>
+
+    <webjars-servlet-2.x.version>1.5</webjars-servlet-2.x.version>
+    <webjars-swagger-ui.version>2.2.8</webjars-swagger-ui.version>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
@@ -160,7 +162,20 @@
         </exclusions>
       </dependency>
 
+      <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>webjars-servlet-2.x</artifactId>
+        <version>${webjars-servlet-2.x.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>swagger-ui</artifactId>
+        <version>${webjars-swagger-ui.version}</version>
+      </dependency>
+
     </dependencies>
+
   </dependencyManagement>
 
   <build>
@@ -204,6 +219,7 @@
     <module>intranet</module>
     <module>prod-server-config</module>
     <module>solr</module>
+    <module>api-docs</module>
   </modules>
 
   <profiles>
@@ -275,6 +291,13 @@
                   <type>war</type>
                   <properties>
                     <context>/solr</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/api-docs/target/api-docs.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/api-docs</context>
                   </properties>
                 </deployable>
               </deployables>

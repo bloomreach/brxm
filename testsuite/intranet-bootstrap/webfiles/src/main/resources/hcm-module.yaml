@@ -1,5 +1,3 @@
 group: hippo-cms
 project: hippo-testsuite
-module:
-  name: hippo-testsuite-intranet-bootstrap-webfiles
-  after: hippo-testsuite-intranet-bootstrap-configuration
+module: hippo-testsuite-intranet-bootstrap-webfiles

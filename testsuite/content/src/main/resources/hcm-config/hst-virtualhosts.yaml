@@ -1,9 +1,7 @@
 definitions:
   config:
     /hst:hst/hst:hosts:
-      jcr:primaryType: hst:virtualhosts
       hst:cmspreviewprefix: _testsuiteExamplePrefix
-      hst:defaultcontextpath: /site
       hst:defaulthostname: localhost
       hst:diagnosticsenabled: false
       hst:homepage: home
