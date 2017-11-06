@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.utils;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
@@ -81,7 +83,7 @@ public class ParameterUtils {
         }
 
         HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
-        parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
+        parametersInfo =  parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, (HttpServletRequest)request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
 
         return parametersInfo;

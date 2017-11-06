@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -177,10 +178,10 @@ public class TestHstComponentInvokerImpl {
         }
 
         @Override
-        protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HttpServletRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
-            return new ParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType) {
+        protected InvocationHandler createHstParameterInfoInvocationHandler(final ParameterConfiguration parameterConfiguration, final HttpServletRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
+            return new ParameterInfoInvocationHandler(parameterConfiguration, request, converter, parametersInfoType) {
                 @Override
-                protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HttpServletRequest req) {
+                protected String getPrefixedParameterName(final String parameterName, final ParameterConfiguration parameterConfiguration, final HttpServletRequest req) {
                     return "professional-" + parameterName;
                 }
             };

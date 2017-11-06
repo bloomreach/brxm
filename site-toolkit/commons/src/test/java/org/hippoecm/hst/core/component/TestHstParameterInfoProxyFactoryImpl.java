@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
     private HstRequestContext requestContext;
     private HstRequest request;
     private ResolvedSiteMapItem resolvedSiteMapItem;
-    private ComponentConfiguration componentConfig;
+    private ParameterConfiguration parameterConfig;
     private HstParameterValueConverter converter;
     private Object[] mocks;
 
@@ -82,15 +83,15 @@ public class TestHstParameterInfoProxyFactoryImpl {
         expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
         resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
-        componentConfig = createNiceMock(ComponentConfiguration.class);
+        parameterConfig = createNiceMock(ParameterConfiguration.class);
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            expect(componentConfig.getParameter(name, resolvedSiteMapItem)).andReturn(value.toString()).anyTimes();
+            expect(parameterConfig.getParameter(name, resolvedSiteMapItem)).andReturn(value.toString()).anyTimes();
         }
 
-        mocks = new Object[]{componentConfig, request, requestContext, resolvedSiteMapItem};
+        mocks = new Object[]{parameterConfig, request, requestContext, resolvedSiteMapItem};
     }
 
     @Test
@@ -99,11 +100,11 @@ public class TestHstParameterInfoProxyFactoryImpl {
 
         ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
 
-        CombinedInfo combinedInfo1 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        CombinedInfo combinedInfo1 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, parameterConfig, request, converter);
         int combinedInfo1HashCode = combinedInfo1.hashCode();
         String combinedInfo1String = combinedInfo1.toString();
 
-        CombinedInfo combinedInfo2 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        CombinedInfo combinedInfo2 = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, parameterConfig, request, converter);
         int combinedInfo2HashCode = combinedInfo2.hashCode();
         String combinedInfo2String = combinedInfo2.toString();
 
@@ -130,7 +131,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
     public void testMultiInheritedParametersInfoType() throws Exception {
         replay(mocks);
         ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
-        CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, parameterConfig, request, converter);
 
         assertEquals(params.get("queryOption"), combinedInfo.getQueryOption());
         assertEquals(params.get("cellWidth"), combinedInfo.getCellWidth());
@@ -158,7 +159,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
         replay(mocks);
         replay(httpServletRequest, containerURL);
         ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
-        CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, componentConfig, request, converter);
+        CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo, parameterConfig, request, converter);
 
         assertEquals("requestParameterQueryOptionValue", combinedInfo.getQueryOption());
         assertEquals(params.get("cellWidth"), combinedInfo.getCellWidth());
