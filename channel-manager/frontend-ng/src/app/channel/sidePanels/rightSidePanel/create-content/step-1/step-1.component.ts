@@ -37,6 +37,7 @@ export class CreateContentComponent implements OnInit {
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
   @ViewChild(DocumentLocationFieldComponent) documentLocationField: DocumentLocationFieldComponent;
 
+  locale: string;
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
@@ -62,6 +63,9 @@ export class CreateContentComponent implements OnInit {
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadingTemplateQuery(error),
       );
+
+    // TODO: replace with actual call
+    this.setLocale('en');
   }
 
   setFullWidth(state) {
@@ -78,8 +82,14 @@ export class CreateContentComponent implements OnInit {
     // this.onContinue.emit(form.value);
   }
 
+  // TODO: Mock function. Refactor once document location picker is implemented.
+  setLocale(locale: string) {
+    this.locale = locale;
+  }
+
   private onLoadDocumentTypes(documentTypes) {
     this.documentTypes = documentTypes;
+
     if (documentTypes.length === 1) {
       this.documentType = documentTypes[0].id;
     }

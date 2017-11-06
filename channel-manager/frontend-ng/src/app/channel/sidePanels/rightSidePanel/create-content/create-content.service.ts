@@ -30,8 +30,8 @@ export class CreateContentService {
     return Observable.fromPromise(promise);
   }
 
-  generateDocumentUrlByName(name: string): Observable<string> {
-    const promise = this.contentService._send('POST', ['slugs'], name, true);
+  generateDocumentUrlByName(name: string, locale: string = ''): Observable<string> {
+    const promise = this.contentService._send('POST', ['slugs'], name, true, { locale });
     return Observable.fromPromise(promise);
   }
 

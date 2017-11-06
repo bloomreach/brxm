@@ -35,6 +35,13 @@
     .create-content-form {
       padding-left: 16px;
     }
+
+    // TODO: shared hippo material overrides
+    .hide-select-arrow {
+      .mat-select-arrow {
+        visibility: hidden;
+      }
+    }
   }
   &-actions {
     display: flex;

@@ -46,7 +46,7 @@
           class="form-dense-layout create-content-form">
 
       <!-- Name and URL fields (as a separate component) -->
-      <hippo-name-url-fields></hippo-name-url-fields>
+      <hippo-name-url-fields [locale]="locale"></hippo-name-url-fields>
 
       <!-- Document type field -->
       <div class="field">
@@ -55,7 +55,8 @@
             <div class="mat-input-infix">
               <mat-select [(ngModel)]="documentType" name="documentType" required
                           placeholder="Document type" [disabled]="documentTypes.length === 1"
-                          class="input-document-type create-content-field mat-input-container">
+                          class="input-document-type create-content-field mat-input-container"
+                          [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
                 <mat-option *ngFor="let documentType of documentTypes"
                             [value]="documentType.id">{{ documentType.displayName }}</mat-option>
               </mat-select>
@@ -81,7 +82,7 @@
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid || nameUrlFields.form.invalid || nameUrlFields.urlEditMode.state">
+            [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
       CONTINUE
     </button>
   </div>
