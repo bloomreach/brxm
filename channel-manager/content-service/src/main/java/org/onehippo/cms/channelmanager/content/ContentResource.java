@@ -42,6 +42,7 @@ import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
@@ -126,6 +127,13 @@ public class ContentResource {
     public Response getTemplateQuery(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
+    }
+
+    @GET
+    @Path("folders/{path:.*}")
+    public Response getFolders(@PathParam("path") final String path, @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK, NO_CACHE,
+                (session, locale) -> FoldersService.get().getFolders(path, session));
     }
 
     @POST

@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecService;
 import org.hippoecm.repository.api.WorkflowException;
@@ -54,5 +55,12 @@ public class DisplayNameUtils {
                                 JcrUtils.getNodePathQuietly(node), displayName, e);
                     }
                 });
+    }
+
+    public static String getDisplayName(final Node node) throws RepositoryException {
+        if (node instanceof HippoNode) {
+            return ((HippoNode) node).getDisplayName();
+        }
+        return node.getName();
     }
 }
