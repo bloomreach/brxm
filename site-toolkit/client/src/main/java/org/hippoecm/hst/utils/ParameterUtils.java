@@ -15,18 +15,13 @@
  */
 package org.hippoecm.hst.utils;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
-import org.hippoecm.hst.core.component.HstParameterValueConversionException;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
@@ -39,54 +34,21 @@ public class ParameterUtils {
      * ISO8601 formatter for date-time without time zone.
      * The format used is <tt>yyyy-MM-dd'T'HH:mm:ss</tt>.
      */
-    public static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String ISO_DATETIME_FORMAT = DefaultHstParameterValueConverter.ISO_DATE_FORMAT;
 
     /**
      * ISO8601 formatter for date without time zone.
      * The format used is <tt>yyyy-MM-dd</tt>.
      */
-    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String ISO_DATE_FORMAT = DefaultHstParameterValueConverter.ISO_TIME_FORMAT;
 
     /**
      * ISO8601 formatter for time without time zone.
      * The format used is <tt>'T'HH:mm:ss</tt>.
      */
-    public static final String ISO_TIME_FORMAT = "'T'HH:mm:ss";
+    public static final String ISO_TIME_FORMAT = DefaultHstParameterValueConverter.ISO_TIME_FORMAT;
 
-    /**
-     * All supported date string formats.
-     */
-    private static final String [] ISO8601_DATETIME_PATTERNS = {
-        ISO_DATETIME_FORMAT,
-        ISO_DATE_FORMAT,
-        ISO_TIME_FORMAT,
-    };
-
-    public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new HstParameterValueConverter(){
-        @Override
-        public Object convert(String parameterValue, Class<?> returnType) {
-            try {
-                if (returnType == Date.class) {
-                    if (StringUtils.isBlank(parameterValue)) {
-                        return null;
-                    }
-                    return DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
-                } else if (returnType == Calendar.class) {
-                    if (StringUtils.isBlank(parameterValue)) {
-                        return null;
-                    }
-                    final Date date = DateUtils.parseDate(parameterValue, ISO8601_DATETIME_PATTERNS);
-                    final Calendar cal = Calendar.getInstance();
-                    cal.setTime(date);
-                    return cal;
-                }
-
-                return ConvertUtils.convert(parameterValue, returnType);
-            } catch (ParseException e) {
-                throw new HstParameterValueConversionException(e);
-            }
-        }
-    };
+    public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new DefaultHstParameterValueConverter();
 
     /**
      * Returns a proxy ParametersInfo object for the component class which resolves parameter from
@@ -121,7 +83,7 @@ public class ParameterUtils {
         }
 
         HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
-        parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
+        parametersInfo =  parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, (HttpServletRequest)request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
 
         return parametersInfo;
