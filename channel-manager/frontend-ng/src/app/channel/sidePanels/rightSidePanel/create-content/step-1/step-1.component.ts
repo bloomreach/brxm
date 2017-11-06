@@ -23,7 +23,6 @@ import FeedbackService from '../../../../../services/feedback.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { TranslateService } from '@ngx-translate/core';
 
-
 @Component({
   selector: 'hippo-create-content-step-1',
   templateUrl: './step-1.html'

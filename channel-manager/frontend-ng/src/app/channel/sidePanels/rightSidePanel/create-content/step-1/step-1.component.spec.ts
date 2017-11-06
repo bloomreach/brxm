@@ -27,9 +27,11 @@ import { HintsComponent } from '../../../../../shared/components/hints/hints.com
 import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
 import { SharedModule } from '../../../../../shared/shared.module';
 import { CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
+import { TranslateStore } from "@ngx-translate/core/src/translate.store";
 import { DocumentTypeInfo } from '../create-content.types';
 
-describe('Create content component', () => {
+describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
@@ -45,10 +47,13 @@ describe('Create content component', () => {
       imports: [
         SharedModule,
         FormsModule,
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
       ],
       providers: [
         { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
+        { provide: FeedbackService, useClass: FeedbackServiceMock }
       ]
     });
 
