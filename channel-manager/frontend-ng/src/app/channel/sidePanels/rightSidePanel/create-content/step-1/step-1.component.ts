@@ -19,29 +19,33 @@ import './step-1.scss';
 import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from '../create-content.types';
+import { CreateContentOptions, DocumentTypeInfo, Folder } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
+import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
 
 @Component({
   selector: 'hippo-create-content',
   templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
-  @Input() document: any;
   @Input() options: CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+  @ViewChild(DocumentLocationFieldComponent) documentLocationField: DocumentLocationFieldComponent;
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
   title = 'Create new content';
 
-  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService) { }
+  constructor(
+    private createContentService: CreateContentService,
+    private feedbackService: FeedbackService
+  ) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -70,7 +74,7 @@ export class CreateContentComponent implements OnInit {
   }
 
   submit(form: NgForm) {
-    console.log(form);
+    console.log(form.value);
     // this.onContinue.emit(form.value);
   }
 
