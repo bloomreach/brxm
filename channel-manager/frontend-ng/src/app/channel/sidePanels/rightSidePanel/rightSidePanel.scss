@@ -43,6 +43,7 @@ right-side-panel {
   .edit-title-toolbar {
     z-index: 3 !important;
     &-tools {
+      display: flex;
       justify-content: space-between;
     }
   }
@@ -50,11 +51,6 @@ right-side-panel {
 
 .right-side-panel {
   max-width: 100%;
-
-  form {
-    padding-right: $form-dense-distance;
-    padding-top: $form-dense-distance;
-  }
 }
 
 .feedback > :last-child {

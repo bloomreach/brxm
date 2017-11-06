@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild, HostListener } from '@angular/core';
 import './step-1.scss';
-import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
 import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
@@ -26,7 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
-  selector: 'hippo-create-content',
+  selector: 'hippo-create-content-step-1',
   templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
@@ -34,8 +33,15 @@ export class CreateContentComponent implements OnInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
+  @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+
+  @HostListener('keydown', ['$event']) closeOnEsc(e) {
+    if (e.which === 27) {
+      this.close();
+    }
+  }
 
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
@@ -44,10 +50,7 @@ export class CreateContentComponent implements OnInit {
 
   constructor(private createContentService: CreateContentService,
               private feedbackService: FeedbackService,
-              private translate: TranslateService) {
-    translate.setDefaultLang('en');
-    translate.use('en');
-  }
+              private translate: TranslateService) {}
 
   ngOnInit() {
     if (!this.options) {
@@ -68,7 +71,7 @@ export class CreateContentComponent implements OnInit {
 
   setWidthState(state) {
     this.isFullWidth = state;
-    this.onFullWidth.emit({ state: 'dfsh' });
+    this.onFullWidth.emit(state);
   }
 
   close() {
@@ -115,5 +118,9 @@ export class CreateContentComponent implements OnInit {
     } else {
       console.error('Unknown error creating new draft document', error);
     }
+  }
+
+  private resetBeforeStateChange() {
+    this.onBeforeStateChange.emit();
   }
 }

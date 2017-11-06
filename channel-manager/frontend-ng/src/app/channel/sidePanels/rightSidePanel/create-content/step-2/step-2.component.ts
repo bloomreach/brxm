@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener } from '@angular/core';
 import { MdDialog } from '@angular/material';
 import './step-2.scss';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,7 +24,8 @@ import DialogService from '../../../../../services/dialog.service';
 import ContentService from '../../../../../services/content.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
-import { NameUrlFieldsDialog } from './nameUrlFieldsDialog/name-url-fields-dialog';
+import { NameUrlFieldsDialog } from './name-url-fields-dialog/name-url-fields-dialog';
+import { Document } from '../create-content.types';
 
 @Component({
   selector: 'hippo-create-content-step-2',
@@ -38,7 +39,16 @@ export class CreateContentStep2Component implements OnInit {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
-  doc: any;
+  // Prevent the default closing action bound to the escape key by Angular Material.
+  // We should show the "unsaved changes" dialog first.
+  @HostListener('keydown', ['$event']) closeOnEsc(e) {
+    if (e.which === 27) {
+      e.stopImmediatePropagation();
+      this.close();
+    }
+  }
+
+  doc: Document;
   docType: any;
   editing: boolean;
   loading: boolean;
@@ -54,20 +64,9 @@ export class CreateContentStep2Component implements OnInit {
               private fieldService: FieldService,
               private dialogService: DialogService,
               private dialog: MdDialog,
-              private translate: TranslateService) {
-    translate.setDefaultLang('en');
-    translate.use('en');
-  }
+              private translate: TranslateService) {}
 
   ngOnInit() {
-    // Prevent the default closing action bound to the escape key by Angular Material.
-    // We should show the "unsaved changes" dialog first.
-    // $element.on('keydown', (e) => {
-    //   if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
-    //     e.stopImmediatePropagation();
-    //     this.close();
-    //   }
-    // });
     this.loadNewDocument();
     this.resetBeforeStateChange();
   }
@@ -110,10 +109,8 @@ export class CreateContentStep2Component implements OnInit {
   private onLoadSuccess(doc, docType) {
     this.doc = doc;
     this.docType = docType;
-    this.editing = true;
 
     this.title = this.translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docType.displayName });
-    // this.resizeTextareas();
   }
 
   setFullWidth(state) {
@@ -144,7 +141,6 @@ export class CreateContentStep2Component implements OnInit {
   private discardAndClose() {
     return this.confirmDiscardChanges()
       .then(() => {
-        // speed up closing the panel by not returning the promise so the draft is deleted asynchronously
         // TODO: Delete document
       });
   }
@@ -167,7 +163,6 @@ export class CreateContentStep2Component implements OnInit {
     delete this.doc;
     delete this.documentId;
     delete this.docType;
-    delete this.editing;
     delete this.feedback;
     this.title = this.defaultTitle;
     this.resetForm();
@@ -182,12 +177,4 @@ export class CreateContentStep2Component implements OnInit {
   private resetBeforeStateChange() {
     this.onBeforeStateChange.emit(() => this.discardAndClose());
   }
-
-  // private resizeTextareas() {
-  //   // Set initial size of textareas (see Angular Material issue #9745).
-  //   // Use $timeout to ensure that the sidenav has become visible.
-  //   this.$timeout(() => {
-  //     this.$scope.$broadcast('md-resize-textarea');
-  //   });
-  // }
 }

@@ -13,81 +13,83 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<mat-toolbar class="edit-title-toolbar">
-  <div class="md-toolbar-tools edit-title-toolbar-tools">
-    <h1 class="md-title text-truncate" title="{{ title }}">
-      {{ title }}
-    </h1>
+<div class="create-content-container">
+  <mat-toolbar class="edit-title-toolbar">
+    <div class="md-toolbar-tools edit-title-toolbar-tools">
+      <h1 class="md-title text-truncate" title="{{ title }}">
+        {{ title }}
+      </h1>
 
-    <button mat-icon-button class="mat-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-            (click)="setFullWidth(true)"
-            *ngIf="!isFullWidth"
-            title="{{ 'FULL_WIDTH' | translate }}">
-      <mat-icon svgIcon="maximize-sidepanel"></mat-icon>
-    </button>
-    <button mat-icon-button class="mat-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-            (click)="setFullWidth(false)"
-            *ngIf="isFullWidth"
-            title="{{ 'RESTORE_WIDTH' | translate }}">
-      <mat-icon svgIcon="un-maximize-sidepanel"></mat-icon>
-    </button>
-  </div>
-  <mat-progress-bar mode="indeterminate"
-                      *ngIf="loading">
-  </mat-progress-bar>
-</mat-toolbar>
-
-<div class="md-content"
-     flex="grow"
-     layout="column"
-     id="rightSidePanel-content">
-
-  <mat-toolbar class="editable-title-toolbar" *ngIf="doc">
-    <div class="md-toolbar-tools">
-      <h6 class="md-subhead text-truncate">
-        {{ doc.displayName }}
-      </h6>
-
-      <span flex></span>
-
-      <button mat-icon-button
-              class="mat-icon-button btn-edit-document-title qa-create-content-edit-document-title"
-              matSuffix
-              type="button"
-              (click)="editNameUrl()">
-        <mat-icon>mode_edit</mat-icon>
+      <button mat-icon-button class="mat-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+              (click)="setFullWidth(true)"
+              *ngIf="!isFullWidth"
+              title="{{ 'FULL_WIDTH' | translate }}">
+        <mat-icon svgIcon="maximize-sidepanel"></mat-icon>
+      </button>
+      <button mat-icon-button class="mat-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+              (click)="setFullWidth(false)"
+              *ngIf="isFullWidth"
+              title="{{ 'RESTORE_WIDTH' | translate }}">
+        <mat-icon svgIcon="un-maximize-sidepanel"></mat-icon>
       </button>
     </div>
+    <mat-progress-bar mode="indeterminate"
+                      *ngIf="loading">
+    </mat-progress-bar>
   </mat-toolbar>
 
-  <hippo-sharedspace-toolbar *ngIf="docType"></hippo-sharedspace-toolbar>
+  <div class="md-content"
+       flex="grow"
+       layout="column"
+       id="rightSidePanel-content">
 
-  <div *ngIf="feedback"
-       class="mat-padding feedback qa-feedback"
-       mat-colors="{background: 'hippo-red-50'}">
-    <h4 class="qa-feedback-title">{{ feedback.title }}</h4>
+    <mat-toolbar class="editable-title-toolbar" *ngIf="doc">
+      <div class="md-toolbar-tools layout-padding">
+        <h6 class="md-subhead text-truncate qa-editable-title">
+          {{ doc.displayName }}
+        </h6>
 
-    <p class="qa-feedback-message">
-      {{ feedback.message }}
-    </p>
+        <span flex></span>
+
+        <button mat-icon-button
+                class="mat-icon-button btn-edit-document-title qa-step-2-edit-name-url"
+                matSuffix
+                type="button"
+                (click)="editNameUrl()">
+          <mat-icon>mode_edit</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
+
+    <hippo-sharedspace-toolbar *ngIf="docType"></hippo-sharedspace-toolbar>
+
+    <div *ngIf="feedback"
+         class="feedback qa-feedback layout-padding"
+         mat-colors="{background: 'hippo-red-50'}">
+      <h4 class="qa-feedback-title">{{ feedback.title }}</h4>
+
+      <p class="qa-feedback-message">
+        {{ feedback.message }}
+      </p>
+    </div>
+
+    <hippo-fields-editor class="top-level layout-padding"
+                         *ngIf="docType"
+                         [fieldTypes]="docType.fields"
+                         [fieldValues]="doc.fields">
+    </hippo-fields-editor>
   </div>
 
-  <hippo-fields-editor class="top-level"
-                       *ngIf="editing"
-                       [fieldTypes]="docType.fields"
-                       [fieldValues]="doc.fields">
-  </hippo-fields-editor>
-</div>
+  <div class="create-content-actions layout-padding">
+    <button mat-button class="qa-close"
+            (click)="close()">
+      {{ 'DISCARD' | translate }}
+    </button>
 
-<div class="create-content-actions">
-  <button mat-button class="qa-close"
-          (click)="close()">
-    {{ 'DISCARD' | translate }}
-  </button>
-
-  <button mat-button class="qa-save"
-          (click)="saveDocument()"
-          ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
-    {{ 'SAVE' | translate  }}
-  </button>
+    <button mat-button class="qa-save"
+            (click)="saveDocument()"
+            ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
+      {{ 'SAVE' | translate  }}
+    </button>
+  </div>
 </div>

@@ -142,6 +142,7 @@ class RightSidePanelCtrl {
   }
 
   closePanel() {
+    this._resetBeforeStateChange();
     this.SidePanelService.close('right').then(() => this._onClose());
   }
 
@@ -151,7 +152,6 @@ class RightSidePanelCtrl {
   }
 
   setFullWidth(state) {
-    state = !this.isFullWidth;
     if (state === true) {
       this.$element.addClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(false);

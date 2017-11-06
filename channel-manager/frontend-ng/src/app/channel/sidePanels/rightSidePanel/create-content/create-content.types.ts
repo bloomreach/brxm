@@ -38,3 +38,14 @@ export interface DocumentDetails {
   rootPath: string;
   defaultPath: string;
 }
+
+export interface Document {
+  id: string;
+  displayName: string;
+  info: {
+    dirty: boolean,
+    type: {
+      id: string;
+    }
+  }
+}

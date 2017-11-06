@@ -15,7 +15,7 @@
   -->
 <div layout="column" class="create-content-container">
 
-  <mat-toolbar class="edit-title-toolbar">
+  <mat-toolbar class="edit-title-toolbar layout-padding">
     <div class="md-toolbar-tools edit-title-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
@@ -36,7 +36,7 @@
     </div>
   </mat-toolbar>
 
-  <div class="md-content"
+  <div class="md-content layout-padding"
        flex="grow"
        layout="column"
        id="rightSidePanel-content">
@@ -79,7 +79,7 @@
     </form>
   </div>
   <!-- Buttons -->
-  <div class="create-content-actions">
+  <div class="create-content-actions layout-padding">
     <button mat-button class="qa-create-content-close"
             (click)="close()">
       {{ 'CANCEL' | translate }}

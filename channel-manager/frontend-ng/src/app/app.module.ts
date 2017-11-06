@@ -23,7 +23,7 @@ import { SharedModule } from './shared/shared.module';
 import ng1Module from './hippo-cm.ng1.module.js';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MdIconRegistry } from "@angular/material";
 import { HttpModule } from '@angular/http';
@@ -60,7 +60,10 @@ export function HttpLoaderFactory(http: HttpClient) {
   ]
 })
 export class AppModule {
-  constructor(private upgrade: UpgradeModule, private iconRegistry: MdIconRegistry, sanitizer: DomSanitizer) {
+  constructor(private upgrade: UpgradeModule, private iconRegistry: MdIconRegistry, sanitizer: DomSanitizer, translate: TranslateService) {
+    translate.setDefaultLang('en');
+    translate.use('en');
+
     const HippoGlobal = window.parent.Hippo || {};
     const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
 
@@ -90,7 +93,7 @@ export class AppModule {
 
     svgIconsList.forEach((icon) => {
       const iconUrl = `images/${icon}.svg${antiCache}`;
-      iconRegistry.addSvgIcon(icon ,sanitizer.bypassSecurityTrustResourceUrl(iconUrl));
+      iconRegistry.addSvgIcon(icon, sanitizer.bypassSecurityTrustResourceUrl(iconUrl));
     });
   }
 

@@ -29,8 +29,19 @@ export class CreateContentServiceMock {
   generateDocumentUrlByName(name): Observable<string> {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
+
+  getDocument() {
+    return null;
+  }
 }
 
 export class FeedbackServiceMock {
   showError(key: string, params: Map<string, any>): void {}
+}
+
+export class ContentServiceMock {
+  // showError(key: string, params: Map<string, any>): void {}
+  getDocumentType() {
+    return Observable.of(null);
+  }
 }

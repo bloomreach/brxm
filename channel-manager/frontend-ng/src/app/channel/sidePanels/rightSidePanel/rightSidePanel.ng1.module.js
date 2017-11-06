@@ -36,7 +36,7 @@ const rightSidePanelModule = angular
   .component('hippoEditContent', editContentComponent)
   .component('fieldsEditor', fieldsEditorComponent)
   .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }))
-  .directive('hippoCreateContent', downgradeComponent({ component: CreateContentComponent }))
+  .directive('hippoCreateContentStep1', downgradeComponent({ component: CreateContentComponent }))
   .directive('hippoCreateContentStep2', downgradeComponent({ component: CreateContentStep2Component }))
   .service('CreateContentService', downgradeInjectable(CreateContentService));
 
