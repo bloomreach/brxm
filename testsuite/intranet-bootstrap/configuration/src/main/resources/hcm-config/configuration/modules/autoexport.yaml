@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:modules:
+        operation: add
+        type: string
+        value: ['intranet-bootstrap/content:/content/documents/intranet', 'intranet-bootstrap/configuration:/hippo:namespaces/intranet']
