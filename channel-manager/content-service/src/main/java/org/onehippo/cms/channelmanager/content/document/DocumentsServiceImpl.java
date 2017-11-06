@@ -130,8 +130,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        editingUtils.copyToPreviewAndKeepEditing(workflow, session)
-                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
+        editingUtils.copyToPreviewAndKeepEditing(workflow, session);
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 

@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -145,9 +146,15 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints);
         replay(workflow);
 
-        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
-        assertNull(errorInfo.getParams());
+        final Optional<ErrorInfo> errorInfoOptional = editingUtils.determineEditingFailure(workflow, session);
+        assertThat("Errorinfo should be present",errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()){
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
+            assertNull(errorInfo.getParams());
+        }
+
+
 
         verify(workflow);
     }
@@ -170,10 +177,15 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(" Doe ");
         replay(workflow, session, workspace, securityService, user);
 
-        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
-        assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
-        assertThat(errorInfo.getParams().get("userName"), equalTo("John Doe"));
+        final Optional<ErrorInfo> errorInfoOptional = editingUtils.determineEditingFailure(workflow, session);
+        assertThat("Errorinfo should be present",errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()){
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+            assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
+            assertThat(errorInfo.getParams().get("userName"), equalTo("John Doe"));
+        }
+
 
         verify(workflow, session, workspace, securityService, user);
     }
@@ -191,10 +203,14 @@ public class EditingUtilsTest {
         expect(workspace.getSecurityService()).andThrow(new RepositoryException());
         replay(workflow, session, workspace);
 
-        final ErrorInfo errorInfo = editingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
-        assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
-        assertNull(errorInfo.getParams().get("userName"));
+        final Optional<ErrorInfo> errorInfoOptional = editingUtils.determineEditingFailure(workflow, session);
+        assertThat("Errorinfo should be present",errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()) {
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+            assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
+            assertNull(errorInfo.getParams().get("userName"));
+        }
 
         verify(workflow, session, workspace);
     }
@@ -210,7 +226,11 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(editingUtils.createDraft(workflow, session).get(), equalTo(draft));
+        final Optional<Node> draftOptional = editingUtils.createDraft(workflow, session);
+        assertThat("There should be a draft", draftOptional.isPresent());
+        if (draftOptional.isPresent()){
+            assertThat(draftOptional.get(), equalTo(draft));
+        }
 
         verify(workflow, document);
     }
@@ -255,7 +275,11 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(editingUtils.copyToPreviewAndKeepEditing(workflow, session).get(), equalTo(draft));
+        final Optional<Node> draftOptional = editingUtils.copyToPreviewAndKeepEditing(workflow, session);
+        assertThat("Draft should be present",draftOptional.isPresent());
+        if (draftOptional.isPresent()){
+            assertThat(draftOptional.get(), equalTo(draft));
+        }
 
         verify(workflow, document);
     }
