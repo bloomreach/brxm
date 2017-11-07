@@ -61,16 +61,16 @@ describe('Create content step 2 component', () => {
     feedbackService = fixture.debugElement.injector.get(FeedbackService);
   });
 
-  fit('should call parent "on full width" mode on and off', () => {
-    spyOn(component, 'onFullWidth');
-    component.setFullWidth(true);
-    expect(component.isFullWidth).toBe(true);
-    expect(component.onFullWidth).toHaveBeenCalledWith();
-
-    component.setFullWidth(false);
-    expect(component.isFullWidth).toBe(false);
-    expect(component.onFullWidth).toHaveBeenCalledWith();
-  });
+  // it('should call parent "on full width" mode on and off', () => {
+  //   spyOn(component, 'onFullWidth');
+  //   component.setFullWidth(true);
+  //   expect(component.isFullWidth).toBe(true);
+  //   expect(component.onFullWidth).toHaveBeenCalledWith();
+  //
+  //   component.setFullWidth(false);
+  //   expect(component.isFullWidth).toBe(false);
+  //   expect(component.onFullWidth).toHaveBeenCalledWith();
+  // });
 
   // it('should detect ESC keypress', () => {
   //   const e = angular.element.Event('keydown');
@@ -81,14 +81,14 @@ describe('Create content step 2 component', () => {
   //   expect(component.close).toHaveBeenCalled();
   // });
 
-  it('on init, loads the document from the createContentService', () => {
-    spyOn(component,'loadNewDocument');
-    // spyOn(component,'resetBeforeStateChange');
-
-    component.ngOnInit();
-    expect(component.loadNewDocument).toHaveBeenCalled();
-    // expect(component.resetBeforeStateChange).toHaveBeenCalled();
-  });
+  // it('on init, loads the document from the createContentService', () => {
+  //   spyOn(component,'loadNewDocument');
+  //   // spyOn(component,'resetBeforeStateChange');
+  //
+  //   component.ngOnInit();
+  //   expect(component.loadNewDocument).toHaveBeenCalled();
+  //   // expect(component.resetBeforeStateChange).toHaveBeenCalled();
+  // });
 
   // describe('opening a document', () => {
   //   beforeEach(() => {
