@@ -17,6 +17,8 @@
 right-side-panel {
   max-width: 0;
 
+  transition: max-width 0.2s;
+
   &.sidepanel-open {
     max-width: 50% !important;
 
@@ -29,6 +31,8 @@ right-side-panel {
       max-width: 100% !important;
       width: 100% !important;
     }
+
+    transition: max-width 0.2s;
   }
 
   .btn-fullwidth,
