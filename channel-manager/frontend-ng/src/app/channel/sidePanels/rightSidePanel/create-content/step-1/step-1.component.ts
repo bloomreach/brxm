@@ -28,6 +28,12 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
+  locale: string;
+  documentType: string;
+  documentTypes: Array<DocumentTypeInfo> = [];
+  isFullWidth: boolean;
+  title = 'Create new content';
+
   @Input() options: CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onContinue: EventEmitter<any> = new EventEmitter();
@@ -41,12 +47,6 @@ export class CreateContentComponent implements OnInit {
       this.close();
     }
   }
-
-  locale: string;
-  documentType: string;
-  documentTypes: Array<DocumentTypeInfo> = [];
-  isFullWidth: boolean;
-  title = 'Create new content';
 
   constructor(private createContentService: CreateContentService,
               private feedbackService: FeedbackService,

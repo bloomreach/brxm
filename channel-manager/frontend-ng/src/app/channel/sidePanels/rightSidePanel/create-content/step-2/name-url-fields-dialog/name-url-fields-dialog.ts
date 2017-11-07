@@ -19,14 +19,13 @@ import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 import './name-url-fields-dialog.scss';
 
 @Component({
-  selector: 'name-url-fields-dialog',
+  selector: 'hippo-name-url-fields-dialog',
   templateUrl: 'name-url-fields-dialog.html',
 })
-export class NameUrlFieldsDialog {
-
-  constructor(public dialogRef: MdDialogRef<NameUrlFieldsDialog>,
+export class NameUrlFieldsDialogComponent {
+  constructor(public dialogRef: MdDialogRef<NameUrlFieldsDialogComponent>,
               @Inject(MD_DIALOG_DATA) public data: any) {}
-
+  title: string = this.data.title;
   name: string = this.data.name;
   url: string = this.data.url;
 

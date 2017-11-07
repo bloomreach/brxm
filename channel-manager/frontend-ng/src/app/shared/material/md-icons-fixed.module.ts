@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
+import { MdIcon, MdIconRegistry } from '@angular/material';
+import { HttpModule } from '@angular/http';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {
-  MATERIAL_SANITY_CHECKS,
-  NoConflictStyleCompatibilityMode,
-  MdListModule,
-  MdButtonModule,
-  MdInputModule,
-  MdSelectModule,
-  MdDialogModule
-} from '@angular/material';
-import './material.scss';
-
 @NgModule({
-  exports: [
-    NoConflictStyleCompatibilityMode,
-    MdListModule,
-    MdButtonModule,
-    MdInputModule,
-    MdButtonModule,
-    MdSelectModule,
-    MdDialogModule
-  ],
-  providers: [
-    {provide: MATERIAL_SANITY_CHECKS, useValue: false},
-  ]
+  imports: [CommonModule, HttpModule],
+  declarations: [MdIcon],
+  exports: [MdIcon],
+  providers: [], // leave empty to avoid multiple instances of MdIconRegistry
 })
-export class MaterialModule { }
+export class MdIconFixedModule {
+  static forRoot() {
+    return {
+      ngModule: MdIconFixedModule,
+      providers: [MdIconRegistry] // will be available only to whoever calls .forRoot()
+    };
+  }
+}

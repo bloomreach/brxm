@@ -24,9 +24,10 @@ import ng1Module from './hippo-cm.ng1.module.js';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
-import { DomSanitizer } from "@angular/platform-browser";
-import { MdIconRegistry } from "@angular/material";
+import { DomSanitizer } from '@angular/platform-browser';
+import { MdIconRegistry } from '@angular/material';
 import { HttpModule } from '@angular/http';
+import { MdIconFixedModule } from './shared/material/md-icons-fixed.module';
 
 declare global {
   interface Window { Hippo: any; }
@@ -49,6 +50,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     UpgradeModule,
     RightSidePanelModule,
     HttpClientModule,
+    MdIconFixedModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -56,7 +58,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     })
-
   ]
 })
 export class AppModule {

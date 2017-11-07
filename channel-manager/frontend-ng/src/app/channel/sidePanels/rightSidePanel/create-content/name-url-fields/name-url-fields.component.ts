@@ -50,7 +50,7 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.hasOwnProperty('locale') && this.form.controls.name) {
+    if (changes.hasOwnProperty('locale') && this.form.controls.name) {
       this.setDocumentUrlByName();
     }
   }

@@ -23,7 +23,7 @@ import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 
 import { CreateContentComponent } from './create-content/step-1/step-1.component.ts';
-import { CreateContentStep2Component } from './create-content/step-2/step-2.component';
+import { CreateContentStep2Component } from './create-content/step-2/step-2.component.ts';
 import { NameUrlFieldsComponent } from './create-content/name-url-fields/name-url-fields.component.ts';
 import { CreateContentService } from './create-content/create-content.service.ts';
 

@@ -15,7 +15,7 @@
 @import 'variables';
 
 hippo-create-content-step-2 {
-  #rightSidePanel-content {
+  .right-side-panel-content {
     display: flex;
     flex-direction: column;
   }
@@ -25,16 +25,16 @@ hippo-create-content-step-2 {
   }
 
   .editable-title-toolbar {
-    width: 100%;
     background-color: $grey-100;
     box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
+    display: flex;
     height: 56px;
     min-height: 54px;
+    width: 100%;
     z-index: 3 !important;
-    display: flex;
     h6 {
-      margin: 0;
       flex: 1;
+      margin: 0;
     }
 
     md-icon {

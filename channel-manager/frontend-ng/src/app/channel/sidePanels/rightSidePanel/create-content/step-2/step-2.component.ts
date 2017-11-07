@@ -24,7 +24,7 @@ import DialogService from '../../../../../services/dialog.service';
 import ContentService from '../../../../../services/content.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
-import { NameUrlFieldsDialog } from './name-url-fields-dialog/name-url-fields-dialog';
+import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { Document } from '../create-content.types';
 
 @Component({
@@ -32,6 +32,15 @@ import { Document } from '../create-content.types';
   templateUrl: './step-2.html'
 })
 export class CreateContentStep2Component implements OnInit {
+  doc: Document;
+  docType: any;
+  editing: boolean;
+  loading: boolean;
+  isFullWidth: boolean;
+  feedback: any;
+  title = 'Create new content';
+  defaultTitle = 'Create new content';
+  documentId: string;
   @Output() onSave: EventEmitter<any> = new EventEmitter();
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
@@ -47,17 +56,6 @@ export class CreateContentStep2Component implements OnInit {
       this.close();
     }
   }
-
-  doc: Document;
-  docType: any;
-  editing: boolean;
-  loading: boolean;
-  isFullWidth: boolean;
-  feedback: any;
-  title: string = 'Create new content';
-  defaultTitle: string = 'Create new content';
-  documentId: string;
-
 
   constructor(private createContentService: CreateContentService,
               private contentService: ContentService,
@@ -81,7 +79,7 @@ export class CreateContentStep2Component implements OnInit {
   }
 
   private openEditNameUrlDialog() {
-    return this.dialog.open(NameUrlFieldsDialog, {
+    return this.dialog.open(NameUrlFieldsDialogComponent, {
       height: '250px',
       width: '600px',
       data: {
@@ -100,7 +98,7 @@ export class CreateContentStep2Component implements OnInit {
     this.openEditNameUrlDialog().afterClosed().subscribe(
       nameUrlObj => {
         if (nameUrlObj) {
-          this.submitEditNameUrl(nameUrlObj)
+          this.submitEditNameUrl(nameUrlObj);
         }
       }
     );
