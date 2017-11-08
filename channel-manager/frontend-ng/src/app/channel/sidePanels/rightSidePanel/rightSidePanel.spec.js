@@ -199,13 +199,13 @@ describe('RightSidePanel', () => {
   it('closes the panel', () => {
     spyOn($ctrl, '_resetBeforeStateChange');
     SidePanelService.close.and.returnValue($q.resolve());
-    $ctrl.closePanel();
+    $ctrl._onClose();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
 
     $ctrl.mode = $ctrl.modes.edit;
     $ctrl.options = 'test';
-    $ctrl.closePanel();
+    $ctrl._onClose();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe('RightSidePanel', () => {
     SidePanelService.close.and.returnValue($q.resolve());
 
     ChannelService.isToolbarDisplayed = false;
-    $ctrl.closePanel();
+    $ctrl._onClose();
     $scope.$apply();
 
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
@@ -241,7 +241,7 @@ describe('RightSidePanel', () => {
       $ctrl._onOpen('edit', null);
       expect(firstCallback).toHaveBeenCalled();
       SidePanelService.close.and.returnValue($q.resolve());
-      $ctrl.closePanel();
+      $ctrl._onClose();
       $rootScope.$digest();
       firstCallback.calls.reset();
       $ctrl._onOpen('edit', 'anotherTestId');
