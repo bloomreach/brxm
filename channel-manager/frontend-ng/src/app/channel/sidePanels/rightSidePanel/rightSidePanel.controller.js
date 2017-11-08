@@ -58,7 +58,7 @@ class RightSidePanelCtrl {
       // onOpen
       (id, options) => this._onOpen(id, options),
       // onClose
-      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage).then(() => this._onClose()));
+      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage));
   }
 
   $onInit() {
@@ -112,18 +112,17 @@ class RightSidePanelCtrl {
     });
   }
 
-  _onClose() {
-    this.SidePanelService.close('right');
+  closePanel() {
     this.$element.removeClass('sidepanel-open');
     this.$element.css('max-width', '0px');
     this.setFullWidth(false);
 
-    if (!this.ChannelService.isToolbarDisplayed) {
-      this.ChannelService.setToolbarDisplayed(true);
-    }
-
-    this._resetState();
-    return this.$q.resolve();
+    return this.SidePanelService.close('right').then(() => {
+      if (!this.ChannelService.isToolbarDisplayed) {
+        this.ChannelService.setToolbarDisplayed(true);
+      }
+      this._resetState();
+    });
   }
 
   onResize(newWidth) {
