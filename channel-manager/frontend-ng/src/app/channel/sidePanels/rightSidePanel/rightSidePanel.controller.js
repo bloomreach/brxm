@@ -118,9 +118,10 @@ class RightSidePanelCtrl {
     this.setFullWidth(false);
 
     return this.SidePanelService.close('right').then(() => {
-      if (!this.ChannelService.isToolbarDisplayed) {
-        this.ChannelService.setToolbarDisplayed(true);
+      if (this.ChannelService.isToolbarDisplayed) {
+        this.ChannelService.setToolbarDisplayed(false);
       }
+
       this._resetState();
     });
   }
