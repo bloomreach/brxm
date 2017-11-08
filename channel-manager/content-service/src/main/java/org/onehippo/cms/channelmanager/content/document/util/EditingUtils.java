@@ -31,6 +31,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -49,6 +50,7 @@ public class EditingUtils {
     private static final String HINT_DELETE = "delete";
     private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_REQUESTS = "requests";
 
     private EditingUtils() { }
@@ -84,13 +86,35 @@ public class EditingUtils {
     }
 
     /**
-     * Check if a document can be deleted, given its workflow.
+     * Check if document can be archived (i.e. moved to the attic and stripped of all its data),
+     * given its workflow.
      *
-     * @param workflow workflow of a document
-     * @return         true if document can be deleted, false otherwise
+     * @param workflow workflow of the document
+     * @return         true if the document can be archived, false otherwise
      */
-    public static boolean canDeleteDocument(final DocumentWorkflow workflow) {
+    public static boolean canArchiveDocument(final DocumentWorkflow workflow) {
         return isActionAvailable(workflow, HINT_DELETE);
+    }
+
+    /**
+     * Check if a document can be erased from a folder, i.e. permanently deleted without
+     * any archiving in the attic.
+     *
+     * @param workflow workflow of the folder
+     * @return         true if the document can be erased, false otherwise
+     */
+    public static boolean canEraseDocument(final FolderWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_DELETE);
+    }
+
+    /**
+     * Check if a document has a 'preview' variant.
+     *
+     * @param workflow the workflow of the document
+     * @return true if the document has a 'preview' variant, false otherwise.
+     */
+    public static boolean hasPreview(final DocumentWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_PREVIEW_AVAILABLE);
     }
 
     private static boolean isActionAvailable(final Workflow workflow, final String action) {

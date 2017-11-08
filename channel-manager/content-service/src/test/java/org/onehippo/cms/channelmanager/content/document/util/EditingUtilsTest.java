@@ -28,8 +28,10 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
@@ -104,6 +106,57 @@ public class EditingUtilsTest {
 
         hints.put("disposeEditableInstance", Boolean.TRUE);
         assertTrue(EditingUtils.canDeleteDraft(workflow));
+    }
+
+    @Test
+    public void canArchiveDocument() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canArchiveDocument(workflow));
+    }
+
+    @Test
+    public void canEraseDocument() throws Exception {
+        final FolderWorkflow workflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canEraseDocument(workflow));
+    }
+
+    @Test
+    public void hasPreview() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.FALSE);
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.TRUE);
+        assertTrue(EditingUtils.hasPreview(workflow));
     }
 
     @Test

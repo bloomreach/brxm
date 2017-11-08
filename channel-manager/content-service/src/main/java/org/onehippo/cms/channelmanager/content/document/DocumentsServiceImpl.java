@@ -257,16 +257,50 @@ class DocumentsServiceImpl implements DocumentsService {
     @Override
     public void deleteDocument(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
 
-        if (!EditingUtils.canDeleteDocument(workflow)) {
+        // Try to archive the document (i.e. move to the attic) so there's still a pointer into the version history
+        if (EditingUtils.canArchiveDocument(documentWorkflow)) {
+            archiveDocument(uuid, documentWorkflow);
+            return;
+        }
+
+        // Archiving not possible: the document can be published, a request can be pending etc. Only case left to check:
+        // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
+        if (EditingUtils.hasPreview(documentWorkflow)) {
+            log.warn("Forbade to erase document '{}': it already has a preview variant", uuid);
             throw new ForbiddenException();
         }
 
+        // No preview indeed, so erase the draft document
+        final Node folder = FolderUtils.getFolder(handle);
+        final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
+
+        if (EditingUtils.canEraseDocument(folderWorkflow)) {
+            eraseDocument(uuid, folderWorkflow, handle);
+        } else {
+            log.warn("Forbade to erase document '{}': not allowed by the workflow of folder '{}'",
+                    JcrUtils.getNodeNameQuietly(handle), JcrUtils.getNodePathQuietly(folder));
+            throw new ForbiddenException();
+        }
+    }
+
+    private void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
         try {
-            workflow.delete();
+            log.info("Archiving document '{}'", uuid);
+            documentWorkflow.delete();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to delete document '{}'", uuid, e);
+            log.warn("Failed to archive document '{}'", uuid, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    private void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Node handle) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
+        try {
+            log.info("Erasing document '{}'", uuid);
+            folderWorkflow.delete(handle.getName());
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to erase document '{}'", uuid, e);
             throw new InternalServerErrorException();
         }
     }

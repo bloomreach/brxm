@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -106,6 +107,18 @@ public class FolderUtils {
             return getExistingFolder(absPath, session);
         } catch (final RepositoryException e) {
             log.warn("Failed to get folder '{}'", absPath, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public static Node getFolder(final Node documentHandle) throws NotFoundException, InternalServerErrorException {
+        try {
+            return documentHandle.getParent();
+        } catch (ItemNotFoundException e) {
+            log.warn("Cannot get folder of document handle '{}': it does not have a parent", JcrUtils.getNodePathQuietly(documentHandle));
+            throw new NotFoundException();
+        } catch (RepositoryException e) {
+            log.warn("Failed to get folder of document handle '{}'", JcrUtils.getNodePathQuietly(documentHandle), e);
             throw new InternalServerErrorException();
         }
     }
