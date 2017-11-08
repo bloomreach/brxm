@@ -56,7 +56,7 @@ describe('RightSidePanel', () => {
     };
   });
 
-  it('should set full width mode on and off', () => {
+  it('sets full width mode on and off', () => {
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
     expect($ctrl.isFullWidth).toBe(true);
@@ -70,14 +70,14 @@ describe('RightSidePanel', () => {
     expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
-  it('should update local storage on resize', () => {
+  it('updates local storage on resize', () => {
     $ctrl.onResize(800);
 
     expect($ctrl.lastSavedWidth).toBe('800px');
     expect($ctrl.localStorageService.get('rightSidePanelWidth')).toBe('800px');
   });
 
-  it('should load last saved width of right side panel', () => {
+  it('loads last saved width of right side panel', () => {
     spyOn($ctrl.localStorageService, 'get').and.callFake(() => '800px');
 
     $ctrl.$onInit();
@@ -122,7 +122,7 @@ describe('RightSidePanel', () => {
       expect($ctrl._resetState).toHaveBeenCalledTimes(2);
     });
 
-    it('initialises "edit" component when calling onOpen with id "edit"', () => {
+    it('initializes "edit" component when calling onOpen with id "edit"', () => {
       spyOn($ctrl, '_openInMode').and.callThrough();
       spyOn($ctrl, '_setMode').and.callThrough();
       sidePanelHandlers.onOpen('edit', testId);
@@ -135,7 +135,7 @@ describe('RightSidePanel', () => {
       expect($ctrl.options).toBe(testId);
     });
 
-    it('initialises "create" component when calling onOpen with id "create"', () => {
+    it('initializes "create" component when calling onOpen with id "create"', () => {
       spyOn($ctrl, '_openInMode').and.callThrough();
       spyOn($ctrl, '_setMode').and.callThrough();
       sidePanelHandlers.onOpen('create', testOptions);
@@ -148,7 +148,7 @@ describe('RightSidePanel', () => {
       expect($ctrl.options).toBe(testOptions);
     });
 
-    it('Doesnt call beforeStateChange and lets editor handle pending changes', () => {
+    it('does not call beforeStateChange and lets editor handle pending changes', () => {
       $ctrl.options = 'test';
       $ctrl.mode = $ctrl.modes.edit;
       const spy = spyOn($ctrl, 'beforeStateChange');
@@ -157,7 +157,7 @@ describe('RightSidePanel', () => {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('open a new document if beforeStateChange is resolved', () => {
+    it('opens a new document if beforeStateChange is resolved', () => {
       $ctrl.options = 'test';
       $ctrl.mode = $ctrl.modes.edit;
       spyOn($ctrl, 'beforeStateChange');
@@ -169,7 +169,7 @@ describe('RightSidePanel', () => {
       expect($ctrl.options).toEqual(testId);
     });
 
-    it('doesnt call beforeStateChange when changing between one createContent to another', () => {
+    it('does not call beforeStateChange when changing between one createContent to another', () => {
       $ctrl.mode = $ctrl.modes.create;
       $ctrl._onOpen('edit');
       spyOn($ctrl, 'beforeStateChange');
@@ -186,22 +186,22 @@ describe('RightSidePanel', () => {
     });
   });
 
-  it('knows when it is locked open', () => {
+  it('sets isLockedOpen value in synchronization with SidePanelService.isOpen', () => {
     SidePanelService.isOpen.and.returnValue(true);
     expect($ctrl.isLockedOpen()).toBe(true);
-  });
 
-  it('knows when it is not locked open', () => {
     SidePanelService.isOpen.and.returnValue(false);
     expect($ctrl.isLockedOpen()).toBe(false);
   });
 
   it('closes the panel', () => {
     spyOn($ctrl, '_resetBeforeStateChange');
+    spyOn($ctrl, 'setFullWidth');
     SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.closePanel();
     $rootScope.$digest();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
 
     $ctrl.mode = $ctrl.modes.edit;
     $ctrl.options = 'test';
@@ -211,31 +211,35 @@ describe('RightSidePanel', () => {
     expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
     expect($ctrl.mode).toBeUndefined();
     expect($ctrl.options).toBeUndefined();
+
   });
 
-  it('reset right side panel properties and returns a promise', () => {
+  it('resets right side panel state and sharedspace toolbar state', () => {
     spyOn($ctrl, '_resetState');
-    const promise = $ctrl._onClose();
-
+    spyOn(ChannelService, 'setToolbarDisplayed');
+    ChannelService.isToolbarDisplayed = true;
+    SidePanelService.close.and.returnValue($q.resolve(true));
+    $ctrl.closePanel();
+    $ctrl.$scope.$apply();
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect($ctrl._resetState).toHaveBeenCalled();
-    expect(promise).toEqual($q.resolve());
   });
 
-  it('should close right side panel', () => {
+  it('closes right side panel', () => {
     spyOn(ChannelService, 'setToolbarDisplayed');
     spyOn($ctrl, 'setFullWidth');
     SidePanelService.close.and.returnValue($q.resolve());
 
-    ChannelService.isToolbarDisplayed = false;
+    ChannelService.isToolbarDisplayed = true;
     $ctrl.closePanel();
     $scope.$apply();
 
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
   });
 
   describe('onBeforeStateChange', () => {
-    it('Should set and unset a onBeforeStateChange callback', () => {
+    it('sets and unsets a onBeforeStateChange callback', () => {
       const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
       $ctrl.onBeforeStateChange(firstCallback);
       $ctrl._onOpen('edit', null);

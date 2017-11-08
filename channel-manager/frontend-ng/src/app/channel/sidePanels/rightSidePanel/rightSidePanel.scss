@@ -15,11 +15,11 @@
 @import 'variables';
 
 right-side-panel {
+  transition: max-width $swift-ease-out;
   max-width: 0;
 
-  transition: max-width 0.2s;
-
   &.sidepanel-open {
+    transition: max-width $swift-ease-in;
     max-width: 50% !important;
 
     md-sidenav {
@@ -31,8 +31,6 @@ right-side-panel {
       max-width: 100% !important;
       width: 100% !important;
     }
-
-    transition: max-width 0.2s;
   }
 
   .btn-fullwidth,
