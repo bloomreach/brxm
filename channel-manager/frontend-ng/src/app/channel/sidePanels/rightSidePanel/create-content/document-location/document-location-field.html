@@ -18,12 +18,12 @@
   <!-- Document location field -->
   <div class="field">
     <mat-input-container class="create-content-field">
-      <input mdInput [(ngModel)]="documentLocationLabel" name="documentLocation" 
-             placeholder="Document location" required disabled #documentLocationElement>
+      <input mdInput [(ngModel)]="documentLocationLabel" name="documentLocation"
+             placeholder="Document location" required disabled>
     </mat-input-container>
 
-    <hippo-hints 
-      [data]="form.controls.documentLocation.errors" 
+    <hippo-hints
+      [data]="form.controls.documentLocation.errors"
       *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
       <div hint="required">This field is required</div>
     </hippo-hints>

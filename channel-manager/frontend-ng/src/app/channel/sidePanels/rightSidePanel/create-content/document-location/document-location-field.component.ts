@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import FeedbackService from '../../../../../services/feedback.service';
-import ChannelService from '../../../../channel.service';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import FeedbackService from '../../../../../services/feedback.service.js';
+import ChannelService from '../../../../channel.service.js';
 import { CreateContentService } from '../create-content.service';
 import { Folder } from '../create-content.types';
 import { Observable } from 'rxjs/Observable';
@@ -31,7 +31,6 @@ export class DocumentLocationFieldComponent implements OnInit {
   @Input() rootPath: string;
   @Input() defaultPath: string;
   @ViewChild('form') form: HTMLFormElement;
-  @ViewChild('documentLocationElement') documentLocationElement: ElementRef;
 
   public rootPathDepth: number;
   public documentLocationLabel: string;
