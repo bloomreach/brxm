@@ -46,7 +46,7 @@ public class ValueFileMapperProviderTest extends AbstractBaseTest {
     public void testLoadPlugins() {
         ValueFileMapperProvider provider = ValueFileMapperProvider.getInstance();
         List<ValueFileMapper> list = provider.valueFileMappers;
-        assertEquals(4, list.size());
+        assertEquals(5, list.size());
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(NtFileMapper.class)));
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(DummyValueFileMapper.class)));
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(OtherValueFileMapper.class)));
