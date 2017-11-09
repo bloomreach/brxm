@@ -55,6 +55,7 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -1525,6 +1526,222 @@ public class DocumentsServiceImplTest {
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getFields().size(), equalTo(0));
+
+        verifyAll();
+    }
+
+
+    @Test(expected = NotFoundException.class)
+    public void deleteDocumentNotAHandle() throws Exception {
+        final String uuid = "uuid";
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
+        replayAll();
+
+        documentsService.deleteDocument(uuid, session, locale);
+    }
+
+    @Test
+    public void deleteDocumentNoWorkflow() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.empty());
+
+        replayAll();
+
+        try {
+            documentsService.deleteDocument(uuid, session, locale);
+            fail("No Exception");
+        } catch (final MethodNotAllowed e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
+        }
+
+        verifyAll();
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void deleteArchivableDocumentWorkflowFailure() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(true);
+
+        workflow.delete();
+        expectLastCall().andThrow(new WorkflowException("meh"));
+
+        replayAll(workflow);
+
+        try {
+            documentsService.deleteDocument(uuid, session, locale);
+        } finally {
+            verifyAll();
+        }
+    }
+
+    @Test
+    public void deleteArchivableDocumentSuccess() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(true);
+
+        workflow.delete();
+        expectLastCall();
+
+        replayAll(workflow);
+
+        documentsService.deleteDocument(uuid, session, locale);
+
+        verifyAll();
+    }
+
+    @Test(expected = ForbiddenException.class)
+    public void deleteExistingDocumentWithPreviewVariant() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(true);
+
+        replayAll(workflow);
+
+        documentsService.deleteDocument(uuid, session, locale);
+
+        verifyAll();
+    }
+
+    @Test
+    public void deleteNewDocumentNoFolderWorkflow() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(false);
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
+        expect(DocumentUtils.getDisplayName(eq(folder))).andReturn(Optional.empty());
+
+        replayAll(workflow);
+
+        try {
+            documentsService.deleteDocument(uuid, session, locale);
+            fail("No Exception");
+        } catch (final MethodNotAllowed e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_FOLDER));
+        }
+
+        verifyAll();
+    }
+
+    @Test(expected = ForbiddenException.class)
+    public void deleteNewDocumentNotAllowedByFolderWorkflow() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
+        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(false);
+        expect(JcrUtils.getNodeNameQuietly(handle)).andReturn("document");
+        expect(JcrUtils.getNodePathQuietly(folder)).andReturn("/path/to/folder");
+
+        replayAll(documentWorkflow, folderWorkflow);
+
+        try {
+            documentsService.deleteDocument(uuid, session, locale);
+        } finally {
+            verifyAll();
+        }
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void deleteNewDocumentFolderWorkflowFailure() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
+        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
+
+        final String handleName = "document";
+        expect(handle.getName()).andReturn(handleName);
+
+        folderWorkflow.delete(eq(handleName));
+        expectLastCall().andThrow(new WorkflowException("meh"));
+
+        replayAll(documentWorkflow, handle, folderWorkflow);
+
+        try {
+            documentsService.deleteDocument(uuid, session, locale);
+        } finally {
+            verifyAll();
+        }
+    }
+
+    @Test
+    public void deleteNewDocumentSuccess() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
+        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
+
+        final String handleName = "document";
+        expect(handle.getName()).andReturn(handleName);
+
+        folderWorkflow.delete(eq(handleName));
+        expectLastCall();
+
+        replayAll(documentWorkflow, handle, folderWorkflow);
+
+        documentsService.deleteDocument(uuid, session, locale);
 
         verifyAll();
     }
