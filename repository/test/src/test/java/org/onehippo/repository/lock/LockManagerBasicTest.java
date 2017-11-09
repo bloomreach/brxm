@@ -20,8 +20,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.Lock;
@@ -66,7 +69,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         lockManager.unlock(key);
         assertEquals(0, lockManager.getLocks().size());
-        
+
         assertDbRowDoesExist(key);
         dbRowAssertion(key, "FREE");
 
@@ -167,7 +170,7 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         assertEquals(0, lockManager.getLocks().size());
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MemoryLockManager.class, DbLockManager.class).build()) {
             lockResource.close();
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '"+key+"' already manually unlocked in thread '"+Thread.currentThread().getName()+"'. This is a coding error!")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '" + key + "' already manually unlocked in thread '" + Thread.currentThread().getName() + "'. This is a coding error!")));
         }
     }
 
@@ -184,37 +187,42 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         final String key = "123";
         lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
-        Thread lockThread = new Thread(() -> {
-            // unlock should fail with error logging because not owned
-            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
-                lockManager.unlock(key);
-                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '"+Thread.currentThread().getName()+"' should never had invoked #unlock(123)")));
-            }
+        final ExecutorService executorService = newSingleThreadExecutor();
+        try {
+            executorService.submit(() -> {
+                // unlock should fail with error logging because not owned
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+                    lockManager.unlock(key);
+                    assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '" + Thread.currentThread().getName() + "' should never had invoked #unlock(123)")));
+                }
 
-            // second time again
-            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
-                lockManager.unlock(key);
-                assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '"+Thread.currentThread().getName()+"' should never had invoked #unlock(123)")));
-            }
+                // second time again
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
+                    lockManager.unlock(key);
+                    assertTrue(interceptor.messages().anyMatch(m -> m.contains("Thread '" + Thread.currentThread().getName() + "' should never had invoked #unlock(123)")));
+                }
 
-            try {
-                assertTrue(lockManager.isLocked(key));
-            } catch (LockManagerException e) {
-                fail("#isLocked should not fail : " +  e.toString());
-            }
-            try {
-                dbRowAssertion(key, "RUNNING");
-            } catch (SQLException e1) {
-                fail(e1.toString());
-            }
-        });
+                try {
+                    assertTrue(lockManager.isLocked(key));
+                } catch (LockManagerException e) {
+                    fail("#isLocked should not fail : " + e.toString());
+                }
+                try {
+                    dbRowAssertion(key, "RUNNING");
+                } catch (SQLException e1) {
+                    fail(e1.toString());
+                }
+                return null;
+            }).get();
+        } catch (ExecutionException e) {
+            throw new AssertionError(e.getCause().getMessage());
+        }
 
-        lockThread.start();
-        lockThread.join();
         assertEquals(1, lockManager.getLocks().size());
         dbRowAssertion(key, "RUNNING");
         lockManager.unlock(key);
         dbRowAssertion(key, "FREE");
+        executorService.shutdown();
     }
 
     @Test
@@ -222,32 +230,36 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         final String key = "123";
         final LockResource lockResource = lockManager.lock(key);
         dbRowAssertion(key, "RUNNING");
-        Thread lockThread = new Thread(() -> {
-            try {
-                assertTrue(lockManager.isLocked(key));
-            } catch (LockManagerException e) {
-                fail("#isLocked should not fail : " +  e.toString());
-            }
-            try {
-                dbRowAssertion(key, "RUNNING");
-            } catch (SQLException e1) {
-                fail(e1.toString());
-            }
-            lockResource.close();
-            try {
-                assertFalse(lockManager.isLocked(key));
-            } catch (LockManagerException e) {
-                fail("#isLocked should not fail : " +  e.toString());
-            }
-            try {
-                dbRowAssertion(key, "FREE");
-            } catch (SQLException e1) {
-                fail(e1.toString());
-            }
-        });
+        final ExecutorService executorService = newSingleThreadExecutor();
+        try {
+            executorService.submit(() -> {
+                try {
+                    assertTrue(lockManager.isLocked(key));
+                } catch (LockManagerException e) {
+                    fail("#isLocked should not fail : " + e.toString());
+                }
+                try {
+                    dbRowAssertion(key, "RUNNING");
+                } catch (SQLException e1) {
+                    fail(e1.toString());
+                }
+                lockResource.close();
+                try {
+                    assertFalse(lockManager.isLocked(key));
+                } catch (LockManagerException e) {
+                    fail("#isLocked should not fail : " + e.toString());
+                }
+                try {
+                    dbRowAssertion(key, "FREE");
+                } catch (SQLException e1) {
+                    fail(e1.toString());
+                }
+            }).get();
+        } catch (ExecutionException e) {
+            throw new AssertionError(e.getCause().getMessage());
+        }
 
-        lockThread.start();
-        lockThread.join();
+        executorService.shutdown();
         assertEquals(0, lockManager.getLocks().size());
     }
 
@@ -261,18 +273,18 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         final CountDownLatch unlockLatch = new CountDownLatch(1);
         // bad pattern (to be tested): manually unlock while also using a lockResource
         lockManager.unlock(key);
-        Thread lockThread = new Thread(() -> {
-            try {
-                lockLatch.await();
-                try (LockResource ignore = lockManager.lock(key)) {
-                    // surprise: another thread stole the lock
-                    testLatch.countDown();
-                    unlockLatch.await();
-                }
-            } catch (Exception ignore) {
+        final ExecutorService executorService = newSingleThreadExecutor();
+
+        final Future<Void> future = executorService.submit(() -> {
+            lockLatch.await();
+            try (LockResource ignore = lockManager.lock(key)) {
+                // surprise: another thread stole the lock
+                testLatch.countDown();
+                unlockLatch.await();
             }
+            return null;
         });
-        lockThread.start();
+
         // let other thread steal the lock
         lockLatch.countDown();
         // wait for the lock to be stolen
@@ -281,11 +293,17 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
             // no try to close the lockResource
             lockResource.close();
             // surprise: lock stolen (error message only)
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '"+key+"' already unlocked before AND locked again. This is a coding error!")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock '" + key + "' already unlocked before AND locked again. This is a coding error!")));
         }
         // now also have the stolen lock closed
         unlockLatch.countDown();
-        lockThread.join();
+
+        try {
+            future.get();
+        } catch (ExecutionException e) {
+            fail(e.getCause().getMessage());
+        }
+
         assertEquals(0, lockManager.getLocks().size());
     }
 
@@ -315,14 +333,14 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
         private volatile boolean keepAlive;
         private Exception e;
 
-        LockRunnable(final String key , final boolean keepAlive) {
+        LockRunnable(final String key, final boolean keepAlive) {
             this.key = key;
             this.keepAlive = keepAlive;
         }
 
         @Override
         public void run() {
-            try (LockResource lock = lockManager.lock(key)){
+            try (LockResource lock = lockManager.lock(key)) {
                 while (keepAlive) {
                     Thread.sleep(25);
                 }
@@ -424,8 +442,8 @@ public class LockManagerBasicTest extends AbstractLockManagerTest {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class, DbLockManager.class).build()) {
             lockManager.clear();
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by cluster '"+getClusterNodeId(session)+
-                    "' and thread '"+Thread.currentThread().getName()+"' was never")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Lock 'a' owned by cluster '" + getClusterNodeId(session) +
+                    "' and thread '" + Thread.currentThread().getName() + "' was never")));
         }
 
         dbRowAssertion("a", "FREE");
