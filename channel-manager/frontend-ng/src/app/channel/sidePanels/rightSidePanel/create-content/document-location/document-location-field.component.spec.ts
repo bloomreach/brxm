@@ -17,17 +17,16 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { DebugElement, Injector } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/observable/of';
 
 import { DocumentLocationFieldComponent } from './document-location-field.component';
-import FeedbackService from '../../../../../services/feedback.service';
+import FeedbackService from '../../../../../services/feedback.service.js';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { SharedModule } from '../../../../../shared/shared.module';
 import { CreateContentService } from '../create-content.service';
 import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
-import ChannelService from '../../../../channel.service';
+import ChannelService from '../../../../channel.service.js';
 
 describe('DocumentLocationField Component', () => {
   let component: DocumentLocationFieldComponent;
