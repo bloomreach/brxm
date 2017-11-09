@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ChannelService from './channel.service.js';
+import ChannelService from '../../channel/channel.service.js';
 
 export function channelServiceFactory(i: any) {
   return i.get('ChannelService');
