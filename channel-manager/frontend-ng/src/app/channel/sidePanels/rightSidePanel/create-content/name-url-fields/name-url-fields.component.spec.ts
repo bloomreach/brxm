@@ -20,11 +20,12 @@ import { FormsModule } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
-import { NameUrlFieldsComponent } from "./name-url-fields.component";
-import { HintsComponent } from "../../../../../shared/components/hints/hints.component";
-import { SharedModule } from "../../../../../shared/shared.module";
+import { NameUrlFieldsComponent } from './name-url-fields.component';
+import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
+import { SharedModule } from '../../../../../shared/shared.module';
 import { CreateContentService } from '../create-content.service';
-import { CreateContentServiceMock } from '../create-content.mocks.spec';
+import { ChannelServiceMock, CreateContentServiceMock } from '../create-content.mocks.spec';
+import ChannelService from '../../../../channel.service';
 
 @Component({
   template: '<hippo-name-url-fields #nameUrlFields [locale]="locale"></hippo-name-url-fields>'
@@ -55,6 +56,7 @@ describe('NameUrlFields Component', () => {
         SharedModule
       ],
       providers: [
+        { provide: ChannelService, useClass: ChannelServiceMock },
         { provide: CreateContentService, useClass: CreateContentServiceMock },
       ]
     });

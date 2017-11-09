@@ -66,16 +66,9 @@
       </div>
 
       <!-- Document location field -->
-      <div class="form">
-        <mat-input-container class="create-content-field">
-          <input mdInput ngModel name="documentLocation" placeholder="Document location" required>
-        </mat-input-container>
-
-        <hippo-hints [data]="form.controls.documentLocation.errors" *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-          <div hint="required">This field is required</div>
-        </hippo-hints>
-      </div>
-
+      <hippo-document-location-field [rootPath]="options.rootPath"
+                                     [defaultPath]="options.defaultPath">
+      </hippo-document-location-field>
 
     </form>
   </div>

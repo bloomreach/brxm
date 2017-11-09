@@ -20,14 +20,16 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { CreateContentComponent } from './step-1.component';
+import ChannelService from '../../../../channel.service';
 import FeedbackService from '../../../../../services/feedback.service';
 import { CreateContentService } from '../create-content.service';
-import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
-import { SharedModule } from '../../../../../shared/shared.module';
-import { CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
 import { DocumentTypeInfo } from '../create-content.types';
+import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
+import { CreateContentComponent } from './step-1.component';
+import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
+import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
+import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
+import { SharedModule } from '../../../../../shared/shared.module';
 
 describe('Create content component', () => {
   let component: CreateContentComponent;
@@ -39,6 +41,7 @@ describe('Create content component', () => {
     TestBed.configureTestingModule({
       declarations: [
         CreateContentComponent,
+        DocumentLocationFieldComponent,
         HintsComponent,
         NameUrlFieldsComponent
       ],
@@ -47,6 +50,7 @@ describe('Create content component', () => {
         FormsModule,
       ],
       providers: [
+        { provide: ChannelService, useClass: ChannelServiceMock },
         { provide: CreateContentService, useClass: CreateContentServiceMock },
         { provide: FeedbackService, useClass: FeedbackServiceMock },
       ]

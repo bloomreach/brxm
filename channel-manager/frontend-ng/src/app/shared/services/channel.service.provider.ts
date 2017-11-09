@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-export interface TemplateQuery {
-  documentTypes: Array<DocumentTypeInfo>;
-}
+import ChannelService from '../../channel/channel.service.js';
 
-export interface DocumentTypeInfo {
-  id: string;
-  displayName: string;
+export function channelServiceFactory(i: any) {
+  return i.get('ChannelService');
 }
-
-export interface CreateContentOptions {
-  componentParameter?: string;
-  defaultPath?: string;
-  rootPath?: string;
-  templateQuery?: string;
-}
-
-export interface Folder {
-  name: string;
-  displayName: string;
-  locale: string;
-  path: string;
-}
+export const ChannelServiceProvider = {
+  provide: ChannelService,
+  useFactory: channelServiceFactory,
+  deps: ['$injector']
+};

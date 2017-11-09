@@ -14,25 +14,6 @@
  * limitations under the License.
  */
 
-export interface TemplateQuery {
-  documentTypes: Array<DocumentTypeInfo>;
-}
-
-export interface DocumentTypeInfo {
-  id: string;
-  displayName: string;
-}
-
-export interface CreateContentOptions {
-  componentParameter?: string;
-  defaultPath?: string;
-  rootPath?: string;
-  templateQuery?: string;
-}
-
-export interface Folder {
-  name: string;
-  displayName: string;
-  locale: string;
-  path: string;
+export interface Channel {
+  contentRoot: string;
 }

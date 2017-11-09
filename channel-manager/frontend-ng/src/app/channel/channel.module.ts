@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-export interface TemplateQuery {
-  documentTypes: Array<DocumentTypeInfo>;
-}
+import { NgModule } from '@angular/core';
 
-export interface DocumentTypeInfo {
-  id: string;
-  displayName: string;
-}
+import { ChannelServiceProvider } from '../shared/services/channel.service.provider';
 
-export interface CreateContentOptions {
-  componentParameter?: string;
-  defaultPath?: string;
-  rootPath?: string;
-  templateQuery?: string;
-}
-
-export interface Folder {
-  name: string;
-  displayName: string;
-  locale: string;
-  path: string;
-}
+@NgModule({
+  providers: [
+    ChannelServiceProvider,
+  ]
+})
+export class ChannelModule {}

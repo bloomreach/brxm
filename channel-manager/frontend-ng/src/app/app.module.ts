@@ -17,6 +17,7 @@
 import { NgModule } from '@angular/core';
 import { UpgradeModule  } from '@angular/upgrade/static';
 
+import { ChannelModule } from './channel/channel.module';
 import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-side-panel.module';
 import { SharedModule } from './shared/shared.module';
 
@@ -24,6 +25,7 @@ import ng1Module from './hippo-cm.ng1.module.js';
 
 @NgModule({
   imports: [
+    ChannelModule,
     SharedModule,
     UpgradeModule,
     RightSidePanelModule,
