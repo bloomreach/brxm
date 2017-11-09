@@ -114,10 +114,10 @@ public class FolderUtils {
     public static Node getFolder(final Node documentHandle) throws NotFoundException, InternalServerErrorException {
         try {
             return documentHandle.getParent();
-        } catch (ItemNotFoundException e) {
+        } catch (final ItemNotFoundException e) {
             log.warn("Cannot get folder of document handle '{}': it does not have a parent", JcrUtils.getNodePathQuietly(documentHandle));
             throw new NotFoundException();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to get folder of document handle '{}'", JcrUtils.getNodePathQuietly(documentHandle), e);
             throw new InternalServerErrorException();
         }
