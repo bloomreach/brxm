@@ -16,6 +16,7 @@
 package org.onehippo.repository.lock;
 
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
 import org.onehippo.cms7.services.lock.LockException;
@@ -31,6 +32,7 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
 
         private final String key;
         private final long lockTime;
+        private AtomicBoolean started = new AtomicBoolean(false);
 
         public TimedLockRunnable(final String key, final long lockTime) {
             this.key = key;
@@ -40,9 +42,19 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
         @Override
         public void run() {
             try (LockResource lock = lockManager.lock(key)){
+                started.set(true);
                 Thread.sleep(lockTime);
             } catch (LockException | InterruptedException ignore) {
                 // bad pattern, but OK for this test-case
+            }
+        }
+
+        void waitForLock(final long waitInterval) {
+            while (!started.get()) {
+                try {
+                    Thread.sleep(waitInterval);
+                } catch (InterruptedException ignore) {
+                }
             }
         }
     }
@@ -50,16 +62,19 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
     @Test
     public void waitForLockTest() throws Exception {
         long time = System.currentTimeMillis();
-        Thread lockThread = new Thread(new TimedLockRunnable("123", 500));
+        TimedLockRunnable runnable = new TimedLockRunnable("123", 500);
+        Thread lockThread = new Thread(runnable);
         lockThread.start();
-        // give lockThread time to start
-        Thread.sleep(15);
+        runnable.waitForLock(10);
         try {
             lockManager.lock("123");
+            // unexpected, but release the lock to prevent (other) warning
+            lockManager.unlock("123");
             fail("Lock should not be available yet");
         } catch (LockException ignore) {
+            // expected
         }
-        try (LockResource lock = LockManagerUtils.waitForLock(lockManager, "123", 100)) {
+        try (LockResource ignore = LockManagerUtils.waitForLock(lockManager, "123", 100)) {
             assertTrue(System.currentTimeMillis() > time + 500);
         }
         lockThread.join();
@@ -67,16 +82,18 @@ public class LockManagerUtilsTest extends AbstractLockManagerTest {
 
     @Test
     public void waitForLockTimeoutTest() throws Exception {
-        Thread lockThread = new Thread(new TimedLockRunnable("123", 500));
+        TimedLockRunnable runnable = new TimedLockRunnable("123", 500);
+        Thread lockThread = new Thread(runnable);
         lockThread.start();
-        // give lockThread time to start
-        Thread.sleep(15);
+        runnable.waitForLock(10);
         try {
             lockManager.lock("123");
+            // unexpected, but release the lock to prevent (other) warning
+            lockManager.unlock("123");
             fail("Lock should not be available yet");
         } catch (LockException ignore) {
         }
-        try (LockResource lock = LockManagerUtils.waitForLock(lockManager, "123", 100, 400)) {
+        try (LockResource ignore = LockManagerUtils.waitForLock(lockManager, "123", 100, 400)) {
             fail("Lock should not be available yet");
         } catch (TimeoutException ignore) {
             // expected
