@@ -19,15 +19,15 @@ import FeedbackService from '../../../../../services/feedback.service.js';
 import ChannelService from '../../../../channel.service.js';
 import { CreateContentService } from '../create-content.service';
 import { Folder } from '../create-content.types';
-import { Observable } from 'rxjs/Observable';
-
-const MAX_DEPTH = 3;
+import { Channel } from '../../../../../shared/interfaces/channel.types';
 
 @Component({
   selector: 'hippo-document-location-field',
   templateUrl: 'document-location-field.html'
 })
 export class DocumentLocationFieldComponent implements OnInit {
+  private static readonly MAX_DEPTH = 3;
+
   @Input() rootPath: string;
   @Input() defaultPath: string;
   @ViewChild('form') form: HTMLFormElement;
@@ -42,55 +42,68 @@ export class DocumentLocationFieldComponent implements OnInit {
     private feedbackService: FeedbackService,
   ) { }
 
-  ngOnInit() {
-    const channel = this.channelService.getChannel();
-
-    if (this.rootPath) {
-      if (this.rootPath.endsWith('/')) {
-        this.rootPath = this.rootPath.substring(0, this.rootPath.length - 1);
-      }
-      if (!this.rootPath.startsWith('/')) {
-        this.rootPath = channel.contentRoot + '/' + this.rootPath;
-      }
-    } else {
-      this.rootPath = channel.contentRoot;
+  /**
+   * Parse the rootPath input value;
+   * - use channelRootPath if rootPath is empty
+   * - use as is if rootPath is absolute
+   * - concatenate with channelRootPath if rootPath is relative
+   * - make sure it does not end with a slash
+   *
+   * @param rootPath the component's rootPath
+   * @param channelRootPath the channel's rootPath
+   */
+  private static parseRootPath (rootPath: string, channelRootPath: string): string {
+    if (!rootPath) {
+      return channelRootPath;
     }
+
+    if (rootPath.endsWith('/')) {
+      rootPath = rootPath.substring(0, rootPath.length - 1);
+    }
+
+    if (!rootPath.startsWith('/')) {
+      rootPath = channelRootPath + '/' + rootPath;
+    }
+    return rootPath;
+  }
+
+  ngOnInit() {
+    if (this.defaultPath && this.defaultPath.startsWith('/')) {
+      throw new Error('The defaultPath option can only be a relative path');
+    }
+
+    const channel: Channel = this.channelService.getChannel();
+    this.rootPath = DocumentLocationFieldComponent.parseRootPath(this.rootPath, channel.contentRoot);
     this.rootPathDepth = (this.rootPath.match(/\//g) || []).length;
 
+    let documentLocationPath = this.rootPath;
     if (this.defaultPath) {
-      if (this.defaultPath.startsWith('/')) {
-        throw new Error('The defaultPath option can only be a relative path');
-      }
-      this.defaultPath = '/' + this.defaultPath;
-    } else {
-      this.defaultPath = '';
+      documentLocationPath += '/' + this.defaultPath;
     }
 
-    this.setDocumentLocation(this.rootPath + this.defaultPath);
+    this.setDocumentLocation(documentLocationPath);
   }
 
   private setDocumentLocation(documentLocation: string) {
     this.createContentService
       .getFolders(documentLocation)
       .subscribe(
-      (folders) => this.onLoadFolders(folders),
-      (error) => this.onError(error, 'Unknown error loading folders')
+        (folders) => this.onLoadFolders(folders),
+        (error) => this.onError(error, 'Unknown error loading folders')
       );
   }
 
+  /**
+   * Store the path of the last folder as documentLocation and calculate the corresponding documentLocationLabel.
+   * @param folders The array of folders returned by the backend
+   */
   private onLoadFolders(folders: Array<Folder>): void {
     if (folders.length === 0) {
       return;
     }
 
-    const defaultPathDepth = folders.length - this.rootPathDepth;
-    const start = defaultPathDepth >= MAX_DEPTH ? folders.length - MAX_DEPTH : this.rootPathDepth - 1;
-
     this.documentLocation = folders[folders.length - 1].path;
-    this.documentLocationLabel = folders
-      .filter((folder, index) => index >= start)
-      .map(folder => folder.displayName)
-      .join('/');
+    this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
   }
 
   private onError(error, unknownErrorMessage) {
@@ -100,5 +113,21 @@ export class DocumentLocationFieldComponent implements OnInit {
     } else {
       console.error(unknownErrorMessage, error);
     }
+  }
+
+  /**
+   * Calculate the document location label from the given array of folders, using the folder's
+   * displayName. It always shows a maximum of three folders in total, and only the last folder
+   * of the rootPath if the path after the rootPath is shorter than the maximum.
+   */
+  private calculateDocumentLocationLabel(folders: Array<Folder>): string {
+    const defaultPathDepth = folders.length - this.rootPathDepth;
+    const start = defaultPathDepth >= DocumentLocationFieldComponent.MAX_DEPTH ?
+      folders.length - DocumentLocationFieldComponent.MAX_DEPTH : this.rootPathDepth - 1;
+
+    return folders
+      .filter((folder, index) => index >= start)
+      .map(folder => folder.displayName)
+      .join('/');
   }
 }

@@ -59,7 +59,7 @@ describe('DocumentLocationField Component', () => {
     getFolderSpy = spyOn(createContentService, 'getFolders').and.callThrough();
   });
 
-  describe('parsing the rootPath input', () => {
+  describe('parsing the rootPath @Input', () => {
     it('defaults to the channel root if not set', () => {
       fixture.detectChanges();
       expect(component.rootPath).toBe('/channel/content');
@@ -102,21 +102,10 @@ describe('DocumentLocationField Component', () => {
     });
   });
 
-  describe('parsing the defaultPath input', () => {
-    it('is an empty string if not set', () => {
-      fixture.detectChanges();
-      expect(component.defaultPath).toBe('');
-    });
-
+  describe('parsing the defaultPath @Input', () => {
     it('throws an error if defaultPath is absolute', () => {
       component.defaultPath = '/path';
       expect(() => fixture.detectChanges()).toThrow(new Error('The defaultPath option can only be a relative path'));
-    });
-
-    it('is always an absolute path if set', () => {
-      component.defaultPath = 'path';
-      fixture.detectChanges();
-      expect(component.defaultPath).toBe('/path');
     });
   });
 
