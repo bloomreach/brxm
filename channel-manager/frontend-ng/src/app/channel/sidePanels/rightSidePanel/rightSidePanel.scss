@@ -15,12 +15,12 @@
 @import 'variables';
 
 right-side-panel {
-  transition: max-width $swift-ease-out;
   max-width: 0;
+  transition: max-width $swift-ease-out;
 
   &.sidepanel-open {
-    transition: max-width $swift-ease-in;
     max-width: 50% !important;
+    transition: max-width $swift-ease-in;
 
     md-sidenav {
       margin-left: auto;
@@ -49,11 +49,6 @@ right-side-panel {
 
 .right-side-panel {
   max-width: 100%;
-
-  form {
-    padding-right: $form-dense-distance;
-    padding-top: $form-dense-distance;
-  }
 }
 
 .feedback > :last-child {

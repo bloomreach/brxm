@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,29 @@
 import { NgModule } from '@angular/core';
 import {
   MATERIAL_SANITY_CHECKS,
-  NoConflictStyleCompatibilityMode,
-  MdListModule,
-  MdButtonModule,
-  MdInputModule,
-  MdSelectModule,
-  MdIconModule
+  MATERIAL_COMPATIBILITY_MODE,
+  MatListModule,
+  MatButtonModule,
+  MatInputModule,
+  MatSelectModule,
+  MatIconModule,
+  NoConflictStyleCompatibilityMode
 } from '@angular/material';
 import './material.scss';
 
 @NgModule({
   exports: [
-    NoConflictStyleCompatibilityMode,
-    MdListModule,
-    MdButtonModule,
-    MdInputModule,
-    MdButtonModule,
-    MdSelectModule,
-    MdIconModule
+    MatListModule,
+    MatButtonModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    NoConflictStyleCompatibilityMode
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},
+    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true},
   ]
 })
 export class MaterialModule { }

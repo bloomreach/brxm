@@ -13,42 +13,8 @@
 // limitations under the License.
 
 @import 'variables';
-.create-content {
-  &-container {
-    background: $grey-100;
-  }
 
-  &-form {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 12px;
-
-    mat-form-field {
-      width: 100%;
-    }
-
-    .field {
-      margin-bottom: 4px;
-    }
-
-    hippo-hints div {
-      color: $red-500;
-      font-size: 12px;
-      margin-top: -15px;
-    }
-
-    // TODO: shared hippo material overrides
-    .hide-select-arrow {
-      .mat-select-arrow {
-        visibility: hidden;
-      }
-    }
-  }
-
-  &-actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    padding: 10px 16px;
-  }
+.edit-content-form {
+  padding-right: $form-dense-distance;
+  padding-top: $form-dense-distance;
 }

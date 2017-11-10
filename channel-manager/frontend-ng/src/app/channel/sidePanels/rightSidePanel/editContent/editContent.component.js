@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './editContent.scss';
 import controller from './editContent.controller';
 import template from './editContent.html';
 

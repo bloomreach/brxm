@@ -50,19 +50,15 @@
 
       <!-- Document type field -->
       <div class="field">
-        <div class="mat-input-wrapper">
-          <div class="mat-input-flex">
-            <div class="mat-input-infix">
-              <mat-select [(ngModel)]="documentType" name="documentType" required
-                          placeholder="Document type" [disabled]="documentTypes.length === 1"
-                          class="input-document-type create-content-field mat-input-container"
-                          [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
-                <mat-option *ngFor="let documentType of documentTypes"
-                            [value]="documentType.id">{{ documentType.displayName }}</mat-option>
-              </mat-select>
-            </div>
-          </div>
-        </div>
+        <mat-form-field>
+          <mat-select [(ngModel)]="documentType" name="documentType" required
+            placeholder="Document type" [disabled]="documentTypes.length === 1"
+            class="input-document-type create-content-field"
+            [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
+            <mat-option *ngFor="let documentType of documentTypes"
+                        [value]="documentType.id">{{ documentType.displayName }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <!-- Document location field -->
