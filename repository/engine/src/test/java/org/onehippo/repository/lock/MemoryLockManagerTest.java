@@ -215,8 +215,9 @@ public class MemoryLockManagerTest {
 
         countDownLatch2.countDown();
 
+        LockResource lockResource = null;
         try {
-            final LockResource lockResource = futureLock.get();
+            lockResource = futureLock.get();
             assertEquals("123", memoryLockManager.getLocks().iterator().next().getLockKey());
             assertEquals(lockResource.getHolder().getName(), memoryLockManager.getLocks().iterator().next().getLockThread());
 
@@ -227,6 +228,9 @@ public class MemoryLockManagerTest {
         executorService.shutdown();
         // The lockThread did not unlock but since the thread is not live any more, the lock
         // should again be eligible for other threads
+        while (lockResource.getHolder().isAlive()) {
+            Thread.sleep(10);
+        }
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MemoryLockManager.class).build()) {
             assertEquals(0, memoryLockManager.getLocks().size());
