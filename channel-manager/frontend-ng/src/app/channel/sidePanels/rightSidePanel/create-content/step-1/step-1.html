@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div layout="column" class="create-content-container">
+<div fxLayout="column" class="create-content-container">
 
   <mat-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools">
@@ -36,11 +36,9 @@
     </div>
   </mat-toolbar>
 
-  <div class="md-content"
-       flex="grow"
-       layout="column"
-       id="rightSidePanel-content">
-
+  <div class="md-content right-side-panel-content" 
+       fxLayout="column" 
+       fxFlex="grow">
     <form (ngSubmit)="submit(form)"
           #form="ngForm"
           class="form-dense-layout create-content-form">
