@@ -18,12 +18,14 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +49,9 @@ public final class ProjectUtils {
     public static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
     public static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
     public static final String ADDON_EDITION_INDICATOR_ARTIFACT_ID = "hippo-addon-edition-indicator";
+    public static final String FOLDER_ASSEMBLY = "src/main/assembly";
+    public static final String FOLDER_CONF = "conf";
+    public static final String CONTEXT_XML = "context.xml";
 
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
@@ -250,6 +255,42 @@ public final class ProjectUtils {
         }
         return null;
 
+    }
+
+    public static List<File> getLog4j2Files() {
+        try {
+            FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
+            return Arrays.asList(getConfFolder().listFiles(log4j2Filter));
+        } catch(Exception e) {
+            log.error("No log4j2 configuration files found in {}", getConfFolder(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<File> getAssemblyFiles() {
+        try {
+            FilenameFilter assemblyFilter = (dir, name) -> name.matches(".*\\.xml");
+            return Arrays.asList(getAssemblyFolder().listFiles(assemblyFilter));
+        } catch(Exception e) {
+            log.error("No assembly files found in {}", getAssemblyFolder().getAbsolutePath(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    public static File getAssemblyFile(String filename) {
+        return new File(getAssemblyFolder(), filename);
+    }
+
+    public static File getContextXml() {
+        return new File(getConfFolder(), CONTEXT_XML);
+    }
+
+    private static File getConfFolder() {
+        return new File(getProjectRootFolder(), FOLDER_CONF);
+    }
+
+    private static File getAssemblyFolder() {
+        return new File(getProjectRootFolder(), FOLDER_ASSEMBLY);
     }
 
     private static File getJavaFolder(final File baseFolder) {

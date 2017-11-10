@@ -60,8 +60,6 @@ public class DependencyUtilsTest extends BaseResourceTest {
         DependencyUtils.addRepository(getContext(), repository);
         hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
-
-
     }
 
     @Test
@@ -97,8 +95,6 @@ public class DependencyUtilsTest extends BaseResourceTest {
         DependencyUtils.removeDependency(context, dependency);
         hasDep = DependencyUtils.hasDependency(context, dependency);
         assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
-
-
     }
 
     @Test
@@ -139,5 +135,53 @@ public class DependencyUtilsTest extends BaseResourceTest {
         }
 
         assertTrue("No Enterprise Repositories found in pom: " + pomModel.getRepositories(), false);
+    }
+
+    @Test
+    public void addCargoDeployableTest() {
+        final PluginContext context = getContext();
+        final EssentialsDependency dependency = new DependencyRestful();
+        final String webContext = "/addCargoDeployableTest";
+
+        assertFalse(DependencyUtils.hasCargoRunnerWebappContext(context, webContext));
+
+        dependency.setTargetPom("project");
+        dependency.setArtifactId("hippo-plugins-shared");
+        dependency.setVersion("dummy");
+        dependency.setGroupId("org.onehippo.cms");
+        DependencyUtils.addDeployableToCargoRunner(context, dependency, webContext);
+        assertTrue(DependencyUtils.hasCargoRunnerWebappContext(context, webContext));
+
+        DependencyUtils.removeDeployableFromCargoRunner(context, webContext);
+        assertFalse(DependencyUtils.hasCargoRunnerWebappContext(context, webContext));
+    }
+
+    @Test
+    public void addCargoDeployableDuplicateTest() {
+        final PluginContext context = getContext();
+        final String webContext = "/test";
+
+        final EssentialsDependency dependency = new DependencyRestful();
+        dependency.setTargetPom("project");
+        dependency.setArtifactId("hippo-plugins-shared");
+        dependency.setVersion("dummy");
+        dependency.setGroupId("org.onehippo.cms");
+        boolean result = DependencyUtils.addDeployableToCargoRunner(context, dependency, webContext);
+        assertTrue(result);
+        result = DependencyUtils.addDeployableToCargoRunner(context, dependency, webContext);
+        assertFalse(result);
+        result = DependencyUtils.removeDeployableFromCargoRunner(context, webContext);
+        assertTrue(result);
+    }
+
+    @Test
+    public void addSharedClasspathTest() {
+        final PluginContext context = getContext();
+        boolean result = DependencyUtils.addDependencyToCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
+        assertTrue("Expected to add dependency", result);
+        result = DependencyUtils.addDependencyToCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
+        assertFalse("Expected to fail adding a duplicate dependency", result);
+        result = DependencyUtils.removeDependencyFromCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
+        assertTrue("Failed to remove dependency", result);
     }
 }
