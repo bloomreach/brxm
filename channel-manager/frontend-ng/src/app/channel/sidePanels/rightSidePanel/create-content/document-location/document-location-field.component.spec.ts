@@ -186,4 +186,17 @@ describe('DocumentLocationField Component', () => {
       expect(component.documentLocationLabel).toBe('some/nested/document');
     });
   });
+
+  describe('the locale @Output', () => {
+    it('emits the locale when component is initialized', () => {
+      let changedLocale: string;
+      component.changeLocale.subscribe((locale: string) => changedLocale = locale);
+
+      const folders = [{path: '/root'}, {path: '/root/path', locale: 'de'}];
+      getFolderSpy.and.returnValue(Observable.of(folders));
+      component.ngOnInit();
+
+      expect(changedLocale).toBe('de');
+    });
+  });
 });

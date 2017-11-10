@@ -67,7 +67,8 @@
 
       <!-- Document location field -->
       <hippo-document-location-field [rootPath]="options.rootPath"
-                                     [defaultPath]="options.defaultPath">
+                                     [defaultPath]="options.defaultPath"
+                                     (changeLocale)="setLocale($event)">
       </hippo-document-location-field>
 
     </form>
