@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+
+  <instructionSet>
+    <!-- load cnd and custom namespace XML -->
+    <cnd documentType="customPollDocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <xml action="copy" source="xml/namespace-customPollDocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+
+    <!-- Java classes -->
+    <file action="copy" source="java/CustomPollDocument.txt" target="{{beansFolder}}/CustomPollDocument.java"/>
+    <file action="copy" source="java/CustomPollDocumentComponent.txt" target="{{componentsFolder}}/CustomPollDocumentComponent.java"/>
+    <file action="copy" source="java/CustomPollDocumentComponentInfo.txt" target="{{componentsFolder}}/CustomPollDocumentComponentInfo.java"/>
+
+    <!-- custompoll.component.ftl created from contents of the standard template at
+     /hst:hst/hst:configurations/hst:default/hst:templates/poll.component.ftl plus some extra code to show the custom title -->
+    <freemarker action="copy" source="freemarker/custompoll.component.ftl" target="{{freemarkerRoot}}/{{namespace}}/custompoll.component.ftl"/>
+
+    <!-- HST configuration -->
+    <xml action="copy" source="freemarker/custompoll-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="xml/custompoll-catalogitem.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog/{{namespace}}-catalog"/>
+    <xml action="copy" source="xml/custompoll-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="xml/custompoll-sitemapitem.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="xml/custompoll-workspace-container.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="xml/menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+
+    <!-- content: example poll document -->
+    <xml action="copy" source="xml/content-custom-example-poll.xml" target="/content/documents/{{namespace}}/polls"/>
+
+    <!-- polldata: example poll votes -->
+    <xml action="copy" source="xml/namespaced-polldata.xml" target="/polldata"/>
+  </instructionSet>
+
+</instructions>

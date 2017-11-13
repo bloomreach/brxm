@@ -1,0 +1,31 @@
+{
+  "@type": "plugin",
+  "id": "hippo-plugin-poll-essentials-demoId",
+  "name": "Polls Demo",
+  "icon": "",
+  "introduction": "This plugin shows how you can extend the Poll plugin and use it in a custom document. NOTE: the Poll feature must be installed BEFORE this one for this feature to work.",
+  "packageFile": "/META-INF/instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor" : {
+    "@type": "vendor",
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": []
+    }
+  ]
+}
