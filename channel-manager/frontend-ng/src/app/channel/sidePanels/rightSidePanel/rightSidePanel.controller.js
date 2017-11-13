@@ -113,16 +113,18 @@ class RightSidePanelCtrl {
   }
 
   closePanel() {
-    this.$element.removeClass('sidepanel-open');
-    this.$element.css('max-width', '0px');
-    this.setFullWidth(false);
-
+    this._beforeClosePanel();
     return this.SidePanelService.close('right').then(() => {
-      if (this.ChannelService.isToolbarDisplayed) {
-        this.ChannelService.setToolbarDisplayed(false);
-      }
-
       this._resetState();
+    });
+  }
+
+  _beforeClosePanel() {
+    return new Promise((resolve) => {
+      this.$element.removeClass('sidepanel-open');
+      this.$element.css('max-width', '0px');
+      this.setFullWidth(false);
+      resolve();
     });
   }
 
