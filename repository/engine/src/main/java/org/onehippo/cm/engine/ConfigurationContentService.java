@@ -167,13 +167,7 @@ public class ConfigurationContentService {
                                 baseNodePath, contentDefinition.getOrigin(), action));
                     }
                 } catch (Exception ex) {
-                    final String errorMsg = String.format("Processing '%s' action for content node '%s' failed.", action, baseNodePath);
-                    if (ex instanceof ConfigurationRuntimeException) {
-                        // no stacktrace needed, the exception message should be informative enough
-                        log.error(errorMsg + "\n" + ex.getMessage());
-                    } else {
-                        log.error(errorMsg, ex);
-                    }
+                    log.error("Processing '{}' action for content node '{}' failed.", action, baseNodePath, ex);
                     failedPaths.add(baseNodePath);
 
                     // we need to clear changes in progress, since they apparently cause the session save to fail

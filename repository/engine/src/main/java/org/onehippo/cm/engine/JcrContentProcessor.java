@@ -145,7 +145,7 @@ public class JcrContentProcessor {
             applyNode(definitionNode, parentNode, actionType, unprocessedReferences);
             applyUnprocessedReferences(unprocessedReferences);
         } catch (Exception e) {
-            log.warn(String.format("Content definition processing failed: %s", definitionNode.getPath()));
+            // don't log here, since the caller will need to handle this anyway
             if (e instanceof RepositoryException) {
                 throw (RepositoryException) e;
             } else if (e instanceof RuntimeException){
