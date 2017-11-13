@@ -63,8 +63,8 @@ export class CreateContentStep2Component implements OnInit {
               private contentService: ContentService,
               private fieldService: FieldService,
               private dialogService: DialogService,
-              private dialog: MdDialog,
-              private translate: TranslateService) {}
+              private translate: TranslateService,
+              private dialog: MdDialog) {}
 
   ngOnInit() {
     this.loadNewDocument();
@@ -139,7 +139,7 @@ export class CreateContentStep2Component implements OnInit {
       });
   }
 
-  private discardAndClose() {
+  discardAndClose() {
     return this.confirmDiscardChanges()
       .then(() => {
         // TODO: Delete document

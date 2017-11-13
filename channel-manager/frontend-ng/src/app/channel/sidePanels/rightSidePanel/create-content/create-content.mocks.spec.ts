@@ -33,7 +33,7 @@ export class CreateContentServiceMock {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 
-  getDocument(): Document {
+  getDocument() {
     return {
       id: 'testId',
       displayName: 'test document',
@@ -66,7 +66,13 @@ export class FieldServiceMock {
 }
 
 export class MdDialogMock {
+  open() {
+    return new MdDialogRefMock();
+  }
+}
+
+export class MdDialogRefMock {
   afterClosed () {
-    return Observable.of(null);
+    return Observable.of({ name: 'docName', url: 'doc-url' });
   }
 }

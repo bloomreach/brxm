@@ -27,7 +27,7 @@ import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.compo
 import { SharedModule } from '../../../../../shared/shared.module';
 import {
   ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FieldServiceMock,
-  MdDialogMock
+  MdDialogMock, MdDialogRefMock
 } from '../create-content.mocks.spec';
 import { CreateContentStep2Component } from './step-2.component';
 import { SharedspaceToolbarDirective } from '../../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
@@ -38,7 +38,7 @@ import ContentService from '../../../../../services/content.service';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { DocumentTypeInfo, Document } from '../create-content.types';
-import { MdDialogRef } from "@angular/material";
+import { MdDialog, MdDialogRef } from "@angular/material";
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 
@@ -49,7 +49,8 @@ describe('Create content step 2 component', () => {
   let contentService: ContentService;
   let dialogService: DialogService;
   let fieldService: FieldService;
-  let dialog: MdDialogRef;
+  let mdDialog: MdDialog;
+  let dialog: MdDialogRef<any>;
 
   const testDocument: Document = {
     id: 'testId',
@@ -87,7 +88,8 @@ describe('Create content step 2 component', () => {
         { provide: ContentService, useClass: ContentServiceMock },
         { provide: DialogService, useClass: DialogServiceMock },
         { provide: FieldService, useClass: FieldServiceMock },
-        { provide: MdDialogRef, useClass: MdDialogMock }
+        { provide: MdDialog, useClass: MdDialogMock },
+        { provide: MdDialogRef, useClass: MdDialogRefMock }
       ]
     });
 
@@ -103,6 +105,7 @@ describe('Create content step 2 component', () => {
     contentService = fixture.debugElement.injector.get(ContentService);
     dialogService = fixture.debugElement.injector.get(DialogService);
     fieldService = fixture.debugElement.injector.get(FieldService);
+    mdDialog = fixture.debugElement.injector.get(MdDialog);
     dialog = fixture.debugElement.injector.get(MdDialogRef);
 
     spyOn(contentService, 'getDocumentType').and.callThrough();
@@ -135,43 +138,33 @@ describe('Create content step 2 component', () => {
 
   it('on init, loads the document from the createContentService', () => {
     spyOn(component,'loadNewDocument');
-    spyOn(component,'resetBeforeStateChange');
 
     component.ngOnInit();
     expect(component.loadNewDocument).toHaveBeenCalled();
-    expect(component.resetBeforeStateChange).toHaveBeenCalled();
   });
 
   describe('opening a document', () => {
-    beforeEach(() => {
-      createContentService.getDocument.and.callThrough();
-      contentService.getDocumentType.and.callThrough();
-    });
-
     it('gets the newly created draft document from create content service', () => {
       component.loadNewDocument();
+
       expect(createContentService.getDocument).toHaveBeenCalled();
       expect(contentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
     });
 
-    it('gets the newly created draft document from create content service', fakeAsync(() => {
-      spyOn(component, 'onLoadSuccess');
-      component.loadNewDocument();
-
-      tick();
-      fixture.detectChanges();
-
-      expect(component.onLoadSuccess).toHaveBeenCalledWith(testDocument, testDocumentType);
-      expect(component.loading).toEqual(false);
-    }));
+    it('gets the newly created draft document from create content service', () => {
+      component.loadNewDocument().then(() => {
+        expect(component.doc).toEqual(testDocument);
+        expect(component.docType).toEqual(testDocumentType);
+        expect(component.loading).toEqual(false);
+      });
+    });
   });
 
   describe('closing the panel', () => {
     beforeEach(() => {
-      spyOn(component, 'resetState');
       spyOn(component.onClose, 'emit');
 
-      component.ngOnInit();
+      component.loadNewDocument();
     });
 
     it('Calls discardAndClose method to confirm document discard and close the panel', fakeAsync(() => {
@@ -188,10 +181,13 @@ describe('Create content step 2 component', () => {
       tick();
       fixture.detectChanges();
       spyOn(component, 'discardAndClose').and.returnValue(resolve());
-      spyOn(component, 'confirmDiscardChanges').and.returnValue(resolve());
 
       component.close().then(() => {
-        expect(component.resetState).toHaveBeenCalled();
+        expect(component.documentId).not.toBeDefined();
+        expect(component.doc).not.toBeDefined();
+        expect(component.docType).not.toBeDefined();
+        expect(component.feedback).not.toBeDefined();
+        expect(component.title).toEqual('Create new content');
         expect(component.onClose.emit).toHaveBeenCalled();
       });
     }));
@@ -200,10 +196,9 @@ describe('Create content step 2 component', () => {
       tick();
       fixture.detectChanges();
 
-      spyOn(component, 'confirmDiscardChanges').and.returnValue(reject());
+      spyOn(component, 'discardAndClose').and.returnValue(reject());
 
       component.close().catch(() => {
-        expect(component.resetState).not.toHaveBeenCalled();
         expect(component.onClose.emit).not.toHaveBeenCalled();
       });
     }));
@@ -211,37 +206,8 @@ describe('Create content step 2 component', () => {
 
   describe('changing name or URL of the document', () => {
     beforeEach(() => {
-      spyOn(component, 'openEditNameUrlDialog').and.callThrough();
-      spyOn(component.dialog, 'open').and.returnValue(dialog);
-      spyOn(dialog, 'afterClosed').and.returnValue(Observable.of({ name: 'docName', url: 'doc-url' }));
-      spyOn(component, 'submitEditNameUrl').and.callThrough();
-
       component.ngOnInit();
       component.doc = testDocument;
-    });
-
-    it('open a change url-name dialog', fakeAsync(() => {
-      tick();
-      fixture.detectChanges();
-      component.editNameUrl();
-
-      expect(component.openEditNameUrlDialog).toHaveBeenCalled();
-    }));
-
-    it('openEditNameUrlDialog method open a dialog with the correct details', () => {
-      component.openEditNameUrlDialog();
-
-      const dialogProps = {
-        height: '250px',
-        width: '600px',
-        data: {
-          title: 'CHANGE_DOCUMENT_NAME',
-          name: testDocument.displayName,
-          url: '',
-        }
-      };
-
-      expect(component.dialog.open).toHaveBeenCalledWith(NameUrlFieldsDialogComponent, dialogProps);
     });
 
     it('changes document title if the change is submitted in dialog', fakeAsync(() => {
@@ -249,17 +215,7 @@ describe('Create content step 2 component', () => {
       tick();
       fixture.detectChanges();
 
-      expect(component.submitEditNameUrl).toHaveBeenCalledWith({ name: 'docName', url: 'doc-url' });
-    }));
-
-    it('takes no action if user clicks cancel on the dialog', fakeAsync(() => {
-      dialog.afterClosed.and.returnValue(Observable.of(false));
-      tick();
-      fixture.detectChanges();
-
-      component.editNameUrl();
-
-      expect(component.submitEditNameUrl).not.toHaveBeenCalled();
+      expect(component.doc.displayName).toBe('docName');
     }));
   });
 
