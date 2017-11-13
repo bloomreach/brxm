@@ -42,7 +42,7 @@ import { MdDialog, MdDialogRef } from "@angular/material";
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 
-describe('Create content step 2 component', () => {
+fdescribe('Create content step 2 component', () => {
   let component: CreateContentStep2Component;
   let fixture: ComponentFixture<CreateContentStep2Component>;
   let createContentService: CreateContentService;
@@ -63,8 +63,6 @@ describe('Create content step 2 component', () => {
     }
   };
   const testDocumentType: DocumentTypeInfo = { id: 'ns:testdocument', displayName: 'test-name 1' };
-  const resolve = (arg = null) => Observable.of(arg).toPromise();
-  const reject = (arg = null) => Observable.throw(arg).toPromise();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -125,25 +123,35 @@ describe('Create content step 2 component', () => {
     expect(component.close).toHaveBeenCalled();
   }));
 
-  it('should call parent "on full width" mode on and off', () => {
-    spyOn(component.onFullWidth, 'emit');
-    component.setFullWidth(true);
-    expect(component.isFullWidth).toBe(true);
-    expect(component.onFullWidth.emit).toHaveBeenCalledWith(true);
+  describe('setFullWidth', () => {
+    it('call parent "on full width" mode on and off', () => {
+      spyOn(component.onFullWidth, 'emit');
+      component.setFullWidth(true);
+      expect(component.isFullWidth).toBe(true);
+      expect(component.onFullWidth.emit).toHaveBeenCalledWith(true);
 
-    component.setFullWidth(false);
-    expect(component.isFullWidth).toBe(false);
-    expect(component.onFullWidth.emit).toHaveBeenCalledWith(false);
+      component.setFullWidth(false);
+      expect(component.isFullWidth).toBe(false);
+      expect(component.onFullWidth.emit).toHaveBeenCalledWith(false);
+    });
   });
 
-  it('on init, loads the document from the createContentService', () => {
-    spyOn(component,'loadNewDocument');
+  describe('ngOnInit', () => {
+    it('loads the document from the createContentService', () => {
+      // Override emit function to trigger the emitted method, so we can test it is called
+      component.onBeforeStateChange.emit = arg => arg();
+      spyOn(component,'loadNewDocument');
+      spyOn(component, 'discardAndClose');
+      spyOn(component.onBeforeStateChange, 'emit').and.callThrough();
 
-    component.ngOnInit();
-    expect(component.loadNewDocument).toHaveBeenCalled();
+      component.ngOnInit();
+      expect(component.loadNewDocument).toHaveBeenCalled();
+      expect(component.onBeforeStateChange.emit).toHaveBeenCalled();
+      expect(component.discardAndClose).toHaveBeenCalled();
+    });
   });
 
-  describe('opening a document', () => {
+  describe('loadNewDocument', () => {
     it('gets the newly created draft document from create content service', () => {
       component.loadNewDocument();
 
@@ -160,28 +168,33 @@ describe('Create content step 2 component', () => {
     });
   });
 
-  describe('closing the panel', () => {
+  describe('close', () => {
     beforeEach(() => {
       spyOn(component.onClose, 'emit');
 
       component.loadNewDocument();
+      component.doc = testDocument;
     });
 
-    it('Calls discardAndClose method to confirm document discard and close the panel', fakeAsync(() => {
-      tick();
+    it('calls the confirmation dialog', () => {
       fixture.detectChanges();
 
-      spyOn(component, 'discardAndClose').and.returnValue(resolve());
+      spyOn(component, 'discardAndClose').and.callThrough();
+
+      component.close();
+      expect(dialogService.confirm).toHaveBeenCalled();
+    });
+
+    it('calls discardAndClose method to confirm document discard and close the panel', () => {
+      fixture.detectChanges();
+
+      spyOn(component, 'discardAndClose').and.returnValue(Promise.resolve());
 
       component.close();
       expect(component.discardAndClose).toHaveBeenCalled();
-    }));
+    });
 
-    it('Discards the document when "discard" is selected', fakeAsync(() => {
-      tick();
-      fixture.detectChanges();
-      spyOn(component, 'discardAndClose').and.returnValue(resolve());
-
+    it('discards the document when "discard" is selected', () => {
       component.close().then(() => {
         expect(component.documentId).not.toBeDefined();
         expect(component.doc).not.toBeDefined();
@@ -190,39 +203,38 @@ describe('Create content step 2 component', () => {
         expect(component.title).toEqual('Create new content');
         expect(component.onClose.emit).toHaveBeenCalled();
       });
-    }));
+    });
 
-    it('Will not discard the document when cancel is clicked', fakeAsync(() => {
-      tick();
+    it('will not discard the document when cancel is clicked', () => {
       fixture.detectChanges();
 
-      spyOn(component, 'discardAndClose').and.returnValue(reject());
+      spyOn(component, 'discardAndClose').and.returnValue(Promise.reject(null));
 
       component.close().catch(() => {
         expect(component.onClose.emit).not.toHaveBeenCalled();
       });
-    }));
+    });
   });
 
-  describe('changing name or URL of the document', () => {
+  describe('editNameUrl', () => {
     beforeEach(() => {
       component.ngOnInit();
       component.doc = testDocument;
     });
 
-    it('changes document title if the change is submitted in dialog', fakeAsync(() => {
+    it('changes document title if the change is submitted in dialog', () => {
       component.editNameUrl();
-      tick();
       fixture.detectChanges();
 
       expect(component.doc.displayName).toBe('docName');
-    }));
+    });
   });
 
-
-  it('knows the document is dirty when the backend says so', () => {
-    component.doc = testDocument;
-    component.doc.info.dirty = true;
-    expect(component.isDocumentDirty()).toBe(true);
+  describe('isDocumentDirty', () => {
+    it('returns true if document is set to dirty by the backend', () => {
+      component.doc = testDocument;
+      component.doc.info.dirty = true;
+      expect(component.isDocumentDirty()).toBe(true);
+    });
   });
 });

@@ -46,7 +46,6 @@ export class CreateContentStep2Component implements OnInit {
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
-  @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
   @ViewChild('step2') step2: ElementRef;
 
@@ -166,13 +165,6 @@ export class CreateContentStep2Component implements OnInit {
     delete this.docType;
     delete this.feedback;
     this.title = this.defaultTitle;
-    this.resetForm();
-  }
-
-  private resetForm() {
-    if (this.form) {
-      this.form.markAsPristine();
-    }
   }
 
   private resetBeforeStateChange() {

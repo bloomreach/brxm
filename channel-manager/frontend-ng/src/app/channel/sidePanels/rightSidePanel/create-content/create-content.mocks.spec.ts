@@ -58,7 +58,31 @@ export class ContentServiceMock {
 }
 
 export class DialogServiceMock {
-  confirm(): void {}
+  confirm(): any {
+    return new ConfirmDialogMock();
+  }
+
+  show(dialog: object): Promise<void> {
+    return Promise.resolve();
+  }
+}
+
+export class ConfirmDialogMock {
+  title() {
+    return this;
+  }
+
+  textContent() {
+    return this;
+  }
+
+  ok() {
+    return this;
+  }
+
+  cancel() {
+    return this;
+  }
 }
 
 export class FieldServiceMock {
