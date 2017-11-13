@@ -91,7 +91,7 @@
   <!--
   <lib path="../a-jar-that-does-not-exist.jar" /> 
   -->
-  
+
   <!-- Data Directory
 
        Used to specify an alternate directory to hold all index data
@@ -99,12 +99,8 @@
        replication is in use, this should match the replication
        configuration.
     -->
-  <!-- bit hacky: In case there is no explicit repo path, this will result in something like
-  ../..//home/user/.... which will work correctly also.
-  -->
-  <dataDir>../../${repo.path:}/solr</dataDir>
+  <dataDir>${solr.data.dir:}</dataDir>
 
-  <!--<dataDir>/home/aschrijvers/hippo-projects/TESTSUITE/trunk/SOLRREPO/solr</dataDir>-->
 
   <!-- The DirectoryFactory to use for indexes.
        
@@ -120,7 +116,7 @@
        solr.RAMDirectoryFactory is memory based, not
        persistent, and doesn't work with replication.
     -->
-  <directoryFactory name="DirectoryFactory" 
+  <directoryFactory name="DirectoryFactory"
                     class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/>
 
   <!-- The CodecFactory for defining the format of the inverted index.
@@ -150,7 +146,7 @@
        When ManagedIndexSchemaFactory is specified with mutable = true, schema
        modification REST API calls will be allowed; otherwise, error responses will be
        sent back for these requests.
-      -->
+  -->
   <schemaFactory class="ManagedIndexSchemaFactory">
     <bool name="mutable">true</bool>
     <str name="managedSchemaResourceName">managed-schema</str>
@@ -176,12 +172,12 @@
          many threads arrive they will wait for others to finish.
          Default in Solr/Lucene is 8. -->
     <!-- <maxIndexingThreads>8</maxIndexingThreads>  -->
-         
+
     <!-- Expert: Enabling compound file will use less files for the index,
          using fewer file descriptors on the expense of performance decrease.
          Default in Lucene is "true". Default in Solr is "false" (since 3.6) -->
     <!-- <useCompoundFile>false</useCompoundFile> -->
-         
+
     <!-- ramBufferSizeMB sets the amount of RAM that may be used by Lucene
          indexing for buffering added documents and deletions before they are
          flushed to the Directory.
@@ -191,7 +187,7 @@
          Lucene will flush based on whichever limit is hit first.  -->
     <!-- <ramBufferSizeMB>100</ramBufferSizeMB> -->
     <!-- <maxBufferedDocs>1000</maxBufferedDocs> -->
-         
+
     <!-- Expert: Merge Policy
          The Merge Policy in Lucene controls how merging of segments is done.
          The default since Solr/Lucene 3.3 is TieredMergePolicy.
@@ -203,7 +199,7 @@
           <int name="maxMergeAtOnce">10</int>
           <int name="segmentsPerTier">10</int>
         </mergePolicy>
-       -->
+      -->
 
     <!-- Merge Factor
          The merge factor controls how many segments will get merged at a time.
@@ -226,7 +222,7 @@
     <!-- 
        <mergeScheduler class="org.apache.lucene.index.ConcurrentMergeScheduler"/>
        -->
-	  
+
     <!-- LockFactory 
 
          This option specifies which Lucene LockFactory implementation
@@ -250,13 +246,13 @@
 
     <!-- Unlock On Startup
 
-          If true, unlock any held write or commit locks on startup.
-          This defeats the locking mechanism that allows multiple
-          processes to safely access a lucene index, and should be used
-          with care. Default is "false".
+         If true, unlock any held write or commit locks on startup.
+         This defeats the locking mechanism that allows multiple
+         processes to safely access a lucene index, and should be used
+         with care. Default is "false".
 
-          This is not needed if lock type is 'single'
-      -->
+         This is not needed if lock type is 'single'
+     -->
     <!--
     <unlockOnStartup>false</unlockOnStartup>
       -->
@@ -418,7 +414,7 @@
       -->
 
   </updateHandler>
-  
+
   <!-- IndexReaderFactory
 
        Use the following format to specify a custom IndexReaderFactory,
@@ -521,7 +517,7 @@
                      size="512"
                      initialSize="512"
                      autowarmCount="0"/>
-   
+
     <!-- Document Cache
 
          Caches Lucene Document objects (the stored fields for each
