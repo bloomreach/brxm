@@ -28,10 +28,11 @@ class SidePanelService {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
-      onOpenCallback: onOpenCallback || angular.noop,
+      onOpenCallback: onOpenCallback || (() => this.$q.resolve()),
       onCloseCallback: onCloseCallback || (() => this.$q.resolve()),
     };
 
+    this.$mdSidenav(panel.sideNavComponentId).onClose(() => this.close(side));
     this.panels[side] = panel;
   }
 

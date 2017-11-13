@@ -24,7 +24,7 @@ describe('SidePanelService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
+    leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close', 'onClose', 'onCloseCb']);
     OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(leftSidePanel);
@@ -45,7 +45,7 @@ describe('SidePanelService', () => {
   });
 
   it('toggles a named side-panel', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     element.width(250);
     SidePanelService.initialize('left', element);
 
@@ -65,7 +65,7 @@ describe('SidePanelService', () => {
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
@@ -81,7 +81,7 @@ describe('SidePanelService', () => {
   });
 
   it('closes a side panel if it is open', (done) => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
@@ -94,7 +94,7 @@ describe('SidePanelService', () => {
   });
 
   it('skips closing a side panel if it is was already closed', (done) => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(false);
@@ -107,7 +107,7 @@ describe('SidePanelService', () => {
   });
 
   it('calls the onCloseCallback before closing a side panel', (done) => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     const onClose = jasmine.createSpy('onClose');
     SidePanelService.initialize('left', element, null, onClose);
 
@@ -123,7 +123,7 @@ describe('SidePanelService', () => {
   });
 
   it('does not close a side panel if its onCloseCallback fails', (done) => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     const onClose = jasmine.createSpy('onClose');
     SidePanelService.initialize('left', element, null, onClose);
 
@@ -139,7 +139,7 @@ describe('SidePanelService', () => {
   });
 
   it('forwards the open call to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="test"></div>');
     SidePanelService.initialize('left', element);
 
     SidePanelService.open('left');
@@ -183,7 +183,7 @@ describe('SidePanelService', () => {
   });
 
   it('syncs the iframe once the side-panel has been opened and closed', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="left"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(false);
