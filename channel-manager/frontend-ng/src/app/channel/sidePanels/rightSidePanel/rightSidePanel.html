@@ -30,9 +30,18 @@
                       on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)"
                       on-close="RightSidePanelCtrl.closePanel()">
   </hippo-edit-content>
-  <hippo-create-content ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
+  <hippo-create-content-step-1 ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
                         [options]="RightSidePanelCtrl.options"
+                        (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
                         (on-close)="RightSidePanelCtrl.closePanel()"
-                        (on-continue)="angular.noop()">
-  </hippo-create-content>
+                        (on-continue)="RightSidePanelCtrl.switchCreateContentStep()"
+                        (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
+  </hippo-create-content-step-1>
+  <hippo-create-content-step-2 flex layout="column"
+                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create2"
+                               (on-save)="RightSidePanelCtrl.openInMode(mode, options)"
+                               (on-close)="RightSidePanelCtrl.closePanel()"
+                               (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
+                               (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
+  </hippo-create-content-step-2>
 </md-sidenav>

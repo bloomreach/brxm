@@ -30,6 +30,26 @@ export interface CreateContentOptions {
   templateQuery?: string;
 }
 
+export interface DocumentDetails {
+  name: string;
+  slug: string;
+  templateQuery: string;
+  documentTypeId: string;
+  rootPath: string;
+  defaultPath: string;
+}
+
+export interface Document {
+  id: string;
+  displayName: string;
+  info: {
+    dirty: boolean,
+    type: {
+      id: string;
+    }
+  }
+}
+
 export interface Folder {
   name: string;
   displayName: string;

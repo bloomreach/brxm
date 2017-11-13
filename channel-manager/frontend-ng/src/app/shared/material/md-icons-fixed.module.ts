@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SharedSpaceToolbarComponent from './sharedspace-toolbar.ng1.component';
-import SharedSpaceToolbarService from './sharedspace-toolbar.service';
 
-const SharedSpaceToolbarModule = angular
-  .module('hippo-cm.channel.fieldsModule.sharedspaceToolbar', [])
-  .component('sharedspaceToolbar', SharedSpaceToolbarComponent)
-  .service('SharedSpaceToolbarService', SharedSpaceToolbarService);
-
-export default SharedSpaceToolbarModule.name;
+import { MdIcon, MdIconRegistry } from '@angular/material';
+import { HttpModule } from '@angular/http';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+@NgModule({
+  imports: [CommonModule, HttpModule],
+  declarations: [MdIcon],
+  exports: [MdIcon],
+  providers: [], // leave empty to avoid multiple instances of MdIconRegistry
+})
+export class MdIconFixedModule {
+  static forRoot() {
+    return {
+      ngModule: MdIconFixedModule,
+      providers: [MdIconRegistry] // will be available only to whoever calls .forRoot()
+    };
+  }
+}

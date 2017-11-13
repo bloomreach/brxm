@@ -52,6 +52,11 @@ class RightSidePanelCtrl {
         openMessage: 'SAVE_CHANGES_GENERIC',
         switchToMessage: null,
       },
+      create2: {
+        closeChannelMessage: null,
+        openMessage: 'SAVE_CHANGES_GENERIC',
+        switchToMessage: null,
+      },
     };
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'),
@@ -90,7 +95,10 @@ class RightSidePanelCtrl {
     this.options = options;
   }
 
-  _openInMode(mode, options) {
+  openInMode(mode, options) {
+    if (typeof mode === 'string') {
+      mode = this.modes[mode];
+    }
     if (this.mode === mode) {
       this._setMode(mode, options);
       return this.$q.resolve();
@@ -105,11 +113,19 @@ class RightSidePanelCtrl {
       throw new Error(`Failed to open rightside panel in mode ${id}`);
     }
 
-    this._openInMode(this.modes[id], options).then(() => {
+    this.openInMode(this.modes[id], options).then(() => {
       this.$element.addClass('sidepanel-open');
       this.$element.css('width', this.lastSavedWidth);
       this.$element.css('max-width', this.lastSavedWidth);
     });
+  }
+
+  switchCreateContentStep() {
+    if (this.mode !== this.modes.create) {
+      throw new Error('Could not switch to Create content step 2 from the current mode');
+    }
+
+    this._setMode(this.modes.create2);
   }
 
   closePanel() {
