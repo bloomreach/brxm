@@ -64,6 +64,25 @@ describe('SidePanelService', () => {
     expect(leftSidePanel.close).toHaveBeenCalled();
   });
 
+  it('lifts and lowers side panel above mask', () => {
+    SidePanelService.isSidePanelLifted = false;
+    SidePanelService.liftSidePanelAboveMask();
+    expect(SidePanelService.isSidePanelLifted).toBeTruthy();
+
+    SidePanelService.isSidePanelLifted = true;
+    SidePanelService.liftSidePanelBelowMask();
+    expect(SidePanelService.isSidePanelLifted).toBeFalsy();
+  });
+
+  it('calls the onCloseCallback when $mdSidenav.close is triggered from AngularJS Material\'s side', () => {
+    const element = angular.element('<div md-component-id="test"></div>');
+
+    leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
+    leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
+    SidePanelService.initialize('left', element);
+    SidePanelService.$mdSidenav('test').close();
+  });
+
   it('forwards the is-open check to the mdSidenav service', () => {
     const element = angular.element('<div md-component-id="test"></div>');
     SidePanelService.initialize('left', element);
