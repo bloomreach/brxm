@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import controller from './editContent.controller';
-import template from './editContent.html';
+import ChannelService from '../../channel/channel.service.js';
 
-const editContentComponent = {
-  controller,
-  template,
-  bindings: {
-    requestedDocument: '=',
-    onFullWidth: '&',
-    onBeforeStateChange: '&',
-    onClose: '&',
-  },
+export function channelServiceFactory(i: any) {
+  return i.get('ChannelService');
+}
+export const ChannelServiceProvider = {
+  provide: ChannelService,
+  useFactory: channelServiceFactory,
+  deps: ['$injector']
 };
-
-export default editContentComponent;

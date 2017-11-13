@@ -51,8 +51,8 @@
     </mat-input-container>
 
     <hippo-hints [data]="form.controls.url.errors" *ngIf="form.controls.url && form.controls.url.touched">
-      <div hint="required">This field is required</div>
-      <div hint="invalidUrl">This URL is invalid</div>
+      <div hint="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+      <div hint="invalidUrl">{{ 'INVALID_URL' | translate }}</div>
     </hippo-hints>
   </div>
 </form>

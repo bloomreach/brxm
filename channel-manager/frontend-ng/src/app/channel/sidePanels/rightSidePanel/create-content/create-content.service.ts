@@ -18,7 +18,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { Injectable } from '@angular/core';
 
-import { Document, DocumentDetails, TemplateQuery } from './create-content.types';
+import { Document, DocumentDetails, TemplateQuery, Folder } from './create-content.types';
 import ContentService from '../../../../services/content.service';
 
 @Injectable()
@@ -42,6 +42,11 @@ export class CreateContentService {
 
   generateDocumentUrlByName(name: string, locale: string = ''): Observable<string> {
     const promise = this.contentService._send('POST', ['slugs'], name, true, { locale });
+    return Observable.fromPromise(promise);
+  }
+
+  getFolders(path: string): Observable<Array<Folder>> {
+    const promise = this.contentService._send('GET', ['folders', path], null, true);
     return Observable.fromPromise(promise);
   }
 }

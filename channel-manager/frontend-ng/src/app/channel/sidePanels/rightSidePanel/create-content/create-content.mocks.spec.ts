@@ -16,7 +16,7 @@
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
-import { DocumentDetails, DocumentTypeInfo, TemplateQuery } from './create-content.types';
+import { DocumentDetails, DocumentTypeInfo, TemplateQuery, Folder } from './create-content.types';
 import { Component } from "@angular/core";
 import { MdDialogRef } from "@angular/material";
 
@@ -44,6 +44,10 @@ export class CreateContentServiceMock {
         }
       }
     };
+  }
+
+  getFolders(path: string): Observable<Array<Folder>> {
+    return Observable.of([]);
   }
 }
 
@@ -98,5 +102,13 @@ export class MdDialogMock {
 export class MdDialogRefMock {
   afterClosed () {
     return Observable.of({ name: 'docName', url: 'doc-url' });
+  }
+}
+
+export class ChannelServiceMock {
+  getChannel() {
+    return {
+      contentRoot: '/channel/content'
+    };
   }
 }

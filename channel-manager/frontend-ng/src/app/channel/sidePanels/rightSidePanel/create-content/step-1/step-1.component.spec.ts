@@ -20,16 +20,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
-import { CreateContentComponent } from './step-1.component';
+import ChannelService from '../../../../channel.service';
 import FeedbackService from '../../../../../services/feedback.service';
 import { CreateContentService } from '../create-content.service';
-import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
-import { SharedModule } from '../../../../../shared/shared.module';
-import { CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
-import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
-import { TranslateStore } from "@ngx-translate/core/src/translate.store";
 import { DocumentTypeInfo } from '../create-content.types';
+import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
+import { CreateContentComponent } from './step-1.component';
+import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
+import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
+import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
+import { SharedModule } from '../../../../../shared/shared.module';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
 
 describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
@@ -41,6 +42,7 @@ describe('Create content step 1 component', () => {
     TestBed.configureTestingModule({
       declarations: [
         CreateContentComponent,
+        DocumentLocationFieldComponent,
         HintsComponent,
         NameUrlFieldsComponent
       ],
@@ -52,6 +54,7 @@ describe('Create content step 1 component', () => {
         })
       ],
       providers: [
+        { provide: ChannelService, useClass: ChannelServiceMock },
         { provide: CreateContentService, useClass: CreateContentServiceMock },
         { provide: FeedbackService, useClass: FeedbackServiceMock }
       ]

@@ -27,7 +27,8 @@
   <hippo-edit-content ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.edit" flex layout="column"
                       requested-document="RightSidePanelCtrl.options"
                       on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                      on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
+                      on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)"
+                      on-close="RightSidePanelCtrl.closePanel()">
   </hippo-edit-content>
   <hippo-create-content-step-1 ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
                         [options]="RightSidePanelCtrl.options"

@@ -86,7 +86,7 @@ export class CreateContentStep2Component implements OnInit {
 
   private openEditNameUrlDialog(): MdDialogRef<NameUrlFieldsDialogComponent> {
     return this.dialog.open(NameUrlFieldsDialogComponent, {
-      height: '250px',
+      height: '295px',
       width: '600px',
       data: {
         title: this.translate.instant('CHANGE_DOCUMENT_NAME'),

@@ -19,8 +19,9 @@ import './step-1.scss';
 
 import { CreateContentService } from '../create-content.service';
 import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
-import FeedbackService from '../../../../../services/feedback.service';
+import FeedbackService from '../../../../../services/feedback.service.js';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
+import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -41,6 +42,7 @@ export class CreateContentComponent implements OnInit {
   @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+  @ViewChild(DocumentLocationFieldComponent) documentLocationField: DocumentLocationFieldComponent;
 
   @HostListener('keydown', ['$event']) closeOnEsc(e) {
     if (e.which === 27) {
@@ -48,9 +50,8 @@ export class CreateContentComponent implements OnInit {
     }
   }
 
-  constructor(private createContentService: CreateContentService,
-              private feedbackService: FeedbackService,
-              private translate: TranslateService) {}
+  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -67,9 +68,6 @@ export class CreateContentComponent implements OnInit {
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadingTemplateQuery(error),
       );
-
-    // TODO: replace with actual call
-    this.setLocale('en');
   }
 
   setWidthState(state) {
@@ -98,7 +96,6 @@ export class CreateContentComponent implements OnInit {
       );
   }
 
-  // TODO: Mock function. Refactor once document location picker is implemented.
   setLocale(locale: string) {
     this.locale = locale;
   }

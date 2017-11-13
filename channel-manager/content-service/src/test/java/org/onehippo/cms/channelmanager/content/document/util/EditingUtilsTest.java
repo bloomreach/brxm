@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,11 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
@@ -107,6 +110,57 @@ public class EditingUtilsTest {
     }
 
     @Test
+    public void canArchiveDocument() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canArchiveDocument(workflow));
+    }
+
+    @Test
+    public void canEraseDocument() throws Exception {
+        final FolderWorkflow workflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canEraseDocument(workflow));
+    }
+
+    @Test
+    public void hasPreview() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.FALSE);
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.TRUE);
+        assertTrue(EditingUtils.hasPreview(workflow));
+    }
+
+    @Test
     public void determineEditingFailureWithException() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Session session = createMock(Session.class);
@@ -144,7 +198,7 @@ public class EditingUtilsTest {
         replay(workflow);
 
         final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
+        assertThat(errorInfo.getReason(), equalTo(Reason.REQUEST_PENDING));
         assertNull(errorInfo.getParams());
 
         verify(workflow);
@@ -169,7 +223,7 @@ public class EditingUtilsTest {
         replay(workflow, session, workspace, securityService, user);
 
         final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+        assertThat(errorInfo.getReason(), equalTo(Reason.OTHER_HOLDER));
         assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
         assertThat(errorInfo.getParams().get("userName"), equalTo("John Doe"));
 
@@ -190,7 +244,7 @@ public class EditingUtilsTest {
         replay(workflow, session, workspace);
 
         final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
-        assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+        assertThat(errorInfo.getReason(), equalTo(Reason.OTHER_HOLDER));
         assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
         assertNull(errorInfo.getParams().get("userName"));
 

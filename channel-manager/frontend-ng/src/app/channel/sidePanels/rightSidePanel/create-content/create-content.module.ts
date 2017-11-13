@@ -26,6 +26,7 @@ import { NameUrlFieldsComponent } from './name-url-fields/name-url-fields.compon
 import { FieldsEditorDirective } from '../fieldsEditor/fields-editor.component';
 import { SharedspaceToolbarDirective } from '../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
 import { NameUrlFieldsDialogComponent } from './step-2/name-url-fields-dialog/name-url-fields-dialog';
+import { DocumentLocationFieldComponent } from './document-location/document-location-field.component';
 
 @NgModule({
   imports: [
@@ -39,14 +40,16 @@ import { NameUrlFieldsDialogComponent } from './step-2/name-url-fields-dialog/na
     CreateContentStep2Component,
     HintsComponent,
     NameUrlFieldsComponent,
-    NameUrlFieldsDialogComponent
+    NameUrlFieldsDialogComponent,
+    DocumentLocationFieldComponent
   ],
   entryComponents: [
     CreateContentComponent,
     CreateContentStep2Component,
     HintsComponent,
     NameUrlFieldsComponent,
-    NameUrlFieldsDialogComponent
+    NameUrlFieldsDialogComponent,
+    DocumentLocationFieldComponent
   ],
   providers: [
     CreateContentService

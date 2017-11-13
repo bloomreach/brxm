@@ -16,7 +16,6 @@
 
 import { TestBed, ComponentFixture, async, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/toPromise';
@@ -42,7 +41,7 @@ import { MdDialog, MdDialogRef } from "@angular/material";
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 
-fdescribe('Create content step 2 component', () => {
+describe('Create content step 2 component', () => {
   let component: CreateContentStep2Component;
   let fixture: ComponentFixture<CreateContentStep2Component>;
   let createContentService: CreateContentService;

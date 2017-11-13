@@ -62,7 +62,6 @@ class editContentController {
     $translate,
     $mdConstant,
     $q,
-    SidePanelService,
     ChannelService,
     CmsService,
     ContentService,
@@ -80,7 +79,6 @@ class editContentController {
     this.$translate = $translate;
     this.$q = $q;
 
-    this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
@@ -411,7 +409,7 @@ class editContentController {
       .then(() => {
         this.deleteDraftOnClose = false;
         this._resetState();
-        this.SidePanelService.close('right');
+        return this.onClose();
       });
   }
 
