@@ -50,6 +50,7 @@ describe('RightSidePanel', () => {
     });
     $rootScope.$apply();
 
+    $ctrl.$postLink();
     sidePanelHandlers = {
       onOpen: SidePanelService.initialize.calls.mostRecent().args[2],
       onClose: SidePanelService.initialize.calls.mostRecent().args[3],
@@ -57,9 +58,11 @@ describe('RightSidePanel', () => {
   });
 
   it('sets full width mode on and off', () => {
+    spyOn(ChannelService, 'setToolbarDisplayed');
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
     expect($ctrl.isFullWidth).toBe(true);
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
 
     CmsService.reportUsageStatistic.calls.reset();
@@ -67,6 +70,7 @@ describe('RightSidePanel', () => {
     $ctrl.setFullWidth(false);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
     expect($ctrl.isFullWidth).toBe(false);
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
@@ -217,25 +221,19 @@ describe('RightSidePanel', () => {
   it('resets right side panel state and sharedspace toolbar state', () => {
     spyOn($ctrl, '_resetState');
     spyOn(ChannelService, 'setToolbarDisplayed');
-    ChannelService.isToolbarDisplayed = true;
     SidePanelService.close.and.returnValue($q.resolve(true));
     $ctrl.closePanel();
     $ctrl.$scope.$apply();
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     expect($ctrl._resetState).toHaveBeenCalled();
   });
 
   it('closes right side panel', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed');
-    spyOn($ctrl, 'setFullWidth');
-    SidePanelService.close.and.returnValue($q.resolve());
-
-    ChannelService.isToolbarDisplayed = true;
+    spyOn(ChannelService, 'setToolbarDisplayed').and.callThrough();
+    SidePanelService.close.and.returnValue($q.resolve(true));
     $ctrl.closePanel();
     $scope.$apply();
-
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
-    expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
   });
 
   describe('onBeforeStateChange', () => {
