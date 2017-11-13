@@ -70,17 +70,20 @@ describe('SidePanelService', () => {
     expect(SidePanelService.isSidePanelLifted).toBeTruthy();
 
     SidePanelService.isSidePanelLifted = true;
-    SidePanelService.liftSidePanelBelowMask();
+    SidePanelService.lowerSidePanelBeneathMask();
     expect(SidePanelService.isSidePanelLifted).toBeFalsy();
   });
 
   it('calls the onCloseCallback when $mdSidenav.close is triggered from AngularJS Material\'s side', () => {
     const element = angular.element('<div md-component-id="test"></div>');
 
+    spyOn(SidePanelService, 'close');
+
     leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
     leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
     SidePanelService.initialize('left', element);
-    SidePanelService.$mdSidenav('test').close();
+    SidePanelService.$mdSidenav('test').close(); // "Native" AngularJS close function, as if we were pressing Escape
+    expect(SidePanelService.close).toHaveBeenCalledWith('left');
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
