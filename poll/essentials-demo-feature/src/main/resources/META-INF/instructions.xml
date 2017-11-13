@@ -3,38 +3,31 @@
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
-    <!-- load cnd -->
+    <!-- load cnd and custom namespace XML -->
     <cnd documentType="customPollDocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
-    <!-- java classes -->
+    <xml action="copy" source="xml/namespace-customPollDocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+
+    <!-- Java classes -->
     <file action="copy" source="java/CustomPollDocument.txt" target="{{beansFolder}}/CustomPollDocument.java"/>
     <file action="copy" source="java/CustomPollDocumentComponent.txt" target="{{componentsFolder}}/CustomPollDocumentComponent.java"/>
     <file action="copy" source="java/CustomPollDocumentComponentInfo.txt" target="{{componentsFolder}}/CustomPollDocumentComponentInfo.java"/>
-  </instructionSet>
 
-  <!-- group "freemarker" is used when that option is chosen in the general settings -->
-  <instructionSet group="freemarker">
     <!-- custompoll.component.ftl created from contents of the standard template at
      /hst:hst/hst:configurations/hst:default/hst:templates/poll.component.ftl plus some extra code to show the custom title -->
     <freemarker action="copy" source="freemarker/custompoll.component.ftl" target="{{freemarkerRoot}}/{{namespace}}/custompoll.component.ftl"/>
+
+    <!-- HST configuration -->
     <xml action="copy" source="freemarker/custompoll-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-  </instructionSet>
-
-  <!-- group "jsp" is used when that option is chosen in the general settings -->
-  <!-- NOTE: there is no demo support for jsp -->
-  <!-- <instructionSet group="jsp"> -->
-  <!-- <file action="copy" source="jsp/example.jsp" target="{{jspRoot}}/example.jsp"/> -->
-  <!-- <xml action="copy" source="hst/example-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/> -->
-  <!-- </instructionSet> -->
-
-  <!-- sample data -->
-  <instructionSet group="sampleData">
-    <xml action="copy" source="xml/content-custom-example-poll.xml" target="/content/documents/{{namespace}}/polls"/>
     <xml action="copy" source="xml/custompoll-catalogitem.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog/{{namespace}}-catalog"/>
     <xml action="copy" source="xml/custompoll-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/custompoll-sitemapitem.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="xml/custompoll-workspace-container.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="xml/menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
-    <xml action="copy" source="xml/namespace-customPollDocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+
+    <!-- content: example poll document -->
+    <xml action="copy" source="xml/content-custom-example-poll.xml" target="/content/documents/{{namespace}}/polls"/>
+
+    <!-- polldata: example poll votes -->
     <xml action="copy" source="xml/namespaced-polldata.xml" target="/polldata"/>
   </instructionSet>
 

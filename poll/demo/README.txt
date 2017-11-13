@@ -17,7 +17,7 @@ How to generate a demo project for the Polls feature
 - With Essentials, set up the project with the default settings.
   Note that JSP for templating language is not supported for the Polls Demo feature.
 
-- With Essentials, install Polls feature, then rebuild && run twice ((boarding, installing).
+- With Essentials, install Polls feature, then rebuild && run twice (boarding, installing).
 
 - With Essentials, install Polls Demo feature, then rebuild && run.
 
