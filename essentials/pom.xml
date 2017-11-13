@@ -27,7 +27,7 @@
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>4.1.0-create-content-SNAPSHOT</version>
+  <version>4.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
