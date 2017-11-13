@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef } from '@angular/core';
+import { MdDialog, MdDialogRef } from '@angular/material';
 import './step-2.scss';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -29,7 +29,8 @@ import { Document } from '../create-content.types';
 
 @Component({
   selector: 'hippo-create-content-step-2',
-  templateUrl: './step-2.html'
+  templateUrl: './step-2.html',
+  entryComponents: [NameUrlFieldsDialogComponent]
 })
 export class CreateContentStep2Component implements OnInit {
   doc: Document;
@@ -47,10 +48,11 @@ export class CreateContentStep2Component implements OnInit {
   @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+  @ViewChild('step2') step2: ElementRef;
 
   // Prevent the default closing action bound to the escape key by Angular Material.
   // We should show the "unsaved changes" dialog first.
-  @HostListener('keydown', ['$event']) closeOnEsc(e) {
+  @HostListener('keypress', ['$event']) closeOnEsc(e) {
     if (e.which === 27) {
       e.stopImmediatePropagation();
       this.close();
@@ -75,10 +77,15 @@ export class CreateContentStep2Component implements OnInit {
     this.fieldService.setDocumentId(doc.id);
     this.loading = true;
     return this.contentService.getDocumentType(doc.info.type.id)
-      .then(docType => this.onLoadSuccess(doc, docType)).finally(() => this.loading = false);
+      .then(docType => {
+        this.onLoadSuccess(doc, docType);
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false
+      });
   }
 
-  private openEditNameUrlDialog() {
+  private openEditNameUrlDialog(): MdDialogRef<NameUrlFieldsDialogComponent> {
     return this.dialog.open(NameUrlFieldsDialogComponent, {
       height: '250px',
       width: '600px',
@@ -121,11 +128,7 @@ export class CreateContentStep2Component implements OnInit {
   }
 
   isDocumentDirty() {
-    return (this.doc && this.doc.info && this.doc.info.dirty) || this.isFormDirty();
-  }
-
-  private isFormDirty() {
-    return this.form && this.form.dirty;
+    return (this.doc && this.doc.info && this.doc.info.dirty);
   }
 
   close() {
@@ -168,7 +171,7 @@ export class CreateContentStep2Component implements OnInit {
 
   private resetForm() {
     if (this.form) {
-      this.form.$setPristine();
+      this.form.markAsPristine();
     }
   }
 

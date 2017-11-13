@@ -14,222 +14,259 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture, async } from '@angular/core/testing';
+import { TestBed, ComponentFixture, async, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/toPromise';
 
-import FeedbackService from '../../../../../services/feedback.service';
 import { CreateContentService } from '../create-content.service';
-import ContentService from '../../../../../services/content.service';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { NameUrlFieldsComponent } from "../name-url-fields/name-url-fields.component";
+import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';
-import { ContentServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
+import {
+  ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FieldServiceMock,
+  MdDialogMock
+} from '../create-content.mocks.spec';
 import { CreateContentStep2Component } from './step-2.component';
+import { SharedspaceToolbarDirective } from '../../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
+import { FieldsEditorDirective } from '../../fieldsEditor/fields-editor.component';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
+
+import ContentService from '../../../../../services/content.service';
+import DialogService from '../../../../../services/dialog.service';
+import FieldService from '../../fields/field.service';
+import { DocumentTypeInfo, Document } from '../create-content.types';
+import { MdDialogRef } from "@angular/material";
+import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
+import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 
 describe('Create content step 2 component', () => {
   let component: CreateContentStep2Component;
   let fixture: ComponentFixture<CreateContentStep2Component>;
   let createContentService: CreateContentService;
-  let ContentService: ContentService;
-  let feedbackService: FeedbackService;
+  let contentService: ContentService;
+  let dialogService: DialogService;
+  let fieldService: FieldService;
+  let dialog: MdDialogRef;
+
+  const testDocument: Document = {
+    id: 'testId',
+    displayName: 'test document',
+    info: {
+      dirty: false,
+      type: {
+        id: 'ns:testdocument',
+      }
+    }
+  };
+  const testDocumentType: DocumentTypeInfo = { id: 'ns:testdocument', displayName: 'test-name 1' };
+  const resolve = (arg = null) => Observable.of(arg).toPromise();
+  const reject = (arg = null) => Observable.throw(arg).toPromise();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         CreateContentStep2Component,
         HintsComponent,
-        NameUrlFieldsComponent
+        NameUrlFieldsComponent,
+        SharedspaceToolbarDirective,
+        FieldsEditorDirective,
+        NameUrlFieldsDialogComponent
       ],
       imports: [
         SharedModule,
         FormsModule,
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
       ],
       providers: [
         { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
         { provide: ContentService, useClass: ContentServiceMock },
+        { provide: DialogService, useClass: DialogServiceMock },
+        { provide: FieldService, useClass: FieldServiceMock },
+        { provide: MdDialogRef, useClass: MdDialogMock }
       ]
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [NameUrlFieldsDialogComponent],
+      },
     });
 
     fixture = TestBed.createComponent(CreateContentStep2Component);
     component = fixture.componentInstance;
     createContentService = fixture.debugElement.injector.get(CreateContentService);
-    ContentService = fixture.debugElement.injector.get(ContentService);
-    feedbackService = fixture.debugElement.injector.get(FeedbackService);
+    contentService = fixture.debugElement.injector.get(ContentService);
+    dialogService = fixture.debugElement.injector.get(DialogService);
+    fieldService = fixture.debugElement.injector.get(FieldService);
+    dialog = fixture.debugElement.injector.get(MdDialogRef);
+
+    spyOn(contentService, 'getDocumentType').and.callThrough();
+    spyOn(createContentService, 'getDocument').and.callThrough();
+    spyOn(dialogService, 'confirm').and.callThrough();
+
+    fixture.detectChanges();
   });
 
-  // it('should call parent "on full width" mode on and off', () => {
-  //   spyOn(component, 'onFullWidth');
-  //   component.setFullWidth(true);
-  //   expect(component.isFullWidth).toBe(true);
-  //   expect(component.onFullWidth).toHaveBeenCalledWith();
-  //
-  //   component.setFullWidth(false);
-  //   expect(component.isFullWidth).toBe(false);
-  //   expect(component.onFullWidth).toHaveBeenCalledWith();
-  // });
+  it('should detect ESC keypress', fakeAsync(() => {
+    fixture.detectChanges();
+    spyOn(component, 'close');
+    const event = new KeyboardEvent('keypress');
+    Object.defineProperty(event, 'which', { value: 27 });
+    fixture.nativeElement.dispatchEvent(event);
 
-  // it('should detect ESC keypress', () => {
-  //   const e = angular.element.Event('keydown');
-  //   e.which = 27;
-  //
-  //   spyOn(component, 'close');
-  //   component.$element.trigger(e);
-  //   expect(component.close).toHaveBeenCalled();
-  // });
+    expect(component.close).toHaveBeenCalled();
+  }));
 
-  // it('on init, loads the document from the createContentService', () => {
-  //   spyOn(component,'loadNewDocument');
-  //   // spyOn(component,'resetBeforeStateChange');
-  //
-  //   component.ngOnInit();
-  //   expect(component.loadNewDocument).toHaveBeenCalled();
-  //   // expect(component.resetBeforeStateChange).toHaveBeenCalled();
-  // });
+  it('should call parent "on full width" mode on and off', () => {
+    spyOn(component.onFullWidth, 'emit');
+    component.setFullWidth(true);
+    expect(component.isFullWidth).toBe(true);
+    expect(component.onFullWidth.emit).toHaveBeenCalledWith(true);
 
-  // describe('opening a document', () => {
-  //   beforeEach(() => {
-  //     ContentService.getDocumentType.and.returnValue(Observable.of(testDocumentType));
-  //     CreateContentService.getDocument.and.returnValue(testDocument);
-  //   });
-  //
-  //   it('gets the newly created draft document from create content service', () => {
-  //     component.loadNewDocument();
-  //     expect(CreateContentService.getDocument).toHaveBeenCalled();
-  //     expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-  //   });
-  //
-  //   it('gets the newly created draft document from create content service', () => {
-  //     spyOn(component, '_onLoadSuccess');
-  //     component.loadNewDocument();
-  //     $rootScope.$apply();
-  //     expect(component._onLoadSuccess).toHaveBeenCalledWith(testDocument, testDocumentType);
-  //     expect(component.loading).not.toBeDefined();
-  //   });
-  // });
-  //
-  // describe('closing the panel', () => {
-  //   beforeEach(() => {
-  //     ContentService.getDocumentType.and.returnValue(Observable.of(testDocumentType));
-  //     CreateContentService.getDocument.and.returnValue(testDocument);
-  //     // DialogService.confirm.and.callThrough();
-  //
-  //     component.$onInit();
-  //     $rootScope.$digest();
-  //   });
-  //
-  //   it('Calls discardAndClose method to confirm document discard and close the panel', () => {
-  //     spyOn(component, '_discardAndClose').and.returnValue($q.resolve());
-  //
-  //     component.close();
-  //     expect(component._discardAndClose).toHaveBeenCalled();
-  //   });
-  //
-  //   it('Discards the document when "discard" is selected', () => {
-  //     spyOn(component, '_confirmDiscardChanges').and.returnValue($q.resolve());
-  //
-  //     component.close();
-  //     $rootScope.$digest();
-  //
-  //     expect(component.doc).toBeUndefined();
-  //     expect(component.documentId).toBeUndefined();
-  //     expect(component.docType).toBeUndefined();
-  //     expect(component.editing).toBeUndefined();
-  //     expect(component.feedback).toBeUndefined();
-  //     expect(component.title).toBe(component.defaultTitle);
-  //     expect(component.form.$setPristine).toHaveBeenCalled();
-  //   });
-  //
-  //   it('Will not discard the document when cancel is clicked', () => {
-  //     spyOn(component, '_confirmDiscardChanges').and.returnValue($q.reject());
-  //
-  //     component.close();
-  //     $rootScope.$digest();
-  //
-  //     expect(component.doc).not.toBeUndefined();
-  //     expect(component.documentId).not.toBeUndefined();
-  //     expect(component.docType).not.toBeUndefined();
-  //     expect(component.editing).not.toBeUndefined();
-  //     expect(component.title).not.toBe(component.defaultTitle);
-  //     expect(component.form.$setPristine).not.toHaveBeenCalled();
-  //   });
-  // });
-  //
-  // describe('changing name or URL of the document', () => {
-  //   beforeEach(() => {
-  //     spyOn(component, '_openEditNameUrlDialog');
-  //     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-  //     CreateContentService.getDocument.and.returnValue(testDocument);
-  //     DialogService.confirm.and.callThrough();
-  //
-  //     component.$onInit();
-  //     $rootScope.$digest();
-  //   });
-  //   it('open a change url-name dialog', () => {
-  //     component._openEditNameUrlDialog.and.returnValue($q.resolve());
-  //     component.editNameUrl();
-  //
-  //     expect(component._openEditNameUrlDialog).toHaveBeenCalled();
-  //   });
-  //
-  //   it('changes document title if the change is submitted in dialog', () => {
-  //     spyOn(component, '_submitEditNameUrl');
-  //     component._openEditNameUrlDialog.and.returnValue($q.resolve({ name: 'docName', url: 'doc-url' }));
-  //     component.editNameUrl();
-  //     $rootScope.$apply();
-  //
-  //     expect(component._submitEditNameUrl).toHaveBeenCalledWith({ name: 'docName', url: 'doc-url' });
-  //   });
-  //
-  //   it('takes no action if user clicks cancel on the dialog', () => {
-  //     spyOn(component, '_submitEditNameUrl');
-  //     component._openEditNameUrlDialog.and.returnValue($q.reject());
-  //     component.editNameUrl();
-  //
-  //     expect(component._submitEditNameUrl).not.toHaveBeenCalled();
-  //   });
-  // });
-  //
-  // it('_openEditNameUrlDialog method open a dialog with the correct details', () => {
-  //   ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-  //   CreateContentService.getDocument.and.returnValue(testDocument);
-  //   component.$onInit();
-  //   $rootScope.$apply();
-  //
-  //   component._openEditNameUrlDialog();
-  //
-  //   const dialogArguments = DialogService.show.calls.mostRecent().args[0];
-  //
-  //   expect(dialogArguments.locals.title).toBe('CHANGE_DOCUMENT_NAME');
-  //   expect(dialogArguments.locals.name).toBe('testDoc');
-  // });
-  //
-  // it('show correct dialog to change name or URL of the document', () => {});
-  //
-  // it('knows the document is dirty when the backend says so', () => {
-  //   component.doc = {
-  //     info: {
-  //       dirty: true,
-  //     },
-  //   };
-  //   expect(component.isDocumentDirty()).toBe(true);
-  // });
-  //
-  // it('knows the document is dirty when the form is dirty', () => {
-  //   component.form.$dirty = true;
-  //   expect(component.isDocumentDirty()).toBe(true);
-  // });
-  //
-  // it('knows the document is dirty when both the backend says so and the form is dirty', () => {
-  //   component.doc = {
-  //     info: {
-  //       dirty: true,
-  //     },
-  //   };
-  //   component.form.$dirty = true;
-  //   expect(component.isDocumentDirty()).toBe(true);
-  // });
+    component.setFullWidth(false);
+    expect(component.isFullWidth).toBe(false);
+    expect(component.onFullWidth.emit).toHaveBeenCalledWith(false);
+  });
+
+  it('on init, loads the document from the createContentService', () => {
+    spyOn(component,'loadNewDocument');
+    spyOn(component,'resetBeforeStateChange');
+
+    component.ngOnInit();
+    expect(component.loadNewDocument).toHaveBeenCalled();
+    expect(component.resetBeforeStateChange).toHaveBeenCalled();
+  });
+
+  describe('opening a document', () => {
+    beforeEach(() => {
+      createContentService.getDocument.and.callThrough();
+      contentService.getDocumentType.and.callThrough();
+    });
+
+    it('gets the newly created draft document from create content service', () => {
+      component.loadNewDocument();
+      expect(createContentService.getDocument).toHaveBeenCalled();
+      expect(contentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+    });
+
+    it('gets the newly created draft document from create content service', fakeAsync(() => {
+      spyOn(component, 'onLoadSuccess');
+      component.loadNewDocument();
+
+      tick();
+      fixture.detectChanges();
+
+      expect(component.onLoadSuccess).toHaveBeenCalledWith(testDocument, testDocumentType);
+      expect(component.loading).toEqual(false);
+    }));
+  });
+
+  describe('closing the panel', () => {
+    beforeEach(() => {
+      spyOn(component, 'resetState');
+      spyOn(component.onClose, 'emit');
+
+      component.ngOnInit();
+    });
+
+    it('Calls discardAndClose method to confirm document discard and close the panel', fakeAsync(() => {
+      tick();
+      fixture.detectChanges();
+
+      spyOn(component, 'discardAndClose').and.returnValue(resolve());
+
+      component.close();
+      expect(component.discardAndClose).toHaveBeenCalled();
+    }));
+
+    it('Discards the document when "discard" is selected', fakeAsync(() => {
+      tick();
+      fixture.detectChanges();
+      spyOn(component, 'discardAndClose').and.returnValue(resolve());
+      spyOn(component, 'confirmDiscardChanges').and.returnValue(resolve());
+
+      component.close().then(() => {
+        expect(component.resetState).toHaveBeenCalled();
+        expect(component.onClose.emit).toHaveBeenCalled();
+      });
+    }));
+
+    it('Will not discard the document when cancel is clicked', fakeAsync(() => {
+      tick();
+      fixture.detectChanges();
+
+      spyOn(component, 'confirmDiscardChanges').and.returnValue(reject());
+
+      component.close().catch(() => {
+        expect(component.resetState).not.toHaveBeenCalled();
+        expect(component.onClose.emit).not.toHaveBeenCalled();
+      });
+    }));
+  });
+
+  describe('changing name or URL of the document', () => {
+    beforeEach(() => {
+      spyOn(component, 'openEditNameUrlDialog').and.callThrough();
+      spyOn(component.dialog, 'open').and.returnValue(dialog);
+      spyOn(dialog, 'afterClosed').and.returnValue(Observable.of({ name: 'docName', url: 'doc-url' }));
+      spyOn(component, 'submitEditNameUrl').and.callThrough();
+
+      component.ngOnInit();
+      component.doc = testDocument;
+    });
+
+    it('open a change url-name dialog', fakeAsync(() => {
+      tick();
+      fixture.detectChanges();
+      component.editNameUrl();
+
+      expect(component.openEditNameUrlDialog).toHaveBeenCalled();
+    }));
+
+    it('openEditNameUrlDialog method open a dialog with the correct details', () => {
+      component.openEditNameUrlDialog();
+
+      const dialogProps = {
+        height: '250px',
+        width: '600px',
+        data: {
+          title: 'CHANGE_DOCUMENT_NAME',
+          name: testDocument.displayName,
+          url: '',
+        }
+      };
+
+      expect(component.dialog.open).toHaveBeenCalledWith(NameUrlFieldsDialogComponent, dialogProps);
+    });
+
+    it('changes document title if the change is submitted in dialog', fakeAsync(() => {
+      component.editNameUrl();
+      tick();
+      fixture.detectChanges();
+
+      expect(component.submitEditNameUrl).toHaveBeenCalledWith({ name: 'docName', url: 'doc-url' });
+    }));
+
+    it('takes no action if user clicks cancel on the dialog', fakeAsync(() => {
+      dialog.afterClosed.and.returnValue(Observable.of(false));
+      tick();
+      fixture.detectChanges();
+
+      component.editNameUrl();
+
+      expect(component.submitEditNameUrl).not.toHaveBeenCalled();
+    }));
+  });
+
+
+  it('knows the document is dirty when the backend says so', () => {
+    component.doc = testDocument;
+    component.doc.info.dirty = true;
+    expect(component.isDocumentDirty()).toBe(true);
+  });
 });

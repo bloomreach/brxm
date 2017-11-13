@@ -15,7 +15,10 @@
  */
 
 import { Observable } from 'rxjs/Observable';
-import { DocumentDetails, TemplateQuery } from './create-content.types';
+import 'rxjs/add/operator/toPromise';
+import { DocumentDetails, DocumentTypeInfo, TemplateQuery } from './create-content.types';
+import { Component } from "@angular/core";
+import { MdDialogRef } from "@angular/material";
 
 export class CreateContentServiceMock {
   getTemplateQuery(id): Observable<TemplateQuery> {
@@ -30,8 +33,17 @@ export class CreateContentServiceMock {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 
-  getDocument() {
-    return null;
+  getDocument(): Document {
+    return {
+      id: 'testId',
+      displayName: 'test document',
+      info: {
+        dirty: false,
+        type: {
+          id: 'ns:testdocument',
+        }
+      }
+    };
   }
 }
 
@@ -40,8 +52,21 @@ export class FeedbackServiceMock {
 }
 
 export class ContentServiceMock {
-  // showError(key: string, params: Map<string, any>): void {}
-  getDocumentType() {
+  getDocumentType(id: string): Promise<DocumentTypeInfo> {
+    return Observable.of({ id: 'ns:testdocument', displayName: 'test-name 1' }).toPromise();
+  }
+}
+
+export class DialogServiceMock {
+  confirm(): void {}
+}
+
+export class FieldServiceMock {
+  setDocumentId(id: string): void {}
+}
+
+export class MdDialogMock {
+  afterClosed () {
     return Observable.of(null);
   }
 }
