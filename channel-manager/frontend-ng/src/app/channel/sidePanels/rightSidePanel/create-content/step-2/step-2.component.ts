@@ -15,17 +15,17 @@
  */
 
 import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
-import './step-2.scss';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import './step-2.scss';
 
+import ContentService from '../../../../../services/content.service';
 import { CreateContentService } from '../create-content.service';
 import DialogService from '../../../../../services/dialog.service';
-import ContentService from '../../../../../services/content.service';
+import { Document } from '../create-content.types';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
-import { Document } from '../create-content.types';
 
 @Component({
   selector: 'hippo-create-content-step-2',
@@ -63,7 +63,7 @@ export class CreateContentStep2Component implements OnInit {
               private fieldService: FieldService,
               private dialogService: DialogService,
               private translate: TranslateService,
-              private dialog: MdDialog) {}
+              private dialog: MatDialog) {}
 
   ngOnInit() {
     this.loadNewDocument();
@@ -80,11 +80,11 @@ export class CreateContentStep2Component implements OnInit {
         this.onLoadSuccess(doc, docType);
         this.loading = false;
       }).catch(() => {
-        this.loading = false
+        this.loading = false;
       });
   }
 
-  private openEditNameUrlDialog(): MdDialogRef<NameUrlFieldsDialogComponent> {
+  private openEditNameUrlDialog(): MatDialogRef<NameUrlFieldsDialogComponent> {
     return this.dialog.open(NameUrlFieldsDialogComponent, {
       height: '280px',
       width: '600px',

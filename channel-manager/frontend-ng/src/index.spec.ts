@@ -39,7 +39,7 @@ getTestBed().initTestEnvironment(
 
 import * as angular from 'angular';
 import { TranslateFakeLoader, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { MdIcon, MdIconModule } from '@angular/material';
+import { MatIcon, MatIconModule } from '@angular/material';
 
 function createMessageBus($window) {
   const subscriptions = {};
@@ -186,10 +186,10 @@ function configureNg4GlobalTestBed() {
   // Some modules imports/declares things that are not needed in tests
   // We override the module to remove these things, since they cause bugs in tests,
   // in this case we make mdIconsModule ignore all "mat-icon" elements, not looking for the icons that are declared in the template
-  TestBed.overrideModule(MdIconModule, {
+  TestBed.overrideModule(MatIconModule, {
     remove: {
-      declarations: [MdIcon],
-      exports: [MdIcon]
+      declarations: [MatIcon],
+      exports: [MatIcon]
     }
   });
 }

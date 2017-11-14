@@ -36,7 +36,7 @@ import ContentService from '../../../../../services/content.service';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { DocumentTypeInfo, Document } from '../create-content.types';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
@@ -47,8 +47,8 @@ describe('Create content step 2 component', () => {
   let contentService: ContentService;
   let dialogService: DialogService;
   let fieldService: FieldService;
-  let mdDialog: MdDialog;
-  let dialog: MdDialogRef<any>;
+  let mdDialog: MatDialog;
+  let dialog: MatDialogRef<any>;
 
   const testDocument: Document = {
     id: 'testId',
@@ -81,8 +81,8 @@ describe('Create content step 2 component', () => {
         { provide: ContentService, useClass: ContentServiceMock },
         { provide: DialogService, useClass: DialogServiceMock },
         { provide: FieldService, useClass: FieldServiceMock },
-        { provide: MdDialog, useClass: MdDialogMock },
-        { provide: MdDialogRef, useClass: MdDialogRefMock }
+        { provide: MatDialog, useClass: MdDialogMock },
+        { provide: MatDialogRef, useClass: MdDialogRefMock }
       ]
     });
 
@@ -98,8 +98,8 @@ describe('Create content step 2 component', () => {
     contentService = fixture.debugElement.injector.get(ContentService);
     dialogService = fixture.debugElement.injector.get(DialogService);
     fieldService = fixture.debugElement.injector.get(FieldService);
-    mdDialog = fixture.debugElement.injector.get(MdDialog);
-    dialog = fixture.debugElement.injector.get(MdDialogRef);
+    mdDialog = fixture.debugElement.injector.get(MatDialog);
+    dialog = fixture.debugElement.injector.get(MatDialogRef);
 
     spyOn(contentService, 'getDocumentType').and.callThrough();
     spyOn(createContentService, 'getDocument').and.callThrough();
@@ -135,7 +135,7 @@ describe('Create content step 2 component', () => {
     it('loads the document from the createContentService', () => {
       // Override emit function to trigger the emitted method, so we can test it is called
       component.onBeforeStateChange.emit = arg => arg();
-      spyOn(component,'loadNewDocument');
+      spyOn(component, 'loadNewDocument');
       spyOn(component, 'discardAndClose');
       spyOn(component.onBeforeStateChange, 'emit').and.callThrough();
 

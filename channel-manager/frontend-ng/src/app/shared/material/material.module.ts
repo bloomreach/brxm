@@ -20,11 +20,11 @@ import {
   MATERIAL_COMPATIBILITY_MODE,
   MatListModule,
   MatButtonModule,
+  MatDialogModule,
   MatInputModule,
   MatSelectModule,
   MatIconModule,
-  MdDialogModule,
-  MdIconRegistry,
+  MatIconRegistry,
   NoConflictStyleCompatibilityMode
 } from '@angular/material';
 import './material.scss';
@@ -34,10 +34,10 @@ import { DomSanitizer } from '@angular/platform-browser';
   exports: [
     MatListModule,
     MatButtonModule,
+    MatDialogModule,
     MatInputModule,
     MatSelectModule,
     MatIconModule,
-    MdDialogModule,
     NoConflictStyleCompatibilityMode
   ],
   providers: [
@@ -46,7 +46,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   ]
 })
 export class MaterialModule {
-  constructor (private iconRegistry: MdIconRegistry, sanitizer: DomSanitizer) {
+  constructor (private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     const HippoGlobal = window.parent.Hippo || {};
     const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
 
