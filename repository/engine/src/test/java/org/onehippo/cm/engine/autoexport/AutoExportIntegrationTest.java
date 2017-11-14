@@ -61,6 +61,18 @@ public class AutoExportIntegrationTest {
      */
 
     @Test
+    public void content_filters() throws Exception {
+        // test that autoexport:filteruuids and autoexport:excluded are applied to content
+        new Fixture("content_filters").test(session -> {
+            session.getNode("/content/uuids").setProperty("newProperty", "value");
+            session.getNode("/content/uuids/child").setProperty("newProperty", "value");
+            session.getNode("/content")
+                    .addNode("excluded", "nt:unstructured")
+                    .addNode("child", "nt:unstructured");
+        });
+    }
+
+    @Test
     public void config_sns_create_new() throws Exception {
         new Fixture("config_sns_create_new").test(session -> {
             final Node container = session.getNode("/config").addNode("container", "nt:unstructured");
