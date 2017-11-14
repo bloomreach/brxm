@@ -78,7 +78,7 @@ describe('NameUrlFields Component', () => {
   function setNameInputValue(value: string) {
     const nameInput = component.nameInputElement.nativeElement;
     component.form.controls.name.value = value;
-    component.documentName = value;
+    component.nameField = value;
     nameInput.dispatchEvent(new Event('keyup'));
   }
 

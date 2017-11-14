@@ -30,8 +30,9 @@ import { DocumentLocationFieldComponent } from '../document-location/document-lo
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
 
-describe('Create content component', () => {
+describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
@@ -48,11 +49,14 @@ describe('Create content component', () => {
       imports: [
         SharedModule,
         FormsModule,
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
       ],
       providers: [
         { provide: ChannelService, useClass: ChannelServiceMock },
         { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
+        { provide: FeedbackService, useClass: FeedbackServiceMock }
       ]
     });
 
@@ -119,6 +123,56 @@ describe('Create content component', () => {
       fixture.detectChanges();
 
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { 'templateQuery': 'new-document' });
+    }));
+  });
+
+  describe('Creating new draft', () => {
+    beforeEach(() => {
+      // Mock templateQuery calls that gets executed on "onInit"
+      // Disabling this will fail the tests
+      component.options = { templateQuery: 'test-template-query' };
+      const documentTypes: Array<DocumentTypeInfo> = [
+        { id: 'test-id1', displayName: 'test-name 1' },
+      ];
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({ documentTypes }));
+    });
+
+    it('assembles document object and send it to the server', () => {
+      component.nameUrlFields.nameField = 'New doc';
+      component.nameUrlFields.urlField = 'new-doc';
+      component.documentType = 'hap:contentdocument';
+
+      const data = {
+        name: 'New doc',
+        slug: 'new-doc',
+        templateQuery: 'test-template-query',
+        documentTypeId: 'hap:contentdocument',
+        rootPath: '/content/documents/hap/news',
+        defaultPath: '2017/11',
+      };
+      const spy = spyOn(createContentService, 'createDraft')
+        .and.returnValue(Observable.of('resolved'));
+
+      component.submit();
+      fixture.detectChanges();
+
+      expect(spy).toHaveBeenCalledWith(data);
+    });
+
+    it('sends feedback as error when server returns 500', async(() => {
+      const feedbackSpy = spyOn(feedbackService, 'showError');
+      spyOn(createContentService, 'createDraft')
+        .and.returnValue(Observable.throw({
+        status: 500,
+        data: {
+          'reason': 'INVALID_DOCUMENT_DETAILS',
+        }
+      }));
+
+      component.submit();
+      fixture.detectChanges();
+
+      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_DOCUMENT_DETAILS');
     }));
   });
 });

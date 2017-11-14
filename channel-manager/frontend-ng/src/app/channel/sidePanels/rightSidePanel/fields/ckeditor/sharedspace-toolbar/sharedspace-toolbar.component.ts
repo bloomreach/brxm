@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SharedSpaceToolbarComponent from './sharedspace-toolbar.ng1.component';
-import SharedSpaceToolbarService from './sharedspace-toolbar.service';
 
-const SharedSpaceToolbarModule = angular
-  .module('hippo-cm.channel.fieldsModule.sharedspaceToolbar', [])
-  .component('sharedspaceToolbar', SharedSpaceToolbarComponent)
-  .service('SharedSpaceToolbarService', SharedSpaceToolbarService);
+import { Directive, ElementRef, Injector, SimpleChanges } from '@angular/core';
+import { UpgradeComponent } from '@angular/upgrade/static';
 
-export default SharedSpaceToolbarModule.name;
+@Directive({
+  selector: 'hippo-sharedspace-toolbar'
+})
+export class SharedspaceToolbarDirective extends UpgradeComponent {
+  constructor(elementRef: ElementRef, injector: Injector) {
+    super('sharedspaceToolbar', elementRef, injector);
+  }
+}

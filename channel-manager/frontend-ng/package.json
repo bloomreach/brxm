@@ -35,6 +35,8 @@
     "@angular/router": "4.3.6",
     "@angular/upgrade": "4.3.6",
     "@bloomreach/dragula": "3.7.2-br.3",
+    "@ngx-translate/core": "^8.0.0",
+    "@ngx-translate/http-loader": "^2.0.0",
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
     "angular-aria": "1.5.11",

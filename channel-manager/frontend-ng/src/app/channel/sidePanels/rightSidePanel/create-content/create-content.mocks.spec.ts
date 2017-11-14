@@ -15,15 +15,35 @@
  */
 
 import { Observable } from 'rxjs/Observable';
-import { TemplateQuery, Folder } from './create-content.types';
+import 'rxjs/add/operator/toPromise';
+import { DocumentDetails, DocumentTypeInfo, TemplateQuery, Folder } from './create-content.types';
+import { Component } from "@angular/core";
+import { MdDialogRef } from "@angular/material";
 
 export class CreateContentServiceMock {
   getTemplateQuery(id): Observable<TemplateQuery> {
     return Observable.of(null);
   }
 
+  createDraft(documentDetails: DocumentDetails): Observable<TemplateQuery> {
+    return Observable.of(null);
+  }
+
   generateDocumentUrlByName(name, locale: string = ''): Observable<string> {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
+  }
+
+  getDocument() {
+    return {
+      id: 'testId',
+      displayName: 'test document',
+      info: {
+        dirty: false,
+        type: {
+          id: 'ns:testdocument',
+        }
+      }
+    };
   }
 
   getFolders(path: string): Observable<Array<Folder>> {
@@ -33,6 +53,56 @@ export class CreateContentServiceMock {
 
 export class FeedbackServiceMock {
   showError(key: string, params: Map<string, any>): void {}
+}
+
+export class ContentServiceMock {
+  getDocumentType(id: string): Promise<DocumentTypeInfo> {
+    return Observable.of({ id: 'ns:testdocument', displayName: 'test-name 1' }).toPromise();
+  }
+}
+
+export class DialogServiceMock {
+  confirm(): any {
+    return new ConfirmDialogMock();
+  }
+
+  show(dialog: object): Promise<void> {
+    return Promise.resolve();
+  }
+}
+
+export class ConfirmDialogMock {
+  title() {
+    return this;
+  }
+
+  textContent() {
+    return this;
+  }
+
+  ok() {
+    return this;
+  }
+
+  cancel() {
+    return this;
+  }
+}
+
+export class FieldServiceMock {
+  setDocumentId(id: string): void {}
+}
+
+export class MdDialogMock {
+  open() {
+    return new MdDialogRefMock();
+  }
+}
+
+export class MdDialogRefMock {
+  afterClosed () {
+    return Observable.of({ name: 'docName', url: 'doc-url' });
+  }
 }
 
 export class ChannelServiceMock {
