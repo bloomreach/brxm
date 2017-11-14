@@ -22,10 +22,9 @@ import {
   MdButtonModule,
   MdInputModule,
   MdSelectModule,
-  MdDialogModule, MdIconRegistry, MdIconModule
+  MdDialogModule
 } from '@angular/material';
 import './material.scss';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
   exports: [
@@ -35,45 +34,10 @@ import { DomSanitizer } from '@angular/platform-browser';
     MdInputModule,
     MdButtonModule,
     MdSelectModule,
-    MdDialogModule,
-    MdIconModule
+    MdDialogModule
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},
   ]
 })
-export class MaterialModule {
-  constructor (private iconRegistry: MdIconRegistry, sanitizer: DomSanitizer) {
-    const HippoGlobal = window.parent.Hippo || {};
-    const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
-
-    const svgIconsList = [
-      'any-device',
-      'attention',
-      'back',
-      'close',
-      'desktop',
-      'document-status-changed',
-      'document-status-live',
-      'document-status-new',
-      'document',
-      'folder-closed',
-      'folder-open',
-      'left-side-panel-arrow-right',
-      'left-side-panel-arrow-left',
-      'maximize-sidepanel',
-      'phone',
-      'publish',
-      'resize-handle',
-      'switch-to-content-editor',
-      'tablet',
-      'toggle_components_overlay',
-      'un-maximize-sidepanel',
-    ];
-
-    svgIconsList.forEach((icon) => {
-      const iconUrl = `images/${icon}.svg${antiCache}`;
-      iconRegistry.addSvgIcon(icon, sanitizer.bypassSecurityTrustResourceUrl(iconUrl));
-    });
-  }
-}
+export class MaterialModule { }

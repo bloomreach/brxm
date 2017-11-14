@@ -26,7 +26,7 @@ import 'zone.js/dist/fake-async-test';
 import './app/hippo-cm.ng1.module.js';
 import 'angular-mocks';
 
-import { getTestBed, TestBed } from '@angular/core/testing';
+import { getTestBed } from '@angular/core/testing';
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting
@@ -38,8 +38,6 @@ getTestBed().initTestEnvironment(
 );
 
 import * as angular from 'angular';
-import { TranslateFakeLoader, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { MdIcon, MdIconModule } from '@angular/material';
 
 function createMessageBus($window) {
   const subscriptions = {};
@@ -174,32 +172,9 @@ function mockMdIcon() {
   });
 }
 
-function configureNg4GlobalTestBed() {
-  // Provide fake translations to ignore GET request for the translation file
-  TestBed.configureTestingModule({
-    imports: [
-      TranslateModule.forRoot({
-        loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
-      })
-    ]
-  });
-  // Some modules imports/declares things that are not needed in tests
-  // We override the module to remove these things, since they cause bugs in tests,
-  // in this case we make mdIconsModule ignore all "mat-icon" elements, not looking for the icons that are declared in the template
-  TestBed.overrideModule(MdIconModule, {
-    remove: {
-      declarations: [MdIcon],
-      exports: [MdIcon]
-    }
-  });
-}
-
-beforeEach(() => {
-  mockHost();
-  mockFallbackTranslations();
-  mockMdIcon();
-  configureNg4GlobalTestBed();
-});
+beforeEach(mockHost);
+beforeEach(mockFallbackTranslations);
+beforeEach(mockMdIcon);
 
 const testsContext = require.context('./app', true, /.spec$/);
 testsContext.keys().forEach(testsContext);

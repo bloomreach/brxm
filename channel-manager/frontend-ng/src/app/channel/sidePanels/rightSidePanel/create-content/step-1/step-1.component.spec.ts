@@ -30,6 +30,7 @@ import { DocumentLocationFieldComponent } from '../document-location/document-lo
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
 
 describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
@@ -47,7 +48,10 @@ describe('Create content step 1 component', () => {
       ],
       imports: [
         SharedModule,
-        FormsModule
+        FormsModule,
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
       ],
       providers: [
         { provide: ChannelService, useClass: ChannelServiceMock },

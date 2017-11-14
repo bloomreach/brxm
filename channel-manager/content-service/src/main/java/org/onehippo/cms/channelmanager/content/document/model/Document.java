@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Document {
     private String id;                // UUID
     private String displayName;
-    private String urlName;
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, List<FieldValue>> fields;
 
@@ -53,14 +52,6 @@ public class Document {
 
     public void setDisplayName(final String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getUrlName() {
-        return urlName;
-    }
-
-    public void setUrlName(final String urlName) {
-        this.urlName = urlName;
     }
 
     public DocumentInfo getInfo() {

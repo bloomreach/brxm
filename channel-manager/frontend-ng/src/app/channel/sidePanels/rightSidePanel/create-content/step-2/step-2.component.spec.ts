@@ -31,14 +31,15 @@ import {
 import { CreateContentStep2Component } from './step-2.component';
 import { SharedspaceToolbarDirective } from '../../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
 import { FieldsEditorDirective } from '../../fieldsEditor/fields-editor.component';
+import { TranslateModule, TranslateLoader, TranslateFakeLoader } from '@ngx-translate/core';
 
 import ContentService from '../../../../../services/content.service';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { DocumentTypeInfo, Document } from '../create-content.types';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MdDialog, MdDialogRef } from "@angular/material";
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 
 describe('Create content step 2 component', () => {
   let component: CreateContentStep2Component;
@@ -74,7 +75,10 @@ describe('Create content step 2 component', () => {
       ],
       imports: [
         SharedModule,
-        FormsModule
+        FormsModule,
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
       ],
       providers: [
         { provide: CreateContentService, useClass: CreateContentServiceMock },
