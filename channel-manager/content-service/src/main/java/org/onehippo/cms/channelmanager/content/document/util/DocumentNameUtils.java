@@ -50,6 +50,9 @@ public class DocumentNameUtils {
     }
 
     private static String encode(final String name, final Encoding encoding, final String locale) {
+        if (name == null) {
+            return null;
+        }
         final StringCodecService service = HippoServiceRegistry.getService(StringCodecService.class);
         final StringCodec codec = service.getStringCodec(encoding, locale);
         return codec.encode(name);
@@ -62,8 +65,8 @@ public class DocumentNameUtils {
         final String newUrlName = encodeUrlName(urlName, locale);
         final String newDisplayName = encodeDisplayName(displayName, locale);
 
-        final boolean sameUrlName = oldUrlName.equals(newUrlName);
-        final boolean sameDisplayName = oldDisplayName.equals(newDisplayName);
+        final boolean sameUrlName = StringUtils.equals(oldUrlName, newUrlName);
+        final boolean sameDisplayName = StringUtils.equals(oldDisplayName, newDisplayName);
 
         if (sameUrlName && sameDisplayName) {
             // nothing to update

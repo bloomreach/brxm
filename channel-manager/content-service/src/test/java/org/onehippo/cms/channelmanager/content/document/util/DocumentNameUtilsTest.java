@@ -25,6 +25,7 @@ import org.hippoecm.repository.api.StringCodecService;
 import org.hippoecm.repository.api.StringCodecService.Encoding;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,15 +40,17 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNull;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({HippoServiceRegistry.class, WorkflowUtils.class})
+@PrepareForTest({HippoServiceRegistry.class, JcrUtils.class, WorkflowUtils.class})
 public class DocumentNameUtilsTest {
 
     @Before
@@ -91,6 +94,12 @@ public class DocumentNameUtilsTest {
 
         assertThat(encoded, equalTo("some-name"));
         verifyAll();
+    }
+
+    @Test
+    public void encodeUrlNameNull() {
+        final String encoded = DocumentNameUtils.encodeUrlName(null, null);
+        assertNull(encoded);
     }
 
     @Test
@@ -203,6 +212,38 @@ public class DocumentNameUtilsTest {
         final StringCodec displayNameCodec = createMock(StringCodec.class);
         final StringCodec urlNameCodec = createMock(StringCodec.class);
         final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
+
+        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
+        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
+        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
+        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
+        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
+
+        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
+
+        workflow.rename("new-name");
+        expectLastCall();
+
+        workflow.setDisplayName("New Name (encoded)");
+        expectLastCall();
+
+        replayAll();
+
+        DocumentNameUtils.setNames(node, "new name", "New Name", "en");
+
+        verifyAll();
+    }
+
+    @Test
+    public void setNamesBothAndUrlNameReadIsNull() throws Exception {
+        final Node node = createHandle("old-name", "Old Name (encoded)");
+        final StringCodecService service = createMock(StringCodecService.class);
+        final StringCodec displayNameCodec = createMock(StringCodec.class);
+        final StringCodec urlNameCodec = createMock(StringCodec.class);
+        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
+        mockStaticPartial(JcrUtils.class, "getNodeNameQuietly");
+
+        expect(JcrUtils.getNodeNameQuietly(node)).andReturn(null);
 
         expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
         expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
