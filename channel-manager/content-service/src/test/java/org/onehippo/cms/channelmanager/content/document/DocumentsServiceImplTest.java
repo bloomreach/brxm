@@ -70,6 +70,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -84,7 +85,7 @@ public class DocumentsServiceImplTest {
 
     private Session session;
     private Locale locale;
-    private final DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
+    private final DocumentsService documentsService = (DocumentsServiceImpl) DocumentsService.get();
     private NewDocumentInfo info;
 
     @Before
@@ -287,7 +288,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Failed to retrieve JCR session for node /bla"));
         }
 
         verifyAll();
@@ -317,7 +318,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Failed to retrieve type of document /bla"));
         }
 
         verifyAll();
@@ -440,7 +441,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
         expect(docType.getFields()).andReturn(fields);
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
-        expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
+        expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
         replayAll(docType);
 
@@ -628,7 +629,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Document type EasyMock for class org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType can not be updated."));
         }
 
         verifyAll();
@@ -693,7 +694,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Failed to save changes to draft node of document uuid"));
         }
 
         verifyAll();
@@ -1029,7 +1030,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Document type EasyMock for class org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType can not be updated."));
         }
 
         verifyAll();
@@ -1151,7 +1152,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Failed to save changes to field ns:field in draft node of document uuid"));
         }
 
         verifyAll();
@@ -1243,7 +1244,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(e.getPayload(), is("Failed to dispose of editable instance"));
         }
 
         verifyAll();
