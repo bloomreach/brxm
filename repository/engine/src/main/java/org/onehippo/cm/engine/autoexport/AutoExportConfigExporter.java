@@ -50,12 +50,10 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
-import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONTENT;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
@@ -68,50 +66,47 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
     private static final Logger log = LoggerFactory.getLogger(AutoExportConfigExporter.class);
 
-    private ConfigurationModelImpl configurationModel;
+    // this local field just allows us to avoid casting where we need the full AutoExportConfig API
     private AutoExportConfig exportConfig;
+
+    private ConfigurationModelImpl configurationModel;
     private PathsMap addedContent;
     private PathsMap deletedContent;
 
-    private static final Set<String> suppressedDelta = newHashSet(
-            // TODO: move these somewhere more permanent
-            // facet-related generated property
-            "hippo:count"
-    );
-
-    public AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig exportConfig,
+    AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig exportConfig,
                                     final PathsMap addedContent, final PathsMap deletedContent) {
-        this.configurationModel = configurationModel;
+        super(exportConfig);
         this.exportConfig = exportConfig;
+        this.configurationModel = configurationModel;
         this.addedContent = addedContent;
         this.deletedContent = deletedContent;
     }
 
-    protected void exportProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
-        exportPrimaryTypeAndMixins(sourceNode, definitionNode);
-        for (final Property property : new PropertyIterable(sourceNode.getProperties())) {
-            if (!propertyShouldBeSkipped(property)) {
-                exportProperty(property, definitionNode);
-
-            }
+    protected boolean shouldExcludeProperty(Property property) throws RepositoryException {
+        // super implements default excludes and ExportConfig excludes
+        if (super.shouldExcludeProperty(property)) {
+            return true;
         }
-        definitionNode.sortProperties();
+
+        // default to exporting anything not explicitly suppressed
+        return false;
     }
 
-    protected boolean propertyShouldBeSkipped(Property property) throws RepositoryException {
-
-        if (super.propertyShouldBeSkipped(property)) {
+    protected boolean shouldExcludeNode(final String jcrPath) {
+        // super implements default excludes and ExportConfig excludes
+        if (super.shouldExcludeNode(jcrPath)) {
             return true;
         }
 
-        final String propName = property.getName();
-        // skip suppressed properties
-        if (suppressedDelta.contains(propName)) {
-            return true;
+        if (configurationModel != null) {
+            // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
+            final ConfigurationItemCategory category = exportConfig.getCategoryForItem(jcrPath, false, configurationModel);
+            if (category != ConfigurationItemCategory.CONFIG) {
+                log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
+                return true;
+            }
         }
-        // check ExportConfig.filterUuidPaths for export (suppressing export of jcr:uuid)
-        return (propName.equals(JCR_UUID) && exportConfig.shouldFilterUuid(property.getNode().getPath()));
-
+        return false;
     }
 
     /**
@@ -119,12 +114,8 @@ public class AutoExportConfigExporter extends JcrContentExporter {
      * the JCR state and the model state for jcrPath and all descendants. In the normal case, this will result in a new
      * definition for each changed Node. However, if a SNS exists anywhere within jcrPath, the definition must have a
      * root above the node with SNSs.
-     * @param session
-     * @param jcrPath
-     * @param configSource
-     * @throws RepositoryException
      */
-    public void exportConfigNode(final Session session, final String jcrPath, final ConfigSourceImpl configSource)
+    void exportConfigNode(final Session session, final String jcrPath, final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
 
         // first, check if we should be looking at this node at all
@@ -191,7 +182,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
             log.debug("Creating new node def without delta: \n\t{}", newPath);
 
-            exportNode(newNode, null, configSource, true);
+            exportNode(newNode, null, configSource);
         }
         else {
             // otherwise, we need to do a detailed comparison
@@ -206,11 +197,10 @@ public class AutoExportConfigExporter extends JcrContentExporter {
      * <p>In case the category "content" is injected, skip exporting child nodes and instead record these child nodes paths
      * as added content paths to be handled by the DefinitionMergeService later.</p>
      * <p>In case the category "system" is injected, skip exporting child nodes altogether.</p>
-     * @throws RepositoryException
      */
     protected void exportNode(final Node jcrNode, final DefinitionNodeImpl parentDefinition,
-                              final ConfigSourceImpl configSource, final boolean checked) throws RepositoryException {
-        if (checked || (isVirtual(jcrNode) && !shouldExcludeNode(jcrNode.getPath()))) {
+                              final ConfigSourceImpl configSource) throws RepositoryException {
+        if (!isVirtual(jcrNode) && !shouldExcludeNode(jcrNode.getPath())) {
 
             final DefinitionNodeImpl definitionNode =
                     parentDefinition != null
@@ -232,6 +222,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                     for (final Node child : new NodeIterable(jcrNode.getNodes())) {
                         final String childPath = child.getPath();
                         // make sure child node is not virtual nor pre-excluded
+                        // NOTE: this is explicitly NOT using shouldExcludeNode(String), because of the category check there
                         if (!(isVirtual(child) || exportConfig.isExcludedPath(childPath))) {
                             // found a new content root node: record it (if not already recorded)
                             if (!addedContent.matches(childPath)) {
@@ -246,26 +237,21 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                     return;
                 }
             }
+
             for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-                exportNode(childNode, definitionNode, configSource, true);
+                exportNode(childNode, definitionNode, configSource);
             }
         }
     }
 
-    protected boolean shouldExcludeNode(final String jcrPath) {
-        if (configurationModel != null) {
-            // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
-            final ConfigurationItemCategory category = exportConfig.getCategoryForItem(jcrPath, false, configurationModel);
-            if (category != ConfigurationItemCategory.CONFIG) {
-                log.debug("Ignoring node because of category:{} \n\t{}", category, jcrPath);
-                return true;
+    protected void exportProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+        exportPrimaryTypeAndMixins(sourceNode, definitionNode);
+        for (final Property property : new PropertyIterable(sourceNode.getProperties())) {
+            if (!shouldExcludeProperty(property)) {
+                exportProperty(property, definitionNode);
             }
         }
-        if (exportConfig.isExcludedPath(jcrPath)) {
-            log.debug("Ignoring node because of export exclusion:\n\t{}", jcrPath);
-            return true;
-        }
-        return false;
+        definitionNode.sortProperties();
     }
 
     protected DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
@@ -280,27 +266,20 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         // add new properties
         for (final Property jcrProperty : new PropertyIterable(jcrNode.getProperties())) {
 
-            final String propName = jcrProperty.getName();
-            if (propName.equals(JCR_PRIMARYTYPE) || propName.equals(JCR_MIXINTYPES)) {
-                continue;
-            }
-            if (isKnownDerivedPropertyName(propName) || suppressedDelta.contains(propName)) {
-                continue;
-            }
-            // skip protected properties, which are managed internally by JCR and don't make sense in export
-            // (except JCR:UUID, which we need to do references properly)
-            if (!propName.equals(JCR_UUID) && jcrProperty.getDefinition().isProtected()) {
-                continue;
-            }
-            if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
-                // skip SYSTEM property
-                continue;
-            }
-            // use ExportConfig.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-            if (propName.equals(JCR_UUID) && exportConfig.shouldFilterUuid(configNode.getJcrPath().toMinimallyIndexedPath().toString())) {
+            // first, check general exclusion rules
+            if (shouldExcludeProperty(jcrProperty)) {
                 continue;
             }
 
+            final String propName = jcrProperty.getName();
+            // skip SYSTEM properties
+            if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
+                continue;
+            }
+
+            // don't export UUID for any nodes included in product config
+            // NOTE: this doesn't work perfectly, since shouldExcludeProperty() isn't aware of this
+            //       check when exporting new nodes added while working on the product itself
             if (propName.equals(JCR_UUID) && !configNode.getDefinitions().isEmpty()) {
                 Group group = configNode.getDefinitions().get(0).getDefinition().getSource().getModule().getProject().getGroup();
                 if (PRODUCT_GROUP_NAME.equals(group.getName())) {
@@ -445,18 +424,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         //   and already build an indexed list of non-skipped/ignored jcrChildNodeNames if we need to check node ordering
         final List<String> indexedJcrChildNodeNames = new ArrayList<>();
         for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-            if (isVirtual(childNode)) {
-                continue;
-            }
-            if (exportConfig.isExcludedPath(childNode.getPath())) {
-                log.debug("Ignoring node because of export exclusion:\n\t{}", childNode.getPath());
-                continue;
-            }
-            // use getCategoryForItem from ExportConfig to account for possible exporter category overrides
-            final ConfigurationItemCategory category =
-                    exportConfig.getCategoryForItem(childNode.getPath(), false, configurationModel);
-            if (category != ConfigurationItemCategory.CONFIG) {
-                log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
+            if (isVirtual(childNode) || shouldExcludeNode(childNode.getPath())) {
                 continue;
             }
 
@@ -473,10 +441,10 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                     // call top-level recursion, not this delta method
                     exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);
                 } else {
-                    // the config doesn't know about this child, or wasnt deleted so do a full export without delta comparisons
+                    // the config doesn't know about this child, or wasn't deleted so do a full export without delta comparisons
                     // yes, defNode is indeed supposed to be the _parent's_ defNode
                     defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                    exportNode(childNode, defNode, null, true);
+                    exportNode(childNode, defNode, (ConfigSourceImpl)null);
                 }
             } else {
                 // call top-level recursion, not this delta method

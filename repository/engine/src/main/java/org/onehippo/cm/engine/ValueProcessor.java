@@ -60,6 +60,7 @@ import static javax.jcr.PropertyType.STRING;
 import static javax.jcr.PropertyType.URI;
 import static javax.jcr.PropertyType.WEAKREFERENCE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_COUNT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
@@ -72,6 +73,7 @@ public abstract class ValueProcessor {
             HIPPO_RELATED,
             HIPPO_PATHS,
             HIPPOSTD_STATESUMMARY,
+            HIPPO_COUNT
     };
 
     public static boolean isKnownDerivedPropertyName(final String modelPropertyName) {

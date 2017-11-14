@@ -138,6 +138,7 @@ public class DefinitionMergeService {
     private final HashMap<String, ModuleMapping> moduleMappings = new HashMap<>();
 
     private final Map<String, ModuleImpl> toExport = new LinkedHashMap<>();
+    private final AutoExportConfig autoExportConfig;
     private final ConfigurationModelImpl model;
     private final Session jcrSession;
 
@@ -153,6 +154,7 @@ public class DefinitionMergeService {
                                   final ConfigurationModelImpl baseline,
                                   final Session jcrSession) {
         this.jcrSession = jcrSession;
+        this.autoExportConfig = autoExportConfig;
 
         // preprocess config mapping paths to moduleMapping objects
         // note: this is very similar to the old auto-export EventProcessor init
@@ -687,7 +689,7 @@ public class DefinitionMergeService {
                     .map(JcrPath::toString).collect(toImmutableSet());
 
             try {
-                new JcrContentExporter().exportNode(
+                new JcrContentExporter(autoExportConfig).exportNode(
                         jcrSession.getNode(defPath.toString()), def, true, contentOrderBefores.get(defPath), excludedPaths);
             }
             catch (RepositoryException e) {
