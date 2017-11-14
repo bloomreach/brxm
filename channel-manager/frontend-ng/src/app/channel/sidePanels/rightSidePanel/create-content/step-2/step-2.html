@@ -52,7 +52,7 @@
         <span flex></span>
 
         <button mat-icon-button
-                class="mat-icon-button btn-edit-document-title qa-step-2-edit-name-url"
+                class="mat-icon-button btn-edit-document-title qa-edit-url"
                 matSuffix
                 type="button"
                 (click)="editNameUrl()">
@@ -86,7 +86,7 @@
       {{ 'DISCARD' | translate }}
     </button>
 
-    <button mat-button class="qa-save"
+    <button mat-button class="qa-create-content-save"
             (click)="saveDocument()"
             ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
       {{ 'SAVE' | translate  }}

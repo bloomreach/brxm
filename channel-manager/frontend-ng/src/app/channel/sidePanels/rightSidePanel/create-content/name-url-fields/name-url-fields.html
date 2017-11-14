@@ -17,7 +17,7 @@
 <form #form="ngForm">
   <!-- Document name field -->
   <div class="field">
-    <mat-input-container class="create-content-field">
+    <mat-input-container class="create-content-field qa-name-field">
       <input mdInput [(ngModel)]="nameField" name="name" placeholder="Document name" required #nameInputElement>
     </mat-input-container>
 
@@ -28,7 +28,7 @@
 
   <!-- Document URL field -->
   <div class="field">
-    <mat-input-container class="create-content-field">
+    <mat-input-container class="create-content-field qa-url-field">
       <input mdInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!isManualUrlMode">
 
       <!-- Edit button -->
@@ -36,7 +36,8 @@
               mat-icon-button
               matSuffix
               type="button"
-              (click)="setManualUrlEditMode(true)">
+              (click)="setManualUrlEditMode(true)"
+              class="qa-edit-url">
         <mat-icon>mode_edit</mat-icon>
       </button>
 
@@ -45,7 +46,8 @@
               mat-icon-button
               matSuffix
               type="button"
-              (click)="setManualUrlEditMode(false)">
+              (click)="setManualUrlEditMode(false)"
+              class="qa-generate-url">
         <mat-icon>autorenew</mat-icon>
       </button>
     </mat-input-container>

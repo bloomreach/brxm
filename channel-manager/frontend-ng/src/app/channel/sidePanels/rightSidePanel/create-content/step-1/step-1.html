@@ -55,7 +55,7 @@
             <div class="mat-input-infix">
               <mat-select [(ngModel)]="documentType" name="documentType" required
                           placeholder="Document type" [disabled]="documentTypes.length === 1"
-                          class="input-document-type create-content-field mat-input-container"
+                          class="input-document-type create-content-field mat-input-container qa-document-type-select"
                           [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
                 <mat-option *ngFor="let documentType of documentTypes"
                             [value]="documentType.id">{{ documentType.displayName }}</mat-option>
@@ -75,12 +75,12 @@
   </div>
   <!-- Buttons -->
   <div class="create-content-actions layout-padding">
-    <button mat-button class="qa-create-content-close"
+    <button mat-button class="qa-close"
             (click)="close()">
       {{ 'CANCEL' | translate }}
     </button>
 
-    <button mat-button class="qa-create-content-continue"
+    <button mat-button class="qa-continue"
             type="submit"
             (click)="submit(form)"
             [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
