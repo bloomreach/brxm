@@ -41,7 +41,7 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -128,6 +128,10 @@ class DocumentsServiceImpl implements DocumentsService {
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException();
         }
+
+        final Node folder = FolderUtils.getFolder(handle);
+        final String folderLocale = FolderUtils.getLocale(folder);
+        DocumentNameUtils.setNames(handle, document.getUrlName(), document.getDisplayName(), folderLocale);
 
         // Push fields onto draft node
         FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draft);
@@ -223,26 +227,29 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final Node rootFolder = FolderUtils.getFolder(rootPath, session);
         final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
+        final String folderLocale = FolderUtils.getLocale(folder);
 
-        if (FolderUtils.nodeWithDisplayNameExists(folder, name)) {
+        final String encodedName = DocumentNameUtils.encodeDisplayName(name, folderLocale);
+        if (FolderUtils.nodeWithDisplayNameExists(folder, encodedName)) {
             throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
         }
-        if (FolderUtils.nodeExists(folder, slug)) {
+
+        final String encodedSlug = DocumentNameUtils.encodeUrlName(slug, folderLocale);
+        if (FolderUtils.nodeExists(folder, encodedSlug)) {
             throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
-            final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, slug);
+            final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, encodedSlug);
             log.debug("Created document {}", documentPath);
 
             final Node handle = session.getNode(documentPath);
 
-            if (!slug.equals(name)) {
-                final String folderLocale = FolderUtils.getLocale(folder);
-                final String displayName = DisplayNameUtils.encodeDisplayName(name, folderLocale);
-                DisplayNameUtils.setDisplayName(handle, displayName);
+            if (!encodedSlug.equals(encodedName)) {
+                // pass the non-encoded name, otherwise it will be encoded twice
+                DocumentNameUtils.setDisplayName(handle, name, folderLocale);
             }
 
             session.save();
@@ -250,7 +257,7 @@ class DocumentsServiceImpl implements DocumentsService {
             return getDraft(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
-                    slug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
+                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
             throw new InternalServerErrorException();
         }
     }
@@ -384,6 +391,7 @@ class DocumentsServiceImpl implements DocumentsService {
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
+        document.setUrlName(JcrUtils.getNodeNameQuietly(handle));
 
         return document;
     }

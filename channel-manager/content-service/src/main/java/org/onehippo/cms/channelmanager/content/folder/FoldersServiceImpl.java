@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
+import org.hippoecm.repository.util.DocumentUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -90,7 +90,8 @@ public class FoldersServiceImpl implements FoldersService {
         final Folder folder = new Folder();
         folder.setName(node.getName());
         folder.setPath(node.getPath());
-        folder.setDisplayName(DisplayNameUtils.getDisplayName(node));
+
+        DocumentUtils.getDisplayName(node).ifPresent(folder::setDisplayName);
 
         String locale = FolderUtils.getLocale(node);
         if (locale == null && parent != null) {
