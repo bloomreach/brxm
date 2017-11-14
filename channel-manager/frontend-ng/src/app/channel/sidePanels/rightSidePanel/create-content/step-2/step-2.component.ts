@@ -165,6 +165,7 @@ export class CreateContentStep2Component implements OnInit {
     delete this.docType;
     delete this.feedback;
     this.title = this.defaultTitle;
+    this.onBeforeStateChange.emit(() => Promise.resolve());
   }
 
   private resetBeforeStateChange() {
