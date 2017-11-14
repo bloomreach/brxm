@@ -15,13 +15,22 @@
 @import 'variables';
 
 hippo-create-content-step-2 {
-  .right-side-panel-content {
-    display: flex;
-    flex-direction: column;
-  }
 
   .create-content-container {
+    overflow: hidden;
+  }
+
+  .right-side-panel-content {
+    overflow: auto;
+  }
+
+  .create-content-container,
+  .edit-title-toolbar {
     background: $white;
+  }
+
+  .create-content-actions {
+    border-top: 1px solid $grey-100;
   }
 
   .editable-title-toolbar {
