@@ -62,6 +62,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
+
 class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final String WORKFLOW_CATEGORY_DEFAULT = "default";
@@ -126,7 +128,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException();
+            throw new ForbiddenException("Document type " + docType + " can not be updated.");
         }
 
         // Push fields onto draft node
@@ -136,8 +138,9 @@ class DocumentsServiceImpl implements DocumentsService {
         try {
             session.save();
         } catch (final RepositoryException e) {
-            log.warn("Failed to save changes to draft node of document {}", uuid, e);
-            throw new InternalServerErrorException();
+            final String warning = "Failed to save changes to draft node of document " + uuid;
+            log.warn(warning, e);
+            throw new InternalServerErrorException(warning);
         }
 
         if (!FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields())) {
@@ -167,7 +170,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException();
+            throw new ForbiddenException("Document type " + docType + " can not be updated.");
         }
 
         // Write field value to draft node
@@ -176,8 +179,9 @@ class DocumentsServiceImpl implements DocumentsService {
             try {
                 session.save();
             } catch (final RepositoryException e) {
-                log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
-                throw new InternalServerErrorException();
+                final String warning = "Failed to save changes to field " + fieldPath + " in draft node of document " + uuid;
+                log.warn(warning, e);
+                throw new InternalServerErrorException(warning);
             }
         }
     }
@@ -195,8 +199,9 @@ class DocumentsServiceImpl implements DocumentsService {
         try {
             workflow.disposeEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to dispose of editable instance", e);
-            throw new InternalServerErrorException();
+            final String warning = "Failed to dispose of editable instance";
+            log.warn(warning, e);
+            throw new InternalServerErrorException(warning);
         }
     }
 
@@ -249,9 +254,9 @@ class DocumentsServiceImpl implements DocumentsService {
 
             return getDraft(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
-                    slug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
-            throw new InternalServerErrorException();
+            final String warning = "Failed to add document " + slug + " of type " + documentTypeId + " to folder " + newDocumentInfo.getRootPath() + " using template query " + templateQuery;
+            log.warn(warning, e);
+            throw new InternalServerErrorException(warning);
         }
     }
 
@@ -269,8 +274,9 @@ class DocumentsServiceImpl implements DocumentsService {
         // Archiving not possible: the document can be published, a request can be pending etc. Only case left to check:
         // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
         if (EditingUtils.hasPreview(documentWorkflow)) {
-            log.warn("Forbade to erase document '{}': it already has a preview variant", uuid);
-            throw new ForbiddenException();
+            final String warning = "Forbade to erase document " + uuid + ": it already has a preview variant";
+            log.warn(warning);
+            throw new ForbiddenException(warning);
         }
 
         // No preview indeed, so erase the draft document
@@ -280,9 +286,9 @@ class DocumentsServiceImpl implements DocumentsService {
         if (EditingUtils.canEraseDocument(folderWorkflow)) {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
-            log.warn("Forbade to erase document '{}': not allowed by the workflow of folder '{}'",
-                    JcrUtils.getNodeNameQuietly(handle), JcrUtils.getNodePathQuietly(folder));
-            throw new ForbiddenException();
+            final String warning = "Forbade to erase document " + JcrUtils.getNodeNameQuietly(handle) + ": not allowed by the workflow of folder " + getNodePathQuietly(folder);
+            log.warn(warning);
+            throw new ForbiddenException(warning);
         }
     }
 
@@ -367,11 +373,13 @@ class DocumentsServiceImpl implements DocumentsService {
         try {
             return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
         } catch (final RepositoryException e) {
-            log.warn("Failed to retrieve JCR session for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
-            throw new InternalServerErrorException();
+            final String warning = "Failed to retrieve JCR session for node " + getNodePathQuietly(handle);
+            log.warn(warning, e);
+            throw new InternalServerErrorException(warning);
         } catch (final ErrorWithPayloadException e) {
-            log.debug("Failed to retrieve type of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
-            throw new InternalServerErrorException();
+            final String warning = "Failed to retrieve type of document " + getNodePathQuietly(handle);
+            log.debug(warning, e);
+            throw new InternalServerErrorException(warning);
         }
     }
 
