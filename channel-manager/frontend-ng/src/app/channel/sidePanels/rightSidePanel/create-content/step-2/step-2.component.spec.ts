@@ -190,12 +190,17 @@ describe('Create content step 2 component', () => {
     });
 
     it('discards the document when "discard" is selected', () => {
+      component.onBeforeStateChange.emit = arg => arg();
+      spyOn(component.onBeforeStateChange, 'emit').and.callThrough();
+      spyOn(Promise, 'resolve').and.callThrough();
       component.close().then(() => {
         expect(component.documentId).not.toBeDefined();
         expect(component.doc).not.toBeDefined();
         expect(component.docType).not.toBeDefined();
         expect(component.feedback).not.toBeDefined();
         expect(component.title).toEqual('Create new content');
+        expect(component.onBeforeStateChange.emit).toHaveBeenCalled();
+        expect(Promise.resolve).toHaveBeenCalled();
         expect(component.onClose.emit).toHaveBeenCalled();
       });
     });
