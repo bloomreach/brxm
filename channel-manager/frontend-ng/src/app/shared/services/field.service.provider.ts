@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SharedSpaceToolbarComponent from './sharedspace-toolbar.ng1.component';
-import SharedSpaceToolbarService from './sharedspace-toolbar.service';
 
-const SharedSpaceToolbarModule = angular
-  .module('hippo-cm.channel.fieldsModule.sharedspaceToolbar', [])
-  .component('sharedspaceToolbar', SharedSpaceToolbarComponent)
-  .service('SharedSpaceToolbarService', SharedSpaceToolbarService);
+import FieldService from '../../channel/sidePanels/rightSidePanel/fields/field.service.js';
 
-export default SharedSpaceToolbarModule.name;
+export function fieldServiceFactory(i: any) {
+  return i.get('FieldService');
+}
+export const FieldServiceProvider = {
+  provide: FieldService,
+  useFactory: fieldServiceFactory,
+  deps: ['$injector']
+};

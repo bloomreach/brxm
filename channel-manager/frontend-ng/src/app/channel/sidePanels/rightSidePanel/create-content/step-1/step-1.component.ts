@@ -14,39 +14,44 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild, HostListener } from '@angular/core';
 import './step-1.scss';
-import { NgForm } from '@angular/forms';
 
 import { CreateContentService } from '../create-content.service';
-import { CreateContentOptions, DocumentTypeInfo } from '../create-content.types';
+import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'hippo-create-content',
+  selector: 'hippo-create-content-step-1',
   templateUrl: './step-1.html'
 })
 export class CreateContentComponent implements OnInit {
-  @Input() options: CreateContentOptions;
-  @Output() onClose: EventEmitter<any> = new EventEmitter();
-  @Output() onContinue: EventEmitter<any> = new EventEmitter();
-  @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
-  @ViewChild('form') form: HTMLFormElement;
-  @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
-  @ViewChild(DocumentLocationFieldComponent) documentLocationField: DocumentLocationFieldComponent;
-
   locale: string;
   documentType: string;
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
   title = 'Create new content';
 
-  constructor(
-    private createContentService: CreateContentService,
-    private feedbackService: FeedbackService
-  ) { }
+  @Input() options: CreateContentOptions;
+  @Output() onClose: EventEmitter<any> = new EventEmitter();
+  @Output() onContinue: EventEmitter<any> = new EventEmitter();
+  @Output() onFullWidth: EventEmitter<any> = new EventEmitter();
+  @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
+  @ViewChild('form') form: HTMLFormElement;
+  @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
+  @ViewChild(DocumentLocationFieldComponent) documentLocationField: DocumentLocationFieldComponent;
+
+  @HostListener('keydown', ['$event']) closeOnEsc(e) {
+    if (e.which === 27) {
+      this.close();
+    }
+  }
+
+  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -63,12 +68,9 @@ export class CreateContentComponent implements OnInit {
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadingTemplateQuery(error),
       );
-
-    // TODO: replace with actual call
-    this.setLocale('en');
   }
 
-  setFullWidth(state) {
+  setWidthState(state) {
     this.isFullWidth = state;
     this.onFullWidth.emit(state);
   }
@@ -77,12 +79,23 @@ export class CreateContentComponent implements OnInit {
     this.onClose.emit();
   }
 
-  submit(form: NgForm) {
-    console.log(form.value);
-    // this.onContinue.emit(form.value);
+  submit() {
+    const document: DocumentDetails = {
+      name: this.nameUrlFields.nameField,
+      slug: this.nameUrlFields.urlField,
+      templateQuery: this.options.templateQuery,
+      documentTypeId: this.documentType,
+      rootPath: '/content/documents/hap/news',
+      defaultPath: '2017/11',
+    };
+    this.createContentService
+      .createDraft(document)
+      .subscribe(
+        (response) => this.onContinue.emit(),
+        (error) => this.onErrorCreatingDraft(error),
+      );
   }
 
-  // TODO: Mock function. Refactor once document location picker is implemented.
   setLocale(locale: string) {
     this.locale = locale;
   }
@@ -97,10 +110,23 @@ export class CreateContentComponent implements OnInit {
 
   private onErrorLoadingTemplateQuery(error) {
     if (error.data && error.data.reason) {
-      const errorKey = `ERROR_${error.data.reason}`;
+      const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
       this.feedbackService.showError(errorKey, error.data.params);
     } else {
       console.error('Unknown error loading template query', error);
     }
+  }
+
+  private onErrorCreatingDraft(error) {
+    if (error.data && error.data.reason) {
+      const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
+      this.feedbackService.showError(errorKey);
+    } else {
+      console.error('Unknown error creating new draft document', error);
+    }
+  }
+
+  private resetBeforeStateChange() {
+    this.onBeforeStateChange.emit();
   }
 }

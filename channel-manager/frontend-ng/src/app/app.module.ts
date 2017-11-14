@@ -22,17 +22,47 @@ import { RightSidePanelModule } from './channel/sidePanels/rightSidePanel/right-
 import { SharedModule } from './shared/shared.module';
 
 import ng1Module from './hippo-cm.ng1.module.js';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { HttpModule } from '@angular/http';
+
+declare global {
+  interface Window { Hippo: any; }
+}
+
+function getAntiCache() {
+  const results = new RegExp('[?&]antiCache=([^&#]*)').exec(document.location.href);
+  const now = new Date().toLocaleString();
+  return results ? results[1] : now;
+}
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'i18n/', `.json?antiCache=${getAntiCache()}`);
+}
 
 @NgModule({
   imports: [
+    HttpModule,
     ChannelModule,
     SharedModule,
     UpgradeModule,
     RightSidePanelModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ]
 })
 export class AppModule {
-  constructor(private upgrade: UpgradeModule) {}
+  constructor(private upgrade: UpgradeModule, translate: TranslateService) {
+    translate.setDefaultLang('en');
+    translate.use('en');
+  }
 
   ngDoBootstrap() {
     this.upgrade.bootstrap(document.body, [ng1Module], { strictDi: true });

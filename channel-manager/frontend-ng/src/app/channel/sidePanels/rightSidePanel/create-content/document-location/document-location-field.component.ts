@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import ChannelService from '../../../../channel.service.js';
 import { CreateContentService } from '../create-content.service';
@@ -30,6 +30,7 @@ export class DocumentLocationFieldComponent implements OnInit {
 
   @Input() rootPath: string;
   @Input() defaultPath: string;
+  @Output() changeLocale: EventEmitter<string> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
 
   public rootPathDepth: number;
@@ -102,8 +103,10 @@ export class DocumentLocationFieldComponent implements OnInit {
       return;
     }
 
-    this.documentLocation = folders[folders.length - 1].path;
+    const lastFolder = folders[folders.length - 1];
     this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
+    this.documentLocation = lastFolder.path;
+    this.changeLocale.emit(lastFolder.locale);
   }
 
   private onError(error, unknownErrorMessage) {

@@ -15,29 +15,29 @@
   -->
 <div fxLayout="column" class="create-content-container">
 
-  <mat-toolbar class="edit-title-toolbar">
-    <div class="md-toolbar-tools">
+  <mat-toolbar class="edit-title-toolbar layout-padding">
+    <div class="md-toolbar-tools edit-title-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
       </h1>
 
-      <button mat-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-                 (click)="setFullWidth(true)"
-                 [hidden]="isFullWidth"
-                 title="{{ 'FULL_WIDTH' }}">
-        <mat-icon md-svg-icon="maximize-sidepanel"></mat-icon>
+      <button mat-icon-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+              (click)="setWidthState(true)"
+              *ngIf="!isFullWidth"
+              title="{{ 'FULL_WIDTH' | translate }}">
+        <mat-icon svgIcon="maximize-sidepanel"></mat-icon>
       </button>
-      <button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-                 (click)="setFullWidth(false)"
-                 [hidden]="!isFullWidth"
-                 title="{{ 'RESTORE_WIDTH' }}">
-        <mat-icon md-svg-icon="un-maximize-sidepanel"></mat-icon>
+      <button mat-icon-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+              (click)="setWidthState(false)"
+              *ngIf="isFullWidth"
+              title="{{ 'RESTORE_WIDTH' | translate }}">
+        <mat-icon svgIcon="un-maximize-sidepanel"></mat-icon>
       </button>
     </div>
   </mat-toolbar>
 
-  <div class="md-content right-side-panel-content" 
-       fxLayout="column" 
+  <div class="md-content right-side-panel-content"
+       fxLayout="column"
        fxFlex="grow">
     <form (ngSubmit)="submit(form)"
           #form="ngForm"
@@ -61,23 +61,24 @@
 
       <!-- Document location field -->
       <hippo-document-location-field [rootPath]="options.rootPath"
-                                     [defaultPath]="options.defaultPath">
+                                     [defaultPath]="options.defaultPath"
+                                     (changeLocale)="setLocale($event)">
       </hippo-document-location-field>
 
     </form>
   </div>
   <!-- Buttons -->
-  <div class="create-content-actions">
+  <div class="create-content-actions layout-padding">
     <button mat-button class="qa-create-content-close"
             (click)="close()">
-      CANCEL
+      {{ 'CANCEL' | translate }}
     </button>
 
     <button mat-button class="qa-create-content-continue"
             type="submit"
             (click)="submit(form)"
             [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
-      CONTINUE
+      {{ 'CONTINUE' | translate }}
     </button>
   </div>
 </div>

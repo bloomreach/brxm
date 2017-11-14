@@ -18,7 +18,7 @@
   <!-- Document name field -->
   <div class="field">
     <mat-form-field class="create-content-field">
-      <input matInput [(ngModel)]="documentName" name="name" placeholder="Document name" required #nameInputElement>
+      <input matInput [(ngModel)]="nameField" name="name" placeholder="Document name" required #nameInputElement>
     </mat-form-field>
 
     <hippo-hints [data]="form.controls.name.errors" *ngIf="form.controls.name && form.controls.name.touched">
@@ -51,8 +51,8 @@
     </mat-form-field>
 
     <hippo-hints [data]="form.controls.url.errors" *ngIf="form.controls.url && form.controls.url.touched">
-      <div hint="required">This field is required</div>
-      <div hint="invalidUrl">This URL is invalid</div>
+      <div hint="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+      <div hint="invalidUrl">{{ 'INVALID_URL' | translate }}</div>
     </hippo-hints>
   </div>
 </form>

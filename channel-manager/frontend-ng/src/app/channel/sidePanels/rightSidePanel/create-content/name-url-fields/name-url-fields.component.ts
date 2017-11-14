@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, Input, OnChanges, SimpleChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
@@ -29,9 +29,11 @@ import 'rxjs/add/operator/filter';
 export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
+  @Input('nameField') nameField: string;
+  @Input('urlField') urlField: string;
+  @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
+  @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
   @Input() locale: string;
-  public documentName: string;
-  public urlField: string;
   public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
@@ -40,11 +42,15 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .filter(() => !this.isManualUrlMode)
       .debounceTime(1000)
-      .subscribe(() => this.setDocumentUrlByName());
+      .subscribe(() => {
+        this.setDocumentUrlByName();
+        this.nameFieldChange.next(this.nameField);
+        this.urlFieldChange.next(this.urlField);
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.hasOwnProperty('locale') && this.form.controls.name) {
+    if (changes.hasOwnProperty('locale') && this.form.controls.name) {
       this.setDocumentUrlByName();
     }
   }

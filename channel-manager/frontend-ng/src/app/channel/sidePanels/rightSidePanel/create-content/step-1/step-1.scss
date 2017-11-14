@@ -37,6 +37,12 @@
       margin-top: -15px;
     }
 
+    .edit-title-toolbar {
+      background: $white;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
+
     // TODO: shared hippo material overrides
     .hide-select-arrow {
       .mat-select-arrow {
