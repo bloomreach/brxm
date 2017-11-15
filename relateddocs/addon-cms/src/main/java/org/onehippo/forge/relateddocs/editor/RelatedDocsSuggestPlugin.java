@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
             }
 
             suggestionsForm = new Form("suggestions-form");
-            suggestionsForm.add(new TextField<Integer>("count", new PropertyModel<Integer>(this, "limit"), Integer.class));
+            suggestionsForm.add(new TextField<>("count", new PropertyModel<>(this, "limit"), Integer.class));
 
             final Fragment fragment = new Fragment("relateddoc-view", "relateddoc-suggestions", this);
             fragment.add(new RelatedDocsSuggestView("view"));
@@ -144,14 +144,20 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
         redraw();
     }
 
-    //Used by the propertyModel of the count widget
-    public int getLimit() {
+    // Used by the propertyModel of the count widget
+    @SuppressWarnings("unused")
+    public Integer getLimit() {
         return limit;
     }
 
-    //Used by the propertyModel of the count widget
-    public void setLimit(final int limit) {
-        this.limit = limit;
+    // Used by the propertyModel of the count widget
+    @SuppressWarnings("unused")
+    public void setLimit(final Integer limit) {
+        if (limit == null) {
+            this.limit = 0;
+        } else {
+            this.limit = limit;
+        }
     }
 
     private class RelatedDocsSuggestView extends RefreshingView {
@@ -172,7 +178,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
 
             RelatedDocSuggestor relatedDocSuggester = getPluginContext().getService(RelatedDocSuggestor.SERVICE,
                     RelatedDocSuggestor.class);
-            List<IModel> list = new ArrayList<IModel>();
+            List<IModel> list = new ArrayList<>();
 
             if (maxAllowed > 0) {
                 final RelatedDocCollection relatedDocCollection = getRelatedDocs();
