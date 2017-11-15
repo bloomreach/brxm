@@ -215,7 +215,6 @@ describe('RightSidePanel', () => {
     expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
     expect($ctrl.mode).toBeUndefined();
     expect($ctrl.options).toBeUndefined();
-
   });
 
   it('resets right side panel state and sharedspace toolbar state', () => {

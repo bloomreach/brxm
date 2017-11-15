@@ -76,13 +76,13 @@ describe('SidePanelService', () => {
 
   it('calls the onCloseCallback when $mdSidenav.close is triggered from AngularJS Material\'s side', () => {
     const element = angular.element('<div md-component-id="left"></div>');
-    leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
+    leftSidePanel.onClose.and.callFake((fn) => { leftSidePanel.onCloseCb = fn; });
     leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
     SidePanelService.initialize('left', element);
 
-    spyOn(SidePanelService.panels['left'], 'onCloseCallback').and.callThrough();
+    spyOn(SidePanelService.panels.left, 'onCloseCallback').and.callThrough();
     leftSidePanel.close(); // "Native" AngularJS close function, as if we were pressing Escape
-    expect(SidePanelService.panels['left'].onCloseCallback).toHaveBeenCalled();
+    expect(SidePanelService.panels.left.onCloseCallback).toHaveBeenCalled();
   });
 
   it('calls the native $mdSidenav close function if closing the sidenav internally', () => {
@@ -167,10 +167,10 @@ describe('SidePanelService', () => {
 
   it('syncs the iframe when the side-panel is closed or opened', () => {
     const element = angular.element('<div md-component-id="left"></div>');
-    leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
+    leftSidePanel.onClose.and.callFake((fn) => { leftSidePanel.onCloseCb = fn; });
     leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
     SidePanelService.initialize('left', element);
-    spyOn(SidePanelService.panels['left'], 'onCloseCallback').and.returnValue($q.resolve());
+    spyOn(SidePanelService.panels.left, 'onCloseCallback').and.returnValue($q.resolve());
 
     leftSidePanel.close();
     $rootScope.$digest();

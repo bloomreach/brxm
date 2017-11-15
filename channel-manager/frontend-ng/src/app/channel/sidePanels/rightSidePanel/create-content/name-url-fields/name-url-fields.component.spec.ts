@@ -31,7 +31,7 @@ import ChannelService from '../../../../channel.service';
   template: '<hippo-name-url-fields #nameUrlFields [locale]="locale"></hippo-name-url-fields>'
 })
 class TestHostComponent {
-  locale: string = 'en';
+  locale = 'en';
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 }
 
