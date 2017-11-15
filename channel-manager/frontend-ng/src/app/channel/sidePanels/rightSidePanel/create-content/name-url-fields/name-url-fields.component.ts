@@ -25,7 +25,6 @@ import 'rxjs/add/operator/filter';
   selector: 'hippo-name-url-fields',
   templateUrl: 'name-url-fields.html'
 })
-
 export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
@@ -56,7 +55,7 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   }
 
   setDocumentUrlByName() {
-    this.createContentService.generateDocumentUrlByName(this.form.controls.name.value, this.locale)
+    this.createContentService.generateDocumentUrlByName(this.nameField, this.locale)
       .subscribe((slug) => this.urlField = slug);
   }
 
