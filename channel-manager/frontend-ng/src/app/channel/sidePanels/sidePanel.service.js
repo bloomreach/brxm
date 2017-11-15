@@ -33,9 +33,7 @@ class SidePanelService {
     };
 
     this.$mdSidenav(panel.sideNavComponentId).onClose(() => {
-      panel.onCloseCallback().then(() => {
-        this.OverlayService.sync();
-      });
+      panel.onCloseCallback().then(() => this.OverlayService.sync())
     });
 
     this.panels[side] = panel;
@@ -67,6 +65,7 @@ class SidePanelService {
   }
 
   close(side) {
+    console.log('test');
     return this.$mdSidenav(this.panels[side].sideNavComponentId).close();
   }
 
