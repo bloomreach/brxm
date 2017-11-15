@@ -29,8 +29,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
@@ -55,7 +57,7 @@ import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO
  */
 public final class DependencyUtils {
 
-    public static final String DEFAULT_ID = "default";
+    private static final String DEFAULT_PROFILE_ID = "default";
     private static Logger log = LoggerFactory.getLogger(DependencyUtils.class);
 
 
@@ -109,7 +111,7 @@ public final class DependencyUtils {
                 // replace default id:
                 final String pomContent = GlobalUtils.readStreamAsText(new FileInputStream(path));
                 final Map<String, String> data = new HashMap<>();
-                data.put("ESSENTIALS_DEFAULT_PLACEHOLDER", DEFAULT_ID);
+                data.put("ESSENTIALS_DEFAULT_PLACEHOLDER", DEFAULT_PROFILE_ID);
                 final String newContent = TemplateUtils.replaceStringPlaceholders(pomContent, data);
                 GlobalUtils.writeToFile(newContent, new File(path).toPath());
                 log.debug("Fixed default profile id");

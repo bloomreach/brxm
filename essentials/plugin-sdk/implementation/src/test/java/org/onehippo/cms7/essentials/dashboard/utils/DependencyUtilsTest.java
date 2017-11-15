@@ -60,8 +60,6 @@ public class DependencyUtilsTest extends BaseResourceTest {
         DependencyUtils.addRepository(getContext(), repository);
         hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
-
-
     }
 
     @Test
@@ -97,8 +95,6 @@ public class DependencyUtilsTest extends BaseResourceTest {
         DependencyUtils.removeDependency(context, dependency);
         hasDep = DependencyUtils.hasDependency(context, dependency);
         assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
-
-
     }
 
     @Test

@@ -1,0 +1,36 @@
+{
+  "@type": "plugin",
+  "id": "projectsPlugin",
+  "name": "Projects",
+  "icon": "/essentials/feature/images/projects-plugin-icon.png",
+  "introduction": "With Projects, you add projects functionality to the project. This feature will add the projects perspective.",
+  "description": "Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project.. ",
+  "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/workflow-process-management/introduction-to-workflow-process-management.html",
+  "imageUrls": [
+    "/essentials/feature/images/screenshots/project-details-no-channels.png"
+  ],  "restClasses": [],
+  "packageFile": "/META-INF/projects_plugin_instructions.xml",
+  "type": "feature",
+  "vendor" : {
+    "@type": "vendor",
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "integration",
+      "productivity",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  },
+  "libraries": [
+  ],
+  "dependencies": [
+  ]
+}

@@ -46,6 +46,7 @@
     <module>menu</module>
     <module>news</module>
     <module>poll</module>
+    <module>projects</module>
     <module>related-documents</module>
     <module>rest-services</module>
     <module>robots</module>
