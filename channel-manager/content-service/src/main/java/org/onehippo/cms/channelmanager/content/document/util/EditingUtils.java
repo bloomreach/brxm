@@ -51,6 +51,7 @@ public class EditingUtils {
     private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
+    private static final String HINT_RENAME = "rename";
     private static final String HINT_REQUESTS = "requests";
 
     private EditingUtils() {
@@ -104,6 +105,16 @@ public class EditingUtils {
      */
     public static boolean canEraseDocument(final FolderWorkflow workflow) {
         return isActionAvailable(workflow, HINT_DELETE);
+    }
+
+    /**
+     * Check if document can be renamed (i.e. change its URL name), given its workflow.
+     *
+     * @param workflow workflow of the document
+     * @return true if the document can be renamed, false otherwise
+     */
+    public static boolean canRenameDocument(final DocumentWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_RENAME);
     }
 
     /**

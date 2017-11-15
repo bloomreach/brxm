@@ -144,6 +144,23 @@ public class EditingUtilsTest {
     }
 
     @Test
+    public void canRenameDocument() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canRenameDocument(workflow));
+
+        hints.put("rename", Boolean.FALSE);
+        assertFalse(EditingUtils.canRenameDocument(workflow));
+
+        hints.put("rename", Boolean.TRUE);
+        assertTrue(EditingUtils.canRenameDocument(workflow));
+    }
+
+    @Test
     public void hasPreview() throws Exception {
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
