@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 public class WebUtilsTest {
     private static final Logger log = LoggerFactory.getLogger(WebUtilsTest.class);
-    static final String PLUGIN = "{\n" +
+    public static final String PLUGIN = "{\n" +
             "  \"@type\": \"plugin\",\n" +
             "  \"id\": \"documentWizardPlugin\",\n" +
             "  \"name\": \"Documents wizard\",\n" +
@@ -67,18 +67,6 @@ public class WebUtilsTest {
             "      \"artifactId\": \"hippo-plugin-dashboard-document-wizard\",\n" +
             "      \"scope\": \"compile\",\n" +
             "      \"targetPom\": \"cms\"\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"shared\": [\n" +
-            "    {\n" +
-            "      \"groupId\": \"org.onehippo.cms7\",\n" +
-            "      \"artifactId\": \"hippo-plugin-dashboard-document-wizard\"\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"loggers\": [\n" +
-            "    {\n" +
-            "      \"name\": \"org.onehippo.cms7.logger\",\n" +
-            "      \"level\": \"warn\"\n" +
             "    }\n" +
             "  ]\n" +
             "}\n";

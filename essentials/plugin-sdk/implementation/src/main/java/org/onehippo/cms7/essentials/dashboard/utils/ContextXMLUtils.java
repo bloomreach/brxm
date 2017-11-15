@@ -64,7 +64,7 @@ public class ContextXMLUtils {
         try {
             Document blob = reader.read(new StringReader(resourceBlob));
             Element e = blob.getRootElement();
-            context.add(e);
+            Dom4JUtils.addIndentedElement(context, e);
         } catch (DocumentException e) {
             log.error("Error adding resource {}", name, e);
         }

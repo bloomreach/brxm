@@ -16,17 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.CharBuffer;
 
 /**
  * MavenAssemblyUtils adds or removes items to be part of the distribution
@@ -59,26 +58,18 @@ public class MavenAssemblyUtils {
         Element component = doc.getRootElement();
         Element dependencySets = (Element) component.selectSingleNode("*[name() = 'dependencySets']");
         if (dependencySets == null) {
-            dependencySets = component.addText("  ").addElement("dependencySets");
+            dependencySets = Dom4JUtils.addIndentedElement(component, "dependencySets");
         }
 
-        Element dependencySet = indent(dependencySets, 4).addElement("dependencySet");
-        indent(dependencySet, 6).addElement("useProjectArtifact").addText(Boolean.toString(useProjectArtifact));
-        indent(dependencySet, 6).addElement("outputDirectory").addText(outputDirectory);
-        indent(dependencySet, 6).addElement("outputFileNameMapping").addText(outputFileNameMapping);
-        indent(dependencySet, 6).addElement("scope").addText(scope);
+        Element dependencySet = Dom4JUtils.addIndentedElement(dependencySets, "dependencySet");
+        Dom4JUtils.addIndentedElement(dependencySet, "useProjectArtifact", Boolean.toString(useProjectArtifact));
+        Dom4JUtils.addIndentedElement(dependencySet, "outputDirectory", outputDirectory);
+        Dom4JUtils.addIndentedElement(dependencySet, "outputFileNameMapping", outputFileNameMapping);
+        Dom4JUtils.addIndentedElement(dependencySet, "scope", scope);
+
         addIncludeToDependencySet(dependencySet, include);
-        indent(dependencySet, 4);
-        indent(dependencySets, 2);
-        indent(component, 0);
 
         return doc;
-    }
-
-    // indent adds a newline and specified number of spaces to the new line
-    private static Element indent(Element e, int spaces) {
-        e.addText("\n" + CharBuffer.allocate( spaces ).toString().replace( '\0', ' ' ));
-        return e;
     }
 
     /*
@@ -86,12 +77,11 @@ public class MavenAssemblyUtils {
      */
     static Element addIncludeToDependencySet(Element dependencySet, String include) {
         Element includes = (Element)dependencySet.selectSingleNode("//*[name()='includes']");
-        if(includes == null) {
-            includes = indent(dependencySet, 6).addElement("includes");
+        if (includes == null) {
+            includes = Dom4JUtils.addIndentedElement(dependencySet, "includes");
         }
-        if(includes.selectNodes("*[text()='" + include + "']").isEmpty()) {
-            indent(includes, 8).addElement("include").addText(include);
-            indent(includes, 6);
+        if (includes.selectNodes("*[text()='" + include + "']").isEmpty()) {
+            Dom4JUtils.addIndentedElement(includes, "include", include);
         }
         return dependencySet;
     }

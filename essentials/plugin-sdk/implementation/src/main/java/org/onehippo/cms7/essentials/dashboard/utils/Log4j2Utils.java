@@ -30,7 +30,6 @@ import java.io.IOException;
 
 /**
  * Log4j2Utils is used for manipulating log4j XML files on a file system
-
  */
 public class Log4j2Utils {
     private Log4j2Utils() {
@@ -38,14 +37,40 @@ public class Log4j2Utils {
     }
     private static Logger log = LoggerFactory.getLogger(Log4j2Utils.class);
 
-    static boolean hasLogger(Document doc, String logger) {
-        return !doc.selectNodes("//Configuration/Loggers/Logger[@name='" + logger + "']").isEmpty();
+    /**
+     * Add a Logger to the specified log4j2 config file.
+     *
+     * @param log4jConfig {@link File} containing the log4j2 configuration
+     * @param name        Name of the Logger
+     * @param level       Level for the Logger
+     */
+    public static void addLogger(File log4jConfig, String name, String level) {
+        try {
+            Document doc = new SAXReader().read(log4jConfig);
+            if (!hasLogger(log4jConfig, name)) {
+                addLogger(doc, name, level);
+                writeLog4j2(doc, log4jConfig);
+            }
+        } catch (DocumentException | IOException e) {
+            log.error("Error adding logger to {}", log4jConfig.getAbsolutePath(), e);
+        }
+    }
+
+    /**
+     * Add a Logger to all log4j2 files of the project.
+     *
+     * @param name  Name of the Logger
+     * @param level Level for the Logger
+     */
+    public static void addLoggerToLog4j2Files(String name, String level) {
+        for (File log4jFile : ProjectUtils.getLog4j2Files()) {
+            addLogger(log4jFile, name, level);
+        }
     }
 
     static boolean hasLogger(File log4jConfig, String logger) {
-        Document doc;
         try {
-            doc = new SAXReader().read(log4jConfig);
+            Document doc = new SAXReader().read(log4jConfig);
             return hasLogger(doc, logger);
         } catch (DocumentException e) {
             log.error("Error reading {}", log4jConfig.getAbsolutePath(), e);
@@ -53,40 +78,16 @@ public class Log4j2Utils {
         return false;
     }
 
+    static boolean hasLogger(Document doc, String logger) {
+        return !doc.selectNodes("//Configuration/Loggers/Logger[@name='" + logger + "']").isEmpty();
+    }
+
     static void addLogger(Document doc, String name, String level) {
         Element loggers = (Element) doc.selectSingleNode("//Configuration/Loggers");
-        Element entry = DocumentHelper.createElement("Logger").addAttribute("name", name).addAttribute("level", level);
-        Element root = (Element) doc.selectSingleNode("//Configuration/Loggers/Root");
 
-        loggers.remove(root);
-        loggers.add(entry);
-        loggers.addText("\n    ") ;
-        loggers.add(root);
-    }
-
-    public static void addLogger(File log4jConfig, String name, String level) {
-        Document doc;
-        try {
-            doc = new SAXReader().read(log4jConfig);
-            addLogger(doc, name, level);
-            writeLog4j2(doc, log4jConfig);
-        } catch (DocumentException | IOException e) {
-            log.error("Error adding logger to {}", log4jConfig.getAbsolutePath(), e);
-        }
-    }
-
-    public static void addLoggerToLog4j2Files(String loggerName, String loggerLevel) {
-        for(File log4jFile : ProjectUtils.getLog4j2Files()) {
-            try {
-                Document doc = new SAXReader().read(log4jFile);
-                if(!hasLogger(doc, loggerName)) {
-                    addLogger(doc, loggerName, loggerLevel);
-                }
-                writeLog4j2(doc, log4jFile);
-            } catch (DocumentException | IOException e) {
-                log.error("Error writing logger to log4j configuration file " + log4jFile.getAbsolutePath(), e);
-            }
-        }
+        Dom4JUtils.addIndentedSameNameSibling(loggers, "Logger", null)
+                .addAttribute("name", name)
+                .addAttribute("level", level);
     }
 
     static void writeLog4j2(Document doc, File target) throws IOException {

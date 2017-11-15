@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.base.Strings;
 
 public class Plugin {
-    private static final Logger log = LoggerFactory.getLogger(Plugin.class);
+    private final static Logger log = LoggerFactory.getLogger(Plugin.class);
 
     private final PluginDescriptor descriptor;
     private final InstallStateMachine stateMachine;

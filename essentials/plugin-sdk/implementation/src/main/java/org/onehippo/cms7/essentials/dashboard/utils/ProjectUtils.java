@@ -259,22 +259,28 @@ public final class ProjectUtils {
 
     public static List<File> getLog4j2Files() {
         try {
-            FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
-            return Arrays.asList(getConfFolder().listFiles(log4j2Filter));
-        } catch(Exception e) {
+            final FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
+            final File[] log4j2Files = getConfFolder().listFiles(log4j2Filter);
+            if (log4j2Files != null) {
+                return Arrays.asList(log4j2Files);
+            }
+        } catch (Exception e) {
             log.error("No log4j2 configuration files found in {}", getConfFolder(), e);
-            return new ArrayList<>();
         }
+        return Collections.emptyList();
     }
 
     public static List<File> getAssemblyFiles() {
         try {
-            FilenameFilter assemblyFilter = (dir, name) -> name.matches(".*\\.xml");
-            return Arrays.asList(getAssemblyFolder().listFiles(assemblyFilter));
-        } catch(Exception e) {
+            final FilenameFilter assemblyFilter = (dir, name) -> name.matches(".*\\.xml");
+            final File[] assemblyFiles = getAssemblyFolder().listFiles(assemblyFilter);
+            if (assemblyFiles != null) {
+                return Arrays.asList(assemblyFiles);
+            }
+        } catch (Exception e) {
             log.error("No assembly files found in {}", getAssemblyFolder().getAbsolutePath(), e);
-            return new ArrayList<>();
         }
+        return Collections.emptyList();
     }
 
     public static File getAssemblyFile(String filename) {

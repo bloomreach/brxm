@@ -91,7 +91,7 @@ public class ProjectsInstruction implements Instruction {
         Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.services.wpm.project", "warn");
 
         log.info("Adding enterprise-services to the Cargo runner shared classpath");
-        DependencyUtils.addDependencyToCargoSharedClasspath(context, ENTERPRISE_GROUPID, ENTERPRISE_SERVICES_ARTIFACTID);
+        MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ENTERPRISE_GROUPID, ENTERPRISE_SERVICES_ARTIFACTID);
 
         log.info("Adding BPM web application to the cargo.run profile with path: {}", WPM_WEBAPP_CONTEXT);
         final EssentialsDependency dependency = new DependencyRestful();
@@ -100,11 +100,11 @@ public class ProjectsInstruction implements Instruction {
         dependency.setArtifactId(WPM_WEBAPP_ARTIFACTID);
         dependency.setGroupId(ENTERPRISE_GROUPID);
 
-        DependencyUtils.addDeployableToCargoRunner(context, dependency, WPM_WEBAPP_CONTEXT);
+        MavenCargoUtils.addDeployableToCargoRunner(context, dependency, WPM_WEBAPP_CONTEXT);
 
         log.info("Adding dependencies to the distribution");
         File assemblyFile = ProjectUtils.getAssemblyFile("webapps-component.xml");
-        MavenAssemblyUtils.addDependencySet(assemblyFile, "webapps", "bmp.war", false,
+        MavenAssemblyUtils.addDependencySet(assemblyFile, "webapps", "bpm.war", false,
                 "provided", ENTERPRISE_GROUPID + ":" + WPM_WEBAPP_ARTIFACTID + ":war");
 
         assemblyFile = ProjectUtils.getAssemblyFile("shared-lib-component.xml");
