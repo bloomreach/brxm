@@ -120,12 +120,9 @@ class RightSidePanelCtrl {
   }
 
   _beforeClosePanel() {
-    return new Promise((resolve) => {
-      this.$element.removeClass('sidepanel-open');
-      this.$element.css('max-width', '0px');
-      this.setFullWidth(false);
-      resolve();
-    });
+    this.$element.removeClass('sidepanel-open');
+    this.$element.css('max-width', '0px');
+    this.setFullWidth(false);
   }
 
   onResize(newWidth) {
