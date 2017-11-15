@@ -24,7 +24,7 @@ describe('SidePanelService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
+    leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close', 'onClose', 'onCloseCb']);
     OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(leftSidePanel);
@@ -45,7 +45,7 @@ describe('SidePanelService', () => {
   });
 
   it('toggles a named side-panel', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="left"></div>');
     element.width(250);
     SidePanelService.initialize('left', element);
 
@@ -64,8 +64,36 @@ describe('SidePanelService', () => {
     expect(leftSidePanel.close).toHaveBeenCalled();
   });
 
+  it('lifts and lowers side panel above mask', () => {
+    SidePanelService.isSidePanelLifted = false;
+    SidePanelService.liftSidePanelAboveMask();
+    expect(SidePanelService.isSidePanelLifted).toBeTruthy();
+
+    SidePanelService.isSidePanelLifted = true;
+    SidePanelService.lowerSidePanelBeneathMask();
+    expect(SidePanelService.isSidePanelLifted).toBeFalsy();
+  });
+
+  it('calls the onCloseCallback when $mdSidenav.close is triggered from AngularJS Material\'s side', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
+    leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
+    SidePanelService.initialize('left', element);
+
+    spyOn(SidePanelService.panels['left'], 'onCloseCallback').and.callThrough();
+    leftSidePanel.close(); // "Native" AngularJS close function, as if we were pressing Escape
+    expect(SidePanelService.panels['left'].onCloseCallback).toHaveBeenCalled();
+  });
+
+  it('calls the native $mdSidenav close function if closing the sidenav internally', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    SidePanelService.initialize('left', element);
+    SidePanelService.close('left');
+    expect(leftSidePanel.close).toHaveBeenCalled();
+  });
+
   it('forwards the is-open check to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="left"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
@@ -81,65 +109,20 @@ describe('SidePanelService', () => {
   });
 
   it('closes a side panel if it is open', (done) => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="left"></div>');
     SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
 
     SidePanelService.close('left').then(() => {
       expect(leftSidePanel.close).toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('skips closing a side panel if it is was already closed', (done) => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
-
-    leftSidePanel.isOpen.and.returnValue(false);
-
-    SidePanelService.close('left').then(() => {
-      expect(leftSidePanel.close).not.toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('calls the onCloseCallback before closing a side panel', (done) => {
-    const element = angular.element('<div></div>');
-    const onClose = jasmine.createSpy('onClose');
-    SidePanelService.initialize('left', element, null, onClose);
-
-    leftSidePanel.isOpen.and.returnValue(true);
-    onClose.and.returnValue($q.resolve());
-
-    SidePanelService.close('left').then(() => {
-      expect(onClose).toHaveBeenCalled();
-      expect(leftSidePanel.close).toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('does not close a side panel if its onCloseCallback fails', (done) => {
-    const element = angular.element('<div></div>');
-    const onClose = jasmine.createSpy('onClose');
-    SidePanelService.initialize('left', element, null, onClose);
-
-    leftSidePanel.isOpen.and.returnValue(true);
-    onClose.and.returnValue($q.reject());
-
-    SidePanelService.close('left').catch(() => {
-      expect(onClose).toHaveBeenCalled();
-      expect(leftSidePanel.close).not.toHaveBeenCalled();
       done();
     });
     $rootScope.$digest();
   });
 
   it('forwards the open call to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
+    const element = angular.element('<div md-component-id="left"></div>');
     SidePanelService.initialize('left', element);
 
     SidePanelService.open('left');
@@ -182,19 +165,21 @@ describe('SidePanelService', () => {
     }).not.toThrow(jasmine.any(Error));
   });
 
-  it('syncs the iframe once the side-panel has been opened and closed', () => {
-    const element = angular.element('<div></div>');
+  it('syncs the iframe when the side-panel is closed or opened', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    leftSidePanel.onClose.and.callFake(fn => leftSidePanel.onCloseCb = fn);
+    leftSidePanel.close.and.callFake(() => leftSidePanel.onCloseCb());
     SidePanelService.initialize('left', element);
+    spyOn(SidePanelService.panels['left'], 'onCloseCallback').and.returnValue($q.resolve());
 
-    leftSidePanel.isOpen.and.returnValue(false);
-    SidePanelService.open('left');
+    leftSidePanel.close();
     $rootScope.$digest();
     expect(OverlayService.sync).toHaveBeenCalled();
 
     OverlayService.sync.calls.reset();
-    leftSidePanel.isOpen.and.returnValue(true);
 
-    SidePanelService.close('left');
+    leftSidePanel.isOpen.and.returnValue(false);
+    SidePanelService.open('left');
     $rootScope.$digest();
     expect(OverlayService.sync).toHaveBeenCalled();
   });

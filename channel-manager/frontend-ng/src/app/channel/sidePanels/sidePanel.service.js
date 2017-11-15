@@ -28,9 +28,13 @@ class SidePanelService {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
-      onOpenCallback: onOpenCallback || angular.noop,
+      onOpenCallback: onOpenCallback || (() => this.$q.resolve()),
       onCloseCallback: onCloseCallback || (() => this.$q.resolve()),
     };
+
+    this.$mdSidenav(panel.sideNavComponentId).onClose(() => {
+      panel.onCloseCallback().then(() => this.OverlayService.sync())
+    });
 
     this.panels[side] = panel;
   }
@@ -61,16 +65,7 @@ class SidePanelService {
   }
 
   close(side) {
-    if (this.isOpen(side)) {
-      const panel = this.panels[side];
-      return panel.onCloseCallback()
-        .then(() => this.$mdSidenav(panel.sideNavComponentId).close()
-          .then(() => {
-            this.OverlayService.sync();
-          }),
-        );
-    }
-    return this.$q.resolve();
+    return this.$mdSidenav(this.panels[side].sideNavComponentId).close();
   }
 
   liftSidePanelAboveMask() {
