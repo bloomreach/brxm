@@ -80,7 +80,7 @@ export class CreateContentStep2Component implements OnInit {
         this.onLoadSuccess(doc, docType);
         this.loading = false;
       }).catch(() => {
-        this.loading = false
+        this.loading = false;
       });
   }
 
