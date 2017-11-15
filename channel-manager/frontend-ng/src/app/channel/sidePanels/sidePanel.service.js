@@ -65,7 +65,6 @@ class SidePanelService {
   }
 
   close(side) {
-    console.log('test');
     return this.$mdSidenav(this.panels[side].sideNavComponentId).close();
   }
 
