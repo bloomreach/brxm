@@ -62,11 +62,13 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
+
 class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
-    private static final String WORKFLOW_CATEGORY_DEFAULT = "default";
-    private static final String WORKFLOW_CATEGORY_EDIT = "editing";
-    private static final String WORKFLOW_CATEGORY_INTERNAL = "internal";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
     static DocumentsService getInstance() {
@@ -128,10 +130,6 @@ class DocumentsServiceImpl implements DocumentsService {
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException();
         }
-
-        final Node folder = FolderUtils.getFolder(handle);
-        final String folderLocale = FolderUtils.getLocale(folder);
-        DocumentNameUtils.setNames(handle, document.getUrlName(), document.getDisplayName(), folderLocale);
 
         // Push fields onto draft node
         FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draft);
@@ -248,8 +246,7 @@ class DocumentsServiceImpl implements DocumentsService {
             final Node handle = session.getNode(documentPath);
 
             if (!encodedSlug.equals(encodedName)) {
-                // pass the non-encoded name, otherwise it will be encoded twice
-                DocumentNameUtils.setDisplayName(handle, name, folderLocale);
+                DocumentNameUtils.setDisplayName(handle, encodedName);
             }
 
             session.save();
@@ -260,6 +257,44 @@ class DocumentsServiceImpl implements DocumentsService {
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    public Document updateDocumentNames(final String uuid, final Document document, final Session session) throws ErrorWithPayloadException {
+        final String displayName = checkNotEmpty("displayName", document.getDisplayName());
+        final String urlName = checkNotEmpty("urlName", document.getUrlName());
+
+        final Node handle = getHandle(uuid, session);
+        final Node folder = FolderUtils.getFolder(handle);
+        final String folderLocale = FolderUtils.getLocale(folder);
+
+        final String newUrlName = DocumentNameUtils.encodeUrlName(urlName, folderLocale);
+        final String oldUrlName = DocumentNameUtils.getUrlName(handle);
+        final String handlePath = JcrUtils.getNodePathQuietly(handle);
+
+        if (!newUrlName.equals(oldUrlName)) {
+            if (FolderUtils.nodeExists(folder, newUrlName)) {
+                throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
+            } else {
+                log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
+                DocumentNameUtils.setUrlName(handle, newUrlName);
+                document.setUrlName(newUrlName);
+            }
+        }
+
+        final String newDisplayName = DocumentNameUtils.encodeDisplayName(displayName, folderLocale);
+        final String oldDisplayName = DocumentNameUtils.getDisplayName(handle);
+        if (!newDisplayName.equals(oldDisplayName)) {
+            if (FolderUtils.nodeWithDisplayNameExists(folder, newDisplayName)) {
+                throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
+            } else {
+                log.info("Changing display name of '{}' to '{}'", handlePath, newDisplayName);
+                DocumentNameUtils.setDisplayName(handle, newDisplayName);
+                document.setDisplayName(newDisplayName);
+            }
+        }
+
+        return document;
     }
 
     @Override
@@ -347,27 +382,6 @@ class DocumentsServiceImpl implements DocumentsService {
                 .isPresent();
     }
 
-    private static EditableWorkflow getEditableWorkflow(final Node handle) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
-                ));
-    }
-
-    private static DocumentWorkflow getDocumentWorkflow(final Node handle) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_DEFAULT, DocumentWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
-                ));
-    }
-
-    private static FolderWorkflow getFolderWorkflow(final Node folderNode) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(folderNode, WORKFLOW_CATEGORY_INTERNAL, FolderWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_FOLDER), folderNode)
-                ));
-    }
-
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
         final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(InternalServerErrorException::new);
 
@@ -394,18 +408,6 @@ class DocumentsServiceImpl implements DocumentsService {
         document.setUrlName(JcrUtils.getNodeNameQuietly(handle));
 
         return document;
-    }
-
-    private static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
-        if (errorInfo != null) {
-            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-                if (errorInfo.getParams() == null) {
-                    errorInfo.setParams(new HashMap<>());
-                }
-                errorInfo.getParams().put("displayName", displayName);
-            });
-        }
-        return errorInfo;
     }
 
     private static ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {

@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecService;
 import org.hippoecm.repository.api.StringCodecService.Encoding;
@@ -28,14 +27,16 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DocumentNameUtils {
 
-    private static final String WORKFLOW_CATEGORY_CORE = "core";
     private static final Logger log = LoggerFactory.getLogger(DocumentNameUtils.class);
 
     private DocumentNameUtils() {
@@ -58,54 +59,61 @@ public class DocumentNameUtils {
         return codec.encode(name);
     }
 
-    public static void setNames(final Node node, final String urlName, final String displayName, final String locale) {
-        final String oldUrlName = JcrUtils.getNodeNameQuietly(node);
-        final String oldDisplayName = DocumentUtils.getDisplayName(node).orElse(StringUtils.EMPTY);
-
-        final String newUrlName = encodeUrlName(urlName, locale);
-        final String newDisplayName = encodeDisplayName(displayName, locale);
-
-        final boolean sameUrlName = StringUtils.equals(oldUrlName, newUrlName);
-        final boolean sameDisplayName = StringUtils.equals(oldDisplayName, newDisplayName);
-
-        if (sameUrlName && sameDisplayName) {
-            // nothing to update
-            return;
-        }
-
-        WorkflowUtils.getWorkflow(node, WORKFLOW_CATEGORY_CORE, DefaultWorkflow.class)
-                .ifPresent((workflow) -> {
-                    if (!sameUrlName) {
-                        rename(node, workflow, newUrlName);
-                    }
-                    if (!sameDisplayName) {
-                        setDisplayName(node, workflow, newDisplayName);
-                    }
-                });
-    }
-
-    private static void rename(final Node node, final DefaultWorkflow workflow, final String name) {
+    public static String getUrlName(final Node handle) throws InternalServerErrorException {
         try {
-            workflow.rename(name);
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to rename node '{}' to '{}'", JcrUtils.getNodePathQuietly(node), name, e);
+            return handle.getName();
+        } catch (RepositoryException e) {
+            log.warn("Failed to read name of node '{}'", JcrUtils.getNodePathQuietly(handle));
+            throw new InternalServerErrorException();
         }
     }
 
-    public static void setDisplayName(final Node node, final String displayName, final String locale) {
-        WorkflowUtils.getWorkflow(node, WORKFLOW_CATEGORY_CORE, DefaultWorkflow.class)
-                .ifPresent((workflow) -> {
-                    final String encodedDisplayName = encodeDisplayName(displayName, locale);
-                    setDisplayName(node, workflow, encodedDisplayName);
-                });
+    public static void setUrlName(final Node handle, final String urlName) throws ForbiddenException, InternalServerErrorException, MethodNotAllowed {
+        final DocumentWorkflow documentWorkflow = ContentWorkflowUtils.getDocumentWorkflow(handle);
+
+        if (EditingUtils.canRenameDocument(documentWorkflow)) {
+            renameDocument(handle, urlName, documentWorkflow);
+        } else if (EditingUtils.hasPreview(documentWorkflow)) {
+            log.warn("Cannot change the URL name of document '{}': it already has a preview variant",
+                    JcrUtils.getNodePathQuietly(handle));
+            throw new ForbiddenException();
+        } else {
+            renameDraft(handle, urlName);
+        }
     }
 
-    private static void setDisplayName(final Node node, final DefaultWorkflow workflow, final String displayName) {
+    private static void renameDocument(final Node handle, final String urlName, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException {
+        try {
+            documentWorkflow.rename(urlName);
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            log.warn("Failed to rename document '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    private static void renameDraft(final Node handle, final String urlName) throws InternalServerErrorException, MethodNotAllowed {
+        final DefaultWorkflow workflow = ContentWorkflowUtils.getDefaultWorkflow(handle);
+        try {
+            workflow.rename(urlName);
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            log.warn("Failed to rename draft '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public static String getDisplayName(final Node handle) throws InternalServerErrorException {
+        return DocumentUtils.getDisplayName(handle).orElseThrow(InternalServerErrorException::new);
+    }
+
+    public static void setDisplayName(final Node handle, final String displayName) throws MethodNotAllowed, InternalServerErrorException {
+        final DefaultWorkflow workflow = ContentWorkflowUtils.getDefaultWorkflow(handle);
+
         try {
             workflow.setDisplayName(displayName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.warn("Failed to set display name of node '{}' to '{}'",
-                    JcrUtils.getNodePathQuietly(node), displayName, e);
+                    JcrUtils.getNodePathQuietly(handle), displayName, e);
+            throw new InternalServerErrorException();
         }
     }
 }

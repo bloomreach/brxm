@@ -143,6 +143,14 @@ public class ContentResource {
                 (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session, locale));
     }
 
+    @PUT
+    @Path("documents/{id}")
+    public Response updateDocumentNames(@PathParam("id") final String id, final Document document,
+                                        @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                (session, locale) -> DocumentsService.get().updateDocumentNames(id, document, session));
+    }
+
     @DELETE
     @Path("documents/{id}")
     public Response deleteDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {

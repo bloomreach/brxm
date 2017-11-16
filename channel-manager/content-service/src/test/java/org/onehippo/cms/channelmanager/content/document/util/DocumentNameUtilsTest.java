@@ -23,14 +23,15 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecService;
 import org.hippoecm.repository.api.StringCodecService.Encoding;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.WorkflowUtils;
+import org.hippoecm.repository.util.DocumentUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -44,19 +45,19 @@ import static org.junit.Assert.assertNull;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({HippoServiceRegistry.class, JcrUtils.class, WorkflowUtils.class})
+@PrepareForTest({ContentWorkflowUtils.class, DocumentUtils.class, EditingUtils.class, HippoServiceRegistry.class})
 public class DocumentNameUtilsTest {
 
     @Before
     public void setUp() {
+        mockStatic(ContentWorkflowUtils.class);
+        mockStatic(EditingUtils.class);
         mockStatic(HippoServiceRegistry.class);
-        mockStatic(WorkflowUtils.class);
     }
 
     @Test(expected = IllegalAccessException.class)
@@ -135,240 +136,145 @@ public class DocumentNameUtilsTest {
     }
 
     @Test
-    public void setIdenticalNames() throws Exception {
-        final Node node = createHandle("some-name", "Some Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("some name"))).andReturn("some-name");
-        expect(displayNameCodec.encode(eq("Some Name"))).andReturn("Some Name (encoded)");
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "some name", "Some Name", "en");
-
-        verifyAll();
+    public void getUrlName() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        assertThat(DocumentNameUtils.getUrlName(handle), equalTo("test"));
     }
 
-    @Test
-    public void setNamesNoWorkflow() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
-        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.empty());
-
+    @Test(expected = InternalServerErrorException.class)
+    public void getUrlNameException() throws Exception {
+        final Node handle = createMock(Node.class);
+        expect(handle.getName()).andThrow(new RepositoryException());
+        expect(handle.getPath()).andThrow(new RepositoryException());
         replayAll();
-
-        DocumentNameUtils.setNames(node, "new name", "New Name", "en");
-
-        verifyAll();
+        DocumentNameUtils.getUrlName(handle);
     }
 
-    @Test
-    public void setNamesWorkflowRenameFails() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
+    @Test(expected = InternalServerErrorException.class)
+    public void setUrlNameOfDocumentThatAllowsRenameException() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
+        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(true);
 
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
-        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-
-        workflow.rename("new-name");
-        expectLastCall().andThrow(new WorkflowException("meh"));
-
-        workflow.setDisplayName("New Name (encoded)");
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "new name", "New Name", "en");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setNamesBoth() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
-        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-
-        workflow.rename("new-name");
-        expectLastCall();
-
-        workflow.setDisplayName("New Name (encoded)");
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "new name", "New Name", "en");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setNamesBothAndUrlNameReadIsNull() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-        mockStaticPartial(JcrUtils.class, "getNodeNameQuietly");
-
-        expect(JcrUtils.getNodeNameQuietly(node)).andReturn(null);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
-        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-
-        workflow.rename("new-name");
-        expectLastCall();
-
-        workflow.setDisplayName("New Name (encoded)");
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "new name", "New Name", "en");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setNamesOnlyUrlName() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("new name"))).andReturn("new-name");
-        expect(displayNameCodec.encode(eq("Old Name"))).andReturn("Old Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-
-        workflow.rename("new-name");
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "new name", "Old Name", "en");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setNamesOnlyDisplayName() throws Exception {
-        final Node node = createHandle("old-name", "Old Name (encoded)");
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec displayNameCodec = createMock(StringCodec.class);
-        final StringCodec urlNameCodec = createMock(StringCodec.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service).anyTimes();
-        expect(service.getStringCodec(eq(Encoding.NODE_NAME), eq("en"))).andReturn(urlNameCodec);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("en"))).andReturn(displayNameCodec);
-        expect(urlNameCodec.encode(eq("old name"))).andReturn("old-name");
-        expect(displayNameCodec.encode(eq("New Name"))).andReturn("New Name (encoded)");
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-
-        workflow.setDisplayName("New Name (encoded)");
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setNames(node, "old name", "New Name", "en");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setDisplayNameWithoutWorkflow() {
-        final Node node = createMock(Node.class);
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.empty());
-        replayAll();
-
-        DocumentNameUtils.setDisplayName(node, "Test", "de");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setDisplayName() throws Exception {
-        final Node node = createMock(Node.class);
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec codec = createMock(StringCodec.class);
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("de"))).andReturn(codec);
-        expect(codec.encode(eq("Test"))).andReturn("Test (encoded)");
-
-        workflow.setDisplayName(eq("Test (encoded)"));
-        expectLastCall();
-
-        replayAll();
-
-        DocumentNameUtils.setDisplayName(node, "Test", "de");
-
-        verifyAll();
-    }
-
-    @Test
-    public void setDisplayNameWorkflowThrowsException() throws Exception {
-        final Node node = createHandle("test", "Test");
-        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
-        final StringCodecService service = createMock(StringCodecService.class);
-        final StringCodec codec = createMock(StringCodec.class);
-
-        expect(WorkflowUtils.getWorkflow(eq(node), eq("core"), eq(DefaultWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(HippoServiceRegistry.getService(eq(StringCodecService.class))).andReturn(service);
-        expect(service.getStringCodec(eq(Encoding.DISPLAY_NAME), eq("de"))).andReturn(codec);
-        expect(codec.encode(eq("Test"))).andReturn("Test (encoded)");
-
-        workflow.setDisplayName(eq("Test (encoded)"));
+        workflow.rename("New name");
         expectLastCall().andThrow(new RepositoryException());
 
         replayAll();
 
-        DocumentNameUtils.setDisplayName(node, "Test", "de");
+        DocumentNameUtils.setUrlName(handle, "New name");
+    }
+
+    @Test
+    public void setUrlNameOfDocumentThatAllowsRenameSuccess() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
+        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(true);
+
+        workflow.rename("New name");
+        expectLastCall();
+
+        replayAll();
+
+        DocumentNameUtils.setUrlName(handle, "New name");
+
+        verifyAll();
+    }
+
+    @Test(expected = ForbiddenException.class)
+    public void setUrlNameOfDocumentWithPreviewVariantThatForbidsRename() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
+        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(true);
+
+        replayAll();
+
+        DocumentNameUtils.setUrlName(handle, "New name");
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void setUrlNameOfDraftException() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final DefaultWorkflow defaultWorkflow = createMock(DefaultWorkflow.class);
+        expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(documentWorkflow);
+        expect(EditingUtils.canRenameDocument(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(defaultWorkflow);
+
+        defaultWorkflow.rename(eq("New name"));
+        expectLastCall().andThrow(new RepositoryException());
+
+        replayAll();
+
+        DocumentNameUtils.setUrlName(handle, "New name");
+    }
+
+    @Test
+    public void setUrlNameOfDraftSuccess() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final DefaultWorkflow defaultWorkflow = createMock(DefaultWorkflow.class);
+        expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(documentWorkflow);
+        expect(EditingUtils.canRenameDocument(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(defaultWorkflow);
+
+        defaultWorkflow.rename(eq("New name"));
+        expectLastCall();
+        replayAll();
+
+        DocumentNameUtils.setUrlName(handle, "New name");
+
+        verifyAll();
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void getDisplayNameMissing() throws Exception {
+        mockStatic(DocumentUtils.class);
+        final Node handle = createMock(Node.class);
+        expect(DocumentUtils.getDisplayName(eq(handle))).andReturn(Optional.empty());
+        replayAll();
+        DocumentNameUtils.getDisplayName(handle);
+    }
+
+    @Test
+    public void getDisplayNameSuccess() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        assertThat(DocumentNameUtils.getDisplayName(handle), equalTo("Test"));
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void setDisplayNameException() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
+
+        expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(workflow);
+
+        workflow.setDisplayName(eq("New name"));
+        expectLastCall().andThrow(new RepositoryException());
+
+        replayAll();
+
+        DocumentNameUtils.setDisplayName(handle, "New name");
+    }
+
+    @Test
+    public void setDisplayNameSuccess() throws Exception {
+        final Node handle = createHandle("test", "Test");
+        final DefaultWorkflow workflow = createMock(DefaultWorkflow.class);
+
+        expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(workflow);
+
+        workflow.setDisplayName(eq("New name"));
+        expectLastCall();
+
+        replayAll();
+
+        DocumentNameUtils.setDisplayName(handle, "New name");
 
         verifyAll();
     }
