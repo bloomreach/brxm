@@ -73,7 +73,7 @@ public class WebXmlUtils {
     public static boolean hasServlet(final PluginContext context, final TargetPom module, final String servletName) {
         final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
         if (webXmlPath == null) {
-            logger.warn("Failed to check for servlet, module '{}' has no web.xml file.", module);
+            logger.warn("Failed to check for servlet, module '{}' has no web.xml file.", module.getName());
             return false;
         }
 
@@ -103,7 +103,7 @@ public class WebXmlUtils {
                                   final Class servletClass, final Integer loadOnStartup, final String[] mappingUrlPatterns) {
         final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
         if (webXmlPath == null) {
-            logger.warn("Failed to add servlet, module '{}' has no web.xml file.", module);
+            logger.warn("Failed to add servlet, module '{}' has no web.xml file.", module.getName());
             return;
         }
 
@@ -130,7 +130,7 @@ public class WebXmlUtils {
                 writer.close();
             }
         } catch (DocumentException | IOException e) {
-            logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module, e);
+            logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module.getName(), e);
         }
     }
 

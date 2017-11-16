@@ -16,25 +16,33 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class WebXmlUtilsTest {
+public class WebXmlUtilsTest extends BaseResourceTest {
     private static final String EXISTING_VALUE = "classpath*:org/example/beans/**/*.class\n" +
             "      ,classpath*:org/onehippo/forge/**/*.class";
     private static final String ADDED_VALUE = "classpath*:org/onehippo/cms7/hst/beans/**/*.class," +
@@ -117,5 +125,64 @@ public class WebXmlUtilsTest {
         final JAXBContext context = JAXBContext.newInstance(WebXml.class);
         final Unmarshaller unmarshaller = context.createUnmarshaller();
         return (WebXml) unmarshaller.unmarshal(new StringReader(webXmlContent));
+    }
+
+    @Test
+    public void add_servlet() throws Exception {
+        final PluginContext context = getContext();
+
+        // create tmp workspace to safely modify web.xml resource.
+        final Path tmpDirPath = Files.createTempDirectory("test");
+        final Path outputPath = tmpDirPath.resolve("cms").resolve("src").resolve("main").resolve("webapp").resolve("WEB-INF").resolve("web.xml");
+        final File output = new File(outputPath.toUri());
+        final File input = new File(getClass().getResource("/utils/webxml/web-without-servlet.xml").getPath());
+        FileUtils.copyFile(input, output);
+
+        System.setProperty("project.basedir", tmpDirPath.toString());
+
+        assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
+        WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
+                23, new String[]{"/my/mapping/*", "/another/mapping/*"});
+        assertTrue(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
+    }
+
+    @Test
+    public void add_servlet_no_webxml() throws Exception {
+        final PluginContext context = getContext();
+
+        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
+            assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Error checking presence of servlet RepositoryJaxrsServlet")));
+        }
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
+            WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
+                    23, null);
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Failed adding servlet 'RepositoryJaxrsServlet' to web.xml of module 'cms'.")));
+        }
+    }
+
+    @Test
+    public void add_servlet_no_cms() throws Exception {
+        final PluginContext context = getContext();
+
+        System.setProperty("project.basedir", getClass().getResource("/utils/webxml").getPath());
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
+            assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Failed to check for servlet, module 'cms' has no web.xml file.")));
+        }
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
+            WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
+                    23, null);
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Failed to add servlet, module 'cms' has no web.xml file.")));
+        }
     }
 }
