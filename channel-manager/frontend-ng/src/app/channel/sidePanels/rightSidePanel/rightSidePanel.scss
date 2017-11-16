@@ -43,6 +43,7 @@ right-side-panel {
   }
 
   .edit-title-toolbar {
+    max-height: 64px;
     z-index: 3 !important;
     &-tools {
       display: flex;
