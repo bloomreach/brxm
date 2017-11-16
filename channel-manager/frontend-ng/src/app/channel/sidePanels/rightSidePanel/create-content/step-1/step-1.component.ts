@@ -88,10 +88,15 @@ export class CreateContentComponent implements OnInit {
       rootPath: '/content/documents/hap/news',
       defaultPath: '2017/11',
     };
+
     this.createContentService
       .createDraft(document)
       .subscribe(
-        (response) => this.onContinue.emit(),
+        (response) => this.onContinue.emit({
+          name: this.nameUrlFields.nameField,
+          url: this.nameUrlFields.urlField,
+          locale: this.locale
+        }),
         (error) => this.onErrorCreatingDraft(error),
       );
   }

@@ -89,12 +89,6 @@ class RightSidePanelCtrl {
     return this.SidePanelService.isOpen('right');
   }
 
-  _setMode(component, options) {
-    this._resetState();
-    this.mode = component;
-    this.options = options;
-  }
-
   openInMode(mode, options) {
     if (typeof mode === 'string') {
       mode = this.modes[mode];
@@ -120,12 +114,18 @@ class RightSidePanelCtrl {
     });
   }
 
-  switchCreateContentStep() {
+  switchCreateContentStep(options = {}) {
     if (this.mode !== this.modes.create) {
       throw new Error('Could not switch to Create content step 2 from the current mode');
     }
 
-    this._setMode(this.modes.create2);
+    this._setMode(this.modes.create2, options);
+  }
+
+  _setMode(component, options) {
+    this._resetState();
+    this.mode = component;
+    this.options = options;
   }
 
   closePanel() {

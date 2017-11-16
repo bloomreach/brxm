@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import './step-2.scss';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,6 +42,7 @@ export class CreateContentStep2Component implements OnInit {
   title = 'Create new content';
   defaultTitle = 'Create new content';
   documentId: string;
+  @Input() options: any;
   @Output() onSave: EventEmitter<any> = new EventEmitter();
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
@@ -78,8 +79,7 @@ export class CreateContentStep2Component implements OnInit {
     return this.contentService.getDocumentType(doc.info.type.id)
       .then(docType => {
         this.onLoadSuccess(doc, docType);
-        this.loading = false;
-      }).catch(() => {
+      }).finally(() => {
         this.loading = false;
       });
   }
@@ -90,8 +90,9 @@ export class CreateContentStep2Component implements OnInit {
       width: '600px',
       data: {
         title: this.translate.instant('CHANGE_DOCUMENT_NAME'),
-        name: this.doc.displayName,
-        url: '',
+        name: this.options.name,
+        url: this.options.url,
+        locale: this.options.locale
       }
     });
   }
@@ -113,7 +114,6 @@ export class CreateContentStep2Component implements OnInit {
   private onLoadSuccess(doc, docType) {
     this.doc = doc;
     this.docType = docType;
-
     this.title = this.translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docType.displayName });
   }
 
