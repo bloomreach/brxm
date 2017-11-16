@@ -1623,9 +1623,9 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
         expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
         expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
         expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(true);
         replayAll();
 
@@ -1656,16 +1656,17 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
         expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
         expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
         expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
-
-        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
-        expectLastCall();
 
         expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn(encodedDisplayName);
+
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        expectLastCall();
 
         replayAll();
 
@@ -1675,7 +1676,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDocumentNamesDisplayNameClashes() throws Exception {
+    public void updateDocumentNamesDisplayNameOnlyAndClashes() throws Exception {
         final String uuid = "uuid";
         final String displayName = "New Name";
         final String encodedDisplayName = "New Name (encoded)";
@@ -1692,10 +1693,10 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
 
         expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
         expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn(encodedUrlName);
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
 
         expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
@@ -1730,10 +1731,10 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
 
         expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
         expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn(encodedUrlName);
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
 
         expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
@@ -1767,18 +1768,18 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
 
         expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
         expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
         expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
-
-        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
-        expectLastCall();
 
         expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
         expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(false);
+
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        expectLastCall();
 
         DocumentNameUtils.setDisplayName(eq(handle), eq(encodedDisplayName));
         expectLastCall();
@@ -1788,6 +1789,45 @@ public class DocumentsServiceImplTest {
         Document result = documentsService.updateDocumentNames(uuid, document, session);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
+    }
+
+    @Test
+    public void updateDocumentNamesBothDisplayNameClashes() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "New Name";
+        final String encodedDisplayName = "New Name (encoded)";
+        final String urlName = "new name";
+        final String encodedUrlName = "new-name";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(true);
+
+        replayAll();
+
+        try {
+            documentsService.updateDocumentNames(uuid, document, session);
+            fail("No Exception");
+        } catch (final ConflictException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
+        }
     }
 
     @Test(expected = NotFoundException.class)

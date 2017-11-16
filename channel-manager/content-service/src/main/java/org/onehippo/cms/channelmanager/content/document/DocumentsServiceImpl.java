@@ -267,31 +267,34 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final Node folder = FolderUtils.getFolder(handle);
         final String folderLocale = FolderUtils.getLocale(folder);
+        final String handlePath = JcrUtils.getNodePathQuietly(handle);
 
         final String newUrlName = DocumentNameUtils.encodeUrlName(urlName, folderLocale);
         final String oldUrlName = DocumentNameUtils.getUrlName(handle);
-        final String handlePath = JcrUtils.getNodePathQuietly(handle);
+        final boolean changeUrlName = !newUrlName.equals(oldUrlName);
 
-        if (!newUrlName.equals(oldUrlName)) {
-            if (FolderUtils.nodeExists(folder, newUrlName)) {
-                throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
-            } else {
-                log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
-                DocumentNameUtils.setUrlName(handle, newUrlName);
-                document.setUrlName(newUrlName);
-            }
+        if (changeUrlName && FolderUtils.nodeExists(folder, newUrlName)) {
+            throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
         final String newDisplayName = DocumentNameUtils.encodeDisplayName(displayName, folderLocale);
         final String oldDisplayName = DocumentNameUtils.getDisplayName(handle);
-        if (!newDisplayName.equals(oldDisplayName)) {
-            if (FolderUtils.nodeWithDisplayNameExists(folder, newDisplayName)) {
-                throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
-            } else {
-                log.info("Changing display name of '{}' to '{}'", handlePath, newDisplayName);
-                DocumentNameUtils.setDisplayName(handle, newDisplayName);
-                document.setDisplayName(newDisplayName);
-            }
+        final boolean changeDisplayName = !newDisplayName.equals(oldDisplayName);
+
+        if (changeDisplayName && FolderUtils.nodeWithDisplayNameExists(folder, newDisplayName)) {
+            throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
+        }
+
+        if (changeUrlName) {
+            log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
+            DocumentNameUtils.setUrlName(handle, newUrlName);
+            document.setUrlName(newUrlName);
+        }
+
+        if (changeDisplayName) {
+            log.info("Changing display name of '{}' to '{}'", handlePath, newDisplayName);
+            DocumentNameUtils.setDisplayName(handle, newDisplayName);
+            document.setDisplayName(newDisplayName);
         }
 
         return document;
