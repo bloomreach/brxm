@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +28,10 @@ import java.util.regex.Pattern;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebContextParam;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebFilter;
@@ -54,6 +60,78 @@ public class WebXmlUtils {
     public enum Dispatcher {
         REQUEST,
         FORWARD
+    }
+
+    /**
+     * Check if a servlet (by name) has already been defined in the specified module's web.xml.
+     *
+     * @param context     Plugin context for accessing the project
+     * @param module      Target module for checking the web.xml file
+     * @param servletName Name of the servlet to look for
+     * @return            true if found, false otherwise
+     */
+    public static boolean hasServlet(final PluginContext context, final TargetPom module, final String servletName) {
+        final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
+        if (webXmlPath == null) {
+            logger.warn("Failed to check for servlet, module '{}' has no web.xml file.", module);
+            return false;
+        }
+
+        final String selector = "/web-app/*[name()='servlet']/*[name()='servlet-name' and text()='" + servletName + "']";
+        try {
+            Document doc = new SAXReader().read(new File(webXmlPath));
+            return doc.getRootElement().selectSingleNode(selector) != null;
+        } catch (DocumentException e) {
+            logger.error("Error checking presence of servlet {}", servletName, e);
+        }
+        return false;
+    }
+
+    /**
+     * Add a servlet and corresponding mapping to the specified module's web.xml.
+     *
+     * If the servlet may already be there, use #hasServlet first.
+     *
+     * @param context       Plugin context for accessing the project
+     * @param module        Target module for modifying the web.xml file
+     * @param servletName   Name of the servlet to add
+     * @param servletClass  Class of the servlet to add
+     * @param loadOnStartup Value for the loadOnStartup parameter, may be null
+     * @param mappingUrlPatterns Values for the URL patterns of the mapping
+     */
+    public static void addServlet(final PluginContext context, final TargetPom module, final String servletName,
+                                  final Class servletClass, final Integer loadOnStartup, final String[] mappingUrlPatterns) {
+        final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
+        if (webXmlPath == null) {
+            logger.warn("Failed to add servlet, module '{}' has no web.xml file.", module);
+            return;
+        }
+
+        final File webXml = new File(webXmlPath);
+        try {
+            Document doc = new SAXReader().read(webXml);
+            Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
+            if (webApp != null) {
+                Element servlet = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet", null);
+                Dom4JUtils.addIndentedElement(servlet, "servlet-name", servletName);
+                Dom4JUtils.addIndentedElement(servlet, "servlet-class", servletClass.getCanonicalName());
+                if (loadOnStartup != null) {
+                    Dom4JUtils.addIndentedElement(servlet, "load-on-startup", loadOnStartup.toString());
+                }
+
+                Element servletMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet-mapping", null);
+                Dom4JUtils.addIndentedElement(servletMapping, "servlet-name", servletName);
+                for (String urlPattern : mappingUrlPatterns) {
+                    Dom4JUtils.addIndentedElement(servletMapping, "url-pattern", urlPattern);
+                }
+
+                FileWriter writer = new FileWriter(webXml);
+                doc.write(writer);
+                writer.close();
+            }
+        } catch (DocumentException | IOException e) {
+            logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module, e);
+        }
     }
 
     /**
