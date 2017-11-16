@@ -1,5 +1,10 @@
 definitions:
   config:
+    /:
+      jcr:mixinTypes:
+        operation: add
+        value: ['hippo:named']
+      hippo:name: Root Node
     /otherTopmost:
       newProperty: value  # REPO-1805 reproduction case: should reuse existing definition
     /topmost:

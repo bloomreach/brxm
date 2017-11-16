@@ -1148,7 +1148,7 @@ public class DefinitionMergeService {
     /**
      * Get or create a definition in the local modules to contain data for jcrPath.
      * Note: this method performs a three-step check for what module to use similar to
-     * {@link #createNewContentSource(JcrPath, SortedMap)}.
+     * {@link #createNewContentSource(JcrPath, SortedMap)}, except we also need to handle the JCR root node here.
      * @param path the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root and may or not may be
      * empty
@@ -1157,6 +1157,11 @@ public class DefinitionMergeService {
     protected DefinitionNodeImpl getOrCreateLocalDef(final JcrPath path, ModuleImpl parentNodeModule) {
         // what module should we put it in, according to normal auto-export config rules?
         final ModuleImpl defaultModule = getModuleByAutoExportConfig(path);
+
+        // for the JCR root node, the auto-export config is the only possible answer
+        if (path.isRoot()) {
+            parentNodeModule = defaultModule;
+        }
 
         // where is the parent of this path initially defined?
         // if the caller already handed us a value, use it
