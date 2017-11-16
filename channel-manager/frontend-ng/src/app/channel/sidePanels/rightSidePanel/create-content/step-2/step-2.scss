@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @import 'variables';
+@import '../../../../../shared/material/material';
 
 hippo-create-content-step-2 {
 
@@ -24,13 +25,13 @@ hippo-create-content-step-2 {
     overflow: auto;
   }
 
+  hippo-fields-editor {
+    padding: 0 12px;
+  }
+
   .create-content-container,
   .edit-title-toolbar {
     background: $white;
-  }
-
-  .edit-title-toolbar:first-child {
-    border-bottom: 0;
   }
 
   .create-content-actions {
@@ -40,13 +41,11 @@ hippo-create-content-step-2 {
   .editable-title-toolbar {
     background-color: $grey-100;
     box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
-    display: flex;
     height: 56px;
     min-height: 56px;
     width: 100%;
     z-index: 3 !important;
     h6 {
-      flex: 1;
       margin: 0;
     }
 
@@ -68,4 +67,9 @@ hippo-create-content-step-2 {
     font-size: 12px;
     margin-top: -15px;
   }
+}
+
+.feedback {
+  background-color: mat-color($hippo-warn, 50);
+  padding: 16px;
 }

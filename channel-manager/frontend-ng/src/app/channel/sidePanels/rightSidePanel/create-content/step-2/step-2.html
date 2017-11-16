@@ -38,13 +38,13 @@
     </mat-progress-bar>
   </mat-toolbar>
 
-  <mat-toolbar class="editable-title-toolbar" *ngIf="doc">
-    <div class="md-toolbar-tools layout-padding">
+  <mat-toolbar class="editable-title-toolbar" *ngIf="doc" fxFlex>
+    <div class="md-toolbar-tools">
       <h6 class="md-subhead text-truncate qa-editable-title">
         {{ doc.displayName }}
       </h6>
 
-      <span flex></span>
+      <span fxFlex></span>
 
       <button mat-icon-button
               class="mat-icon-button btn-edit-document-title qa-step-2-edit-name-url"
@@ -59,12 +59,10 @@
   <hippo-sharedspace-toolbar *ngIf="docType"></hippo-sharedspace-toolbar>
 
   <div class="md-content right-side-panel-content"
-  fxLayout="column"
-  fxFlex="grow">
+       fxLayout="column"
+       fxFlex="grow">
 
-    <div *ngIf="feedback"
-        class="feedback qa-feedback layout-padding"
-        mat-colors="{background: 'hippo-red-50'}">
+    <div *ngIf="feedback" class="feedback qa-feedback">
       <h4 class="qa-feedback-title">{{ feedback.title }}</h4>
 
       <p class="qa-feedback-message">
@@ -72,7 +70,7 @@
       </p>
     </div>
 
-    <hippo-fields-editor class="top-level layout-padding"
+    <hippo-fields-editor class="top-level"
                         *ngIf="docType"
                         [fieldTypes]="docType.fields"
                         [fieldValues]="doc.fields">
@@ -96,16 +94,4 @@
 
     </div>    
   </mat-toolbar>
-  <!-- <div class="create-content-actions layout-padding">
-    <button mat-button class="qa-close"
-            (click)="close()">
-      {{ 'DISCARD' | translate }}
-    </button>
-
-    <button mat-button class="qa-save"
-            (click)="saveDocument()"
-            ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
-      {{ 'SAVE' | translate  }}
-    </button>
-  </div> -->
 </div>
