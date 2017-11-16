@@ -29,6 +29,10 @@ hippo-create-content-step-2 {
     background: $white;
   }
 
+  .edit-title-toolbar:first-child {
+    border-bottom: 0;
+  }
+
   .create-content-actions {
     border-top: 1px solid $grey-100;
   }
@@ -38,7 +42,7 @@ hippo-create-content-step-2 {
     box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
     display: flex;
     height: 56px;
-    min-height: 54px;
+    min-height: 56px;
     width: 100%;
     z-index: 3 !important;
     h6 {
@@ -63,11 +67,5 @@ hippo-create-content-step-2 {
     color: $red-500;
     font-size: 12px;
     margin-top: -15px;
-  }
-}
-
-.name-url-fields-dialog {
-  mat-input-container {
-    width: 100%;
   }
 }
