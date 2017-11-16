@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugins.projects;
+package org.onehippo.cms7.essentials.plugins.relevance;
 
 import java.io.File;
 

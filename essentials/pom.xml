@@ -191,7 +191,7 @@
                 <exclude>**/*.properties</exclude>
                 <exclude>**/hippoecm-extension.xml</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
-                <!-- exclude IntelliJ module files of sub-projects -->
+                <!-- exclude IntelliJ module files of sub-relevance -->
                 <exclude>**/*.iml</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
