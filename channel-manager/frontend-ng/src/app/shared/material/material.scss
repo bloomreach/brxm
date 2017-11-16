@@ -13,7 +13,7 @@
 // limitations under the License.
 
 @import 'variables';
-@import '../../../../node_modules/@angular/material/theming';
+@import '~@angular/material/theming';
 @include mat-core;
 
 $hippo-blue: (
@@ -120,3 +120,8 @@ $hippo-accent:  mat-palette($hippo-orange);
 $hippo-warn:    mat-palette($hippo-red);
 $hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
 @include angular-material-theme($hippo-theme);
+
+$custom-typography: mat-typography-config(
+  $font-family: $font-family-material2
+);
+@include angular-material-typography($custom-typography);
