@@ -42,7 +42,8 @@ public class FoldersServiceImpl implements FoldersService {
         return INSTANCE;
     }
 
-    private FoldersServiceImpl() { }
+    private FoldersServiceImpl() {
+    }
 
     @Override
     public List<Folder> getFolders(final String path, final Session session) throws ErrorWithPayloadException {
@@ -73,7 +74,7 @@ public class FoldersServiceImpl implements FoldersService {
         return folders;
     }
 
-    private Folder createFolder(final String name, final Folder parent) {
+    private static Folder createFolder(final String name, final Folder parent) {
         final Folder folder = new Folder();
         final String locale = parent != null ? parent.getLocale() : null;
         final String encodedName = SlugFactory.createSlug(name, locale);
@@ -86,7 +87,7 @@ public class FoldersServiceImpl implements FoldersService {
         return folder;
     }
 
-    private Folder createFolder(final Node node, final Folder parent) throws RepositoryException {
+    private static Folder createFolder(final Node node, final Folder parent) throws RepositoryException {
         final Folder folder = new Folder();
         folder.setName(node.getName());
         folder.setPath(node.getPath());

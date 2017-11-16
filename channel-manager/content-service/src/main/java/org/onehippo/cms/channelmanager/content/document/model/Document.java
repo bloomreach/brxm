@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a document, stored in the CMS.
- * It can be serialized into JSON to expose it through a REST API.
+ * This bean represents a document, stored in the CMS. It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class Document {
     private String id;                // UUID
     private String displayName;

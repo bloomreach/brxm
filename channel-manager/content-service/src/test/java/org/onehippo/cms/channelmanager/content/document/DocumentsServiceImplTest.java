@@ -51,6 +51,7 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
@@ -1670,7 +1671,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
         assertThat(result.getDisplayName(), equalTo(displayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
     }
@@ -1704,13 +1705,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        try {
-            documentsService.updateDocumentNames(uuid, document, session);
-            fail("No Exception");
-        } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
-        }
+        assertDocumentNameIsUpdated(uuid, document);
     }
 
     @Test
@@ -1745,7 +1740,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(urlName));
     }
@@ -1786,7 +1781,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
     }
@@ -1821,13 +1816,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        try {
-            documentsService.updateDocumentNames(uuid, document, session);
-            fail("No Exception");
-        } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
-        }
+        assertDocumentNameIsUpdated(uuid, document);
     }
 
     @Test(expected = NotFoundException.class)
@@ -2059,4 +2048,15 @@ public class DocumentsServiceImplTest {
 
         return docType;
     }
+
+    private void assertDocumentNameIsUpdated(final String uuid, final Document document) throws ErrorWithPayloadException {
+        try {
+            documentsService.updateDocumentNames(uuid, document, session);
+            fail("No Exception");
+        } catch (final ConflictException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
+        }
+    }
+
 }
