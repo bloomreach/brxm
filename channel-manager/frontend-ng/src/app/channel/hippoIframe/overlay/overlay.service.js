@@ -345,22 +345,32 @@ class OverlayService {
       },
     };
 
-    const optionsSet = {
-      mainButtonIcon: addContentSvg,
-      mainButtonCloseIcon: clearSvg,
-      buttons: [],
-    };
-
-    if (config.documentUuid) {
-      optionsSet.mainButtonIcon = contentLinkSvg;
-      optionsSet.mainButtonCloseIcon = contentLinkSvg;
-    }
+    const optionsSet = Object.assign({ buttons: [] },
+      config.documentUuid ? this._getMainEditButtonConfig() : this._getMainCreateButtonConfig());
 
     Object.keys(optionButtons)
       .filter(key => config[key])
       .forEach(key => optionsSet.buttons.push(optionButtons[key]));
 
     return optionsSet;
+  }
+
+  _getMainCreateButtonConfig() {
+    return {
+      mainButtonIcon: addContentSvg,
+      mainButtonTooltip: this.$translate.instant('CREATE_DOCUMENT'),
+      mainButtonCloseIcon: clearSvg,
+      mainButtonCloseTooltip: this.$translate.instant('CANCEL'),
+    };
+  }
+
+  _getMainEditButtonConfig() {
+    return {
+      mainButtonIcon: contentLinkSvg,
+      mainButtonTooltip: this.$translate.instant('EDIT_CONTENT'),
+      mainButtonCloseIcon: contentLinkSvg,
+      mainButtonCloseTooltip: this.$translate.instant('EDIT_CONTENT'),
+    };
   }
 
   filterConfigByPrivileges(configObj) {
@@ -400,10 +410,11 @@ class OverlayService {
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button id="hippo-fab-btn" class="hippo-fab-btn qa-manage-content-link">${optionsSet.mainButtonIcon}</button>`)
+      .append(`<button title="${optionsSet.mainButtonTooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${optionsSet.mainButtonIcon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
-    const fabBtn = overlayElement.find('#hippo-fab-btn');
+    const fabBtn = overlayElement.find('.hippo-fab-btn');
     const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
 
     if (config.documentUuid) {
@@ -435,6 +446,7 @@ class OverlayService {
         optionButtonsContainer.html(this._createButtonsHtml(optionsSet.buttons));
         fabBtn.addClass('hippo-fab-btn-open');
         fabBtn.html(optionsSet.mainButtonCloseIcon);
+        fabBtn.attr('title', optionsSet.mainButtonCloseTooltip);
         overlayElement.addClass('is-showing-options');
         return true;
       }
@@ -443,6 +455,7 @@ class OverlayService {
     const hideOptions = () => {
       fabBtn.removeClass('hippo-fab-btn-open');
       fabBtn.html(optionsSet.mainButtonIcon);
+      fabBtn.attr('title', optionsSet.mainButtonTooltip);
       overlayElement.removeClass('is-showing-options');
     };
     const showOptionsIfLeft = () => {
