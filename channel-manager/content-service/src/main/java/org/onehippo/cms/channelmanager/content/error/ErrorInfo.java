@@ -91,6 +91,5 @@ public class ErrorInfo {
         NAME_ALREADY_EXISTS,
         SLUG_ALREADY_EXISTS,
         // add more specific failure reasons here.
-
     }
 }

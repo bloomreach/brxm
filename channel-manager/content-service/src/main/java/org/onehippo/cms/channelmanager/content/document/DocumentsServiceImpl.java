@@ -338,7 +338,7 @@ class DocumentsServiceImpl implements DocumentsService {
             documentWorkflow.delete();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to archive document '{}'", uuid, e);
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -348,7 +348,7 @@ class DocumentsServiceImpl implements DocumentsService {
             folderWorkflow.delete(handle.getName());
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to erase document '{}'", uuid, e);
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException();
         }
     }
 
