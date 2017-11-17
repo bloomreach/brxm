@@ -18,17 +18,18 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -38,11 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-
 
 /**
  * @version "$Id$"
@@ -51,21 +47,15 @@ import com.google.common.eventbus.EventBus;
 @XmlRootElement(name = "cnd", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class CndInstruction extends PluginInstruction {
 
-    //private static final String DEFAULT_URL = "http://www.onehippo.org/${namespace}/nt/1.0";
     private static Logger log = LoggerFactory.getLogger(CndInstruction.class);
-    @Inject
-    private EventBus eventBus;
     // TODO implement possibility to add custom namespace, currently only project namespaces is used
     private String namespace;
     private String superType;
     private String documentType;
     private String namespacePrefix;
 
-    @Named("${instruction.message.cnd.register.failed}")
-    private String messageRegisterError;
-
-    @Named("${instruction.message.cnd.register}")
-    private String message;
+    // TODO I believe this variable may not be used at all. See MessageInstructionExecutor#processCndInstruction.
+    private String message = "Registered document type: {{documentType}}.";
     private String action;
 
     @Override
@@ -93,8 +83,7 @@ public class CndInstruction extends PluginInstruction {
             }
             CndUtils.registerDocumentType(context, prefix, documentType, true, false, superTypes);
             session.save();
-            // TODO add message
-            eventBus.post(new InstructionEvent(this));
+            log.info("Successfully registered document type '{}:{}'.", prefix, documentType);
             return InstructionStatus.SUCCESS;
         } catch (NodeTypeExistsException e) {
             // just add already exiting ones:
@@ -107,8 +96,8 @@ public class CndInstruction extends PluginInstruction {
             GlobalUtils.cleanupSession(session);
         }
 
-        message = messageRegisterError;
-        eventBus.post(new InstructionEvent(this));
+
+        log.info("Failed to registered document type: '{}:{}'.", prefix, documentType);
         return InstructionStatus.FAILED;
     }
 
@@ -127,10 +116,6 @@ public class CndInstruction extends PluginInstruction {
         final String myDocumentType = TemplateUtils.replaceTemplateData(documentType, data);
         if (myDocumentType != null) {
             documentType = myDocumentType;
-        }
-        final String myErrorMessage = TemplateUtils.replaceTemplateData(messageRegisterError, data);
-        if (myErrorMessage != null) {
-            messageRegisterError = myErrorMessage;
         }
     }
 

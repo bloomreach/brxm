@@ -21,18 +21,17 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -61,7 +60,7 @@ public class FreemarkerInstruction extends FileInstruction {
         processPlaceholders(context.getPlaceholderData());
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
-            eventBus.post(new InstructionEvent(this));
+            log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
 

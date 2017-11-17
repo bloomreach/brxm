@@ -36,7 +36,6 @@ import com.google.common.eventbus.EventBus;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -72,8 +71,6 @@ public class XmlInstruction extends PluginInstruction {
     @Value("${instruction.message.xml.copy}")
     private String messageCopy;
 
-    @Value("${instruction.message.xml.copy.error}")
-    private String messageCopyError;
     private PluginContext context;
 
     @Override
@@ -89,12 +86,9 @@ public class XmlInstruction extends PluginInstruction {
         // check action:
         if (action.equals(COPY)) {
             return copy();
-        } else if (action.equals(DELETE)) {
+        } else {
             return delete();
         }
-
-        eventBus.post(new InstructionEvent(this));
-        return InstructionStatus.FAILED;
     }
 
     private InstructionStatus copy() {
@@ -110,14 +104,12 @@ public class XmlInstruction extends PluginInstruction {
 
             if (stream == null) {
                 log.error("Source file not found {}", source);
-                message = messageCopyError;
-                eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.FAILED;
             }
 
             // first check if node exists:
             if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
-                eventBus.post(new InstructionEvent(this));
+                log.info("Skipping XML import, target node '{}' already exists.", target);
                 return InstructionStatus.SKIPPED;
             }
 
@@ -125,7 +117,7 @@ public class XmlInstruction extends PluginInstruction {
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
-            log.info("Added node to: {}", destination.getPath());
+            log.info("Imported XML from '{}' to '{}'.", source, target);
             sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
@@ -172,7 +164,7 @@ public class XmlInstruction extends PluginInstruction {
             node.remove();
             session.save();
             sendEvents();
-            log.info("Deleted node: {}", target);
+            log.info("Deleted node '{}'.", target);
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
@@ -210,7 +202,6 @@ public class XmlInstruction extends PluginInstruction {
         super.processPlaceholders(data);
         //
 
-        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 

@@ -40,7 +40,6 @@ import com.google.common.eventbus.EventBus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -72,11 +71,6 @@ public class FileInstruction extends PluginInstruction {
     @Value("${instruction.message.file.copy}")
     private String messageCopy;
 
-    @Value("${instruction.message.file.copy.error}")
-    private String messageCopyError;
-
-    @Value("${instruction.message.folder.create}")
-    private String messageFolderCreate;
     private boolean overwrite;
     private String source;
     private String target;
@@ -93,26 +87,22 @@ public class FileInstruction extends PluginInstruction {
         this.context = context;
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
-            eventBus.post(new InstructionEvent(this));
+            log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
 
         // check action:
         if (action.equals(COPY)) {
             return copy();
-        } else if (action.equals(DELETE)) {
+        } else {
             return delete();
         }
-
-        eventBus.post(new InstructionEvent(this));
-        return InstructionStatus.FAILED;
     }
 
     private InstructionStatus copy() {
         final File destination = new File(target);
         if (!overwrite && destination.exists()) {
             log.info("File already exists {}", destination);
-            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SKIPPED;
         }
 
@@ -143,15 +133,14 @@ public class FileInstruction extends PluginInstruction {
                 final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
                 FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
             }
+            log.info("Copied file from '{}' to '{}'.", source, target);
             sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
-            message = messageCopyError;
-            log.error("Error while copy resource", e);
+            log.error("Failed to copy file from '{}' to '{}'.", source, target, e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
@@ -191,7 +180,7 @@ public class FileInstruction extends PluginInstruction {
             createdFolders = directories.getLast().substring(directories.getFirst().length());
             createdFoldersTarget = directories.getLast();
             Files.createDirectories(new File(directories.getLast()).toPath());
-            eventBus.post(new InstructionEvent(messageFolderCreate));
+            log.info("Created '{}'.", target);
         }
     }
 
@@ -210,17 +199,15 @@ public class FileInstruction extends PluginInstruction {
             final boolean deleted = Files.deleteIfExists(path);
             if (deleted) {
                 sendEvents();
-                log.debug("Deleted file {}", target);
+                log.info("Deleted file '{}'.", target);
                 return InstructionStatus.SUCCESS;
             } else {
-                log.debug("File not deleted {}", target);
-                eventBus.post(new InstructionEvent(this));
+                log.info("Failed to delete '{}', as it doesn't exist.", target);
                 return InstructionStatus.SKIPPED;
             }
         } catch (IOException e) {
-            log.error("Error deleting file", e);
+            log.error("Error deleting file '{}'.", target, e);
         }
-        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
@@ -254,8 +241,6 @@ public class FileInstruction extends PluginInstruction {
         }
 
         super.processPlaceholders(data);
-        //
-        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 

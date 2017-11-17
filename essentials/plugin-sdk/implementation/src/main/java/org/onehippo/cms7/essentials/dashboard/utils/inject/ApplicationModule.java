@@ -19,7 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.utils.inject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -28,8 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoader;
-
-import com.google.common.eventbus.EventBus;
 
 
 /**
@@ -51,8 +50,6 @@ public class ApplicationModule {
     @Inject
     private MemoryPluginEventListener memoryPluginEventListener;
     @Inject
-    private InstructionsEventListener instructionsEventListener;
-    @Inject
     private RebuildProjectEventListener rebuildProjectEventListener;
 
     private static volatile boolean initialized = false;
@@ -69,7 +66,6 @@ public class ApplicationModule {
             applicationContextRef = applicationContext;
             eventBus.register(rebuildProjectEventListener);
             eventBus.register(memoryPluginEventListener);
-            eventBus.register(instructionsEventListener);
             initialized = true;
         }
         return eventBus;

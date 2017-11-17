@@ -21,13 +21,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.springframework.stereotype.Component;
-
-import com.google.common.eventbus.EventBus;
 
 
 /**
@@ -54,7 +53,6 @@ public abstract class PluginInstruction implements Instruction {
 
 
     protected void sendEvents() {
-        eventBus.post(new InstructionEvent(this));
         eventBus.post(new DisplayEvent(getMessage()));
     }
 

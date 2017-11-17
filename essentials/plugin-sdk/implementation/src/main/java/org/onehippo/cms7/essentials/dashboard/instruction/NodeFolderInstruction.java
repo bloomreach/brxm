@@ -113,6 +113,7 @@ public class NodeFolderInstruction extends PluginInstruction {
             message = TemplateUtils.replaceTemplateData(messageSuccess, data);
             session.save();
             sendEvents();
+            log.info("Created '{}' from '{}'.", path, template);
             return InstructionStatus.SUCCESS;
 
 
