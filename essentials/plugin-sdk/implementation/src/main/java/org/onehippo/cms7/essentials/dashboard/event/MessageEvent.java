@@ -29,17 +29,7 @@ public class MessageEvent extends BaseEvent {
     }
 
     @Override
-    public boolean canUndo() {
-        return false;
-    }
-
-    @Override
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public DisplayLocation getDisplayLocation() {
-        return DisplayLocation.PLUGIN_CONTENT;
     }
 }

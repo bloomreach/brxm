@@ -33,9 +33,4 @@ public class RebuildEvent extends MessageEvent {
     public String getPluginId() {
         return pluginId;
     }
-
-    @Override
-    public DisplayLocation getDisplayLocation() {
-        return DisplayLocation.SYSTEM;
-    }
 }

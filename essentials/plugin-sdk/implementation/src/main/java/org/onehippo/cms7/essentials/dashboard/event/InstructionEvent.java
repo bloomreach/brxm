@@ -35,11 +35,6 @@ public class InstructionEvent extends MessageEvent {
         super(message);
     }
 
-    @Override
-    public DisplayLocation getDisplayLocation() {
-        return DisplayLocation.SYSTEM;
-    }
-
     public Instruction getInstruction() {
         return instruction;
     }
