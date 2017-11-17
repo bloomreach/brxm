@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -50,8 +49,6 @@ public class ApplicationModule {
 
 
     @Inject
-    private LoggingPluginEventListener loggingPluginEventListener;
-    @Inject
     private MemoryPluginEventListener memoryPluginEventListener;
     @Inject
     private InstructionsEventListener instructionsEventListener;
@@ -71,7 +68,6 @@ public class ApplicationModule {
         if (!initialized) {
             applicationContextRef = applicationContext;
             eventBus.register(rebuildProjectEventListener);
-            eventBus.register(loggingPluginEventListener);
             eventBus.register(memoryPluginEventListener);
             eventBus.register(instructionsEventListener);
             initialized = true;
