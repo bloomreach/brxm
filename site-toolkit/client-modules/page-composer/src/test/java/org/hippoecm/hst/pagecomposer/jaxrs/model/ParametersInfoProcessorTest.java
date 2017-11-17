@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -422,7 +422,7 @@ public class ParametersInfoProcessorTest {
 
     @FieldGroupList({
             @FieldGroup(titleKey = "group1",
-                    value = {"parameter"}
+                    value = {"parameter", "parameter"}
             ),
             @FieldGroup(titleKey = "group2",
                     value = {"parameter"}
@@ -486,7 +486,6 @@ public class ParametersInfoProcessorTest {
                 value = {"d3"}
             )
     })
-
     static interface FieldGroupInheritedInterfaceD {
         @Parameter(name = "d1")
         String getD1();
