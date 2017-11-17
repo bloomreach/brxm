@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +32,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebContextParam;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebFilter;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebFilterMapping;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
@@ -53,38 +51,12 @@ public class WebXmlUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebXmlUtils.class);
     private static final Pattern FILTER_PATTERN = Pattern.compile("(?is)<filter>.+?</filter>[^\\n]*\\n");
     private static final Pattern FILTER_MAPPING_PATTERN = Pattern.compile("(?is)<filter-mapping>.+?</filter-mapping>[^\\n]*\\n");
-    private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";
 
     private WebXmlUtils() {}
 
     public enum Dispatcher {
         REQUEST,
         FORWARD
-    }
-
-    /**
-     * Check if a servlet (by name) has already been defined in the specified module's web.xml.
-     *
-     * @param context     Plugin context for accessing the project
-     * @param module      Target module for checking the web.xml file
-     * @param servletName Name of the servlet to look for
-     * @return            true if found, false otherwise
-     */
-    public static boolean hasServlet(final PluginContext context, final TargetPom module, final String servletName) {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
-        if (webXmlPath == null) {
-            logger.warn("Failed to check for servlet, module '{}' has no web.xml file.", module.getName());
-            return false;
-        }
-
-        final String selector = "/web-app/*[name()='servlet']/*[name()='servlet-name' and text()='" + servletName + "']";
-        try {
-            Document doc = new SAXReader().read(new File(webXmlPath));
-            return doc.getRootElement().selectSingleNode(selector) != null;
-        } catch (DocumentException e) {
-            logger.error("Error checking presence of servlet {}", servletName, e);
-        }
-        return false;
     }
 
     /**
@@ -98,37 +70,52 @@ public class WebXmlUtils {
      * @param servletClass  Class of the servlet to add
      * @param loadOnStartup Value for the loadOnStartup parameter, may be null
      * @param mappingUrlPatterns Values for the URL patterns of the mapping
+     * @return true if the servlet is there upon completion, false otherwise
      */
-    public static void addServlet(final PluginContext context, final TargetPom module, final String servletName,
+    public static boolean addServlet(final PluginContext context, final TargetPom module, final String servletName,
                                   final Class servletClass, final Integer loadOnStartup, final String[] mappingUrlPatterns) {
         final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
         if (webXmlPath == null) {
             logger.warn("Failed to add servlet, module '{}' has no web.xml file.", module.getName());
-            return;
+            return false;
         }
 
         final File webXml = new File(webXmlPath);
         try {
             Document doc = new SAXReader().read(webXml);
-            Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
-            if (webApp != null) {
-                Element servlet = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet", null);
-                Dom4JUtils.addIndentedElement(servlet, "servlet-name", servletName);
-                Dom4JUtils.addIndentedElement(servlet, "servlet-class", servletClass.getCanonicalName());
-                if (loadOnStartup != null) {
-                    Dom4JUtils.addIndentedElement(servlet, "load-on-startup", loadOnStartup.toString());
-                }
-
-                Element servletMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet-mapping", null);
-                Dom4JUtils.addIndentedElement(servletMapping, "servlet-name", servletName);
-                for (String urlPattern : mappingUrlPatterns) {
-                    Dom4JUtils.addIndentedElement(servletMapping, "url-pattern", urlPattern);
-                }
-
+            Element servlet = servletFor(servletName, doc);
+            if (servlet == null) {
+                createServlet(doc, servletName, servletClass, loadOnStartup, mappingUrlPatterns);
                 write(webXml, doc);
             }
+            return true;
         } catch (DocumentException | IOException e) {
             logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module.getName(), e);
+        }
+        return false;
+    }
+
+    private static Element servletFor(final String servletName, final Document doc) {
+        final String selector = String.format("/web-app/*[name()='servlet']/*[name()='servlet-name' and text()='%s']",
+                servletName);
+        return parentElementFor(selector, doc);
+    }
+
+    private static void createServlet(final Document doc, final String name, final Class clazz,
+                                      final Integer loadOnStartup, final String[] mappingUrlPatterns) {
+        final Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
+
+        final Element servlet = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet", null);
+        Dom4JUtils.addIndentedElement(servlet, "servlet-name", name);
+        Dom4JUtils.addIndentedElement(servlet, "servlet-class", clazz.getCanonicalName());
+        if (loadOnStartup != null) {
+            Dom4JUtils.addIndentedElement(servlet, "load-on-startup", loadOnStartup.toString());
+        }
+
+        final Element servletMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet-mapping", null);
+        Dom4JUtils.addIndentedElement(servletMapping, "servlet-name", name);
+        for (String urlPattern : mappingUrlPatterns) {
+            Dom4JUtils.addIndentedElement(servletMapping, "url-pattern", urlPattern);
         }
     }
 
@@ -150,7 +137,7 @@ public class WebXmlUtils {
         final File webXml = new File(webXmlPath);
         try {
             Document doc = new SAXReader().read(webXml);
-            Element contextParameter = contextParameterSelectorFor(paramName, doc);
+            Element contextParameter = contextParameterFor(paramName, doc);
             if (contextParameter != null) {
                 final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");
                 final String value = parameterValue.getText();
@@ -173,10 +160,10 @@ public class WebXmlUtils {
         return false;
     }
 
-    private static void write(final File webXml, final Document doc) throws IOException {
-        FileWriter writer = new FileWriter(webXml);
-        doc.write(writer);
-        writer.close();
+    private static Element contextParameterFor(final String parameterName, final Document doc) {
+        final String selector = String.format("/web-app/*[name()='context-param']/*[name()='param-name' and text()='%s']",
+                parameterName);
+        return parentElementFor(selector, doc);
     }
 
     private static void createContextParameter(final Document doc, final String name, final String value) {
@@ -186,11 +173,15 @@ public class WebXmlUtils {
         Dom4JUtils.addIndentedElement(contextParam, "param-value", value);
     }
 
-    private static Element contextParameterSelectorFor(final String parameterName, final Document doc) {
-        final String selector = String.format("/web-app/*[name()='context-param']/*[name()='param-name' and text()='%s']",
-                parameterName);
-        final Element nameElement = (Element) doc.getRootElement().selectSingleNode(selector);
-        return nameElement != null ? nameElement.getParent() : null;
+    private static Element parentElementFor(final String selector, final Document doc) {
+        final Element element = (Element) doc.getRootElement().selectSingleNode(selector);
+        return element != null ? element.getParent() : null;
+    }
+
+    private static void write(final File webXml, final Document doc) throws IOException {
+        FileWriter writer = new FileWriter(webXml);
+        doc.write(writer);
+        writer.close();
     }
 
     /**

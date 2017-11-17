@@ -115,16 +115,24 @@ public class WebXmlUtilsTest extends BaseResourceTest {
 
     @Test
     public void add_servlet() throws Exception {
+        final String webxml = "/utils/webxml/web-without-servlet.xml";
+        final String servletName = "RepositoryJaxrsServlet";
         final PluginContext context = getContext();
 
         final Map<String, String> resourceToProjectLocation = new HashMap<>();
-        resourceToProjectLocation.put("/utils/webxml/web-without-servlet.xml", "cms/src/main/webapp/WEB-INF/web.xml");
-        createModifiableProject(resourceToProjectLocation);
+        resourceToProjectLocation.put(webxml, "cms/src/main/webapp/WEB-INF/web.xml");
+        final Map<String, File> resourceToFile = createModifiableProject(resourceToProjectLocation);
+        final File webXmlFile = resourceToFile.get(webxml);
 
-        assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
-        WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
-                23, new String[]{"/my/mapping/*", "/another/mapping/*"});
-        assertTrue(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
+        assertEquals(0, nrOfOccurrences(webXmlFile, servletName));
+        assertTrue(WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
+                23, new String[]{"/my/mapping/*", "/another/mapping/*"}));
+        assertEquals(2, nrOfOccurrences(webXmlFile, servletName));
+        assertEquals(1, nrOfOccurrences(webXmlFile, getClass().getName()));
+        assertTrue(WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
+                23, new String[]{"/my/mapping/*", "/another/mapping/*"}));
+        assertEquals(2, nrOfOccurrences(webXmlFile, servletName));
+        assertEquals(1, nrOfOccurrences(webXmlFile, getClass().getName()));
     }
 
     @Test
@@ -132,12 +140,6 @@ public class WebXmlUtilsTest extends BaseResourceTest {
         final PluginContext context = getContext();
 
         System.setProperty("project.basedir", getClass().getResource("/project").getPath());
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
-            assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Error checking presence of servlet RepositoryJaxrsServlet")));
-        }
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
             WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
@@ -152,12 +154,6 @@ public class WebXmlUtilsTest extends BaseResourceTest {
         final PluginContext context = getContext();
 
         System.setProperty("project.basedir", getClass().getResource("/utils/webxml").getPath());
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
-            assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to check for servlet, module 'cms' has no web.xml file.")));
-        }
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
             WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),

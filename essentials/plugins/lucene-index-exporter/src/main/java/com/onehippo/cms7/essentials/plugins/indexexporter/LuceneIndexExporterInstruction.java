@@ -54,11 +54,8 @@ public class LuceneIndexExporterInstruction implements Instruction {
         dependency.setTargetPom("cms");
         DependencyUtils.addDependency(context, dependency);
 
-        if (!WebXmlUtils.hasServlet(context, TargetPom.CMS, SERVLET_NAME)) {
-            WebXmlUtils.addServlet(context, TargetPom.CMS, SERVLET_NAME, RepositoryJaxrsServlet.class,
-                    6, new String[]{"/ws/*"});
-        }
-        return InstructionStatus.SUCCESS;
+        return WebXmlUtils.addServlet(context, TargetPom.CMS, SERVLET_NAME, RepositoryJaxrsServlet.class,
+                6, new String[]{"/ws/*"}) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
     @Override
