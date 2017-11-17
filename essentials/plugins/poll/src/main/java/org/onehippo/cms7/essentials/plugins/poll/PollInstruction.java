@@ -16,24 +16,18 @@
 
 package org.onehippo.cms7.essentials.plugins.poll;
 
-import java.io.FileNotFoundException;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Add a bean mapping to the Site's web.xml file.
  */
 public class PollInstruction implements Instruction {
 
-    private static Logger log = LoggerFactory.getLogger(PollInstruction.class);
     private static final String BEANS_MAPPING = "classpath*:org/onehippo/forge/**/*.class";
 
     @Override
@@ -58,16 +52,7 @@ public class PollInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        try {
-            if (WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
-                return InstructionStatus.SUCCESS;
-            } else {
-                return InstructionStatus.SKIPPED;
-            }
-        } catch (FileNotFoundException | JAXBException e) {
-            log.error("Error executing poll plugin instruction", e);
-        }
-        return InstructionStatus.FAILED;
+        return WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
     @Override

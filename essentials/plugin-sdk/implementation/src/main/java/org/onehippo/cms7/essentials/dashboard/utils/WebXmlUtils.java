@@ -125,9 +125,7 @@ public class WebXmlUtils {
                     Dom4JUtils.addIndentedElement(servletMapping, "url-pattern", urlPattern);
                 }
 
-                FileWriter writer = new FileWriter(webXml);
-                doc.write(writer);
-                writer.close();
+                write(webXml, doc);
             }
         } catch (DocumentException | IOException e) {
             logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module.getName(), e);
@@ -139,28 +137,60 @@ public class WebXmlUtils {
      *
      * @param context     project context
      * @param beanMapping desired bean mapping
-     * @return            true if added, false if already present
+     * @return            true upon success, false otherwise
      */
-    public static boolean addHstBeanMapping(final PluginContext context, final String beanMapping)
-            throws FileNotFoundException, JAXBException {
+    public static boolean addHstBeanMapping(final PluginContext context, final String beanMapping) {
+        final String paramName = "hst-beans-annotated-classes";
         final String webXmlPath = ProjectUtils.getWebXmlPath(context, TargetPom.SITE);
-        final WebXml webXml = readWebXmlFile(webXmlPath);
-        final String hstBeansAnnotatedClassesValue = getHstBeansAnnotatedClassesValue(webXml);
-        if (hstBeansAnnotatedClassesValue == null) {
-            logger.warn(String.format("No '%s' context parameter found in Site web.xml, ignore bean mapping '%s'",
-                    HST_BEANS_ANNOTATED_CLASSES, beanMapping));
+        if (webXmlPath == null) {
+            logger.warn("Failed to add bean mapping, module 'site' has no web.xml file.");
             return false;
         }
 
-        if (hstBeansAnnotatedClassesValue.contains(beanMapping)) {
-            logger.info("HST bean mapping already inplace");
-            return false;
+        final File webXml = new File(webXmlPath);
+        try {
+            Document doc = new SAXReader().read(webXml);
+            Element contextParameter = contextParameterSelectorFor(paramName, doc);
+            if (contextParameter != null) {
+                final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");
+                final String value = parameterValue.getText();
+                final String[] mappings = value.split("\\s*,\\s*");
+                for (String mapping : mappings) {
+                    if (mapping.equals(beanMapping)) {
+                        logger.debug("HST bean mapping '{}' already in place.", beanMapping);
+                        return true;
+                    }
+                }
+                parameterValue.setText(value + ",\n" + beanMapping);
+            } else {
+                createContextParameter(doc, paramName, beanMapping);
+            }
+            write(webXml, doc);
+            return true;
+        } catch (DocumentException | IOException e) {
+            logger.error("Failed to add HST bean mapping '{}'.", beanMapping, e);
         }
+        return false;
+    }
 
-        String webXmlContent = readWebXmlFileAsString(webXmlPath);
-        webXmlContent = addToHstBeansAnnotatedClassesValue(webXmlContent, hstBeansAnnotatedClassesValue, beanMapping);
-        writeWebXmlFile(webXmlPath, webXmlContent);
-        return true;
+    private static void write(final File webXml, final Document doc) throws IOException {
+        FileWriter writer = new FileWriter(webXml);
+        doc.write(writer);
+        writer.close();
+    }
+
+    private static void createContextParameter(final Document doc, final String name, final String value) {
+        final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+        final Element contextParam = Dom4JUtils.addIndentedSameNameSibling(webApp, "context-param", null);
+        Dom4JUtils.addIndentedElement(contextParam, "param-name", name);
+        Dom4JUtils.addIndentedElement(contextParam, "param-value", value);
+    }
+
+    private static Element contextParameterSelectorFor(final String parameterName, final Document doc) {
+        final String selector = String.format("/web-app/*[name()='context-param']/*[name()='param-name' and text()='%s']",
+                parameterName);
+        final Element nameElement = (Element) doc.getRootElement().selectSingleNode(selector);
+        return nameElement != null ? nameElement.getParent() : null;
     }
 
     /**
@@ -312,29 +342,6 @@ public class WebXmlUtils {
 
     private static void writeWebXmlFile(final String path, final String webXmlContent) {
         GlobalUtils.writeToFile(webXmlContent, new File(path).toPath());
-    }
-
-    static String getHstBeansAnnotatedClassesValue(final WebXml webXml) {
-        final List<WebContextParam> parameters = webXml.getParameters();
-        if (parameters != null) {
-            for (WebContextParam parameter : parameters) {
-                if (HST_BEANS_ANNOTATED_CLASSES.equals(parameter.getParamName())) {
-                    return parameter.getParamValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    static String addToHstBeansAnnotatedClassesValue(final String webXmlContent, final String currentValues,
-                                                     final String valueToAdd) {
-        final int startIndex = webXmlContent.indexOf(currentValues);
-        final String firstPart = webXmlContent.substring(0, startIndex);
-
-        final int endIndex = startIndex + currentValues.length();
-        final String secondPart = webXmlContent.substring(endIndex, webXmlContent.length());
-
-        return firstPart + currentValues + ',' + valueToAdd + secondPart;
     }
 
     static boolean hasFilter(final WebXml webXml, final String filterClass) {

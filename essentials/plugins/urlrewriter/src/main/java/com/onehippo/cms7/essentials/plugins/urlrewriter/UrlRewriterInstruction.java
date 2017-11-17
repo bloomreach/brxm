@@ -58,11 +58,12 @@ public class UrlRewriterInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(PluginContext context, InstructionStatus previousStatus) {
+        if (!WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
+            return InstructionStatus.FAILED;
+        }
+
         boolean effect = false;
         try {
-            if (WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
-                effect = true;
-            }
             final String filter = readResource("instructions/xml/webxml/rewrite-filter.xml");
             if (WebXmlUtils.addFilter(context, TargetPom.SITE, FILTER_CLASS, filter)) {
                 effect = true;

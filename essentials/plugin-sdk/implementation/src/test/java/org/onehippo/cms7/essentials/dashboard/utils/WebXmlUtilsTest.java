@@ -23,13 +23,18 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Charsets;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -39,28 +44,9 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class WebXmlUtilsTest extends BaseResourceTest {
-    private static final String EXISTING_VALUE = "classpath*:org/example/beans/**/*.class\n" +
-            "      ,classpath*:org/onehippo/forge/**/*.class";
-    private static final String ADDED_VALUE = "classpath*:org/onehippo/cms7/hst/beans/**/*.class," +
-            "    classpath*:org/onehippo/forge/robotstxt/**/*.class";
-    private static final String EXPECTED_RESULT = EXISTING_VALUE + ',' + ADDED_VALUE;
-
-    @Test
-    public void testParsing() throws Exception {
-        final String webXmlContent = readResource("test_web.xml");
-        final WebXml webXml = parseWebXml(webXmlContent);
-        assertEquals(2, webXml.getParameters().size());
-        final String hstBeanContextValue = WebXmlUtils.getHstBeansAnnotatedClassesValue(webXml);
-        assertNotNull(hstBeanContextValue);
-
-        final String newWebXmlContent = WebXmlUtils.addToHstBeansAnnotatedClassesValue(webXmlContent, hstBeanContextValue, ADDED_VALUE);
-        final WebXml newWebXml = parseWebXml(newWebXmlContent);
-        assertEquals(EXPECTED_RESULT, WebXmlUtils.getHstBeansAnnotatedClassesValue(newWebXml));
-    }
 
     @Test
     public void add_filter() throws Exception {
@@ -131,14 +117,9 @@ public class WebXmlUtilsTest extends BaseResourceTest {
     public void add_servlet() throws Exception {
         final PluginContext context = getContext();
 
-        // create tmp workspace to safely modify web.xml resource.
-        final Path tmpDirPath = Files.createTempDirectory("test");
-        final Path outputPath = tmpDirPath.resolve("cms").resolve("src").resolve("main").resolve("webapp").resolve("WEB-INF").resolve("web.xml");
-        final File output = new File(outputPath.toUri());
-        final File input = new File(getClass().getResource("/utils/webxml/web-without-servlet.xml").getPath());
-        FileUtils.copyFile(input, output);
-
-        System.setProperty("project.basedir", tmpDirPath.toString());
+        final Map<String, String> resourceToProjectLocation = new HashMap<>();
+        resourceToProjectLocation.put("/utils/webxml/web-without-servlet.xml", "cms/src/main/webapp/WEB-INF/web.xml");
+        createModifiableProject(resourceToProjectLocation);
 
         assertFalse(WebXmlUtils.hasServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet"));
         WebXmlUtils.addServlet(context, TargetPom.CMS, "RepositoryJaxrsServlet", getClass(),
@@ -184,5 +165,89 @@ public class WebXmlUtilsTest extends BaseResourceTest {
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add servlet, module 'cms' has no web.xml file.")));
         }
+    }
+
+    @Test
+    public void add_beans_mapping() throws Exception {
+        final String webxml = "/utils/webxml/web-without-servlet.xml";
+        final String beanMapping = "classpath*:org/onehippo/forge/**/*.class";
+        final PluginContext context = getContext();
+
+        final Map<String, String> resourceToProjectLocation = new HashMap<>();
+        resourceToProjectLocation.put(webxml, "site/src/main/webapp/WEB-INF/web.xml");
+        final Map<String, File> resourceToFile = createModifiableProject(resourceToProjectLocation);
+
+        assertEquals(0, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
+        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
+        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
+        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
+        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
+    }
+
+    @Test
+    public void append_beans_mapping() throws Exception {
+        final String webxml = "/utils/webxml/web-with-beans-mapping.xml";
+        final String beanMapping = "classpath*:org/onehippo/forge/**/*.class";
+        final PluginContext context = getContext();
+
+        final Map<String, String> resourceToProjectLocation = new HashMap<>();
+        resourceToProjectLocation.put(webxml, "site/src/main/webapp/WEB-INF/web.xml");
+        final Map<String, File> resourceToFile = createModifiableProject(resourceToProjectLocation);
+
+        assertEquals(0, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
+        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
+        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
+    }
+
+    @Test
+    public void add_beans_mapping_no_webxml() throws Exception {
+        final PluginContext context = getContext();
+
+        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
+            WebXmlUtils.addHstBeanMapping(context, "foo");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Failed to add HST bean mapping 'foo'.")));
+        }
+    }
+
+    @Test
+    public void add_beans_mapping_no_cms() throws Exception {
+        final PluginContext context = getContext();
+
+        System.setProperty("project.basedir", getClass().getResource("/utils/webxml").getPath());
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
+            WebXmlUtils.addHstBeanMapping(context, "foo");
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Failed to add bean mapping, module 'site' has no web.xml file.")));
+        }
+    }
+
+    private Map<String, File> createModifiableProject(final Map<String, String> resourceToProjectLocation) throws IOException {
+        final Map<String, File> resourceToFile = new HashMap<>();
+        final Path projectPath = Files.createTempDirectory("test");
+        System.setProperty("project.basedir", projectPath.toString());
+
+        for (String resource : resourceToProjectLocation.keySet()) {
+            final String[] projectLegs = resourceToProjectLocation.get(resource).split("/");
+            Path outputPath = projectPath;
+            for (String leg : projectLegs) {
+                outputPath = outputPath.resolve(leg);
+            }
+            final File output = new File(outputPath.toUri());
+            final File input = new File(getClass().getResource(resource).getPath());
+
+            FileUtils.copyFile(input, output);
+            resourceToFile.put(resource, output);
+        }
+
+        return resourceToFile;
+    }
+
+    private int nrOfOccurrences(final File file, final String value) throws IOException {
+        final String fileContent = com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
+        return StringUtils.countMatches(fileContent, value);
     }
 }
