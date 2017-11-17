@@ -273,9 +273,8 @@ public class ParametersInfoProcessor {
         final Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = LinkedHashMultimap.create();
 
         for (final Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
-            Multimap<String, ContainerItemComponentPropertyRepresentation> interfaceClassFieldGroupProperties = LinkedHashMultimap.create();
             final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
-            Set<String> uniquePropertiesForInterfaceClass = new HashSet<>();
+            final Set<String> uniquePropertiesForInterfaceClass = new HashSet<>();
             if (fieldGroupList != null) {
                 final FieldGroup[] fieldGroups = fieldGroupList.value();
                 if (fieldGroups != null && fieldGroups.length > 0) {
@@ -290,10 +289,10 @@ public class ParametersInfoProcessor {
                             final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
                             if (!uniquePropertiesForInterfaceClass.add(propertyName)) {
                                 log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
-                                        propertyName, fieldGroup.titleKey(), classType.getCanonicalName());
+                                        propertyName, titleKey, classType.getCanonicalName());
                             } else if (property == null) {
-                                log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
-                                        propertyName, classType.getCanonicalName());
+                                log.warn("Ignoring unknown parameter '{}' in field group '{}' of parameters info interface '{}'",
+                                        propertyName, titleKey, classType.getCanonicalName());
                             } else if (fieldGroupProperties.containsValue(property)) {
                                 // valid if FieldGroup is (re)defined in inherited Info Class
                                 log.debug("Parameter '{}' in field group '{}' of parameters info interface '{}' was already added to list.",
