@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -39,7 +38,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -79,9 +77,6 @@ public class GalleryPluginResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
     public static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     public static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
-
-    @Inject
-    private EventBus eventBus;
 
 
     /**
@@ -224,7 +219,7 @@ public class GalleryPluginResource extends BaseResource {
                         }
                     }
                     // update HST beans, create new ones and update image sets:
-                    final ContentBeansService beansService = new ContentBeansService(context, eventBus);
+                    final ContentBeansService beansService = new ContentBeansService(context);
                     beansService.createBeans();
                     beansService.convertImageMethods(newImageNamespace);
                     // add beanwriter messages
@@ -241,7 +236,7 @@ public class GalleryPluginResource extends BaseResource {
                         messages.add(new MessageRestful("Successfully created image folder: " + absPath + '/' + imageSetName));
                     }
                     // update HST beans, create new ones and *do not* update image sets:
-                    final ContentBeansService beansService = new ContentBeansService(context, eventBus);
+                    final ContentBeansService beansService = new ContentBeansService(context);
                     beansService.createBeans();
                     // add beanwriter messages
                     BeanWriterUtils.populateBeanwriterMessages(context, messages);

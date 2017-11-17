@@ -29,18 +29,15 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -60,10 +57,6 @@ public class FileInstruction extends PluginInstruction {
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
     private boolean binary;
-
-    @Inject
-    private EventBus eventBus;
-
     private boolean overwrite;
     private String source;
     private String target;
@@ -79,7 +72,6 @@ public class FileInstruction extends PluginInstruction {
         processPlaceholders(context.getPlaceholderData());
         this.context = context;
         if (!valid()) {
-            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }

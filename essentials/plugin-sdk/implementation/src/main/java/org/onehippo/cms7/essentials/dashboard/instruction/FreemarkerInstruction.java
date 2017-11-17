@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
@@ -47,19 +44,14 @@ public class FreemarkerInstruction extends FileInstruction {
             .add("essentials")
             .build();
 
-
-    @Inject
-    private EventBus eventBus;
     private String repositoryTarget;
     private String templateName;
-
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing Freemarker Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         if (!valid()) {
-            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class BeanWriterResource extends BaseResource {
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
         final String updateImageMethods = values.get("updateImageMethods");
-        final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
+        final ContentBeansService contentBeansService = new ContentBeansService(context);
         // check if we are using custom image set:
         java.nio.file.Path path = null;
         final boolean hippoStandardType = imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN) || imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_CLASS);
@@ -116,7 +116,7 @@ public class BeanWriterResource extends BaseResource {
     @Path("/imagesets")
     public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
         final PluginContext context = PluginContextFactory.getContext();
-        final ContentBeansService contentBeansService = new ContentBeansService(context, eventBus);
+        final ContentBeansService contentBeansService = new ContentBeansService(context);
         final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
         return existingImageTypes.keySet();
     }

@@ -40,7 +40,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.AST;
@@ -50,7 +49,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
@@ -95,11 +93,9 @@ public class ContentBeansService {
      */
     private static final int MISSING_DEPTH_MAX = 5;
     private int missingBeansDepth = 0;
-    private final EventBus eventBus;
 
-    public ContentBeansService(final PluginContext context, final EventBus eventBus) {
+    public ContentBeansService(final PluginContext context) {
         this.context = context;
-        this.eventBus = eventBus;
         this.baseSupertype = context.getProjectNamespacePrefix() + ':' + "basedocument";
         this.contentBeans = getContentBeans();
     }
@@ -187,7 +183,6 @@ public class ContentBeansService {
                             final String methodName = method.getMethodName();
                             if (deleted) {
                                 context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), methodName, ActionType.DELETED_METHOD));
-                                eventBus.post(new MessageEvent(String.format("Successfully deleted method: %s", methodName)));
                             } else {
                                 context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(String.format("Failed to  delete method: %s", methodName)));
                             }
@@ -243,7 +238,6 @@ public class ContentBeansService {
                     JavaSourceUtils.addRelatedDocsMethod(EssentialConst.METHOD_RELATED_DOCUMENTS, path);
                     log.debug(MSG_ADDED_METHOD, EssentialConst.METHOD_RELATED_DOCUMENTS);
                     context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), EssentialConst.METHOD_RELATED_DOCUMENTS, ActionType.CREATED_METHOD));
-                    eventBus.post(new MessageEvent(String.format("Successfully created method: %s", EssentialConst.METHOD_RELATED_DOCUMENTS)));
                 }
             }
         }
@@ -502,7 +496,7 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logChildBeanMessage(beanPath, methodName);
+                    logMessage(beanPath, methodName);
                     break;
 
                 case "hippogallerypicker:imagelink":
@@ -516,27 +510,27 @@ public class ContentBeansService {
                         JavaSourceUtils.addBeanMethodInternalImageSet(beanPath, className, importName, methodName, name, multiple);
                     }
                     existing.add(name);
-                    logChildBeanMessage(beanPath, methodName);
+                    logMessage(beanPath, methodName);
                     break;
                 case "hippo:mirror":
                     // TODO: we could add a note to define more specific type instead of HippoBean
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logChildBeanMessage(beanPath, methodName);
+                    logMessage(beanPath, methodName);
                     break;
                 case "hippogallery:image":
 
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logChildBeanMessage(beanPath, methodName);
+                    logMessage(beanPath, methodName);
                     break;
                 case RESOURCE:
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoResource(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logChildBeanMessage(beanPath, methodName);
+                    logMessage(beanPath, methodName);
                     break;
                 default:
                     // check if project type is used:
@@ -565,15 +559,9 @@ public class ContentBeansService {
     }
 
 
-    private void logChildBeanMessage(final Path beanPath, final String methodName) {
+    private void logMessage(final Path beanPath, final String methodName) {
         context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
         log.debug(MSG_ADDED_METHOD, methodName);
-    }
-
-
-    private void logMessage(final Path beanPath, final String methodName) {
-        logChildBeanMessage(beanPath, methodName);
-        eventBus.post(new MessageEvent(String.format("Successfully created method: %s", methodName)));
     }
 
 
