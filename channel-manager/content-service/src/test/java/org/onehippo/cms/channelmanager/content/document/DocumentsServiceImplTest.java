@@ -1630,13 +1630,7 @@ public class DocumentsServiceImplTest {
         expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(true);
         replayAll();
 
-        try {
-            documentsService.updateDocumentNames(uuid, document, session);
-            fail("No Exception");
-        } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.SLUG_ALREADY_EXISTS));
-        }
+        assertUpdateDocumentNamesFails(uuid, document, Reason.SLUG_ALREADY_EXISTS);
     }
 
     @Test
@@ -1705,7 +1699,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        assertDocumentNameIsUpdated(uuid, document);
+        assertUpdateDocumentNamesFails(uuid, document, Reason.NAME_ALREADY_EXISTS);
     }
 
     @Test
@@ -1816,7 +1810,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        assertDocumentNameIsUpdated(uuid, document);
+        assertUpdateDocumentNamesFails(uuid, document, Reason.NAME_ALREADY_EXISTS);
     }
 
     @Test(expected = NotFoundException.class)
@@ -2049,14 +2043,13 @@ public class DocumentsServiceImplTest {
         return docType;
     }
 
-    private void assertDocumentNameIsUpdated(final String uuid, final Document document) throws ErrorWithPayloadException {
+    private void assertUpdateDocumentNamesFails(final String uuid, final Document document, final Reason reason) throws ErrorWithPayloadException {
         try {
             documentsService.updateDocumentNames(uuid, document, session);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
+            assertThat(errorInfo.getReason(), equalTo(reason));
         }
     }
-
 }
