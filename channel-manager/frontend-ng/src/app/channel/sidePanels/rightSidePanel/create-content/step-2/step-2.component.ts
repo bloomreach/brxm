@@ -25,7 +25,7 @@ import ContentService from '../../../../../services/content.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
-import { Document } from '../create-content.types';
+import { Document, DocumentTypeInfo } from '../create-content.types';
 
 @Component({
   selector: 'hippo-create-content-step-2',
@@ -33,6 +33,8 @@ import { Document } from '../create-content.types';
   entryComponents: [NameUrlFieldsDialogComponent]
 })
 export class CreateContentStep2Component implements OnInit {
+  private documentUrl: string;
+  private documentLocale: string;
   doc: Document;
   docType: any;
   editing: boolean;
@@ -64,14 +66,14 @@ export class CreateContentStep2Component implements OnInit {
               private fieldService: FieldService,
               private dialogService: DialogService,
               private translate: TranslateService,
-              private dialog: MdDialog) {}
+              public dialog: MdDialog) {}
 
   ngOnInit() {
     this.loadNewDocument();
     this.resetBeforeStateChange();
   }
 
-  loadNewDocument() {
+  loadNewDocument(): Promise<Document> {
     const doc = this.createContentService.getDocument();
     this.documentId = doc.id;
     this.fieldService.setDocumentId(doc.id);
@@ -79,45 +81,43 @@ export class CreateContentStep2Component implements OnInit {
     return this.contentService.getDocumentType(doc.info.type.id)
       .then(docType => {
         this.onLoadSuccess(doc, docType);
-      }).finally(() => {
+        this.loading = false;
+      }).catch(() => {
         this.loading = false;
       });
   }
 
-  private openEditNameUrlDialog(): MdDialogRef<NameUrlFieldsDialogComponent> {
-    return this.dialog.open(NameUrlFieldsDialogComponent, {
+  openEditNameUrlDialog() {
+    const dialog = this.dialog.open(NameUrlFieldsDialogComponent, {
       height: '280px',
       width: '600px',
       data: {
         title: this.translate.instant('CHANGE_DOCUMENT_NAME'),
-        name: this.options.name,
-        url: this.options.url,
-        locale: this.options.locale
+        name: this.doc.displayName,
+        url: this.documentUrl,
+        locale: this.documentLocale
       }
     });
+    dialog.afterClosed().subscribe((result: { name: string, url: string }) => this.onEditNameUrlDialogClose(result));
+    return dialog;
   }
 
-  private submitEditNameUrl(nameUrlObj) {
-    this.doc.displayName = nameUrlObj.name;
+  private onEditNameUrlDialogClose(result) {
+    this.doc.displayName = result.name;
+    this.documentUrl = result.url;
   }
 
-  editNameUrl() {
-    this.openEditNameUrlDialog().afterClosed().subscribe(
-      nameUrlObj => {
-        if (nameUrlObj) {
-          this.submitEditNameUrl(nameUrlObj);
-        }
-      }
-    );
-  }
-
-  private onLoadSuccess(doc, docType) {
+  private onLoadSuccess(doc: Document, docTypeInfo: DocumentTypeInfo) {
     this.doc = doc;
-    this.docType = docType;
-    this.title = this.translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docType.displayName });
+    this.docType = docTypeInfo;
+    this.title = this.translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docTypeInfo.displayName });
+
+    this.doc.displayName = this.options.name;
+    this.documentUrl = this.options.url;
+    this.documentLocale = this.options.locale;
   }
 
-  setFullWidth(state) {
+  setFullWidth(state: boolean) {
     this.isFullWidth = state;
     this.onFullWidth.emit(state);
   }
@@ -126,11 +126,11 @@ export class CreateContentStep2Component implements OnInit {
     this.onSave.emit({ mode: 'edit', options: this.documentId });
   }
 
-  isDocumentDirty() {
+  isDocumentDirty(): boolean {
     return (this.doc && this.doc.info && this.doc.info.dirty);
   }
 
-  close() {
+  close(): Promise<void> {
     return this.discardAndClose()
       .then(() => {
         this.resetState();
@@ -138,16 +138,16 @@ export class CreateContentStep2Component implements OnInit {
       });
   }
 
-  discardAndClose() {
+  discardAndClose(): Promise<void> {
     return this.confirmDiscardChanges()
       .then(() => {
         // TODO: Delete document
       });
   }
 
-  private confirmDiscardChanges() {
+  private confirmDiscardChanges(): Promise<void> {
     const messageParams = {
-      documentName: this.doc.displayName,
+      // documentName: this.doc.displayName,
     };
 
     const confirm = this.dialogService.confirm()

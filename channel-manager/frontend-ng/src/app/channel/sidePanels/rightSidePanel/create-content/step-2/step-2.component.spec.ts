@@ -25,8 +25,7 @@ import { HintsComponent } from '../../../../../shared/components/hints/hints.com
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';
 import {
-  ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FieldServiceMock,
-  MdDialogMock, MdDialogRefMock
+  ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FieldServiceMock, MdDialogRefMock
 } from '../create-content.mocks.spec';
 import { CreateContentStep2Component } from './step-2.component';
 import { SharedspaceToolbarDirective } from '../../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
@@ -81,8 +80,8 @@ describe('Create content step 2 component', () => {
         { provide: ContentService, useClass: ContentServiceMock },
         { provide: DialogService, useClass: DialogServiceMock },
         { provide: FieldService, useClass: FieldServiceMock },
-        { provide: MdDialog, useClass: MdDialogMock },
-        { provide: MdDialogRef, useClass: MdDialogRefMock }
+        { provide: MdDialog },
+        { provide: MdDialogRef }
       ]
     });
 
@@ -104,6 +103,12 @@ describe('Create content step 2 component', () => {
     spyOn(contentService, 'getDocumentType').and.callThrough();
     spyOn(createContentService, 'getDocument').and.callThrough();
     spyOn(dialogService, 'confirm').and.callThrough();
+
+    component.options = {
+      name: testDocument.displayName,
+      url: 'test-document',
+      locale: 'en'
+    };
 
     fixture.detectChanges();
   });
@@ -132,10 +137,10 @@ describe('Create content step 2 component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('loads the document from the createContentService', () => {
+    it('loads the document from createContentService', () => {
       // Override emit function to trigger the emitted method, so we can test it is called
       component.onBeforeStateChange.emit = arg => arg();
-      spyOn(component,'loadNewDocument');
+      spyOn(component,'loadNewDocument').and.callThrough();
       spyOn(component, 'discardAndClose');
       spyOn(component.onBeforeStateChange, 'emit').and.callThrough();
 
@@ -213,20 +218,6 @@ describe('Create content step 2 component', () => {
       component.close().catch(() => {
         expect(component.onClose.emit).not.toHaveBeenCalled();
       });
-    });
-  });
-
-  describe('editNameUrl', () => {
-    beforeEach(() => {
-      component.ngOnInit();
-      component.doc = testDocument;
-    });
-
-    it('changes document title if the change is submitted in dialog', () => {
-      component.editNameUrl();
-      fixture.detectChanges();
-
-      expect(component.doc.displayName).toBe('docName');
     });
   });
 
