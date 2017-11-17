@@ -140,9 +140,7 @@ export class CreateContentStep2Component implements OnInit {
 
   discardAndClose() {
     return this.confirmDiscardChanges()
-      .then(() => {
-        // TODO: Delete document
-      });
+      .then(() => this.createContentService.deleteDraft(this.documentId));
   }
 
   private confirmDiscardChanges() {
