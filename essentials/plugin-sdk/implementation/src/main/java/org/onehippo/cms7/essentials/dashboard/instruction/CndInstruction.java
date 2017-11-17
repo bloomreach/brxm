@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,9 +53,7 @@ public class CndInstruction extends PluginInstruction {
     private String superType;
     private String documentType;
     private String namespacePrefix;
-
-    // TODO I believe this variable may not be used at all. See MessageInstructionExecutor#processCndInstruction.
-    private String message = "Registered document type: {{documentType}}.";
+    private String message;
     private String action;
 
     @Override
@@ -67,8 +65,6 @@ public class CndInstruction extends PluginInstruction {
         }
         final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
-        //
-
 
         final String prefix = context.getProjectNamespacePrefix();
         final Session session = context.createSession();

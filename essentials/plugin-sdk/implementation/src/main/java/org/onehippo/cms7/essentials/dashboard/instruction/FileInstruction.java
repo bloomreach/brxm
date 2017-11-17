@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -64,12 +63,6 @@ public class FileInstruction extends PluginInstruction {
 
     @Inject
     private EventBus eventBus;
-
-    @Value("${instruction.message.file.delete}")
-    private String messageDelete;
-
-    @Value("${instruction.message.file.copy}")
-    private String messageCopy;
 
     private boolean overwrite;
     private String source;
@@ -134,7 +127,6 @@ public class FileInstruction extends PluginInstruction {
                 FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
             }
             log.info("Copied file from '{}' to '{}'.", source, target);
-            sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
             log.error("Failed to copy file from '{}' to '{}'.", source, target, e);
@@ -198,7 +190,6 @@ public class FileInstruction extends PluginInstruction {
             Path path = new File(target).toPath();
             final boolean deleted = Files.deleteIfExists(path);
             if (deleted) {
-                sendEvents();
                 log.info("Deleted file '{}'.", target);
                 return InstructionStatus.SUCCESS;
             } else {
@@ -230,15 +221,6 @@ public class FileInstruction extends PluginInstruction {
         data.put("createdFolders", createdFolders);
         data.put("createdFoldersTarget", createdFoldersTarget);
         // setup messages:
-
-        if (Strings.isNullOrEmpty(message) && !Strings.isNullOrEmpty(action)) {
-            // check message based on action:
-            if (action.equals(COPY)) {
-                message = messageCopy;
-            } else if (action.equals(DELETE)) {
-                message = messageDelete;
-            }
-        }
 
         super.processPlaceholders(data);
         message = TemplateUtils.replaceTemplateData(message, data);

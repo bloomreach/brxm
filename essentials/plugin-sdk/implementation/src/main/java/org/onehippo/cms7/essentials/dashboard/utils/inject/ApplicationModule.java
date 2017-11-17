@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.inject.Singleton;
 
 import com.google.common.eventbus.EventBus;
 
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -46,9 +45,6 @@ public class ApplicationModule {
 
     private static final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
-
-    @Inject
-    private MemoryPluginEventListener memoryPluginEventListener;
     @Inject
     private RebuildProjectEventListener rebuildProjectEventListener;
 
@@ -65,7 +61,6 @@ public class ApplicationModule {
         if (!initialized) {
             applicationContextRef = applicationContext;
             eventBus.register(rebuildProjectEventListener);
-            eventBus.register(memoryPluginEventListener);
             initialized = true;
         }
         return eventBus;

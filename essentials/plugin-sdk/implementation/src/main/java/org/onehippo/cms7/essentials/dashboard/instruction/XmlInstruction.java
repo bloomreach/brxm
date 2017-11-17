@@ -45,7 +45,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -65,33 +64,22 @@ public class XmlInstruction extends PluginInstruction {
     @Inject
     private EventBus eventBus;
 
-    @Value("${instruction.message.xml.delete}")
-    private String messageDelete;
-
-    @Value("${instruction.message.xml.copy}")
-    private String messageCopy;
-
-    private PluginContext context;
-
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        this.context = context;
         processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             return InstructionStatus.FAILED;
         }
-        /*processPlaceholders(context.getPlaceholderData());*/
-        // check action:
         if (action.equals(COPY)) {
-            return copy();
+            return copy(context);
         } else {
-            return delete();
+            return delete(context);
         }
     }
 
-    private InstructionStatus copy() {
+    private InstructionStatus copy(final PluginContext context) {
         final Session session = context.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
@@ -108,7 +96,7 @@ public class XmlInstruction extends PluginInstruction {
             }
 
             // first check if node exists:
-            if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
+            if (!isOverwrite() && nodeExists(context, session, source, destination.getPath())) {
                 log.info("Skipping XML import, target node '{}' already exists.", target);
                 return InstructionStatus.SKIPPED;
             }
@@ -118,7 +106,6 @@ public class XmlInstruction extends PluginInstruction {
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Imported XML from '{}' to '{}'.", source, target);
-            sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error on copy node", e);
@@ -130,7 +117,7 @@ public class XmlInstruction extends PluginInstruction {
 
     }
 
-    private boolean nodeExists(final Session session, final String source, final String parentPath) throws RepositoryException {
+    private boolean nodeExists(final PluginContext context, final Session session, final String source, final String parentPath) throws RepositoryException {
 
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
@@ -148,22 +135,19 @@ public class XmlInstruction extends PluginInstruction {
             IOUtils.closeQuietly(stream);
         }
 
-
         return false;
     }
 
 
-    private InstructionStatus delete() {
+    private InstructionStatus delete(final PluginContext context) {
         final Session session = context.createSession();
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist: {}", target);
                 return InstructionStatus.FAILED;
             }
-            final Node node = session.getNode(target);
-            node.remove();
+            session.getNode(target).remove();
             session.save();
-            sendEvents();
             log.info("Deleted node '{}'.", target);
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException e) {
@@ -188,20 +172,8 @@ public class XmlInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
-        // setup messages:
-
-        if (Strings.isNullOrEmpty(message)) {
-            // check message based on action:
-            if (action.equals(COPY)) {
-                message = messageCopy;
-            } else if (action.equals(DELETE)) {
-                message = messageDelete;
-            }
-        }
 
         super.processPlaceholders(data);
-        //
-
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 

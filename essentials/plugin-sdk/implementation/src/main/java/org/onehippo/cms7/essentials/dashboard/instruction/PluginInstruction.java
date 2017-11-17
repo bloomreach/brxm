@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,18 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.google.common.eventbus.EventBus;
-
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.springframework.stereotype.Component;
 
-
-/**
- * @version "$Id$"
- */
 @XmlTransient
 @Component
 public abstract class PluginInstruction implements Instruction {
 
     public static final String COPY = "copy";
     public static final String DELETE = "delete";
-
-
-    @Inject
-    private EventBus eventBus;
 
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
@@ -50,10 +38,4 @@ public abstract class PluginInstruction implements Instruction {
             setMessage(message);
         }
     }
-
-
-    protected void sendEvents() {
-        eventBus.post(new DisplayEvent(getMessage()));
-    }
-
 }

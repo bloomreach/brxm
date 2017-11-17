@@ -33,7 +33,6 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -45,7 +44,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  * @version "$Id$"
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class, PropertiesModule.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
 public abstract class BaseTest {
     private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
 

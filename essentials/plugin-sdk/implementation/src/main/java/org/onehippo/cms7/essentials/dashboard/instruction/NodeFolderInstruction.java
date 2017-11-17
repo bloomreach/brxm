@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@ import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -36,11 +39,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 
 /**
@@ -54,16 +53,11 @@ public class NodeFolderInstruction extends PluginInstruction {
     private String message;
     private String template;
     private String path;
-    private PluginContext context;
-
-    @Value("${instruction.message.folder.create}")
-    private String messageSuccess;
 
     // path="/foo/bar/foobar" template="/my_folder_template.xml"
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        this.context = context;
         if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(template)) {
             log.error("Invalid instruction:", this);
             return InstructionStatus.FAILED;
@@ -74,11 +68,10 @@ public class NodeFolderInstruction extends PluginInstruction {
         if (myPath != null) {
             path = myPath;
         }
-        return createFolders();
-
+        return createFolders(context);
     }
 
-    private InstructionStatus createFolders() {
+    private InstructionStatus createFolders(final PluginContext context) {
 
         final Session session = context.createSession();
 
@@ -107,16 +100,10 @@ public class NodeFolderInstruction extends PluginInstruction {
                 final String folderXml = TemplateUtils.replaceTemplateData(content, data);
                 session.importXML(parent.getPath(), new ByteArrayInputStream(folderXml.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 parent = parent.getNode(part);
-
             }
-            data.put("target", path);
-            message = TemplateUtils.replaceTemplateData(messageSuccess, data);
             session.save();
-            sendEvents();
             log.info("Created '{}' from '{}'.", path, template);
             return InstructionStatus.SUCCESS;
-
-
         } catch (RepositoryException | IOException e) {
             log.error("Error creating folders" + this, e);
             GlobalUtils.refreshSession(session, false);

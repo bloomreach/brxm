@@ -67,7 +67,6 @@ public class FileInstructionTest extends BaseResourceTest {
         copyInstruction.setOverwrite(true);
         status = executor.execute(set, getContext());
         assertTrue(status == InstructionStatus.SUCCESS || status == InstructionStatus.SKIPPED);
-        assertTrue(!copyInstruction.getMessage().contains("{{"));
         File file = new File(copyInstruction.getTarget());
         assertTrue(file.exists());
         StringBuilder textFile = GlobalUtils.readTextFile(file.toPath());
@@ -92,8 +91,5 @@ public class FileInstructionTest extends BaseResourceTest {
         deleteSet.addInstruction(deleteInstruction);
         status = executor.execute(deleteSet, getContext());
         assertTrue(status == InstructionStatus.SUCCESS);
-        assertTrue(!deleteInstruction.getMessage().contains("{{"));
-
-
     }
 }
