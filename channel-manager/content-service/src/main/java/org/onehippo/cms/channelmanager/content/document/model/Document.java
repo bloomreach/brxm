@@ -21,15 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a document, stored in the CMS.
- * It can be serialized into JSON to expose it through a REST API.
+ * This bean represents a document, stored in the CMS. It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class Document {
     private String id;                // UUID
     private String displayName;
+    private String urlName;
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, List<FieldValue>> fields;
 
@@ -52,6 +53,14 @@ public class Document {
 
     public void setDisplayName(final String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getUrlName() {
+        return urlName;
+    }
+
+    public void setUrlName(final String urlName) {
+        this.urlName = urlName;
     }
 
     public DocumentInfo getInfo() {

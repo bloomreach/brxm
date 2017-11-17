@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
+import org.hippoecm.repository.util.DocumentUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -42,7 +42,8 @@ public class FoldersServiceImpl implements FoldersService {
         return INSTANCE;
     }
 
-    private FoldersServiceImpl() { }
+    private FoldersServiceImpl() {
+    }
 
     @Override
     public List<Folder> getFolders(final String path, final Session session) throws ErrorWithPayloadException {
@@ -73,7 +74,7 @@ public class FoldersServiceImpl implements FoldersService {
         return folders;
     }
 
-    private Folder createFolder(final String name, final Folder parent) {
+    private static Folder createFolder(final String name, final Folder parent) {
         final Folder folder = new Folder();
         final String locale = parent != null ? parent.getLocale() : null;
         final String encodedName = SlugFactory.createSlug(name, locale);
@@ -86,11 +87,12 @@ public class FoldersServiceImpl implements FoldersService {
         return folder;
     }
 
-    private Folder createFolder(final Node node, final Folder parent) throws RepositoryException {
+    private static Folder createFolder(final Node node, final Folder parent) throws RepositoryException {
         final Folder folder = new Folder();
         folder.setName(node.getName());
         folder.setPath(node.getPath());
-        folder.setDisplayName(DisplayNameUtils.getDisplayName(node));
+
+        DocumentUtils.getDisplayName(node).ifPresent(folder::setDisplayName);
 
         String locale = FolderUtils.getLocale(node);
         if (locale == null && parent != null) {

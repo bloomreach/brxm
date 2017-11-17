@@ -41,7 +41,7 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -63,12 +63,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
 class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
-    private static final String WORKFLOW_CATEGORY_DEFAULT = "default";
-    private static final String WORKFLOW_CATEGORY_EDIT = "editing";
-    private static final String WORKFLOW_CATEGORY_INTERNAL = "internal";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
     static DocumentsService getInstance() {
@@ -128,7 +129,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException("Document type " + docType + " can not be updated.");
+            throw new ForbiddenException();
         }
 
         // Push fields onto draft node
@@ -138,9 +139,8 @@ class DocumentsServiceImpl implements DocumentsService {
         try {
             session.save();
         } catch (final RepositoryException e) {
-            final String warning = "Failed to save changes to draft node of document " + uuid;
-            log.warn(warning, e);
-            throw new InternalServerErrorException(warning);
+            log.warn("Failed to save changes to draft node of document {}", uuid, e);
+            throw new InternalServerErrorException();
         }
 
         if (!FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields())) {
@@ -170,7 +170,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException("Document type " + docType + " can not be updated.");
+            throw new ForbiddenException();
         }
 
         // Write field value to draft node
@@ -179,9 +179,8 @@ class DocumentsServiceImpl implements DocumentsService {
             try {
                 session.save();
             } catch (final RepositoryException e) {
-                final String warning = "Failed to save changes to field " + fieldPath + " in draft node of document " + uuid;
-                log.warn(warning, e);
-                throw new InternalServerErrorException(warning);
+                log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
+                throw new InternalServerErrorException();
             }
         }
     }
@@ -199,9 +198,8 @@ class DocumentsServiceImpl implements DocumentsService {
         try {
             workflow.disposeEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            final String warning = "Failed to dispose of editable instance";
-            log.warn(warning, e);
-            throw new InternalServerErrorException(warning);
+            log.warn("Failed to dispose of editable instance", e);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -228,36 +226,79 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final Node rootFolder = FolderUtils.getFolder(rootPath, session);
         final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
+        final String folderLocale = FolderUtils.getLocale(folder);
 
-        if (FolderUtils.nodeWithDisplayNameExists(folder, name)) {
+        final String encodedName = DocumentNameUtils.encodeDisplayName(name, folderLocale);
+        if (FolderUtils.nodeWithDisplayNameExists(folder, encodedName)) {
             throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
         }
-        if (FolderUtils.nodeExists(folder, slug)) {
+
+        final String encodedSlug = DocumentNameUtils.encodeUrlName(slug, folderLocale);
+        if (FolderUtils.nodeExists(folder, encodedSlug)) {
             throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
-            final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, slug);
+            final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, encodedSlug);
             log.debug("Created document {}", documentPath);
 
             final Node handle = session.getNode(documentPath);
 
-            if (!slug.equals(name)) {
-                final String folderLocale = FolderUtils.getLocale(folder);
-                final String displayName = DisplayNameUtils.encodeDisplayName(name, folderLocale);
-                DisplayNameUtils.setDisplayName(handle, displayName);
+            if (!encodedSlug.equals(encodedName)) {
+                DocumentNameUtils.setDisplayName(handle, encodedName);
             }
 
             session.save();
 
             return getDraft(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            final String warning = "Failed to add document " + slug + " of type " + documentTypeId + " to folder " + newDocumentInfo.getRootPath() + " using template query " + templateQuery;
-            log.warn(warning, e);
-            throw new InternalServerErrorException(warning);
+            log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
+                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
+            throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    public Document updateDocumentNames(final String uuid, final Document document, final Session session) throws ErrorWithPayloadException {
+        final String displayName = checkNotEmpty("displayName", document.getDisplayName());
+        final String urlName = checkNotEmpty("urlName", document.getUrlName());
+
+        final Node handle = getHandle(uuid, session);
+        final Node folder = FolderUtils.getFolder(handle);
+        final String folderLocale = FolderUtils.getLocale(folder);
+        final String handlePath = JcrUtils.getNodePathQuietly(handle);
+
+        final String newUrlName = DocumentNameUtils.encodeUrlName(urlName, folderLocale);
+        final String oldUrlName = DocumentNameUtils.getUrlName(handle);
+        final boolean changeUrlName = !newUrlName.equals(oldUrlName);
+
+        if (changeUrlName && FolderUtils.nodeExists(folder, newUrlName)) {
+            throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
+        }
+
+        final String newDisplayName = DocumentNameUtils.encodeDisplayName(displayName, folderLocale);
+        final String oldDisplayName = DocumentNameUtils.getDisplayName(handle);
+        final boolean changeDisplayName = !newDisplayName.equals(oldDisplayName);
+
+        if (changeDisplayName && FolderUtils.nodeWithDisplayNameExists(folder, newDisplayName)) {
+            throw new ConflictException(new ErrorInfo(Reason.NAME_ALREADY_EXISTS));
+        }
+
+        if (changeUrlName) {
+            log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
+            DocumentNameUtils.setUrlName(handle, newUrlName);
+            document.setUrlName(newUrlName);
+        }
+
+        if (changeDisplayName) {
+            log.info("Changing display name of '{}' to '{}'", handlePath, newDisplayName);
+            DocumentNameUtils.setDisplayName(handle, newDisplayName);
+            document.setDisplayName(newDisplayName);
+        }
+
+        return document;
     }
 
     @Override
@@ -274,9 +315,8 @@ class DocumentsServiceImpl implements DocumentsService {
         // Archiving not possible: the document can be published, a request can be pending etc. Only case left to check:
         // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
         if (EditingUtils.hasPreview(documentWorkflow)) {
-            final String warning = "Forbade to erase document " + uuid + ": it already has a preview variant";
-            log.warn(warning);
-            throw new ForbiddenException(warning);
+            log.warn("Forbade to erase document '{}': it already has a preview variant", uuid);
+            throw new ForbiddenException();
         }
 
         // No preview indeed, so erase the draft document
@@ -286,9 +326,9 @@ class DocumentsServiceImpl implements DocumentsService {
         if (EditingUtils.canEraseDocument(folderWorkflow)) {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
-            final String warning = "Forbade to erase document " + JcrUtils.getNodeNameQuietly(handle) + ": not allowed by the workflow of folder " + getNodePathQuietly(folder);
-            log.warn(warning);
-            throw new ForbiddenException(warning);
+            log.warn("Forbade to erase document '{}': not allowed by the workflow of folder '{}'",
+                    JcrUtils.getNodeNameQuietly(handle), JcrUtils.getNodePathQuietly(folder));
+            throw new ForbiddenException();
         }
     }
 
@@ -346,40 +386,17 @@ class DocumentsServiceImpl implements DocumentsService {
                 .isPresent();
     }
 
-    private static EditableWorkflow getEditableWorkflow(final Node handle) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
-                ));
-    }
-
-    private static DocumentWorkflow getDocumentWorkflow(final Node handle) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_DEFAULT, DocumentWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_DOCUMENT), handle)
-                ));
-    }
-
-    private static FolderWorkflow getFolderWorkflow(final Node folderNode) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(folderNode, WORKFLOW_CATEGORY_INTERNAL, FolderWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(
-                        withDisplayName(new ErrorInfo(Reason.NOT_A_FOLDER), folderNode)
-                ));
-    }
-
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
         final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(InternalServerErrorException::new);
 
         try {
             return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
         } catch (final RepositoryException e) {
-            final String warning = "Failed to retrieve JCR session for node " + getNodePathQuietly(handle);
-            log.warn(warning, e);
-            throw new InternalServerErrorException(warning);
+            log.warn("Failed to retrieve JCR session for node '{}'", getNodePathQuietly(handle), e);
+            throw new InternalServerErrorException();
         } catch (final ErrorWithPayloadException e) {
-            final String warning = "Failed to retrieve type of document " + getNodePathQuietly(handle);
-            log.debug(warning, e);
-            throw new InternalServerErrorException(warning);
+            log.warn("Failed to retrieve type of document '{}'", getNodePathQuietly(handle), e);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -392,20 +409,9 @@ class DocumentsServiceImpl implements DocumentsService {
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
+        document.setUrlName(JcrUtils.getNodeNameQuietly(handle));
 
         return document;
-    }
-
-    private static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
-        if (errorInfo != null) {
-            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-                if (errorInfo.getParams() == null) {
-                    errorInfo.setParams(new HashMap<>());
-                }
-                errorInfo.getParams().put("displayName", displayName);
-            });
-        }
-        return errorInfo;
     }
 
     private static ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
