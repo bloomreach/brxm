@@ -23,7 +23,6 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventL
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -55,8 +54,6 @@ public class ApplicationModule {
     @Inject
     private MemoryPluginEventListener memoryPluginEventListener;
     @Inject
-    private ValidationEventListener validationEventListener;
-    @Inject
     private InstructionsEventListener instructionsEventListener;
     @Inject
     private RebuildProjectEventListener rebuildProjectEventListener;
@@ -76,7 +73,6 @@ public class ApplicationModule {
             eventBus.register(rebuildProjectEventListener);
             eventBus.register(loggingPluginEventListener);
             eventBus.register(memoryPluginEventListener);
-            eventBus.register(validationEventListener);
             eventBus.register(instructionsEventListener);
             initialized = true;
         }
