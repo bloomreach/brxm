@@ -58,17 +58,7 @@ public class BlogDaemonModuleInstruction implements Instruction {
     }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final Session session = context.createSession();
         try {

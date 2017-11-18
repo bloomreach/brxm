@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,17 +66,7 @@ public class TranslationsInstruction extends PluginInstruction {
     }
 
     @Override
-    public String getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        this.action = action;
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         final Session session = context.createSession();
         try (final InputStream in = getClass().getClassLoader().getResourceAsStream(source)) {
             final String json = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(in), context.getPlaceholderData());

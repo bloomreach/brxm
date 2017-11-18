@@ -64,17 +64,7 @@ public class BlogFacetInstruction implements Instruction {
     }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         processPlaceholders(context.getPlaceholderData());
         final String namespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
         final String targetNode = "/content/documents/" + namespace;

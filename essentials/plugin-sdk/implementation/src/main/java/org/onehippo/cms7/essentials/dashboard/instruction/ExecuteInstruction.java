@@ -58,11 +58,6 @@ public class ExecuteInstruction extends PluginInstruction {
         this.message = message;
     }
 
-    @Override
-    public String getAction() {
-        return null;
-    }
-
     @XmlAttribute(name = "class")
     public String getClazz() {
         return clazz;
@@ -73,18 +68,13 @@ public class ExecuteInstruction extends PluginInstruction {
     }
 
     @Override
-    public void setAction(final String action) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         if (Strings.isNullOrEmpty(clazz)) {
             log.warn("Cannot execute instruction, class name was not defined");
             return InstructionStatus.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
         log.info("Executing instruction '{}'.", clazz);
-        return instruction.process(context, previousStatus);
+        return instruction.process(context);
     }
 }

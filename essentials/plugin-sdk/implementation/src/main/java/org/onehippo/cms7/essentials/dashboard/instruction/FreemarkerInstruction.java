@@ -48,7 +48,7 @@ public class FreemarkerInstruction extends FileInstruction {
     private String templateName;
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         log.debug("executing Freemarker Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         if (!valid()) {
@@ -56,7 +56,7 @@ public class FreemarkerInstruction extends FileInstruction {
             return InstructionStatus.FAILED;
         }
 
-        return super.process(context, previousStatus);
+        return super.process(context);
 
     }
 
@@ -76,10 +76,11 @@ public class FreemarkerInstruction extends FileInstruction {
 
     @Override
     protected boolean valid() {
-        if (Strings.isNullOrEmpty(getAction()) || !VALID_ACTIONS.contains(getAction())) {
+        final FileInstruction.Action action = getActionEnum();
+        if (action == null) {
             return false;
         }
-        if (getAction().equals(COPY) && (Strings.isNullOrEmpty(getSource()))) {
+        if (action == FileInstruction.Action.COPY && Strings.isNullOrEmpty(getSource())) {
             return false;
         }
         // check if we have valid

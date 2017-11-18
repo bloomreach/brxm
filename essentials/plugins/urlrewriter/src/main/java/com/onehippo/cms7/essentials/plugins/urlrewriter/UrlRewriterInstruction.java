@@ -49,15 +49,7 @@ public class UrlRewriterInstruction implements Instruction {
     public void setMessage(String message) { }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(String action) { }
-
-    @Override
-    public InstructionStatus process(PluginContext context, InstructionStatus previousStatus) {
+    public InstructionStatus process(PluginContext context) {
         if (!WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
             return InstructionStatus.FAILED;
         }

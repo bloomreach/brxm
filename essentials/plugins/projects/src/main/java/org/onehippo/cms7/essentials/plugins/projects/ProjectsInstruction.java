@@ -60,17 +60,7 @@ public class ProjectsInstruction implements Instruction {
     }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        //
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         File contextXml = ProjectUtils.getContextXml();
 
         log.info("Adding jdbc/wpmDS datasource to conf/context.xml: {}", WPM_DATASOURCE_NAME);

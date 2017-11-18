@@ -53,10 +53,13 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name = "directory", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class DirectoryInstruction extends PluginInstruction {
 
+    public enum Action {
+        CREATE, COPY
+    }
+
     private static final Logger log = LoggerFactory.getLogger(DirectoryInstruction.class);
-    private PluginContext context;
     private String target;
-    private String action;
+    private Action action;
     private String source;
     private String message;
     private boolean overwrite;
@@ -82,15 +85,10 @@ public class DirectoryInstruction extends PluginInstruction {
             .add("css")
             .add("js")
             .build();
-    private static final Set<String> SUPPORTED_ACTIONS = new ImmutableSet.Builder<String>()
-            .add("create")
-            .add("copy")
-            .build();
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        this.context = context;
-        if (Strings.isNullOrEmpty(action)) {
+    public InstructionStatus process(final PluginContext context) {
+        if (action == null) {
             log.warn("DirectoryInstruction: action was empty");
             message = "Failed to process instruction: invalid action";
             return InstructionStatus.FAILED;
@@ -100,15 +98,11 @@ public class DirectoryInstruction extends PluginInstruction {
             message = "Failed to create directory: invalid name";
             return InstructionStatus.FAILED;
         }
-        if (!SUPPORTED_ACTIONS.contains(action)) {
-            message = "Failed to process instruction: invalid action";
-            throw new IllegalStateException("Not implemented yet: " + action);
-        }
         processPlaceholders(context.getPlaceholderData());
         switch (action) {
-            case "create":
+            case CREATE:
                 return create();
-            case "copy":
+            case COPY:
                 return copy(context.getPlaceholderData());
         }
         return InstructionStatus.FAILED;
@@ -172,17 +166,13 @@ public class DirectoryInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    @Override
     public String getAction() {
-        return action;
+        return action != null ? action.toString().toLowerCase() : null;
     }
 
-
-    @Override
     public void setAction(final String action) {
-        this.action = action;
+        this.action = Action.valueOf(action.toUpperCase());
     }
-
 
     @XmlAttribute
     public String getSource() {

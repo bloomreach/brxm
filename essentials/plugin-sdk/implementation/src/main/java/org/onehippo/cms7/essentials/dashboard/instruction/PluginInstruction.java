@@ -28,9 +28,6 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class PluginInstruction implements Instruction {
 
-    public static final String COPY = "copy";
-    public static final String DELETE = "delete";
-
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
         final String message = TemplateUtils.replaceTemplateData(getMessage(), data);

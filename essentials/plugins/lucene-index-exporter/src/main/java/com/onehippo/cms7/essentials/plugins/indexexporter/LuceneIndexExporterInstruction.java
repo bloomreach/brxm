@@ -39,15 +39,7 @@ public class LuceneIndexExporterInstruction implements Instruction {
     public void setMessage(String message) { }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(String action) { }
-
-    @Override
-    public InstructionStatus process(PluginContext context, InstructionStatus previousStatus) {
+    public InstructionStatus process(PluginContext context) {
         DependencyRestful dependency = new DependencyRestful();
         dependency.setGroupId("com.onehippo.cms7");
         dependency.setArtifactId("hippo-addon-lucene-export");

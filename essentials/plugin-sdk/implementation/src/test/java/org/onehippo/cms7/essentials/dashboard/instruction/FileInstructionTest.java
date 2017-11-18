@@ -61,7 +61,7 @@ public class FileInstructionTest extends BaseResourceTest {
         InstructionStatus status = executor.execute(set, getContext());
         // invalid instruction:
         assertTrue(status == InstructionStatus.FAILED);
-        copyInstruction.setAction(PluginInstruction.COPY);
+        copyInstruction.setAction(FileInstruction.Action.COPY.toString());
         copyInstruction.setSource(SOURCE);
         copyInstruction.setTarget(TARGET);
         copyInstruction.setOverwrite(true);
@@ -85,7 +85,7 @@ public class FileInstructionTest extends BaseResourceTest {
         //############################################
         // DELETE
         //############################################
-        deleteInstruction.setAction(PluginInstruction.DELETE);
+        deleteInstruction.setActionEnum(FileInstruction.Action.DELETE);
         deleteInstruction.setTarget(TARGET);
         final InstructionSet deleteSet = new PluginInstructionSet();
         deleteSet.addInstruction(deleteInstruction);

@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -48,26 +49,26 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class XmlInstruction extends PluginInstruction {
 
-    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
-            .add(COPY)
-            .add(DELETE)
-            .build();
+    public enum Action {
+        COPY, DELETE
+    }
+
     private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
     private String message;
     private boolean overwrite;
     private String source;
     private String target;
-    private String action;
+    private Action action;
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
             log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
-        if (action.equals(COPY)) {
+        if (action == Action.COPY) {
             return copy(context);
         } else {
             return delete(context);
@@ -173,11 +174,11 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     private boolean valid() {
-        if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
+        if (action == null || Strings.isNullOrEmpty(target)) {
             return false;
         }
 
-        if (action.equals(COPY) && Strings.isNullOrEmpty(source)) {
+        if (action == Action.COPY && Strings.isNullOrEmpty(source)) {
             return false;
         }
         return true;
@@ -189,10 +190,11 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     /**
-     * Setting overwrite=true is not yet supported!
-     * Invoking this method with value parameter override=true will result in an UnsupportedOperationException being thrown
-     * @throws UnsupportedOperationException when invoked with overwrite=true
+     * Setting overwrite=true is not yet supported! Invoking this method with value parameter override=true will result
+     * in an UnsupportedOperationException being thrown
+     *
      * @param overwrite
+     * @throws UnsupportedOperationException when invoked with overwrite=true
      */
     public void setOverwrite(final boolean overwrite) throws UnsupportedOperationException {
         if (overwrite) {
@@ -243,14 +245,20 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    @Override
     public String getAction() {
+        return action != null ? action.toString().toLowerCase() : null;
+    }
+
+    public void setAction(final String action) {
+        this.action = Action.valueOf(action.toUpperCase());
+    }
+
+    @XmlTransient
+    public Action getActionEnum() {
         return action;
     }
 
-    @Override
-    public void setAction(final String action) {
+    public void setActionEnum(final Action action) {
         this.action = action;
     }
-
 }

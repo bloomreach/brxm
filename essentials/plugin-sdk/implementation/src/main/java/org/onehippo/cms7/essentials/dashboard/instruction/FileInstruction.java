@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -50,24 +51,24 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
-    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
-            .add(COPY)
-            .add(DELETE)
-            .build();
+    public enum Action {
+        COPY, DELETE
+    }
+
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
     private boolean binary;
     private boolean overwrite;
     private String source;
     private String target;
-    private String action;
+    private Action action;
     private String folderMessage;
     private String createdFolders;
     private String createdFoldersTarget;
     private PluginContext context;
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         log.debug("executing FILE Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         this.context = context;
@@ -77,7 +78,7 @@ public class FileInstruction extends PluginInstruction {
         }
 
         // check action:
-        if (action.equals(COPY)) {
+        if (action == Action.COPY) {
             return copy();
         } else {
             return delete();
@@ -219,10 +220,10 @@ public class FileInstruction extends PluginInstruction {
     }
 
     protected boolean valid() {
-        if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
+        if (action == null || Strings.isNullOrEmpty(target)) {
             return false;
         }
-        if (action.equals(COPY) && (Strings.isNullOrEmpty(source))) {
+        if (action == Action.COPY && (Strings.isNullOrEmpty(source))) {
             return false;
         }
         return true;
@@ -267,13 +268,20 @@ public class FileInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    @Override
     public String getAction() {
+        return action != null ? action.toString().toLowerCase() : null;
+    }
+
+    public void setAction(final String action) {
+        this.action = Action.valueOf(action.toUpperCase());
+    }
+
+    @XmlTransient
+    public Action getActionEnum() {
         return action;
     }
 
-    @Override
-    public void setAction(final String action) {
+    public void setActionEnum(final Action action) {
         this.action = action;
     }
 

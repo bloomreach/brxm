@@ -57,7 +57,7 @@ public class NodeFolderInstruction extends PluginInstruction {
     // path="/foo/bar/foobar" template="/my_folder_template.xml"
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(template)) {
             log.error("Invalid instruction:", this);
             return InstructionStatus.FAILED;
@@ -141,16 +141,6 @@ public class NodeFolderInstruction extends PluginInstruction {
     @Override
     public void setMessage(final String message) {
         this.message = message;
-    }
-
-    @Override
-    public String getAction() {
-        return "folder";
-    }
-
-    @Override
-    public void setAction(final String action) {
-        // ignore
     }
 
     @Override

@@ -41,17 +41,7 @@ public class RobotsInstruction implements Instruction {
     }
 
     @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         return WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 

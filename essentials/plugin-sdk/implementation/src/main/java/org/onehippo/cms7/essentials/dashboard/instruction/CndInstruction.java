@@ -57,7 +57,7 @@ public class CndInstruction extends PluginInstruction {
     private String action;
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus process(final PluginContext context) {
         if (Strings.isNullOrEmpty(namespacePrefix)) {
             namespace = context.getProjectNamespacePrefix();
         } else {
@@ -123,16 +123,6 @@ public class CndInstruction extends PluginInstruction {
     @Override
     public void setMessage(final String message) {
         this.message = message;
-    }
-
-    @Override
-    public String getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        this.action = action;
     }
 
     @XmlAttribute

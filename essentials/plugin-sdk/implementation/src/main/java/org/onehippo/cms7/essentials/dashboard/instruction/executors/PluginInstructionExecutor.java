@@ -45,7 +45,7 @@ public class PluginInstructionExecutor implements InstructionExecutor {
         InstructionStatus status = InstructionStatus.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {
-            status = instruction.process(context, status);
+            status = instruction.process(context);
         }
         return status;
     }

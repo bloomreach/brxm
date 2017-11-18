@@ -305,7 +305,7 @@ public class GalleryPluginResource extends BaseResource {
     public void scheduleImageScript(final PluginContext context) {
         // schedule updater script so new variants are created:
         final XmlInstruction instruction = new XmlInstruction();
-        instruction.setAction(PluginInstruction.COPY);
+        instruction.setActionEnum(XmlInstruction.Action.COPY);
         instruction.setSource("image_set_updater.xml");
         instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
         final InstructionExecutor executor = new PluginInstructionExecutor();
