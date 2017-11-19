@@ -20,10 +20,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -31,31 +34,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Execute instruction instantiates and executes instruction for given class.
- * NOTE: class must implement {@code org.onehippo.cms7.essentials.dashboard.instructions.Instruction}
- *
- * @version "$Id$"
+ * Execute instruction instantiates and executes a custom Instruction class.
  */
 @Component
 @XmlRootElement(name = "execute", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class ExecuteInstruction extends PluginInstruction {
+public class ExecuteInstruction extends BuiltinInstruction {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteInstruction.class);
 
-
-    private String message;
-
     private String clazz;
 
-    @XmlAttribute
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
+    public ExecuteInstruction() {
+        super(MessageGroup.EXECUTE);
     }
 
     @XmlAttribute(name = "class")
@@ -68,13 +58,28 @@ public class ExecuteInstruction extends PluginInstruction {
     }
 
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(clazz)) {
             log.warn("Cannot execute instruction, class name was not defined");
             return InstructionStatus.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
         log.info("Executing instruction '{}'.", clazz);
-        return instruction.process(context);
+        return instruction.execute(context);
+    }
+
+    @Override
+    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Instruction instruction = GlobalUtils.newInstance(clazz);
+        if (instruction != null) {
+            final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
+            if (changeMessages != null) {
+                return changeMessages;
+            }
+        }
+
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), "Execute instruction class '" + clazz + "'.");
+        return result;
     }
 }

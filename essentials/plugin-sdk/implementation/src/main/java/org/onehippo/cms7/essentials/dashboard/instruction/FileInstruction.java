@@ -27,19 +27,20 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -49,14 +50,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class FileInstruction extends PluginInstruction {
+public class FileInstruction extends BuiltinInstruction {
 
     public enum Action {
         COPY, DELETE
     }
 
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
-    private String message;
     private boolean binary;
     private boolean overwrite;
     private String source;
@@ -67,8 +67,12 @@ public class FileInstruction extends PluginInstruction {
     private String createdFoldersTarget;
     private PluginContext context;
 
+    public FileInstruction() {
+        super(MessageGroup.FILE_CREATE);
+    }
+
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         log.debug("executing FILE Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         this.context = context;
@@ -83,6 +87,17 @@ public class FileInstruction extends PluginInstruction {
         } else {
             return delete();
         }
+    }
+
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        if (action == Action.COPY) {
+            result.put(MessageGroup.FILE_CREATE, "Create project file '" + target + "'.");
+        } else {
+            result.put(MessageGroup.FILE_DELETE, "Delete project file '" + target + "'.");
+        }
+        return result;
     }
 
     private InstructionStatus copy() {
@@ -195,8 +210,7 @@ public class FileInstruction extends PluginInstruction {
         return InstructionStatus.FAILED;
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
+    protected void processPlaceholders(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;
@@ -209,14 +223,10 @@ public class FileInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
-        //TODO check what Wicket can offer regarding placeholders and localization, it's probably reusable
+        //TODO below statements make no sense, at the point of calling processPlaceholders, these messages are still null
         data.put("folderMessage", folderMessage);
         data.put("createdFolders", createdFolders);
         data.put("createdFoldersTarget", createdFoldersTarget);
-        // setup messages:
-
-        super.processPlaceholders(data);
-        message = TemplateUtils.replaceTemplateData(message, data);
     }
 
     protected boolean valid() {
@@ -257,17 +267,6 @@ public class FileInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    @XmlAttribute
     public String getAction() {
         return action != null ? action.toString().toLowerCase() : null;
     }
@@ -288,7 +287,6 @@ public class FileInstruction extends PluginInstruction {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("FileInstruction{");
-        sb.append("message='").append(message).append('\'');
         sb.append(", overwrite=").append(overwrite);
         sb.append(", source='").append(source).append('\'');
         sb.append(", target='").append(target).append('\'');

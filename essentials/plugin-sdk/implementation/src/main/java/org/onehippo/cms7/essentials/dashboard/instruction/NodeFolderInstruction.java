@@ -30,10 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -47,28 +50,35 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @XmlRootElement(name = "folder", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class NodeFolderInstruction extends PluginInstruction {
+public class NodeFolderInstruction extends BuiltinInstruction {
 
     private static Logger log = LoggerFactory.getLogger(NodeFolderInstruction.class);
-    private String message;
     private String template;
     private String path;
 
-    // path="/foo/bar/foobar" template="/my_folder_template.xml"
+    public NodeFolderInstruction() {
+        super(MessageGroup.XML_NODE_FOLDER_CREATE);
+    }
 
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(template)) {
             log.error("Invalid instruction:", this);
             return InstructionStatus.FAILED;
         }
         final Map<String, Object> data = context.getPlaceholderData();
-        super.processPlaceholders(data);
         final String myPath = TemplateUtils.replaceTemplateData(path, data);
         if (myPath != null) {
             path = myPath;
         }
         return createFolders(context);
+    }
+
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), "Create repository folder '" + path + "'.");
+        return result;
     }
 
     private InstructionStatus createFolders(final PluginContext context) {
@@ -133,20 +143,8 @@ public class NodeFolderInstruction extends PluginInstruction {
     }
 
     @Override
-    @XmlAttribute
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("NodeFolderInstruction{");
-        sb.append("message='").append(message).append('\'');
         sb.append(", template='").append(template).append('\'');
         sb.append(", path='").append(path).append('\'');
         sb.append('}');

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
@@ -31,11 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -47,21 +48,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class XmlInstruction extends PluginInstruction {
+public class XmlInstruction extends BuiltinInstruction {
 
     public enum Action {
         COPY, DELETE
     }
 
     private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
-    private String message;
     private boolean overwrite;
     private String source;
     private String target;
     private Action action;
 
+    public XmlInstruction() {
+        super(MessageGroup.XML_NODE_CREATE);
+    }
+
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
@@ -73,6 +77,17 @@ public class XmlInstruction extends PluginInstruction {
         } else {
             return delete(context);
         }
+    }
+
+    @Override
+    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        if (action == Action.COPY) {
+            result.put(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
+        } else {
+            result.put(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
+        }
+        return result;
     }
 
     private InstructionStatus copy(final PluginContext context) {
@@ -154,8 +169,7 @@ public class XmlInstruction extends PluginInstruction {
         return InstructionStatus.FAILED;
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
+    private void processPlaceholders(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;
@@ -168,9 +182,6 @@ public class XmlInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
-
-        super.processPlaceholders(data);
-        message = TemplateUtils.replaceTemplateData(message, data);
     }
 
     private boolean valid() {
@@ -221,25 +232,13 @@ public class XmlInstruction extends PluginInstruction {
         this.target = target;
     }
 
-    @XmlAttribute
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("XmlInstruction{");
-        sb.append("message='").append(message).append('\'');
-        sb.append(", overwrite=").append(overwrite);
-        sb.append(", source='").append(source).append('\'');
-        sb.append(", target='").append(target).append('\'');
-        sb.append(", action='").append(action).append('\'');
+        sb.append("source='").append(source).append("', ");
+        sb.append("target='").append(target).append("', ");
+        sb.append("action='").append(action).append("', ");
+        sb.append("overwrite=").append(overwrite);
         sb.append('}');
         return sb.toString();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -48,24 +46,8 @@ public class BlogFacetInstruction implements Instruction {
     public static final long DEFAULT_FACET_LIMIT = 100L;
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
-
-
-    private String message = "Created blog facet at: /content/documents/{{namespace}}/blogFacets";
-
     @Override
-    public String getMessage() {
-
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context) {
-        processPlaceholders(context.getPlaceholderData());
+    public InstructionStatus execute(final PluginContext context) {
         final String namespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
         final String targetNode = "/content/documents/" + namespace;
         Session session = null;
@@ -101,10 +83,8 @@ public class BlogFacetInstruction implements Instruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        final String myMessage = TemplateUtils.replaceTemplateData(message, data);
-        if (!Strings.isNullOrEmpty(myMessage)) {
-            message = myMessage;
-        }
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+                "Create blog facet at: /content/documents/{{namespace}}/blogFacets");
     }
 }

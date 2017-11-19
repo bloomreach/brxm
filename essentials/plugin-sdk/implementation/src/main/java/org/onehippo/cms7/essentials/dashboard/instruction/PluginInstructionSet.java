@@ -37,7 +37,6 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "instructionSet", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class PluginInstructionSet implements InstructionSet {
 
-
     public static final Set<String> DEFAULT_GROUPS =  ImmutableSet.of(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
     private Set<Instruction> instructions = new LinkedHashSet<>();
 

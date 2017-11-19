@@ -16,11 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.robots;
 
-import java.util.Map;
+import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
 
 /**
@@ -31,22 +32,13 @@ public class RobotsInstruction implements Instruction {
     private static final String BEANS_MAPPING = "classpath*:org/onehippo/forge/**/*.class";
 
     @Override
-    public String getMessage() {
-        return "Adding bean mapping to web.xml: " + BEANS_MAPPING;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         return WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        // noop
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+                "Add mapping '" + BEANS_MAPPING + "' for annotated HST beans to Site web.xml.");
     }
 }

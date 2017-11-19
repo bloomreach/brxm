@@ -16,23 +16,52 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 /**
- * @version "$Id$"
+ * Contract for implementing a plugin installation instruction.
+ *
+ * All instructions should describe their (intended) action by means of one or more "change messages".
  */
 @XmlTransient
 public interface Instruction {
 
-    String getMessage();
+    /**
+     * Execute this instruction.
+     *
+     * @param context {@link PluginContext} providing access to the project sources and repository through Essentials'
+     *                                     services
+     * @return result of the instruction execution (success, failure, skipped)
+     */
+    InstructionStatus execute(PluginContext context);
 
-    void setMessage(String message);
+    /**
+     * Retrieve the "Changes made by this feature" messages.
+     *
+     * An instruction can return 1 or more messages. Each message must be assigned to a {@link MessageGroup},
+     * and instruction-specific variables should be interpolated before returning. Each change message will
+     * be post-processed in order to interpolate project-specific variables.
+     *
+     * @return a {@link Multimap} containing all change messages.
+     */
+    default Multimap<MessageGroup, String> getChangeMessages() {
+        return null;
+    }
 
-    InstructionStatus process(PluginContext context);
-
-    void processPlaceholders(final Map<String, Object> data);
+    /**
+     * Convenience method for building a change messages multimap.
+     */
+    static Multimap<MessageGroup, String> makeChangeMessages(final MessageGroup group, final String... messages) {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        for (String message : messages) {
+            result.put(group, message);
+        }
+        return result;
+    }
 }

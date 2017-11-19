@@ -26,11 +26,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -45,7 +48,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @XmlRootElement(name = "cnd", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class CndInstruction extends PluginInstruction {
+public class CndInstruction extends BuiltinInstruction {
 
     private static Logger log = LoggerFactory.getLogger(CndInstruction.class);
     // TODO implement possibility to add custom namespace, currently only project namespaces is used
@@ -53,11 +56,13 @@ public class CndInstruction extends PluginInstruction {
     private String superType;
     private String documentType;
     private String namespacePrefix;
-    private String message;
-    private String action;
+
+    public CndInstruction() {
+        super(MessageGroup.DOCUMENT_REGISTER);
+    }
 
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(namespacePrefix)) {
             namespace = context.getProjectNamespacePrefix();
         } else {
@@ -97,10 +102,16 @@ public class CndInstruction extends PluginInstruction {
         return InstructionStatus.FAILED;
     }
 
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), "Register document type '" + documentType + "'.");
+        return result;
+    }
+
     private void processAllPlaceholders(final Map<String, Object> data) {
         data.put("documentType", documentType);
         data.put("superType", superType);
-        processPlaceholders(data);
         final String mySupertype = TemplateUtils.replaceTemplateData(superType, data);
         if (mySupertype != null) {
             superType = mySupertype;
@@ -113,16 +124,6 @@ public class CndInstruction extends PluginInstruction {
         if (myDocumentType != null) {
             documentType = myDocumentType;
         }
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
     }
 
     @XmlAttribute

@@ -16,34 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Map;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 
-/**
- * @version "$Id$"
- */
 public class DummyInstruction implements Instruction {
-
     @Override
-    public String getMessage() {
-        return "myMessage";
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         return InstructionStatus.SUCCESS;
-    }
-
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-
     }
 }

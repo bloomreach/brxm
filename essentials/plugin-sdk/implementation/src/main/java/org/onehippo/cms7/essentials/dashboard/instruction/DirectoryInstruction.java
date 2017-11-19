@@ -33,12 +33,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialsFileUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -47,11 +50,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * @version "$Id$"
+ * DirectoryInstruction allows you to create an empty directory in your project, or to copy an entire directory
+ * into your project.
  */
 @Component
 @XmlRootElement(name = "directory", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class DirectoryInstruction extends PluginInstruction {
+public class DirectoryInstruction extends BuiltinInstruction {
 
     public enum Action {
         CREATE, COPY
@@ -61,7 +65,6 @@ public class DirectoryInstruction extends PluginInstruction {
     private String target;
     private Action action;
     private String source;
-    private String message;
     private boolean overwrite;
 
     /**
@@ -86,16 +89,18 @@ public class DirectoryInstruction extends PluginInstruction {
             .add("js")
             .build();
 
+    public DirectoryInstruction() {
+        super(MessageGroup.FILE_CREATE);
+    }
+
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         if (action == null) {
             log.warn("DirectoryInstruction: action was empty");
-            message = "Failed to process instruction: invalid action";
             return InstructionStatus.FAILED;
         }
         if (Strings.isNullOrEmpty(target)) {
             log.warn("DirectoryInstruction: target was empty");
-            message = "Failed to create directory: invalid name";
             return InstructionStatus.FAILED;
         }
         processPlaceholders(context.getPlaceholderData());
@@ -106,6 +111,15 @@ public class DirectoryInstruction extends PluginInstruction {
                 return copy(context.getPlaceholderData());
         }
         return InstructionStatus.FAILED;
+    }
+
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), action == DirectoryInstruction.Action.COPY
+                ? "Copy directory '" + source + "' to project directory '" + target + "'."
+                : "Create directory '" + target + "'.");
+        return result;
     }
 
 
@@ -120,8 +134,6 @@ public class DirectoryInstruction extends PluginInstruction {
         }
 
         return copyResources(source, new File(target), placeholderData);
-
-
     }
 
     private InstructionStatus create() {
@@ -130,30 +142,16 @@ public class DirectoryInstruction extends PluginInstruction {
             EssentialsFileUtils.createParentDirectories(new File(target));
         } catch (IOException e) {
             log.error("Error creating directory: " + target, e);
-            message = "Failed to create directory " + target;
             return InstructionStatus.FAILED;
         }
-        message = "Created directory " + target;
         return InstructionStatus.SUCCESS;
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        super.processPlaceholders(data);
+    private void processPlaceholders(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;
         }
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
     }
 
     @XmlAttribute
@@ -278,6 +276,4 @@ public class DirectoryInstruction extends PluginInstruction {
         }
         return null;
     }
-
-
 }

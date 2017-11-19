@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
@@ -48,7 +46,7 @@ public class FreemarkerInstruction extends FileInstruction {
     private String templateName;
 
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         log.debug("executing Freemarker Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         if (!valid()) {
@@ -56,7 +54,7 @@ public class FreemarkerInstruction extends FileInstruction {
             return InstructionStatus.FAILED;
         }
 
-        return super.process(context);
+        return super.execute(context);
 
     }
 
@@ -91,17 +89,9 @@ public class FreemarkerInstruction extends FileInstruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        super.processPlaceholders(data);
-
-
-    }
-
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("FreemarkerInstruction{");
-        sb.append("").append(super.toString());
+        sb.append(super.toString());
         sb.append('}');
         return sb.toString();
     }

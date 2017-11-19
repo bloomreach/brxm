@@ -20,6 +20,8 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
@@ -29,8 +31,6 @@ import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Multimap;
-
 /**
  * @version "$Id$"
  */
@@ -38,14 +38,12 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class PluginInstructionExecutor implements InstructionExecutor {
 
-
-
     @Override
     public InstructionStatus execute(final InstructionSet set, PluginContext context) {
         InstructionStatus status = InstructionStatus.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {
-            status = instruction.process(context);
+            status = instruction.execute(context);
         }
         return status;
     }

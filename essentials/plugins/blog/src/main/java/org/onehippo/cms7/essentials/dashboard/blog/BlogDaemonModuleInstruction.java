@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,22 +46,10 @@ public class BlogDaemonModuleInstruction implements Instruction {
     private static final Pattern PREFIX_PATTERN = Pattern.compile(PREFIX);
     private static Logger log = LoggerFactory.getLogger(BlogDaemonModuleInstruction.class);
 
-
     private static final String CONFIG_EVENT_BUS = "/hippo:configuration/hippo:modules/essentials-eventbus-listener/hippo:moduleconfig";
 
-
     @Override
-    public String getMessage() {
-        return "Configured Blog Daemon module";
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus execute(final PluginContext context) {
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final Session session = context.createSession();
         try {
@@ -107,7 +98,7 @@ public class BlogDaemonModuleInstruction implements Instruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE, "Configure Blog Daemon module");
     }
 }

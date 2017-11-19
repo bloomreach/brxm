@@ -16,13 +16,14 @@
 
 package com.onehippo.cms7.essentials.plugins.indexexporter;
 
-import java.util.Map;
+import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsServlet;
@@ -31,15 +32,7 @@ public class LuceneIndexExporterInstruction implements Instruction {
     private static final String SERVLET_NAME = "RepositoryJaxrsServlet";
 
     @Override
-    public String getMessage() {
-        return "Add dependency and Ensure availability of RepositoryJaxrsServlet through cms web.xml";
-    }
-
-    @Override
-    public void setMessage(String message) { }
-
-    @Override
-    public InstructionStatus process(PluginContext context) {
+    public InstructionStatus execute(PluginContext context) {
         DependencyRestful dependency = new DependencyRestful();
         dependency.setGroupId("com.onehippo.cms7");
         dependency.setArtifactId("hippo-addon-lucene-export");
@@ -51,5 +44,8 @@ public class LuceneIndexExporterInstruction implements Instruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) { }
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+                "Add dependency and ensure availability of '" + SERVLET_NAME + "' through cms web.xml");
+    }
 }
