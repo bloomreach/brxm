@@ -1469,9 +1469,10 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
-                .andReturn("/content/documents/channel/news/breaking-news");
-        expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
-                .andReturn(documentHandle);
+                .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
+        expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
+                .andReturn(documentDraft);
+        expect(documentDraft.getParent()).andReturn(documentHandle);
 
         DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();
@@ -1534,9 +1535,10 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
-                .andReturn("/content/documents/channel/news/breaking-news");
-        expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
-                .andReturn(documentHandle);
+                .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
+        expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
+                .andReturn(documentDraft);
+        expect(documentDraft.getParent()).andReturn(documentHandle);
 
         DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();
