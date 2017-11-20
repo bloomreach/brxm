@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture, async } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FormsModule} from '@angular/forms';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
 import ChannelService from '../../../../channel.service';
 import FeedbackService from '../../../../../services/feedback.service';
-import { CreateContentService } from '../create-content.service';
-import { DocumentTypeInfo } from '../create-content.types';
-import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
-import { CreateContentComponent } from './step-1.component';
-import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
-import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
-import { SharedModule } from '../../../../../shared/shared.module';
+import {CreateContentService} from '../create-content.service';
+import {DocumentTypeInfo} from '../create-content.types';
+import {ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock} from '../create-content.mocks.spec';
+import {CreateContentComponent} from './step-1.component';
+import {DocumentLocationFieldComponent} from '../document-location/document-location-field.component';
+import {HintsComponent} from '../../../../../shared/components/hints/hints.component';
+import {NameUrlFieldsComponent} from '../name-url-fields/name-url-fields.component';
+import {SharedModule} from '../../../../../shared/shared.module';
 
 describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
@@ -50,9 +50,9 @@ describe('Create content step 1 component', () => {
         FormsModule
       ],
       providers: [
-        { provide: ChannelService, useClass: ChannelServiceMock },
-        { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock }
+        {provide: ChannelService, useClass: ChannelServiceMock},
+        {provide: CreateContentService, useClass: CreateContentServiceMock},
+        {provide: FeedbackService, useClass: FeedbackServiceMock}
       ]
     });
 
@@ -72,20 +72,20 @@ describe('Create content step 1 component', () => {
 
     it('throws an error if templateQuery is not set', () => {
       expect(() => {
-        component.options = { templateQuery: null };
+        component.options = {templateQuery: null};
         fixture.detectChanges();
       }).toThrowError('Configuration option "templateQuery" is required');
     });
 
     it('loads documentTypes from the templateQuery', () => {
       const documentTypes: Array<DocumentTypeInfo> = [
-        { id: 'test-id1', displayName: 'test-name 1' },
-        { id: 'test-id2', displayName: 'test-name 2' },
+        {id: 'test-id1', displayName: 'test-name 1'},
+        {id: 'test-id2', displayName: 'test-name 2'},
       ];
       const spy = spyOn(createContentService, 'getTemplateQuery')
-        .and.returnValue(Observable.of({ documentTypes }));
+        .and.returnValue(Observable.of({documentTypes}));
 
-      component.options = { templateQuery: 'test-template-query' };
+      component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
 
       expect(spy).toHaveBeenCalledWith('test-template-query');
@@ -94,10 +94,10 @@ describe('Create content step 1 component', () => {
     });
 
     it('pre-selects the documentType if only one is returned from the templateQuery', () => {
-      const documentTypes: Array<DocumentTypeInfo> = [{ id: 'test-id1', displayName: 'test-name 1' }];
-      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({ documentTypes }));
+      const documentTypes: Array<DocumentTypeInfo> = [{id: 'test-id1', displayName: 'test-name 1'}];
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({documentTypes}));
 
-      component.options = { templateQuery: 'test-template-query' };
+      component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
 
       expect(component.documentType).toBe('test-id1');
@@ -111,14 +111,15 @@ describe('Create content step 1 component', () => {
         data: {
           'reason': 'INVALID_TEMPLATE_QUERY',
           'params': {
-            'templateQuery': 'new-document' }
+            'templateQuery': 'new-document'
+          }
         }
       }));
 
-      component.options = { templateQuery: 'test-template-query' };
+      component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
 
-      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { 'templateQuery': 'new-document' });
+      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', {'templateQuery': 'new-document'});
     }));
   });
 
@@ -126,14 +127,18 @@ describe('Create content step 1 component', () => {
     beforeEach(() => {
       // Mock templateQuery calls that gets executed on "onInit"
       // Disabling this will fail the tests
-      component.options = { templateQuery: 'test-template-query' };
+      component.options = {
+        templateQuery: 'test-template-query',
+        rootPath: '/content/documents/hap/news',
+        defaultPath: '2017/12'
+      };
       const documentTypes: Array<DocumentTypeInfo> = [
-        { id: 'test-id1', displayName: 'test-name 1' },
+        {id: 'test-id1', displayName: 'test-name 1'},
       ];
-      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({ documentTypes }));
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({documentTypes}));
     });
 
-    it('assembles document object and send it to the server', () => {
+    it('assembles document object and sends it to the server', () => {
       component.nameUrlFields.nameField = 'New doc';
       component.nameUrlFields.urlField = 'new-doc';
       component.documentType = 'hap:contentdocument';
@@ -144,7 +149,7 @@ describe('Create content step 1 component', () => {
         templateQuery: 'test-template-query',
         documentTypeId: 'hap:contentdocument',
         rootPath: '/content/documents/hap/news',
-        defaultPath: '2017/11',
+        defaultPath: '2017/12',
       };
       const spy = spyOn(createContentService, 'createDraft')
         .and.returnValue(Observable.of('resolved'));

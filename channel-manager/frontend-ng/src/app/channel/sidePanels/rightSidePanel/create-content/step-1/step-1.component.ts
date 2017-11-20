@@ -85,8 +85,8 @@ export class CreateContentComponent implements OnInit {
       slug: this.nameUrlFields.urlField,
       templateQuery: this.options.templateQuery,
       documentTypeId: this.documentType,
-      rootPath: '/content/documents/hap/news',
-      defaultPath: '2017/11',
+      rootPath: this.options.rootPath,
+      defaultPath: this.options.defaultPath,
     };
     this.createContentService
       .createDraft(document)
