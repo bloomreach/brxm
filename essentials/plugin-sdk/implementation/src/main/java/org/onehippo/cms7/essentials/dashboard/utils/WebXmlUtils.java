@@ -119,60 +119,6 @@ public class WebXmlUtils {
         }
     }
 
-    /**
-     * Add an HST Bean mapping to the site's web.xml.
-     *
-     * @param context     project context
-     * @param beanMapping desired bean mapping
-     * @return            true upon success, false otherwise
-     */
-    public static boolean addHstBeanMapping(final PluginContext context, final String beanMapping) {
-        final String paramName = "hst-beans-annotated-classes";
-        final String webXmlPath = ProjectUtils.getWebXmlPath(context, TargetPom.SITE);
-        if (webXmlPath == null) {
-            logger.warn("Failed to add bean mapping, module 'site' has no web.xml file.");
-            return false;
-        }
-
-        final File webXml = new File(webXmlPath);
-        try {
-            Document doc = new SAXReader().read(webXml);
-            Element contextParameter = contextParameterFor(paramName, doc);
-            if (contextParameter != null) {
-                final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");
-                final String value = parameterValue.getText();
-                final String[] mappings = value.split("\\s*,\\s*");
-                for (String mapping : mappings) {
-                    if (mapping.equals(beanMapping)) {
-                        logger.debug("HST bean mapping '{}' already in place.", beanMapping);
-                        return true;
-                    }
-                }
-                parameterValue.setText(value + ",\n" + beanMapping);
-            } else {
-                createContextParameter(doc, paramName, beanMapping);
-            }
-            write(webXml, doc);
-            return true;
-        } catch (DocumentException | IOException e) {
-            logger.error("Failed to add HST bean mapping '{}'.", beanMapping, e);
-        }
-        return false;
-    }
-
-    private static Element contextParameterFor(final String parameterName, final Document doc) {
-        final String selector = String.format("/web-app/*[name()='context-param']/*[name()='param-name' and text()='%s']",
-                parameterName);
-        return parentElementFor(selector, doc);
-    }
-
-    private static void createContextParameter(final Document doc, final String name, final String value) {
-        final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
-        final Element contextParam = Dom4JUtils.addIndentedSameNameSibling(webApp, "context-param", null);
-        Dom4JUtils.addIndentedElement(contextParam, "param-name", name);
-        Dom4JUtils.addIndentedElement(contextParam, "param-value", value);
-    }
-
     private static Element parentElementFor(final String selector, final Document doc) {
         final Element element = (Element) doc.getRootElement().selectSingleNode(selector);
         return element != null ? element.getParent() : null;

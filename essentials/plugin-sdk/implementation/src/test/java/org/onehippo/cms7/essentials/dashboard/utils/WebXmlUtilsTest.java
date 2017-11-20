@@ -163,64 +163,6 @@ public class WebXmlUtilsTest extends BaseResourceTest {
         }
     }
 
-    @Test
-    public void add_beans_mapping() throws Exception {
-        final String webxml = "/utils/webxml/web-without-servlet.xml";
-        final String beanMapping = "classpath*:org/onehippo/forge/**/*.class";
-        final PluginContext context = getContext();
-
-        final Map<String, String> resourceToProjectLocation = new HashMap<>();
-        resourceToProjectLocation.put(webxml, "site/src/main/webapp/WEB-INF/web.xml");
-        final Map<String, File> resourceToFile = createModifiableProject(resourceToProjectLocation);
-
-        assertEquals(0, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
-        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
-        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
-        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
-        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
-    }
-
-    @Test
-    public void append_beans_mapping() throws Exception {
-        final String webxml = "/utils/webxml/web-with-beans-mapping.xml";
-        final String beanMapping = "classpath*:org/onehippo/forge/**/*.class";
-        final PluginContext context = getContext();
-
-        final Map<String, String> resourceToProjectLocation = new HashMap<>();
-        resourceToProjectLocation.put(webxml, "site/src/main/webapp/WEB-INF/web.xml");
-        final Map<String, File> resourceToFile = createModifiableProject(resourceToProjectLocation);
-
-        assertEquals(0, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
-        assertTrue(WebXmlUtils.addHstBeanMapping(context, beanMapping));
-        assertEquals(1, nrOfOccurrences(resourceToFile.get(webxml), beanMapping));
-    }
-
-    @Test
-    public void add_beans_mapping_no_webxml() throws Exception {
-        final PluginContext context = getContext();
-
-        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlUtils.class).build()) {
-            WebXmlUtils.addHstBeanMapping(context, "foo");
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to add HST bean mapping 'foo'.")));
-        }
-    }
-
-    @Test
-    public void add_beans_mapping_no_cms() throws Exception {
-        final PluginContext context = getContext();
-
-        System.setProperty("project.basedir", getClass().getResource("/utils/webxml").getPath());
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(WebXmlUtils.class).build()) {
-            WebXmlUtils.addHstBeanMapping(context, "foo");
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to add bean mapping, module 'site' has no web.xml file.")));
-        }
-    }
-
     private Map<String, File> createModifiableProject(final Map<String, String> resourceToProjectLocation) throws IOException {
         final Map<String, File> resourceToFile = new HashMap<>();
         final Path projectPath = Files.createTempDirectory("test");

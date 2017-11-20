@@ -38,16 +38,11 @@ import org.slf4j.LoggerFactory;
 public class UrlRewriterInstruction implements Instruction {
 
     private static final Logger logger = LoggerFactory.getLogger(UrlRewriterInstruction.class);
-    private static final String BEANS_MAPPING = "classpath*:org/onehippo/forge/**/*.class";
     private static final String FILTER_CLASS = "org.onehippo.forge.rewriting.HippoRewriteFilter";
     private static final String FILTER_NAME = "RewriteFilter";
 
     @Override
     public InstructionStatus execute(PluginContext context) {
-        if (!WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
-            return InstructionStatus.FAILED;
-        }
-
         boolean effect = false;
         try {
             final String filter = readResource("instructions/xml/webxml/rewrite-filter.xml");
