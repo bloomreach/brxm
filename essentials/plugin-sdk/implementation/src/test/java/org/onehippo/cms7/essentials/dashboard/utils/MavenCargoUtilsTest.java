@@ -16,12 +16,18 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -72,5 +78,25 @@ public class MavenCargoUtilsTest extends BaseResourceTest {
         assertFalse("Expected to fail adding a duplicate dependency", result);
         result = MavenCargoUtils.removeDependencyFromCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
         assertTrue("Failed to remove dependency", result);
+    }
+
+    @Test
+    public void addPropertyTest() {
+        final PluginContext context = getContext();
+        MavenCargoUtils.addPropertyToProfile(context, "first.test.property", "random", true);
+        assertTrue(MavenCargoUtils.hasProfileProperty(context, "first.test.property"));
+    }
+
+    @Test
+    public void mergeModelTest() throws IOException, XmlPullParserException {
+        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
+        final PluginContext context = getContext();
+
+        InputStream pomStream = MavenCargoUtilsTest.class.getResourceAsStream("/test-pom-overlay.xml");
+        Model model = MavenModelUtils.readPom(pomStream);
+        MavenCargoUtils.mergeCargoProfile(context, model);
+
+        String version = model.getProperties().get("elasticsearch.version").toString();
+        assertEquals("5.6.4", version);
     }
 }

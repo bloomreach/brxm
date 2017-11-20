@@ -17,13 +17,22 @@
 package org.onehippo.cms7.essentials.plugins.relevance;
 
 import java.io.File;
-import java.util.Map;
+import java.io.InputStream;
 
+import com.google.common.collect.Multimap;
+
+import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.*;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
+import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,33 +53,17 @@ public class RelevanceInstruction implements Instruction {
     private static final String ENTERPRISE_GROUPID = "com.onehippo.cms7";
 
     @Override
-    public String getMessage() {
-        return "Adding H2 JDBC resource to context.xml.";
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        //
-    }
-
-    @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        //
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         File contextXml = ProjectUtils.getContextXml();
 
         log.info("Adding jdbc/wpmDS datasource to conf/context.xml: {}", WPM_DATASOURCE_NAME);
         if (!ContextXMLUtils.hasResource(contextXml, WPM_DATASOURCE_NAME)) {
             ContextXMLUtils.addResource(contextXml, WPM_DATASOURCE_NAME, DEFAULT_WPM_RESOURCE);
         }
+        ContextXMLUtils.addEnvironment(contextXml,
+                "elasticsearch/targetingDS",
+                "{'indexName':'visits', 'locations':['http://localhost:9200/']}",
+                "java.lang.String", false);
 
         // Adding the dependencies in this Instruction instead of using plugin-descriptor.json
         // This so all configuration can be done in one phase
@@ -79,9 +72,15 @@ public class RelevanceInstruction implements Instruction {
         addDependency(context, ENTERPRISE_GROUPID, "hippo-addon-targeting-dependencies-site", null, "pom", "", "site");
         addDependency(context, ENTERPRISE_GROUPID, "hippo-maxmind-geolite2", "20161123", "", "runtime", "site");
 
-        log.info("Adding Relevant related log4j2 loggers");
+        log.info("Adding Relevance log4j2 logger");
         Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.targeting", "warn");
 
+        MavenCargoUtils.addPropertyToProfile(context, "elasticsearch.version","5.6.4", true);
+        MavenCargoUtils.addPropertyToProfile(context, "maven.plugin.elasticsearch.version","5.7", true);
+
+        InputStream pomStream = RelevanceInstruction.class.getResourceAsStream("/relevance-pom-overlay.xml");
+        Model model = MavenModelUtils.readPom(pomStream);
+        MavenCargoUtils.mergeCargoProfile(context, model);
 
 
         return InstructionStatus.SUCCESS;
@@ -98,8 +97,7 @@ public class RelevanceInstruction implements Instruction {
         DependencyUtils.addDependency(context, dependency);
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        // noop
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE, "Add H2 JDBC resource to context.xml.");
     }
 }

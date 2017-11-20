@@ -90,6 +90,10 @@
       <artifactId>maven-model</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.archetype</groupId>
+      <artifactId>archetype-common</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>

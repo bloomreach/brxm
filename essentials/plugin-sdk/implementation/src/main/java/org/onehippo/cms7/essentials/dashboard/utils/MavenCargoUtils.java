@@ -38,6 +38,47 @@ public class MavenCargoUtils {
         throw new IllegalStateException("Utility class");
     }
 
+    static public boolean hasProfileProperty(final PluginContext context, final String name) {
+        final Model model = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        return getCargoProfile(model).getProperties().containsKey(name);
+    }
+
+    static public boolean addPropertyToProfile(final PluginContext context, final String name, final String value, boolean skipIfExists) {
+        final Model model = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        Profile cargoProfile = getCargoProfile(model);
+        if(skipIfExists && cargoProfile.getProperties().containsKey(name)) {
+            return false;
+        }
+        cargoProfile.addProperty(name, value);
+        return MavenModelUtils.writePom(model, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
+    }
+
+    /**
+     * Merge plugins and properties from an external model's cargo.run profile.
+     * DefaultPomManager.mergePoms could not be used as it fails to copy properties,
+     * https://issues.apache.org/jira/browse/ARCHETYPE-535
+     *
+     * @param context
+     * @param temporaryModel
+     */
+    static public boolean mergeCargoProfile(final PluginContext context, Model temporaryModel) {
+        final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        Profile modelProfile = getCargoProfile(pomModel);
+        Profile temporaryProfile = getCargoProfile(temporaryModel);
+        if(modelProfile != null && temporaryProfile != null) {
+            // Copy all properties. Existing properties will be overwritten
+            MavenModelUtils.mergeProperties(modelProfile, temporaryProfile);
+
+            MavenModelUtils.mergeBuildPlugins(modelProfile.getBuild(), temporaryProfile.getBuild());
+        } else  if(modelProfile == null) {
+            // Model doesn't have a cargo.run profile yet, copy it
+            if(temporaryProfile != null) {
+                pomModel.addProfile(temporaryProfile);
+            }
+        }
+        return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
+    }
+
     /**
      * Checks if the cargo plugin in the cargo.run profile already has a deployable defined with specific context path
      *
@@ -91,7 +132,7 @@ public class MavenCargoUtils {
         Xpp3Dom configuration = (Xpp3Dom) cargoPlugin.getConfiguration();
         Xpp3Dom deployables = configuration.getChild("deployables");
         deployables.addChild(deployable);
-        return DependencyUtils.writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT),pomModel);
+        return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
     }
 
     public static boolean removeDeployableFromCargoRunner(final PluginContext context, String webContext) {
@@ -107,7 +148,7 @@ public class MavenCargoUtils {
                 Xpp3Dom deployable = deployables.getChild(i);
                 if (webContext.equals(deployable.getChild("properties").getChild("context").getValue())) {
                     deployables.removeChild(i);
-                    return DependencyUtils.writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT), pomModel);
+                    return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
                 }
             }
         }
@@ -153,7 +194,7 @@ public class MavenCargoUtils {
         addTextElement(dependency, "classpath", "shared");
 
         dependencies.addChild(dependency);
-        return DependencyUtils.writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT),pomModel);
+        return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
     }
 
     /**
@@ -184,7 +225,7 @@ public class MavenCargoUtils {
             if (groupId.equals(dependency.getChild(MAVEN_GROUPID).getValue())
                     && artifactId.equals(dependency.getChild(MAVEN_ARTIFACTID).getValue())) {
                 dependencies.removeChild(i);
-                return DependencyUtils.writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT),pomModel);
+                return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
             }
         }
         return false;
@@ -194,15 +235,8 @@ public class MavenCargoUtils {
      * Return the cargo plugin inside the cargo.run profile as Maven model object. Return null if the profile or plugin is not found
      */
     private static Plugin getCargoPlugin(final Model pomModel) {
-        // First find the cargo.run profile
-        Profile cargoProfile = null;
+        Profile cargoProfile = getCargoProfile(pomModel);
 
-        for (Profile profile : pomModel.getProfiles()) {
-            if (CARGO_PROFILE_ID.equals((profile.getId()))) {
-                cargoProfile = profile;
-                break;
-            }
-        }
         if (cargoProfile == null) {
             log.info("{} profile not found", CARGO_PROFILE_ID);
             return null;
@@ -214,6 +248,18 @@ public class MavenCargoUtils {
             }
         }
         return null;
+    }
+
+    private static Profile getCargoProfile(Model pomModel) {
+        // Find the cargo.run profile
+        Profile cargoProfile = null;
+        for (Profile profile : pomModel.getProfiles()) {
+            if (CARGO_PROFILE_ID.equals((profile.getId()))) {
+                cargoProfile = profile;
+                break;
+            }
+        }
+        return cargoProfile;
     }
 
     /* Add element to the dom with text. For example <artifactId>my-module</artifactId>
