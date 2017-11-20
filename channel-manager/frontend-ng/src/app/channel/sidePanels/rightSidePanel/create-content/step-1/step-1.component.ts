@@ -51,7 +51,7 @@ export class CreateContentComponent implements OnInit {
   }
 
   constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService,
-              private translate: TranslateService) { }
+    private translate: TranslateService) { }
 
   ngOnInit() {
     if (!this.options) {
@@ -65,9 +65,9 @@ export class CreateContentComponent implements OnInit {
     this.createContentService
       .getTemplateQuery(this.options.templateQuery)
       .subscribe(
-        (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
-        (error) => this.onErrorLoadingTemplateQuery(error),
-      );
+      (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
+      (error) => this.onErrorLoadingTemplateQuery(error),
+    );
   }
 
   setWidthState(state) {
@@ -80,20 +80,24 @@ export class CreateContentComponent implements OnInit {
   }
 
   submit() {
+    const location = this.documentLocationField.documentLocation;
+    const rootPath = this.documentLocationField.rootPath;
+    const defaultPath = location.substring(rootPath.length + 1);
+
     const document: DocumentDetails = {
       name: this.nameUrlFields.nameField,
       slug: this.nameUrlFields.urlField,
       templateQuery: this.options.templateQuery,
       documentTypeId: this.documentType,
-      rootPath: this.options.rootPath,
-      defaultPath: this.options.defaultPath,
+      rootPath,
+      defaultPath,
     };
     this.createContentService
       .createDraft(document)
       .subscribe(
-        (response) => this.onContinue.emit(),
-        (error) => this.onErrorCreatingDraft(error),
-      );
+      (response) => this.onContinue.emit(),
+      (error) => this.onErrorCreatingDraft(error),
+    );
   }
 
   setLocale(locale: string) {
