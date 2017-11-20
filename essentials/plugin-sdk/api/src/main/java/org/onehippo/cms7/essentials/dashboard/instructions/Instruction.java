@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -29,7 +27,6 @@ import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
  *
  * All instructions should describe their (intended) action by means of one or more "change messages".
  */
-@XmlTransient
 public interface Instruction {
 
     /**
