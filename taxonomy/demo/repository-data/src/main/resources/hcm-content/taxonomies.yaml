@@ -3,18 +3,125 @@
   /exampletaxonomy:
     jcr:primaryType: hippo:handle
     jcr:mixinTypes: ['mix:referenceable']
-    /exampletaxonomy:
+    jcr:uuid: 55414db9-09ae-4b41-8b3d-ed16872d28a3
+    /exampletaxonomy[1]:
       jcr:primaryType: hippotaxonomy:taxonomy
-      jcr:mixinTypes: ['mix:referenceable', 'hippostd:publishableSummary']
-      hippo:availability: [live, preview]
+      jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
+      jcr:uuid: 683c4f9d-87fd-4fbb-8931-63c2ad7b158e
+      hippo:availability: [live,preview]
       hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-02-04T09:32:28.068-05:00
-      hippostdpubwf:lastModificationDate: 2012-06-11T22:27:19.615-04:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:14:53.486+02:00
       hippostdpubwf:lastModifiedBy: admin
-      hippostdpubwf:publicationDate: 2012-06-11T22:27:21.856-04:00
-      hippotaxonomy:locales: [en, fr, it, nl]
+      hippostdpubwf:publicationDate: 2017-10-05T13:14:59.784+02:00
+      hippotaxonomy:locales: [en, en-GB, nl]
+      /our-words:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: our-words
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:description: Different spelling between American and British
+              English.
+            hippotaxonomy:name: Our Words
+          /en_GB:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:description: Different spelling between American and British
+              English.
+            hippotaxonomy:name: Our words
+          /nl:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:description: Vooral interessant vanwege de verschillende
+              maniere van spellen in de Engelse taal.
+            hippotaxonomy:name: Onze Woorden
+        /humor:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: humor
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Humor
+            /en_GB:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Humour
+            /nl:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Humor
+        /color:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: color
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Color
+            /nl:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Kleur
+            /en_GB:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Colour
+        /flavor:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: flavor
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Flavor
+            /nl:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Smaak
+            /en_GB:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Flavour
+        /fantasie:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: fantasy
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Fantasy
+            /nl:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Fantasie
+      /level-1:
+        jcr:primaryType: hippotaxonomy:category
+        hippotaxonomy:key: level-1
+        /hippotaxonomy:categoryinfos:
+          jcr:primaryType: hippotaxonomy:categoryinfos
+          /en:
+            jcr:primaryType: hippotaxonomy:categoryinfo
+            hippotaxonomy:name: Level 1
+        /level-2:
+          jcr:primaryType: hippotaxonomy:category
+          hippotaxonomy:key: level-2
+          /hippotaxonomy:categoryinfos:
+            jcr:primaryType: hippotaxonomy:categoryinfos
+            /en:
+              jcr:primaryType: hippotaxonomy:categoryinfo
+              hippotaxonomy:name: Level 2
+          /level-3:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: level-3
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Level 3
+            /level-4:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: level-4
+              /hippotaxonomy:categoryinfos:
+                jcr:primaryType: hippotaxonomy:categoryinfos
+                /en:
+                  jcr:primaryType: hippotaxonomy:categoryinfo
+                  hippotaxonomy:name: Level 4
       /Transport_and_infrastructure:
         jcr:primaryType: hippotaxonomy:category
         hippotaxonomy:key: key_3d25266f-c316-4fa0-b28a-55483718058b
@@ -559,12 +666,6 @@
             hippotaxonomy:fulldescription: This is a Category of Economy knowledge
               and employment
             hippotaxonomy:name: Economy knowledge and employment
-          /fr:
-            jcr:primaryType: hippotaxonomy:categoryinfo
-            hippotaxonomy:description: Catégorie de l'économie du savoir et de l'emploi
-            hippotaxonomy:fulldescription: Il s'agit d'une catégorie de l'économie
-              du savoir et de l'emploi
-            hippotaxonomy:name: Économie de la connaissance et de l'emploi
           /nl:
             jcr:primaryType: hippotaxonomy:categoryinfo
             hippotaxonomy:description: Categorie voor kennis economie en werkgelegenheid

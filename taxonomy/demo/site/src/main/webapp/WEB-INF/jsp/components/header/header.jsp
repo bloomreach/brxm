@@ -1,5 +1,5 @@
 <%--
-  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@
       <h1>Taxonomy Demo Website</h1>
     </td>
     <td align="right">
-      <a href="<hst:link path='/' mount='site' />">English</a>
+      <a href="<hst:link path='/' mount='site' />">USA</a>
       |
-      <a href="<hst:link path='/'  mount='site-fr' />">French</a>
+      <a href="<hst:link path='/'  mount='site-en-gb' />">UK</a>
       |
-      <a href="<hst:link path='/'  mount='site-nl' />">Dutch</a>
+      <a href="<hst:link path='/'  mount='site-nl' />">NL</a>
     </td>
   </tr>
   <tr>

@@ -6,7 +6,7 @@ definitions:
       /taxonomydemo-en:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../taxonomydemo-common]
-      /taxonomydemo-fr:
+      /taxonomydemo-en-gb:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../taxonomydemo-common]
       /taxonomydemo-nl:

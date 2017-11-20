@@ -1,112 +1,32 @@
 definitions:
   config:
     /hippo:configuration/hippo:frontend/cms/cms-services/localeProviderService:
-      /en:
-        jcr:mixinTypes: ['hippo:translated']
-        /hippo:translation[1]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: en
-          hippo:message: English
-        /hippo:translation[2]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: nl
-          hippo:message: Engels
-        /hippo:translation[3]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: fr
-          hippo:message: Anglais
-        /hippo:translation[4]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: it
-          hippo:message: Ingleze
-        /hippo:translation[5]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: de
-          hippo:message: Englisch
-      /fr:
-        jcr:mixinTypes: ['hippo:translated']
-        /hippo:translation[1]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: en
-          hippo:message: French
-        /hippo:translation[2]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: nl
-          hippo:message: Frans
-        /hippo:translation[3]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: fr
-          hippo:message: Français
-        /hippo:translation[4]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: it
-          hippo:message: Francese
-        /hippo:translation[5]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: de
-          hippo:message: Französisch
-      /nl:
-        jcr:mixinTypes: ['hippo:translated']
-        /hippo:translation[1]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: en
-          hippo:message: Dutch
-        /hippo:translation[2]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: nl
-          hippo:message: Nederlands
-        /hippo:translation[3]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: fr
-          hippo:message: Néerlandais
-        /hippo:translation[4]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: it
-          hippo:message: Olandese
-        /hippo:translation[5]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: de
-          hippo:message: Niederländisch
-      /it:
+      /en_GB:
         jcr:primaryType: frontend:pluginconfig
         jcr:mixinTypes: ['hippo:translated']
-        country: it
-        language: it
+        country: GB
+        language: en
         /hippo:translation[1]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: en
-          hippo:message: Italian
+          hippo:message: English (UK)
         /hippo:translation[2]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: fr
-          hippo:message: Italien
-        /hippo:translation[3]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: nl
-          hippo:message: Italiaans
+          hippo:message: Engels (GB)
+        /hippo:translation[3]:
+          jcr:primaryType: frontend:pluginconfig
+          hippo:language: fr
+          hippo:message: Anglais (GB)
         /hippo:translation[4]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: it
-          hippo:message: Italiano
-      /de:
-        jcr:mixinTypes: ['hippo:translated']
-        /hippo:translation[1]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: en
-          hippo:message: German
-        /hippo:translation[2]:
           jcr:primaryType: frontend:pluginconfig
           hippo:language: de
-          hippo:message: Deutsch
-        /hippo:translation[3]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: nl
-          hippo:message: Duits
-        /hippo:translation[4]:
-          jcr:primaryType: frontend:pluginconfig
-          hippo:language: fr
-          hippo:message: Allemand
+          hippo:message: Englisch (VK)
         /hippo:translation[5]:
           jcr:primaryType: frontend:pluginconfig
-          hippo:language: it
-          hippo:message: Tedesco
+          hippo:language: es
+          hippo:message: inglés (RU)
+        /hippo:translation[6]:
+          jcr:primaryType: frontend:pluginconfig
+          hippo:language: zh
+          hippo:message: 英文 (英国)
