@@ -142,6 +142,8 @@ describe('Create content step 1 component', () => {
       component.nameUrlFields.nameField = 'New doc';
       component.nameUrlFields.urlField = 'new-doc';
       component.documentType = 'hap:contentdocument';
+      component.documentLocationField.rootPath = '/content/documents/hap/news';
+      component.documentLocationField.documentLocation = '/content/documents/hap/news/2017/12';
 
       const data = {
         name: 'New doc',
