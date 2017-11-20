@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="create-content-container" #step2>
+<div class="create-content-container" fxLayout="column" fxFlex="grow" #step2>
   <mat-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools edit-title-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
@@ -38,34 +38,31 @@
     </mat-progress-bar>
   </mat-toolbar>
 
+  <mat-toolbar class="editable-title-toolbar" *ngIf="doc" fxFlex>
+    <div class="md-toolbar-tools">
+      <h6 class="md-subhead text-truncate qa-editable-title">
+        {{ doc.displayName }}
+      </h6>
+
+      <span fxFlex></span>
+
+      <button mat-icon-button
+              class="mat-icon-button btn-edit-document-title qa-edit-url"
+              matSuffix
+              type="button"
+              (click)="openEditNameUrlDialog()">
+        <mat-icon>mode_edit</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <hippo-sharedspace-toolbar *ngIf="docType"></hippo-sharedspace-toolbar>
+
   <div class="md-content right-side-panel-content"
-       flex="grow"
-       layout="column"
-       id="rightSidePanel-content">
+       fxLayout="column"
+       fxFlex="grow">
 
-    <mat-toolbar class="editable-title-toolbar" *ngIf="doc">
-      <div class="md-toolbar-tools layout-padding">
-        <h6 class="md-subhead text-truncate qa-editable-title">
-          {{ doc.displayName }}
-        </h6>
-
-        <span flex></span>
-
-        <button mat-icon-button
-                class="mat-icon-button btn-edit-document-title qa-edit-url"
-                matSuffix
-                type="button"
-                (click)="openEditNameUrlDialog()">
-          <mat-icon>mode_edit</mat-icon>
-        </button>
-      </div>
-    </mat-toolbar>
-
-    <hippo-sharedspace-toolbar *ngIf="docType"></hippo-sharedspace-toolbar>
-
-    <div *ngIf="feedback"
-         class="feedback qa-feedback layout-padding"
-         mat-colors="{background: 'hippo-red-50'}">
+    <div *ngIf="feedback" class="feedback qa-feedback">
       <h4 class="qa-feedback-title">{{ feedback.title }}</h4>
 
       <p class="qa-feedback-message">
@@ -73,23 +70,28 @@
       </p>
     </div>
 
-    <hippo-fields-editor class="top-level layout-padding"
-                         *ngIf="docType"
-                         [fieldTypes]="docType.fields"
-                         [fieldValues]="doc.fields">
+    <hippo-fields-editor class="top-level"
+                        *ngIf="docType"
+                        [fieldTypes]="docType.fields"
+                        [fieldValues]="doc.fields">
     </hippo-fields-editor>
   </div>
 
-  <div class="create-content-actions layout-padding">
-    <button mat-button class="qa-close"
-            (click)="close()">
-      {{ 'DISCARD' | translate }}
-    </button>
+  <mat-toolbar>
+    <div class="md-toolbar-tools">
+      <span fxFlex></span>
 
-    <button mat-button class="qa-create-content-save"
+      <button mat-button class="qa-close"
+      (click)="close()">
+      {{ 'DISCARD' | translate }}
+      </button>
+
+      <button mat-button class="qa-create-content-save"
             (click)="saveDocument()"
             ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
       {{ 'SAVE' | translate  }}
-    </button>
-  </div>
+      </button>
+
+    </div>
+  </mat-toolbar>
 </div>

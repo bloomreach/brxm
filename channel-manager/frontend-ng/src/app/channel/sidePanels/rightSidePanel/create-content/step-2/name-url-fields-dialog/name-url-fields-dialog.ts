@@ -15,7 +15,7 @@
  */
 import { Inject, OnInit, ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
-import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import './name-url-fields-dialog.scss';
 import { CreateContentService } from '../../create-content.service';
 import { NameUrlFieldsComponent } from '../../name-url-fields/name-url-fields.component';
@@ -24,7 +24,7 @@ import { NameUrlFieldsComponent } from '../../name-url-fields/name-url-fields.co
   selector: 'hippo-name-url-fields-dialog',
   templateUrl: 'name-url-fields-dialog.html',
 })
-export class NameUrlFieldsDialogComponent implements OnInit {
+export class NameUrlFieldsDialogComponent {
   private initialValues: { name: string, url: string };
   title: string = this.data.title;
   name: string = this.data.name;
@@ -33,8 +33,8 @@ export class NameUrlFieldsDialogComponent implements OnInit {
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
   constructor(
-    public dialogRef: MdDialogRef<NameUrlFieldsDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<NameUrlFieldsDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private createContentService: CreateContentService
   ) {}
 

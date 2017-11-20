@@ -17,8 +17,8 @@
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import { DocumentDetails, DocumentTypeInfo, TemplateQuery, Folder } from './create-content.types';
-import { Component } from "@angular/core";
-import { MdDialogRef } from "@angular/material";
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
 
 export class CreateContentServiceMock {
   getTemplateQuery(id): Observable<TemplateQuery> {

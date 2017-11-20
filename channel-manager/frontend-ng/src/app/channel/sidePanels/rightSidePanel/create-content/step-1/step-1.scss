@@ -16,16 +16,19 @@
 .create-content {
   &-container {
     background: $grey-100;
-    display: flex;
-    flex-direction: column;
+  }
 
-    .mat-input-container,
-    .mat-input-wrapper {
+  &-form {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+
+    mat-form-field {
       width: 100%;
     }
 
     .field {
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     hippo-hints div {
@@ -47,9 +50,11 @@
       }
     }
   }
+
   &-actions {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    padding: 10px 16px;
   }
 }

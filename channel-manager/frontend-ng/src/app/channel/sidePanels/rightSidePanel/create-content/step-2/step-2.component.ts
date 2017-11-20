@@ -15,13 +15,13 @@
  */
 
 import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
-import './step-2.scss';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import './step-2.scss';
 
+import ContentService from '../../../../../services/content.service';
 import { CreateContentService } from '../create-content.service';
 import DialogService from '../../../../../services/dialog.service';
-import ContentService from '../../../../../services/content.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
@@ -66,7 +66,7 @@ export class CreateContentStep2Component implements OnInit {
               private fieldService: FieldService,
               private dialogService: DialogService,
               private translate: TranslateService,
-              public dialog: MdDialog) {}
+              public dialog: MatDialog) {}
 
   ngOnInit() {
     this.loadNewDocument();

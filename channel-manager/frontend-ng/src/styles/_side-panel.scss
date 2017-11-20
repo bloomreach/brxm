@@ -51,8 +51,10 @@
   max-width: 440px;
   width: 440px;
 
+  mat-toolbar,
   md-toolbar {
     background: $grey-50;
+    box-sizing: border-box;
     color: $text-dark;
 
     &:first-child {

@@ -47,7 +47,7 @@ export interface Document {
     type: {
       id: string;
     }
-  }
+  };
 }
 
 export interface Folder {

@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div layout="column" class="create-content-container">
+<div fxLayout="column" class="create-content-container">
 
-  <mat-toolbar class="edit-title-toolbar layout-padding">
+  <mat-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools edit-title-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ title }}">
         {{ title }}
@@ -36,11 +36,9 @@
     </div>
   </mat-toolbar>
 
-  <div class="md-content layout-padding"
-       flex="grow"
-       layout="column"
-       id="rightSidePanel-content">
-
+  <div class="md-content right-side-panel-content"
+       fxLayout="column"
+       fxFlex="grow">
     <form (ngSubmit)="submit(form)"
           #form="ngForm"
           class="form-dense-layout create-content-form">
@@ -50,19 +48,15 @@
 
       <!-- Document type field -->
       <div class="field">
-        <div class="mat-input-wrapper">
-          <div class="mat-input-flex">
-            <div class="mat-input-infix">
-              <mat-select [(ngModel)]="documentType" name="documentType" required
-                          placeholder="Document type" [disabled]="documentTypes.length === 1"
-                          class="input-document-type create-content-field mat-input-container qa-document-type-select"
-                          [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
-                <mat-option *ngFor="let documentType of documentTypes"
-                            [value]="documentType.id">{{ documentType.displayName }}</mat-option>
-              </mat-select>
-            </div>
-          </div>
-        </div>
+        <mat-form-field>
+          <mat-select [(ngModel)]="documentType" name="documentType" required
+            placeholder="Document type" [disabled]="documentTypes.length === 1"
+            class="input-document-type create-content-field qa-document-type-select"
+            [ngClass]="{ 'hide-select-arrow': documentTypes.length === 1 }">
+            <mat-option *ngFor="let documentType of documentTypes"
+                        [value]="documentType.id">{{ documentType.displayName }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <!-- Document location field -->
@@ -74,7 +68,7 @@
     </form>
   </div>
   <!-- Buttons -->
-  <div class="create-content-actions layout-padding">
+  <div class="create-content-actions">
     <button mat-button class="qa-close"
             (click)="close()">
       {{ 'CANCEL' | translate }}
