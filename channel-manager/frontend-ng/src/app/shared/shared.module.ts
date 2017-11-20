@@ -15,34 +15,46 @@
  */
 
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { FlexLayoutModule, BREAKPOINTS } from '@angular/flex-layout';
 import { MaterialModule } from './material/material.module';
 
-import { FeedbackServiceProvider } from './services/feedback.service.provider';
 import { ContentServiceProvider } from './services/content.service.provider';
-import { FieldServiceProvider } from './services/field.service.provider';
 import { DialogServiceProvider } from './services/dialog.service.provider';
+import { FeedbackServiceProvider } from './services/feedback.service.provider';
+import { FieldServiceProvider } from './services/field.service.provider';
 import { TranslateModule } from '@ngx-translate/core';
+
+// Curently the impl of flex-layout break-points clashes with $rootScope.$apply()
+// when opening the right-side panel. Since we don't need the breakpoints atm,
+// we pass an empty array instead of the default value to prevent break-point events.
+export const EmptyBreakPointsProvider = {
+  provide: BREAKPOINTS,
+  useValue: [],
+};
 
 @NgModule({
   imports: [
-    BrowserModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    FlexLayoutModule,
     MaterialModule,
     TranslateModule
   ],
   exports: [
-    BrowserModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    FlexLayoutModule,
     MaterialModule,
     TranslateModule
   ],
   providers: [
     ContentServiceProvider,
+    EmptyBreakPointsProvider,
+    DialogServiceProvider,
     FeedbackServiceProvider,
     FieldServiceProvider,
-    DialogServiceProvider,
   ]
 })
 export class SharedModule {}

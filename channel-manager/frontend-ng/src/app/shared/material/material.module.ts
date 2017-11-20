@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,36 @@
 import { NgModule } from '@angular/core';
 import {
   MATERIAL_SANITY_CHECKS,
-  NoConflictStyleCompatibilityMode,
-  MdListModule,
-  MdButtonModule,
-  MdInputModule,
-  MdSelectModule,
-  MdDialogModule, MdIconRegistry, MdIconModule
+  MATERIAL_COMPATIBILITY_MODE,
+  MatListModule,
+  MatButtonModule,
+  MatDialogModule,
+  MatInputModule,
+  MatSelectModule,
+  MatIconModule,
+  MatIconRegistry,
+  NoConflictStyleCompatibilityMode
 } from '@angular/material';
 import './material.scss';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
   exports: [
-    NoConflictStyleCompatibilityMode,
-    MdListModule,
-    MdButtonModule,
-    MdInputModule,
-    MdButtonModule,
-    MdSelectModule,
-    MdDialogModule,
-    MdIconModule
+    MatListModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
+    NoConflictStyleCompatibilityMode
   ],
   providers: [
     {provide: MATERIAL_SANITY_CHECKS, useValue: false},
+    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true},
   ]
 })
 export class MaterialModule {
-  constructor (private iconRegistry: MdIconRegistry, sanitizer: DomSanitizer) {
+  constructor (private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     const HippoGlobal = window.parent.Hippo || {};
     const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
 

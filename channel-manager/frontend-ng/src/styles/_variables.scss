@@ -85,6 +85,10 @@ $icon-button-default: rgba(0, 0, 0, .54);
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
 
+// $font-family-material2 has to be a string for it to be passed to @include angular-material-typography()
+// without node-sass throwing warnings
+$font-family-material2: 'Open Sans, Roboto, Helvetica Neue, sans-serif';
+
 //TODO Clean these variables, replace with color palette
 $white: #fff;
 $black: #000;
