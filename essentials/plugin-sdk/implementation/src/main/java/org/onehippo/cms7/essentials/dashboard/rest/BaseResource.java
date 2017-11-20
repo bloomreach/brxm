@@ -53,23 +53,6 @@ public class BaseResource {
         return new ErrorMessageRestful(message);
     }
 
-    protected ProjectRestful getProjectRestful() {
-        final PluginContext context = PluginContextFactory.getContext();
-        final ProjectRestful projectRestful = new ProjectRestful();
-        // inject project settings:
-        try (final PluginConfigService configService = context.getConfigService()) {
-
-            final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-            if (document != null) {
-                projectRestful.setNamespace(document.getProjectNamespace());
-            }
-
-        } catch (Exception e) {
-            log.error("Error reading project settings", e);
-        }
-        return projectRestful;
-    }
-
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {
             if (applicationContext == null) {
