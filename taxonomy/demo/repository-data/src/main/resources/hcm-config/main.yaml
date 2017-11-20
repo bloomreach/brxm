@@ -37,5 +37,3 @@ definitions:
         operation: add
         type: string
         value: [sitewriters]
-    /content/taxonomies:
-      .meta:category: content

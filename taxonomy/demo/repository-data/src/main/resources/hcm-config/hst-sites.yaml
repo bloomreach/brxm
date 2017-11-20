@@ -1,7 +1,6 @@
 definitions:
   config:
     /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
       /taxonomydemo-nl:
         jcr:primaryType: hst:site
         hst:content: /content/documents
