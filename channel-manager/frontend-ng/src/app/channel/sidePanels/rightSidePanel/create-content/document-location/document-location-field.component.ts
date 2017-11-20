@@ -107,6 +107,10 @@ export class DocumentLocationFieldComponent implements OnInit {
     this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
     this.documentLocation = lastFolder.path;
     this.changeLocale.emit(lastFolder.locale);
+    this.defaultPath = folders
+      .filter((folder, index) => index >= this.rootPathDepth)
+      .map(folder => folder.name)
+      .join('/');
   }
 
   private onError(error, unknownErrorMessage) {
