@@ -32,7 +32,7 @@ public class LuceneIndexExporterInstruction implements Instruction {
 
     @Override
     public String getMessage() {
-        return "Ensure availability of RepositoryJaxrsServlet through cms web.xml";
+        return "Add dependency and Ensure availability of RepositoryJaxrsServlet through cms web.xml";
     }
 
     @Override
