@@ -15,7 +15,7 @@
  */
 import { Inject } from '@angular/core';
 import { Component } from '@angular/core';
-import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import './name-url-fields-dialog.scss';
 
 @Component({
@@ -23,8 +23,8 @@ import './name-url-fields-dialog.scss';
   templateUrl: 'name-url-fields-dialog.html',
 })
 export class NameUrlFieldsDialogComponent {
-  constructor(public dialogRef: MdDialogRef<NameUrlFieldsDialogComponent>,
-              @Inject(MD_DIALOG_DATA) public data: any) {}
+  constructor(public dialogRef: MatDialogRef<NameUrlFieldsDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any) {}
   title: string = this.data.title;
   name: string = this.data.name;
   url: string = this.data.url;

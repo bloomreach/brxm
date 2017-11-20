@@ -59,7 +59,7 @@
 
 <md-content flex="grow"
             layout="column"
-            id="rightSidePanel-content">
+            class="right-side-panel-content">
 
   <md-subheader class="md-no-sticky"
                 ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
@@ -87,7 +87,7 @@
 
   <form novalidate ng-if="$ctrl.editing"
         name="$ctrl.form"
-        class="form-dense-layout">
+        class="form-dense-layout edit-content-form">
     <document-fields class="top-level"
                      field-types="$ctrl.docType.fields"
                      field-values="$ctrl.doc.fields">
