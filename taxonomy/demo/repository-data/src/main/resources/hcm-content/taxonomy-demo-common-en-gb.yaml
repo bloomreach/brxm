@@ -1,21 +1,21 @@
-/content/documents/taxonomydemo/common:
+/content/documents/taxonomydemo-en-gb/common:
   jcr:primaryType: hippostd:folder
   jcr:mixinTypes: ['hippo:named', 'hippotranslation:translated', 'mix:referenceable']
-  jcr:uuid: 101cc297-3d17-43b5-aa70-d443f87b00d2
+  jcr:uuid: 8702d501-37fb-4a46-b8d3-339765b2a3c6
   hippo:name: Common
   hippostd:foldertype: [new-translated-folder, new-document]
   hippotranslation:id: taxonomydemo-common-id
-  hippotranslation:locale: en
+  hippotranslation:locale: en_GB
   /homepage:
     jcr:primaryType: hippo:handle
     jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-    jcr:uuid: 120c9e06-2bac-4997-9ba2-ba90d8280cac
+    jcr:uuid: 96b988cc-d2f1-4df4-b9bd-73efe1d03d99
     hippo:name: Home Page
     /homepage:
       jcr:primaryType: taxonomydemo:textpage
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
         'mix:referenceable']
-      jcr:uuid: 143140f9-1e75-457f-a782-381cd4eade7c
+      jcr:uuid: 04c0909f-4f60-4df8-9d14-8bcf4c676705
       hippo:availability: [live, preview]
       hippostd:holder: admin
       hippostd:state: published
@@ -24,7 +24,7 @@
       hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotranslation:id: taxonomydemo-common-homepage-id
-      hippotranslation:locale: en
+      hippotranslation:locale: en_GB
       taxonomydemo:summary: This is the home page of the generated HST website.
       taxonomydemo:title: taxonomydemo Home Page
       /taxonomydemo:body:
@@ -34,24 +34,24 @@
   /About Us:
     jcr:primaryType: hippo:handle
     jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-    jcr:uuid: c30cab27-5317-44f0-a9eb-977f87e0d904
+    jcr:uuid: 6eef22c5-b43a-4b2e-9b07-c7e0dd3d892e
     hippo:name: About Us
     /About Us[1]:
       jcr:primaryType: taxonomydemo:textpage
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
         'mix:referenceable']
-      jcr:uuid: 133bc73d-84c8-48d9-b0e9-220f78a5062a
+      jcr:uuid: a48b5418-b1bf-4577-b55e-a80066f4d0d0
       hippo:availability: [live]
       hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:26.203+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:44.700+02:00
       hippostdpubwf:lastModifiedBy: admin
-      hippostdpubwf:publicationDate: 2017-10-05T13:28:28.886+02:00
+      hippostdpubwf:publicationDate: 2017-10-05T13:28:47.159+02:00
       hippotaxonomy:keys: [humor]
       hippotranslation:id: taxonomydemo-common-about-us-id
-      hippotranslation:locale: en
+      hippotranslation:locale: en_GB
       taxonomydemo:summary: Who we are.
       taxonomydemo:title: About us
       /taxonomydemo:body:
@@ -63,16 +63,16 @@
       jcr:primaryType: taxonomydemo:textpage
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
         'mix:referenceable', 'mix:versionable']
-      jcr:uuid: 7c0c182a-bba7-458c-8b22-45861034d479
+      jcr:uuid: 11926909-227e-47f1-9f0c-e3279e39e956
       hippo:availability: [preview]
       hippostd:state: unpublished
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:26.203+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:44.700+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotaxonomy:keys: [humor]
       hippotranslation:id: taxonomydemo-common-about-us-id
-      hippotranslation:locale: en
+      hippotranslation:locale: en_GB
       taxonomydemo:summary: Who we are.
       taxonomydemo:title: About us
       /taxonomydemo:body:
@@ -84,16 +84,16 @@
       jcr:primaryType: taxonomydemo:textpage
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'hippotranslation:translated',
         'mix:referenceable']
-      jcr:uuid: def5f8d8-47bb-4732-8f49-03d8fb327d39
+      jcr:uuid: d1c7d907-7a9d-4394-bbe3-042b9db19875
       hippo:availability: []
       hippostd:state: draft
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:04.839+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:28:33.864+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotaxonomy:keys: [humor]
       hippotranslation:id: taxonomydemo-common-about-us-id
-      hippotranslation:locale: en
+      hippotranslation:locale: en_GB
       taxonomydemo:summary: Who we are.
       taxonomydemo:title: About us
       /taxonomydemo:body:
@@ -104,48 +104,48 @@
   /two-taxonomy-fields:
     jcr:primaryType: hippo:handle
     jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-    jcr:uuid: a2eecfd6-6d47-4045-8d03-1575b3886e4b
+    jcr:uuid: 3ea96b4b-81c6-423e-9f63-4b6f3637b196
     hippo:name: Two Taxonomy Fields!
     /two-taxonomy-fields[1]:
       jcr:primaryType: taxonomydemo:doubletaxonomy
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'mix:referenceable']
-      jcr:uuid: 37578158-c7a6-474e-8321-d4f78dc0eddd
+      jcr:uuid: 5436c6ad-6a12-4f27-b80f-144b8710bb87
       hippo:availability: []
       hippostd:state: draft
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-06-17T12:31:18.424+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:29:23.458+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:30:03.904+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotaxonomy:keys: [color, flavor]
       hippotranslation:id: 3e91cd96-70ac-4a1a-9d72-811d05a757e8
-      hippotranslation:locale: en
-      taxonomydemo:alternatekeys: [level-3]
+      hippotranslation:locale: en_GB
+      taxonomydemo:alternatekeys: [level-4]
     /two-taxonomy-fields[2]:
       jcr:primaryType: taxonomydemo:doubletaxonomy
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'mix:versionable']
-      jcr:uuid: bd3fa935-b69c-4cd5-8343-f8cd280f6cda
+      jcr:uuid: 28c3d80c-e004-4b6b-bf3d-afc515792a43
       hippo:availability: [preview]
       hippostd:state: unpublished
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-06-17T12:31:18.424+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:29:55.539+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:30:35.266+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotaxonomy:keys: [color, flavor]
       hippotranslation:id: 3e91cd96-70ac-4a1a-9d72-811d05a757e8
-      hippotranslation:locale: en
-      taxonomydemo:alternatekeys: [level-3]
+      hippotranslation:locale: en_GB
+      taxonomydemo:alternatekeys: [level-4]
     /two-taxonomy-fields[3]:
       jcr:primaryType: taxonomydemo:doubletaxonomy
       jcr:mixinTypes: ['hippotaxonomy:classifiable', 'mix:referenceable']
-      jcr:uuid: a8120089-0f14-4595-b97c-f8e5eb1f2d77
+      jcr:uuid: e2645102-bd42-4343-ac44-c62dd6ba0708
       hippo:availability: [live]
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-06-17T12:31:18.424+02:00
-      hippostdpubwf:lastModificationDate: 2017-10-05T13:29:55.539+02:00
+      hippostdpubwf:lastModificationDate: 2017-10-05T13:30:35.266+02:00
       hippostdpubwf:lastModifiedBy: admin
-      hippostdpubwf:publicationDate: 2017-10-05T13:29:57.706+02:00
+      hippostdpubwf:publicationDate: 2017-10-05T13:30:37.392+02:00
       hippotaxonomy:keys: [color, flavor]
       hippotranslation:id: 3e91cd96-70ac-4a1a-9d72-811d05a757e8
-      hippotranslation:locale: en
-      taxonomydemo:alternatekeys: [level-3]
+      hippotranslation:locale: en_GB
+      taxonomydemo:alternatekeys: [level-4]

@@ -3,7 +3,7 @@ definitions:
     /hst:hst/hst:configurations/taxonomydemo-nl/hst:channel:
       jcr:primaryType: hst:channel
       hst:channelinfoclass: org.onehippo.taxonomy.demo.channels.WebsiteInfo
-      hst:name: Selection Demo NL
+      hst:name: Taxonomy Demo NL
       hst:type: website
       /hst:channelinfo:
         jcr:primaryType: hst:channelinfo

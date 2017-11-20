@@ -33,8 +33,8 @@
     <hst:link var="taxonomies" path="/taxonomies" />
     <tax:categories var="list" keys="${document.taxonomyKeys}" />
 
-    <p>Current HST locale: ${hstRequest.locale.toString()}</p>
-    <p>Current document locale: ${document.locale.toString()}</p>
+    <p>Current HST locale: ${hstRequest.locale.toLanguageTag()}</p>
+    <p>Current document locale: ${document.locale.toLanguageTag()}</p>
 
     <h4>Selected taxonomies:</h4>
     <c:forEach var="ancestors" items="${list}">

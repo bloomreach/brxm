@@ -25,7 +25,7 @@
 
   <name>Hippo Plugin Taxonomy Demo</name>
   <artifactId>hippo-plugin-taxonomy-demo</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>4.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>

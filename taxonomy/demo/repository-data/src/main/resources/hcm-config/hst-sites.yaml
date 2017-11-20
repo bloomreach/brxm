@@ -7,6 +7,6 @@ definitions:
       /taxonomydemo-en:
         jcr:primaryType: hst:site
         hst:content: /content/documents
-      /taxonomydemo-fr:
+      /taxonomydemo-en-gb:
         jcr:primaryType: hst:site
         hst:content: /content/documents

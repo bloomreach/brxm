@@ -1,10 +1,10 @@
 definitions:
   config:
-    /hst:hst/hst:configurations/taxonomydemo-fr/hst:channel:
+    /hst:hst/hst:configurations/taxonomydemo-en-gb/hst:channel:
       jcr:primaryType: hst:channel
       hst:channelinfoclass: org.onehippo.taxonomy.demo.channels.WebsiteInfo
-      hst:name: Selection Demo FR
+      hst:name: Taxonomy Demo UK
       hst:type: website
       /hst:channelinfo:
         jcr:primaryType: hst:channelinfo
-        headerName: HST Website FR
+        headerName: HST Website UK
