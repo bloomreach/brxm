@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -85,10 +86,12 @@ public class ContentBlocksResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
 
+    @Inject private PluginContextFactory contextFactory;
+
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, NO_IMAGE_FILTER);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
@@ -122,7 +125,7 @@ public class ContentBlocksResource extends BaseResource {
     @POST
     @Path("/")
     public MessageRestful update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
         final Session session = GlobalUtils.createSession();
@@ -155,7 +158,7 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(context, ContentType::isCompoundType, false);
         List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
                 "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?

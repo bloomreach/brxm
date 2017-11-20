@@ -55,12 +55,12 @@ import com.google.common.eventbus.EventBus;
 public class BeanWriterResource extends BaseResource {
 
 
-    @Inject
-    private EventBus eventBus;
+    @Inject private EventBus eventBus;
+    @Inject private PluginContextFactory contextFactory;
 
     @POST
     public RestfulList<MessageRestful> runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         //############################################
         // USE SERVICES
         //############################################
@@ -115,7 +115,7 @@ public class BeanWriterResource extends BaseResource {
     @GET
     @Path("/imagesets")
     public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final ContentBeansService contentBeansService = new ContentBeansService(context);
         final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
         return existingImageTypes.keySet();

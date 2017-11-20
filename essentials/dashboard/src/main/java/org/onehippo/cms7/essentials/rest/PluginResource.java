@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,9 @@ public class PluginResource extends BaseResource {
     @Inject
     private PluginStore pluginStore;
 
+    @Inject
+    private PluginContextFactory contextFactory;
+
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -153,7 +156,7 @@ public class PluginResource extends BaseResource {
 
         final Map<String, Object> properties = makeSetupPropertiesFromValues(payload.getValues());
         instructionPackage.setProperties(properties);
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
         @SuppressWarnings("unchecked")
@@ -326,7 +329,7 @@ public class PluginResource extends BaseResource {
     }
 
     private String setupPlugin(final Plugin plugin, final Map<String, Object> properties) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
         HstUtils.erasePreview(context);

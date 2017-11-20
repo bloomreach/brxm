@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -77,6 +78,8 @@ public class TaxonomyResource extends BaseResource {
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
+    @Inject private PluginContextFactory contextFactory;
+
     /**
      * Returns list of taxonomies found under {@code /content/taxonomies/} node.
      *
@@ -87,7 +90,7 @@ public class TaxonomyResource extends BaseResource {
     @Path("/taxonomies")
     public List<TaxonomyRestful> getTaxonomies(@Context ServletContext servletContext) {
         final List<TaxonomyRestful> taxonomies = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
 
         try {
@@ -121,7 +124,7 @@ public class TaxonomyResource extends BaseResource {
     public List<String> getTaxonomyFields(@PathParam("document-name") final String documentName) {
         List<String> fields = new ArrayList<>();
 
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final String prefix = context.getProjectNamespacePrefix();
         final Session session = context.createSession();
         try {
@@ -156,7 +159,7 @@ public class TaxonomyResource extends BaseResource {
     @POST
     @Path("/taxonomies/add")
     public MessageRestful createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String taxonomyName = taxonomyRestful.getName();
@@ -191,7 +194,7 @@ public class TaxonomyResource extends BaseResource {
     @POST
     @Path("/add")
     public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();

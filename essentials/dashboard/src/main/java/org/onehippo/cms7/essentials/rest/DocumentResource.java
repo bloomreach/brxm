@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -70,13 +71,15 @@ public class DocumentResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
+    @Inject private PluginContextFactory contextFactory;
+
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
             response = RestfulList.class)
     @GET
     @Path("/")
     public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, null);
     }
 
@@ -86,7 +89,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, type -> !type.isCompoundType());
     }
 
@@ -96,7 +99,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, ContentType::isCompoundType);
     }
 
@@ -110,7 +113,7 @@ public class DocumentResource extends BaseResource {
     @Path("/{docType}")
     public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
         final List<KeyValueRestful> valueLists = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
 
         try {
@@ -145,7 +148,7 @@ public class DocumentResource extends BaseResource {
     @Path("/templatequeries")
     public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
         final List<KeyValueRestful> templateList = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();

@@ -69,13 +69,13 @@ public class SelectionResource extends BaseResource {
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
-    @Inject
-    private EventBus eventBus;
+    @Inject private EventBus eventBus;
+    @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
     public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final Session session = PluginContextFactory.getContext().createSession();
+        final Session session = contextFactory.getContext().createSession();
 
         try {
             return addField(session, payloadRestful.getValues(), response);
@@ -91,7 +91,7 @@ public class SelectionResource extends BaseResource {
     @Path("/fieldsfor/{docType}/")
     public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = PluginContextFactory.getContext().createSession();
+        final Session session = contextFactory.getContext().createSession();
 
         try {
             addSelectionFields(fields, docType, session);
@@ -108,7 +108,7 @@ public class SelectionResource extends BaseResource {
     @Path("spring")
     public List<ProvisionedValueList> loadProvisionedValueLists() {
         List<ProvisionedValueList> pvlList = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Document document = readSpringConfiguration(context);
 
         String xPath = VALUELIST_XPATH + "/beans:entry";
@@ -129,7 +129,7 @@ public class SelectionResource extends BaseResource {
     @Path("spring")
     public MessageRestful storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
                                                      @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Document document = readSpringConfiguration(context);
         if (document == null) {
             return createErrorMessage("Failure parsing the Spring configuration.", response);

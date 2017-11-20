@@ -73,8 +73,8 @@ public class PluginStore {
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject
-    private RebuildProjectEventListener rebuildListener;
+    @Inject private RebuildProjectEventListener rebuildListener;
+    @Inject private PluginContextFactory contextFactory;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -121,7 +121,7 @@ public class PluginStore {
 
     public List<Plugin> getAllPlugins() {
         final List<Plugin> plugins = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
 
         // Read local descriptors
         final List<PluginDescriptorRestful> localDescriptors = getLocalDescriptors();
@@ -219,7 +219,7 @@ public class PluginStore {
 
     // TODO: this is not a *plugin* utility! Move to better place.
     public ProjectSettings getProjectSettings() {
-        return PluginContextFactory.getContext().getProjectSettings();
+        return contextFactory.getContext().getProjectSettings();
     }
 
     private List<PluginDescriptorRestful> getLocalDescriptors() {

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -77,6 +78,7 @@ public class GalleryPluginResource extends BaseResource {
     public static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     public static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
+    @Inject private PluginContextFactory contextFactory;
 
     /**
      * Updates an image model
@@ -84,7 +86,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/update")
     public MessageRestful update(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -113,7 +115,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/remove")
     public MessageRestful remove(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -165,7 +167,7 @@ public class GalleryPluginResource extends BaseResource {
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
 
         final String imageSetPrefix = values.get("imageSetPrefix");
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final MessageRestful imageSet = createImageSet(context, imageSetPrefix, imageSetName, response);
         final RestfulList<MessageRestful> messages = new RestfulList<>();
 
@@ -280,7 +282,7 @@ public class GalleryPluginResource extends BaseResource {
         }
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final boolean created = GalleryUtils.createImagesetVariant(context, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
         if (created) {
             // add processor node:
@@ -342,7 +344,7 @@ public class GalleryPluginResource extends BaseResource {
     public List<GalleryModel> fetchExisting(@Context ServletContext servletContext) {
 
         final List<GalleryModel> models = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         try {
             final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HIPPOGALLERY_IMAGE_SET, true);
 

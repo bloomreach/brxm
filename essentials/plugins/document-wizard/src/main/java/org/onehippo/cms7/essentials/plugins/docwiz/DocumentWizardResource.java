@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.plugins.docwiz;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -53,11 +54,12 @@ public class DocumentWizardResource extends BaseResource {
 
     public static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
 
+    @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/")
     public MessageRestful addWizard(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final Node root = session.getNode(ROOT_CONFIG_PATH);
