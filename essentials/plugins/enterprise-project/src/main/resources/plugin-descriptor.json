@@ -1,0 +1,27 @@
+{
+  "@type": "plugin",
+  "id": "enterpriseProject",
+  "name": "Experience Project",
+  "icon": "/essentials/feature/enterpriseProject/icon.png",
+  "introduction": "The Experience Project feature ensures, upon installation, that your Hippo CMS project is a BloomReach Experience project.",
+  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Installing this feature will convert your project to a BloomReach Experience project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
+  "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-developer-information/setting-up-a-hippo-enterprise-project.html",
+  "packageFile": "/META-INF/enterpriseproject_plugin_instructions.xml",
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "integration"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  }
+}

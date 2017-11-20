@@ -68,6 +68,7 @@
     <module>products-grid-category</module>
     <module>products-grid-query</module>
     <module>lucene-index-exporter</module>
+    <module>enterprise-project</module>
   </modules>
 
   <dependencyManagement>

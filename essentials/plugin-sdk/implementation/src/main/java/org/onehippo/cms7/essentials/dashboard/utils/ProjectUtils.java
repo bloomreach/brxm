@@ -48,7 +48,6 @@ public final class ProjectUtils {
     public static final String ENT_REPO_ID = "hippo-maven2-enterprise";
     public static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
     public static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
-    public static final String ADDON_EDITION_INDICATOR_ARTIFACT_ID = "hippo-addon-edition-indicator";
     public static final String FOLDER_ASSEMBLY = "src/main/assembly";
     public static final String FOLDER_CONF = "conf";
     public static final String CONTEXT_XML = "context.xml";
