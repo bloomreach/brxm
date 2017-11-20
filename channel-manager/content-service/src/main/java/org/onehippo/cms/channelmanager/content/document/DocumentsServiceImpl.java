@@ -244,7 +244,8 @@ class DocumentsServiceImpl implements DocumentsService {
             final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, encodedSlug);
             log.debug("Created document {}", documentPath);
 
-            final Node handle = session.getNode(documentPath);
+            final Node document = session.getNode(documentPath);
+            final Node handle = document.getParent();
 
             if (!encodedSlug.equals(encodedName)) {
                 DocumentNameUtils.setDisplayName(handle, encodedName);

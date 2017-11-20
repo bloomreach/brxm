@@ -80,17 +80,13 @@ export class CreateContentComponent implements OnInit {
   }
 
   submit() {
-    const rootPath = this.documentLocationField.rootPath;
-    const location = this.documentLocationField.documentLocation;
-    const defaultPath = location ? location.substring(rootPath.length + 1) : '';
-
     const document: DocumentDetails = {
       name: this.nameUrlFields.nameField,
       slug: this.nameUrlFields.urlField,
       templateQuery: this.options.templateQuery,
       documentTypeId: this.documentType,
-      rootPath,
-      defaultPath,
+      rootPath: this.documentLocationField.rootPath,
+      defaultPath: this.documentLocationField.defaultPath,
     };
 
     this.createContentService
