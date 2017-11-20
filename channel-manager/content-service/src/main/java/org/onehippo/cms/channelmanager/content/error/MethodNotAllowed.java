@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 
 public class MethodNotAllowed extends ErrorWithPayloadException {
 
-    public MethodNotAllowed(final Object payload) {
+    public MethodNotAllowed(final ErrorInfo payload) {
         super(Response.Status.METHOD_NOT_ALLOWED, payload);
     }
 }

@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.util.DisplayNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -51,6 +51,7 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
@@ -79,12 +80,12 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({WorkflowUtils.class, DocumentUtils.class, DocumentTypesService.class,
-        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class, DisplayNameUtils.class})
+        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class, DocumentNameUtils.class})
 public class DocumentsServiceImplTest {
 
     private Session session;
     private Locale locale;
-    private final DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
+    private final DocumentsService documentsService = (DocumentsServiceImpl) DocumentsService.get();
     private NewDocumentInfo info;
 
     @Before
@@ -92,7 +93,7 @@ public class DocumentsServiceImplTest {
         session = createMock(Session.class);
         locale = new Locale("en");
 
-        PowerMock.mockStatic(DisplayNameUtils.class);
+        PowerMock.mockStatic(DocumentNameUtils.class);
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
         PowerMock.mockStatic(EditingUtils.class);
@@ -102,8 +103,8 @@ public class DocumentsServiceImplTest {
         PowerMock.mockStatic(WorkflowUtils.class);
 
         info = new NewDocumentInfo();
-        info.setName("Breaking News");
-        info.setSlug("breaking-news");
+        info.setName("Breaking News"); // the name needs to be display-name-encoded by the backend
+        info.setSlug("breaking news"); // the slug needs to be URI-encoded by the backend, e.g. to "breaking-news"
         info.setTemplateQuery("new-news-document");
         info.setDocumentTypeId("project:newsdocument");
         info.setRootPath("/content/documents/channel/news");
@@ -401,6 +402,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(fields).anyTimes();
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
+        expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -408,6 +410,7 @@ public class DocumentsServiceImplTest {
 
         final Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(false));
@@ -426,6 +429,7 @@ public class DocumentsServiceImplTest {
         final List<FieldType> fields = Collections.emptyList();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canCreateDraft(workflow)).andReturn(true);
@@ -438,14 +442,16 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(fields);
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
+        expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
         expect(docType.getFields()).andReturn(fields);
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
-        expectLastCall().andAnswer(() -> ((Map)getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
+        expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
         replayAll(docType);
 
         final Document document = documentsService.createDraft(uuid, session, locale);
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(true));
@@ -652,6 +658,7 @@ public class DocumentsServiceImplTest {
         expectLastCall().andThrow(badRequest);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         replayAll(docType);
@@ -1279,6 +1286,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Document Display Name"));
+        expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("document-url-name");
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)).andReturn(Optional.of(published));
         FieldTypeUtils.readFieldValues(eq(published), eq(Collections.emptyList()), isA(Map.class));
         expectLastCall();
@@ -1290,6 +1298,7 @@ public class DocumentsServiceImplTest {
 
         final Document document = documentsService.getPublished(uuid, session, locale);
 
+        assertThat(document.getUrlName(), equalTo("document-url-name"));
         assertThat(document.getDisplayName(), equalTo("Document Display Name"));
 
         verifyAll();
@@ -1328,8 +1337,14 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDocumentWithExistingName() throws Exception {
         final Node folderNode = createMock(Node.class);
-        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News"))).andReturn(true);
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(true);
         replayAll(folderNode);
 
         try {
@@ -1346,9 +1361,18 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDocumentWithExistingSlug() throws Exception {
         final Node folderNode = createMock(Node.class);
-        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))).andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News"))).andReturn(false);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(true);
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(true);
         replayAll(folderNode);
 
         try {
@@ -1367,8 +1391,14 @@ public class DocumentsServiceImplTest {
         final Node folderNode = createMock(Node.class);
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
                 .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
@@ -1396,12 +1426,16 @@ public class DocumentsServiceImplTest {
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
-                .andReturn(false);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
-                .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))
                 .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
@@ -1422,22 +1456,24 @@ public class DocumentsServiceImplTest {
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
-                .andReturn(false);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
-                .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))
                 .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
                 .andReturn("/content/documents/channel/news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
                 .andReturn(documentHandle);
-        expect(DisplayNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
-                .andReturn("Breaking News (encoded)");
 
-        DisplayNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
+        DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(Variant.DRAFT)))
@@ -1449,6 +1485,7 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
+        expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
 
         session.save();
         expectLastCall();
@@ -1463,6 +1500,7 @@ public class DocumentsServiceImplTest {
         final Document document = documentsService.createDocument(info, session, locale);
 
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getFields().size(), equalTo(0));
 
@@ -1483,33 +1521,36 @@ public class DocumentsServiceImplTest {
                 .andReturn(rootFolderNode);
         expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session)))
                 .andReturn(folderNode);
-        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News")))
-                .andReturn(false);
-        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
-                .andReturn(false);
         expect(FolderUtils.getLocale(folderNode))
                 .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
                 .andReturn("/content/documents/channel/news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news")))
                 .andReturn(documentHandle);
-        expect(DisplayNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
-                .andReturn("Breaking News (encoded)");
 
-        DisplayNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
+        DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(Variant.DRAFT)))
                 .andReturn(Optional.of(documentDraft));
-
+        expect(documentHandle.getName()).andReturn("breaking-news");
         expect(documentHandle.getIdentifier()).andReturn("uuid");
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
+        expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
 
         session.save();
         expectLastCall();
@@ -1524,12 +1565,241 @@ public class DocumentsServiceImplTest {
         final Document document = documentsService.createDocument(info, session, locale);
 
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
     }
 
+    @Test(expected = BadRequestException.class)
+    public void updateDocumentNamesWithoutDisplayName() throws Exception {
+        final Document document = new Document();
+        documentsService.updateDocumentNames("uuid", document, session);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void updateDocumentNamesWithoutUrlName() throws Exception {
+        final Document document = new Document();
+        document.setDisplayName("Breaking News");
+        documentsService.updateDocumentNames("uuid", document, session);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void updateDocumentNamesNotAHandle() throws Exception {
+        final String uuid = "uuid";
+        final Document document = new Document();
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
+        replayAll();
+
+        documentsService.updateDocumentNames(uuid, document, session);
+    }
+
+    @Test
+    public void updateDocumentNamesUrlNameClashes() throws Exception {
+        final String uuid = "uuid";
+        final String urlName = "new name";
+        final String encodedUrlName = "new-name";
+        final Document document = new Document();
+        document.setDisplayName("New Name");
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(true);
+        replayAll();
+
+        assertUpdateDocumentNamesFails(uuid, document, Reason.SLUG_ALREADY_EXISTS);
+    }
+
+    @Test
+    public void updateDocumentNamesUrlNameOnly() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "Breaking News";
+        final String encodedDisplayName = "Breaking News (encoded)";
+        final String urlName = "new name";
+        final String encodedUrlName = "new-name";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn(encodedDisplayName);
+
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        expectLastCall();
+
+        replayAll();
+
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        assertThat(result.getDisplayName(), equalTo(displayName));
+        assertThat(result.getUrlName(), equalTo(encodedUrlName));
+    }
+
+    @Test
+    public void updateDocumentNamesDisplayNameOnlyAndClashes() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "New Name";
+        final String encodedDisplayName = "New Name (encoded)";
+        final String urlName = "breaking news";
+        final String encodedUrlName = "breaking-news";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn(encodedUrlName);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(true);
+
+        replayAll();
+
+        assertUpdateDocumentNamesFails(uuid, document, Reason.NAME_ALREADY_EXISTS);
+    }
+
+    @Test
+    public void updateDocumentNamesDisplayNameOnly() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "New Name";
+        final String encodedDisplayName = "New Name (encoded)";
+        final String urlName = "breaking news";
+        final String encodedUrlName = "breaking-news";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn(encodedUrlName);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(false);
+
+        DocumentNameUtils.setDisplayName(eq(handle), eq(encodedDisplayName));
+        expectLastCall();
+
+        replayAll();
+
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
+        assertThat(result.getUrlName(), equalTo(urlName));
+    }
+
+    @Test
+    public void updateDocumentNamesBoth() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "New Name";
+        final String encodedDisplayName = "New Name (encoded)";
+        final String urlName = "new name";
+        final String encodedUrlName = "new-name";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(false);
+
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        expectLastCall();
+
+        DocumentNameUtils.setDisplayName(eq(handle), eq(encodedDisplayName));
+        expectLastCall();
+
+        replayAll();
+
+        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
+        assertThat(result.getUrlName(), equalTo(encodedUrlName));
+    }
+
+    @Test
+    public void updateDocumentNamesBothDisplayNameClashes() throws Exception {
+        final String uuid = "uuid";
+        final String displayName = "New Name";
+        final String encodedDisplayName = "New Name (encoded)";
+        final String urlName = "new name";
+        final String encodedUrlName = "new-name";
+        final Document document = new Document();
+        document.setDisplayName(displayName);
+        document.setUrlName(urlName);
+        final Node handle = createMock(Node.class);
+        final Node folder = createMock(Node.class);
+        final String folderLocale = "en";
+
+        expect(DocumentUtils.getHandle(eq(uuid), eq(session))).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("project:newsdocument"));
+        expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
+        expect(FolderUtils.getLocale(eq(folder))).andReturn(folderLocale);
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/channel/news/breaking-news");
+
+        expect(DocumentNameUtils.encodeUrlName(eq(urlName), eq(folderLocale))).andReturn(encodedUrlName);
+        expect(DocumentNameUtils.getUrlName(eq(handle))).andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folder), eq(encodedUrlName))).andReturn(false);
+
+        expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
+        expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(true);
+
+        replayAll();
+
+        assertUpdateDocumentNamesFails(uuid, document, Reason.NAME_ALREADY_EXISTS);
+    }
 
     @Test(expected = NotFoundException.class)
     public void deleteDocumentNotAHandle() throws Exception {
@@ -1759,5 +2029,15 @@ public class DocumentsServiceImplTest {
         replay(documentTypesService, handle);
 
         return docType;
+    }
+
+    private void assertUpdateDocumentNamesFails(final String uuid, final Document document, final Reason reason) throws ErrorWithPayloadException {
+        try {
+            documentsService.updateDocumentNames(uuid, document, session);
+            fail("No Exception");
+        } catch (final ConflictException e) {
+            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(reason));
+        }
     }
 }

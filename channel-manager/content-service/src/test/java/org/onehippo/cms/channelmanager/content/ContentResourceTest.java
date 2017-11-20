@@ -145,18 +145,14 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
-        final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new ForbiddenException(testDocument));
+        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new ForbiddenException());
         replay(documentsService);
-
-        final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
         .then()
-                .statusCode(403)
-                .body(equalTo(expectedBody));
+                .statusCode(403);
     }
 
     @Test

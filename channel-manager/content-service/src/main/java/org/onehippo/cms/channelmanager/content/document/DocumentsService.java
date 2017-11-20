@@ -114,6 +114,17 @@ public interface DocumentsService {
     Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
+     * Updates the display name and URL name of a document.
+     *
+     * @param uuid     UUID of the document (handle)
+     * @param document Document containing the to-be-persisted display name and URL name. Other fields are ignored.
+     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
+     *                 be pending.
+     * @throws ErrorWithPayloadException if the display name and/or URL name already exists, or changing the names fails.
+     */
+    Document updateDocumentNames(String uuid, Document document, Session session) throws ErrorWithPayloadException;
+
+    /**
      * Deletes a document
      *
      * @param uuid            UUID of the document (handle) to delete

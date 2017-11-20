@@ -58,17 +58,17 @@ class RightSidePanelCtrl {
         switchToMessage: null,
       },
     };
-
-    SidePanelService.initialize('right', $element.find('.right-side-panel'),
-      // onOpen
-      (id, options) => this._onOpen(id, options),
-      // onClose
-      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage));
   }
 
   $onInit() {
     this._resetBeforeStateChange();
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
+  }
+
+  $postLink() {
+    this.SidePanelService.initialize('right', this.$element.find('.right-side-panel'),
+      (id, options) => this._onOpen(id, options),
+      () => this.beforeStateChange(this.mode && this.mode.closeChannelMessage).then(this._beforeClosePanel()));
   }
 
   onBeforeStateChange(callback) {
@@ -129,17 +129,16 @@ class RightSidePanelCtrl {
   }
 
   closePanel() {
+    this._beforeClosePanel();
+    return this.SidePanelService.close('right').then(() => {
+      this._resetState();
+    });
+  }
+
+  _beforeClosePanel() {
     this.$element.removeClass('sidepanel-open');
     this.$element.css('max-width', '0px');
     this.setFullWidth(false);
-
-    return this.SidePanelService.close('right').then(() => {
-      if (this.ChannelService.isToolbarDisplayed) {
-        this.ChannelService.setToolbarDisplayed(false);
-      }
-
-      this._resetState();
-    });
   }
 
   onResize(newWidth) {

@@ -625,8 +625,10 @@ describe('OverlayService', () => {
       it('Scenario 1', (done) => {
         manageContentScenario(1, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(0);
           done();
         });
@@ -635,8 +637,10 @@ describe('OverlayService', () => {
       it('Scenario 2', (done) => {
         manageContentScenario(2, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
           expect(optionButtons.children().length).toBe(0);
           done();
         });
@@ -645,8 +649,10 @@ describe('OverlayService', () => {
       it('Scenario 3', (done) => {
         manageContentScenario(3, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(1);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           done();
@@ -656,8 +662,10 @@ describe('OverlayService', () => {
       it('Scenario 4', (done) => {
         manageContentScenario(4, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(1);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
           done();
@@ -667,8 +675,10 @@ describe('OverlayService', () => {
       it('Scenario 5', (done) => {
         manageContentScenario(5, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('CANCEL');
           expect(optionButtons.children().length).toBe(2);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
@@ -679,8 +689,10 @@ describe('OverlayService', () => {
       it('Scenario 6', (done) => {
         manageContentScenario(6, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
           mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(2);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');

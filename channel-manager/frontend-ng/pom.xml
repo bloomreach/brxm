@@ -54,7 +54,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run build</commandlineArgs>
+              <commandlineArgs>run build -- --lint</commandlineArgs>
             </configuration>
           </execution>
           <execution>

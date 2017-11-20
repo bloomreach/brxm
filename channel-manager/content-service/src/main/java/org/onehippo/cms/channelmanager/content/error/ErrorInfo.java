@@ -18,7 +18,12 @@ package org.onehippo.cms.channelmanager.content.error;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+
+import javax.jcr.Node;
+
+import org.hippoecm.repository.util.DocumentUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -57,6 +62,18 @@ public class ErrorInfo {
 
     public void setParams(final Map<String, Serializable> params) {
         this.params = params;
+    }
+
+    public static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
+        if (errorInfo != null) {
+            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
+                if (errorInfo.getParams() == null) {
+                    errorInfo.setParams(new HashMap<>());
+                }
+                errorInfo.getParams().put("displayName", displayName);
+            });
+        }
+        return errorInfo;
     }
 
     public enum Reason {

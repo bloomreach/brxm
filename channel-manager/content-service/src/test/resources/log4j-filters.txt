@@ -78,3 +78,10 @@ Failed to archive document 'uuid'
 Failed to erase document 'uuid'
 Forbade to erase document 'uuid'
 Forbade to erase document 'document'
+Failed to read name of node 'null'
+Failed to rename document
+Failed to rename draft
+Failed to set display name of node
+Cannot change the URL name of document
+Property 'displayName' cannot be empty
+Property 'urlName' cannot be empty

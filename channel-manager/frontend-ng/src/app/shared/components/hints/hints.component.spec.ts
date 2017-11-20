@@ -24,10 +24,10 @@ import { By } from '@angular/platform-browser';
    <hippo-hints [data]="testHintsData">
      <div hint="required" id="test-hint-1" class="info test">Required test hint</div>
      <div hint="minlength" id="test-hint-2" class="alert">Minlength test hint</div>
-   </hippo-hints> 
+   </hippo-hints>
   `
 })
-class HintsComponentTestWrapper {
+class HintsComponentTestWrapperComponent {
   testHintsData = {
     required: false,
     minlength: false
@@ -35,18 +35,18 @@ class HintsComponentTestWrapper {
 }
 
 describe('HintsComponent', () => {
-  let wrapperComponent: HintsComponentTestWrapper;
-  let fixture: ComponentFixture<HintsComponentTestWrapper>;
+  let wrapperComponent: HintsComponentTestWrapperComponent;
+  let fixture: ComponentFixture<HintsComponentTestWrapperComponent>;
   let hintsElement: any;
   let hintsComponent;
   let originalHintElements: Array<HTMLElement>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HintsComponentTestWrapper, HintsComponent]
+      declarations: [HintsComponentTestWrapperComponent, HintsComponent]
     });
 
-    fixture = TestBed.createComponent(HintsComponentTestWrapper);
+    fixture = TestBed.createComponent(HintsComponentTestWrapperComponent);
     wrapperComponent = fixture.componentInstance;
     hintsElement = fixture.debugElement.query(By.css('hippo-hints'));
     hintsComponent = hintsElement.injector.get(HintsComponent);

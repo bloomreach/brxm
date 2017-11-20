@@ -24,7 +24,7 @@ public class ConflictException extends ErrorWithPayloadException {
         super(Status.CONFLICT, null);
     }
 
-    public ConflictException(final Object payload) {
+    public ConflictException(final ErrorInfo payload) {
         super(Status.CONFLICT, payload);
     }
 }
