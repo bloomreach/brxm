@@ -39,15 +39,21 @@ export class CreateContentServiceMock {
       displayName: 'test document',
       info: {
         dirty: false,
-        type: {
-          id: 'ns:testdocument',
-        }
+        type: { id: 'ns:testdocument' }
       }
     };
   }
 
   getFolders(path: string): Observable<Array<Folder>> {
     return Observable.of([]);
+  }
+
+  setDraftNameUrl(documentId: string, data: { name, url }) {
+    const document: any = this.getDocument();
+    document.id = documentId;
+    document.displayName = data.name;
+    document.urlName = data.url;
+    return Promise.resolve(document);
   }
 }
 

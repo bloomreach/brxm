@@ -25,11 +25,12 @@ import { HintsComponent } from '../../../../../shared/components/hints/hints.com
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';
 import {
-  ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FieldServiceMock, MdDialogRefMock
+  ContentServiceMock, CreateContentServiceMock, DialogServiceMock, FeedbackServiceMock, FieldServiceMock
 } from '../create-content.mocks.spec';
 import { CreateContentStep2Component } from './step-2.component';
 import { SharedspaceToolbarDirective } from '../../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
 import { FieldsEditorDirective } from '../../fieldsEditor/fields-editor.component';
+import FeedbackService from '../../../../../services/feedback.service.js';
 
 import ContentService from '../../../../../services/content.service';
 import DialogService from '../../../../../services/dialog.service';
@@ -46,6 +47,7 @@ describe('Create content step 2 component', () => {
   let contentService: ContentService;
   let dialogService: DialogService;
   let fieldService: FieldService;
+  let feedbackService: FeedbackService;
   let matDialog: MatDialog;
   let dialog: MatDialogRef<any>;
 
@@ -80,7 +82,9 @@ describe('Create content step 2 component', () => {
         { provide: ContentService, useClass: ContentServiceMock },
         { provide: DialogService, useClass: DialogServiceMock },
         { provide: FieldService, useClass: FieldServiceMock },
-        { provide: MatDialogRef, useClass: MdDialogRefMock }
+        { provide: FeedbackService, useClass: FeedbackServiceMock },
+        { provide: MatDialog },
+        { provide: MatDialogRef }
       ]
     });
 
@@ -96,6 +100,7 @@ describe('Create content step 2 component', () => {
     contentService = fixture.debugElement.injector.get(ContentService);
     dialogService = fixture.debugElement.injector.get(DialogService);
     fieldService = fixture.debugElement.injector.get(FieldService);
+    feedbackService = fixture.debugElement.injector.get(FeedbackService);
     matDialog = fixture.debugElement.injector.get(MatDialog);
     dialog = fixture.debugElement.injector.get(MatDialogRef);
 
@@ -153,7 +158,6 @@ describe('Create content step 2 component', () => {
   describe('loadNewDocument', () => {
     it('gets the newly created draft document from create content service', () => {
       component.loadNewDocument();
-
       expect(createContentService.getDocument).toHaveBeenCalled();
       expect(contentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
     });
@@ -167,28 +171,23 @@ describe('Create content step 2 component', () => {
     });
   });
 
-  describe('close', () => {
+ describe('close', () => {
     beforeEach(() => {
       spyOn(component.onClose, 'emit');
-
       component.loadNewDocument();
       component.doc = testDocument;
     });
 
     it('calls the confirmation dialog', () => {
       fixture.detectChanges();
-
       spyOn(component, 'discardAndClose').and.callThrough();
-
       component.close();
       expect(dialogService.confirm).toHaveBeenCalled();
     });
 
     it('calls discardAndClose method to confirm document discard and close the panel', () => {
       fixture.detectChanges();
-
       spyOn(component, 'discardAndClose').and.returnValue(Promise.resolve());
-
       component.close();
       expect(component.discardAndClose).toHaveBeenCalled();
     });
@@ -219,6 +218,41 @@ describe('Create content step 2 component', () => {
       });
     });
   });
+
+ describe('onEditNameUrlClose', () => {
+   let _component;
+
+   beforeEach(() => {
+     // The "as any" cast is needed because otherwise our only way to test this
+     // functionality is to mock the whole Angular Material dialog workflow and prototype methods.
+     _component = (component as any);
+     component.doc = testDocument;
+   });
+
+   it('receives new document name and URL when dialog is submitted', () => {
+     spyOn(createContentService, 'setDraftNameUrl').and.callThrough();
+
+     expect(component.doc.displayName).toEqual('test document');
+     _component.onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' }).then(() => {
+       expect(createContentService.setDraftNameUrl).toHaveBeenCalledWith(component.doc.id, { name: 'New name', url: 'new-url' });
+       expect(component.doc.displayName).toEqual('New name');
+       expect(_component.documentUrl).toEqual('new-url');
+     });
+   });
+
+   it('calls feedbackService.showError when an error is returned from the back-end', fakeAsync(() => {
+     spyOn(createContentService, 'setDraftNameUrl').and.returnValue(Promise.reject({
+       data: { reason: 'TEST', params: {} },
+     }));
+     spyOn(feedbackService, 'showError');
+
+     expect(component.doc.displayName).toEqual('test document');
+     _component.onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' });
+     tick();
+     expect(feedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
+     expect(component.doc.displayName).toEqual('test document');
+   }));
+ });
 
   describe('isDocumentDirty', () => {
     it('returns true if document is set to dirty by the backend', () => {
