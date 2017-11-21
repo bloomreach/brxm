@@ -135,12 +135,6 @@ class RightSidePanelCtrl {
     this._setMode(this.modes.create2, options);
   }
 
-  _setMode(component, options) {
-    this._resetState();
-    this.mode = component;
-    this.options = options;
-  }
-
   closePanel() {
     this._beforeClosePanel();
     return this.SidePanelService.close('right').then(() => {
