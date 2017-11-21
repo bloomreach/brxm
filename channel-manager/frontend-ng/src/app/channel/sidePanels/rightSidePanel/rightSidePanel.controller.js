@@ -21,10 +21,11 @@ class RightSidePanelCtrl {
     $timeout,
     $translate,
     $q,
-    SidePanelService,
     ChannelService,
     CmsService,
+    HippoIframeService,
     localStorageService,
+    SidePanelService,
   ) {
     'ngInject';
 
@@ -34,10 +35,11 @@ class RightSidePanelCtrl {
     this.$translate = $translate;
     this.$q = $q;
 
-    this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.HippoIframeService = HippoIframeService;
     this.localStorageService = localStorageService;
+    this.SidePanelService = SidePanelService;
 
     this.lastSavedWidth = null;
     this.isFullWidth = false;
@@ -95,6 +97,11 @@ class RightSidePanelCtrl {
     this.options = options;
   }
 
+  editDocumentAndRefreshPage(documentId) {
+    this.HippoIframeService.reload();
+    this.openInMode(this.modes.edit, documentId);
+  }
+
   openInMode(mode, options) {
     if (typeof mode === 'string') {
       mode = this.modes[mode];
@@ -120,12 +127,12 @@ class RightSidePanelCtrl {
     });
   }
 
-  switchCreateContentStep() {
+  switchCreateContentStep(options = {}) {
     if (this.mode !== this.modes.create) {
       throw new Error('Could not switch to Create content step 2 from the current mode');
     }
 
-    this._setMode(this.modes.create2);
+    this._setMode(this.modes.create2, options);
   }
 
   closePanel() {

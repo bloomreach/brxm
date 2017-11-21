@@ -1472,8 +1472,7 @@ public class DocumentsServiceImplTest {
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
                 .andReturn(documentDraft);
-        expect(documentDraft.getParent())
-                .andReturn(documentHandle);
+        expect(documentDraft.getParent()).andReturn(documentHandle);
 
         DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();
@@ -1539,8 +1538,7 @@ public class DocumentsServiceImplTest {
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
                 .andReturn(documentDraft);
-        expect(documentDraft.getParent())
-                .andReturn(documentHandle);
+        expect(documentDraft.getParent()).andReturn(documentHandle);
 
         DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
         expectLastCall();

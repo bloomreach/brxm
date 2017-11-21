@@ -50,8 +50,10 @@ export class CreateContentComponent implements OnInit {
     }
   }
 
-  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService,
-              private translate: TranslateService) { }
+  constructor(
+    private createContentService: CreateContentService,
+    private feedbackService: FeedbackService,
+    private translate: TranslateService) {}
 
   ngOnInit() {
     if (!this.options) {
@@ -67,7 +69,7 @@ export class CreateContentComponent implements OnInit {
       .subscribe(
         (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
         (error) => this.onErrorLoadingTemplateQuery(error),
-      );
+    );
   }
 
   setWidthState(state) {
@@ -85,15 +87,19 @@ export class CreateContentComponent implements OnInit {
       slug: this.nameUrlFields.urlField,
       templateQuery: this.options.templateQuery,
       documentTypeId: this.documentType,
-      rootPath: this.options.rootPath,
-      defaultPath: this.options.defaultPath,
+      rootPath: this.documentLocationField.rootPath,
+      defaultPath: this.documentLocationField.defaultPath,
     };
+
     this.createContentService
       .createDraft(document)
       .subscribe(
-        (response) => this.onContinue.emit(),
-        (error) => this.onErrorCreatingDraft(error),
-      );
+      (response) => this.onContinue.emit({
+      name: this.nameUrlFields.nameField,
+          url: this.nameUrlFields.urlField,
+          locale: this.locale
+        }),(error) => this.onErrorCreatingDraft(error),
+    );
   }
 
   setLocale(locale: string) {

@@ -115,6 +115,14 @@ describe('DocumentLocationField Component', () => {
       component.ngOnInit();
       expect(component.documentLocation).toBe('/root/path');
     });
+
+    it('stores the value of defaultPath returned by the create-content-service', () => {
+      component.rootPath = '/root';
+      const folders = [{name: 'root'}, {name: 'default'}, {name: 'path'}];
+      getFolderSpy.and.returnValue(Observable.of(folders));
+      component.ngOnInit();
+      expect(component.defaultPath).toBe('default/path');
+    });
   });
 
   describe('setting the document location label', () => {
