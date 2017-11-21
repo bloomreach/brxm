@@ -49,4 +49,8 @@ export class CreateContentService {
     const promise = this.contentService._send('GET', ['folders', path], null, true);
     return Observable.fromPromise(promise);
   }
+
+  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<any> {
+    return this.contentService._send('PUT', ['documents', documentId], { displayName: data.name, urlName: data.url });
+  }
 }

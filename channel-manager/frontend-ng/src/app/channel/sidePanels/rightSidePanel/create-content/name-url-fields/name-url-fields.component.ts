@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild, Output,
+  EventEmitter
+} from '@angular/core';
 import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
 
 @Component({
   selector: 'hippo-name-url-fields',
@@ -31,6 +35,7 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @Input() locale: string;
   @Input() nameField: string;
   @Input() urlField: string;
+  @Output() urlUpdate: EventEmitter<boolean> = new EventEmitter();
   public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
@@ -41,8 +46,12 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
 
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .filter(() => !this.isManualUrlMode)
+      .do(() => this.urlUpdate.emit(true))
       .debounceTime(1000)
-      .subscribe(() => this.setDocumentUrlByName());
+      .subscribe(() => {
+        this.setDocumentUrlByName();
+        this.urlUpdate.emit(false);
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {

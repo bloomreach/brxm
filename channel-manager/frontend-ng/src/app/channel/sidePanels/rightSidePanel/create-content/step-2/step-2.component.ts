@@ -26,6 +26,8 @@ import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { Document, DocumentTypeInfo } from '../create-content.types';
+import FeedbackService from '../../../../../services/feedback.service.js';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'hippo-create-content-step-2',
@@ -65,6 +67,7 @@ export class CreateContentStep2Component implements OnInit {
               private contentService: ContentService,
               private fieldService: FieldService,
               private dialogService: DialogService,
+              private feedbackService: FeedbackService,
               private translate: TranslateService,
               public dialog: MatDialog) {}
 
@@ -102,9 +105,15 @@ export class CreateContentStep2Component implements OnInit {
     return dialog;
   }
 
-  private onEditNameUrlDialogClose(result) {
-    this.doc.displayName = result.name;
-    this.documentUrl = result.url;
+  private async onEditNameUrlDialogClose(data: { name: string, url: string }) {
+    try {
+      const result = await this.createContentService.setDraftNameUrl(this.doc.id, data);
+      this.doc.displayName = result.displayName;
+      this.documentUrl = result.urlName;
+    } catch (error) {
+        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`)
+        this.feedbackService.showError(errorKey, error.data.params);
+    }
   }
 
   private onLoadSuccess(doc: Document, docTypeInfo: DocumentTypeInfo) {

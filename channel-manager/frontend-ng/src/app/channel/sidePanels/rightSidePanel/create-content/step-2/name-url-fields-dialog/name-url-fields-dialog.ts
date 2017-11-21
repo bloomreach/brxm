@@ -30,6 +30,7 @@ export class NameUrlFieldsDialogComponent {
   name: string = this.data.name;
   url: string = this.data.url;
   locale: string = this.data.locale;
+  isUrlBusyUpdating: boolean = false;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
   constructor(
@@ -43,6 +44,10 @@ export class NameUrlFieldsDialogComponent {
       name: this.data.name,
       url: this.data.url
     }
+  }
+
+  onUrlUpdate(value: boolean) {
+    this.isUrlBusyUpdating = value;
   }
 
   change() {

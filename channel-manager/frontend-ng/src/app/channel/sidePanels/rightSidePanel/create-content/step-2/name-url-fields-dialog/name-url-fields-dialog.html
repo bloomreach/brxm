@@ -20,7 +20,8 @@
     <hippo-name-url-fields
       [nameField]="name"
       [urlField]="url"
-      [locale]="locale">
+      [locale]="locale"
+      (urlUpdate)="onUrlUpdate($event)">
     </hippo-name-url-fields>
 
   </div>
@@ -33,7 +34,8 @@
   </button>
 
   <button mat-button (click)="change()"
-          class="qa-submit-name-url">
+          class="qa-submit-name-url"
+          [disabled]="isUrlBusyUpdating">
     {{ 'CHANGE' | translate }}
   </button>
 </mat-dialog-actions>
