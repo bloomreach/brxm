@@ -75,7 +75,7 @@
   height: 385px;
   overflow: auto;
   border-bottom: 1px solid #e3e3e3;
-  background-color: #e3e3e3;
+  background-color: #eeeeee;
 
   /* copied from hippo theme's .flex-child */
   -webkit-flex: 1 1 auto;
@@ -89,31 +89,41 @@
 }
 
 .taxonomy-details {
-  margin-left: 10px;
-  margin-top: 10px;
   background-color: #e3e3e3;
-  padding: 5px;
+  padding: 15px 16px 15px 15px;
 }
 
-div.taxonomy-details a, div.taxonomy-details a:visited {
-  color: #0467b4;
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
-div.taxonomy-details a:hover {
-  text-decoration: underline;
+div.taxonomy-details a {
+  float: right;
+}
+
+.taxonomy-details td {
+  text-align: left;
+  vertical-align: top;
+  padding-bottom: 3px;
+  padding-right: 3px;
 }
 
 .taxonomy-selected {
-  margin-left: 10px;
-  margin-top: 15px;
-  background-color: #e3e3e3;
-  padding: 5px;
+  padding: 15px 5px 5px 15px;
+  border-top: solid 1px #6A747D;
 }
 
 .taxonomy-selected .remove {
   font-size: 12px;
   font-weight: bold;
   color: red;
+  padding-left: 3px;
+}
+
+.taxonomy-selected li {
+  padding-bottom: 5px;
 }
 
 .taxonomy-container table {
@@ -132,16 +142,14 @@ div.taxonomy-details a:hover {
   width: 100%;
 }
 
-.taxonomy-editor td,
-.taxonomy-details td {
+.taxonomy-editor td {
   text-align: left;
   vertical-align: top;
   margin: 5px;
   padding: 10px;
 }
 
-.taxonomy-editor tr td:first-child,
-.taxonomy-details tr td:first-child {
+.taxonomy-editor tr td:first-child {
   text-align: right;
   width: 100px;
 }

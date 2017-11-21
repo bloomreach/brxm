@@ -107,7 +107,7 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
                                  final boolean detailsReadOnly) {
         super(model);
 
-        setOkEnabled(true);
+        setOkEnabled(false);
         setOutputMarkupId(true);
         setTitleKey("taxonomy-picker");
         setSize(DialogConstants.LARGE_AUTO);
@@ -124,7 +124,13 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
             ITreeNodeIconProvider iconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
 
             add(browser = new TaxonomyBrowser("content", new Model<>(model.getObject()),
-                     taxonomyModel, preferredLocale, detailsReadOnly, iconProvider));
+                     taxonomyModel, preferredLocale, detailsReadOnly, iconProvider) {
+
+                @Override
+                protected void onModelChanged() {
+                    setOkEnabled(true);
+                }
+            });
         }
     }
 
