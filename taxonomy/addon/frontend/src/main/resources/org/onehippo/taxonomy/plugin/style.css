@@ -107,12 +107,12 @@ div.taxonomy-details a {
   text-align: left;
   vertical-align: top;
   padding-bottom: 3px;
+  padding-right: 3px;
 }
 
 .taxonomy-selected {
   padding: 15px 5px 5px 15px;
   border-top: solid 1px #6A747D;
-  height: 100%;
 }
 
 .taxonomy-selected .remove {
