@@ -59,6 +59,10 @@ export class ContentServiceMock {
   getDocumentType(id: string): Promise<DocumentTypeInfo> {
     return Observable.of({ id: 'ns:testdocument', displayName: 'test-name 1' }).toPromise();
   }
+
+  saveDraft() {
+    return Observable.of(true).toPromise();
+  }
 }
 
 export class DialogServiceMock {

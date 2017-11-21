@@ -21,10 +21,11 @@ class RightSidePanelCtrl {
     $timeout,
     $translate,
     $q,
-    SidePanelService,
     ChannelService,
     CmsService,
+    HippoIframeService,
     localStorageService,
+    SidePanelService,
   ) {
     'ngInject';
 
@@ -34,10 +35,11 @@ class RightSidePanelCtrl {
     this.$translate = $translate;
     this.$q = $q;
 
-    this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.HippoIframeService = HippoIframeService;
     this.localStorageService = localStorageService;
+    this.SidePanelService = SidePanelService;
 
     this.lastSavedWidth = null;
     this.isFullWidth = false;
@@ -87,6 +89,17 @@ class RightSidePanelCtrl {
 
   isLockedOpen() {
     return this.SidePanelService.isOpen('right');
+  }
+
+  _setMode(component, options) {
+    this._resetState();
+    this.mode = component;
+    this.options = options;
+  }
+
+  editDocumentAndRefreshPage(documentId) {
+    this.HippoIframeService.reload();
+    this.openInMode(this.modes.edit, documentId);
   }
 
   openInMode(mode, options) {
