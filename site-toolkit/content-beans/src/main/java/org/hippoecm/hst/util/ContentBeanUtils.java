@@ -68,7 +68,6 @@ public class ContentBeanUtils {
 
     private static final String DISPOSABLE_SESSION_KEY_PREFIX = ContentBeanUtils.class.getName() + ";disposableSession";
 
-
     private ContentBeanUtils() {
     }
 
@@ -119,11 +118,12 @@ public class ContentBeanUtils {
      * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
      * @throws QueryException when there is no HstRequestContext available, or another unexpected exception occurs
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-                                                    String linkPath,
-                                                    Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
+    public static HstQuery createIncomingBeansQuery(final HippoDocumentBean bean, final HippoBean scope,
+                                                    final String linkPath,
+                                                    final Class<? extends HippoBean> beanMappingClass,
+                                                    final boolean includeSubTypes) throws QueryException {
 
-        List<String> linkPaths = new ArrayList<>();
+        final List<String> linkPaths = new ArrayList<>();
         linkPaths.add(linkPath);
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
     }
@@ -143,16 +143,14 @@ public class ContentBeanUtils {
      * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
      * @throws QueryException when there is no HstRequestContext available, or another unexpected exception occurs
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-                                                    String linkPath,
-                                                    Class<? extends HippoBean> beanMappingClass) throws QueryException {
+    public static HstQuery createIncomingBeansQuery(final HippoDocumentBean bean, final HippoBean scope,
+                                                    final String linkPath,
+                                                    final Class<? extends HippoBean> beanMappingClass) throws QueryException {
 
-        List<String> linkPaths = new ArrayList<>();
+        final List<String> linkPaths = new ArrayList<>();
         linkPaths.add(linkPath);
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, false);
-
     }
-
 
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it
@@ -167,20 +165,21 @@ public class ContentBeanUtils {
      * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
      * @throws QueryException when <code>depth</code> is larger than 4
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth, Class<? extends HippoBean> beanMappingClass,
-        boolean includeSubTypes) throws QueryException{
+    public static HstQuery createIncomingBeansQuery(final HippoDocumentBean bean, final HippoBean scope,
+                                                    final int depth, Class<? extends HippoBean> beanMappingClass,
+                                                    final boolean includeSubTypes) throws QueryException {
         if (depth < 0 || depth > 4) {
             throw new FilterException("Depth must be between 0 and 4 (inclusive)");
         }
         String path = "@hippo:docbase";
-        List<String> linkPaths = new ArrayList<>();
+        final List<String> linkPaths = new ArrayList<>();
         linkPaths.add(path);
         for (int i = 1; i <= depth; i++) {
             path = "*/" + path;
             linkPaths.add(path);
         }
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
-     }
+    }
 
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}).
@@ -196,8 +195,8 @@ public class ContentBeanUtils {
      * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
      * @throws QueryException when <code>depth</code> is larger than 4
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth,
-                                                    Class<? extends HippoBean> beanMappingClass) throws QueryException {
+    public static HstQuery createIncomingBeansQuery(final HippoDocumentBean bean, final HippoBean scope, final int depth,
+                                                    final Class<? extends HippoBean> beanMappingClass) throws QueryException {
         if (depth < 0 || depth > 4) {
             throw new FilterException("Depth must be between 0 and 4 (inclusive)");
         }
@@ -210,6 +209,7 @@ public class ContentBeanUtils {
         }
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, false);
     }
+
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}).
      * You can add filters and ordering to the query before executing it.
@@ -227,17 +227,16 @@ public class ContentBeanUtils {
      * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
      * @throws QueryException when there is no HstRequestContext available, or another unexpected exception occurs
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-            List<String> linkPaths,
-            Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException {
-
+    public static HstQuery createIncomingBeansQuery(final HippoDocumentBean bean, final HippoBean scope,
+                                                    final List<String> linkPaths, final Class<? extends HippoBean> beanMappingClass,
+                                                    final boolean includeSubTypes) throws QueryException {
         final HstRequestContext requestContext = RequestContextProvider.get();
         if (requestContext == null) {
             throw new QueryException("Cannot search without HstRequestContext");
         }
-        String canonicalHandleUUID = bean.getCanonicalHandleUUID();
-        HstQuery query = requestContext.getQueryManager().createQuery(scope, beanMappingClass, includeSubTypes);
-        Filter filter = query.createFilter();
+        final String canonicalHandleUUID = bean.getCanonicalHandleUUID();
+        final HstQuery query = requestContext.getQueryManager().createQuery(scope, beanMappingClass, includeSubTypes);
+        final Filter filter = query.createFilter();
         for (String linkPath : linkPaths) {
             Filter orFilter = query.createFilter();
             orFilter.addEqualTo(linkPath, canonicalHandleUUID);
