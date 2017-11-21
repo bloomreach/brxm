@@ -157,7 +157,7 @@ export class CreateContentStep2Component implements OnInit {
 
   private confirmDiscardChanges(): Promise<void> {
     const messageParams = {
-      // documentName: this.doc.displayName,
+      documentName: this.doc.displayName,
     };
 
     const confirm = this.dialogService.confirm()
