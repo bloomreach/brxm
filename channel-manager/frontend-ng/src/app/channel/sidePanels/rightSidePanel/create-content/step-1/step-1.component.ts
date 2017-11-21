@@ -50,8 +50,10 @@ export class CreateContentComponent implements OnInit {
     }
   }
 
-  constructor(private createContentService: CreateContentService, private feedbackService: FeedbackService,
-    private translate: TranslateService) { }
+  constructor(
+    private createContentService: CreateContentService,
+    private feedbackService: FeedbackService,
+    private translate: TranslateService) {}
 
   ngOnInit() {
     if (!this.options) {
@@ -65,8 +67,8 @@ export class CreateContentComponent implements OnInit {
     this.createContentService
       .getTemplateQuery(this.options.templateQuery)
       .subscribe(
-      (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
-      (error) => this.onErrorLoadingTemplateQuery(error),
+        (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
+        (error) => this.onErrorLoadingTemplateQuery(error),
     );
   }
 
@@ -91,8 +93,8 @@ export class CreateContentComponent implements OnInit {
     this.createContentService
       .createDraft(document)
       .subscribe(
-      (response) => this.onContinue.emit(),
-      (error) => this.onErrorCreatingDraft(error),
+        (response) => this.onContinue.emit(),
+        (error) => this.onErrorCreatingDraft(error),
     );
   }
 
