@@ -165,14 +165,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected Map<String, Serializable> getHints() {
-        DocumentWorkflow workflow = getWorkflow();
-        if (workflow != null) {
-            try {
-                return workflow.hints();
-            } catch (WorkflowException | RemoteException | RepositoryException e) {
-                log.error("Unable to retrieve workflow hints", e);
-            }
-        }
-        return Collections.emptyMap();
+        return getModel().getHints();
     }
 }
