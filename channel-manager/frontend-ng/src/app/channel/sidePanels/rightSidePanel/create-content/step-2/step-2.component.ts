@@ -123,7 +123,11 @@ export class CreateContentStep2Component implements OnInit {
   }
 
   saveDocument() {
-    this.onSave.emit({ mode: 'edit', options: this.documentId });
+    this.contentService.saveDraft(this.doc)
+      .then(() => {
+        this.onBeforeStateChange.emit(() => Promise.resolve());
+        this.onSave.emit(this.doc.id);
+      });
   }
 
   isDocumentDirty() {

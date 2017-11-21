@@ -21,6 +21,7 @@ describe('RightSidePanel', () => {
   let SidePanelService;
   let CmsService;
   let ChannelService;
+  let HippoIframeService;
 
   let $ctrl;
   let $scope;
@@ -36,9 +37,9 @@ describe('RightSidePanel', () => {
       ChannelService = _ChannelService_;
     });
 
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
-
     CmsService = jasmine.createSpyObj('CmsService', ['reportUsageStatistic']);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
@@ -46,6 +47,7 @@ describe('RightSidePanel', () => {
       $scope,
       $element,
       CmsService,
+      HippoIframeService,
       SidePanelService,
     });
     $rootScope.$apply();
@@ -247,6 +249,15 @@ describe('RightSidePanel', () => {
       firstCallback.calls.reset();
       $ctrl._onOpen('edit', 'anotherTestId');
       expect(firstCallback).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('editDocumentAndRefreshPage', () => {
+    it('reloads the iframe and opens the sidePanel in edit mode', () => {
+      spyOn($ctrl, 'openInMode');
+      $ctrl.editDocumentAndRefreshPage('docId');
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.edit, 'docId');
     });
   });
 });

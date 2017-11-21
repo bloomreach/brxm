@@ -237,4 +237,30 @@ describe('Create content step 2 component', () => {
       expect(component.isDocumentDirty()).toBe(true);
     });
   });
+
+  describe('saveDocument', () => {
+    beforeEach(() => {
+      component.doc = testDocument;
+    });
+
+    it('creates a draft of the current document', () => {
+      spyOn(contentService, 'saveDraft').and.callThrough();
+      component.saveDocument();
+      expect(contentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    });
+
+    it('emits the id of the saved document', fakeAsync(() => {
+      spyOn(component.onSave, 'emit');
+      component.saveDocument();
+      tick();
+      expect(component.onSave.emit).toHaveBeenCalledWith(testDocument.id);
+    }));
+
+    it('does not trigger a discardAndCLose dialog by resetting onBeforeStateChange', fakeAsync(() => {
+      spyOn(component.onBeforeStateChange, 'emit');
+      component.saveDocument();
+      tick();
+      expect(component.onBeforeStateChange.emit).toHaveBeenCalled();
+    }));
+  });
 });
