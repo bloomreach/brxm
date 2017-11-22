@@ -42,8 +42,7 @@ import { CapitalizePipe } from '../../../../shared/pipes/capitalize.pipe';
     HintsComponent,
     NameUrlFieldsComponent,
     NameUrlFieldsDialogComponent,
-    DocumentLocationFieldComponent,
-    CapitalizePipe
+    DocumentLocationFieldComponent
   ],
   entryComponents: [
     CreateContentComponent,
