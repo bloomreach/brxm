@@ -106,7 +106,7 @@ export class CreateContentStep2Component implements OnInit {
 
   private async onEditNameUrlDialogClose(data: { name: string, url: string }) {
     try {
-      const result = await this.createContentService.setDraftNameUrl(this.doc.id, data);
+      const result: any = await this.createContentService.setDraftNameUrl(this.doc.id, data);
       this.doc.displayName = result.displayName;
       this.documentUrl = result.urlName;
     } catch (error) {
@@ -150,9 +150,15 @@ export class CreateContentStep2Component implements OnInit {
       });
   }
 
-  discardAndClose(): Promise<void> {
-    return this.confirmDiscardChanges()
-      .then(() => this.createContentService.deleteDraft(this.documentId));
+  discardAndClose() {
+    return this.confirmDiscardChanges().then(async () => {
+      try {
+        await this.createContentService.deleteDraft(this.documentId);
+      } catch (error) {
+        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
+        this.feedbackService.showError(errorKey, error.data.params);
+      }
+    });
   }
 
   private confirmDiscardChanges(): Promise<void> {

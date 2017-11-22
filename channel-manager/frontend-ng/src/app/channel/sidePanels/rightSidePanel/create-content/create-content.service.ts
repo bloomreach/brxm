@@ -40,11 +40,6 @@ export class CreateContentService {
     return Observable.fromPromise(promise);
   }
 
-  deleteDraft(id: string): Observable<Document> {
-    const promise = this.contentService._send('DELETE', ['documents', id]);
-    return Observable.fromPromise(promise);
-  }
-
   generateDocumentUrlByName(name: string, locale: string = ''): Observable<string> {
     const promise = this.contentService._send('POST', ['slugs'], name, true, { locale });
     return Observable.fromPromise(promise);
@@ -55,7 +50,11 @@ export class CreateContentService {
     return Observable.fromPromise(promise);
   }
 
-  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<any> {
+  async deleteDraft(id: string): Promise<Document> {
+    return this.contentService._send('DELETE', ['documents', id]);
+  }
+
+  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<Document> {
     return this.contentService._send('PUT', ['documents', documentId], { displayName: data.name, urlName: data.url });
   }
 }
