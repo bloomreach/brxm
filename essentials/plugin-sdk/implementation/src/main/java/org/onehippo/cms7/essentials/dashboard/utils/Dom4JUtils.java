@@ -101,8 +101,14 @@ public class Dom4JUtils {
                 parent.add(element);
             }
         } else {
-            final String selector = appendToSameNameSiblings ? "./*[name()='" + element.getName() + "']" : CHILD_ELEMENTS;
-            final Node lastElement = Iterables.getLast(parent.selectNodes(selector), null);
+            Node lastElement = null;
+            if (appendToSameNameSiblings) {
+                final String selector = "./*[name()='" + element.getName() + "']";
+                lastElement = Iterables.getLast(parent.selectNodes(selector), null);
+            }
+            if (lastElement == null) {
+                lastElement = Iterables.getLast(parent.selectNodes(CHILD_ELEMENTS));
+            }
             if (lastElement != null) {
                 int lastElementIndex = children.indexOf(lastElement);
                 final Node indentation = deriveIndentation(lastElement);

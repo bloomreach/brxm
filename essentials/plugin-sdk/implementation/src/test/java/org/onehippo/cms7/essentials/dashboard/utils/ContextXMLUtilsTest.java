@@ -18,12 +18,14 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -69,9 +71,45 @@ public class ContextXMLUtilsTest {
     }
 
     @Test
+    public void testAddEnvironment() throws Exception {
+        final String name = "test/name";
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("project/conf/context.xml");
+        Document doc = new SAXReader().read(stream);
+        doc = ContextXMLUtils.addEnvironment(doc, name, "initial-value", "java.lang.String", true);
+
+        assertTrue(ContextXMLUtils.hasEnvironment(doc, name));
+
+        // test overwrite=false
+        doc = ContextXMLUtils.addEnvironment(doc, name, "overwrite-value", "java.lang.String", false);
+        assertEquals("initial-value", getEnvironmentValue(doc, name));
+
+        // test overwrite=true
+        doc = ContextXMLUtils.addEnvironment(doc, name, "overwrite-value", "java.lang.String", true);
+        assertEquals("overwrite-value", getEnvironmentValue(doc, name));
+    }
+
+    @Test
+    public void testRemoveEnvironment() throws Exception {
+        final String name = "test/name";
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("project/conf/context.xml");
+        Document doc = new SAXReader().read(stream);
+        doc = ContextXMLUtils.addEnvironment(doc, name, "{'test': 'value'}", "java.lang.String", true);
+        assertTrue(ContextXMLUtils.hasEnvironment(doc, name));
+        doc = ContextXMLUtils.removeEnvironment(doc, name);
+        assertFalse(ContextXMLUtils.hasEnvironment(doc, name));
+    }
+
+    @Test
     public void testGetContextXmlFile() {
         System.setProperty("project.basedir", getClass().getResource("/project").getPath());
         File contextXml = ProjectUtils.getContextXml();
         assertTrue((contextXml.getName().equals("context.xml")));
+    }
+
+    public String getEnvironmentValue(Document doc, String environment) {
+        Element env = (Element)doc.selectSingleNode("//Context/Environment[@name='" + environment + "']");
+        return env.attributeValue("value");
     }
 }

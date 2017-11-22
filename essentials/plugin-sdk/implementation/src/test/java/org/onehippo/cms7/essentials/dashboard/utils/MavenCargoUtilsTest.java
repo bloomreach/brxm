@@ -16,61 +16,128 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class MavenCargoUtilsTest extends BaseResourceTest {
+public class MavenCargoUtilsTest extends ResourceModifyingTest {
     @Test
-    public void addCargoDeployableTest() {
+    public void addCargoDeployableTest() throws Exception {
         final PluginContext context = getContext();
-        final EssentialsDependency dependency = new DependencyRestful();
-        final String webContext = "/addCargoDeployableTest";
+        final String webappContext = "/addCargoDeployableTest";
 
-        assertFalse(MavenCargoUtils.hasCargoRunnerWebappContext(context, webContext));
+        createModifiableFile("/project/pom.xml", "pom.xml");
 
-        dependency.setTargetPom("project");
+        assertFalse(MavenCargoUtils.hasCargoRunnerWebappContext(context, webappContext));
+
+        final Dependency dependency = new Dependency();
         dependency.setArtifactId("hippo-plugins-shared");
-        dependency.setVersion("dummy");
         dependency.setGroupId("org.onehippo.cms");
-        MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webContext);
-        assertTrue(MavenCargoUtils.hasCargoRunnerWebappContext(context, webContext));
 
-        MavenCargoUtils.removeDeployableFromCargoRunner(context, webContext);
-        assertFalse(MavenCargoUtils.hasCargoRunnerWebappContext(context, webContext));
+        assertTrue(MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webappContext));
+
+        assertTrue(MavenCargoUtils.hasCargoRunnerWebappContext(context, webappContext));
     }
 
     @Test
-    public void addCargoDeployableDuplicateTest() {
+    public void addCargoDeployableDuplicateTest() throws Exception {
         final PluginContext context = getContext();
-        final String webContext = "/test";
+        final String webappContext = "/test";
 
-        final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setTargetPom("project");
-        dependency.setArtifactId("hippo-plugins-shared");
-        dependency.setVersion("dummy");
+        createModifiableFile("/project/pom.xml", "pom.xml");
+
+        final Dependency dependency = new Dependency();
         dependency.setGroupId("org.onehippo.cms");
-        boolean result = MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webContext);
-        assertTrue(result);
-        result = MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webContext);
-        assertFalse(result);
-        result = MavenCargoUtils.removeDeployableFromCargoRunner(context, webContext);
-        assertTrue(result);
+        dependency.setArtifactId("hippo-plugins-shared");
+
+        assertTrue(MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webappContext));
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MavenCargoUtils.class).build()) {
+            assertFalse(MavenCargoUtils.addDeployableToCargoRunner(context, dependency, webappContext));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Cargo deployable with web context /test already exists")));
+        }
     }
 
     @Test
-    public void addSharedClasspathTest() {
+    public void noCargoPlugin() throws Exception {
         final PluginContext context = getContext();
-        boolean result = MavenCargoUtils.addDependencyToCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
-        assertTrue("Expected to add dependency", result);
-        result = MavenCargoUtils.addDependencyToCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
-        assertFalse("Expected to fail adding a duplicate dependency", result);
-        result = MavenCargoUtils.removeDependencyFromCargoSharedClasspath(context, "org.onehippo.cms", "hippo-plugins-shared");
-        assertTrue("Failed to remove dependency", result);
+
+        createModifiableFile("/utils/cargo/no-cargo-plugin.xml", "pom.xml");
+
+        assertFalse(MavenCargoUtils.addDeployableToCargoRunner(context, null, null));
+    }
+
+    @Test
+    public void noCargoProfile() throws Exception {
+        final PluginContext context = getContext();
+
+        createModifiableFile("/utils/cargo/no-cargo-profile.xml", "pom.xml");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MavenCargoUtils.class).build()) {
+            assertFalse(MavenCargoUtils.addDeployableToCargoRunner(context, null, null));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("cargo.run profile not found")));
+        }
+    }
+
+    @Test
+    public void addSharedClasspathTest() throws Exception {
+        final String groupId = "org.onehippo.cms";
+        final String artifactId ="hippo-plugins-shared";
+        final PluginContext context = getContext();
+
+        createModifiableFile("/project/pom.xml", "pom.xml");
+
+        assertTrue(MavenCargoUtils.addDependencyToCargoSharedClasspath(context, groupId, artifactId));
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MavenCargoUtils.class).build()) {
+            assertFalse(MavenCargoUtils.addDependencyToCargoSharedClasspath(context, groupId, artifactId));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Dependency org.onehippo.cms:hippo-plugins-shared already on the shared classpath")));
+        }
+    }
+
+    @Test
+    public void addPropertyTest() throws Exception {
+        final PluginContext context = getContext();
+
+        createModifiableFile("/project/pom.xml", "pom.xml");
+
+        assertFalse(MavenCargoUtils.hasProfileProperty(context, "first.test.property"));
+        assertTrue(MavenCargoUtils.addPropertyToProfile(context, "first.test.property", "random"));
+        assertTrue(MavenCargoUtils.hasProfileProperty(context, "first.test.property"));
+    }
+
+    @Test
+    public void mergeModelTest() throws IOException, XmlPullParserException {
+        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
+        final PluginContext context = getContext();
+
+        final File pom = createModifiableFile("/project/pom.xml", "pom.xml");
+
+        Model incomingModel = MavenModelUtils.readPom(getClass().getResourceAsStream("/test-pom-overlay.xml"));
+        MavenCargoUtils.mergeCargoProfile(context, incomingModel);
+
+        Model model = MavenModelUtils.readPom(pom);
+        assertNotNull(model);
+        Profile cargoProfile = null;
+        for (Profile p : model.getProfiles()) {
+            if ("cargo.run".equals(p.getId())) {
+                cargoProfile = p;
+                break;
+            }
+        }
+        assertNotNull(cargoProfile);
+        assertTrue(cargoProfile.getProperties().containsKey("es.tcpPort"));
     }
 }

@@ -17,10 +17,8 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,8 +31,6 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
@@ -204,12 +200,11 @@ public final class ProjectUtils {
     }
 
     public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {
-        final String pomPath = getPomPath(context, targetPom);
-        if (Strings.isNullOrEmpty(pomPath)) {
+        final File pom = getPomFile(context, targetPom);
+        if (pom == null || !pom.exists()) {
             throw new IllegalStateException("pom.xml could not be found for:" + targetPom);
         }
-        return getPomModel(pomPath);
-
+        return MavenModelUtils.readPom(pom);
     }
 
     /**
@@ -218,7 +213,7 @@ public final class ProjectUtils {
      * @param targetPom targetPom of dependency
      * @return null if targetPom is invalid
      */
-    public static String getPomPath(final PluginContext context, final TargetPom targetPom) {
+    public static File getPomFile(final PluginContext context, final TargetPom targetPom) {
         if (targetPom == null || targetPom == TargetPom.INVALID) {
             return null;
         }
@@ -241,7 +236,14 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getEssentialsFolderName(context));
         }
         return null;
+    }
 
+    /**
+     * @deprecated Use {@link #getPomFile(PluginContext, TargetPom)}
+     */
+    @Deprecated public static String getPomPath(final PluginContext context, final TargetPom targetPom) {
+        File pomFile = getPomFile(context, targetPom);
+        return (pomFile == null) ? null : pomFile.getAbsolutePath();
     }
 
     public static String getWebXmlPath(final PluginContext context, final TargetPom targetPom) {
@@ -332,23 +334,11 @@ public final class ProjectUtils {
         return null;
     }
 
-    private static String getPomForDir(final File folder) {
+    private static File getPomForDir(final File folder) {
         if (folder != null) {
-            return folder.getPath() + File.separatorChar + EssentialConst.POM_XML;
+            return new File(folder, EssentialConst.POM_XML);
         }
         return null;
-    }
-
-    private static Model getPomModel(String path) {
-
-        try (Reader fileReader = new FileReader(path)) {
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-            return reader.read(fileReader);
-        } catch (XmlPullParserException | IOException e) {
-            log.error("Error parsing pom", e);
-        }
-        return null;
-
     }
 
     private static String getWebXmlForDir(final File folder) {

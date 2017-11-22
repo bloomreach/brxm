@@ -48,6 +48,8 @@
     <module>poll</module>
     <module>projects</module>
     <module>related-documents</module>
+    <module>relevance</module>
+    <module>relevance-collectors-bundle</module>
     <module>rest-services</module>
     <module>robots</module>
     <module>search</module>

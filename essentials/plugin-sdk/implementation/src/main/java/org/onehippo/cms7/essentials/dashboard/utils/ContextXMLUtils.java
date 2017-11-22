@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,48 @@ public class ContextXMLUtils {
         try {
             doc = new SAXReader().read(contextXML);
             addResource(doc, name, resourceBlob);
+            writeResource(doc, contextXML);
+        } catch (DocumentException | IOException e) {
+            log.error("Error adding resource to {}", contextXML.getAbsolutePath(), e);
+        }
+    }
+
+    static boolean hasEnvironment(Document doc, String environment) {
+        return !doc.selectNodes("//Context/Environment[@name='" + environment + "']").isEmpty();
+    }
+
+    static Document removeEnvironment(Document doc, String environment) {
+        Node env = doc.selectSingleNode("//Context/Environment[@name='" + environment + "']");
+        if (env != null) {
+            env.getParent().remove(env);
+        }
+        return doc;
+    }
+
+    /* Add an environment element to context.xml. Example:
+        <Environment name="elasticsearch/targetingDS" type="java.lang.String"
+                     value="{'indexName':'visits', 'locations':['http://localhost:9200/']}" />
+     */
+    static Document addEnvironment(Document doc, String name, String value, String type, boolean overwrite) {
+        if (hasEnvironment(doc, name)) {
+            if (overwrite) {
+                removeEnvironment(doc, name);
+            } else {
+                return doc;
+            }
+        }
+        Element context = (Element) doc.selectSingleNode("//Context");
+        Dom4JUtils.addIndentedSameNameSibling(context, "Environment", null)
+                .addAttribute("name", name)
+                .addAttribute("value", value)
+                .addAttribute("type", type);
+        return doc;
+    }
+
+    public static void addEnvironment(File contextXML, String name, String value, String type, boolean overwrite) {
+        try {
+            Document doc = new SAXReader().read(contextXML);
+            addEnvironment(doc, name, value, type, overwrite);
             writeResource(doc, contextXML);
         } catch (DocumentException | IOException e) {
             log.error("Error adding resource to {}", contextXML.getAbsolutePath(), e);

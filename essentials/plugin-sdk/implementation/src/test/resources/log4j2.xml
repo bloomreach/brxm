@@ -17,7 +17,7 @@
 <Configuration>
   <Appenders>
     <Console name="console" target="SYSTEM_OUT">
-      <ThresholdFilter level="DEBUG"/>
+      <ThresholdFilter level="INFO"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </Console>
   </Appenders>

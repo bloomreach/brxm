@@ -20,6 +20,7 @@ import java.io.File;
 
 import com.google.common.collect.Multimap;
 
+import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -81,11 +82,10 @@ public class ProjectsInstruction implements Instruction {
         MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ENTERPRISE_GROUPID, ENTERPRISE_SERVICES_ARTIFACTID);
 
         log.info("Adding BPM web application to the cargo.run profile with path: {}", WPM_WEBAPP_CONTEXT);
-        final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setTargetPom("project");
-        dependency.setType("war");
-        dependency.setArtifactId(WPM_WEBAPP_ARTIFACTID);
+        final Dependency dependency = new Dependency();
         dependency.setGroupId(ENTERPRISE_GROUPID);
+        dependency.setArtifactId(WPM_WEBAPP_ARTIFACTID);
+        dependency.setType("war");
 
         MavenCargoUtils.addDeployableToCargoRunner(context, dependency, WPM_WEBAPP_CONTEXT);
 
