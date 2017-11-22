@@ -177,7 +177,7 @@
   <xs:complexType name="hstBeanClassesType" mixed="true">
     <xs:attribute use="required" name="pattern" type="xs:string">
       <xs:annotation>
-        <xs:documentation>Pattern for classpath scanning of annotated HST bean classes, e.g. 'org/example/**/*.class'.</xs:documentation>
+        <xs:documentation>Pattern for classpath scanning of annotated HST bean classes, e.g. 'classpath*:org/example/**/*.class'.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
