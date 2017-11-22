@@ -89,7 +89,7 @@ public class ContextXMLUtils {
 
     static Document removeEnvironment(Document doc, String environment) {
         Node env = doc.selectSingleNode("//Context/Environment[@name='" + environment + "']");
-        if(env != null) {
+        if (env != null) {
             env.getParent().remove(env);
         }
         return doc;
@@ -100,7 +100,7 @@ public class ContextXMLUtils {
                      value="{'indexName':'visits', 'locations':['http://localhost:9200/']}" />
      */
     static Document addEnvironment(Document doc, String name, String value, String type, boolean overwrite) {
-        if(hasEnvironment(doc, name)) {
+        if (hasEnvironment(doc, name)) {
             if (overwrite) {
                 removeEnvironment(doc, name);
             } else {
@@ -108,7 +108,7 @@ public class ContextXMLUtils {
             }
         }
         Element context = (Element) doc.selectSingleNode("//Context");
-        Dom4JUtils.addIndentedElement(context, "Environment", null)
+        Dom4JUtils.addIndentedSameNameSibling(context, "Environment", null)
                 .addAttribute("name", name)
                 .addAttribute("value", value)
                 .addAttribute("type", type);
@@ -116,9 +116,8 @@ public class ContextXMLUtils {
     }
 
     public static void addEnvironment(File contextXML, String name, String value, String type, boolean overwrite) {
-        Document doc;
         try {
-            doc = new SAXReader().read(contextXML);
+            Document doc = new SAXReader().read(contextXML);
             addEnvironment(doc, name, value, type, overwrite);
             writeResource(doc, contextXML);
         } catch (DocumentException | IOException e) {

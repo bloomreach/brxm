@@ -66,27 +66,6 @@ public class MavenModelUtils {
     public static boolean writePom(final Model model, final File pomFile) {
         try {
             new DefaultPomManager().writePom(model, pomFile, pomFile);
-
-            // fix profile names (intellij expects default profile id)
-            // see: http://youtrack.jetbrains.com/issue/IDEA-126568
-            final List<Profile> profiles = model.getProfiles();
-            boolean needsRewrite = false;
-            for (Profile profile : profiles) {
-                if (Strings.isNullOrEmpty(profile.getId()) || profile.getId().equals("default")) {
-                    profile.setId("{{ESSENTIALS_DEFAULT_PLACEHOLDER}}");
-                    needsRewrite = true;
-                }
-            }
-            if (needsRewrite) {
-                // replace default id:
-                final String pomContent = GlobalUtils.readStreamAsText(new FileInputStream(pomFile));
-                final Map<String, String> data = new HashMap<>();
-                data.put("ESSENTIALS_DEFAULT_PLACEHOLDER", DEFAULT_PROFILE_ID);
-                final String newContent = TemplateUtils.replaceStringPlaceholders(pomContent, data);
-                GlobalUtils.writeToFile(newContent, pomFile.toPath());
-                log.debug("Fixed default profile id");
-            }
-            log.debug("Written pom to: {}", pomFile.getAbsolutePath());
         } catch (IOException e) {
             log.error("Error adding maven dependency", e);
             return false;
@@ -94,35 +73,26 @@ public class MavenModelUtils {
         return true;
     }
 
-    public static void mergeProperties(ModelBase model, ModelBase temporaryModel) {
-        // ModelBase can be a Model or a Profile...
-
+    public static void mergeProperties(ModelBase model, ModelBase incomingModel) {
         // Copy all properties. Existing properties will be overwritten
-        model.getProperties().putAll( temporaryModel.getProperties() );
+        model.getProperties().putAll(incomingModel.getProperties());
     }
 
-    public static void mergeBuildPlugins(BuildBase modelBuild, BuildBase generatedModelBuild )
-    {
-        @SuppressWarnings( "unchecked" )
-        Map<String, Plugin> pluginsByIds = modelBuild.getPluginsAsMap();
-        @SuppressWarnings( "unchecked" )
-        List<Plugin> generatedPlugins = generatedModelBuild.getPlugins();
+    public static void mergeBuildPlugins(BuildBase build, BuildBase incomingBuild) {
+        final Map<String, Plugin> pluginsById = build.getPluginsAsMap();
+        final List<Plugin> incomingPlugins = incomingBuild.getPlugins();
 
-        for ( Plugin generatedPlugin : generatedPlugins )
-        {
-            String generatedPluginsId = generatedPlugin.getKey();
+        for (Plugin incomingPlugin : incomingPlugins) {
+            String incomingPluginId = incomingPlugin.getKey();
 
-            if ( !pluginsByIds.containsKey( generatedPluginsId ) )
-            {
-                modelBuild.addPlugin( generatedPlugin );
-            }
-            else
-            {
-                log.info( "Try to merge plugin configuration of plugins with id: {}", generatedPluginsId );
-                Plugin modelPlugin = pluginsByIds.get( generatedPluginsId );
+            if (!pluginsById.containsKey(incomingPluginId)) {
+                build.addPlugin(incomingPlugin);
+            } else {
+                log.info("Try to merge plugin configuration of plugins with id: {}", incomingPluginId);
+                Plugin plugin = pluginsById.get(incomingPluginId);
 
-                modelPlugin.setConfiguration( Xpp3DomUtils.mergeXpp3Dom( (Xpp3Dom) generatedPlugin.getConfiguration(),
-                        (Xpp3Dom) modelPlugin.getConfiguration() ) );
+                plugin.setConfiguration(Xpp3DomUtils.mergeXpp3Dom((Xpp3Dom) incomingPlugin.getConfiguration(),
+                        (Xpp3Dom) plugin.getConfiguration()));
             }
         }
     }

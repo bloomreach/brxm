@@ -43,7 +43,7 @@
                             <clusterName>esDevCluster</clusterName>
                             <httpPort>${es.httpPort}</httpPort>
                             <transportPort>${es.tcpPort}</transportPort>
-                            <version>${elasticsearch.version}</version>
+                            <version>${maven.plugin.elasticsearch.configuration.version}</version>
                             <keepExistingData>true</keepExistingData>
                             <timeout>60</timeout>
                             <skip>${es.skip.start}</skip>

@@ -17,10 +17,9 @@
 package org.onehippo.cms7.essentials;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.common.base.Charsets;
 
@@ -40,13 +39,13 @@ public abstract class ResourceModifyingTest {
     private String oldProjectBaseDir;
     private Path projectRootPath;
 
-    public PluginContext getContext() throws Exception {
+    public PluginContext getContext() throws IOException {
         ensureContext();
         return context;
     }
 
     @After
-    public void after() throws Exception {
+    public void after() throws IOException {
         if (context != null) {
             FileUtils.deleteDirectory(projectRootPath.toFile());
             if (oldProjectBaseDir != null) {
@@ -58,18 +57,7 @@ public abstract class ResourceModifyingTest {
         }
     }
 
-    /**
-     * Given a resource-path to project-location map, create a modifiable {@link File} for each entry.
-     */
-    protected Map<String, File> createModifiableFiles(final Map<String, String> resourceMap) throws Exception {
-        final Map<String, File> resourceToFile = new HashMap<>();
-        for (String resource : resourceMap.keySet()) {
-            resourceToFile.put(resource, createModifiableFile(resource, resourceMap.get(resource)));
-        }
-        return resourceToFile;
-    }
-
-    protected File createModifiableFile(final String resourcePath, final String projectLocation) throws Exception {
+    protected File createModifiableFile(final String resourcePath, final String projectLocation) throws IOException {
         final File output = fileAt(projectLocation);
         final File input = new File(getClass().getResource(resourcePath).getPath());
 
@@ -78,7 +66,7 @@ public abstract class ResourceModifyingTest {
         return output;
     }
 
-    protected File createModifiableDirectory(final String projectLocation) throws Exception {
+    protected File createModifiableDirectory(final String projectLocation) throws IOException {
         final File output = fileAt(projectLocation);
 
         output.mkdirs();
@@ -86,7 +74,7 @@ public abstract class ResourceModifyingTest {
         return output;
     }
 
-    private File fileAt(final String projectLocation) throws Exception {
+    private File fileAt(final String projectLocation) throws IOException {
         final String[] projectLegs = projectLocation.split("/");
         ensureContext();
         Path outputPath = projectRootPath;
@@ -96,12 +84,12 @@ public abstract class ResourceModifyingTest {
         return new File(outputPath.toUri());
     }
 
-    protected int nrOfOccurrences(final File file, final String value) throws Exception {
+    protected int nrOfOccurrences(final File file, final String value) throws IOException {
         final String fileContent = com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
         return StringUtils.countMatches(fileContent, value);
     }
 
-    private void ensureContext() throws Exception {
+    private void ensureContext() throws IOException {
         if (context == null) {
             // create a temporary directory representing the root of modifiable project files
             projectRootPath = Files.createTempDirectory("test");
