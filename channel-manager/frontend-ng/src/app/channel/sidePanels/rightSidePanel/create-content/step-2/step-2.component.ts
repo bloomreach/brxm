@@ -100,7 +100,12 @@ export class CreateContentStep2Component implements OnInit {
         locale: this.documentLocale
       }
     });
-    dialog.afterClosed().subscribe((result: { name: string, url: string }) => this.onEditNameUrlDialogClose(result));
+    dialog.beforeClose().subscribe((result: { name: string, url: string }) => {
+      // If dialog was not cancelled (has a result)
+      if (result) {
+        this.onEditNameUrlDialogClose(result)
+      }
+    });
     return dialog;
   }
 

@@ -28,7 +28,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="create-content-actions">
-  <button mat-button (click)="cancel()"
+  <button mat-button (click)="cancel() || !name.length || !url.length"
           class="qa-cancel">
     {{ 'CANCEL' | translate }}
   </button>

@@ -36,7 +36,6 @@ export class NameUrlFieldsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<NameUrlFieldsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private createContentService: CreateContentService
   ) {}
 
   ngOnInit() {
