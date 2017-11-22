@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,13 +69,13 @@ public class SelectionResource extends BaseResource {
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
-    @Inject
-    private EventBus eventBus;
+    @Inject private EventBus eventBus;
+    @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
     public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final Session session = PluginContextFactory.getContext().createSession();
+        final Session session = contextFactory.getContext().createSession();
 
         try {
             return addField(session, payloadRestful.getValues(), response);
@@ -91,7 +91,7 @@ public class SelectionResource extends BaseResource {
     @Path("/fieldsfor/{docType}/")
     public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = PluginContextFactory.getContext().createSession();
+        final Session session = contextFactory.getContext().createSession();
 
         try {
             addSelectionFields(fields, docType, session);
@@ -108,7 +108,8 @@ public class SelectionResource extends BaseResource {
     @Path("spring")
     public List<ProvisionedValueList> loadProvisionedValueLists() {
         List<ProvisionedValueList> pvlList = new ArrayList<>();
-        final Document document = readSpringConfiguration();
+        final PluginContext context = contextFactory.getContext();
+        final Document document = readSpringConfiguration(context);
 
         String xPath = VALUELIST_XPATH + "/beans:entry";
         List valueLists = document.selectNodes(xPath);
@@ -128,7 +129,8 @@ public class SelectionResource extends BaseResource {
     @Path("spring")
     public MessageRestful storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
                                                      @Context HttpServletResponse response) {
-        final Document document = readSpringConfiguration();
+        final PluginContext context = contextFactory.getContext();
+        final Document document = readSpringConfiguration(context);
         if (document == null) {
             return createErrorMessage("Failure parsing the Spring configuration.", response);
         }
@@ -152,7 +154,7 @@ public class SelectionResource extends BaseResource {
         }
 
         try {
-            final File springFile = getSpringFile();
+            final File springFile = getSpringFile(context);
             springFile.getParentFile().mkdirs();
             springFile.createNewFile();
 
@@ -383,8 +385,8 @@ public class SelectionResource extends BaseResource {
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
 
-    private Document readSpringConfiguration() {
-        final File springFile = getSpringFile();
+    private Document readSpringConfiguration(final PluginContext context) {
+        final File springFile = getSpringFile(context);
         InputStream is = null;
         if (springFile !=null && springFile.exists() && springFile.isFile()) {
             try {
@@ -416,12 +418,11 @@ public class SelectionResource extends BaseResource {
         return null;
     }
 
-    private File getSpringFile() {
+    private File getSpringFile(final PluginContext context) {
         final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
         if (Strings.isNullOrEmpty(baseDir)) {
             return null;
         }
-        PluginContext context = PluginContextFactory.getContext();
         String springFilePath = new StringBuilder()
                 .append(baseDir)
                 .append(File.separator)

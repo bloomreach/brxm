@@ -21,6 +21,5 @@
 
   <!-- APPLICATION CONFIG -->
   <bean id="applicationModule" class="org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule"/>
-  <bean id="propertiesModule" class="org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule"/>
 
 </beans>

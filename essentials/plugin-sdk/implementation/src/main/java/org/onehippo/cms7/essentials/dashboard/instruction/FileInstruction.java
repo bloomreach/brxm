@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,92 +27,83 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
-import java.util.Set;
 
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class FileInstruction extends PluginInstruction {
+public class FileInstruction extends BuiltinInstruction {
 
-    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
-            .add(COPY)
-            .add(DELETE)
-            .build();
+    public enum Action {
+        COPY, DELETE
+    }
+
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
-    private String message;
     private boolean binary;
-
-    @Inject
-    private EventBus eventBus;
-
-    @Value("${instruction.message.file.delete}")
-    private String messageDelete;
-
-    @Value("${instruction.message.file.copy}")
-    private String messageCopy;
-
-    @Value("${instruction.message.file.copy.error}")
-    private String messageCopyError;
-
-    @Value("${instruction.message.folder.create}")
-    private String messageFolderCreate;
     private boolean overwrite;
     private String source;
     private String target;
-    private String action;
+    private Action action;
     private String folderMessage;
     private String createdFolders;
     private String createdFoldersTarget;
     private PluginContext context;
 
+    public FileInstruction() {
+        super(MessageGroup.FILE_CREATE);
+    }
+
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         log.debug("executing FILE Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         this.context = context;
         if (!valid()) {
-            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
-            eventBus.post(new InstructionEvent(this));
+            log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
 
         // check action:
-        if (action.equals(COPY)) {
+        if (action == Action.COPY) {
             return copy();
-        } else if (action.equals(DELETE)) {
+        } else {
             return delete();
         }
+    }
 
-        eventBus.post(new InstructionEvent(this));
-        return InstructionStatus.FAILED;
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        if (action == Action.COPY) {
+            result.put(MessageGroup.FILE_CREATE, "Create project file '" + target + "'.");
+        } else {
+            result.put(MessageGroup.FILE_DELETE, "Delete project file '" + target + "'.");
+        }
+        return result;
     }
 
     private InstructionStatus copy() {
         final File destination = new File(target);
         if (!overwrite && destination.exists()) {
             log.info("File already exists {}", destination);
-            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SKIPPED;
         }
 
@@ -143,15 +134,13 @@ public class FileInstruction extends PluginInstruction {
                 final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
                 FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
             }
-            sendEvents();
+            log.info("Copied file from '{}' to '{}'.", source, target);
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
-            message = messageCopyError;
-            log.error("Error while copy resource", e);
+            log.error("Failed to copy file from '{}' to '{}'.", source, target, e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
@@ -191,7 +180,7 @@ public class FileInstruction extends PluginInstruction {
             createdFolders = directories.getLast().substring(directories.getFirst().length());
             createdFoldersTarget = directories.getLast();
             Files.createDirectories(new File(directories.getLast()).toPath());
-            eventBus.post(new InstructionEvent(messageFolderCreate));
+            log.info("Created '{}'.", target);
         }
     }
 
@@ -209,23 +198,19 @@ public class FileInstruction extends PluginInstruction {
             Path path = new File(target).toPath();
             final boolean deleted = Files.deleteIfExists(path);
             if (deleted) {
-                sendEvents();
-                log.debug("Deleted file {}", target);
+                log.info("Deleted file '{}'.", target);
                 return InstructionStatus.SUCCESS;
             } else {
-                log.debug("File not deleted {}", target);
-                eventBus.post(new InstructionEvent(this));
+                log.info("Failed to delete '{}', as it doesn't exist.", target);
                 return InstructionStatus.SKIPPED;
             }
         } catch (IOException e) {
-            log.error("Error deleting file", e);
+            log.error("Error deleting file '{}'.", target, e);
         }
-        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
+    protected void processPlaceholders(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;
@@ -238,32 +223,17 @@ public class FileInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
-        //TODO check what Wicket can offer regarding placeholders and localization, it's probably reusable
+        //TODO below statements make no sense, at the point of calling processPlaceholders, these messages are still null
         data.put("folderMessage", folderMessage);
         data.put("createdFolders", createdFolders);
         data.put("createdFoldersTarget", createdFoldersTarget);
-        // setup messages:
-
-        if (Strings.isNullOrEmpty(message) && !Strings.isNullOrEmpty(action)) {
-            // check message based on action:
-            if (action.equals(COPY)) {
-                message = messageCopy;
-            } else if (action.equals(DELETE)) {
-                message = messageDelete;
-            }
-        }
-
-        super.processPlaceholders(data);
-        //
-        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
-        message = TemplateUtils.replaceTemplateData(message, data);
     }
 
     protected boolean valid() {
-        if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
+        if (action == null || Strings.isNullOrEmpty(target)) {
             return false;
         }
-        if (action.equals(COPY) && (Strings.isNullOrEmpty(source))) {
+        if (action == Action.COPY && (Strings.isNullOrEmpty(source))) {
             return false;
         }
         return true;
@@ -297,31 +267,26 @@ public class FileInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    @XmlAttribute
-    @Override
     public String getAction() {
+        return action != null ? action.toString().toLowerCase() : null;
+    }
+
+    public void setAction(final String action) {
+        this.action = Action.valueOf(action.toUpperCase());
+    }
+
+    @XmlTransient
+    public Action getActionEnum() {
         return action;
     }
 
-    @Override
-    public void setAction(final String action) {
+    public void setActionEnum(final Action action) {
         this.action = action;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("FileInstruction{");
-        sb.append("message='").append(message).append('\'');
         sb.append(", overwrite=").append(overwrite);
         sb.append(", source='").append(source).append('\'');
         sb.append(", target='").append(target).append('\'');

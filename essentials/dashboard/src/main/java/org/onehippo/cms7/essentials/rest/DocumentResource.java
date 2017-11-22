@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -36,26 +37,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsCompound;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsDocument;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -72,13 +71,16 @@ public class DocumentResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
+    @Inject private PluginContextFactory contextFactory;
+
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
             response = RestfulList.class)
     @GET
     @Path("/")
     public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocuments(null, true);
+        final PluginContext context = contextFactory.getContext();
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, null);
     }
 
     @ApiOperation(
@@ -87,7 +89,8 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(new ContentTypeIsDocument());
+        final PluginContext context = contextFactory.getContext();
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, type -> !type.isCompoundType());
     }
 
     @ApiOperation(
@@ -96,7 +99,8 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(new ContentTypeIsCompound());
+        final PluginContext context = contextFactory.getContext();
+        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, ContentType::isCompoundType);
     }
 
 
@@ -109,7 +113,7 @@ public class DocumentResource extends BaseResource {
     @Path("/{docType}")
     public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
         final List<KeyValueRestful> valueLists = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
 
         try {
@@ -144,7 +148,7 @@ public class DocumentResource extends BaseResource {
     @Path("/templatequeries")
     public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
         final List<KeyValueRestful> templateList = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();

@@ -48,7 +48,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         //############################################
         // ADD
         //############################################
-        addNodeInstruction.setAction(PluginInstruction.COPY);
+        addNodeInstruction.setActionEnum(XmlInstruction.Action.COPY);
         addNodeInstruction.setTarget("/");
         addNodeInstruction.setSource("instruction_xml_file.xml");
         final InstructionSet set = new PluginInstructionSet();
@@ -74,7 +74,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         // DELETE
         //############################################
 
-        removeNodeInstruction.setAction(PluginInstruction.DELETE);
+        removeNodeInstruction.setActionEnum(XmlInstruction.Action.DELETE);
         removeNodeInstruction.setTarget('/' + NODE_NAME);
         final InstructionSet removeSet = new PluginInstructionSet();
         removeSet.addInstruction(removeNodeInstruction);

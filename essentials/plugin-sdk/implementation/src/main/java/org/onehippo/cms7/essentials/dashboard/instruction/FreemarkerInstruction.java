@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,17 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Map;
-
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -48,24 +42,19 @@ public class FreemarkerInstruction extends FileInstruction {
             .add("essentials")
             .build();
 
-
-    @Inject
-    private EventBus eventBus;
     private String repositoryTarget;
     private String templateName;
 
-
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         log.debug("executing Freemarker Instruction {}", this);
         processPlaceholders(context.getPlaceholderData());
         if (!valid()) {
-            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
-            eventBus.post(new InstructionEvent(this));
+            log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
 
-        return super.process(context, previousStatus);
+        return super.execute(context);
 
     }
 
@@ -85,10 +74,11 @@ public class FreemarkerInstruction extends FileInstruction {
 
     @Override
     protected boolean valid() {
-        if (Strings.isNullOrEmpty(getAction()) || !VALID_ACTIONS.contains(getAction())) {
+        final FileInstruction.Action action = getActionEnum();
+        if (action == null) {
             return false;
         }
-        if (getAction().equals(COPY) && (Strings.isNullOrEmpty(getSource()))) {
+        if (action == FileInstruction.Action.COPY && Strings.isNullOrEmpty(getSource())) {
             return false;
         }
         // check if we have valid
@@ -99,17 +89,9 @@ public class FreemarkerInstruction extends FileInstruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        super.processPlaceholders(data);
-
-
-    }
-
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("FreemarkerInstruction{");
-        sb.append("").append(super.toString());
+        sb.append(super.toString());
         sb.append('}');
         return sb.toString();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,15 @@ package org.onehippo.cms7.essentials.dashboard.utils.inject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoader;
-
-import com.google.common.eventbus.EventBus;
 
 
 /**
@@ -49,15 +45,6 @@ public class ApplicationModule {
 
     private static final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
-
-    @Inject
-    private LoggingPluginEventListener loggingPluginEventListener;
-    @Inject
-    private MemoryPluginEventListener memoryPluginEventListener;
-    @Inject
-    private ValidationEventListener validationEventListener;
-    @Inject
-    private InstructionsEventListener instructionsEventListener;
     @Inject
     private RebuildProjectEventListener rebuildProjectEventListener;
 
@@ -74,10 +61,6 @@ public class ApplicationModule {
         if (!initialized) {
             applicationContextRef = applicationContext;
             eventBus.register(rebuildProjectEventListener);
-            eventBus.register(loggingPluginEventListener);
-            eventBus.register(memoryPluginEventListener);
-            eventBus.register(validationEventListener);
-            eventBus.register(instructionsEventListener);
             initialized = true;
         }
         return eventBus;

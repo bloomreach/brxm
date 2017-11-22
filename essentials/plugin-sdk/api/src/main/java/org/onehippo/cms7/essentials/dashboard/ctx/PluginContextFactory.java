@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
 
-public class PluginContextFactory {
-
-    private PluginContextFactory() {
-    }
-
-    public static PluginContext getContext() {
-        return new DefaultPluginContext();
-    }
+public interface PluginContextFactory {
+    PluginContext getContext();
 }

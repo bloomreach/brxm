@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.event;
+package org.onehippo.cms7.essentials.dashboard.ctx;
 
-/**
- * @version "$Id$"
- */
-public class ValidationEvent extends MessageEvent {
+import org.springframework.stereotype.Component;
 
-    private static final long serialVersionUID = 1L;
-
-    public ValidationEvent(final String message) {
-        super(message);
-
+@Component
+public class PluginContextFactoryImpl implements PluginContextFactory {
+    public PluginContext getContext() {
+        return new DefaultPluginContext();
     }
-
-
 }

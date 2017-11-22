@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,8 +62,8 @@ public class ProjectResource {
 
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
-    @Inject
-    private PluginStore pluginStore;
+    @Inject private PluginStore pluginStore;
+    @Inject private PluginContextFactory contextFactory;
 
 
     @ApiOperation(
@@ -74,7 +74,8 @@ public class ProjectResource {
     @Path("/status")
     public StatusRestful getProjectStatus() {
         final StatusRestful status = new StatusRestful();
-        final ProjectSettings settings = ProjectUtils.loadSettings();
+        final PluginContext context = contextFactory.getContext();
+        final ProjectSettings settings = ProjectUtils.loadSettings(context);
         if (settings != null && settings.getSetupDone()) {
             status.setProjectInitialized(true);
         }
@@ -106,7 +107,8 @@ public class ProjectResource {
     @GET
     @Path("/settings")
     public ProjectSettings getProjectSettings() {
-        return ProjectUtils.loadSettings();
+        final PluginContext context = contextFactory.getContext();
+        return ProjectUtils.loadSettings(context);
     }
 
 
@@ -116,6 +118,7 @@ public class ProjectResource {
     @POST
     @Path("/settings")
     public MessageRestful saveProjectSettings(final ProjectSettingsBean projectSettings) {
+        final PluginContext context = contextFactory.getContext();
         // Remove empty plugin repository entries
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         final Set<String> validatedRepositories = new HashSet<>();
@@ -130,7 +133,7 @@ public class ProjectResource {
         projectSettings.setSetupDone(true);
 
         try {
-            ProjectUtils.persistSettings(projectSettings);
+            ProjectUtils.persistSettings(context, projectSettings);
         } catch (Exception e) {
             log.error("Error persisting project settings", e);
             return new ErrorMessageRestful("Error saving project settings");
@@ -147,7 +150,7 @@ public class ProjectResource {
     @GET
     @Path("/coordinates")
     public RestfulList<KeyValueRestful> getProjectCoordinates() {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final RestfulList<KeyValueRestful> list = new RestList<>();
         for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {

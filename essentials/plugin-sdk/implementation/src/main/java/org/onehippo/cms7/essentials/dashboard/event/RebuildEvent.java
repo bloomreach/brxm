@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,28 @@
 package org.onehippo.cms7.essentials.dashboard.event;
 
 /**
- * @version "$Id$"
+ * Rebuild events should be posted on the event bus if an event occurred which requires a rebuild of the project.
+ * This could be the execution of some instruction during the installation of a plugin, or a change made to the
+ * project by a 'tool'.
  */
-public class RebuildEvent extends MessageEvent {
+public class RebuildEvent implements PluginEvent {
 
     private static final long serialVersionUID = 1L;
 
     private final String pluginId;
+    private final String message;
 
     public RebuildEvent(final String pluginId, final String message) {
-        super(message);
+        this.message = message;
         this.pluginId = pluginId;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 
     public String getPluginId() {
         return pluginId;
-    }
-
-    @Override
-    public DisplayLocation getDisplayLocation() {
-        return DisplayLocation.SYSTEM;
     }
 }

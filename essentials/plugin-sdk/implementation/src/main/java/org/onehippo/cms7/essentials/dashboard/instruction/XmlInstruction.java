@@ -20,25 +20,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Set;
 
-import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -46,58 +44,53 @@ import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class XmlInstruction extends PluginInstruction {
+public class XmlInstruction extends BuiltinInstruction {
 
-    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
-            .add(COPY)
-            .add(DELETE)
-            .build();
+    public enum Action {
+        COPY, DELETE
+    }
+
     private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
-    private String message;
     private boolean overwrite;
     private String source;
     private String target;
-    private String action;
-    @Inject
-    private EventBus eventBus;
+    private Action action;
 
-    @Value("${instruction.message.xml.delete}")
-    private String messageDelete;
-
-    @Value("${instruction.message.xml.copy}")
-    private String messageCopy;
-
-    @Value("${instruction.message.xml.copy.error}")
-    private String messageCopyError;
-    private PluginContext context;
+    public XmlInstruction() {
+        super(MessageGroup.XML_NODE_CREATE);
+    }
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        this.context = context;
+    public InstructionStatus execute(final PluginContext context) {
         processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
-            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
+            log.info("Invalid instruction descriptor: {}", toString());
             return InstructionStatus.FAILED;
         }
-        /*processPlaceholders(context.getPlaceholderData());*/
-        // check action:
-        if (action.equals(COPY)) {
-            return copy();
-        } else if (action.equals(DELETE)) {
-            return delete();
+        if (action == Action.COPY) {
+            return copy(context);
+        } else {
+            return delete(context);
         }
-
-        eventBus.post(new InstructionEvent(this));
-        return InstructionStatus.FAILED;
     }
 
-    private InstructionStatus copy() {
+    @Override
+    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        if (action == Action.COPY) {
+            result.put(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
+        } else {
+            result.put(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
+        }
+        return result;
+    }
+
+    private InstructionStatus copy(final PluginContext context) {
         final Session session = context.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
@@ -110,14 +103,12 @@ public class XmlInstruction extends PluginInstruction {
 
             if (stream == null) {
                 log.error("Source file not found {}", source);
-                message = messageCopyError;
-                eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.FAILED;
             }
 
             // first check if node exists:
-            if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
-                eventBus.post(new InstructionEvent(this));
+            if (!isOverwrite() && nodeExists(context, session, source, destination.getPath())) {
+                log.info("Skipping XML import, target node '{}' already exists.", target);
                 return InstructionStatus.SKIPPED;
             }
 
@@ -125,8 +116,7 @@ public class XmlInstruction extends PluginInstruction {
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
-            log.info("Added node to: {}", destination.getPath());
-            sendEvents();
+            log.info("Imported XML from '{}' to '{}'.", source, target);
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error on copy node", e);
@@ -138,7 +128,7 @@ public class XmlInstruction extends PluginInstruction {
 
     }
 
-    private boolean nodeExists(final Session session, final String source, final String parentPath) throws RepositoryException {
+    private boolean nodeExists(final PluginContext context, final Session session, final String source, final String parentPath) throws RepositoryException {
 
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
@@ -156,23 +146,20 @@ public class XmlInstruction extends PluginInstruction {
             IOUtils.closeQuietly(stream);
         }
 
-
         return false;
     }
 
 
-    private InstructionStatus delete() {
+    private InstructionStatus delete(final PluginContext context) {
         final Session session = context.createSession();
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist: {}", target);
                 return InstructionStatus.FAILED;
             }
-            final Node node = session.getNode(target);
-            node.remove();
+            session.getNode(target).remove();
             session.save();
-            sendEvents();
-            log.info("Deleted node: {}", target);
+            log.info("Deleted node '{}'.", target);
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
@@ -182,8 +169,7 @@ public class XmlInstruction extends PluginInstruction {
         return InstructionStatus.FAILED;
     }
 
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
+    private void processPlaceholders(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;
@@ -196,30 +182,14 @@ public class XmlInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
-        // setup messages:
-
-        if (Strings.isNullOrEmpty(message)) {
-            // check message based on action:
-            if (action.equals(COPY)) {
-                message = messageCopy;
-            } else if (action.equals(DELETE)) {
-                message = messageDelete;
-            }
-        }
-
-        super.processPlaceholders(data);
-        //
-
-        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
-        message = TemplateUtils.replaceTemplateData(message, data);
     }
 
     private boolean valid() {
-        if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
+        if (action == null || Strings.isNullOrEmpty(target)) {
             return false;
         }
 
-        if (action.equals(COPY) && Strings.isNullOrEmpty(source)) {
+        if (action == Action.COPY && Strings.isNullOrEmpty(source)) {
             return false;
         }
         return true;
@@ -231,10 +201,11 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     /**
-     * Setting overwrite=true is not yet supported!
-     * Invoking this method with value parameter override=true will result in an UnsupportedOperationException being thrown
-     * @throws UnsupportedOperationException when invoked with overwrite=true
+     * Setting overwrite=true is not yet supported! Invoking this method with value parameter override=true will result
+     * in an UnsupportedOperationException being thrown
+     *
      * @param overwrite
+     * @throws UnsupportedOperationException when invoked with overwrite=true
      */
     public void setOverwrite(final boolean overwrite) throws UnsupportedOperationException {
         if (overwrite) {
@@ -261,38 +232,32 @@ public class XmlInstruction extends PluginInstruction {
         this.target = target;
     }
 
-    @XmlAttribute
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("XmlInstruction{");
-        sb.append("message='").append(message).append('\'');
-        sb.append(", overwrite=").append(overwrite);
-        sb.append(", source='").append(source).append('\'');
-        sb.append(", target='").append(target).append('\'');
-        sb.append(", action='").append(action).append('\'');
+        sb.append("source='").append(source).append("', ");
+        sb.append("target='").append(target).append("', ");
+        sb.append("action='").append(action).append("', ");
+        sb.append("overwrite=").append(overwrite);
         sb.append('}');
         return sb.toString();
     }
 
     @XmlAttribute
-    @Override
     public String getAction() {
+        return action != null ? action.toString().toLowerCase() : null;
+    }
+
+    public void setAction(final String action) {
+        this.action = Action.valueOf(action.toUpperCase());
+    }
+
+    @XmlTransient
+    public Action getActionEnum() {
         return action;
     }
 
-    @Override
-    public void setAction(final String action) {
+    public void setActionEnum(final Action action) {
         this.action = action;
     }
-
 }

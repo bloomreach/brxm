@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,15 +73,15 @@ public class RestPluginResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
 
-    @Inject
-    private EventBus eventBus;
+    @Inject private EventBus eventBus;
+    @Inject private PluginContextFactory contextFactory;
 
     @GET
     @Path("/beans")
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(context, "java");
         for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
             list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
@@ -94,7 +94,7 @@ public class RestPluginResource extends BaseResource {
     @Path("/mounts")
     public List<MountRestful> getHippoSites(@Context ServletContext servletContext) throws RepositoryException {
 
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Set<Node> hstMounts = HstUtils.getHstMounts(context);
         final List<MountRestful> list = new ArrayList<>();
         for (Node m : hstMounts) {
@@ -108,7 +108,7 @@ public class RestPluginResource extends BaseResource {
     @Path("/")
     public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final RestfulList<MessageRestful> messages = new RestfulList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();
         final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
         final boolean isManualApiEnabled = Boolean.valueOf(values.get(RestPluginConst.MANUAL_API_ENABLED));

@@ -17,14 +17,21 @@
 package org.onehippo.cms7.essentials.plugins.projects;
 
 import java.io.File;
-import java.util.Map;
+
+import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
-import org.onehippo.cms7.essentials.dashboard.utils.*;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
+import org.onehippo.cms7.essentials.dashboard.utils.MavenAssemblyUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,27 +57,7 @@ public class ProjectsInstruction implements Instruction {
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
 
     @Override
-    public String getMessage() {
-        return "Adding H2 JDBC resource to context.xml.";
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        //
-    }
-
-    @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        //
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         File contextXml = ProjectUtils.getContextXml();
 
         log.info("Adding jdbc/wpmDS datasource to conf/context.xml: {}", WPM_DATASOURCE_NAME);
@@ -113,6 +100,12 @@ public class ProjectsInstruction implements Instruction {
         return InstructionStatus.SUCCESS;
     }
 
+    @Override
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+                "Adjust project in several ways to install the 'Projects' feature.");
+    }
+
     private void addDependency(final PluginContext context, String groupId, String artifactId, String type, String scope, String targetPom) {
         DependencyRestful dependency = new DependencyRestful();
         dependency.setGroupId(groupId);
@@ -121,10 +114,5 @@ public class ProjectsInstruction implements Instruction {
         dependency.setScope(scope);
         dependency.setTargetPom(targetPom);
         DependencyUtils.addDependency(context, dependency);
-    }
-
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-        // noop
     }
 }

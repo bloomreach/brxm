@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="create"/>
       <xs:enumeration value="copy"/>
-      <xs:enumeration value="delete"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="cndActionType">

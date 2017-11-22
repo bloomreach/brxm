@@ -39,14 +39,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -80,9 +78,7 @@ public class GalleryPluginResource extends BaseResource {
     public static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     public static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
-    @Inject
-    private EventBus eventBus;
-
+    @Inject private PluginContextFactory contextFactory;
 
     /**
      * Updates an image model
@@ -90,7 +86,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/update")
     public MessageRestful update(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -119,7 +115,7 @@ public class GalleryPluginResource extends BaseResource {
     @POST
     @Path("/remove")
     public MessageRestful remove(final ImageModel payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final String myType = payload.getType();
@@ -171,7 +167,7 @@ public class GalleryPluginResource extends BaseResource {
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
 
         final String imageSetPrefix = values.get("imageSetPrefix");
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final MessageRestful imageSet = createImageSet(context, imageSetPrefix, imageSetName, response);
         final RestfulList<MessageRestful> messages = new RestfulList<>();
 
@@ -224,7 +220,7 @@ public class GalleryPluginResource extends BaseResource {
                         }
                     }
                     // update HST beans, create new ones and update image sets:
-                    final ContentBeansService beansService = new ContentBeansService(context, eventBus);
+                    final ContentBeansService beansService = new ContentBeansService(context);
                     beansService.createBeans();
                     beansService.convertImageMethods(newImageNamespace);
                     // add beanwriter messages
@@ -241,7 +237,7 @@ public class GalleryPluginResource extends BaseResource {
                         messages.add(new MessageRestful("Successfully created image folder: " + absPath + '/' + imageSetName));
                     }
                     // update HST beans, create new ones and *do not* update image sets:
-                    final ContentBeansService beansService = new ContentBeansService(context, eventBus);
+                    final ContentBeansService beansService = new ContentBeansService(context);
                     beansService.createBeans();
                     // add beanwriter messages
                     BeanWriterUtils.populateBeanwriterMessages(context, messages);
@@ -286,7 +282,7 @@ public class GalleryPluginResource extends BaseResource {
         }
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final boolean created = GalleryUtils.createImagesetVariant(context, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
         if (created) {
             // add processor node:
@@ -310,7 +306,7 @@ public class GalleryPluginResource extends BaseResource {
     public void scheduleImageScript(final PluginContext context) {
         // schedule updater script so new variants are created:
         final XmlInstruction instruction = new XmlInstruction();
-        instruction.setAction(PluginInstruction.COPY);
+        instruction.setActionEnum(XmlInstruction.Action.COPY);
         instruction.setSource("image_set_updater.xml");
         instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
         final InstructionExecutor executor = new PluginInstructionExecutor();
@@ -348,7 +344,7 @@ public class GalleryPluginResource extends BaseResource {
     public List<GalleryModel> fetchExisting(@Context ServletContext servletContext) {
 
         final List<GalleryModel> models = new ArrayList<>();
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         try {
             final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HIPPOGALLERY_IMAGE_SET, true);
 

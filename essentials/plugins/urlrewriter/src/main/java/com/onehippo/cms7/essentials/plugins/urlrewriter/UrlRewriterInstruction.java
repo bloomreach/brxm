@@ -17,15 +17,17 @@
 package com.onehippo.cms7.essentials.plugins.urlrewriter;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.xml.bind.JAXBException;
+
+import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,23 +43,7 @@ public class UrlRewriterInstruction implements Instruction {
     private static final String FILTER_NAME = "RewriteFilter";
 
     @Override
-    public String getMessage() {
-        return "Install URL Rewriter filter into Site web.xml";
-    }
-
-    @Override
-    public void setMessage(String message) { }
-
-    @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(String action) { }
-
-    @Override
-    public InstructionStatus process(PluginContext context, InstructionStatus previousStatus) {
+    public InstructionStatus execute(PluginContext context) {
         if (!WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
             return InstructionStatus.FAILED;
         }
@@ -86,7 +72,10 @@ public class UrlRewriterInstruction implements Instruction {
     }
 
     @Override
-    public void processPlaceholders(final Map<String, Object> data) { }
+    public Multimap<MessageGroup, String> getChangeMessages() {
+        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+                "Install URL Rewriter filter into Site web.xml.");
+    }
 
     private String readResource(final String resourcePath) throws IOException {
         return IOUtils.toString(getClass().getClassLoader().getResourceAsStream(resourcePath));
