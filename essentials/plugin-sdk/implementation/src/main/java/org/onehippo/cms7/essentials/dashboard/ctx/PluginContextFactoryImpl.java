@@ -16,12 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
 
-import javax.inject.Singleton;
-
 import org.springframework.stereotype.Component;
 
 @Component
-@Singleton
 public class PluginContextFactoryImpl implements PluginContextFactory {
     public PluginContext getContext() {
         return new DefaultPluginContext();

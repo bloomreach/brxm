@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -57,12 +56,9 @@ public abstract class BuiltinInstruction implements Instruction {
 
     @Override
     public Multimap<MessageGroup, String> getChangeMessages() {
-
         String message = getMessage();
         if (message != null) {
-            final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-            result.put(defaultGroup, message);
-            return result;
+            return Instruction.makeChangeMessages(defaultGroup, message);
         }
 
         return getDefaultChangeMessages();
