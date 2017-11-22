@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture, async, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
@@ -118,7 +118,6 @@ describe('Create content step 2 component', () => {
   });
 
   it('should detect ESC keypress', fakeAsync(() => {
-    fixture.detectChanges();
     spyOn(component, 'close');
     const event = new KeyboardEvent('keypress');
     Object.defineProperty(event, 'which', { value: 27 });
@@ -179,14 +178,12 @@ describe('Create content step 2 component', () => {
     });
 
     it('calls the confirmation dialog', () => {
-      // fixture.detectChanges();
       spyOn(component, 'discardAndClose').and.callThrough();
       component.close();
       expect(dialogService.confirm).toHaveBeenCalled();
     });
 
     it('calls discardAndClose method to confirm document discard and close the panel', () => {
-      fixture.detectChanges();
       spyOn(component, 'discardAndClose').and.returnValue(Promise.resolve());
       component.close();
       expect(component.discardAndClose).toHaveBeenCalled();
@@ -208,9 +205,7 @@ describe('Create content step 2 component', () => {
       });
     });
 
-    it('will not discard the document when cancel is clicked', () => {
-      fixture.detectChanges();
-
+    it('does not discard the document when cancel is clicked', () => {
       spyOn(component, 'discardAndClose').and.returnValue(Promise.reject(null));
 
       component.close().catch(() => {
