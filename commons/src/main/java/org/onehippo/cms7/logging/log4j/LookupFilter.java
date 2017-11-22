@@ -49,7 +49,43 @@ import org.apache.logging.log4j.message.Message;
 @Plugin(name = "LookupFilter", category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = true)
 public class LookupFilter extends AbstractFilter {
 
-    private Interpolator interpolator = new Interpolator(null, null);
+    /**
+     * Extended Interpolator to intercept its lookup methods to guard against invocation from within the
+     * Java System FinalizerThread which does <em>not</em> have a contextClassLoader set.
+     * In that scenario a jndi key lookup will fail (on Tomcat) with a
+     * <pre>ClassNotFoundException: org.apache.naming.java.javaURLContextFactory</pre>
+     * To fix this the Thread currentContextClassLoader is temporarily set to the classloader of this class.
+     */
+    private Interpolator interpolator = new Interpolator(null, null) {
+        @Override
+        public String lookup(final LogEvent event, final String var) {
+            final boolean noContextClassLoader = Thread.currentThread().getContextClassLoader() == null;
+            try {
+                if (noContextClassLoader) {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                }
+                return super.lookup(event, var);
+            } finally {
+                if (noContextClassLoader) {
+                    Thread.currentThread().setContextClassLoader(null);
+                }
+            }
+        }
+        @Override
+        public String lookup(final String key) {
+            final boolean noContextClassLoader = Thread.currentThread().getContextClassLoader() == null;
+            try {
+                if (noContextClassLoader) {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                }
+                return super.lookup(key);
+            } finally {
+                if (noContextClassLoader) {
+                    Thread.currentThread().setContextClassLoader(null);
+                }
+            }
+        }
+    };
 
     private final String key;
     private final String value;
