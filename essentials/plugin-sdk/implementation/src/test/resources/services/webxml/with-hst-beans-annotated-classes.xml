@@ -10,6 +10,7 @@
   <context-param>
     <param-name>hst-beans-annotated-classes</param-name>
     <param-value>classpath*:org/onehippo/gorge/**/*.class,
-      classpath*:org/onehippo/morge/**/*.class</param-value>
+      classpath*:org/onehippo/morge/**/*.class
+    </param-value>
   </context-param>
 </web-app>

@@ -61,6 +61,7 @@
       <xs:element type="translationsType" name="translations" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="hstBeanClassesType" name="hst-bean-classes" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
     <xs:attribute use="optional" name="group" default="default" type="xs:string"/>
   </xs:complexType>
@@ -170,6 +171,15 @@
       </xs:annotation>
     </xs:attribute>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
+  </xs:complexType>
+
+  <xs:complexType name="hstBeanClassesType" mixed="true">
+    <xs:attribute use="required" name="pattern" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Pattern for classpath scanning of annotated HST bean classes, e.g. 'classpath*:org/example/**/*.class'.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 

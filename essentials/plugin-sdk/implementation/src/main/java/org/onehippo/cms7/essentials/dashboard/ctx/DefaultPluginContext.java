@@ -429,10 +429,4 @@ public class DefaultPluginContext implements PluginContext {
             placeholderData.put(placeholderName, "1970-01-01T01:00:00.000+01:00");
         }
     }
-
-
-
-
-
-
 }
