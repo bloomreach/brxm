@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Injector, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
@@ -27,6 +27,7 @@ import { FieldsEditorDirective } from '../fieldsEditor/fields-editor.component';
 import { SharedspaceToolbarDirective } from '../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
 import { NameUrlFieldsDialogComponent } from './step-2/name-url-fields-dialog/name-url-fields-dialog';
 import { DocumentLocationFieldComponent } from './document-location/document-location-field.component';
+import { CapitalizePipe } from '../../../../shared/pipes/capitalize.pipe';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import { DocumentLocationFieldComponent } from './document-location/document-loc
     HintsComponent,
     NameUrlFieldsComponent,
     NameUrlFieldsDialogComponent,
-    DocumentLocationFieldComponent
+    DocumentLocationFieldComponent,
+    CapitalizePipe
   ],
   entryComponents: [
     CreateContentComponent,

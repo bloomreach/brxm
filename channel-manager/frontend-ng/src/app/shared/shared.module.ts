@@ -54,7 +54,7 @@ export const EmptyBreakPointsProvider = {
     EmptyBreakPointsProvider,
     DialogServiceProvider,
     FeedbackServiceProvider,
-    FieldServiceProvider,
+    FieldServiceProvider
   ]
 })
 export class SharedModule {}
