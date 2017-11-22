@@ -133,7 +133,7 @@
   "PUBLISH": "Publish",
   "PUBLISH_ALL": "Publish all",
   "REMOVE": "Remove",
-  "SAVE": "SAVE",
+  "SAVE": "Save",
   "SAVE_CHANGES_TITLE": "Save changes?",
   "SAVE_CHANGES_ON_BLUR_MESSAGE": "'{{documentName}}' has unsaved changes. Do you want to save or discard these changes before opening a new document?",
   "SAVE_CHANGES_ON_CLOSE_CHANNEL": "'{{documentName}}' has unsaved changes. Do you want to save or discard these changes before closing the channel?",
