@@ -21,10 +21,8 @@ import com.google.common.collect.Multimap;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsServlet;
 
@@ -33,12 +31,6 @@ public class LuceneIndexExporterInstruction implements Instruction {
 
     @Override
     public InstructionStatus execute(PluginContext context) {
-        DependencyRestful dependency = new DependencyRestful();
-        dependency.setGroupId("com.onehippo.cms7");
-        dependency.setArtifactId("hippo-addon-lucene-export");
-        dependency.setTargetPom("cms");
-        DependencyUtils.addDependency(context, dependency);
-
         return WebXmlUtils.addServlet(context, TargetPom.CMS, SERVLET_NAME, RepositoryJaxrsServlet.class,
                 6, new String[]{"/ws/*"}) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
@@ -46,6 +38,6 @@ public class LuceneIndexExporterInstruction implements Instruction {
     @Override
     public Multimap<MessageGroup, String> getChangeMessages() {
         return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
-                "Add dependency and ensure availability of '" + SERVLET_NAME + "' through cms web.xml");
+                "Ensure availability of '" + SERVLET_NAME + "' through cms web.xml");
     }
 }

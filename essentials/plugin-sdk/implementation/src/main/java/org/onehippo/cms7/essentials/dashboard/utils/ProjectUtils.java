@@ -200,10 +200,7 @@ public final class ProjectUtils {
 
     public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {
         final File pom = getPomFile(context, targetPom);
-        if (pom == null || !pom.exists()) {
-            throw new IllegalStateException("pom.xml could not be found for:" + targetPom);
-        }
-        return MavenModelUtils.readPom(pom);
+        return (pom != null && pom.exists()) ? MavenModelUtils.readPom(pom) : null;
     }
 
     /**

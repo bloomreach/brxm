@@ -52,7 +52,8 @@ public class PluginInstructionSet implements InstructionSet {
             @XmlElementRef(type = FreemarkerInstruction.class),
             @XmlElementRef(type = FileInstruction.class),
             @XmlElementRef(type = TranslationsInstruction.class),
-            @XmlElementRef(type = HstBeanClassesInstruction.class)
+            @XmlElementRef(type = HstBeanClassesInstruction.class),
+            @XmlElementRef(type = MavenDependencyInstruction.class)
     })
     @Override
     public Set<Instruction> getInstructions() {

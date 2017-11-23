@@ -24,7 +24,8 @@
     <xml action="copy" source="instruction_xml_file.xml" target="/"/>
     <xml action="delete" target="/testNode"/>
     <folder path="/foo/bar/foobar" template="my_folder_template.xml"/>
-    <hst-bean-classes pattern="foo"/>
+    <hstBeanClasses pattern="foo"/>
+    <mavenDependency groupId="group" artifactId="artifact" targetPom="project"/>
   </instructionSet>
   <!-- DEFAULT GROUP-->
   <instructionSet>
