@@ -18,14 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModel;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
-/**
- * @version "$Id$"
- */
 @ApiModel
 @XmlRootElement(name = "message")
 public class MessageRestful implements Restful {

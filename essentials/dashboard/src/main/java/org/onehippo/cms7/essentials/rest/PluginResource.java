@@ -63,14 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-
-
-/**
- * @version "$Id$"
- */
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
