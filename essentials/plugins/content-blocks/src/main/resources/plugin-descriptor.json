@@ -11,6 +11,7 @@
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html",
   "type": "feature",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
+  "packageFile": "/META-INF/content_blocks_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"
   ],
@@ -32,15 +33,6 @@
       "community"
     ]
   },
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-content-blocks",
-      "scope": "compile",
-      "targetPom": "cms"
-    }
-  ],
   "libraries": [
     {
       "items": [

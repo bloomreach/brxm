@@ -11,6 +11,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
+  "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"
   ],
@@ -40,15 +41,6 @@
           "file": "documentWizardPlugin.js"
         }
       ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-dashboard-document-wizard",
-      "scope": "compile",
-      "targetPom": "cms"
     }
   ]
 }
