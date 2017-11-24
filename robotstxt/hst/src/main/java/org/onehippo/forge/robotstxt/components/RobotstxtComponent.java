@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import org.apache.jackrabbit.util.ISO9075;
+
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -30,11 +31,17 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.onehippo.forge.robotstxt.annotated.Robotstxt;
 
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 
+import org.onehippo.forge.robotstxt.annotated.Robotstxt;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RobotstxtComponent extends BaseHstComponent {
+
+    private static final Logger log = LoggerFactory.getLogger(RobotstxtComponent.class);
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) {
@@ -57,7 +64,7 @@ public class RobotstxtComponent extends BaseHstComponent {
         request.setAttribute("document", bean);
 
         // Handle faceted navigation
-        if (isFacetedNavigationDisallowed(request, (Robotstxt)bean)) {
+        if (isFacetedNavigationDisallowed(request, (Robotstxt) bean)) {
             request.setAttribute("disallowedFacNavLinks", getDisallowedFacetNavigationLinks(request, mount));
         }
     }
@@ -75,54 +82,61 @@ public class RobotstxtComponent extends BaseHstComponent {
     /**
      * Disallow faceted navigation URLs.
      * @param request Handle for current request
-     * @param mount   Mount point of current site
+     * @param currentMount   Mount point of current site
      * @return        List of HstLinks, representing Facet Navigation URLs.
      */
-    protected List<HstLink> getDisallowedFacetNavigationLinks(final HstRequest request, final Mount mount) {
-        List<HstLink> disallowedLinks = new ArrayList<HstLink>();
+    protected List<HstLink> getDisallowedFacetNavigationLinks(final HstRequest request, final Mount currentMount) {
+
+        final List<HstLink> disallowedLinks = new ArrayList<>();
+
+        final HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
+        final List<Mount> allMounts = getMountWithSubMounts(currentMount);
 
         try {
-            /**
-             * We're running a JCR query because HST queries don't find facetnavigation nodes.
-             * The query includes all content of the current site (everything under a certain
-             * mount). It has been discussed whether nodes with the hst:authenticated flag
-             * raised should be excluded, but the idea is that facetnavigation nodes would
-             * typically not have this flag raised.
-             */
-
-            final String siteContentBase = mount.getContentPath();
-            final String xpath = "/jcr:root" + ISO9075.encodePath(siteContentBase)
-                    + "//element(*," + FacNavNodeType.NT_FACETNAVIGATION + ")";
-
+            // We're running a JCR query because HST queries don't find facetnavigation nodes.
+            // The query gets all facetnavigation content nodes and matches later to be under the current mount's
+            // content path (or under any submount paths)
             final QueryManager queryManager = request.getRequestContext().getSession().getWorkspace().getQueryManager();
-            final NodeIterator nodeIterator = queryManager.createQuery(xpath, "xpath").execute().getNodes();
-            final HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
+            @SuppressWarnings("deprecation")
+            final Query query = queryManager.createQuery(getFacNavQueryXPath(), Query.XPATH);
+            query.setLimit(getFacNavQueryLimit());
 
+            final NodeIterator nodeIterator = query.execute().getNodes();
             while (nodeIterator.hasNext()) {
-                final Node node = nodeIterator.nextNode();
+                final Node facNavNode = nodeIterator.nextNode();
+
+                final HstLink facNavLink = linkCreator.create(facNavNode, request.getRequestContext());
+                if (facNavLink.isNotFound()) {
+                    log.debug("Not disallowing link for facet nav node {}: its HST link is not-found link '{}'",
+                            facNavNode.getPath(), facNavLink.toUrlForm(request.getRequestContext(), false));
+                    continue;
+                }
+
+                final Mount facNavLinkMount = facNavLink.getMount();
+
+                if (allMounts.stream().noneMatch(mount -> mount.equals(facNavLinkMount))) {
+                    log.debug("Not disallowing links for facet navigation node {} because its link mount {} is not part " +
+                           "of the current mount (or one of its submounts) for paths {}", facNavNode.getPath(),
+                            facNavLink.getMount().getContentPath(), allMounts.stream().map(mount -> mount.getContentPath()).toArray());
+                    continue;
+                }
 
                 // disallow all first level links below facet navigation
-                final NodeIterator facetChildNodesIterator = node.getNodes();
+                final NodeIterator facetChildNodesIterator = facNavNode.getNodes();
                 while (facetChildNodesIterator.hasNext()){
                     final Node facetChildNode = facetChildNodesIterator.nextNode();
 
                     if (!facetChildNode.isNodeType(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION)){
+                        log.debug("Not disallowing link for facet child node {}: it is not of type {} but of type {}",
+                                facetChildNode.getPath(), FacNavNodeType.NT_FACETSAVAILABLENAVIGATION, facetChildNode.getPrimaryNodeType().getName());
                         continue;
                     }
 
                     final HstLink link = linkCreator.create(facetChildNode, request.getRequestContext());
 
                     if (link.isNotFound()) {
-                        continue;
-                    }
-
-                    if (link.getMount() != mount) {
-                        /**
-                         * Some projects combine the content of multiple sites into the same content tree.
-                         * It may then happen that certain (faceted) content is only available on another
-                         * site than the one for which robots.txt has been requested. In order to avoid that
-                         * robots.txt ends up with links to different sites, we exclude such content here.
-                         */
+                        log.debug("Not disallowing link for facet child node {}: its HST link is not-found link '{}'",
+                                facetChildNode.getPath(), link.toUrlForm(request.getRequestContext(), false));
                         continue;
                     }
 
@@ -137,6 +151,49 @@ public class RobotstxtComponent extends BaseHstComponent {
     }
 
     /**
+     * Get the XPath query for searching facet navigation nodes, that are to be checked for exclusion.
+     */
+    protected String getFacNavQueryXPath() {
+        return "//element(*, " + FacNavNodeType.NT_FACETNAVIGATION + ")";
+    }
+
+    /**
+     * Get the limit used in the query for facet navigation nodes, that are to be checked for exclusion.
+     */
+    protected long getFacNavQueryLimit() {
+        long limit = 200;
+        final String limitStr = this.getComponentParameter("facnavQueryLimit");
+        if (limitStr != null) {
+            try {
+                limit = Long.valueOf(limitStr);
+            }
+            catch (NumberFormatException nfe) {
+                log.warn("Value {} for parameter facnavQueryLimit is not a long, falling back to limit {}", limitStr, limit);
+            }
+        }
+        return limit;
+    }
+
+    /**
+     * Get a list of the mount content base path, plus all content base paths of its child mounts.
+     */
+    protected List<Mount> getMountWithSubMounts(Mount mount) {
+
+        final List<Mount> allMounts = new ArrayList<>();
+
+        allMounts.add(mount);
+
+        // add only live submounts recursively (no preview or composer (_rp) types)
+        for (Mount subMount : mount.getChildMounts()) {
+            if (subMount.isOfType(Mount.LIVE_NAME)) {
+                allMounts.addAll(getMountWithSubMounts(subMount));
+            }
+        }
+
+        return allMounts;
+    }
+
+    /**
      * Overridable logic to disallow all URLs for preview sites (setting the "disallowAll" flag)
      *
      * @param request Handle for current request
@@ -144,6 +201,6 @@ public class RobotstxtComponent extends BaseHstComponent {
      * @return        true if mount is of type "preview"
      */
     protected boolean disallowPreviewMount(final HstRequest request, final Mount mount) {
-        return "preview".equals(mount.getType());
+        return mount.isOfType(Mount.PREVIEW_NAME);
     }
 }
