@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 package org.hippoecm.hst.restapi.content.search;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,6 +27,7 @@ import javax.jcr.Session;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
 import org.onehippo.cms7.services.search.result.Hit;
@@ -51,35 +54,39 @@ public class SearchResult {
     public boolean more;
 
     @JsonProperty("items")
-    public SearchResultItem[] items;
+    public List<Map<String, Object>> items;
 
     public void populateFromDocument(final int offset, final int max,
                                      final QueryResult queryResult,
                                      final ResourceContext context) throws RepositoryException {
-        final List<SearchResultItem> itemArrayList = new ArrayList<>();
+        final List<Map<String, Object>> itemArrayList = new ArrayList<>();
         final HitIterator iterator = queryResult.getHits();
         final Session session = context.getRequestContext().getSession();
         final RestApiLinkCreator restApiLinkCreator = context.getRestApiLinkCreator();
         while (iterator.hasNext()) {
             final Hit hit = iterator.nextHit();
             final String variantUUID = hit.getSearchDocument().getContentId().toIdentifier();
-            final Node handleNode = session.getNodeByIdentifier(variantUUID).getParent();
+            final Node node = session.getNodeByIdentifier(variantUUID);
+            final Node handleNode = node.getParent();
             if (!handleNode.isNodeType(NT_HANDLE)) {
                 throw new IllegalStateException(String.format("Expected node of type 'NT_HANDLE' but was '%s'.",
                         handleNode.getPrimaryNodeType().getName()));
             }
 
+            final Map<String, Object> response = new LinkedHashMap<>();
+            response.put("name", handleNode.getName());
+            response.put("id", handleNode.getIdentifier());
             final HstLink hstLink = context.getRequestContext().getHstLinkCreator().create(handleNode, context.getRequestContext());
-            final SearchResultItem item = new SearchResultItem(handleNode.getName(), handleNode.getIdentifier(), restApiLinkCreator.convert(context, handleNode.getIdentifier(), hstLink));
-            itemArrayList.add(item);
-
-            this.offset = offset;
-            this.max = max;
-            count = itemArrayList.size();
-            total = queryResult.getTotalHitCount();
-            more = (offset + count) < total;
-            items = new SearchResultItem[(int)count];
-            itemArrayList.toArray(items);
+            response.put("link", restApiLinkCreator.convert(context, handleNode.getIdentifier(), hstLink));
+            final NodeVisitor visitor = context.getVisitor(node);
+            visitor.visit(context, node, response);
+            itemArrayList.add(response);
         }
+        this.offset = offset;
+        this.max = max;
+        count = itemArrayList.size();
+        total = queryResult.getTotalHitCount();
+        more = (offset + count) < total;
+        items = itemArrayList;
     }
 }

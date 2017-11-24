@@ -17,6 +17,7 @@
 package org.hippoecm.hst.restapi.content;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,6 +75,7 @@ public class DocumentsResource extends AbstractResource {
     public Logger getLogger() {
         return log;
     }
+
 
     public void setMaxSearchResultItems(final Integer maxSearchResultItems) {
         if (maxSearchResultItems != null) {
@@ -141,6 +143,13 @@ public class DocumentsResource extends AbstractResource {
         throw new IllegalArgumentException(String.format("_nodetype must be of (sub)type: '%s'", NT_DOCUMENT));
     }
 
+    private List<String> parseAttributes(final String attributeString) {
+        if (attributeString == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(attributeString.split(","));
+    }
+
     private List<String> parseOrderBy(final String orderBy) {
         return Arrays.asList(StringUtils.split(orderBy, ','));
     }
@@ -171,9 +180,11 @@ public class DocumentsResource extends AbstractResource {
                                  @QueryParam("_query") final String queryString,
                                  @QueryParam("_nodetype") final String nodeTypeString,
                                  @QueryParam("_orderBy") @DefaultValue(HIPPOSTDPUBWF_PUBLICATION_DATE) final String orderBy,
-                                 @QueryParam("_sortOrder") @DefaultValue("descending") final String sortOrder) {
+                                 @QueryParam("_sortOrder") @DefaultValue("descending") final String sortOrder,
+                                 @QueryParam("_attributes") final String attributeString) {
         try {
-            ResourceContext context = getResourceContextFactory().createResourceContext();
+            final List<String> includedAttributes = parseAttributes(attributeString);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
@@ -246,9 +257,11 @@ public class DocumentsResource extends AbstractResource {
 
     @GET
     @Path("/documents/{uuid}")
-    public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
+    public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString,
+                                       @QueryParam("_attributes") final String attributeString) {
         try {
-            final ResourceContext context = getResourceContextFactory().createResourceContext();
+            final List<String> includedAttributes = parseAttributes(attributeString);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
