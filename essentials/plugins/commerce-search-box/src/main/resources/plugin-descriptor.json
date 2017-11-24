@@ -21,40 +21,5 @@
     "type": [
       "feature"
     ]
-  },
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-addon-crisp-api",
-      "scope": "compile",
-      "version": "${hippo.addon-crisp.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-addon-crisp-repository",
-      "scope": "compile",
-      "version": "${hippo.addon-crisp.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "com.onehippo.cms7",
-      "artifactId": "hippo-addon-personalization-components-repository",
-      "scope": "compile",
-      "version": "${hippo.addon-personalization.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "com.onehippo.cms7",
-      "artifactId": "hippo-addon-personalization-dependencies",
-      "scope": "compile",
-      "type": "pom",
-      "version": "${hippo.addon-personalization.version}",
-      "targetPom": "site"
-    }
-  ]
+  }
 }

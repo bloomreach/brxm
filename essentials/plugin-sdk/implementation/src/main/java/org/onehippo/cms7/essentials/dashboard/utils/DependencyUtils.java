@@ -207,15 +207,15 @@ public final class DependencyUtils {
                 //check if versions match:    (TODO fix placeholder versions)
                 final String currentVersion = projectDependency.getVersion();
                 if (Strings.isNullOrEmpty(currentVersion) || currentVersion.indexOf('$') != -1) {
-                    log.warn("Current version couldn't be resolved {}", currentVersion);
+                    if (!ourVersion.equals(currentVersion)) {
+                        log.warn("Current version couldn't be resolved {}", currentVersion);
+                    }
                     return true;
                 }
                 return VersionUtils.compareVersionNumbers(currentVersion, ourVersion) >= 0;
             }
         }
         return false;
-
-
     }
 
     public static boolean upgradeToEnterpriseProject(final PluginContext context) {
