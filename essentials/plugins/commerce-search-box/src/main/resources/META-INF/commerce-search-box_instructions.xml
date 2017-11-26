@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet group="default">
+    <xml action="copy" source="hst/product-search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="hst/product-search-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
+    <file action="copy" binary="false" overwrite="false" source="css/categories.css" target="{{webfilesRoot}}/css/categories.css"/>
+    <file action="copy" binary="false" overwrite="false" source="hst/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
+    <file action="copy" binary="true" overwrite="false" source="css/jquery.typeahead.min.css" target="{{webfilesRoot}}/css/jquery.typeahead.min.css"/>
+    <file action="copy" binary="true" overwrite="false" source="js/jquery.typeahead.min.js" target="{{webfilesJsRoot}}/jquery.typeahead.min.js"/>
+    <xml action="copy" overwrite="false" source="xml/commerce-search-box.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" overwrite="false" source="images/commerce-search-box.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-search-box.png"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-main.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-main.ftl"/>
+    <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-autosuggest.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-autosuggest.ftl"/>
+    <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-product-list.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-product-list.ftl"/>
+    <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-category-list.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-category-list.ftl"/>
+    <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-box.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-box.ftl"/>
+    <!-- templates-->
+    <xml action="copy" overwrite="false" source="hst/commerce-search-product-list-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-category-list-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-box-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-box-autosuggest-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-main-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+</instructions>
