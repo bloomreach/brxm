@@ -35,7 +35,11 @@
   <modules>
     <module>banner-and-carousel</module>
     <module>bean-writer</module>
+    <module>bloomreach-connector</module>
     <module>blog</module>
+    <module>commerce-detail</module>
+    <module>commerce-more-like-this</module>
+    <module>commerce-product-grid</module>
     <module>commerce-search-box</module>
     <module>commerce-search-results-category</module>
     <module>commerce-search-results-products</module>
@@ -66,12 +70,6 @@
     <module>video</module>
     <module>google-maps</module>
     <module>urlrewriter</module>
-    <module>bloomreach-connector</module>
-    <module>more-like-this</module>
-    <module>products-category</module>
-    <module>products-grid</module>
-    <module>products-grid-category</module>
-    <module>products-grid-query</module>
     <module>lucene-index-exporter</module>
   </modules>
 
