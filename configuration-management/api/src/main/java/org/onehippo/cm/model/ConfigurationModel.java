@@ -23,6 +23,8 @@ import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.DefinitionProperty;
 
 /**
  * Represents a combined representation of configuration data from multiple groups, projects, modules, and sources.
@@ -52,7 +54,7 @@ public interface ConfigurationModel extends Closeable {
     /**
      * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
      */
-    ConfigurationNode getConfigurationRootNode();
+    ConfigurationNode<? extends DefinitionNode> getConfigurationRootNode();
 
     /**
      * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
@@ -73,13 +75,13 @@ public interface ConfigurationModel extends Closeable {
      * @param path the path of a node
      * @return a ConfigurationNode or null, if no node exists with this path
      */
-    ConfigurationNode resolveNode(String path);
+    ConfigurationNode<? extends DefinitionNode> resolveNode(String path);
 
     /**
      * Find a ConfigurationProperty by its absolute path.
      * @param path the path of a property
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
-    ConfigurationProperty resolveProperty(String path);
+    ConfigurationProperty<? extends DefinitionProperty> resolveProperty(String path);
 
 }
