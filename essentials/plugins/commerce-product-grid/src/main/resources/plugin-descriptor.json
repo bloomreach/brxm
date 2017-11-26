@@ -1,0 +1,61 @@
+{
+  "vendor": {
+    "@type": "vendor",
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "name": "Commerce Product Grid",
+  "introduction": "With Commerce Product Grid you can place BloomReach Personalization Product Grids directly onto your page. This feature will be installed as a drag-and-drop component in the Channel Manager. With this component you can select the product grid matching the your BloomReach Category ID or Query you want to show.",
+  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. Also, you need a BloomReach Personalization license in order to use this component.",
+  "id": "commerce-product-grid",
+  "hasConfiguration": false,
+  "packageFile": "/META-INF/commerce-product-grid_instructions.xml",
+  "type": "feature",
+  "icon": "/essentials/images/commerce-products-grid.png",
+  "categories": {
+    "license": [
+      "enterprise"
+    ],
+    "application": [
+      "personalization"
+    ],
+    "type": [
+      "feature"
+    ]
+  },
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-addon-crisp-api",
+      "scope": "compile",
+      "version": "${hippo.addon-crisp.version}",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-addon-crisp-repository",
+      "scope": "compile",
+      "version": "${hippo.addon-crisp.version}",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-personalization-components-repository",
+      "scope": "compile",
+      "version": "${hippo.addon-personalization.version}",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-personalization-dependencies",
+      "scope": "compile",
+      "type": "pom",
+      "version": "${hippo.addon-personalization.version}",
+      "targetPom": "site"
+    }
+  ]
+}
