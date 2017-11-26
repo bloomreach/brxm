@@ -36,6 +36,8 @@
     <module>banner-and-carousel</module>
     <module>bean-writer</module>
     <module>blog</module>
+    <module>commerce-search-results-category</module>
+    <module>commerce-search-results-products</module>
     <module>content-blocks</module>
     <module>document-wizard</module>
     <module>events</module>

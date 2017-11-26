@@ -219,6 +219,7 @@
                 <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/webxml/**</exclude>
                 <exclude>plugins/rest-services/src/main/resources/BeanNameResource.txt</exclude>
                 <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
+                <exclude>**/target/**</exclude>
               </excludes>
             </configuration>
           </plugin>
