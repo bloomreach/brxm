@@ -87,7 +87,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         if (!EditingUtils.canCreateDraft(workflow)) {
             throw new ForbiddenException(
-                    withDisplayName(EditingUtils.determineEditingFailure(workflow, session).orElse(null), handle)
+                    withDisplayName(EditingUtils.determineEditingFailure(workflow, session).orElse(new ErrorInfo(Reason.SERVER_ERROR)), handle)
             );
         }
 
@@ -98,7 +98,7 @@ class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
+        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR)));
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -121,7 +121,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         if (!EditingUtils.canUpdateDraft(workflow)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
@@ -129,7 +129,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException();
+            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
         }
 
         // Push fields onto draft node
@@ -140,7 +140,7 @@ class DocumentsServiceImpl implements DocumentsService {
             session.save();
         } catch (final RepositoryException e) {
             log.warn("Failed to save changes to draft node of document {}", uuid, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
         if (!FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields())) {
@@ -162,7 +162,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.WORKFLOW_ERROR)));
 
         if (!EditingUtils.canUpdateDraft(workflow)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
@@ -170,7 +170,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException();
+            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
         }
 
         // Write field value to draft node
@@ -180,7 +180,7 @@ class DocumentsServiceImpl implements DocumentsService {
                 session.save();
             } catch (final RepositoryException e) {
                 log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
-                throw new InternalServerErrorException();
+                throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
             }
         }
     }
@@ -199,7 +199,7 @@ class DocumentsServiceImpl implements DocumentsService {
             workflow.disposeEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to dispose of editable instance", e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -257,7 +257,7 @@ class DocumentsServiceImpl implements DocumentsService {
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -269,7 +269,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final Node folder = FolderUtils.getFolder(handle);
         final String folderLocale = FolderUtils.getLocale(folder);
-        final String handlePath = JcrUtils.getNodePathQuietly(handle);
+        final String handlePath = getNodePathQuietly(handle);
 
         final String newUrlName = DocumentNameUtils.encodeUrlName(urlName, folderLocale);
         final String oldUrlName = DocumentNameUtils.getUrlName(handle);
@@ -317,7 +317,7 @@ class DocumentsServiceImpl implements DocumentsService {
         // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
         if (EditingUtils.hasPreview(documentWorkflow)) {
             log.warn("Forbade to erase document '{}': it already has a preview variant", uuid);
-            throw new ForbiddenException();
+            throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         }
 
         // No preview indeed, so erase the draft document
@@ -328,8 +328,8 @@ class DocumentsServiceImpl implements DocumentsService {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
             log.warn("Forbade to erase document '{}': not allowed by the workflow of folder '{}'",
-                    JcrUtils.getNodeNameQuietly(handle), JcrUtils.getNodePathQuietly(folder));
-            throw new ForbiddenException();
+                    JcrUtils.getNodeNameQuietly(handle), getNodePathQuietly(folder));
+            throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         }
     }
 
@@ -339,7 +339,7 @@ class DocumentsServiceImpl implements DocumentsService {
             documentWorkflow.delete();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to archive document '{}'", uuid, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -349,7 +349,7 @@ class DocumentsServiceImpl implements DocumentsService {
             folderWorkflow.delete(handle.getName());
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to erase document '{}'", uuid, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -370,7 +370,7 @@ class DocumentsServiceImpl implements DocumentsService {
 
         final Document document = assembleDocument(handle.getIdentifier(), handle, docType);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(InternalServerErrorException::new);
+                .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
     }
@@ -378,7 +378,7 @@ class DocumentsServiceImpl implements DocumentsService {
     private static Node getHandle(final String uuid, final Session session) throws ErrorWithPayloadException {
         return DocumentUtils.getHandle(uuid, session)
                 .filter(DocumentsServiceImpl::isValidHandle)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
     }
 
     private static boolean isValidHandle(final Node handle) {
@@ -388,16 +388,16 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
-        final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(InternalServerErrorException::new);
+        final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         try {
             return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
         } catch (final RepositoryException e) {
             log.warn("Failed to retrieve JCR session for node '{}'", getNodePathQuietly(handle), e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         } catch (final ErrorWithPayloadException e) {
             log.warn("Failed to retrieve type of document '{}'", getNodePathQuietly(handle), e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 

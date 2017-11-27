@@ -77,6 +77,7 @@ public class ErrorInfo {
     }
 
     public enum Reason {
+        DOES_NOT_EXIST,
         ALREADY_DELETED,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         INVALID_DATA,
@@ -90,6 +91,8 @@ public class ErrorInfo {
         NOT_A_FOLDER,
         NAME_ALREADY_EXISTS,
         SLUG_ALREADY_EXISTS,
+        SERVER_ERROR,
+        WORKFLOW_ERROR,
         // add more specific failure reasons here.
     }
 }
