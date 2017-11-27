@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -33,11 +35,8 @@ import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
-import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ADDON_EDITION_INDICATOR_ARTIFACT_ID;
-import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_GROUP_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_NAME;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_URL;
@@ -238,12 +237,19 @@ public final class DependencyUtils {
             parent.setVersion(pomModel.getParent().getVersion());
             pomModel.setParent(parent);
 
-            // add indicator:
+            // add edition indicator:
             final Model cmsModel = ProjectUtils.getPomModel(context, TargetPom.CMS);
             final Dependency indicator = new Dependency();
-            indicator.setArtifactId(ADDON_EDITION_INDICATOR_ARTIFACT_ID);
+            indicator.setArtifactId("hippo-addon-edition-indicator");
             indicator.setGroupId(ENT_GROUP_ID);
             cmsModel.addDependency(indicator);
+
+            // add enterprise package of app dependencies
+            final Dependency enterpriseApp = new Dependency();
+            enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
+            enterpriseApp.setGroupId(ENT_GROUP_ID);
+            cmsModel.addDependency(enterpriseApp);
+
             MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
             return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
         }

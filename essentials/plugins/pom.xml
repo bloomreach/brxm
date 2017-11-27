@@ -71,6 +71,7 @@
     <module>google-maps</module>
     <module>urlrewriter</module>
     <module>lucene-index-exporter</module>
+    <module>enterprise-project</module>
   </modules>
 
   <dependencyManagement>
