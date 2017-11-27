@@ -39,7 +39,7 @@
                         </td>
                         <td>{{doc.name}}</td>
                         <td>
-                            <input type="text" ng-model="doc.searchPaths" ng-required="doc.checked" name="searchPaths"/>
+                            <input type="text" ng-model="doc.searchPaths" ng-required="doc.checked" name="searchPaths" ng-disabled="!doc.checked"/>
                             <essentials-folder-picker button-text="Select search folder"
                                                       title="Select search folder"
                                                       selected-path="doc.searchPaths"
@@ -47,7 +47,7 @@
                                                       end-point="{{endpoint}}"/>
                         </td>
                         <td>
-                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="doc.checked" name="numberOfSuggestions" />
+                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="doc.checked" name="numberOfSuggestions" ng-disabled="!doc.checked"/>
                         </td>
                         <td>
                             <essentials-cms-document-type-deep-link
