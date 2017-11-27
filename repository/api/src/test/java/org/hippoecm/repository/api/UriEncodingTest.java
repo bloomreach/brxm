@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.api;
 
+import java.text.Normalizer;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,9 +75,17 @@ public class UriEncodingTest {
         assertEquals("aaaaaaaeceeeeiiiidnoooooouuuuyyssaaaaaaaeceeeeiiiidnoooooouuuuuyy",
               uri.encode("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ"));
 
+        // still works when input is decomposed to separate accent chars?
+        assertEquals("aaaaaaaeceeeeiiiidnoooooouuuuyyssaaaaaaaeceeeeiiiidnoooooouuuuuyy",
+              uri.encode(Normalizer.normalize("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ", Normalizer.Form.NFD)));
+
         // complete Unicode Latin Extended-A
         assertEquals("aaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiiijijjjkkkllllllllllnnnnnnnnnoooooooeoerrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzs",
               uri.encode("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"));
+
+        // still works when input is decomposed to separate accent chars?
+        assertEquals("aaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiiijijjjkkkllllllllllnnnnnnnnnoooooooeoerrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzs",
+                uri.encode(Normalizer.normalize("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ", Normalizer.Form.NFD)));
 
         // 0x201x subrange of Unicode General Punctuation
         assertEquals("--------with-ending", uri.encode("‐‑‒–—―‖‗‘’‚‛“”„‟with-ending"));
