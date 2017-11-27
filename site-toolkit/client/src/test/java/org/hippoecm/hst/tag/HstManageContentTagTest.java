@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import org.hamcrest.CoreMatchers;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -30,16 +30,14 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -53,17 +51,15 @@ import static javax.servlet.jsp.tagext.Tag.EVAL_PAGE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class HstManageContentTagTest {
 
     private MockHstRequestContext hstRequestContext;
     private MockPageContext pageContext;
     private MockHttpServletResponse response;
+    private MockHstComponentWindow window;
     private HstManageContentTag tag;
 
     @Before
@@ -75,7 +71,7 @@ public class HstManageContentTagTest {
         final MockServletContext servletContext = new MockServletContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        final MockHstComponentWindow window = new MockHstComponentWindow();
+        window = new MockHstComponentWindow();
         window.setComponent(new TestComponent());
         request.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
 
@@ -225,7 +221,9 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"componentParameter\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"componentParameterIsRelativePath\":\"false\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
@@ -240,7 +238,9 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"componentParameter\":\"relPath\","
-                + "\"componentParameterIsRelativePath\":\"true\""
+                + "\"componentParameterIsRelativePath\":\"true\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
@@ -287,6 +287,83 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"componentParameter\":\"test\","
                 + "\"componentParameterIsRelativePath\":\"false\""
+                + "} -->"));
+    }
+
+    @Test
+    public void componentValueAbsolutePath() throws Exception {
+        window.setLocalParameter("absPath", "/absolute/path");
+
+        tag.setComponentParameter("absPath");
+        final HippoBean document = createMock(HippoBean.class);
+        tag.setDocument(document);
+
+        final MockNode root = MockNode.root();
+        final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+        expect(document.getNode()).andReturn(handle);
+        replay(document);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- "
+                + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\","
+                + "\"componentParameter\":\"absPath\","
+                + "\"componentParameterIsRelativePath\":\"false\","
+                + "\"componentValue\":\"/absolute/path\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "} -->"));
+    }
+
+    @Test
+    public void componentValueRelativePath() throws Exception {
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/mount/path").anyTimes();
+
+        hstRequestContext.setResolvedMount(resolvedMount);
+        window.setLocalParameter("relPath", "relative/path");
+
+        tag.setComponentParameter("relPath");
+        final HippoBean document = createMock(HippoBean.class);
+        tag.setDocument(document);
+
+        final MockNode root = MockNode.root();
+        final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+        expect(document.getNode()).andReturn(handle);
+
+        replay(resolvedMount, mount, document);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- "
+                + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\","
+                + "\"componentParameter\":\"relPath\","
+                + "\"componentParameterIsRelativePath\":\"true\","
+                + "\"componentValue\":\"/mount/path/relative/path\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "} -->"));
+    }
+
+    @Test
+    public void componentPickerConfiguration() throws Exception {
+        tag.setComponentParameter("pickerPath");
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"componentParameter\":\"pickerPath\","
+                + "\"componentParameterIsRelativePath\":\"true\","
+                + "\"componentPickerConfiguration\":\"picker-config\","
+                + "\"componentPickerInitialPath\":\"initial-path\","
+                + "\"componentPickerRemembersLastVisited\":\"false\","
+                + "\"componentPickerRootPath\":\"root-path\","
+                + "\"componentPickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
                 + "} -->"));
     }
 
@@ -423,7 +500,19 @@ public class HstManageContentTagTest {
         @JcrPath(isRelative = true)
         String getRelPath();
 
+        @Parameter(name = "pickerPath")
+        @JcrPath(
+                isRelative = true,
+                pickerInitialPath = "initial-path",
+                pickerRootPath = "root-path",
+                pickerConfiguration = "picker-config",
+                pickerRemembersLastVisited = false,
+                pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
+        )
+        String getPickerPath();
+
         @Parameter(name = "string")
         String getString();
     }
+
 }
