@@ -39,7 +39,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         private CmsSessionContextImpl cmsCtx;
         private Map<String, CmsSessionContextImpl> sharedContextsMap;
         private Map<String, Object> dataMap;
-        private Map<String, Object> attributeMap;
 
         private HttpSession session;
 
@@ -48,14 +47,12 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
-            attributeMap = new ConcurrentHashMap<>();
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
             this.service = service;
             cmsCtx = ctx.cmsCtx;
             dataMap = ctx.dataMap;
-            attributeMap = ctx.attributeMap;
             sharedContextsMap = ctx.sharedContextsMap;
             sharedContextsMap.put(id, this);
         }
@@ -75,22 +72,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             return dataMap.get(key);
         }
 
-        @Override
-        public Object setAttribute(String key, Object value) {
-            return attributeMap.put(key, value);
-        }
-
-        @Override
-        public Object getAttribute(String key) {
-            return attributeMap.get(key);
-        }
-
-        @Override
-        public Object removeAttribute(final String key) {
-            return attributeMap.remove(key);
-        }
-
-
         private synchronized void detach() {
             if (service != null) {
 
@@ -104,7 +85,8 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                         iter.remove();
                         ctx.detach();
                     }
-                } else {
+                }
+                else {
                     // will already be removed in case cmsCtx itself is being detached
                     sharedContextsMap.remove(id);
                     removeDeprecatedHSTSessionAttributes();
@@ -123,13 +105,11 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
                 dataMap = Collections.emptyMap();
-                attributeMap = Collections.emptyMap();
             }
         }
 
         /**
          * TODO: remove this for *HST* 5.0 when these deprecated attributes will be dropped from ContainerConstants
-         *
          * @Deprecated
          */
         @Deprecated
@@ -164,7 +144,8 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         public void valueBound(final HttpSessionBindingEvent event) {
             if (session == null && SESSION_KEY.equals(event.getName())) {
                 session = event.getSession();
-            } else {
+            }
+            else {
                 // don't allow storing this instance under any other session attribute and/or any other session
                 event.getSession().removeAttribute(event.getName());
             }
@@ -214,7 +195,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public synchronized CmsSessionContext create(final HttpSession session) {
-        CmsSessionContextImpl ctx = (CmsSessionContextImpl) session.getAttribute(SESSION_KEY);
+        CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
         if (ctx == null) {
             ctx = new CmsSessionContextImpl(this);
             try {
@@ -231,7 +212,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public void setData(CmsSessionContext ctx, String key, Object data) {
-        ((CmsSessionContextImpl) ctx).dataMap.put(key, data);
+        ((CmsSessionContextImpl)ctx).dataMap.put(key, data);
     }
-
 }
