@@ -181,32 +181,27 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-products-grid</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-more-like-this</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-products-category</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-products-grid-query</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-products-grid-category</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-bloomreach-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-commerce-detail</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-commerce-more-like-this</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-commerce-product-grid</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-commerce-search-box</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -217,11 +212,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-commerce-search-results-products</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-commerce-search-box</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
