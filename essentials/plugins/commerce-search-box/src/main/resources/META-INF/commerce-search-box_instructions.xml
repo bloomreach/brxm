@@ -16,15 +16,15 @@
   -->
 
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
-  <instructionSet group="default">
+  <instructionSet>
     <xml action="copy" source="hst/product-search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/product-search-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
     <file action="copy" binary="false" overwrite="false" source="css/categories.css" target="{{webfilesRoot}}/css/categories.css"/>
-    <file action="copy" binary="false" overwrite="false" source="hst/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
+    <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="true" overwrite="false" source="css/jquery.typeahead.min.css" target="{{webfilesRoot}}/css/jquery.typeahead.min.css"/>
     <file action="copy" binary="true" overwrite="false" source="js/jquery.typeahead.min.js" target="{{webfilesJsRoot}}/jquery.typeahead.min.js"/>
-    <xml action="copy" overwrite="false" source="xml/commerce-search-box.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-box.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" overwrite="false" source="images/commerce-search-box.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-search-box.png"/>
   </instructionSet>
   <instructionSet group="freemarker">
