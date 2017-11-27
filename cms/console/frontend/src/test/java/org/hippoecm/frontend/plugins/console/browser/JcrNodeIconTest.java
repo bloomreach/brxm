@@ -33,7 +33,8 @@ public class JcrNodeIconTest extends RepositoryTestCase {
     @Test
     public void testCssClass() throws RepositoryException, WorkflowException, RemoteException {
         assertEquals(getCssClass("/"), "fa fa-circle jcrnode-default");
-        assertEquals(getCssClass("/jcr:system"), "fa fa-circle jcrnode-default");
+        assertEquals(getCssClass("/jcr:system"), "fa fa-link jcrnode-system");
+        assertEquals(getCssClass("/hcm:hcm"), "fa fa-link jcrnode-system");
         assertEquals(getCssClass("/hippo:configuration"), "fa fa-cogs jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:derivatives"), "fa fa-circle jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries"), "fa fa-question-circle jcrnode-conf");
@@ -54,7 +55,7 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:configuration/hippo:frontend"), "fa fa-diamond jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:modules"), "fa fa-simplybuilt jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:update"), "fa fa-wrench jcrnode-conf");
-        assertEquals(getCssClass("/hippo:log"), "fa fa-circle jcrnode-log");
+        assertEquals(getCssClass("/hippo:log"), "fa fa-list jcrnode-log");
         assertEquals(getCssClass("/hippo:namespaces"), "fa fa-bullseye jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String"), "fa fa-file-text jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/system/String/hipposysedit:nodetype"), "fa fa-umbrella jcrnode-namespaces");
@@ -64,7 +65,7 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:namespaces/system/String/editor:templates/_default_/root"), "fa fa-plug jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/hippo/query/hipposysedit:prototypes"), "fa fa-star-o jcrnode-namespaces");
         assertEquals(getCssClass("/hippo:namespaces/hipposysedit/templatetype/editor:templates/_default_/rootLayout/yui.config"), "fa fa-cog jcrnode-namespaces");
-        assertEquals(getCssClass("/hippo:reports"), "fa fa-circle jcrnode-reports");
+        assertEquals(getCssClass("/hippo:reports"), "fa fa-pie-chart jcrnode-reports");
     }
 
     private String getCssClass(final String path) throws RepositoryException {
