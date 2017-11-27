@@ -248,6 +248,7 @@ public final class DependencyUtils {
             final Dependency enterpriseApp = new Dependency();
             enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
             enterpriseApp.setGroupId(ENT_GROUP_ID);
+            enterpriseApp.setType("pom");
             cmsModel.addDependency(enterpriseApp);
 
             MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
