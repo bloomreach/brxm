@@ -33,6 +33,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class FieldEditor extends Panel {
 
@@ -105,18 +106,20 @@ public class FieldEditor extends Panel {
             }
 
             @Override
-            public void setObject(final Boolean object) {
+            public void setObject(final Boolean isRequired) {
                 final IFieldDescriptor field = getDescriptor();
-                if (object) {
-                    field.addValidator("required");
-                    if (field.getTypeDescriptor().isType("String")) {
+                final ITypeDescriptor typeDescriptor = field.getTypeDescriptor();
+                final String validatorDescription = typeDescriptor.isType(HippoNodeType.NT_RESOURCE) ? "resource-required" : "required";
+                if (isRequired) {
+                    field.addValidator(validatorDescription);
+                    if (typeDescriptor.isType("String")) {
                         field.addValidator("non-empty");
                     }
                 } else {
-                    if (field.getTypeDescriptor().isType("String")) {
+                    if (typeDescriptor.isType("String")) {
                         field.removeValidator("non-empty");
                     }
-                    field.removeValidator("required");
+                    field.removeValidator(validatorDescription);
                 }
             }
 
