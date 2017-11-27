@@ -16,11 +16,14 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -36,6 +39,7 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.hst.utils.ParameterUtils;
 import org.hippoecm.repository.api.HippoNode;
@@ -111,7 +115,8 @@ public class HstManageContentTag extends TagSupport {
                 }
             }
 
-            boolean isRelativePathParameter = isRelativePathParameter();
+            final JcrPath jcrPath = getJcrPath();
+            final boolean isRelativePathParameter = jcrPath != null && jcrPath.isRelative();
             if (isRelativePathParameter && StringUtils.startsWith(rootPath, "/")) {
                 log.warn("Ignoring manage content tag for component parameter '{}': the @{} annotation of the parameter"
                                 + " makes it store a relative path to the content root of the channel while the 'rootPath'"
@@ -122,8 +127,10 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
+
             try {
-                write(documentId, isRelativePathParameter);
+                write(documentId, componentValue, jcrPath, isRelativePathParameter);
             } catch (final IOException ignore) {
                 throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
@@ -133,18 +140,33 @@ public class HstManageContentTag extends TagSupport {
         }
     }
 
-    private boolean isRelativePathParameter() {
+    private String getComponentValue(final HstRequestContext requestContext, final boolean isRelativePathParameter) {
         if (componentParameter == null) {
-            return false;
+            return null;
+        }
+
+        final ServletRequest request = pageContext.getRequest();
+        final HstComponentWindow window = (HstComponentWindow) request.getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
+        final String componentValue = window.getParameter(componentParameter);
+
+        if (componentValue != null && isRelativePathParameter) {
+            final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+            final String contentRoot = resolvedMount.getMount().getContentPath();
+            return contentRoot + "/" + componentValue;
+        }
+        return componentValue;
+    }
+
+    private JcrPath getJcrPath() {
+        if (componentParameter == null) {
+            return null;
         }
 
         final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
         final HstComponent component = window.getComponent();
         final ComponentConfiguration componentConfig = component.getComponentConfiguration();
         final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, componentParameter, JcrPath.class);
-
-        return jcrPath != null && jcrPath.isRelative();
+        return ParameterUtils.getParameterAnnotation(paramsInfo, componentParameter, JcrPath.class);
     }
 
     protected void cleanup() {
@@ -155,14 +177,16 @@ public class HstManageContentTag extends TagSupport {
         document = null;
     }
 
-    private void write(final String documentId, final boolean isRelativePathParameter) throws IOException {
+    private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
+                       final boolean isRelativePathParameter) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final Map<?, ?> attributeMap = getAttributeMap(documentId, isRelativePathParameter);
+        final Map<?, ?> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
         final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
-    private Map<?, ?> getAttributeMap(final String documentId, final boolean isRelativePathParameter) {
+    private Map<?, ?> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
+                                      final boolean isRelativePathParameter) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
@@ -173,6 +197,17 @@ public class HstManageContentTag extends TagSupport {
 
         if (componentParameter != null) {
             writeToMap(result, "componentParameterIsRelativePath", Boolean.toString(isRelativePathParameter));
+            writeToMap(result, "componentValue", componentValue);
+        }
+
+        if (jcrPath != null) {
+            writeToMap(result, "componentPickerConfiguration", jcrPath.pickerConfiguration());
+            writeToMap(result, "componentPickerInitialPath", jcrPath.pickerInitialPath());
+            writeToMap(result, "componentPickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
+            writeToMap(result, "componentPickerRootPath", jcrPath.pickerRootPath());
+
+            final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
+            writeToMap(result, "componentPickerSelectableNodeTypes", nodeTypes);
         }
 
         return result;
