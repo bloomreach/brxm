@@ -15,9 +15,7 @@
  */
 package org.onehippo.cms7.services.cmscontext;
 
-import java.io.Serializable;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSession;
@@ -34,32 +32,23 @@ public interface CmsSessionContext {
 
     /**
      * Key to the the SimpleCredentials with which the CMS session authenticates with the Repository.
-     *
      * @see #getRepositoryCredentials()
      */
     String REPOSITORY_CREDENTIALS = "repository.credentials";
 
     /**
      * Key to retrieve the locale applicable to the current CMS session.
-     *
      * @see #getLocale()
      */
     String LOCALE = "locale";
 
-
-    /**
-     * Key to retrieve the context payload
-     */
-    String CMS_SESSION_CONTEXT_PAYLOAD_KEY = CmsSessionContext.class.getName() + ".contextPayload";
-
     /**
      * Static method to retrieve the CmsSessionContext from a HttpSession
-     *
      * @param session the HttpSession
      * @return the CmsSessionContext bound to the provided HttpSession
      */
     static CmsSessionContext getContext(HttpSession session) {
-        return (CmsSessionContext) session.getAttribute(SESSION_KEY);
+        return (CmsSessionContext)session.getAttribute(SESSION_KEY);
     }
 
     /**
@@ -74,7 +63,6 @@ public interface CmsSessionContext {
 
     /**
      * Retrieve CMS Session Context specific information by key
-     *
      * @param key the key of the information
      * @return the information
      */
@@ -84,22 +72,13 @@ public interface CmsSessionContext {
      * @return the SimpleCredentials with which the CMS session authenticates with the Repository
      */
     default SimpleCredentials getRepositoryCredentials() {
-        return (SimpleCredentials) get(REPOSITORY_CREDENTIALS);
+        return (SimpleCredentials)get(REPOSITORY_CREDENTIALS);
     }
 
     /**
      * @return the Locale applicable to the current CMS session
      */
     default Locale getLocale() {
-        return (Locale) get(LOCALE);
-    }
-
-    /**
-     * Returns a mutable map bound to the http session. It can e.g. be used to manage user specific properties.
-     *
-     * @return mutable map of properties bound to the http session
-     */
-    default Map<String, Serializable> getContextPayload() {
-        return (Map<String, Serializable>) get(CMS_SESSION_CONTEXT_PAYLOAD_KEY);
+        return (Locale)get(LOCALE);
     }
 }
