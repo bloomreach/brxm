@@ -26,6 +26,8 @@ import plusSvg from '../../../../images/html/plus.svg';
 import searchSvg from '../../../../images/html/search.svg';
 import addContentSvg from '../../../../images/html/add-content.svg';
 
+const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
+
 class OverlayService {
   constructor(
     $log,
@@ -68,7 +70,7 @@ class OverlayService {
     this.iframeJQueryElement.on('load', () => this._onLoad());
 
     this.CmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === 'component-path-picker') {
+      if (callbackId === PATH_PICKER_CALLBACK_ID) {
         this.pathPickedHandler(path);
         this.pathPickedHandler = angular.noop;
       }
@@ -92,7 +94,12 @@ class OverlayService {
       // TODO: handle picked path
       console.log('picked path', path);
     };
-    this.CmsService.publish('show-path-picker', 'component-path-picker', config.componentValue, config.componentPickerConfig);
+
+    this.CmsService.publish(
+      'show-path-picker',
+      PATH_PICKER_CALLBACK_ID,
+      config.componentValue,
+      config.componentPickerConfig);
   }
 
   _onLoad() {
