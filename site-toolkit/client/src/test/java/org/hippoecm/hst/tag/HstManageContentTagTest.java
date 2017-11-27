@@ -292,7 +292,7 @@ public class HstManageContentTagTest {
 
     @Test
     public void componentValueAbsolutePath() throws Exception {
-        window.setLocalParameter("absPath", "/absolute/path");
+        window.setParameter("absPath", "/absolute/path");
 
         tag.setComponentParameter("absPath");
         final HippoBean document = createMock(HippoBean.class);
@@ -324,7 +324,7 @@ public class HstManageContentTagTest {
         expect(mount.getContentPath()).andReturn("/mount/path").anyTimes();
 
         hstRequestContext.setResolvedMount(resolvedMount);
-        window.setLocalParameter("relPath", "relative/path");
+        window.setParameter("relPath", "relative/path");
 
         tag.setComponentParameter("relPath");
         final HippoBean document = createMock(HippoBean.class);

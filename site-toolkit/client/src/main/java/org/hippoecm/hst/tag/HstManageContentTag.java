@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -62,7 +63,6 @@ public class HstManageContentTag extends TagSupport {
     private HippoBean document;
     private String rootPath;
     private String templateQuery;
-    private JcrPath jcrPath;
 
     @Override
     public int doStartTag() throws JspException {
@@ -90,8 +90,6 @@ public class HstManageContentTag extends TagSupport {
             }
 
             String documentId = null;
-            String componentValue = null;
-
             if (document != null) {
                 final HippoNode documentNode = (HippoNode) document.getNode();
                 try {
@@ -117,16 +115,7 @@ public class HstManageContentTag extends TagSupport {
                 }
             }
 
-            if (componentParameter != null) {
-                final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
-                componentValue = window.getLocalParameter(componentParameter);
-
-                final HstComponent component = window.getComponent();
-                final ComponentConfiguration componentConfig = component.getComponentConfiguration();
-                final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
-                jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, componentParameter, JcrPath.class);
-            }
-
+            final JcrPath jcrPath = getJcrPath();
             final boolean isRelativePathParameter = jcrPath != null && jcrPath.isRelative();
             if (isRelativePathParameter && StringUtils.startsWith(rootPath, "/")) {
                 log.warn("Ignoring manage content tag for component parameter '{}': the @{} annotation of the parameter"
@@ -138,14 +127,10 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            if (componentValue != null && isRelativePathParameter) {
-                final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-                final String contentRoot = resolvedMount.getMount().getContentPath();
-                componentValue = contentRoot + "/" + componentValue;
-            }
+            final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
 
             try {
-                write(documentId, componentValue, jcrPath);
+                write(documentId, componentValue, jcrPath, isRelativePathParameter);
             } catch (final IOException ignore) {
                 throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
@@ -153,6 +138,35 @@ public class HstManageContentTag extends TagSupport {
         } finally {
             cleanup();
         }
+    }
+
+    private String getComponentValue(final HstRequestContext requestContext, final boolean isRelativePathParameter) {
+        if (componentParameter == null) {
+            return null;
+        }
+
+        final ServletRequest request = pageContext.getRequest();
+        final HstComponentWindow window = (HstComponentWindow) request.getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
+        final String componentValue = window.getParameter(componentParameter);
+
+        if (componentValue != null && isRelativePathParameter) {
+            final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+            final String contentRoot = resolvedMount.getMount().getContentPath();
+            return contentRoot + "/" + componentValue;
+        }
+        return componentValue;
+    }
+
+    private JcrPath getJcrPath() {
+        if (componentParameter == null) {
+            return null;
+        }
+
+        final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
+        final HstComponent component = window.getComponent();
+        final ComponentConfiguration componentConfig = component.getComponentConfiguration();
+        final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
+        return ParameterUtils.getParameterAnnotation(paramsInfo, componentParameter, JcrPath.class);
     }
 
     protected void cleanup() {
@@ -163,14 +177,16 @@ public class HstManageContentTag extends TagSupport {
         document = null;
     }
 
-    private void write(final String documentId, final String componentValue, final JcrPath jcrPath) throws IOException {
+    private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
+                       final boolean isRelativePathParameter) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final Map<?, ?> attributeMap = getAttributeMap(documentId, componentValue, jcrPath);
+        final Map<?, ?> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
         final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
-    private Map<?, ?> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath) {
+    private Map<?, ?> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
+                                      final boolean isRelativePathParameter) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
@@ -180,8 +196,7 @@ public class HstManageContentTag extends TagSupport {
         writeToMap(result, "componentParameter", componentParameter);
 
         if (componentParameter != null) {
-            final String isRelative = Boolean.toString(jcrPath != null && jcrPath.isRelative());
-            writeToMap(result, "componentParameterIsRelativePath", isRelative);
+            writeToMap(result, "componentParameterIsRelativePath", Boolean.toString(isRelativePathParameter));
             writeToMap(result, "componentValue", componentValue);
         }
 
