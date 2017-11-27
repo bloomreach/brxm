@@ -26,6 +26,7 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -33,9 +34,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -114,12 +113,11 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), action == DirectoryInstruction.Action.COPY
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        final String message = action == DirectoryInstruction.Action.COPY
                 ? "Copy directory '" + source + "' to project directory '" + target + "'."
-                : "Create directory '" + target + "'.");
-        return result;
+                : "Create directory '" + target + "'.";
+        changeMessageQueue.accept(getDefaultGroup(), message);
     }
 
 

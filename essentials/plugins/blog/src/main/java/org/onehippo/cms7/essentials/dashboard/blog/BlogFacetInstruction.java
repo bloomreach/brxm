@@ -16,11 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
+import java.util.function.BiConsumer;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -83,8 +83,7 @@ public class BlogFacetInstruction implements Instruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
-                "Create blog facet at: /content/documents/{{namespace}}/blogFacets");
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Create blog facet at: /content/documents/{{namespace}}/blogFacets");
     }
 }

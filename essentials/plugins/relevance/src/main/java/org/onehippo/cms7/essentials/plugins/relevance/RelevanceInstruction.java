@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugins.relevance;
 
 import java.io.File;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.Multimap;
 
@@ -70,7 +71,7 @@ public class RelevanceInstruction implements Instruction {
         return InstructionStatus.SUCCESS;
     }
 
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE, "Add H2 JDBC resource to context.xml.");
+    public void populateChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add H2 JDBC resource to context.xml.");
     }
 }

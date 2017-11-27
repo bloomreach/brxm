@@ -17,10 +17,9 @@
 package com.onehippo.cms7.essentials.plugins.urlrewriter;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 
 import javax.xml.bind.JAXBException;
-
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -67,9 +66,8 @@ public class UrlRewriterInstruction implements Instruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
-                "Install URL Rewriter filter into Site web.xml.");
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Install URL Rewriter filter into Site web.xml.");
     }
 
     private String readResource(final String resourcePath) throws IOException {

@@ -16,8 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import java.util.function.BiConsumer;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -39,26 +38,13 @@ public interface Instruction {
     InstructionStatus execute(PluginContext context);
 
     /**
-     * Retrieve the "Changes made by this feature" messages.
+     * Ask the instruction to declare its contribution to the "Changes made by this feature".
      *
-     * An instruction can return 1 or more messages. Each message must be assigned to a {@link MessageGroup},
-     * and instruction-specific variables should be interpolated before returning. Each change message will
+     * An instruction can push 0 or more messages. Each message pertains to a {@link MessageGroup},
+     * and instruction-specific variables should be interpolated before pushing. Each change message will
      * be post-processed in order to interpolate project-specific variables.
      *
-     * @return a {@link Multimap} containing all change messages.
+     * @param changeMessageQueue 'consumer' to push 0 or more [messageGroup, changeMessage] tuples onto.
      */
-    default Multimap<MessageGroup, String> getChangeMessages() {
-        return null;
-    }
-
-    /**
-     * Convenience method for building a change messages multimap.
-     */
-    static Multimap<MessageGroup, String> makeChangeMessages(final MessageGroup group, final String... messages) {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        for (String message : messages) {
-            result.put(group, message);
-        }
-        return result;
-    }
+    default void populateChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue) { }
 }

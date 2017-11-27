@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -69,17 +69,21 @@ public class ExecuteInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         final Instruction instruction = GlobalUtils.newInstance(clazz);
+        final BooleanWrapper signal = new BooleanWrapper();
         if (instruction != null) {
-            final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-            if (changeMessages != null) {
-                return changeMessages;
-            }
+            instruction.populateChangeMessages((g, m) -> {
+                changeMessageQueue.accept(g, m);
+                signal.flag = true;
+            });
         }
+        if (!signal.flag) {
+            changeMessageQueue.accept(getDefaultGroup(), "Execute instruction class '" + clazz + "'.");
+        }
+    }
 
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Execute instruction class '" + clazz + "'.");
-        return result;
+    private static class BooleanWrapper {
+        boolean flag;
     }
 }

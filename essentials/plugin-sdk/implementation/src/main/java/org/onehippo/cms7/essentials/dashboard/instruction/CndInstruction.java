@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,9 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -103,10 +102,8 @@ public class CndInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Register document type '" + documentType + "'.");
-        return result;
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(getDefaultGroup(), "Register document type '" + documentType + "'.");
     }
 
     private void processAllPlaceholders(final Map<String, Object> data) {

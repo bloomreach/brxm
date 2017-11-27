@@ -17,8 +17,7 @@
 package org.onehippo.cms7.essentials.plugins.projects;
 
 import java.io.File;
-
-import com.google.common.collect.Multimap;
+import java.util.function.BiConsumer;
 
 import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -90,8 +89,8 @@ public class ProjectsInstruction implements Instruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE,
                 "Adjust project in several ways to install the 'Projects' feature.");
     }
 }

@@ -16,7 +16,7 @@
 
 package com.onehippo.cms7.essentials.plugins.indexexporter;
 
-import com.google.common.collect.Multimap;
+import java.util.function.BiConsumer;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -36,8 +36,8 @@ public class LuceneIndexExporterInstruction implements Instruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE,
                 "Ensure availability of '" + SERVLET_NAME + "' through cms web.xml");
     }
 }
