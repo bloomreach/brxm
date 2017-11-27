@@ -291,8 +291,6 @@ plugins/skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js
 plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js
 plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css
 
-
-
     The MIT License (MIT)
 
     Copyright (c) 2015 tombertrand
