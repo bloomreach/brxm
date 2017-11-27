@@ -17,9 +17,9 @@
 
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet group="default">
-    <file action="copy" binary="false" overwrite="false" source="hst/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
+    <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/categories.css" target="{{webfilesRoot}}/css/categories.css"/>
-    <xml action="copy" overwrite="false" source="xml/commerce-search-category-list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-search-category-list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" overwrite="false" source="images/commerce-search-category-list.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-search-category-list.png"/>
   </instructionSet>
   <instructionSet group="freemarker">
