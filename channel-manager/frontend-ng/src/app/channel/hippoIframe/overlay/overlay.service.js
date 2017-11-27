@@ -55,6 +55,7 @@ class OverlayService {
     this.editMenuHandler = angular.noop;
     this.createContentHandler = angular.noop;
     this.editContentHandler = angular.noop;
+    this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -65,6 +66,13 @@ class OverlayService {
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
+
+    this.CmsService.subscribe('path-picked', (callbackId, path) => {
+      if (callbackId === 'component-path-picker') {
+        this.pathPickedHandler(path);
+        this.pathPickedHandler = angular.noop;
+      }
+    });
   }
 
   onEditMenu(callback) {
@@ -77,6 +85,14 @@ class OverlayService {
 
   onEditContent(callback) {
     this.editContentHandler = callback;
+  }
+
+  pickPath(config) {
+    this.pathPickedHandler = (path) => {
+      // TODO: handle picked path
+      console.log('picked path', path);
+    };
+    this.CmsService.publish('show-path-picker', 'component-path-picker', config.componentValue, config.componentPickerConfig);
   }
 
   _onLoad() {
@@ -340,7 +356,7 @@ class OverlayService {
       },
       componentParameter: {
         svg: searchSvg,
-        callback: () => {},
+        callback: () => this.pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
       },
     };
@@ -374,11 +390,11 @@ class OverlayService {
   }
 
   filterConfigByPrivileges(configObj) {
-    const config = angular.copy(configObj);
     if (this.ChannelService.isEditable()) {
       return configObj;
     }
 
+    const config = angular.copy(configObj);
     delete config.componentParameter;
     if (configObj.documentUuid) { // whenever uuid is available, only edit button for authors
       delete config.templateQuery;
@@ -396,6 +412,8 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const config = this.filterConfigByPrivileges({
       componentParameter: structureElement.getComponentParameter(),
+      componentPickerConfig: structureElement.getComponentPickerConfig(),
+      componentValue: structureElement.getComponentValue(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid: structureElement.getUuid(),
       rootPath: structureElement.getRootPath(),

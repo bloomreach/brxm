@@ -17,17 +17,19 @@
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
 describe('OverlayService', () => {
+  let $iframe;
   let $q;
   let $rootScope;
+  let $window;
+  let iframeWindow;
+  let ChannelService;
+  let CmsService;
   let DomService;
   let ExperimentStateService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
   let RenderingService;
-  let ChannelService;
-  let $iframe;
-  let iframeWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -35,24 +37,30 @@ describe('OverlayService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _$window_,
+      _ChannelService_,
+      _CmsService_,
       _DomService_,
       _ExperimentStateService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
       _PageStructureService_,
       _RenderingService_,
-      _ChannelService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $window = _$window_;
+      ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
-      ChannelService = _ChannelService_;
     });
+
+    spyOn(CmsService, 'subscribe').and.callThrough();
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $('.iframe');
@@ -590,6 +598,34 @@ describe('OverlayService', () => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
+    });
+  });
+
+  describe('path picker', () => {
+    it('subscribes to CMS event "path-picked"', () => {
+      expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function));
+    });
+
+    it('calls pathPickedHandler() only once and only if callbackId is "component-path-picker"', () => {
+      const spy = spyOn(OverlayService, 'pathPickedHandler');
+      $window.CMS_TO_APP.publish('path-picked', 'unknownCallbackId');
+      expect(spy).not.toHaveBeenCalled();
+
+      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path');
+      expect(spy).toHaveBeenCalledWith('/path');
+
+      spy.calls.reset();
+      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path');
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('opens the path picker through the CmsService', () => {
+      spyOn(CmsService, 'publish');
+      OverlayService.pickPath({
+        componentValue: 'component-value',
+        componentPickerConfig: 'component-picker-config',
+      });
+      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', 'component-value', 'component-picker-config');
     });
   });
 
