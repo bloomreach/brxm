@@ -17,6 +17,10 @@
 let q;
 let http;
 
+const FORM_HEADERS = {
+  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+};
+
 class HstService {
   constructor($q, $http, CmsService, ConfigService, PathService) {
     'ngInject';
@@ -73,6 +77,13 @@ class HstService {
 
   doPut(data, uuid, ...pathElements) {
     return this._callHst('PUT', uuid, pathElements, data);
+  }
+
+  // The legacy HST endpoints (like org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource#moveAndUpdateVariant)
+  // expect FormData instead of JSON objects
+  doPutForm(data, uuid, ...pathElements) {
+    data = this._serializeParams(data);
+    return this._callHst('PUT', uuid, pathElements, data, null, FORM_HEADERS);
   }
 
   doPutWithHeaders(uuid, headers, ...pathElements) {
