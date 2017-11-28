@@ -26,7 +26,7 @@
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>5.1.0-SNAPSHOT</version>
+  <version>5.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
@@ -40,14 +40,14 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>5.1.0-SNAPSHOT</hippo.hst.version>
-    <hippo.services.webfiles.version>4.1.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.contenttype.version>4.1.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.htmlprocessor.version>1.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.essentials-components.version>4.1.0-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.utilities.version>4.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>5.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.services.webfiles.version>4.2.0-SNAPSHOT</hippo.services.webfiles.version>
+    <hippo.services.contenttype.version>4.2.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.htmlprocessor.version>1.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.essentials-components.version>4.2.0-SNAPSHOT</hippo.essentials-components.version>
 
   </properties>
 
