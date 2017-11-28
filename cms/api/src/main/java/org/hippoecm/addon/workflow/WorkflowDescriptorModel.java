@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,11 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,14 +31,21 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDescriptor> {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowDescriptorModel.class);
 
     private String id;
     private String category;
     private transient Workflow workflow;
+    private transient Map<String, Serializable> hints;
 
     /**
      * deprecated: use the alternative constructor instead
@@ -105,9 +117,29 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
         }
     }
 
+
+
     @Override
     protected void onDetach() {
         super.onDetach();
         workflow = null;
+        hints = null;
+    }
+
+    public Map<String, Serializable> getHints() {
+        if (hints != null) {
+            return hints;
+        }
+        DocumentWorkflow workflow = getWorkflow();
+        if (workflow != null) {
+            try {
+                hints = workflow.hints();
+                return hints;
+            } catch (WorkflowException | RemoteException | RepositoryException e) {
+                log.error("Unable to retrieve workflow hints", e);
+            }
+        }
+        hints = Collections.emptyMap();
+        return hints;
     }
 }

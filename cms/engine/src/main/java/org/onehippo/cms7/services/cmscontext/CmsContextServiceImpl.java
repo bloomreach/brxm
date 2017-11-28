@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.cmscontext;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +47,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
-            dataMap.put(CMS_SESSION_CONTEXT_PAYLOAD_KEY, new HashMap<>());
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
@@ -87,7 +85,8 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                         iter.remove();
                         ctx.detach();
                     }
-                } else {
+                }
+                else {
                     // will already be removed in case cmsCtx itself is being detached
                     sharedContextsMap.remove(id);
                     removeDeprecatedHSTSessionAttributes();
@@ -111,7 +110,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
         /**
          * TODO: remove this for *HST* 5.0 when these deprecated attributes will be dropped from ContainerConstants
-         *
          * @Deprecated
          */
         @Deprecated
@@ -146,7 +144,8 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         public void valueBound(final HttpSessionBindingEvent event) {
             if (session == null && SESSION_KEY.equals(event.getName())) {
                 session = event.getSession();
-            } else {
+            }
+            else {
                 // don't allow storing this instance under any other session attribute and/or any other session
                 event.getSession().removeAttribute(event.getName());
             }
@@ -196,7 +195,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public synchronized CmsSessionContext create(final HttpSession session) {
-        CmsSessionContextImpl ctx = (CmsSessionContextImpl) session.getAttribute(SESSION_KEY);
+        CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
         if (ctx == null) {
             ctx = new CmsSessionContextImpl(this);
             try {
@@ -213,7 +212,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public void setData(CmsSessionContext ctx, String key, Object data) {
-        ((CmsSessionContextImpl) ctx).dataMap.put(key, data);
+        ((CmsSessionContextImpl)ctx).dataMap.put(key, data);
     }
-
 }
