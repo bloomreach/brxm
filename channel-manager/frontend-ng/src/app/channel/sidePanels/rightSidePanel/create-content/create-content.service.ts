@@ -49,4 +49,12 @@ export class CreateContentService {
     const promise = this.contentService._send('GET', ['folders', path], null, true);
     return Observable.fromPromise(promise);
   }
+
+  async deleteDraft(id: string): Promise<Document> {
+    return this.contentService._send('DELETE', ['documents', id]);
+  }
+
+  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<Document> {
+    return this.contentService._send('PUT', ['documents', documentId], { displayName: data.name, urlName: data.url });
+  }
 }

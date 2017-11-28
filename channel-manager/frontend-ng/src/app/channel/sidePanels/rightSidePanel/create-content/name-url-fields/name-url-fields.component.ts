@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild, Output,
+  EventEmitter
+} from '@angular/core';
 import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
 
 @Component({
   selector: 'hippo-name-url-fields',
@@ -28,23 +32,25 @@ import 'rxjs/add/operator/filter';
 export class NameUrlFieldsComponent implements OnInit, OnChanges {
   @ViewChild('form') form: HTMLFormElement;
   @ViewChild('nameInputElement') nameInputElement: ElementRef;
-  @Input('nameField') nameField: string;
-  @Input('urlField') urlField: string;
-  @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
-  @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
   @Input() locale: string;
+  @Input() nameField: string;
+  @Input() urlField: string;
+  @Output() urlUpdate: EventEmitter<boolean> = new EventEmitter();
   public isManualUrlMode = false;
 
   constructor(private createContentService: CreateContentService) {}
 
   ngOnInit() {
+    this.nameField = this.nameField || '';
+    this.urlField = this.urlField || '';
+
     Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
       .filter(() => !this.isManualUrlMode)
+      .do(() => this.urlUpdate.emit(true))
       .debounceTime(1000)
       .subscribe(() => {
         this.setDocumentUrlByName();
-        this.nameFieldChange.next(this.nameField);
-        this.urlFieldChange.next(this.urlField);
+        this.urlUpdate.emit(false);
       });
   }
 
@@ -55,8 +61,11 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   }
 
   setDocumentUrlByName() {
-    this.createContentService.generateDocumentUrlByName(this.nameField, this.locale)
-      .subscribe((slug) => this.urlField = slug);
+    const observable = this.createContentService.generateDocumentUrlByName(this.nameField, this.locale);
+    observable.subscribe((slug) => {
+      this.urlField = slug;
+    });
+    return observable;
   }
 
   setManualUrlEditMode(state: boolean) {

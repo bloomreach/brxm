@@ -17,18 +17,25 @@
   <div class="md-dialog-content name-url-fields-dialog">
     <h3 mat-dialog-title>{{ title }}</h3>
 
-    <hippo-name-url-fields [(nameField)]="name" [(urlField)]="url"></hippo-name-url-fields>
+    <hippo-name-url-fields
+      [nameField]="name"
+      [urlField]="url"
+      [locale]="locale"
+      (urlUpdate)="onUrlUpdate($event)">
+    </hippo-name-url-fields>
+
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions class="create-content-actions">
-  <button mat-button (click)="submitDialog(false)"
+  <button mat-button (click)="cancel() || !name.length || !url.length"
           class="qa-cancel">
     {{ 'CANCEL' | translate }}
   </button>
 
-  <button mat-button (click)="submitDialog(true)"
-          class="qa-submit-name-url">
+  <button mat-button (click)="change()"
+          class="qa-submit-name-url"
+          [disabled]="isUrlBusyUpdating">
     {{ 'CHANGE' | translate }}
   </button>
 </mat-dialog-actions>

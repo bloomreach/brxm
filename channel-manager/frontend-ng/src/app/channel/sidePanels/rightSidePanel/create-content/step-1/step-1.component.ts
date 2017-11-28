@@ -90,11 +90,15 @@ export class CreateContentComponent implements OnInit {
       rootPath: this.documentLocationField.rootPath,
       defaultPath: this.documentLocationField.defaultPath,
     };
+
     this.createContentService
       .createDraft(document)
       .subscribe(
-        (response) => this.onContinue.emit(),
-        (error) => this.onErrorCreatingDraft(error),
+      (response) => this.onContinue.emit({
+      name: this.nameUrlFields.nameField,
+          url: this.nameUrlFields.urlField,
+          locale: this.locale
+        }),(error) => this.onErrorCreatingDraft(error),
     );
   }
 

@@ -127,12 +127,12 @@ class RightSidePanelCtrl {
     });
   }
 
-  switchCreateContentStep() {
+  switchCreateContentStep(options = {}) {
     if (this.mode !== this.modes.create) {
       throw new Error('Could not switch to Create content step 2 from the current mode');
     }
 
-    this._setMode(this.modes.create2);
+    this._setMode(this.modes.create2, options);
   }
 
   closePanel() {
