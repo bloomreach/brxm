@@ -98,7 +98,7 @@ class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR)));
+        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -162,7 +162,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.WORKFLOW_ERROR)));
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         if (!EditingUtils.canUpdateDraft(workflow)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
@@ -316,7 +316,7 @@ class DocumentsServiceImpl implements DocumentsService {
         // Archiving not possible: the document can be published, a request can be pending etc. Only case left to check:
         // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
         if (EditingUtils.hasPreview(documentWorkflow)) {
-            log.warn("Forbade to erase document '{}': it already has a preview variant", uuid);
+            log.warn("Forbidden to erase document '{}': it already has a preview variant", uuid);
             throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         }
 
@@ -327,7 +327,7 @@ class DocumentsServiceImpl implements DocumentsService {
         if (EditingUtils.canEraseDocument(folderWorkflow)) {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
-            log.warn("Forbade to erase document '{}': not allowed by the workflow of folder '{}'",
+            log.warn("Forbidden to erase document '{}': not allowed by the workflow of folder '{}'",
                     JcrUtils.getNodeNameQuietly(handle), getNodePathQuietly(folder));
             throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         }

@@ -375,7 +375,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.WORKFLOW_ERROR));
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -921,7 +921,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.WORKFLOW_ERROR));
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
