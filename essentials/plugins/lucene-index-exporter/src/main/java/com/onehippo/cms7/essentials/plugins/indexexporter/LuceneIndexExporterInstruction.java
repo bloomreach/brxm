@@ -16,23 +16,32 @@
 
 package com.onehippo.cms7.essentials.plugins.indexexporter;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
+
+import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
-import org.onehippo.repository.jaxrs.RepositoryJaxrsServlet;
+import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 
 public class LuceneIndexExporterInstruction implements Instruction {
     private static final String SERVLET_NAME = "RepositoryJaxrsServlet";
+    private static final String SERVLET_FQCN = "org.onehippo.repository.jaxrs.RepositoryJaxrsServlet";
+    private static final List<String> URL_PATTERNS = Collections.singletonList("/ws/*");
+
+    @Inject
+    private WebXmlService webXmlService;
 
     @Override
     public InstructionStatus execute(PluginContext context) {
-        return WebXmlUtils.addServlet(context, TargetPom.CMS, SERVLET_NAME, RepositoryJaxrsServlet.class,
-                6, new String[]{"/ws/*"}) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+        return webXmlService.addServlet(context, TargetPom.CMS, SERVLET_NAME, SERVLET_FQCN, 6)
+                && webXmlService.addServletMapping(context, TargetPom.CMS, SERVLET_NAME, URL_PATTERNS)
+                ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
     @Override
