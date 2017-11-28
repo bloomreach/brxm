@@ -26,7 +26,7 @@
   <name>Hippo Plugin Robots.txt Generator</name>
   <description>Hippo Plugin Robots.txt Generator</description>
   <artifactId>hippo-plugin-robotstxt</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -41,8 +41,8 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
     <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
-    <hippo.hst.version>5.1.0-SNAPSHOT</hippo.hst.version>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
 
   </properties>
 
