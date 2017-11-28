@@ -76,6 +76,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -120,7 +121,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -140,7 +141,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -160,7 +161,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -202,6 +203,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canCreateDraft(workflow)).andReturn(false);
         expect(EditingUtils.determineEditingFailure(workflow, session)).andReturn(Optional.empty());
+        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("display name"));
 
         replayAll();
 
@@ -209,7 +211,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -235,7 +237,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(e.getPayload(), equalTo(errorInfo));
+            assertThat(e.getPayload(), is(errorInfo));
         }
 
         verifyAll();
@@ -259,7 +261,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -288,7 +290,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -318,7 +320,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -373,7 +375,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -472,7 +474,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -521,7 +523,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -606,7 +608,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -634,7 +636,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -700,7 +702,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -868,7 +870,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -919,7 +921,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1007,7 +1009,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1036,7 +1038,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -1158,7 +1160,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -1176,7 +1178,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1250,7 +1252,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDraft(uuid, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertNull(e.getPayload());
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();

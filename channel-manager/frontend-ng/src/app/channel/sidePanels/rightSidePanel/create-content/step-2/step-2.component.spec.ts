@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture, async, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
@@ -118,7 +118,6 @@ describe('Create content step 2 component', () => {
   });
 
   it('should detect ESC keypress', fakeAsync(() => {
-    fixture.detectChanges();
     spyOn(component, 'close');
     const event = new KeyboardEvent('keypress');
     Object.defineProperty(event, 'which', { value: 27 });
@@ -179,14 +178,12 @@ describe('Create content step 2 component', () => {
     });
 
     it('calls the confirmation dialog', () => {
-      fixture.detectChanges();
       spyOn(component, 'discardAndClose').and.callThrough();
       component.close();
       expect(dialogService.confirm).toHaveBeenCalled();
     });
 
     it('calls discardAndClose method to confirm document discard and close the panel', () => {
-      fixture.detectChanges();
       spyOn(component, 'discardAndClose').and.returnValue(Promise.resolve());
       component.close();
       expect(component.discardAndClose).toHaveBeenCalled();
@@ -208,9 +205,7 @@ describe('Create content step 2 component', () => {
       });
     });
 
-    it('will not discard the document when cancel is clicked', () => {
-      fixture.detectChanges();
-
+    it('does not discard the document when cancel is clicked', () => {
       spyOn(component, 'discardAndClose').and.returnValue(Promise.reject(null));
 
       component.close().catch(() => {
@@ -262,6 +257,39 @@ describe('Create content step 2 component', () => {
     });
   });
 
+  describe('discardAndClose', () => {
+    let deleteDraftSpy;
+    beforeEach(() => {
+      component.doc = testDocument;
+      spyOn(feedbackService, 'showError');
+      deleteDraftSpy = spyOn(createContentService, 'deleteDraft').and.returnValue(Promise.resolve());
+    });
+
+    it('deletes the draft after confirming the discard dialog', fakeAsync(() => {
+      const _component = (component as any);
+      spyOn(_component, 'confirmDiscardChanges').and.returnValue(Promise.resolve());
+
+      component.discardAndClose();
+      tick();
+
+      expect(_component.confirmDiscardChanges).toHaveBeenCalled();
+      expect(deleteDraftSpy).toHaveBeenCalledWith(testDocument.id);
+      expect(feedbackService.showError).not.toHaveBeenCalled();
+    }));
+
+    it('calls feedbackService.showError if deleting the draft has failed', fakeAsync(() => {
+      deleteDraftSpy.and.returnValue(Promise.reject({
+        data: { reason: 'TEST', params: {} },
+      }));
+
+      component.discardAndClose();
+      tick();
+
+      expect(deleteDraftSpy).toHaveBeenCalledWith(testDocument.id);
+      expect(feedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
+    }))
+  });
+
   describe('saveDocument', () => {
     beforeEach(() => {
       component.doc = testDocument;
@@ -280,7 +308,7 @@ describe('Create content step 2 component', () => {
       expect(component.onSave.emit).toHaveBeenCalledWith(testDocument.id);
     }));
 
-    it('does not trigger a discardAndCLose dialog by resetting onBeforeStateChange', fakeAsync(() => {
+    it('does not trigger a discardAndClose dialog by resetting onBeforeStateChange', fakeAsync(() => {
       spyOn(component.onBeforeStateChange, 'emit');
       component.saveDocument();
       tick();
