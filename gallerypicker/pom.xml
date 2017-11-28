@@ -26,7 +26,7 @@
   <description>Hippo Plugin Gallery Picker</description>
   <artifactId>hippo-plugin-gallerypicker</artifactId>
   <packaging>jar</packaging>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.2.0-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
@@ -37,8 +37,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
