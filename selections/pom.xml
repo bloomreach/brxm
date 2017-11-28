@@ -26,7 +26,7 @@
   <name>Hippo Plugin Selections</name>
   <description>Hippo Plugin Selections</description>
   <artifactId>hippo-plugin-selections</artifactId>
-  <version>5.1.0-SNAPSHOT</version>
+  <version>5.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -42,9 +42,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugins Selection</notice.project.name>
 
-    <hippo.cms.version>5.1.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>5.1.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.2.0-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.8.2</junit.version>
     <wicket.version>6.26.0</wicket.version>
