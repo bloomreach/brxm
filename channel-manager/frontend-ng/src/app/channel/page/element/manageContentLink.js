@@ -36,6 +36,25 @@ class ManageContentLink extends EmbeddedLink {
   getTemplateQuery() {
     return this.metaData.templateQuery;
   }
+
+  getComponentValue() {
+    return this.metaData.componentValue;
+  }
+
+  getComponentPickerConfig() {
+    if (!this.metaData.componentParameter) {
+      return null;
+    }
+    return {
+      configuration: this.metaData.componentPickerConfiguration,
+      initialPath: this.metaData.componentPickerInitialPath,
+      isRelativePath: this.metaData.componentParameterIsRelativePath === 'true',
+      remembersLastVisited: this.metaData.componentPickerRemembersLastVisited === 'true',
+      rootPath: this.metaData.componentPickerRootPath,
+      selectableNodeTypes: this.metaData.componentPickerSelectableNodeTypes ?
+        this.metaData.componentPickerSelectableNodeTypes.split(',') : [],
+    };
+  }
 }
 
 export default ManageContentLink;

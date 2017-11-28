@@ -245,6 +245,15 @@ describe('PageStructureService', () => {
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
     expect(manageContentLink.getRootPath()).toBe('test-root-path');
     expect(manageContentLink.getComponentParameter()).toBe('test-component-parameter');
+    expect(manageContentLink.getComponentValue()).toBe('test-component-value');
+    expect(manageContentLink.getComponentPickerConfig()).toEqual({
+      configuration: 'test-component-picker configuration',
+      initialPath: 'test-component-picker-initial-path',
+      isRelativePath: true,
+      remembersLastVisited: false,
+      rootPath: 'test-component-picker-root-path',
+      selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
+    });
   });
 
   it('registers processed and unprocessed head contributions', () => {

@@ -26,35 +26,42 @@ import plusSvg from '../../../../images/html/plus.svg';
 import searchSvg from '../../../../images/html/search.svg';
 import addContentSvg from '../../../../images/html/add-content.svg';
 
+const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
+
 class OverlayService {
   constructor(
     $log,
     $rootScope,
     $translate,
+    ChannelService,
     CmsService,
     DomService,
     ExperimentStateService,
+    FeedbackService,
     HippoIframeService,
+    HstService,
     MaskService,
     PageStructureService,
-    ChannelService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.DomService = DomService;
-    this.ChannelService = ChannelService;
     this.ExperimentStateService = ExperimentStateService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
     this.createContentHandler = angular.noop;
     this.editContentHandler = angular.noop;
+    this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -65,6 +72,13 @@ class OverlayService {
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
+
+    this.CmsService.subscribe('path-picked', (callbackId, path) => {
+      if (callbackId === PATH_PICKER_CALLBACK_ID) {
+        this.pathPickedHandler(path);
+        this.pathPickedHandler = angular.noop;
+      }
+    });
   }
 
   onEditMenu(callback) {
@@ -77,6 +91,38 @@ class OverlayService {
 
   onEditContent(callback) {
     this.editContentHandler = callback;
+  }
+
+  pickPath(config) {
+    this.pathPickedHandler = path => this.onPathPicked(config, path);
+    this.CmsService.publish(
+      'show-path-picker',
+      PATH_PICKER_CALLBACK_ID,
+      config.componentValue,
+      config.componentPickerConfig);
+  }
+
+  onPathPicked(config, path) {
+    if (!config.containerItem) {
+      this.FeedbackService.showError('ERROR_SET_COMPONENT_PARAMETER_NO_CONTAINER_ITEM');
+      return;
+    }
+
+    path = path.startsWith('/') ? path : `/${path}`;
+    if (config.componentPickerConfig.isRelativePath) {
+      path = this._pathRelativeToChannelRoot(path);
+    }
+
+    const component = config.containerItem;
+    this.HstService.doPutForm({ document: path }, component.getId(), 'hippo-default')
+      .then(() => this.HippoIframeService.reload())
+      .catch(() => this.FeedbackService.showError('ERROR_SET_COMPONENT_PARAMETER_PATH', { path }));
+  }
+
+  _pathRelativeToChannelRoot(path) {
+    const channel = this.ChannelService.getChannel();
+    path = path.substring(channel.contentRoot.length);
+    return path.startsWith('/') ? path.substring(1) : path;
   }
 
   _onLoad() {
@@ -340,7 +386,7 @@ class OverlayService {
       },
       componentParameter: {
         svg: searchSvg,
-        callback: () => {},
+        callback: () => this.pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
       },
     };
@@ -374,11 +420,11 @@ class OverlayService {
   }
 
   filterConfigByPrivileges(configObj) {
-    const config = angular.copy(configObj);
     if (this.ChannelService.isEditable()) {
       return configObj;
     }
 
+    const config = angular.copy(configObj);
     delete config.componentParameter;
     if (configObj.documentUuid) { // whenever uuid is available, only edit button for authors
       delete config.templateQuery;
@@ -396,10 +442,13 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const config = this.filterConfigByPrivileges({
       componentParameter: structureElement.getComponentParameter(),
+      componentPickerConfig: structureElement.getComponentPickerConfig(),
+      componentValue: structureElement.getComponentValue(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid: structureElement.getUuid(),
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
+      containerItem: structureElement.getEnclosingElement(),
     });
 
     // if the config is empty, create no button
