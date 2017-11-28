@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-describe('OverlayService', () => {
+fdescribe('OverlayService', () => {
   let $iframe;
   let $q;
   let $rootScope;
@@ -26,6 +26,9 @@ describe('OverlayService', () => {
   let CmsService;
   let DomService;
   let ExperimentStateService;
+  let FeedbackService;
+  let HippoIframeService;
+  let HstService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -42,6 +45,9 @@ describe('OverlayService', () => {
       _CmsService_,
       _DomService_,
       _ExperimentStateService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _HstService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
       _PageStructureService_,
@@ -54,6 +60,9 @@ describe('OverlayService', () => {
       CmsService = _CmsService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
+      HstService = _HstService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -626,6 +635,69 @@ describe('OverlayService', () => {
         componentPickerConfig: 'component-picker-config',
       });
       expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', 'component-value', 'component-picker-config');
+    });
+  });
+
+  fdescribe('onPathPicked', () => {
+    let conf;
+    let putFormSpy;
+
+    beforeEach(() => {
+      spyOn(ChannelService, 'getChannel').and.returnValue({
+        contentRoot: '/channel-root',
+      });
+      spyOn(FeedbackService, 'showError');
+      spyOn(HippoIframeService, 'reload');
+      putFormSpy = spyOn(HstService, 'doPutForm').and.returnValue(Promise.resolve());
+      conf = {
+        componentPickerConfig: {
+          isRelativePath: false,
+        },
+        containerItem: {
+          getId: () => 'container-id',
+        },
+      };
+    });
+
+    it('shows an error if no container-item is found', () => {
+      OverlayService.onPathPicked({});
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SET_COMPONENT_PARAMETER_NO_CONTAINER_ITEM');
+    });
+
+    it('makes path absolute if passed path is relative', () => {
+      OverlayService.onPathPicked(conf, 'rel/path');
+      expect(putFormSpy).toHaveBeenCalledWith({ document: '/rel/path' }, 'container-id', 'hippo-default');
+    });
+
+    it('respects absolute paths', () => {
+      OverlayService.onPathPicked(conf, '/abs/path');
+      expect(putFormSpy).toHaveBeenCalledWith({ document: '/abs/path' }, 'container-id', 'hippo-default');
+    });
+
+    it('make the input path relative to the channel root', () => {
+      conf.componentPickerConfig.isRelativePath = true;
+      OverlayService.onPathPicked(conf, '/channel-root/path');
+      expect(putFormSpy).toHaveBeenCalledWith({ document: 'path' }, 'container-id', 'hippo-default');
+
+      OverlayService.onPathPicked(conf, 'channel-root/path');
+      expect(putFormSpy).toHaveBeenCalledWith({ document: 'path' }, 'container-id', 'hippo-default');
+    });
+
+    it('reload the iframe after updating the component parameter', (done) => {
+      OverlayService.onPathPicked(conf, '/abs/path');
+      setTimeout(() => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('shows an error when the backend fails', (done) => {
+      putFormSpy.and.returnValue(Promise.reject());
+      OverlayService.onPathPicked(conf, '/abs/path');
+      setTimeout(() => {
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SET_COMPONENT_PARAMETER_PATH', { path: '/abs/path' });
+        done();
+      });
     });
   });
 
