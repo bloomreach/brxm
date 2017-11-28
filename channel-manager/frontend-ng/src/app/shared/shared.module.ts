@@ -20,6 +20,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule, BREAKPOINTS } from '@angular/flex-layout';
 import { MaterialModule } from './material/material.module';
 
+import { CmsServiceProvider } from './services/cms.service.provider';
 import { ContentServiceProvider } from './services/content.service.provider';
 import { DialogServiceProvider } from './services/dialog.service.provider';
 import { FeedbackServiceProvider } from './services/feedback.service.provider';
@@ -50,6 +51,7 @@ export const EmptyBreakPointsProvider = {
     TranslateModule
   ],
   providers: [
+    CmsServiceProvider,
     ContentServiceProvider,
     EmptyBreakPointsProvider,
     DialogServiceProvider,

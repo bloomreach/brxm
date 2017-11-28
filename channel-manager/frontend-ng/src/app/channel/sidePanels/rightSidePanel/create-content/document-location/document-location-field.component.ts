@@ -17,6 +17,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import ChannelService from '../../../../channel.service.js';
+import CmsService from '../../../../../services/cms.service';
 import { CreateContentService } from '../create-content.service';
 import { Folder } from '../create-content.types';
 import { Channel } from '../../../../../shared/interfaces/channel.types';
@@ -39,6 +40,7 @@ export class DocumentLocationFieldComponent implements OnInit {
 
   constructor(
     private channelService: ChannelService,
+    private cmsService: CmsService,
     private createContentService: CreateContentService,
     private feedbackService: FeedbackService,
   ) { }
