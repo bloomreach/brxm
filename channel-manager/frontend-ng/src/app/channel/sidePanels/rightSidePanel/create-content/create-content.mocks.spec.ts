@@ -55,6 +55,10 @@ export class CreateContentServiceMock {
     document.urlName = data.url;
     return Promise.resolve(document);
   }
+
+  deleteDraft() {
+    return Promise.resolve();
+  }
 }
 
 export class FeedbackServiceMock {
