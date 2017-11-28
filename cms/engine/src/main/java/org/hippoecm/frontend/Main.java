@@ -93,7 +93,9 @@ import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.observation.JcrObservationManager;
+import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -110,6 +112,7 @@ import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,6 +180,7 @@ public class Main extends PluginApplication {
 
     private CmsContextServiceImpl cmsContextServiceImpl;
     private CmsInternalCmsContextService cmsContextService;
+    private CmsEventDispatcherService cmsEventDispatcherService;
 
     @Override
     protected void init() {
@@ -327,6 +331,12 @@ public class Main extends PluginApplication {
                 cmsContextServiceImpl = new CmsContextServiceImpl();
                 cmsContextService = cmsContextServiceImpl;
                 HippoServiceRegistry.registerService(cmsContextServiceImpl, new Class[]{CmsContextService.class,CmsInternalCmsContextService.class});
+            }
+
+            cmsEventDispatcherService = HippoServiceRegistry.getService(CmsEventDispatcherService.class);
+            if ( cmsEventDispatcherService == null) {
+                cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
+                HippoServiceRegistry.registerService(cmsEventDispatcherService, new Class[]{CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class});
             }
             mount(new MountMapper("auth", new IMountedRequestMapper() {
 

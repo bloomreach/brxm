@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
@@ -63,6 +64,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private final Map<String, NodeState> stateCache;
     
     private String path;
+    private String listenerPath;
     private int eventTypes;
     private boolean isDeep;
     private List<String> uuids;
@@ -72,20 +74,29 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private boolean isvirtual;
     private List<String> parents;
     private final List<Event> virtualEvents = new LinkedList<Event>();
-    private final Queue<Event> events = new ConcurrentLinkedQueue<Event>();
+    private final Queue<Event> jcrEvents = new ConcurrentLinkedQueue<>();
+
+    // events not the result of jcr changes but of manually created ChangeEvent s
+    private final Set<ChangeEvent> dispatchedEvents = new ConcurrentHashSet<>();
     private Session session;
     private FacetRootsObserver fro;
     private WeakReference<UserSession> sessionRef;
+    private final InternalCmsEventDispatcherService cmsEventDispatcherService;
 
-    JcrListener(ReferenceQueue<EventListener> listenerQueue, Map<String, NodeState> stateCache, UserSession userSession, EventListener upstream) {
+    JcrListener(final ReferenceQueue<EventListener> listenerQueue,
+                final Map<String, NodeState> stateCache,
+                final UserSession userSession,
+                final EventListener upstream,
+                final InternalCmsEventDispatcherService cmsEventDispatcherService) {
         super(upstream, listenerQueue);
         this.stateCache = stateCache;
         sessionRef = new WeakReference<UserSession>(userSession);
+        this.cmsEventDispatcherService = cmsEventDispatcherService;
     }
 
     public void onEvent(EventIterator events) {
         while (events.hasNext()) {
-            this.events.add(events.nextEvent());
+            this.jcrEvents.add(events.nextEvent());
         }
         // When the update requests do not arrive anymore,
         // for instance due to the user not properly having closed
@@ -97,7 +108,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         // and its pagemaps to be emptied.
         // This in turn causes wicket to send a page expired response
         // to the browser on the next request that comes in.
-        if (this.events.size() > MAX_EVENTS) {
+        if (this.jcrEvents.size() > MAX_EVENTS) {
             PluginUserSession session = ((PluginUserSession)getSession());
             if (session != null) {
                 String userID = session.getJcrSession().getUserID();
@@ -105,6 +116,10 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 session.flush();
             }
         }
+    }
+
+    public void onEvent(ChangeEvent dispatched) {
+        dispatchedEvents.add(dispatched);
     }
 
     public void onVirtualEvent(final Event event) {
@@ -205,7 +220,9 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
             session = null;
         }
-        events.clear();
+        jcrEvents.clear();
+        dispatchedEvents.clear();
+        virtualEvents.clear();
     }
 
     private void subscribe() throws RepositoryException {
@@ -231,7 +248,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
         // subscribe when target has a facetsearch as an ancestor
         try {
-            for (Node node = getRoot(); node.getDepth() > 0; ) {
+            final Node root = getRoot();
+            for (Node node = root; node.getDepth() > 0; ) {
                 if (JcrHelper.isVirtualRoot(node)) {
                     fro.subscribe(this, node);
                     break;
@@ -244,11 +262,15 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                     fro.subscribe(this, node);
                 }
             }
+
+            listenerPath = root.getPath();
+            cmsEventDispatcherService.subscribe(listenerPath, this);
         } catch (PathNotFoundException pnfe) {
             log.warn("Path no longer exists, stopping observation; " + pnfe.getMessage());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
+
     }
 
     private void unsubscribe() throws RepositoryException {
@@ -256,6 +278,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             fro.unsubscribe(this, session);
             fro = null;
         }
+
+        cmsEventDispatcherService.unsubscribe(listenerPath, this);
 
         if (!isvirtual && session.isLive()) {
             ObservationManager obMgr = session.getWorkspace().getObservationManager();
@@ -436,7 +460,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.info("resubscribing listener " + this);
 
             // events have references to the session, so they are useless now
-            events.clear();
+            jcrEvents.clear();
+            dispatchedEvents.clear();
             try {
                 unsubscribe();
             } catch (RepositoryException ex) {
@@ -520,18 +545,22 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private List<Event> getEvents(Map<String, NodeState> dirty) {
-        List<Event> events = new ArrayList<Event>(virtualEvents);
+        List<Event> events = new ArrayList<>(virtualEvents);
         virtualEvents.clear();
 
-        List<Event> jcrEvents = new LinkedList<Event>(this.events);
-        this.events.clear();
+        List<Event> copyJcrEvents = new LinkedList<>(this.jcrEvents);
+        this.jcrEvents.clear();
 
         if (isvirtual) {
             return events;
         }
 
-        Set<Node> externallyModified = getExternallyModifiedNodes(jcrEvents);
+        Set<Node> externallyModified = getExternallyModifiedNodes(copyJcrEvents);
         createEventsForExternallyModifiedNodes(dirty, events, externallyModified);
+
+        List<ChangeEvent> copyDispatchedEvents = new ArrayList<>(dispatchedEvents);
+        dispatchedEvents.clear();
+        events.addAll(copyDispatchedEvents);
 
         // process pending changes
         Set<Node> locallyModified;
@@ -557,9 +586,9 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         return events;
     }
 
-    private Set<Node> getExternallyModifiedNodes(final List<Event> jcrEvents) {
+    private Set<Node> getExternallyModifiedNodes(final List<Event> events) {
         final Set<Node> nodes = new TreeSet<Node>(new NodePathComparator());
-        for (Event jcrEvent : jcrEvents) {
+        for (Event jcrEvent : events) {
             try {
                 String eventPath = getEventParentPath(jcrEvent.getPath());
                 Node parentNode = session.getNode(eventPath);
