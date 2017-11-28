@@ -21,6 +21,7 @@ import CmsService from '../../../../../services/cms.service';
 import { CreateContentService } from '../create-content.service';
 import { Folder } from '../create-content.types';
 import { Channel } from '../../../../../shared/interfaces/channel.types';
+import './document-location-field.scss';
 
 @Component({
   selector: 'hippo-document-location-field',
@@ -28,12 +29,14 @@ import { Channel } from '../../../../../shared/interfaces/channel.types';
 })
 export class DocumentLocationFieldComponent implements OnInit {
   private static readonly MAX_DEPTH = 3;
+  private static readonly PICKER_CALLBACK_ID = 'document-location-callback-id';
 
   @Input() rootPath: string;
   @Input() defaultPath: string;
   @Output() changeLocale: EventEmitter<string> = new EventEmitter();
   @ViewChild('form') form: HTMLFormElement;
 
+  private pickerConfig: any;
   public rootPathDepth: number;
   public documentLocationLabel: string;
   public documentLocation: string;
@@ -84,7 +87,34 @@ export class DocumentLocationFieldComponent implements OnInit {
       documentLocationPath += '/' + this.defaultPath;
     }
 
+    this.pickerConfig = {
+      configuration: 'cms-pickers/folders',
+      rootPath: this.rootPath,
+      selectableNodeTypes: ['hippostd:folder'],
+    };
+
+    this.cmsService.subscribe('path-picked', (callbackId, path) => {
+      if (callbackId === DocumentLocationFieldComponent.PICKER_CALLBACK_ID) {
+        if (!path.startsWith('/')) {
+          path = `/${path}`;
+        }
+        if (!path.startsWith(this.rootPath)) {
+          this.feedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+        } else {
+          this.setDocumentLocation(path);
+        }
+      }
+    });
+
     this.setDocumentLocation(documentLocationPath);
+  }
+
+  openPicker() {
+    this.cmsService.publish(
+      'show-path-picker',
+      DocumentLocationFieldComponent.PICKER_CALLBACK_ID,
+      this.documentLocation,
+      this.pickerConfig);
   }
 
   private setDocumentLocation(documentLocation: string) {
