@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.1.0-projectdocs-SNAPSHOT</version>
+    <version>5.2.0-projectdocs-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
@@ -71,12 +71,19 @@
       </plugin>
         <plugin>
             <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ng-clean</id>
+              </execution>
+            </executions>
             <configuration>
                 <filesets>
                     <fileset>
                         <directory>cache</directory>
                         <directory>coverage</directory>
                         <directory>node_modules</directory>
+                        <directory>.awcache</directory>
+                        <directory>dll</directory>
                         <followSymlinks>false</followSymlinks>
                     </fileset>
                 </filesets>
@@ -84,4 +91,47 @@
         </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>skinny</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${maven.plugin.exec.version}</version>
+            <executions>
+              <execution>
+                <id>npm-build</id>
+                <phase>process-resources</phase>
+                <goals><goal>exec</goal></goals>
+                <configuration>
+                  <executable>npm</executable>
+                  <commandlineArgs>run buildDev -- --transpileOnly</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ng-clean</id>
+              </execution>
+            </executions>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>cache</directory>
+                  <directory>coverage</directory>
+                  <followSymlinks>false</followSymlinks>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
