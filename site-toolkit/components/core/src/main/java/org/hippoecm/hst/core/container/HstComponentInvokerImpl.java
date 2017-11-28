@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -216,7 +217,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                         .createParameterInfoProxy(
                                 HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAMETER_INFO_HOLDER.getParametersInfo(),
                                 component.getComponentConfiguration(),
-                                hstRequest,
+                                (HttpServletRequest) hstRequest,
                                 (parameterValue, returnType) -> parameterValue);
 
                 templateParameter = parameterInfoProxy.getTemplateParameter();

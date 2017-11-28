@@ -27,11 +27,16 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.resourcebundle.CompositeResourceBundle;
 import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.slf4j.LoggerFactory;
@@ -132,44 +137,44 @@ public class LocalizationValve extends AbstractBaseOrderableValve {
         return null;
     }
 
+    /**
+     * Find the default resource bundle object if available. Otherwise, return null.
+     * @param requestContext request context
+     * @return the default resource bundle object if available. Otherwise, return null
+     */
     protected ResourceBundle findDefaultResourceBundle(HstRequestContext requestContext) {
+        String [] bundleIds = findResourceBundleIds(requestContext);
+
+        if (ArrayUtils.isEmpty(bundleIds)) {
+            return null;
+        }
+
+        ResourceBundleRegistry bundleRegistry = getResourceBundleRegistry();
+        Locale locale = requestContext.getPreferredLocale();
         List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
+        ResourceBundle bundle = null;
 
-        if (requestContext.getResolvedMount() != null) {
-            String [] bundleIds = null;
-
-            if (requestContext.getResolvedSiteMapItem() != null) {
-                bundleIds = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getResourceBundleIds();
-            } else {
-                bundleIds = requestContext.getResolvedMount().getMount().getDefaultResourceBundleIds();
-            }
-
-            ResourceBundleRegistry bundleRegistry = getResourceBundleRegistry();
-            Locale locale = requestContext.getPreferredLocale();
-            ResourceBundle bundle = null;
-
-            for (String bundleId : bundleIds) {
-                try {
-                    if (bundleRegistry != null) {
-                        if (locale == null) {
-                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId) : bundleRegistry.getBundle(bundleId));
-                        } else {
-                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId, locale) : bundleRegistry.getBundle(bundleId, locale));
-                        }
+        for (String bundleId : bundleIds) {
+            try {
+                if (bundleRegistry != null) {
+                    if (locale == null) {
+                        bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId) : bundleRegistry.getBundle(bundleId));
                     } else {
-                        if (locale == null) {
-                            bundle = ResourceBundle.getBundle(bundleId, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-                        } else {
-                            bundle = ResourceBundle.getBundle(bundleId, locale, Thread.currentThread().getContextClassLoader());
-                        }
+                        bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId, locale) : bundleRegistry.getBundle(bundleId, locale));
                     }
-
-                    if (bundle != null) {
-                        bundles.add(bundle);
+                } else {
+                    if (locale == null) {
+                        bundle = ResourceBundle.getBundle(bundleId, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+                    } else {
+                        bundle = ResourceBundle.getBundle(bundleId, locale, Thread.currentThread().getContextClassLoader());
                     }
-                } catch (MissingResourceException e) {
-                    log.warn("Resource bundle not found by the basename, '{}'. {}", bundleId, e);
                 }
+
+                if (bundle != null) {
+                    bundles.add(bundle);
+                }
+            } catch (MissingResourceException e) {
+                log.warn("Resource bundle not found by the basename, '{}'. {}", bundleId, e);
             }
         }
 
@@ -180,5 +185,29 @@ public class LocalizationValve extends AbstractBaseOrderableValve {
         } else {
             return new CompositeResourceBundle(bundles.toArray(new ResourceBundle[bundles.size()]));
         }
+    }
+
+    /**
+     * Find the default resource bundle ID array if available. Otherwise, return null.
+     * @param requestContext
+     * @return the default resource bundle ID array if available. Otherwise, return null
+     */
+    protected String [] findResourceBundleIds(HstRequestContext requestContext) {
+        String [] bundleIds = null;
+
+        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        final ChannelInfo channelInfo = (resolvedMount != null) ? resolvedMount.getMount().getChannelInfo() : null;
+
+        if (channelInfo != null && channelInfo.getProperties().containsKey(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
+            bundleIds = StringUtils.split((String) channelInfo.getProperties().get(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), "\t\r\n, ");
+        } else {
+            if (requestContext.getResolvedSiteMapItem() != null) {
+                bundleIds = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getResourceBundleIds();
+            } else if (resolvedMount != null) {
+                bundleIds = resolvedMount.getMount().getDefaultResourceBundleIds();
+            }
+        }
+
+        return bundleIds;
     }
 }

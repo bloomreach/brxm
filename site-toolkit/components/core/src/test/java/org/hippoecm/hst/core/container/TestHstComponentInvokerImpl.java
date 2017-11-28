@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import java.lang.reflect.InvocationHandler;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -29,9 +31,12 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -97,7 +102,12 @@ public class TestHstComponentInvokerImpl {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
+        ModifiableRequestContextProvider.set(requestContext);
+    }
 
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.set(null);
     }
 
     @Test
@@ -167,11 +177,18 @@ public class TestHstComponentInvokerImpl {
     }
 
     class CustomParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
+
         @Override
-        protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig, final HstRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
-            return new ParameterInfoInvocationHandler(componentConfig, request, converter, parametersInfoType) {
+        public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
+                final HstRequest request, final HstParameterValueConverter converter) {
+            return createParameterInfoProxy(parametersInfo, componentConfig, (HttpServletRequest) request, converter);
+        }
+
+        @Override
+        protected InvocationHandler createHstParameterInfoInvocationHandler(final ParameterConfiguration parameterConfiguration, final HttpServletRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {
+            return new ParameterInfoInvocationHandler(parameterConfiguration, request, converter, parametersInfoType) {
                 @Override
-                protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+                protected String getPrefixedParameterName(final String parameterName, final ParameterConfiguration parameterConfiguration, final HttpServletRequest req) {
                     return "professional-" + parameterName;
                 }
             };

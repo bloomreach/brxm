@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>client-modules</artifactId>
-    <version>5.1.0-projectdocs-SNAPSHOT</version>
+    <version>5.2.0-projectdocs-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Client Module Page Composer</name>

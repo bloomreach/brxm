@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -35,11 +35,20 @@
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
   </bean>
 
+  <bean id="org.hippoecm.hst.jaxrs.cxf.ParameterConfigurationFactory"
+        class="org.hippoecm.hst.jaxrs.cxf.ParameterConfigurationFactoryImpl">
+  </bean>
+
+  <bean id="jaxrsParametersInfoProviderContextProvider" class="org.hippoecm.hst.jaxrs.cxf.ParametersInfoProviderContextProvider">
+    <property name="parameterConfigurationFactory" ref="org.hippoecm.hst.jaxrs.cxf.ParameterConfigurationFactory" />
+  </bean>
+
   <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
   <bean id="jaxrsRestDefaultEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <ref bean="jaxrsRestJsonProvider"/>
+        <ref bean="jaxrsParametersInfoProviderContextProvider" />
       </list>
     </property>
   </bean>

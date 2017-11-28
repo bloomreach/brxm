@@ -86,14 +86,21 @@
       </list>
     </property>
   </bean>
-  
+
+  <bean id="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" class="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" />
+
   <bean id="defaultRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <ref bean="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" />
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>
-    
+
   <!-- Default empty list of custom plain resource providers to be overriden. -->
   <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
