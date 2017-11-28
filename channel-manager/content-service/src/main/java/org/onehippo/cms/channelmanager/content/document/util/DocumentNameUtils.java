@@ -27,6 +27,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
@@ -62,9 +64,9 @@ public class DocumentNameUtils {
     public static String getUrlName(final Node handle) throws InternalServerErrorException {
         try {
             return handle.getName();
-        } catch (RepositoryException e) {
-            log.warn("Failed to read name of node '{}'", JcrUtils.getNodePathQuietly(handle));
-            throw new InternalServerErrorException();
+        } catch (final RepositoryException e) {
+            log.warn("Failed to read name of node '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -76,7 +78,7 @@ public class DocumentNameUtils {
         } else if (EditingUtils.hasPreview(documentWorkflow)) {
             log.warn("Cannot change the URL name of document '{}': it already has a preview variant",
                     JcrUtils.getNodePathQuietly(handle));
-            throw new ForbiddenException();
+            throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         } else {
             renameDraft(handle, urlName);
         }
@@ -87,7 +89,7 @@ public class DocumentNameUtils {
             documentWorkflow.rename(urlName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.warn("Failed to rename document '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -97,7 +99,7 @@ public class DocumentNameUtils {
             workflow.rename(urlName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.warn("Failed to rename draft '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
@@ -113,7 +115,7 @@ public class DocumentNameUtils {
         } catch (RepositoryException | WorkflowException | RemoteException e) {
             log.warn("Failed to set display name of node '{}' to '{}'",
                     JcrUtils.getNodePathQuietly(handle), displayName, e);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 }
