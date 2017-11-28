@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
@@ -50,6 +51,9 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Plugin that renders a list of configured mixin types in the document editor as checkboxes.
+ */
 public class MixinPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
@@ -73,7 +77,8 @@ public class MixinPlugin extends RenderPlugin {
         }
         helper = new FieldPluginHelper(context, config);
 
-        add(new Label("name", helper.getCaptionModel(this)));
+        final String defaultCaption = new StringResourceModel("mixins", this, null).getString();
+        add(new Label("name", helper.getCaptionModel(this, defaultCaption)));
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
 

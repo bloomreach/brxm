@@ -70,35 +70,43 @@ public class FieldPluginHelper implements IDetachable {
 
         final String typeName = config.getString(AbstractFieldPlugin.TYPE);
         final String fieldName = config.getString(AbstractFieldPlugin.FIELD);
-        if (fieldName == null) {
-            log.error("No field was specified in the configuration");
-        } else {
-            final ITemplateEngine engine = getTemplateEngine();
-            if (engine != null) {
-                try {
-                    if (typeName == null) {
-                        documentType = engine.getType(getNodeModel());
-                    } else {
-                        documentType = engine.getType(typeName);
-                    }
-                    field = documentType.getField(fieldName);
-                    if (field == null) {
-                        log.warn("Could not find field with name {} in {}; has the field been added " +
-                                "without committing the document type?", fieldName, documentType.getName());
-                    } else if ("*".equals(field.getPath())) {
-                        log.warn("Field path * is not supported, field name is {} in document type",
-                                fieldName, documentType.getName());
-                        field = null;
-                    } else if (field.getPath() == null) {
-                        log.error("No path available for field {}", fieldName);
-                        field = null;
-                    }
-                } catch (TemplateEngineException tee) {
-                    log.error("Could not resolve field for name " + fieldName, tee);
-                }
+
+        final ITemplateEngine engine = getTemplateEngine();
+        if (engine == null) {
+            log.error("No template engine available for type {}, field {}, config {}", typeName, fieldName, config);
+            return;
+        }
+
+        try {
+            if (typeName == null) {
+                documentType = engine.getType(getNodeModel());
             } else {
-                log.error("No template engine available for {}", fieldName);
+                documentType = engine.getType(typeName);
             }
+
+            if (documentType == null) {
+                log.warn("No documentType found for type name {} or node model {}", typeName, getNodeModel());
+            }
+            else if (fieldName == null) {
+                log.debug("No field was specified for type {} in the configuration {}", documentType.getName(), config);
+            }
+            else {
+
+                field = documentType.getField(fieldName);
+                if (field == null) {
+                    log.warn("Could not find field with name {} in type {}; has the field been added " +
+                            "without committing the document type?", fieldName, documentType.getName());
+                } else if ("*".equals(field.getPath())) {
+                    log.warn("Field path * is not supported, field name is {} in document type {}",
+                            fieldName, documentType.getName());
+                    field = null;
+                } else if (field.getPath() == null) {
+                    log.error("No path available for field {}", fieldName);
+                    field = null;
+                }
+            }
+        } catch (TemplateEngineException tee) {
+            log.error("Could not resolve field for name " + fieldName, tee);
         }
 
         // FIXME: don't validate in "view" mode?
@@ -154,20 +162,49 @@ public class FieldPluginHelper implements IDetachable {
     }
 
     public IModel<String> getCaptionModel(final Component component) {
+        return this.getCaptionModel(component, null);
+    }
+
+    public IModel<String> getCaptionModel(final Component component, final String defaultCaption) {
+
+        String caption = (defaultCaption != null) ? defaultCaption : getPluginConfig().getString("caption");
+        String captionKey;
         final IFieldDescriptor field = getField();
-        if (field == null) {
+        if (field != null) {
+            captionKey = field.getPath();
+            final String translation = getStringFromBundle(captionKey);
+            if (translation != null) {
+                return Model.of(translation);
+            }
+
+            captionKey = field.getName();
+            if (caption == null && !captionKey.isEmpty()) {
+                caption = StringUtils.capitalize(captionKey);
+            }
+        }
+        else {
+            final String key = getPluginConfig().getString("captionKey");
+            if ((key != null) && !key.isEmpty()) {
+                captionKey = key;
+                final String translation = getStringFromBundle(captionKey);
+                if (translation != null) {
+                    return Model.of(translation);
+                }
+
+                if (caption == null) {
+                    caption = StringUtils.capitalize(captionKey);
+                }
+            }
+            else {
+                captionKey = StringUtils.lowerCase(caption);
+            }
+        }
+
+        // safety, may still occur
+        if (captionKey == null) {
             return Model.of("undefined");
         }
-        String captionKey = field.getPath();
-        final String translation = getStringFromBundle(captionKey);
-        if (translation != null) {
-            return Model.of(translation);
-        }
-        String caption = getPluginConfig().getString("caption");
-        captionKey = field.getName();
-        if (caption == null && !field.getName().isEmpty()) {
-            caption = StringUtils.capitalize(field.getName());
-        }
+
         // this should be replaced by
         // return caption
         // after deprecation period of translator method
@@ -211,8 +248,7 @@ public class FieldPluginHelper implements IDetachable {
     }
 
     private String getBundleName() {
-        final String docType = getDocumentType().getName();
-        return HIPPO_TYPES + "." + docType;
+        return (documentType == null) ? null : HIPPO_TYPES + "." + documentType.getName();
     }
 
 }
