@@ -39,6 +39,8 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.tree.ValueType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -53,13 +55,25 @@ import static org.onehippo.cm.model.Constants.YAML_EXT;
  */
 public class JcrContentExporter {
 
+    private static final Logger log = LoggerFactory.getLogger(JcrContentExporter.class);
+
+    protected final ExportConfig exportConfig;
+
+    // This constructor should be used only as a convenience for testing
+    JcrContentExporter() {
+        this.exportConfig = new ExportConfig();
+    }
+
+    public JcrContentExporter(final ExportConfig exportConfig) {
+        this.exportConfig = exportConfig;
+
+        // TODO: should we also exclude system properties and nodes using a ConfigurationModel?
+    }
+
     /**
      * Export specified node
-     *
-     * @param node
-     * @return
      */
-    public ModuleImpl exportNode(final Node node) throws RepositoryException {
+    ModuleImpl exportNode(final Node node) throws RepositoryException {
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
         module.setConfigResourceInputProvider(new JcrResourceInputProvider(node.getSession()));
         module.setContentResourceInputProvider(module.getConfigResourceInputProvider());
@@ -72,15 +86,15 @@ public class JcrContentExporter {
         return module;
     }
 
-    protected String mapNodeNameToFileName(String part) {
+    private String mapNodeNameToFileName(String part) {
         return part.contains(":") ? part.replace(":", "-") : part;
     }
 
-    public DefinitionNodeImpl exportNode(final Node node,
-                                         final ContentDefinitionImpl contentDefinition,
-                                         final boolean fullPath,
-                                         final String orderBefore,
-                                         final Set<String> excludedPaths) throws RepositoryException {
+    public void exportNode(final Node node,
+                           final ContentDefinitionImpl contentDefinition,
+                           final boolean fullPath,
+                           final String orderBefore,
+                           final Set<String> excludedPaths) throws RepositoryException {
         if (isVirtual(node)) {
             throw new ConfigurationRuntimeException("Virtual node cannot be exported: " + node.getPath());
         }
@@ -100,31 +114,58 @@ public class JcrContentExporter {
         definitionNode.sortProperties();
 
         for (final Node childNode : new NodeIterable(node.getNodes())) {
-            if (!excludedPaths.contains(childNode.getPath())) {
-                exportNode(childNode, definitionNode, excludedPaths);
-            }
+            exportNode(childNode, definitionNode, excludedPaths);
         }
-        return definitionNode;
     }
 
-    protected DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode, final Set<String> excludedPaths) throws RepositoryException {
-
-        if (!isVirtual(sourceNode) && !shouldExcludeNode(sourceNode.getPath())) {
+    protected void exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode, final Set<String> excludedPaths) throws RepositoryException {
+        final String path = sourceNode.getPath();
+        if (!isVirtual(sourceNode) && !shouldExcludeNode(path) && !excludedPaths.contains(path)) {
             final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
 
             exportProperties(sourceNode, definitionNode);
 
             for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
-                if (!excludedPaths.contains(childNode.getPath())) {
-                    exportNode(childNode, definitionNode, excludedPaths);
-                }
+                exportNode(childNode, definitionNode, excludedPaths);
             }
-            return definitionNode;
         }
-        return null;
+    }
+
+    protected boolean shouldExcludeProperty(Property property) throws RepositoryException {
+        final String propName = property.getName();
+        if (propName.equals(JCR_PRIMARYTYPE) || propName.equals(JCR_MIXINTYPES)) {
+            return true; //Already processed those properties
+        }
+
+        // check ExportConfig.filterUuidPaths for export (suppressing export of jcr:uuid)
+        if (propName.equals(JCR_UUID) && exportConfig.shouldFilterUuid(property.getNode().getPath())) {
+            return true;
+        }
+
+        // suppress common derived Hippo properties
+        if (isKnownDerivedPropertyName(propName)) {
+            return true;
+        }
+
+        // skip protected properties, which are managed internally by JCR and don't make sense in export
+        // (except JCR:UUID, which we need to do references properly)
+        if (!propName.equals(JCR_UUID) && property.getDefinition().isProtected()) {
+            return true;
+        }
+
+        // exclude anything on an excluded path (which might specifically address properties)
+        // default to exporting anything not explicitly suppressed
+        return exportConfig.isExcludedPath(property.getPath());
     }
 
     protected boolean shouldExcludeNode(final String jcrPath) {
+        // exclude anything on an excluded path
+        if (exportConfig.isExcludedPath(jcrPath)) {
+            log.debug("Ignoring node because of export exclusion:\n\t{}", jcrPath);
+            return true;
+        }
+
+        // default to exporting anything not explicitly suppressed
         return false;
     }
 
@@ -147,25 +188,11 @@ public class JcrContentExporter {
     protected void exportProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
         exportPrimaryTypeAndMixins(sourceNode, definitionNode);
         for (final Property property : new PropertyIterable(sourceNode.getProperties())) {
-            if (!propertyShouldBeSkipped(property)) {
+            if (!shouldExcludeProperty(property)) {
                 exportProperty(property, definitionNode);
             }
         }
         definitionNode.sortProperties();
-    }
-
-    protected boolean propertyShouldBeSkipped(Property property) throws RepositoryException {
-
-        final String propName = property.getName();
-        if (propName.equals(JCR_PRIMARYTYPE) || propName.equals(JCR_MIXINTYPES)) {
-            return true; //Already processed those properties
-        }
-        if (isKnownDerivedPropertyName(propName)) {
-            return true;
-        }
-        // skip protected properties, which are managed internally by JCR and don't make sense in export
-        // (except JCR:UUID, which we need to do references properly)
-        return !propName.equals(JCR_UUID) && property.getDefinition().isProtected();
     }
 
     protected DefinitionPropertyImpl exportProperty(final Property property, DefinitionNodeImpl definitionNode) throws RepositoryException {

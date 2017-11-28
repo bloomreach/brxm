@@ -31,7 +31,9 @@ import javax.jcr.RepositoryException;
  * the repository will not be able to shut down until the module execution
  * has been completed.
  * </p>
+ * @deprecated REPO-1899: will be dropped in 6.0.0
  */
+@Deprecated
 public interface ExecutableDaemonModule extends DaemonModule {
 
     void execute() throws RepositoryException;

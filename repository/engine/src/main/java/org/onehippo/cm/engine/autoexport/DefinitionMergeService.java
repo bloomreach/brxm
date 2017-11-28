@@ -138,6 +138,7 @@ public class DefinitionMergeService {
     private final HashMap<String, ModuleMapping> moduleMappings = new HashMap<>();
 
     private final Map<String, ModuleImpl> toExport = new LinkedHashMap<>();
+    private final AutoExportConfig autoExportConfig;
     private final ConfigurationModelImpl model;
     private final Session jcrSession;
 
@@ -153,6 +154,7 @@ public class DefinitionMergeService {
                                   final ConfigurationModelImpl baseline,
                                   final Session jcrSession) {
         this.jcrSession = jcrSession;
+        this.autoExportConfig = autoExportConfig;
 
         // preprocess config mapping paths to moduleMapping objects
         // note: this is very similar to the old auto-export EventProcessor init
@@ -687,7 +689,7 @@ public class DefinitionMergeService {
                     .map(JcrPath::toString).collect(toImmutableSet());
 
             try {
-                new JcrContentExporter().exportNode(
+                new JcrContentExporter(autoExportConfig).exportNode(
                         jcrSession.getNode(defPath.toString()), def, true, contentOrderBefores.get(defPath), excludedPaths);
             }
             catch (RepositoryException e) {
@@ -1146,7 +1148,7 @@ public class DefinitionMergeService {
     /**
      * Get or create a definition in the local modules to contain data for jcrPath.
      * Note: this method performs a three-step check for what module to use similar to
-     * {@link #createNewContentSource(JcrPath, SortedMap)}.
+     * {@link #createNewContentSource(JcrPath, SortedMap)}, except we also need to handle the JCR root node here.
      * @param path the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root and may or not may be
      * empty
@@ -1155,6 +1157,11 @@ public class DefinitionMergeService {
     protected DefinitionNodeImpl getOrCreateLocalDef(final JcrPath path, ModuleImpl parentNodeModule) {
         // what module should we put it in, according to normal auto-export config rules?
         final ModuleImpl defaultModule = getModuleByAutoExportConfig(path);
+
+        // for the JCR root node, the auto-export config is the only possible answer
+        if (path.isRoot()) {
+            parentNodeModule = defaultModule;
+        }
 
         // where is the parent of this path initially defined?
         // if the caller already handed us a value, use it

@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.3-SNAPSHOT</version>
+    <version>29.3</version>
   </parent>
 
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>5.1.0-projectdocs-SNAPSHOT</version>
+  <version>5.2.0-projectdocs-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -73,13 +73,13 @@
     <notice.project.name>Hippo Repository</notice.project.name>
 
     <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>1.1.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>4.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>4.1.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.configuration-management.version>1.2.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.commons.version>4.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.2.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.utilities.version>4.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.06</hippo.jcrdiff.version>
-    <hippo.testutils.version>1.1.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>1.2.0-SNAPSHOT</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>

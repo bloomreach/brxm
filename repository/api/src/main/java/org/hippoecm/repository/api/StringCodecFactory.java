@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.api;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,9 +128,11 @@ public class StringCodecFactory {
     public static class UriEncoding implements StringCodec {
 
 
-        public String encode(String input) {
+        public String encode(final String input) {
+            // use Unicode "composed" normal form, so we aren't confused by decomposed accent chars
+            char[] chars = Normalizer.normalize(input, Normalizer.Form.NFC).toCharArray();
+
             StringBuffer sb = new StringBuffer();
-            char[] chars = input.toCharArray();
             boolean lastSpace = true;
             for (int i = 0; i < chars.length; i++) {
                 boolean appendSpace = false;

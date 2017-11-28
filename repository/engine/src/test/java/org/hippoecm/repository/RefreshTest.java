@@ -25,20 +25,10 @@ import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public class RefreshTest {
-
-    @BeforeClass
-    public static void clearRepository() {
-        // when run together with other RepositoryTestCase based tests *and*
-        // -Dorg.onehippo.repository.test.keepserver=true
-        // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test
-        RepositoryTestCase.clearRepository();
-    }
 
     @Ignore
     public void testRefreshAfterRemoveIssueJackrabbit() throws Exception {

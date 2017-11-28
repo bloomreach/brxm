@@ -7,3 +7,4 @@
 .settings
 .DS_Store
 target/
+/engine/workspaces/

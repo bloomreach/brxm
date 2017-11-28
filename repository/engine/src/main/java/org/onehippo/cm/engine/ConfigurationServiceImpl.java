@@ -138,6 +138,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         // acquire a write lock for the hcm
         lockManager.lock();
         try {
+            // Ensure/force cluster synchronization in case another instance just initialized before, which changes
+            // then may not yet have been synchronized automatically!
+            session.refresh(true);
             // create the /hcm:hcm node, if necessary
             ensureInitialized();
 

@@ -45,6 +45,8 @@ import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
+
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator implements HippoNode {
 
     private static final Logger log = LoggerFactory.getLogger(NodeDecorator.class);
@@ -289,7 +291,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
             }
         }
         if (!node.isNodeType(HippoNodeType.NT_NAMED)) {
-            if (node.equals(node.getSession().getRootNode())) {
+            if (ROOT_NODE_ID.equals(node.getIdentifier())) {
                 return getName();
             }
             final Node parent = node.getParent();
