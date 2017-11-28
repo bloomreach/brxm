@@ -16,8 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -46,23 +49,26 @@ import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 public class ContentResource {
 
     private static final CacheControl NO_CACHE = new CacheControl();
+
     static {
         NO_CACHE.setNoCache(true);
     }
 
     private final SessionRequestContextProvider sessionRequestContextProvider;
-    private DocumentsService documentService;
+    private final DocumentsService documentService;
+    private final Function<HttpServletRequest, Map<String,Serializable>> contextPayloadService;
 
-    public ContentResource(final SessionRequestContextProvider userSessionProvider, final DocumentsService documentsService) {
+    public ContentResource(final SessionRequestContextProvider userSessionProvider, final DocumentsService documentsService, final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
+        this.contextPayloadService = contextPayloadService;
     }
 
     @POST
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> documentService.createDraft(id, session, locale));
+                (session, locale) -> documentService.createDraft(id, session, locale, getPayload(servletRequest)));
     }
 
     @PUT
@@ -70,7 +76,7 @@ public class ContentResource {
     public Response updateDraftDocument(@PathParam("id") String id, Document document,
                                         @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateDraft(id, document, session, locale));
+                (session, locale) -> documentService.updateDraft(id, document, session, locale, getPayload(servletRequest)));
     }
 
     @PUT
@@ -80,7 +86,7 @@ public class ContentResource {
                                      List<FieldValue> fieldValues,
                                      @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
+            documentService.updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getPayload(servletRequest));
             return null;
         });
     }
@@ -89,7 +95,7 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response deleteDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.deleteDraft(id, session, locale);
+            documentService.deleteDraft(id, session, locale, getPayload(servletRequest));
             return null;
         });
     }
@@ -138,6 +144,10 @@ public class ContentResource {
         } catch (ErrorWithPayloadException e) {
             return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
         }
+    }
+
+    private Map<String, Serializable> getPayload(HttpServletRequest servletRequest) {
+        return contextPayloadService.apply(servletRequest);
     }
 
     @FunctionalInterface

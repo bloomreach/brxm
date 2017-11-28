@@ -16,16 +16,23 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
-import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
-import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
+import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
@@ -43,9 +50,11 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     private final DocumentsServiceImpl documentsService;
+    private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
     public ChannelContentServiceModule() {
         this.documentsService = new DocumentsServiceImpl();
+        this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {
@@ -63,7 +72,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         final String hintsInspectorClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
             final HintsInspector hintsInspector = (HintsInspector) Class.forName(hintsInspectorClassName).newInstance();
-            documentsService.setEditingUtils(new EditingUtils(hintsInspector));
+            documentsService.setHintsInspector(hintsInspector);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
@@ -71,7 +80,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider) {
-        return new ContentResource(sessionRequestContextProvider, documentsService);
+        return new ContentResource(sessionRequestContextProvider, documentsService, contextPayloadService);
     }
 
     private abstract static class HippoNamespacesEventListener extends JcrEventListener {
