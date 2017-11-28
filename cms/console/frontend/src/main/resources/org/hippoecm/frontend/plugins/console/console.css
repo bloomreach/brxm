@@ -338,6 +338,14 @@ li.hippo-console-menu-actions-save.session-changes a {
   color: #009688;
 }
 
+.jcrnode-system {
+  color: #90caf9;
+}
+
+.jcrnode-system + span {
+  color: #757575;
+}
+
 .jcrnode-content {
   color: #4caf50;
 }
