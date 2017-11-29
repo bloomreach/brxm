@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -42,9 +43,13 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugins.console.behavior.OriginTitleBehavior;
 import org.hippoecm.frontend.plugins.console.icons.IconLabel;
 import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +68,19 @@ class NodeEditor extends Form<Node> {
     private String uuid;
     @SuppressWarnings("unused FieldCanBeLocal")
     private String nodePath;
+    @SuppressWarnings("unused FieldCanBeLocal")
+    private String category;
+    @SuppressWarnings("unused FieldCanBeLocal")
+    private String origin;
+    private String primaryTypeOrigin;
+    private String mixinTypesOrigin;
 
     private NamespaceProvider namespaceProvider;
     private NamespacePropertiesEditor namespacePropertiesEditor;
     private NodeTypesEditor typesEditor;
+
+    // get the HCM ConfigurationService, which is repo-static, but not the model, which can be updated
+    private final ConfigurationService cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
 
     NodeEditor(String id, IModel<Node> model) {
         super(id, model);
@@ -99,6 +113,16 @@ class NodeEditor extends Form<Node> {
         add(namespacePropertiesEditor);
 
         add(new ToggleHeader("toggle-header-3", "3", "Mixin Types"));
+
+        // HCM config-tracing info
+        // TODO: upgrade this to a component with AjaxLinks to the baseline for each origin source file
+        add(new MultiLineLabel("origin", new PropertyModel<String>(this, "origin")));
+
+        add(new Label("primarytypeorigin", "")
+                .add(new OriginTitleBehavior(new PropertyModel<>(this, "primaryTypeOrigin"))));
+        add(new Label("mixintypesorigin", "")
+                .add(new OriginTitleBehavior(new PropertyModel<>(this, "mixinTypesOrigin"))));
+
         onModelChanged();
     }
 
@@ -120,12 +144,23 @@ class NodeEditor extends Form<Node> {
 
                 namespacePropertiesEditor.setVisible(true);
 
+                // update HCM category & origin(s)
+                final ConfigurationModel cfgModel = cfgService.getRuntimeConfigurationModel();
+                origin = PropertiesEditor.getNodeOrigin(nodePath, cfgModel);
+                primaryTypeOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:primaryType", cfgModel);
+                mixinTypesOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:mixinTypes", cfgModel);
+
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
         } else {
+            // if there is no node, set values to non-null empty strings for safety
             typesEditor.setVisible(false);
             namespacePropertiesEditor.setVisible(false);
+
+            origin = "";
+            primaryTypeOrigin = "";
+            mixinTypesOrigin = "";
         }
     }
 
