@@ -72,15 +72,17 @@ class NodeEditor extends Form<Node> {
     private String category;
     @SuppressWarnings("unused FieldCanBeLocal")
     private String origin;
+    @SuppressWarnings("unused FieldCanBeLocal")
     private String primaryTypeOrigin;
+    @SuppressWarnings("unused FieldCanBeLocal")
     private String mixinTypesOrigin;
 
     private NamespaceProvider namespaceProvider;
     private NamespacePropertiesEditor namespacePropertiesEditor;
     private NodeTypesEditor typesEditor;
 
-    // get the HCM ConfigurationService, which is repo-static, but not the model, which can be updated
-    private final ConfigurationService cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
+    // the (transient, not serializable) HCM ConfigurationService, which is repo-static, but not the model, which can be updated
+    private transient ConfigurationService cfgService;
 
     NodeEditor(String id, IModel<Node> model) {
         super(id, model);
@@ -127,6 +129,19 @@ class NodeEditor extends Form<Node> {
     }
 
     @Override
+    protected void onDetach() {
+        super.onDetach();
+        cfgService = null;
+    }
+
+    private ConfigurationService getConfigurationService() {
+        if (cfgService == null) {
+            cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
+        }
+        return cfgService;
+    }
+
+    @Override
     public void onModelChanged() {
         super.onModelChanged();
         final IModel<Node> model = getModel();
@@ -145,7 +160,7 @@ class NodeEditor extends Form<Node> {
                 namespacePropertiesEditor.setVisible(true);
 
                 // update HCM category & origin(s)
-                final ConfigurationModel cfgModel = cfgService.getRuntimeConfigurationModel();
+                final ConfigurationModel cfgModel = getConfigurationService().getRuntimeConfigurationModel();
                 origin = PropertiesEditor.getNodeOrigin(nodePath, cfgModel);
                 primaryTypeOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:primaryType", cfgModel);
                 mixinTypesOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:mixinTypes", cfgModel);
