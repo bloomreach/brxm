@@ -45,13 +45,6 @@ public class ProjectUtilsTest extends BaseResourceTest {
     }
 
     @Test
-    public void testGetLog4jFiles() throws Exception {
-        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
-        final List<File> log4jFiles = ProjectUtils.getLog4j2Files();
-        assertEquals(2, log4jFiles.size());
-    }
-
-    @Test
     public void testGetContextXml() throws Exception {
         assertTrue(ProjectUtils.getContextXml().exists());
     }

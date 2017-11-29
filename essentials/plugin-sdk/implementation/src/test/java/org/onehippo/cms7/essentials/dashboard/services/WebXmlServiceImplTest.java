@@ -29,8 +29,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +36,6 @@ import static org.junit.Assert.assertTrue;
 
 public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImplTest.class);
     private static final String SITE_WEB_XML = "site/src/main/webapp/WEB-INF/web.xml";
     private final WebXmlService service = new WebXmlServiceImpl();
 

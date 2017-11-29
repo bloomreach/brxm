@@ -19,13 +19,16 @@ package org.onehippo.cms7.essentials.plugins.projects;
 import java.io.File;
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
+
 import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenAssemblyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -53,6 +56,9 @@ public class ProjectsInstruction implements Instruction {
     private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
 
+    @Inject private LoggingService loggingService;
+    @Inject private ProjectService projectService;
+
     @Override
     public InstructionStatus execute(final PluginContext context) {
         File contextXml = ProjectUtils.getContextXml();
@@ -62,9 +68,10 @@ public class ProjectsInstruction implements Instruction {
             ContextXMLUtils.addResource(contextXml, WPM_DATASOURCE_NAME, DEFAULT_WPM_RESOURCE);
         }
 
-        log.info("Adding Projects related log4j2 loggers");
-        Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.hst.configuration.branch", "warn");
-        Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.services.wpm.project", "warn");
+        projectService.getLog4j2Files().forEach(f -> {
+            loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.hst.configuration.branch", "warn");
+            loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.services.wpm.project", "warn");
+        });
 
         log.info("Adding enterprise-services to the Cargo runner shared classpath");
         MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ENTERPRISE_GROUPID, ENTERPRISE_SERVICES_ARTIFACTID);

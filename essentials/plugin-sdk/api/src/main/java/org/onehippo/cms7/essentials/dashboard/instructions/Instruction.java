@@ -25,6 +25,11 @@ import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
  * Contract for implementing a plugin installation instruction.
  *
  * All instructions should describe their (intended) action by means of one or more "change messages".
+ *
+ * If an Essentials Plugin implements an Instruction, to be executed during the "setup" phase of the installation
+ * by means of an &lt;execute class="fqcn.of.custom.Instruction"/&gt; element in the Plugin's package file,
+ * the class-instance will be @Inject-ed with beans known to the Spring application, such that services
+ * exposed through the SDK API can be used in these instructions.
  */
 public interface Instruction {
 

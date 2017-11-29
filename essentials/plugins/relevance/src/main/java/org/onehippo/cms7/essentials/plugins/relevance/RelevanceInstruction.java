@@ -19,15 +19,16 @@ package org.onehippo.cms7.essentials.plugins.relevance;
 import java.io.File;
 import java.util.function.BiConsumer;
 
-import com.google.common.collect.Multimap;
+import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -49,6 +50,9 @@ public class RelevanceInstruction implements Instruction {
             "          driverClassName=\"org.h2.Driver\"\n" +
             "          url=\"jdbc:h2:${repo.path}/targeting/targeting;MVCC=TRUE\"/>";
 
+    @Inject private LoggingService loggingService;
+    @Inject private ProjectService projectService;
+
     @Override
     public InstructionStatus execute(final PluginContext context) {
         File contextXml = ProjectUtils.getContextXml();
@@ -62,8 +66,8 @@ public class RelevanceInstruction implements Instruction {
                 "{'indexName':'visits', 'locations':['http://localhost:9200/']}",
                 "java.lang.String", false);
 
-        log.info("Adding Relevance log4j2 logger");
-        Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.targeting", "warn");
+        projectService.getLog4j2Files()
+                .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.targeting", "warn"));
 
         Model model = MavenModelUtils.readPom(getClass().getResourceAsStream("/relevance-pom-overlay.xml"));
         MavenCargoUtils.mergeCargoProfile(context, model);

@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -31,6 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +44,7 @@ public class ExecuteInstruction extends BuiltinInstruction {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteInstruction.class);
 
+    @Inject private AutowireCapableBeanFactory injector;
     private String clazz;
 
     public ExecuteInstruction() {
@@ -64,6 +67,7 @@ public class ExecuteInstruction extends BuiltinInstruction {
             return InstructionStatus.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
+        injector.autowireBean(instruction);
         log.info("Executing instruction '{}'.", clazz);
         return instruction.execute(context);
     }
@@ -71,6 +75,8 @@ public class ExecuteInstruction extends BuiltinInstruction {
     @Override
     void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         final Instruction instruction = GlobalUtils.newInstance(clazz);
+        injector.autowireBean(instruction);
+
         final BooleanWrapper signal = new BooleanWrapper();
         if (instruction != null) {
             instruction.populateChangeMessages((g, m) -> {
