@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.observation;
 
+import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,11 +29,11 @@ import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService, InternalCmsEventDispatcherService {
+public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService, InternalCmsEventDispatcherService, Serializable {
 
-    private final static Logger log = LoggerFactory.getLogger(CmsEventDispatcherServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CmsEventDispatcherServiceImpl.class);
 
-    final Map<String, Set<JcrListener>> listeners = new ConcurrentHashMap<>();
+    final transient ConcurrentMap<String, Set<JcrListener>> listeners = new ConcurrentHashMap<>();
 
     @Override
     public void events(final Node... nodes) {
@@ -46,8 +47,9 @@ public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService,
                 if (jcrListeners == null) {
                     continue;
                 }
+                final ChangeEvent changeEvent = new ChangeEvent(path, node.getSession().getUserID());
                 for (JcrListener jcrListener : jcrListeners) {
-                    jcrListener.onEvent(new ChangeEvent(path, node.getSession().getUserID()));
+                    jcrListener.onEvent(changeEvent);
                 }
             } catch (RepositoryException e) {
                 log.error("RepositoryException ", e);
@@ -60,27 +62,11 @@ public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService,
         if (StringUtils.isEmpty(nodePath)) {
             return;
         }
-        Set<JcrListener> jcrListeners = listeners.get(nodePath);
-        if (jcrListeners == null) {
-            synchronized (this) {
-                jcrListeners = listeners.get(nodePath);
-                if (jcrListeners == null) {
-                    // note do NOT use here org.apache.wicket.util.collections.ConcurrentHashSet because there can be
-                    // *many* instances (for every nodePath) AND ConcurrentHashSet is backed by a ConcurrentHashMap which
-                    // used to have a very large memory footprint (note sure how much improved in java 8. To be save, use
-                    // normal hashset and synchronize on jcrListeners
-                    jcrListeners = new HashSet<>();
-                    listeners.put(nodePath, jcrListeners);
-                }
-            }
-        }
-        synchronized (jcrListeners) {
-            if (jcrListeners.contains(jcrListener)) {
-                log.debug("Listeners already contains {} for path {}", jcrListener, nodePath);
-                return;
-            }
-            log.debug("Adding {} to listeners for path {}", jcrListener, nodePath);
-            jcrListeners.add(jcrListener);
+        final boolean added = listeners.computeIfAbsent(nodePath, p -> new HashSet<>()).add(jcrListener);
+        if (added) {
+            log.debug("Added {} to listeners for path {}", jcrListener, nodePath);
+        } else {
+            log.debug("Listeners already contains {} for path {}", jcrListener, nodePath);
         }
     }
 
@@ -113,8 +99,8 @@ public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService,
 
     private void logListenerInfo() {
         if (log.isDebugEnabled()) {
-            log.debug("To #{} paths in total '{}' listeners are subscribed", listeners.size(),
-                    listeners.values().stream().mapToInt(value -> value.size()).sum());
+            log.debug("To '{}' paths in total '{}' listeners are subscribed", listeners.size(),
+                    listeners.values().stream().mapToInt(Set::size).sum());
         }
     }
 
