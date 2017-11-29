@@ -12,6 +12,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
+  "packageFile": "/META-INF/taxonomy_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"
   ],
@@ -43,50 +44,6 @@
           "file": "taxonomyPlugin.js"
         }
       ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-api",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-addon-frontend",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-addon-repository",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-api",
-      "scope": "compile",
-      "targetPom": "site"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-hst-api",
-      "scope": "compile",
-      "targetPom": "site"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-hstclient",
-      "scope": "compile",
-      "targetPom": "site"
     }
   ]
 }

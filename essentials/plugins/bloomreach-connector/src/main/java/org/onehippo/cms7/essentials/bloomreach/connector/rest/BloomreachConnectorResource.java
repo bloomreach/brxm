@@ -90,7 +90,6 @@ public class BloomreachConnectorResource extends BaseResource {
         // check if we have crisp namespace registered:
         final PluginContext context = contextFactory.getContext();
         final RestfulList<MessageRestful> retVal = new RestfulList<>();
-        //TODO read dependency from plugin descriptor
         final DependencyRestful dependency = new DependencyRestful();
         dependency.setTargetPom(TargetPom.CMS.getName());
         dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);

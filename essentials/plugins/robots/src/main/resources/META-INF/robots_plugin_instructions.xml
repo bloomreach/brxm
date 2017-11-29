@@ -20,7 +20,7 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS & SAMPLE CONTENT -->
   <instructionSet>
-    <hst-bean-classes pattern="classpath*:org/onehippo/forge/**/*.class"/>
+    <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class"/>
     <xml action="copy" source="xml/robots_sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
 

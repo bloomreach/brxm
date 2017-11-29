@@ -30,7 +30,7 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="freemarkerActionType">
+  <xs:simpleType name="xmlActionType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="delete"/>
       <xs:enumeration value="copy"/>
@@ -42,13 +42,27 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="cndActionType">
+  <xs:simpleType name="targetPomType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="delete"/>
-      <xs:enumeration value="copy"/>
+      <xs:enumeration value="project"/>
+      <xs:enumeration value="site"/>
+      <xs:enumeration value="cms"/>
+      <xs:enumeration value="essentials"/>
+      <xs:enumeration value="repository-data"/>
+      <xs:enumeration value="webfiles"/>
+      <xs:enumeration value="application"/>
+      <xs:enumeration value="development"/>
     </xs:restriction>
   </xs:simpleType>
-
+  <xs:simpleType name="mavenDependencyScopeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="compile"/>
+      <xs:enumeration value="runtime"/>
+      <xs:enumeration value="test"/>
+      <xs:enumeration value="system"/>
+      <xs:enumeration value="provided"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="instructionsSetType" mixed="true">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -61,7 +75,8 @@
       <xs:element type="translationsType" name="translations" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element type="hstBeanClassesType" name="hst-bean-classes" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="hstBeanClassesType" name="hstBeanClasses" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="dependencyType" name="mavenDependency" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
     <xs:attribute use="optional" name="group" default="default" type="xs:string"/>
   </xs:complexType>
@@ -85,7 +100,7 @@
     <xs:attribute use="optional" name="binary" type="xs:boolean" default="false"/>
   </xs:complexType>
   <xs:complexType name="freemarkerType" mixed="true">
-    <xs:attribute use="required" name="action" type="freemarkerActionType"/>
+    <xs:attribute use="required" name="action" type="fileActionType"/>
     <xs:attribute use="optional" name="source" type="xs:string">
       <xs:annotation>
         <xs:documentation>Source file. We'll first try to check if file exist on a file system and copy it, if not, we'll try to fetch it from the classpath</xs:documentation>
@@ -132,7 +147,7 @@
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">
-    <xs:attribute use="required" name="action" type="fileActionType"/>
+    <xs:attribute use="required" name="action" type="xmlActionType"/>
     <xs:attribute use="optional" name="source" type="xs:string"/>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
@@ -183,6 +198,15 @@
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
+  <xs:complexType name="dependencyType" mixed="true">
+    <xs:attribute use="required" name="groupId" type="xs:string"/>
+    <xs:attribute use="required" name="artifactId" type="xs:string"/>
+    <xs:attribute use="required" name="targetPom" type="targetPomType"/>
+    <xs:attribute use="optional" name="version" type="xs:string"/>
+    <xs:attribute use="optional" name="scope" type="mavenDependencyScopeType"/>
+    <xs:attribute use="optional" name="type" type="xs:string"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
+  </xs:complexType>
 
   <!--  <xs:complexType name="instructionsSet" mixed="true">
       <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>

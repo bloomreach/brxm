@@ -25,6 +25,10 @@
     <xml action="copy" overwrite="false" source="hst/commerce-more-like-this-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>
+    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-addon-crisp-api" version="${hippo.addon-crisp.version}"/>
+    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-addon-crisp-repository" version="${hippo.addon-crisp.version}"/>
+    <mavenDependency targetPom="cms" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-components-repository" version="${hippo.addon-personalization.version}"/>
+    <mavenDependency targetPom="site" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-dependencies" type="pom" version="${hippo.addon-personalization.version}"/>
     <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
     <xml action="copy" overwrite="false" source="hst/commerce-more-like-this.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>

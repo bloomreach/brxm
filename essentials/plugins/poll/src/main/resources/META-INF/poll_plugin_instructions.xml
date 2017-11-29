@@ -20,7 +20,7 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS-->
   <instructionSet>
-    <hst-bean-classes pattern="classpath*:org/onehippo/forge/**/*.class"/>
+    <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class"/>
     <xml action="copy" source="xml/new-poll-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/new-poll-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <translations source="json/polltemplates-translations.json" />

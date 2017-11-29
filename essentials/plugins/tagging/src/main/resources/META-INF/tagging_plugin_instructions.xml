@@ -17,14 +17,9 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-
-  <instructionSet>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-dependencies-cms" targetPom="cms" type="pom"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-dependencies-site" targetPom="site" type="pom"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-enterprise-services" targetPom="project" scope="provided"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-camunda" targetPom="project" type="war" scope="provided"/>
   
-    <execute class="org.onehippo.cms7.essentials.plugins.projects.ProjectsInstruction" />
+  <instructionSet>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-content-tagging" targetPom="cms"/>
   </instructionSet>
 
 </instructions>

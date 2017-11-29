@@ -11,6 +11,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
   "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
+  "packageFile": "/META-INF/related_documents_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"
   ],
@@ -39,22 +40,6 @@
           "file": "relatedDocumentsPlugin.js"
         }
       ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-relateddocs",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-relateddocs-hst-client",
-      "scope": "compile",
-      "targetPom": "site"
     }
   ]
 }

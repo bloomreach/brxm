@@ -163,7 +163,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
             instructions = getInstructions();
         }
         if (instructions == null) {
-            log.error("Failed to parse instructions");
+            log.error("Failed to parse instructions at '{}'.", getInstructionPath());
             return InstructionStatus.FAILED;
         }
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();

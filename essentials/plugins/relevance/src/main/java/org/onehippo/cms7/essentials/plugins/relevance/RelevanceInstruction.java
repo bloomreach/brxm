@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.plugins.relevance;
 
 import java.io.File;
-import java.io.InputStream;
 
 import com.google.common.collect.Multimap;
 
@@ -25,10 +24,8 @@ import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
@@ -64,13 +61,6 @@ public class RelevanceInstruction implements Instruction {
                 "{'indexName':'visits', 'locations':['http://localhost:9200/']}",
                 "java.lang.String", false);
 
-        // Adding the dependencies in this Instruction instead of using plugin-descriptor.json
-        // This so all configuration can be done in one phase
-        log.info("Adding Relevance dependencies");
-        addDependency(context, ProjectUtils.ENT_GROUP_ID, "hippo-addon-targeting-dependencies-cms", null, "pom", "", "cms");
-        addDependency(context, ProjectUtils.ENT_GROUP_ID, "hippo-addon-targeting-dependencies-site", null, "pom", "", "site");
-        addDependency(context, ProjectUtils.ENT_GROUP_ID, "hippo-maxmind-geolite2", "20161123", "", "runtime", "site");
-
         log.info("Adding Relevance log4j2 logger");
         Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.targeting", "warn");
 
@@ -78,17 +68,6 @@ public class RelevanceInstruction implements Instruction {
         MavenCargoUtils.mergeCargoProfile(context, model);
 
         return InstructionStatus.SUCCESS;
-    }
-
-    private void addDependency(final PluginContext context, String groupId, String artifactId, String version, String type, String scope, String targetPom) {
-        DependencyRestful dependency = new DependencyRestful();
-        dependency.setGroupId(groupId);
-        dependency.setArtifactId(artifactId);
-        dependency.setVersion(version);
-        dependency.setType(type);
-        dependency.setScope(scope);
-        dependency.setTargetPom(targetPom);
-        DependencyUtils.addDependency(context, dependency);
     }
 
     public Multimap<MessageGroup, String> getChangeMessages() {

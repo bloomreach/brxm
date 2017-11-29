@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * Instruction
  */
 @Component
-@XmlRootElement(name = "hst-bean-classes", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
+@XmlRootElement(name = "hstBeanClasses", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class HstBeanClassesInstruction extends BuiltinInstruction {
 
     @Inject WebXmlService webXmlService;

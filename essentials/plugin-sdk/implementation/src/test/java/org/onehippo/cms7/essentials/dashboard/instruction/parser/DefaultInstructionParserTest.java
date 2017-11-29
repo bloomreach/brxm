@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,10 +77,10 @@ public class DefaultInstructionParserTest extends BaseTest {
 
         assertEquals("myGroup", set1.getGroups().iterator().next());
         assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroups().iterator().next());
-        assertEquals(7, set1.getInstructions().size());
+        assertEquals(8, set1.getInstructions().size());
         assertEquals(1, set2.getInstructions().size());
         // total instructions is 6:
-        assertEquals(9, myInstructions.totalInstructions());
+        assertEquals(10, myInstructions.totalInstructions());
         assertEquals(3, myInstructions.totalInstructionSets());
 
 

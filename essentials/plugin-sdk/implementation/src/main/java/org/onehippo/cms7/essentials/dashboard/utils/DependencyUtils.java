@@ -160,6 +160,9 @@ public final class DependencyUtils {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(context, type);
+        if (model == null) {
+            return false;
+        }
         final List<org.apache.maven.model.Repository> repositories = model.getRepositories();
         for (org.apache.maven.model.Repository rep : repositories) {
             final String url = repository.getUrl();
@@ -189,6 +192,9 @@ public final class DependencyUtils {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(context, targetPom);
+        if (model == null) {
+            return false;
+        }
         final List<Dependency> dependencies = model.getDependencies();
         for (Dependency projectDependency : dependencies) {
             final boolean isSameDependency = isSameDependency(dependency, projectDependency);
@@ -201,15 +207,15 @@ public final class DependencyUtils {
                 //check if versions match:    (TODO fix placeholder versions)
                 final String currentVersion = projectDependency.getVersion();
                 if (Strings.isNullOrEmpty(currentVersion) || currentVersion.indexOf('$') != -1) {
-                    log.warn("Current version couldn't be resolved {}", currentVersion);
+                    if (!ourVersion.equals(currentVersion)) {
+                        log.warn("Current version couldn't be resolved {}", currentVersion);
+                    }
                     return true;
                 }
                 return VersionUtils.compareVersionNumbers(currentVersion, ourVersion) >= 0;
             }
         }
         return false;
-
-
     }
 
     public static boolean upgradeToEnterpriseProject(final PluginContext context) {
@@ -239,19 +245,21 @@ public final class DependencyUtils {
 
             // add edition indicator:
             final Model cmsModel = ProjectUtils.getPomModel(context, TargetPom.CMS);
-            final Dependency indicator = new Dependency();
-            indicator.setArtifactId("hippo-addon-edition-indicator");
-            indicator.setGroupId(ENT_GROUP_ID);
-            cmsModel.addDependency(indicator);
+            if (cmsModel != null) {
+                final Dependency indicator = new Dependency();
+                indicator.setArtifactId("hippo-addon-edition-indicator");
+                indicator.setGroupId(ENT_GROUP_ID);
+                cmsModel.addDependency(indicator);
 
-            // add enterprise package of app dependencies
-            final Dependency enterpriseApp = new Dependency();
-            enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
-            enterpriseApp.setGroupId(ENT_GROUP_ID);
-            enterpriseApp.setType("pom");
-            cmsModel.addDependency(enterpriseApp);
+                // add enterprise package of app dependencies
+                final Dependency enterpriseApp = new Dependency();
+                enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
+                enterpriseApp.setGroupId(ENT_GROUP_ID);
+                enterpriseApp.setType("pom");
+                cmsModel.addDependency(enterpriseApp);
 
-            MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
+                MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
+            }
             return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
         }
         return false;
@@ -259,6 +267,9 @@ public final class DependencyUtils {
 
     public static boolean isEnterpriseProject(final PluginContext context) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
         final Parent parent = pomModel.getParent();
         if (parent == null) {
             return false;

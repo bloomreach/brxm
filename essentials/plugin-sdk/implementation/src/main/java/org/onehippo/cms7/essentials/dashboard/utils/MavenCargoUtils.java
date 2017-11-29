@@ -40,11 +40,14 @@ public class MavenCargoUtils {
 
     public static boolean hasProfileProperty(final PluginContext context, final String name) {
         final Model model = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
-        return hasProperty(getCargoProfile(model), name);
+        return model != null && hasProperty(getCargoProfile(model), name);
     }
 
     public static boolean addPropertyToProfile(final PluginContext context, final String name, final String value) {
         final Model model = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (model == null) {
+            return false;
+        }
         Profile cargoProfile = getCargoProfile(model);
         if (!hasProperty(cargoProfile, name)) {
             cargoProfile.addProperty(name, value);
@@ -68,6 +71,9 @@ public class MavenCargoUtils {
      */
     public static boolean mergeCargoProfile(final PluginContext context, Model incomingModel) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
         final Profile modelProfile = getCargoProfile(pomModel);
         final Profile incomingProfile = getCargoProfile(incomingModel);
 
@@ -96,6 +102,9 @@ public class MavenCargoUtils {
      */
     static boolean hasCargoRunnerWebappContext(final PluginContext context, final String webappContext) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
         final Plugin cargoPlugin = getCargoPlugin(pomModel);
 
         return cargoPlugin != null && hasCargoRunnerWebappContext(cargoPlugin, webappContext);
@@ -111,6 +120,9 @@ public class MavenCargoUtils {
     public static boolean addDeployableToCargoRunner(final PluginContext context, final Dependency dependency,
                                                      final String webappContext) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
 
         Plugin cargoPlugin = getCargoPlugin(pomModel);
         if (cargoPlugin == null) {
@@ -159,6 +171,9 @@ public class MavenCargoUtils {
      */
     public static boolean addDependencyToCargoSharedClasspath(final PluginContext context, final String groupId, final String artifactId) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
 
         Plugin cargoPlugin = getCargoPlugin(pomModel);
         if (cargoPlugin == null) {

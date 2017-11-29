@@ -24,11 +24,8 @@ import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.Log4j2Utils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenAssemblyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
@@ -66,14 +63,6 @@ public class ProjectsInstruction implements Instruction {
             ContextXMLUtils.addResource(contextXml, WPM_DATASOURCE_NAME, DEFAULT_WPM_RESOURCE);
         }
 
-        // Adding the dependencies in this Instruction instead of using plugin-descriptor.json
-        // This so all configuration can be done in one phase
-        log.info("Adding Projects dependencies");
-        addDependency(context, ENTERPRISE_GROUPID, "hippo-addon-wpm-dependencies-cms", "pom", "", "cms");
-        addDependency(context, ENTERPRISE_GROUPID, "hippo-addon-wpm-dependencies-site", "pom", "", "site");
-        addDependency(context, ENTERPRISE_GROUPID, "hippo-enterprise-services", "jar", "provided", "project");
-        addDependency(context, ENTERPRISE_GROUPID, "hippo-addon-wpm-camunda", "war", "provided", "project");
-
         log.info("Adding Projects related log4j2 loggers");
         Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.hst.configuration.branch", "warn");
         Log4j2Utils.addLoggerToLog4j2Files("com.onehippo.cms7.services.wpm.project", "warn");
@@ -104,15 +93,5 @@ public class ProjectsInstruction implements Instruction {
     public Multimap<MessageGroup, String> getChangeMessages() {
         return Instruction.makeChangeMessages(MessageGroup.EXECUTE,
                 "Adjust project in several ways to install the 'Projects' feature.");
-    }
-
-    private void addDependency(final PluginContext context, String groupId, String artifactId, String type, String scope, String targetPom) {
-        DependencyRestful dependency = new DependencyRestful();
-        dependency.setGroupId(groupId);
-        dependency.setArtifactId(artifactId);
-        dependency.setType(type);
-        dependency.setScope(scope);
-        dependency.setTargetPom(targetPom);
-        DependencyUtils.addDependency(context, dependency);
     }
 }

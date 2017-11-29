@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support" targetPom="site"/>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support-repository" targetPom="cms"/>
     <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/seo.png" target="{{imagesRoot}}/essentials/catalog-component-icons/seo.png"/>
   </instructionSet>
