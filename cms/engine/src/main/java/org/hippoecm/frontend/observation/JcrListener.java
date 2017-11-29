@@ -76,7 +76,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private final List<Event> virtualEvents = new LinkedList<Event>();
     private final Queue<Event> jcrEvents = new ConcurrentLinkedQueue<>();
 
-    // events not the result of jcr changes but of manually created ChangeEvent s
+    // events not the result of jcr changes but of manually created ChangeEvents
     private final Set<ChangeEvent> dispatchedEvents = new ConcurrentHashSet<>();
     private Session session;
     private FacetRootsObserver fro;
@@ -462,6 +462,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             // events have references to the session, so they are useless now
             jcrEvents.clear();
             dispatchedEvents.clear();
+            virtualEvents.clear();
             try {
                 unsubscribe();
             } catch (RepositoryException ex) {
