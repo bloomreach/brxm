@@ -3,5 +3,5 @@ group:
   after: hippo-cms
 project: hippo-addon-crisp-demo
 module: 
-  name: hippo-addon-crisp-demo-repository-data-webfiles
+  name: hippo-addon-crisp-demo-repository-data-development
   after: hippo-addon-crisp-demo-repository-data-application

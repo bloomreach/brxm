@@ -2,7 +2,7 @@
            xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2 http://maven.apache.org/xsd/component-1.1.2.xsd">
   <files>
     <file>
-      <source>bootstrap/content/target/hippo-addon-crisp-demo-bootstrap-content-${project.version}.jar</source>
+      <source>repository-data/development/target/hippo-addon-crisp-demo-bootstrap-development-${project.version}.jar</source>
       <outputDirectory>shared/lib</outputDirectory>
     </file>
   </files>

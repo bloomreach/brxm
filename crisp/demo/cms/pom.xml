@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.demo</groupId>
-      <artifactId>hippo-addon-crisp-demo-repository-data-config</artifactId>
+      <artifactId>hippo-addon-crisp-demo-repository-data-application</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

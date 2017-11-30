@@ -6,16 +6,6 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
       watchedModules: [repository-data/webfiles]
-    /hippo:configuration/hippo:groups/author:
-      hipposys:members:
-        operation: add
-        type: string
-        value: [author]
-    /hippo:configuration/hippo:groups/editor:
-      hipposys:members:
-        operation: add
-        type: string
-        value: [editor]
     /hippo:configuration/hippo:groups/webmaster:
       hipposys:members:
         operation: add

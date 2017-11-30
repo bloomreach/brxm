@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:modules:
+        operation: add
+        type: string
+        value: ['repository-data/development:/content']
+    /hippo:configuration/hippo:groups/author:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [author]
+    /hippo:configuration/hippo:groups/editor:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [editor]
