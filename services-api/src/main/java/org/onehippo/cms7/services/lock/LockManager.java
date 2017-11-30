@@ -39,7 +39,7 @@ import org.onehippo.cms7.services.SingletonService;
  *     <code>
  *         <pre>
  *             public void run() {
- *                try (LockResource lock = lockManager.lock(key)){
+ *                try (LockResource ignore = lockManager.lock(key)){
  *                   // Do work
  *                } catch (AlreadyLockedException e) {
  *                   log.info("'{}' is already locked", key, e);
