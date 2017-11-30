@@ -28,6 +28,7 @@ import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
+import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -68,10 +69,10 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableDirectory("site/src/main/webapp/WEB-INF");
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             service.addHstBeanClassPattern(context, "foo");
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to add HST bean class pattern 'foo'.")));
+                    "Failed to update XML file")));
         }
     }
 
@@ -124,9 +125,9 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addFilter(context, TargetPom.SITE, "Console", null, null));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to add filter 'Console'.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 
@@ -154,18 +155,18 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addFilterMapping(context, TargetPom.SITE, "Console", null));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to add mapping for filter 'Console'.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 
     @Test
     public void add_dispatchers_filter_mapping_absent() throws Exception {
         final PluginContext context = getContext();
-        final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
+        createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addDispatchersToFilterMapping(context, TargetPom.SITE, "non-existent-filter", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to find filter-mapping for filter 'non-existent-filter' in web.xml file of module 'site'.")));
@@ -196,10 +197,9 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addDispatchersToFilterMapping(context, TargetPom.SITE, "dummy", null));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to add dispatchers to filter-mapping for filter 'dummy'.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 
@@ -236,10 +236,9 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addServlet(context, TargetPom.SITE, "Console", null, null));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed adding servlet 'Console' to web.xml of module 'site'.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 
@@ -286,10 +285,9 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(WebXmlServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addServletMapping(context, TargetPom.SITE, "Console", null));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed adding/updating servlet-mappping for servlet 'Console' in web.xml of module 'site'.")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 }

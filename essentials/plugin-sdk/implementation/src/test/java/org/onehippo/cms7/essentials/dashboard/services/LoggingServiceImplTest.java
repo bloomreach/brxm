@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
+import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -62,9 +63,9 @@ public class LoggingServiceImplTest extends ResourceModifyingTest {
     public void add_logger_invalid_xml() throws Exception {
         final File config = createModifiableFile("/services/logging/log4j2-invalid.xml", "dummy.xml");
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(LoggingServiceImpl.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addLoggerToLog4jConfiguration(config, "org.hippoecm.hst", "info"));
-            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to add Logger to ")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
 }

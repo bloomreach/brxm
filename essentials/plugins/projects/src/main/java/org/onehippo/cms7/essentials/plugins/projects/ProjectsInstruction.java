@@ -17,6 +17,8 @@
 package org.onehippo.cms7.essentials.plugins.projects;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -26,9 +28,9 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenAssemblyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -41,32 +43,38 @@ import org.slf4j.LoggerFactory;
 public class ProjectsInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(ProjectsInstruction.class);
-    private static final String DEFAULT_WPM_RESOURCE = "<Resource\n" +
-            "            name=\"jdbc/wpmDS\" auth=\"Container\" type=\"javax.sql.DataSource\"\n" +
-            "            maxTotal=\"100\" maxIdle=\"10\" initialSize=\"10\" maxWaitMillis=\"10000\"\n" +
-            "            testWhileIdle=\"true\" testOnBorrow=\"false\" validationQuery=\"SELECT 1\"\n" +
-            "            timeBetweenEvictionRunsMillis=\"10000\"\n" +
-            "            minEvictableIdleTimeMillis=\"60000\"\n" +
-            "            username=\"sa\" password=\"\"\n" +
-            "            driverClassName=\"org.h2.Driver\"\n" +
-            "            url=\"jdbc:h2:./wpm/wpm;AUTO_SERVER=TRUE\"/>";
-    private static final String WPM_DATASOURCE_NAME = "jdbc/wpmDS";
+    private static final String WPM_RESOURCE_NAME = "jdbc/wpmDS";
+    private static final Map<String, String> WPM_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
     private static final String WPM_WEBAPP_ARTIFACTID = "hippo-addon-wpm-camunda";
     private static final String ENTERPRISE_GROUPID = "com.onehippo.cms7";
     private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
 
+    static {
+        WPM_RESOURCE_ATTRIBUTES.put("auth", "Container");
+        WPM_RESOURCE_ATTRIBUTES.put("type", "javax.sql.DataSource");
+        WPM_RESOURCE_ATTRIBUTES.put("maxTotal", "100");
+        WPM_RESOURCE_ATTRIBUTES.put("maxIdle", "10");
+        WPM_RESOURCE_ATTRIBUTES.put("initialSize", "10");
+        WPM_RESOURCE_ATTRIBUTES.put("maxWaitMillis", "10000");
+        WPM_RESOURCE_ATTRIBUTES.put("testWhileIdle", "true");
+        WPM_RESOURCE_ATTRIBUTES.put("testOnBorrow", "false");
+        WPM_RESOURCE_ATTRIBUTES.put("validationQuery", "SELECT 1");
+        WPM_RESOURCE_ATTRIBUTES.put("timeBetweenEvictionRunsMillis", "10000");
+        WPM_RESOURCE_ATTRIBUTES.put("minEvictableIdleTimeMillis", "60000");
+        WPM_RESOURCE_ATTRIBUTES.put("username", "sa");
+        WPM_RESOURCE_ATTRIBUTES.put("password", "");
+        WPM_RESOURCE_ATTRIBUTES.put("driverClassName", "org.h2.Driver");
+        WPM_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:./wpm/wpm;AUTO_SERVER=TRUE");
+    }
+
+    @Inject private ContextXmlService contextXmlService;
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
-        File contextXml = ProjectUtils.getContextXml();
-
-        log.info("Adding jdbc/wpmDS datasource to conf/context.xml: {}", WPM_DATASOURCE_NAME);
-        if (!ContextXMLUtils.hasResource(contextXml, WPM_DATASOURCE_NAME)) {
-            ContextXMLUtils.addResource(contextXml, WPM_DATASOURCE_NAME, DEFAULT_WPM_RESOURCE);
-        }
+        contextXmlService.addResource(WPM_RESOURCE_NAME, WPM_RESOURCE_ATTRIBUTES);
 
         projectService.getLog4j2Files().forEach(f -> {
             loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.hst.configuration.branch", "warn");

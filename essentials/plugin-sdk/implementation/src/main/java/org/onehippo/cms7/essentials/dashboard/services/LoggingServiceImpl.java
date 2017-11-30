@@ -17,52 +17,38 @@
 package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 import javax.inject.Singleton;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 @Singleton
 public class LoggingServiceImpl implements LoggingService {
-    private static final Logger LOG = LoggerFactory.getLogger(LoggingServiceImpl.class);
 
     @Override
     public boolean addLoggerToLog4jConfiguration(final File configuration, final String loggerName, final String level) {
-        try {
-            Document doc = new SAXReader().read(configuration);
+        return Dom4JUtils.update(configuration, doc -> {
             Element logger = loggerFor(doc, loggerName);
             if (logger == null) {
                 logger = createLogger(doc, loggerName);
             }
             logger.addAttribute("level", level);
-            writeLog4j2(doc, configuration);
-            return true;
-        } catch (DocumentException | IOException e) {
-            LOG.error("Failed to add Logger to '{}'.", configuration.getAbsolutePath(), e);
-        }
-        return false;
+        });
     }
 
     private Element loggerFor(final Document doc, final String loggerName) {
-        final String selector = String.format("/Configuration/*[name()='Loggers']/*[name()='Logger' and @name='%s']",
+        final String selector = String.format("/Configuration/Loggers/Logger[@name='%s']",
                 loggerName);
         return (Element) doc.getRootElement().selectSingleNode(selector);
     }
 
     private Element createLogger(final Document doc, final String loggerName) {
-        final String selector = "/Configuration/*[name()='Loggers']";
-        Element loggers = (Element) doc.getRootElement().selectSingleNode(selector);
+        Element loggers = (Element) doc.getRootElement().selectSingleNode("/Configuration/Loggers");
         if (loggers == null) {
             Element configuration = (Element) doc.getRootElement().selectSingleNode("/Configuration");
             if (configuration == null) {
@@ -72,11 +58,5 @@ public class LoggingServiceImpl implements LoggingService {
         }
         return Dom4JUtils.addIndentedSameNameSibling(loggers, "Logger", null)
                 .addAttribute("name", loggerName);
-    }
-
-    private void writeLog4j2(Document doc, File target) throws IOException {
-        FileWriter writer = new FileWriter(target);
-        doc.write(writer);
-        writer.close();
     }
 }

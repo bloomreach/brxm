@@ -16,7 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugins.relevance;
 
-import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -26,48 +27,55 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.ContextXMLUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Add JDBC resource to context.xml.
  */
 public class RelevanceInstruction implements Instruction {
 
-    private static Logger log = LoggerFactory.getLogger(RelevanceInstruction.class);
     private static final String TARGETING_RESOURCE_NAME = "jdbc/targetingDS";
-    private static final String TARGETING_RESOURCE = "<Resource name=\"" + TARGETING_RESOURCE_NAME + "\" auth=\"Container\" type=\"javax.sql.DataSource\"\n" +
-            "          maxTotal=\"100\" maxIdle=\"10\" initialSize=\"10\" maxWaitMillis=\"10000\"\n" +
-            "          testWhileIdle=\"true\" testOnBorrow=\"false\" validationQuery=\"SELECT 1\"\n" +
-            "          timeBetweenEvictionRunsMillis=\"10000\" minEvictableIdleTimeMillis=\"60000\"\n" +
-            "          username=\"sa\" password=\"\"\n" +
-            "          driverClassName=\"org.h2.Driver\"\n" +
-            "          url=\"jdbc:h2:${repo.path}/targeting/targeting;MVCC=TRUE\"/>";
+    private static final String TARGETING_ENVIRONMENT_NAME = "elasticsearch/targetingDS";
+    private static final String TARGETING_LOGGER = "com.onehippo.cms7.targeting";
+    private static final Map<String, String> TARGETING_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
+    private static final Map<String, String> TARGETING_ENVIRONMENT_ATTRIBUTES = new LinkedHashMap<>();
 
+    static {
+        TARGETING_RESOURCE_ATTRIBUTES.put("auth", "Container");
+        TARGETING_RESOURCE_ATTRIBUTES.put("type", "javax.sql.DataSource");
+        TARGETING_RESOURCE_ATTRIBUTES.put("maxTotal", "100");
+        TARGETING_RESOURCE_ATTRIBUTES.put("maxIdle", "10");
+        TARGETING_RESOURCE_ATTRIBUTES.put("initialSize", "10");
+        TARGETING_RESOURCE_ATTRIBUTES.put("maxWaitMillis", "10000");
+        TARGETING_RESOURCE_ATTRIBUTES.put("testWhileIdle", "true");
+        TARGETING_RESOURCE_ATTRIBUTES.put("testOnBorrow", "false");
+        TARGETING_RESOURCE_ATTRIBUTES.put("validationQuery", "SELECT 1");
+        TARGETING_RESOURCE_ATTRIBUTES.put("timeBetweenEvictionRunsMillis", "10000");
+        TARGETING_RESOURCE_ATTRIBUTES.put("minEvictableIdleTimeMillis", "60000");
+        TARGETING_RESOURCE_ATTRIBUTES.put("username", "sa");
+        TARGETING_RESOURCE_ATTRIBUTES.put("password", "");
+        TARGETING_RESOURCE_ATTRIBUTES.put("driverClassName", "org.h2.Driver");
+        TARGETING_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:${repo.path}/targeting/targeting;MVCC=TRUE");
+
+        TARGETING_ENVIRONMENT_ATTRIBUTES.put("value", "{'indexName':'visits', 'locations':['http://localhost:9200/']}");
+        TARGETING_ENVIRONMENT_ATTRIBUTES.put("type", "java.lang.String");
+    }
+
+    @Inject private ContextXmlService contextXmlService;
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
-        File contextXml = ProjectUtils.getContextXml();
-
-        log.info("Adding jdbc/wpmDS datasource to conf/context.xml: {}", TARGETING_RESOURCE_NAME);
-        if (!ContextXMLUtils.hasResource(contextXml, TARGETING_RESOURCE_NAME)) {
-            ContextXMLUtils.addResource(contextXml, TARGETING_RESOURCE_NAME, TARGETING_RESOURCE);
-        }
-        ContextXMLUtils.addEnvironment(contextXml,
-                "elasticsearch/targetingDS",
-                "{'indexName':'visits', 'locations':['http://localhost:9200/']}",
-                "java.lang.String", false);
+        contextXmlService.addResource(TARGETING_RESOURCE_NAME, TARGETING_RESOURCE_ATTRIBUTES);
+        contextXmlService.addEnvironment(TARGETING_ENVIRONMENT_NAME, TARGETING_ENVIRONMENT_ATTRIBUTES);
 
         projectService.getLog4j2Files()
-                .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.targeting", "warn"));
+                .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, TARGETING_LOGGER, "warn"));
 
         Model model = MavenModelUtils.readPom(getClass().getResourceAsStream("/relevance-pom-overlay.xml"));
         MavenCargoUtils.mergeCargoProfile(context, model);
@@ -76,6 +84,8 @@ public class RelevanceInstruction implements Instruction {
     }
 
     public void populateChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add H2 JDBC resource to context.xml.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Resource '" + TARGETING_RESOURCE_NAME + "' to context.xml.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
     }
 }
