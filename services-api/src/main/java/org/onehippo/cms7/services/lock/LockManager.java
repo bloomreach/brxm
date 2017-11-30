@@ -74,8 +74,8 @@ import org.onehippo.cms7.services.SingletonService;
  * <p>
  *     Note that when {@code key} is already locked by another {@link Thread} or other cluster node,
  *     the invocation of {@link #lock(String) #lock(key)} directly results in an {@link AlreadyLockedException} :
- *     This is thus <strong>different</strong> than {@link java.util.concurrent.locks.ReentrantLock} behavior. If you
- *     need similar behavior to {@link ReentrantLock#lock()} but then <strong>cluster wide</strong>, you can use
+ *     This is thus <strong>different</strong> than {@link ReentrantLock#lock()} behavior (which blocks until the lock is acquired).
+ *     If you need similar behavior to {@link ReentrantLock#lock()} but then <strong>cluster wide</strong>, you can use
  *     {@link LockManagerUtils#waitForLock(LockManager, String, long)} and if you need the cluster wide equivalent
  *     of {@link java.util.concurrent.locks.ReentrantLock#tryLock(long, TimeUnit)} you can use
  *     {@link LockManagerUtils#waitForLock(LockManager, String, long, long)}.
