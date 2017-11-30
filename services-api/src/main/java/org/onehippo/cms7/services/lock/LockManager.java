@@ -39,12 +39,12 @@ import org.onehippo.cms7.services.SingletonService;
  *     <code>
  *         <pre>
  *             public void run() {
- *                boolean locked = false;
- *                try {
- *                   try (LockResource lock = lockManager.lock(key)){
+ *                try (LockResource lock = lockManager.lock(key)){
  *                   // Do work
+ *                } catch (AlreadyLockedException e) {
+ *                   log.info("'{}' is already locked", key, e);
  *                } catch (LockException e) {
- *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
+ *                   log.error("Exception while trying to obtain lock, e);
  *                }
  *              }
  *         </pre>
@@ -58,9 +58,11 @@ import org.onehippo.cms7.services.SingletonService;
  *                   lockManager.lock(key);
  *                   locked = true;
  *                   // Do work
+ *                } catch (AlreadyLockedException e) {
+ *                   log.info("'{}' is already locked", key, e);
  *                } catch (LockException e) {
- *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
- *                } finally {
+ *                   log.error("Exception while trying to obtain lock, e);
+ *                }finally {
  *                   if (locked) {
  *                     lockManager.unlock(key);
  *                   }
