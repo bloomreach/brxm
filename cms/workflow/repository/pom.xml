@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-workflow</artifactId>
-    <version>5.1.0-create-content-SNAPSHOT</version>
+    <version>5.2.0-create-content-SNAPSHOT</version>
   </parent>
 
   <name>CMS Publication Workflow configuration</name>

@@ -18,7 +18,7 @@
   <parent>
     <artifactId>hippo-cms</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.1.0-create-content-SNAPSHOT</version>
+    <version>5.2.0-create-content-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
