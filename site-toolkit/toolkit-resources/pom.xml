@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>5.1.0-create-content-SNAPSHOT</version>
+    <version>5.2.0-create-content-SNAPSHOT</version>
   </parent>
   <artifactId>toolkit-resources</artifactId>
   <packaging>pom</packaging>

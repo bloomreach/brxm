@@ -21,18 +21,20 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.easymock.EasyMock;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -65,6 +67,13 @@ public class ParameterUtilsTest {
         EasyMock.replay(request);
         EasyMock.replay(requestContext);
         EasyMock.replay(resolvedSiteMapItem);
+
+        ModifiableRequestContextProvider.set(requestContext);
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.set(null);
     }
 
     @Test
@@ -78,7 +87,7 @@ public class ParameterUtilsTest {
         assertEquals("queryOptionValue1", searchInfo.getQueryOption());
 
         Calendar since = searchInfo.getSince();
-        assertEquals("2014-10-07", DateFormatUtils.format(since, ParameterUtils.ISO_DATE_FORMAT));
+        assertEquals("2014-10-07", DateFormatUtils.format(since, DefaultHstParameterValueConverter.ISO_DATE_FORMAT));
     }
 
     @Ignore(value="As long as HSTTWO-3405 is not done this test will fail")
@@ -94,7 +103,7 @@ public class ParameterUtilsTest {
         assertEquals("queryOptionValue1", searchInfo.getQueryOption());
 
         Calendar since = searchInfo.getSince();
-        assertEquals("2014-10-07", DateFormatUtils.format(since, ParameterUtils.ISO_DATE_FORMAT));
+        assertEquals("2014-10-07", DateFormatUtils.format(since, DefaultHstParameterValueConverter.ISO_DATE_FORMAT));
     }
 
 
@@ -104,21 +113,21 @@ public class ParameterUtilsTest {
         EasyMock.replay(componentConfig);
         SearchInfo searchInfo = ParameterUtils.getParametersInfo(component, componentConfig, request);
         Calendar since = searchInfo.getSince();
-        assertEquals("2014-10-07T11:59:59", DateFormatUtils.format(since, ParameterUtils.ISO_DATETIME_FORMAT));
+        assertEquals("2014-10-07T11:59:59", DateFormatUtils.format(since, DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT));
 
         EasyMock.reset(componentConfig);
         EasyMock.expect(componentConfig.getParameter("since", resolvedSiteMapItem)).andReturn("2014-10-7").anyTimes();
         EasyMock.replay(componentConfig);
         searchInfo = ParameterUtils.getParametersInfo(component, componentConfig, request);
         since = searchInfo.getSince();
-        assertEquals("2014-10-07", DateFormatUtils.format(since, ParameterUtils.ISO_DATE_FORMAT));
+        assertEquals("2014-10-07", DateFormatUtils.format(since, DefaultHstParameterValueConverter.ISO_DATE_FORMAT));
 
         EasyMock.reset(componentConfig);
         EasyMock.expect(componentConfig.getParameter("since", resolvedSiteMapItem)).andReturn("T11:59:59").anyTimes();
         EasyMock.replay(componentConfig);
         searchInfo = ParameterUtils.getParametersInfo(component, componentConfig, request);
         since = searchInfo.getSince();
-        assertEquals("T11:59:59", DateFormatUtils.format(since, ParameterUtils.ISO_TIME_FORMAT));
+        assertEquals("T11:59:59", DateFormatUtils.format(since, DefaultHstParameterValueConverter.ISO_TIME_FORMAT));
     }
 
     @Test

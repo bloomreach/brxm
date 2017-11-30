@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -273,6 +274,7 @@ public class ParametersInfoProcessor {
 
         for (final Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
             final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
+            final Set<String> uniquePropertiesForInterfaceClass = new HashSet<>();
             if (fieldGroupList != null) {
                 final FieldGroup[] fieldGroups = fieldGroupList.value();
                 if (fieldGroups != null && fieldGroups.length > 0) {
@@ -285,13 +287,19 @@ public class ParametersInfoProcessor {
                         }
                         for (final String propertyName : fieldGroup.value()) {
                             final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
-                            if (property == null) {
-                                log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
-                                        propertyName, classType.getCanonicalName());
-                            } else if (fieldGroupProperties.containsValue(property)) {
+                            if (!uniquePropertiesForInterfaceClass.add(propertyName)) {
                                 log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
-                                        new Object[]{ propertyName, fieldGroup.titleKey(), classType.getCanonicalName() });
+                                        propertyName, titleKey, classType.getCanonicalName());
+                            } else if (property == null) {
+                                log.warn("Ignoring unknown parameter '{}' in field group '{}' of parameters info interface '{}'",
+                                        propertyName, titleKey, classType.getCanonicalName());
+                            } else if (fieldGroupProperties.containsValue(property)) {
+                                // valid if FieldGroup is (re)defined in inherited Info Class
+                                log.debug("Parameter '{}' in field group '{}' of parameters info interface '{}' was already added to list.",
+                                         propertyName, fieldGroup.titleKey(), classType.getCanonicalName());
                             } else {
+                                log.debug("Adding parameter '{}' to field group '{}' of parameters info interface '{}'",
+                                        propertyName, titleKey, classType.getCanonicalName());
                                 property.setGroupLabel(groupLabel);
                                 fieldGroupProperties.put(titleKey, property);
                             }
@@ -362,7 +370,7 @@ public class ParametersInfoProcessor {
      * hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
      */
     protected static final ResourceBundle[] getResourceBundles(final ParametersInfo parameterInfo, final Locale locale) {
-        final List<ResourceBundle> resourceBundles = new ArrayList<ResourceBundle>();
+        final List<ResourceBundle> resourceBundles = new ArrayList<>();
 
         final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(parameterInfo.type());
         for (final Class<?> clazz : breadthFirstInterfaceHierarchy) {

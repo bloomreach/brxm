@@ -47,6 +47,7 @@ definitions:
                 hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                 hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                 hippostdpubwf:lastModifiedBy: admin
+                hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                 hippotranslation:id: unittestproject-common-folder-homepage-id
                 hippotranslation:locale: en_US
                 unittestproject:date: 2009-08-10T10:05:07.580+02:00
@@ -77,6 +78,7 @@ definitions:
                   hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                   hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                   hippostdpubwf:lastModifiedBy: admin
+                  hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                   hippotranslation:id: unittestproject-aboutus-folder-about-us-id
                   hippotranslation:locale: en_US
                   unittestproject:date: 2009-08-10T10:05:07.580+02:00
@@ -100,6 +102,7 @@ definitions:
                   hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                   hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                   hippostdpubwf:lastModifiedBy: admin
+                  hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                   hippotranslation:id: unittestproject-aboutus-folder-contact-id
                   hippotranslation:locale: en_US
                   unittestproject:date: 2009-08-10T10:05:07.580+02:00
@@ -123,6 +126,7 @@ definitions:
                   hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                   hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                   hippostdpubwf:lastModifiedBy: admin
+                  hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                   hippotranslation:id: unittestproject-aboutus-folder-aboutfolder-document-id
                   hippotranslation:locale: en_US
                   unittestproject:date: 2009-08-10T10:05:07.580+02:00
@@ -153,6 +157,7 @@ definitions:
                     hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                     hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                     hippostdpubwf:lastModifiedBy: admin
+                    hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                     hippotranslation:id: unittestproject-aboutus-sub-folder-address-id
                     hippotranslation:locale: en_US
                     unittestproject:date: 2009-08-10T10:05:07.580+02:00
@@ -176,6 +181,7 @@ definitions:
                     hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
                     hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
                     hippostdpubwf:lastModifiedBy: admin
+                    hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
                     hippotranslation:id: unittestproject-aboutus-sub-folder-aboutsubfolder-doc-id
                     hippotranslation:locale: en_US
                     unittestproject:date: 2009-08-10T10:05:07.580+02:00

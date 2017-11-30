@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class HippoPublishableDocumentVisitor extends HippoDocumentVisitor {
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
-        response.put("pubState", node.getProperty(HIPPOSTD_STATE).getString());
+        addPropertyConditionally(context, "pubState", node.getProperty(HIPPOSTD_STATE).getString(), response);
     }
 
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
@@ -55,5 +55,12 @@ public class HippoPublishableDocumentVisitor extends HippoDocumentVisitor {
             return true;
         }
         return super.skipProperty(context, propertyType, property);
+    }
+
+    protected void addPropertyConditionally(final ResourceContext context, final String name, final String value,
+                                            final Map<String, Object> response ) {
+        if(context.getIncludedAttributes().size() == 0 || context.getIncludedAttributes().contains(name)) {
+            response.put(name, value);
+        }
     }
 }

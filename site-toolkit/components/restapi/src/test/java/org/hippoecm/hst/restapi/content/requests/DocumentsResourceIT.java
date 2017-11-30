@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.restapi.AbstractRestApiIT;
 import org.junit.Test;
@@ -36,6 +38,7 @@ import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLIC
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentsResourceIT extends AbstractRestApiIT {
@@ -117,7 +120,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final String restResponse = response.getContentAsString();
             // TODO assertions
         } catch (Exception e) {
-            log.error("error : ", e);
+            log.error("error : ",e);
         } finally {
             session.logout();
         }
@@ -136,7 +139,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
             for (Map<String, Object> item : itemsList) {
-                final Node node = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = liveUser.getNodeByIdentifier((String)item.get("id"));
                 assertTrue(node.isNodeType(NT_HANDLE));
             }
         } finally {
@@ -163,7 +166,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             int processed = 0;
             Calendar prev = null;
             for (Map<String, Object> item : itemsList) {
-                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node handleNode = liveUser.getNodeByIdentifier((String)item.get("id"));
                 final Node node = handleNode.getNode(handleNode.getName());
                 if (!node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
                     continue;
@@ -308,10 +311,79 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         }
     }
 
+    @Test
+    public void test_document_attribute_selection() throws Exception {
+        // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
+        RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", "_attributes=unittestproject:summary,unittestproject:title");
+
+        Map<String, Object> items = renderAndGetDocumentItems(requestResponse);
+        assertNotNull(items);
+        assertEquals(2, items.size());
+        assertEquals("Summary of the about us", items.get("unittestproject:summary"));
+        assertEquals("This is the about us", items.get("unittestproject:title"));
+
+        requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", "_attributes=no-such-property");
+
+        items = renderAndGetDocumentItems(requestResponse);
+        // TODO - this should never be null imho
+        assertNull(items);
+    }
+
+    @Test
+    public void test_list_attribute_selection() throws Exception {
+        RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/",
+                "_attributes=unittestproject:summary,unittestproject:title&_nodetype=unittestproject:textpage");
+
+        List<Map<String, Object>> listItems = renderAndGetListItems(requestResponse);
+        assertTrue(listItems.size() > 0);
+
+        for (Map<String, Object> item : listItems) {
+            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
+            assertEquals(2, documentItems.keySet().size());
+            assertNotNull(documentItems.get("unittestproject:title"));
+            assertNotNull(documentItems.get("unittestproject:summary"));
+        }
+
+        requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
+
+        listItems = renderAndGetListItems(requestResponse);
+        assertTrue(listItems.size() > 0);
+
+        for (Map<String, Object> item : listItems) {
+            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
+            assertTrue(documentItems.keySet().size() > 2);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> renderAndGetDocumentItems(final RequestResponseMock requestResponse) throws Exception {
+        MockHttpServletResponse response = render(requestResponse);
+
+        String restResponse = response.getContentAsString();
+        assertTrue(StringUtils.isNotEmpty(restResponse));
+
+        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        return (Map<String, Object>) deserializedResponse.get("items");
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> renderAndGetListItems(final RequestResponseMock requestResponse) throws Exception {
+        MockHttpServletResponse response = render(requestResponse);
+
+        String restResponse = response.getContentAsString();
+        assertTrue(StringUtils.isNotEmpty(restResponse));
+
+        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        return (List) deserializedResponse.get("items");
+    }
+
     private List<Map<String, Object>> getItemsFromSearchResult(final Map<String, Object> searchResult) {
         final Object items = searchResult.get("items");
         assertNotNull(items);
         assertTrue(items instanceof List);
-        return (List) items;
+        return (List)items;
     }
 }

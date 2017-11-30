@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.3-SNAPSHOT</version>
+    <version>29.3</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>5.1.0-create-content-SNAPSHOT</version>
+  <version>5.2.0-create-content-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -81,16 +81,16 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.jackrabbit.version>2.14.0-h2</hippo.jackrabbit.version>
-    <hippo.commons.version>4.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>5.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>1.1.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.cms.version>5.1.0-create-content-SNAPSHOT</hippo.cms.version>
-    <hippo.utilities.version>4.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>4.1.0-create-content-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>4.1.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.search.version>4.1.0-SNAPSHOT</hippo.services.search.version>
-    <hippo.services.contenttype.version>4.1.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.testutils.version>1.1.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.commons.version>4.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>1.2.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.cms.version>5.2.0-create-content-SNAPSHOT</hippo.cms.version>
+    <hippo.utilities.version>4.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>4.2.0-create-content-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.2.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.search.version>4.2.0-SNAPSHOT</hippo.services.search.version>
+    <hippo.services.contenttype.version>4.2.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.2.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
 
@@ -100,6 +100,9 @@
     <mime4j.version>0.6</mime4j.version>
     <dependency.solr.version>4.9.0</dependency.solr.version>
     <h2.version>1.3.175</h2.version>
+
+    <swagger-core.version>1.5.15</swagger-core.version>
+    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
   </properties>
 
@@ -583,6 +586,48 @@
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-jaxb-annotations</artifactId>
         <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-base</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-jaxrs</artifactId>
+        <version>${swagger-jaxrs.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

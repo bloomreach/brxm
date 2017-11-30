@@ -128,4 +128,11 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getParametersInfoClassName();
     }
 
+    @Override
+    public String toString() {
+        return "ComponentConfigurationImpl{" +
+                "componentConfiguration=" + componentConfiguration +
+                ", parameterNames=" + parameterNames +
+                '}';
+    }
 }

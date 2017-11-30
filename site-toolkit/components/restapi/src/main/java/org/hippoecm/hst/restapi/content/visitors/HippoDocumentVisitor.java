@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
@@ -61,4 +62,14 @@ public class HippoDocumentVisitor extends DefaultNodeVisitor {
         }
         return super.skipProperty(context, propertyType, property);
     }
+
+    protected boolean skipChild(final ResourceContext context, final ContentTypeChild childType,
+                                final Node child) throws RepositoryException {
+
+        if(context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(child.getName())) {
+            return true;
+        }
+        return super.skipChild(context, childType, child);
+    }
+
 }
