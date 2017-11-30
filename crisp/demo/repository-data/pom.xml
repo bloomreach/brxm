@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.1.0</version>
   </parent>
 
   <name>Hippo Addon CRISP Demo Repository Data</name>
