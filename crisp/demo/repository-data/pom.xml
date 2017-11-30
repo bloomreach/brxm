@@ -14,8 +14,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>config</module>
-    <module>content</module>
+    <module>application</module>
+    <module>development</module>
     <module>webfiles</module>
   </modules>
 

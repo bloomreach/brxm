@@ -1,7 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:modules:
-        operation: add
-        type: string
-        value: ['repository-data/content:/content']

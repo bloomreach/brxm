@@ -6,4 +6,4 @@ definitions:
         autoexport:modules:
           operation: override
           type: string
-          value: ['repository-data/config:/']
+          value: ['repository-data/application:/']
