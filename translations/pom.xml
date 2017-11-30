@@ -32,7 +32,7 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <hippo.l10n-tooling.version>2.1.0-SNAPSHOT</hippo.l10n-tooling.version>
+    <hippo.l10n-tooling.version>2.2.0-SNAPSHOT</hippo.l10n-tooling.version>
     <locales>fr,nl,de,zh,es</locales>
     <locale/>
     <format>excel</format>
