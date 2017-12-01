@@ -71,14 +71,14 @@
   <div class="create-content-actions">
     <button mat-button class="qa-close"
             (click)="close()">
-      {{ 'CANCEL' | translate }}
+      {{ 'CANCEL' | translate | uppercase }}
     </button>
 
     <button mat-button class="qa-continue"
             type="submit"
             (click)="submit(form)"
             [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
-      {{ 'CONTINUE' | translate }}
+      {{ 'CONTINUE' | translate | uppercase }}
     </button>
   </div>
 </div>

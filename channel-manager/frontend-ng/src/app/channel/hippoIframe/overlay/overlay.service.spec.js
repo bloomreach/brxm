@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-fdescribe('OverlayService', () => {
+describe('OverlayService', () => {
   let $iframe;
   let $q;
   let $rootScope;
@@ -638,7 +638,7 @@ fdescribe('OverlayService', () => {
     });
   });
 
-  fdescribe('onPathPicked', () => {
+  describe('onPathPicked', () => {
     let conf;
     let putFormSpy;
 

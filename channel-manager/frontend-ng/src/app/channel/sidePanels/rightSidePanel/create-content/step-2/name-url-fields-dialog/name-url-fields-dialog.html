@@ -30,12 +30,12 @@
 <mat-dialog-actions class="create-content-actions">
   <button mat-button (click)="cancel() || !name.length || !url.length"
           class="qa-cancel">
-    {{ 'CANCEL' | translate }}
+    {{ 'CANCEL' | translate | uppercase }}
   </button>
 
   <button mat-button (click)="change()"
           class="qa-submit-name-url"
           [disabled]="isUrlBusyUpdating">
-    {{ 'CHANGE' | translate }}
+    {{ 'CHANGE' | translate | uppercase }}
   </button>
 </mat-dialog-actions>

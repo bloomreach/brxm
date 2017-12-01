@@ -83,13 +83,13 @@
 
       <button mat-button class="qa-close"
       (click)="close()">
-      {{ 'DISCARD' | translate }}
+      {{ 'DISCARD' | translate | uppercase }}
       </button>
 
       <button mat-button class="qa-create-content-save"
             (click)="saveDocument()"
             ng-disabled="!editing || !isDocumentDirty() || form.$invalid">
-      {{ 'SAVE' | translate  }}
+      {{ 'SAVE' | translate | uppercase  }}
       </button>
 
     </div>
