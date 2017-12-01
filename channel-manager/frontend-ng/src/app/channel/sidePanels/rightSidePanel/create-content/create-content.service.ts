@@ -50,7 +50,11 @@ export class CreateContentService {
     return Observable.fromPromise(promise);
   }
 
-  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<any> {
+  async deleteDraft(id: string): Promise<Document> {
+    return this.contentService._send('DELETE', ['documents', id]);
+  }
+
+  async setDraftNameUrl(documentId, data: { name: string, url: string }): Promise<Document> {
     return this.contentService._send('PUT', ['documents', documentId], { displayName: data.name, urlName: data.url });
   }
 }

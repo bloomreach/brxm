@@ -79,17 +79,20 @@ public class ErrorInfo {
     public enum Reason {
         ALREADY_DELETED,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        DOES_NOT_EXIST,
         INVALID_DATA,
+        INVALID_TEMPLATE_QUERY,
+        NAME_ALREADY_EXISTS,
         NO_HOLDER,
         NOT_A_DOCUMENT,
+        NOT_A_FOLDER,
         OTHER_HOLDER,
         REQUEST_PENDING,
-        UNKNOWN_VALIDATOR,
-        INVALID_TEMPLATE_QUERY,
-        TEMPLATE_QUERY_NOT_FOUND,
-        NOT_A_FOLDER,
-        NAME_ALREADY_EXISTS,
+        SERVER_ERROR,
         SLUG_ALREADY_EXISTS,
+        TEMPLATE_QUERY_NOT_FOUND,
+        UNKNOWN_VALIDATOR,
+        WORKFLOW_ERROR,
         // add more specific failure reasons here.
     }
 }
