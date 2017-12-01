@@ -551,10 +551,11 @@ class OverlayService {
   }
 
   isHoverEnabled(config) {
-    if (config.documentUuid) {
-      return config.templateQuery || config.componentParameter;
-    }
-    return config.templateQuery && config.componentParameter;
+    const conditions = [
+      config.documentUuid   && config.templateQuery || config.componentParameter,
+      !config.documentUuid  && config.componentParameter
+    ];
+    return conditions.some((condition) => condition);
   }
 
   _getElementPositionObject(boxElement) {
