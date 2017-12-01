@@ -25,6 +25,8 @@ import java.util.List;
  * It can be @Inject-ed into an Essentials plugin's REST resource ({@code BaseResource}) or custom {@code Instruction}.
  */
 public interface ProjectService {
+    final String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
+    final String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
 
     /**
      * Retrieve a list of the log4j2 files of the project.

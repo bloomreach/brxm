@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugins.projects;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -30,10 +29,9 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.MavenAssemblyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,6 @@ public class ProjectsInstruction implements Instruction {
     private static final String WPM_RESOURCE_NAME = "jdbc/wpmDS";
     private static final Map<String, String> WPM_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
     private static final String WPM_WEBAPP_ARTIFACTID = "hippo-addon-wpm-camunda";
-    private static final String ENTERPRISE_GROUPID = "com.onehippo.cms7";
     private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
 
@@ -71,6 +68,7 @@ public class ProjectsInstruction implements Instruction {
     @Inject private ContextXmlService contextXmlService;
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
+    @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
@@ -82,23 +80,21 @@ public class ProjectsInstruction implements Instruction {
         });
 
         log.info("Adding enterprise-services to the Cargo runner shared classpath");
-        MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ENTERPRISE_GROUPID, ENTERPRISE_SERVICES_ARTIFACTID);
+        MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
 
         log.info("Adding BPM web application to the cargo.run profile with path: {}", WPM_WEBAPP_CONTEXT);
         final Dependency dependency = new Dependency();
-        dependency.setGroupId(ENTERPRISE_GROUPID);
+        dependency.setGroupId(ProjectService.GROUP_ID_ENTERPRISE);
         dependency.setArtifactId(WPM_WEBAPP_ARTIFACTID);
         dependency.setType("war");
 
         MavenCargoUtils.addDeployableToCargoRunner(context, dependency, WPM_WEBAPP_CONTEXT);
 
-        log.info("Adding dependencies to the distribution");
-        File assemblyFile = ProjectUtils.getAssemblyFile("webapps-component.xml");
-        MavenAssemblyUtils.addDependencySet(assemblyFile, "webapps", "bpm.war", false,
-                "provided", ENTERPRISE_GROUPID + ":" + WPM_WEBAPP_ARTIFACTID + ":war");
-
-        assemblyFile = ProjectUtils.getAssemblyFile("shared-lib-component.xml");
-        MavenAssemblyUtils.addIncludeToFirstDependencySet(assemblyFile, ENTERPRISE_GROUPID + ":" + ENTERPRISE_SERVICES_ARTIFACTID);
+        final String bpmWar = String.format("%s:%s:war", ProjectService.GROUP_ID_ENTERPRISE, WPM_WEBAPP_ARTIFACTID);
+        mavenAssemblyService.addDependencySet("webapps-component.xml", "webapps",
+                "bpm.war", false, "provided", bpmWar);
+        final String servicesJar = String.format("%s:%s", ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
+        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", servicesJar);
 
         return InstructionStatus.SUCCESS;
     }
