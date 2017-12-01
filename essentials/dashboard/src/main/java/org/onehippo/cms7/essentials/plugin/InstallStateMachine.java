@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package org.onehippo.cms7.essentials.plugin;
 
-import org.onehippo.cms7.essentials.dashboard.config.*;
+import java.util.Calendar;
+
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
+import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Calendar;
 
 /**
  * Implements the state transitions and persistance of the per plugin installation state.
@@ -30,11 +32,13 @@ import java.util.Calendar;
 class InstallStateMachine {
 
     private static Logger log = LoggerFactory.getLogger(InstallStateMachine.class);
+    private final Plugin plugin;
+    private final PluginContext context;
     private InstallState state;
-    private Plugin plugin;
 
-    InstallStateMachine(final Plugin plugin) {
+    InstallStateMachine(final Plugin plugin, final PluginContext context) {
         this.plugin = plugin;
+        this.context = context;
         this.state = loadStateFromFileSystem();
     }
 
@@ -118,7 +122,6 @@ class InstallStateMachine {
     }
 
     private InstallState loadState(final boolean fromWar) {
-        final PluginContext context = PluginContextFactory.getContext();
         InstallState state = InstallState.DISCOVERED;
 
         try (PluginConfigService resourceService = new ResourcePluginService(context);
@@ -138,8 +141,6 @@ class InstallStateMachine {
 
     private void persistState() {
         if (state != InstallState.DISCOVERED) {
-            final PluginContext context = PluginContextFactory.getContext();
-
             try (PluginConfigService service = new FilePluginService(context)) {
                 InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
                 if (document == null) {

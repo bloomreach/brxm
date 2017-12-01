@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>4.1.0-create-content-SNAPSHOT</version>
+    <version>4.2.0-create-content-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Banner and Carousel Plugin</name>
@@ -32,10 +32,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
     </dependency>
   </dependencies>
   <build>

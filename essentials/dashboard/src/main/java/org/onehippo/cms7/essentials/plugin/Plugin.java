@@ -44,7 +44,7 @@ public class Plugin {
     public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
         this.context = context;
         this.descriptor = descriptor;
-        this.stateMachine = new InstallStateMachine(this);
+        this.stateMachine = new InstallStateMachine(this, context);
     }
 
     public PluginDescriptor getDescriptor() {

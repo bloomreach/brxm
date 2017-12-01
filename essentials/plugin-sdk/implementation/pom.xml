@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugin-sdk</artifactId>
-    <version>4.1.0-create-content-SNAPSHOT</version>
+    <version>4.2.0-create-content-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Plugin SDK Implementation</name>
@@ -30,7 +30,22 @@
   <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <dom4j.version>2.0.1</dom4j.version>
+    <jaxen.version>1.1.6</jaxen.version>
+  </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>org.dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>${dom4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>${jaxen.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services-contenttype</artifactId>
@@ -46,12 +61,12 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.wordnik</groupId>
-      <artifactId>swagger-annotations_2.10</artifactId>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.10</artifactId>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jaxrs</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -73,6 +88,10 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.archetype</groupId>
+      <artifactId>archetype-common</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

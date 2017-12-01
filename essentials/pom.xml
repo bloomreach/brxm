@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>12.1.0-SNAPSHOT</version>
+    <version>12.2.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>4.1.0-create-content-SNAPSHOT</version>
+  <version>4.2.0-create-content-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -219,6 +219,9 @@
                 <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/webxml/**</exclude>
                 <exclude>plugins/rest-services/src/main/resources/BeanNameResource.txt</exclude>
                 <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
+                <exclude>plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css</exclude>
+                <exclude>plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js</exclude>
+                <exclude>**/target/**</exclude>
               </excludes>
             </configuration>
           </plugin>

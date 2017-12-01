@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,13 @@ package org.onehippo.cms7.essentials.dashboard.event;
 import java.io.Serializable;
 
 /**
- * @version "$Id$"
+ * A plugin event is a carrier of a human-readable message about some event that occurred inside the Essentials
+ * dashboard. The event is typically posted on the eventBus, and processed by an event listener.
  */
 public interface PluginEvent extends Serializable {
 
     /**
-     * in case of change events, indicates if plugin itself can undo changes
-     *
-     * @return true if change event and change can be reverted
-     */
-    boolean canUndo();
-
-    /**
-     *
-     */
-    void setCanUndo(boolean canUndo);
-
-    /**
-     * Human readable message
-     *
      * @return message which can be displayed to users
      */
     String getMessage();
-
-    /**
-     * Location where to display event message
-     *
-     * @return DisplayLocation enum
-     */
-    DisplayLocation getDisplayLocation();
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.project;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
 /**
@@ -30,15 +30,15 @@ public class ProjectUtils {
     private ProjectUtils() {
     }
 
-    public static void persistSettings(final ProjectSettings settings) throws Exception {
-        try (PluginConfigService configService = PluginContextFactory.getContext().getConfigService()) {
+    public static void persistSettings(final PluginContext context, final ProjectSettings settings) throws Exception {
+        try (PluginConfigService configService = context.getConfigService()) {
             configService.write(settings);
         }
     }
 
-    public static ProjectSettings loadSettings() {
+    public static ProjectSettings loadSettings(final PluginContext context) {
         // TODO: more symmetry!
-        return PluginContextFactory.getContext().getProjectSettings();
+        return context.getProjectSettings();
     }
 
     public static void setInitialized(final boolean init) {

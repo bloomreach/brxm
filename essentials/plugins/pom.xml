@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>4.1.0-create-content-SNAPSHOT</version>
+    <version>4.2.0-create-content-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <name>Hippo Essentials Plugins</name>
@@ -36,6 +36,13 @@
     <module>banner-and-carousel</module>
     <module>bean-writer</module>
     <module>blog</module>
+    <module>bloomreach-connector</module>
+    <module>commerce-detail</module>
+    <module>commerce-more-like-this</module>
+    <module>commerce-product-grid</module>
+    <module>commerce-search-box</module>
+    <module>commerce-search-results-category</module>
+    <module>commerce-search-results-products</module>
     <module>content-blocks</module>
     <module>document-wizard</module>
     <module>events</module>
@@ -46,7 +53,10 @@
     <module>menu</module>
     <module>news</module>
     <module>poll</module>
+    <module>projects</module>
     <module>related-documents</module>
+    <module>relevance</module>
+    <module>relevance-collectors-bundle</module>
     <module>rest-services</module>
     <module>robots</module>
     <module>search</module>
@@ -60,12 +70,8 @@
     <module>video</module>
     <module>google-maps</module>
     <module>urlrewriter</module>
-    <module>bloomreach-connector</module>
-    <module>more-like-this</module>
-    <module>products-category</module>
-    <module>products-grid</module>
-    <module>products-grid-category</module>
-    <module>products-grid-query</module>
+    <module>lucene-index-exporter</module>
+    <module>enterprise-project</module>
   </modules>
 
   <dependencyManagement>

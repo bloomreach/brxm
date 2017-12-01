@@ -25,18 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class WebXml {
     static final String NS = "http://java.sun.com/xml/ns/javaee";
 
-    private List<WebContextParam> parameters;
     private List<WebFilter> filters;
     private List<WebFilterMapping> filterMappings;
-
-    @XmlElement(name = "context-param", namespace = NS)
-    public List<WebContextParam> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(final List<WebContextParam> parameters) {
-        this.parameters = parameters;
-    }
 
     @XmlElement(name = "filter", namespace = NS)
     public List<WebFilter> getFilters() {
@@ -59,8 +49,7 @@ public class WebXml {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebXml{");
-        sb.append("parameters=").append(parameters);
-        sb.append(",filters=").append(filters);
+        sb.append("filters=").append(filters);
         sb.append('}');
         return sb.toString();
     }

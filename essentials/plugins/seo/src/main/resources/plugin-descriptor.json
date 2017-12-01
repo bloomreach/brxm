@@ -30,21 +30,5 @@
       "community"
     ]
   },
-  "libraries": [],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-seo-support",
-      "scope": "compile",
-      "targetPom": "site"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-seo-support-repository",
-      "scope": "compile",
-      "targetPom": "cms"
-    }
-  ]
+  "libraries": []
 }

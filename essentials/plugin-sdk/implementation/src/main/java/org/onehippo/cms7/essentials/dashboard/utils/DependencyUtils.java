@@ -17,20 +17,14 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
+import com.google.common.base.Strings;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.apache.maven.model.Profile;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
@@ -41,11 +35,8 @@ import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
-import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ADDON_EDITION_INDICATOR_ARTIFACT_ID;
-import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_GROUP_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_NAME;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_URL;
@@ -55,7 +46,7 @@ import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO
  */
 public final class DependencyUtils {
 
-    public static final String DEFAULT_ID = "default";
+    private static final String DEFAULT_PROFILE_ID = "default";
     private static Logger log = LoggerFactory.getLogger(DependencyUtils.class);
 
 
@@ -82,48 +73,18 @@ public final class DependencyUtils {
             final org.apache.maven.model.Repository mavenRepository = repository.createMavenRepository();
             model.addRepository(mavenRepository);
             log.debug("Added new maven repository {}", repository);
-            final String pomPath = ProjectUtils.getPomPath(context, targetPom);
-            return writePom(pomPath, model);
+            final File pomFile = ProjectUtils.getPomFile(context, targetPom);
+            return MavenModelUtils.writePom(model, pomFile);
         }
         return true;
     }
 
+    /**
+     * @deprecated Use {@link MavenModelUtils#writePom(Model, File)}
+     */
+    @Deprecated
     public static boolean writePom(final String path, final Model model) {
-        FileWriter fileWriter = null;
-        try {
-            fileWriter = new FileWriter(path);
-            // fix profile names (intellij expects default profile id)
-            // see: http://youtrack.jetbrains.com/issue/IDEA-126568
-            final List<Profile> profiles = model.getProfiles();
-            boolean needsRewrite = false;
-            for (Profile profile : profiles) {
-                if (Strings.isNullOrEmpty(profile.getId()) || profile.getId().equals("default")) {
-                    profile.setId("{{ESSENTIALS_DEFAULT_PLACEHOLDER}}");
-                    needsRewrite = true;
-                }
-            }
-            final MavenXpp3Writer writer = new MavenXpp3Writer();
-            writer.write(fileWriter, model);
-            if (needsRewrite) {
-                fileWriter.close();
-                // replace default id:
-                final String pomContent = GlobalUtils.readStreamAsText(new FileInputStream(path));
-                final Map<String, String> data = new HashMap<>();
-                data.put("ESSENTIALS_DEFAULT_PLACEHOLDER", DEFAULT_ID);
-                final String newContent = TemplateUtils.replaceStringPlaceholders(pomContent, data);
-                GlobalUtils.writeToFile(newContent, new File(path).toPath());
-                log.debug("Fixed default profile id");
-            }
-            log.debug("Written pom to: {}", path);
-            return true;
-        } catch (IOException e) {
-            log.error("Error adding maven dependency", e);
-            return false;
-        } finally {
-            IOUtils.closeQuietly(fileWriter);
-        }
-
-
+        return MavenModelUtils.writePom(model, new File(path));
     }
 
     /**
@@ -155,10 +116,8 @@ public final class DependencyUtils {
                 break;
             }
         }
-        final String pomPath = ProjectUtils.getPomPath(context, type);
-        return writePom(pomPath, model);
-
-
+        final File pomFile = ProjectUtils.getPomFile(context, type);
+        return MavenModelUtils.writePom(model, pomFile);
     }
 
     /**
@@ -182,8 +141,8 @@ public final class DependencyUtils {
         if (!hasDependency(context, dependency)) {
             final Dependency newDependency = dependency.createMavenDependency();
             model.addDependency(newDependency);
-            final String pomPath = ProjectUtils.getPomPath(context, targetPom);
-            return writePom(pomPath, model);
+            final File pomFile = ProjectUtils.getPomFile(context, targetPom);
+            return MavenModelUtils.writePom(model, pomFile);
         }
         return true;
 
@@ -201,6 +160,9 @@ public final class DependencyUtils {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(context, type);
+        if (model == null) {
+            return false;
+        }
         final List<org.apache.maven.model.Repository> repositories = model.getRepositories();
         for (org.apache.maven.model.Repository rep : repositories) {
             final String url = repository.getUrl();
@@ -230,6 +192,9 @@ public final class DependencyUtils {
             return false;
         }
         final Model model = ProjectUtils.getPomModel(context, targetPom);
+        if (model == null) {
+            return false;
+        }
         final List<Dependency> dependencies = model.getDependencies();
         for (Dependency projectDependency : dependencies) {
             final boolean isSameDependency = isSameDependency(dependency, projectDependency);
@@ -242,15 +207,15 @@ public final class DependencyUtils {
                 //check if versions match:    (TODO fix placeholder versions)
                 final String currentVersion = projectDependency.getVersion();
                 if (Strings.isNullOrEmpty(currentVersion) || currentVersion.indexOf('$') != -1) {
-                    log.warn("Current version couldn't be resolved {}", currentVersion);
+                    if (!ourVersion.equals(currentVersion)) {
+                        log.warn("Current version couldn't be resolved {}", currentVersion);
+                    }
                     return true;
                 }
                 return VersionUtils.compareVersionNumbers(currentVersion, ourVersion) >= 0;
             }
         }
         return false;
-
-
     }
 
     public static boolean upgradeToEnterpriseProject(final PluginContext context) {
@@ -278,20 +243,33 @@ public final class DependencyUtils {
             parent.setVersion(pomModel.getParent().getVersion());
             pomModel.setParent(parent);
 
-            // add indicator:
+            // add edition indicator:
             final Model cmsModel = ProjectUtils.getPomModel(context, TargetPom.CMS);
-            final Dependency indicator = new Dependency();
-            indicator.setArtifactId(ADDON_EDITION_INDICATOR_ARTIFACT_ID);
-            indicator.setGroupId(ENT_GROUP_ID);
-            cmsModel.addDependency(indicator);
-            writePom(ProjectUtils.getPomPath(context, TargetPom.CMS), cmsModel);
-            return writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT), pomModel);
+            if (cmsModel != null) {
+                final Dependency indicator = new Dependency();
+                indicator.setArtifactId("hippo-addon-edition-indicator");
+                indicator.setGroupId(ENT_GROUP_ID);
+                cmsModel.addDependency(indicator);
+
+                // add enterprise package of app dependencies
+                final Dependency enterpriseApp = new Dependency();
+                enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
+                enterpriseApp.setGroupId(ENT_GROUP_ID);
+                enterpriseApp.setType("pom");
+                cmsModel.addDependency(enterpriseApp);
+
+                MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
+            }
+            return MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT));
         }
         return false;
     }
 
     public static boolean isEnterpriseProject(final PluginContext context) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        if (pomModel == null) {
+            return false;
+        }
         final Parent parent = pomModel.getParent();
         if (parent == null) {
             return false;

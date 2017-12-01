@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
@@ -36,11 +40,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
 
 /**
  * Default implementation of a instruction package. Reads instruction XML from {@code /META-INF/instructions.xml}
@@ -164,8 +163,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
             instructions = getInstructions();
         }
         if (instructions == null) {
-            eventBus.post(new DisplayEvent("Couldn't parse instructions"));
-            log.error("Failed to parse instructions");
+            log.error("Failed to parse instructions at '{}'.", getInstructionPath());
             return InstructionStatus.FAILED;
         }
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();

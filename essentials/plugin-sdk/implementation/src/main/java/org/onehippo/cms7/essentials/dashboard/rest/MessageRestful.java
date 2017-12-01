@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import io.swagger.annotations.ApiModel;
+
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
-import com.wordnik.swagger.annotations.ApiModel;
-
-/**
- * @version "$Id$"
- */
 @ApiModel
 @XmlRootElement(name = "message")
 public class MessageRestful implements Restful {
@@ -44,7 +40,6 @@ public class MessageRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private DisplayEvent.DisplayType displayType;
     private MessageGroup group;
 
     public MessageRestful() {
@@ -57,25 +52,12 @@ public class MessageRestful implements Restful {
 
     private String value;
 
-    public MessageRestful(final String message, final DisplayEvent.DisplayType displayType) {
-        this(message);
-        this.displayType = displayType;
-    }
-
     public String getValue() {
         return value;
     }
 
     public void setValue(final String value) {
         this.value = value;
-    }
-
-    public DisplayEvent.DisplayType getDisplayType() {
-        return displayType;
-    }
-
-    public void setDisplayType(final DisplayEvent.DisplayType displayType) {
-        this.displayType = displayType;
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
-import com.google.common.eventbus.EventBus;
-
 @Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
@@ -39,7 +37,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         context.setUseHippoSession(true);
         context.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
-        final ContentBeansService contentBeansService = new ContentBeansService(context, new EventBus("Test"));
+        final ContentBeansService contentBeansService = new ContentBeansService(context);
         contentBeansService.createBeans();
         contentBeansService.convertImageMethods("testproject:testasasasas");
 

@@ -17,13 +17,13 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,8 +31,6 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
@@ -46,7 +44,9 @@ public final class ProjectUtils {
     public static final String ENT_REPO_ID = "hippo-maven2-enterprise";
     public static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
     public static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
-    public static final String ADDON_EDITION_INDICATOR_ARTIFACT_ID = "hippo-addon-edition-indicator";
+    public static final String FOLDER_ASSEMBLY = "src/main/assembly";
+    public static final String FOLDER_CONF = "conf";
+    public static final String CONTEXT_XML = "context.xml";
 
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
@@ -199,12 +199,8 @@ public final class ProjectUtils {
     }
 
     public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {
-        final String pomPath = getPomPath(context, targetPom);
-        if (Strings.isNullOrEmpty(pomPath)) {
-            throw new IllegalStateException("pom.xml could not be found for:" + targetPom);
-        }
-        return getPomModel(pomPath);
-
+        final File pom = getPomFile(context, targetPom);
+        return (pom != null && pom.exists()) ? MavenModelUtils.readPom(pom) : null;
     }
 
     /**
@@ -213,7 +209,7 @@ public final class ProjectUtils {
      * @param targetPom targetPom of dependency
      * @return null if targetPom is invalid
      */
-    public static String getPomPath(final PluginContext context, final TargetPom targetPom) {
+    public static File getPomFile(final PluginContext context, final TargetPom targetPom) {
         if (targetPom == null || targetPom == TargetPom.INVALID) {
             return null;
         }
@@ -236,7 +232,14 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getEssentialsFolderName(context));
         }
         return null;
+    }
 
+    /**
+     * @deprecated Use {@link #getPomFile(PluginContext, TargetPom)}
+     */
+    @Deprecated public static String getPomPath(final PluginContext context, final TargetPom targetPom) {
+        File pomFile = getPomFile(context, targetPom);
+        return (pomFile == null) ? null : pomFile.getAbsolutePath();
     }
 
     public static String getWebXmlPath(final PluginContext context, final TargetPom targetPom) {
@@ -250,6 +253,48 @@ public final class ProjectUtils {
         }
         return null;
 
+    }
+
+    public static List<File> getLog4j2Files() {
+        try {
+            final FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
+            final File[] log4j2Files = getConfFolder().listFiles(log4j2Filter);
+            if (log4j2Files != null) {
+                return Arrays.asList(log4j2Files);
+            }
+        } catch (Exception e) {
+            log.error("No log4j2 configuration files found in {}", getConfFolder(), e);
+        }
+        return Collections.emptyList();
+    }
+
+    public static List<File> getAssemblyFiles() {
+        try {
+            final FilenameFilter assemblyFilter = (dir, name) -> name.matches(".*\\.xml");
+            final File[] assemblyFiles = getAssemblyFolder().listFiles(assemblyFilter);
+            if (assemblyFiles != null) {
+                return Arrays.asList(assemblyFiles);
+            }
+        } catch (Exception e) {
+            log.error("No assembly files found in {}", getAssemblyFolder().getAbsolutePath(), e);
+        }
+        return Collections.emptyList();
+    }
+
+    public static File getAssemblyFile(String filename) {
+        return new File(getAssemblyFolder(), filename);
+    }
+
+    public static File getContextXml() {
+        return new File(getConfFolder(), CONTEXT_XML);
+    }
+
+    private static File getConfFolder() {
+        return new File(getProjectRootFolder(), FOLDER_CONF);
+    }
+
+    private static File getAssemblyFolder() {
+        return new File(getProjectRootFolder(), FOLDER_ASSEMBLY);
     }
 
     private static File getJavaFolder(final File baseFolder) {
@@ -285,23 +330,11 @@ public final class ProjectUtils {
         return null;
     }
 
-    private static String getPomForDir(final File folder) {
+    private static File getPomForDir(final File folder) {
         if (folder != null) {
-            return folder.getPath() + File.separatorChar + EssentialConst.POM_XML;
+            return new File(folder, EssentialConst.POM_XML);
         }
         return null;
-    }
-
-    private static Model getPomModel(String path) {
-
-        try (Reader fileReader = new FileReader(path)) {
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-            return reader.read(fileReader);
-        } catch (XmlPullParserException | IOException e) {
-            log.error("Error parsing pom", e);
-        }
-        return null;
-
     }
 
     private static String getWebXmlForDir(final File folder) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -60,15 +61,16 @@ import org.slf4j.LoggerFactory;
 @Path("related-documents")
 public class RelatedDocumentsResource extends BaseResource {
 
-
     private static Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
 
     public static final String MIXIN_NAME = "relateddocs:relatabledocs";
 
+    @Inject private PluginContextFactory contextFactory;
+
     @POST
     @Path("/")
     public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();

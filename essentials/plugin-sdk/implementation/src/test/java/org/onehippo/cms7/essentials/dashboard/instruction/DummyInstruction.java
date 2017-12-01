@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,48 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Map;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 public class DummyInstruction implements Instruction {
-
-    private static Logger log = LoggerFactory.getLogger(DummyInstruction.class);
-
     @Override
-    public String getMessage() {
-        return "myMessage";
-    }
-
-    @Override
-    public void setMessage(final String message) {
-
-    }
-
-    @Override
-    public String getAction() {
-        return null;
-    }
-
-    @Override
-    public void setAction(final String action) {
-
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         return InstructionStatus.SUCCESS;
-    }
-
-    @Override
-    public void processPlaceholders(final Map<String, Object> data) {
-
     }
 }

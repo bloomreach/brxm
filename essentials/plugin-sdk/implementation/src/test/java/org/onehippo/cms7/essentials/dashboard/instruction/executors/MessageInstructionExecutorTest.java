@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class MessageInstructionExecutorTest extends BaseTest {
             final Multimap<MessageGroup, Restful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }
-        assertEquals(8, messages.size());
-        assertEquals(8, messages.keys().size());
+        assertEquals(10, messages.size());
+        assertEquals(10, messages.keys().size());
     }
 }

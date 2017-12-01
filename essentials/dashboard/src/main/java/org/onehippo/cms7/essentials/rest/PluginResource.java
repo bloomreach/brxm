@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,14 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-
-
-/**
- * @version "$Id$"
- */
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
@@ -85,6 +80,9 @@ public class PluginResource extends BaseResource {
 
     @Inject
     private PluginStore pluginStore;
+
+    @Inject
+    private PluginContextFactory contextFactory;
 
 
     @SuppressWarnings("unchecked")
@@ -153,7 +151,7 @@ public class PluginResource extends BaseResource {
 
         final Map<String, Object> properties = makeSetupPropertiesFromValues(payload.getValues());
         instructionPackage.setProperties(properties);
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
         @SuppressWarnings("unchecked")
@@ -326,7 +324,7 @@ public class PluginResource extends BaseResource {
     }
 
     private String setupPlugin(final Plugin plugin, final Map<String, Object> properties) {
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
         HstUtils.erasePreview(context);

@@ -1,0 +1,73 @@
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project>
+    <properties>
+        <elasticsearch.version>5.6.4</elasticsearch.version>
+        <maven.plugin.elasticsearch.version>5.7</maven.plugin.elasticsearch.version>
+    </properties>
+    <profiles>
+        <profile>
+            <id>cargo.run</id>
+            <properties>
+                <targeting.bootstrap>false</targeting.bootstrap>
+                <targeting.truncate>true</targeting.truncate>
+                <es.path>${project.build.directory}/storage</es.path>
+                <sql.driver>org.h2.Driver</sql.driver>
+                <sql.username>sa</sql.username>
+                <sql.password />
+                <sql.url>jdbc:h2:${repo.path}/targeting/targeting;AUTO_SERVER=TRUE</sql.url>
+                <es.httpPort>9200</es.httpPort>
+                <es.tcpPort>9300</es.tcpPort>
+                <es.skip.start>false</es.skip.start>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.alexcojocaru</groupId>
+                        <artifactId>elasticsearch-maven-plugin</artifactId>
+                        <version>${maven.plugin.elasticsearch.version}</version>
+                        <configuration>
+                            <clusterName>esDevCluster</clusterName>
+                            <httpPort>${es.httpPort}</httpPort>
+                            <transportPort>${es.tcpPort}</transportPort>
+                            <version>${maven.plugin.elasticsearch.configuration.version}</version>
+                            <keepExistingData>true</keepExistingData>
+                            <timeout>60</timeout>
+                            <skip>${es.skip.start}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-elasticsearch</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>runforked</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-elasticsearch</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

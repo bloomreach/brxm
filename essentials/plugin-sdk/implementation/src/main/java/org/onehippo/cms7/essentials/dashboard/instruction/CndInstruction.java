@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,22 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -38,38 +42,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-
 
 /**
  * @version "$Id$"
  */
 @Component
 @XmlRootElement(name = "cnd", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class CndInstruction extends PluginInstruction {
+public class CndInstruction extends BuiltinInstruction {
 
-    //private static final String DEFAULT_URL = "http://www.onehippo.org/${namespace}/nt/1.0";
     private static Logger log = LoggerFactory.getLogger(CndInstruction.class);
-    @Inject
-    private EventBus eventBus;
     // TODO implement possibility to add custom namespace, currently only project namespaces is used
     private String namespace;
     private String superType;
     private String documentType;
     private String namespacePrefix;
 
-    @Named("${instruction.message.cnd.register.failed}")
-    private String messageRegisterError;
-
-    @Named("${instruction.message.cnd.register}")
-    private String message;
-    private String action;
+    public CndInstruction() {
+        super(MessageGroup.DOCUMENT_REGISTER);
+    }
 
     @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(namespacePrefix)) {
             namespace = context.getProjectNamespacePrefix();
         } else {
@@ -77,8 +70,6 @@ public class CndInstruction extends PluginInstruction {
         }
         final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
-        //
-
 
         final String prefix = context.getProjectNamespacePrefix();
         final Session session = context.createSession();
@@ -93,8 +84,7 @@ public class CndInstruction extends PluginInstruction {
             }
             CndUtils.registerDocumentType(context, prefix, documentType, true, false, superTypes);
             session.save();
-            // TODO add message
-            eventBus.post(new InstructionEvent(this));
+            log.info("Successfully registered document type '{}:{}'.", prefix, documentType);
             return InstructionStatus.SUCCESS;
         } catch (NodeTypeExistsException e) {
             // just add already exiting ones:
@@ -107,15 +97,21 @@ public class CndInstruction extends PluginInstruction {
             GlobalUtils.cleanupSession(session);
         }
 
-        message = messageRegisterError;
-        eventBus.post(new InstructionEvent(this));
+
+        log.info("Failed to registered document type: '{}:{}'.", prefix, documentType);
         return InstructionStatus.FAILED;
+    }
+
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), "Register document type '" + documentType + "'.");
+        return result;
     }
 
     private void processAllPlaceholders(final Map<String, Object> data) {
         data.put("documentType", documentType);
         data.put("superType", superType);
-        processPlaceholders(data);
         final String mySupertype = TemplateUtils.replaceTemplateData(superType, data);
         if (mySupertype != null) {
             superType = mySupertype;
@@ -128,30 +124,6 @@ public class CndInstruction extends PluginInstruction {
         if (myDocumentType != null) {
             documentType = myDocumentType;
         }
-        final String myErrorMessage = TemplateUtils.replaceTemplateData(messageRegisterError, data);
-        if (myErrorMessage != null) {
-            messageRegisterError = myErrorMessage;
-        }
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        this.action = action;
     }
 
     @XmlAttribute

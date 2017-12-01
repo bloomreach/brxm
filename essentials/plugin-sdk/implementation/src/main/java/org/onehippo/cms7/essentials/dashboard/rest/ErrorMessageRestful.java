@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-
 /**
  * @version "$Id$"
  */
@@ -32,10 +30,6 @@ public class ErrorMessageRestful extends MessageRestful {
 
     public ErrorMessageRestful(final String value) {
         super(value);
-    }
-
-    public ErrorMessageRestful(final String message, final DisplayEvent.DisplayType displayType) {
-        super(message, displayType);
     }
 
     @Override

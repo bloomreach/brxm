@@ -58,14 +58,14 @@ public class BloomreachConnectorResource extends BaseResource {
     private static final String ARTIFACT_ID_API = "hippo-addon-crisp-api";
     private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
     private static final String CRISP_VERSION = "${hippo.addon-crisp.version}";
-    @Inject
-    private EventBus eventBus;
+    @Inject private EventBus eventBus;
+    @Inject private PluginContextFactory contextFactory;
 
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final boolean exists = CndUtils.nodeTypeExists(context, CRISP_NODE);
         final ResourceData resourceData = new ResourceData();
         final DependencyRestful dependency = new DependencyRestful();
@@ -88,9 +88,8 @@ public class BloomreachConnectorResource extends BaseResource {
     @Path("/install")
     public RestfulList<MessageRestful> install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final RestfulList<MessageRestful> retVal = new RestfulList<>();
-        //TODO read dependency from plugin descriptor
         final DependencyRestful dependency = new DependencyRestful();
         dependency.setTargetPom(TargetPom.CMS.getName());
         dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);
@@ -116,7 +115,7 @@ public class BloomreachConnectorResource extends BaseResource {
         log.info("data = {}", data);
         // TODO validate data
 
-        final PluginContext context = PluginContextFactory.getContext();
+        final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         final RestfulList<MessageRestful> retVal = new RestfulList<>();
         try {

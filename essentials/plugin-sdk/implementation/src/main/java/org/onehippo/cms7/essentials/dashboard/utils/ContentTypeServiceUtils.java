@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.function.Predicate;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,9 +37,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
@@ -58,8 +56,9 @@ public class ContentTypeServiceUtils {
      * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final ContentTypeFilter filter) {
-        return fetchDocuments(filter, true);
+    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final PluginContext context,
+                                                                       final Predicate<ContentType> filter) {
+        return fetchDocuments(context, filter, true);
     }
 
     /**
@@ -68,8 +67,9 @@ public class ContentTypeServiceUtils {
      * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocuments(final ContentTypeFilter filter, final boolean ownNamespaceOnly) {
-        final PluginContext context = PluginContextFactory.getContext();
+    public static List<DocumentRestful> fetchDocuments(final PluginContext context,
+                                                       final Predicate<ContentType> filter,
+                                                       final boolean ownNamespaceOnly) {
         final List<DocumentRestful> documents = new ArrayList<>();
         final Session session = context.createSession();
         try {
@@ -89,7 +89,7 @@ public class ContentTypeServiceUtils {
 
             // filter on document type
             for (ContentType doc : filteredContentTypes) {
-                if (filter == null || filter.pass(doc)) {
+                if (filter == null || filter.test(doc)) {
                     documents.add(new DocumentRestful(doc, context));
                 }
             }
@@ -122,18 +122,9 @@ public class ContentTypeServiceUtils {
             GlobalUtils.cleanupSession(session);
         }
         // sort documents by name:
-        Collections.sort(documents, new DocumentNameComparator());
+        documents.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(d1.getName(), d2.getName()));
         populateBeanPaths(context, documents);
         return documents;
-    }
-
-    private static class DocumentNameComparator implements java.util.Comparator<DocumentRestful> {
-        @Override
-        public int compare(final DocumentRestful first, final DocumentRestful second) {
-            String name1 = first.getName();
-            String name2 = second.getName();
-            return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
-        }
     }
 
     /**

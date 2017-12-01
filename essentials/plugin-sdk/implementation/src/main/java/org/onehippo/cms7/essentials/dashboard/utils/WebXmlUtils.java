@@ -19,15 +19,19 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebContextParam;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebFilter;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebFilterMapping;
 import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
@@ -47,7 +51,6 @@ public class WebXmlUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebXmlUtils.class);
     private static final Pattern FILTER_PATTERN = Pattern.compile("(?is)<filter>.+?</filter>[^\\n]*\\n");
     private static final Pattern FILTER_MAPPING_PATTERN = Pattern.compile("(?is)<filter-mapping>.+?</filter-mapping>[^\\n]*\\n");
-    private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";
 
     private WebXmlUtils() {}
 
@@ -57,32 +60,74 @@ public class WebXmlUtils {
     }
 
     /**
-     * Add an HST Bean mapping to the site's web.xml.
+     * Add a servlet and corresponding mapping to the specified module's web.xml.
      *
-     * @param context     project context
-     * @param beanMapping desired bean mapping
-     * @return            true if added, false if already present
+     * If the servlet may already be there, use #hasServlet first.
+     *
+     * @param context       Plugin context for accessing the project
+     * @param module        Target module for modifying the web.xml file
+     * @param servletName   Name of the servlet to add
+     * @param servletClass  Class of the servlet to add
+     * @param loadOnStartup Value for the loadOnStartup parameter, may be null
+     * @param mappingUrlPatterns Values for the URL patterns of the mapping
+     * @return true if the servlet is there upon completion, false otherwise
      */
-    public static boolean addHstBeanMapping(final PluginContext context, final String beanMapping)
-            throws FileNotFoundException, JAXBException {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(context, TargetPom.SITE);
-        final WebXml webXml = readWebXmlFile(webXmlPath);
-        final String hstBeansAnnotatedClassesValue = getHstBeansAnnotatedClassesValue(webXml);
-        if (hstBeansAnnotatedClassesValue == null) {
-            logger.warn(String.format("No '%s' context parameter found in Site web.xml, ignore bean mapping '%s'",
-                    HST_BEANS_ANNOTATED_CLASSES, beanMapping));
+    public static boolean addServlet(final PluginContext context, final TargetPom module, final String servletName,
+                                  final Class servletClass, final Integer loadOnStartup, final String[] mappingUrlPatterns) {
+        final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
+        if (webXmlPath == null) {
+            logger.warn("Failed to add servlet, module '{}' has no web.xml file.", module.getName());
             return false;
         }
 
-        if (hstBeansAnnotatedClassesValue.contains(beanMapping)) {
-            logger.info("HST bean mapping already inplace");
-            return false;
+        final File webXml = new File(webXmlPath);
+        try {
+            Document doc = new SAXReader().read(webXml);
+            Element servlet = servletFor(servletName, doc);
+            if (servlet == null) {
+                createServlet(doc, servletName, servletClass, loadOnStartup, mappingUrlPatterns);
+                write(webXml, doc);
+            }
+            return true;
+        } catch (DocumentException | IOException e) {
+            logger.error("Failed adding servlet '{}' to web.xml of module '{}'.", servletName, module.getName(), e);
+        }
+        return false;
+    }
+
+    private static Element servletFor(final String servletName, final Document doc) {
+        final String selector = String.format("/web-app/*[name()='servlet']/*[name()='servlet-name' and text()='%s']",
+                servletName);
+        return parentElementFor(selector, doc);
+    }
+
+    private static void createServlet(final Document doc, final String name, final Class clazz,
+                                      final Integer loadOnStartup, final String[] mappingUrlPatterns) {
+        final Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
+
+        final Element servlet = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet", null);
+        Dom4JUtils.addIndentedElement(servlet, "servlet-name", name);
+        Dom4JUtils.addIndentedElement(servlet, "servlet-class", clazz.getCanonicalName());
+        if (loadOnStartup != null) {
+            Dom4JUtils.addIndentedElement(servlet, "load-on-startup", loadOnStartup.toString());
         }
 
-        String webXmlContent = readWebXmlFileAsString(webXmlPath);
-        webXmlContent = addToHstBeansAnnotatedClassesValue(webXmlContent, hstBeansAnnotatedClassesValue, beanMapping);
-        writeWebXmlFile(webXmlPath, webXmlContent);
-        return true;
+        final Element servletMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet-mapping", null);
+        Dom4JUtils.addIndentedElement(servletMapping, "servlet-name", name);
+        for (String urlPattern : mappingUrlPatterns) {
+            Dom4JUtils.addIndentedElement(servletMapping, "url-pattern", urlPattern);
+        }
+    }
+
+    private static Element parentElementFor(final String selector, final Document doc) {
+        final Element element = (Element) doc.getRootElement().selectSingleNode(selector);
+        return element != null ? element.getParent() : null;
+    }
+
+    private static void write(final File webXml, final Document doc) throws IOException {
+        FileWriter writer = new FileWriter(webXml);
+        doc.write(writer);
+        writer.close();
     }
 
     /**
@@ -234,29 +279,6 @@ public class WebXmlUtils {
 
     private static void writeWebXmlFile(final String path, final String webXmlContent) {
         GlobalUtils.writeToFile(webXmlContent, new File(path).toPath());
-    }
-
-    static String getHstBeansAnnotatedClassesValue(final WebXml webXml) {
-        final List<WebContextParam> parameters = webXml.getParameters();
-        if (parameters != null) {
-            for (WebContextParam parameter : parameters) {
-                if (HST_BEANS_ANNOTATED_CLASSES.equals(parameter.getParamName())) {
-                    return parameter.getParamValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    static String addToHstBeansAnnotatedClassesValue(final String webXmlContent, final String currentValues,
-                                                     final String valueToAdd) {
-        final int startIndex = webXmlContent.indexOf(currentValues);
-        final String firstPart = webXmlContent.substring(0, startIndex);
-
-        final int endIndex = startIndex + currentValues.length();
-        final String secondPart = webXmlContent.substring(endIndex, webXmlContent.length());
-
-        return firstPart + currentValues + ',' + valueToAdd + secondPart;
     }
 
     static boolean hasFilter(final WebXml webXml, final String filterClass) {

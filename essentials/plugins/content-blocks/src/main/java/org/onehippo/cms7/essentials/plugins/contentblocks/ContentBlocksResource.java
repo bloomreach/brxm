@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
-import javax.jcr.*;
+import javax.inject.Inject;
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -40,14 +50,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.*;
+import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.*;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeFilter;
-import org.onehippo.cms7.essentials.dashboard.utils.contenttypeservice.ContentTypeIsCompound;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.*;
+import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
@@ -67,27 +82,17 @@ public class ContentBlocksResource extends BaseResource {
     private static final String PROP_MAXITEMS = "maxitems";
     private static final String PROP_PATH = "hipposysedit:path";
     private static final String PROP_PICKERTYPE = "contentPickerType";
+    private static final Predicate<ContentType> NO_IMAGE_FILTER = type -> !type.isContentType("hippogallery:imageset");
 
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
+
+    @Inject private PluginContextFactory contextFactory;
 
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
-        final ContentTypeFilter filter = new ContentTypeFilter() {
-            public boolean pass(ContentType type) {
-                // Accept both doc types and compounds, but rule out imagesets.
-                if (type.isContentType("hippogallery:imageset")) {
-                    return false;
-                }
-                for (String supertype : type.getSuperTypes()) {
-                    if (supertype.equals("hippogallery:imageset")) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        };
-        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocuments(filter, true);
+        final PluginContext context = contextFactory.getContext();
+        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, NO_IMAGE_FILTER);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
         final Session session = GlobalUtils.createSession();
@@ -120,13 +125,14 @@ public class ContentBlocksResource extends BaseResource {
     @POST
     @Path("/")
     public MessageRestful update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
+        final PluginContext context = contextFactory.getContext();
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
         final Session session = GlobalUtils.createSession();
 
         try {
             for (DocumentTypeRestful docType : docTypes) {
-                updateDocumentType(docType, session, updaters);
+                updateDocumentType(context, docType, session, updaters);
             }
             session.save();
             updatersRun = executeUpdaters(session, updaters);
@@ -152,7 +158,8 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
-        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(new ContentTypeIsCompound(), false);
+        final PluginContext context = contextFactory.getContext();
+        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(context, ContentType::isCompoundType, false);
         List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
                 "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?
                 "hippo:resource",
@@ -222,7 +229,8 @@ public class ContentBlocksResource extends BaseResource {
      * @param session    JCR session
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateDocumentType(final DocumentTypeRestful docType, final Session session, final List<UpdateRequest> updaters)
+    private void updateDocumentType(final PluginContext context, final DocumentTypeRestful docType,
+                                    final Session session, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
         final String primaryType = docType.getId();
 
@@ -237,7 +245,7 @@ public class ContentBlocksResource extends BaseResource {
                     if (fieldName.equals(field.getOriginalName())) {
                         updated = true;
                         docType.getContentBlocksFields().remove(field);
-                        updateField(fieldNode, docType, field, updaters);
+                        updateField(context, fieldNode, docType, field, updaters);
                         // the fieldNode may have been renamed (copied), don't use it anymore!
                         break;
                     }
@@ -253,7 +261,7 @@ public class ContentBlocksResource extends BaseResource {
 
         // add new content blocks fields
         for (ContentBlocksFieldRestful field : docType.getContentBlocksFields()) {
-            createField(field, docType, session);
+            createField(context, field, docType, session);
         }
     }
 
@@ -265,7 +273,8 @@ public class ContentBlocksResource extends BaseResource {
      * @param session JCR session
      * @throws ContentBlocksException for error message propagation
      */
-    private void createField(final ContentBlocksFieldRestful field, final DocumentTypeRestful docType, final Session session)
+    private void createField(final PluginContext context, final ContentBlocksFieldRestful field,
+                             final DocumentTypeRestful docType, final Session session)
             throws ContentBlocksException {
         final String newNodeName = makeNodeName(field.getName());
         final String primaryType = docType.getId();
@@ -302,7 +311,7 @@ public class ContentBlocksResource extends BaseResource {
             Map<String, Object> data = new HashMap<>();
 
             data.put("name", newNodeName);
-            data.put("namespace", PluginContextFactory.getContext().getProjectNamespacePrefix());
+            data.put("namespace", context.getProjectNamespacePrefix());
             data.put("caption", field.getName());
             data.put("pickerType", field.getPickerType());
             data.put("compoundList", makeCompoundList(field));
@@ -351,7 +360,7 @@ public class ContentBlocksResource extends BaseResource {
      * @param field        desired field parameters
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateField(Node oldFieldNode, final DocumentTypeRestful docType,
+    private void updateField(final PluginContext context, final Node oldFieldNode, final DocumentTypeRestful docType,
                              final ContentBlocksFieldRestful field, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
         Node fieldNode = oldFieldNode;
@@ -366,7 +375,7 @@ public class ContentBlocksResource extends BaseResource {
                             "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
                 }
 
-                final String namespace = PluginContextFactory.getContext().getProjectNamespacePrefix();
+                final String namespace = context.getProjectNamespacePrefix();
                 final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
                 final String newNodePath = namespace + ":" + newNodeName;
                 nodeTypeNode = JcrUtils.copy(nodeTypeNode, newNodeName, nodeTypeNode.getParent());

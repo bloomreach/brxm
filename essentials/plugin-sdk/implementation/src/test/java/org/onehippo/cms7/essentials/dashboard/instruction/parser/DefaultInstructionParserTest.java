@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.instruction.BuiltinInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
@@ -76,10 +77,10 @@ public class DefaultInstructionParserTest extends BaseTest {
 
         assertEquals("myGroup", set1.getGroups().iterator().next());
         assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroups().iterator().next());
-        assertEquals(6, set1.getInstructions().size());
+        assertEquals(8, set1.getInstructions().size());
         assertEquals(1, set2.getInstructions().size());
         // total instructions is 6:
-        assertEquals(8, myInstructions.totalInstructions());
+        assertEquals(10, myInstructions.totalInstructions());
         assertEquals(3, myInstructions.totalInstructionSets());
 
 
@@ -108,7 +109,7 @@ public class DefaultInstructionParserTest extends BaseTest {
         // test ordering
         final Iterator<Instruction> iterator = mySet.iterator();
         for (int i = 0; i < mySet.size(); i++) {
-            final Instruction next = iterator.next();
+            final BuiltinInstruction next = (BuiltinInstruction)iterator.next();
             final int isMod3 = i % 3;
             if (isMod3 == 0) {
                 assertTrue(next.getMessage().equals(String.format("XML%d", i)));
@@ -121,7 +122,7 @@ public class DefaultInstructionParserTest extends BaseTest {
     private void addInstructions(final PluginInstructionSet pluginInstructionSet) {
         for (int i = 0; i < 100; i++) {
             final int isMod3 = i % 3;
-            final Instruction instruction = isMod3 == 0 ? new XmlInstruction() : new FileInstruction();
+            final BuiltinInstruction instruction = isMod3 == 0 ? new XmlInstruction() : new FileInstruction();
             if (isMod3 == 0) {
                 instruction.setMessage(String.format("XML%d", i));
             } else {

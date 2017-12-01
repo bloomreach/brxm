@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.IOException;
@@ -23,8 +24,12 @@ import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -38,13 +43,15 @@ import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionSta
 
 @Component
 @XmlRootElement(name = "translations", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class TranslationsInstruction extends PluginInstruction {
+public class TranslationsInstruction extends BuiltinInstruction {
 
     private static final Logger log = LoggerFactory.getLogger(TranslationsInstruction.class);
 
     private String source;
-    private String message;
-    private String action;
+
+    public TranslationsInstruction() {
+        super(MessageGroup.XML_NODE_CREATE);
+    }
 
     @XmlAttribute
     public String getSource() {
@@ -56,27 +63,7 @@ public class TranslationsInstruction extends PluginInstruction {
     }
 
     @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(final String action) {
-        this.action = action;
-    }
-
-    @Override
-    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+    public InstructionStatus execute(final PluginContext context) {
         final Session session = context.createSession();
         try (final InputStream in = getClass().getClassLoader().getResourceAsStream(source)) {
             final String json = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(in), context.getPlaceholderData());
@@ -90,4 +77,10 @@ public class TranslationsInstruction extends PluginInstruction {
         }
     }
 
+    @Override
+    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+        result.put(getDefaultGroup(), "Import repository translations from '" + source + "'.");
+        return result;
+    }
 }
