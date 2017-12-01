@@ -22,16 +22,17 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class ProjectsInstruction implements Instruction {
     private static final String WPM_WEBAPP_ARTIFACTID = "hippo-addon-wpm-camunda";
     private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
+    private static final String LOGGER_HST_BRANCH = "com.onehippo.cms7.hst.configuration.branch";
+    private static final String LOGGER_PROJECT = "com.onehippo.cms7.services.wpm.project";
 
     static {
         WPM_RESOURCE_ATTRIBUTES.put("auth", "Container");
@@ -68,6 +71,8 @@ public class ProjectsInstruction implements Instruction {
     @Inject private ContextXmlService contextXmlService;
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
+    @Inject private MavenCargoService mavenCargoService;
+    @Inject private MavenDependencyService mavenDependencyService;
     @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
@@ -75,33 +80,36 @@ public class ProjectsInstruction implements Instruction {
         contextXmlService.addResource(WPM_RESOURCE_NAME, WPM_RESOURCE_ATTRIBUTES);
 
         projectService.getLog4j2Files().forEach(f -> {
-            loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.hst.configuration.branch", "warn");
-            loggingService.addLoggerToLog4jConfiguration(f, "com.onehippo.cms7.services.wpm.project", "warn");
+            loggingService.addLoggerToLog4jConfiguration(f, LOGGER_HST_BRANCH, "warn");
+            loggingService.addLoggerToLog4jConfiguration(f, LOGGER_PROJECT, "warn");
         });
 
-        log.info("Adding enterprise-services to the Cargo runner shared classpath");
-        MavenCargoUtils.addDependencyToCargoSharedClasspath(context, ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
+        // Install "enterprise services" JAR
+        final MavenDependency enterpriseServices
+                = mavenDependencyService.createDependency(ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
+        mavenCargoService.addDependencyToCargoSharedClasspath(context, enterpriseServices);
+        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", enterpriseServices);
 
-        log.info("Adding BPM web application to the cargo.run profile with path: {}", WPM_WEBAPP_CONTEXT);
-        final Dependency dependency = new Dependency();
-        dependency.setGroupId(ProjectService.GROUP_ID_ENTERPRISE);
-        dependency.setArtifactId(WPM_WEBAPP_ARTIFACTID);
-        dependency.setType("war");
-
-        MavenCargoUtils.addDeployableToCargoRunner(context, dependency, WPM_WEBAPP_CONTEXT);
-
-        final String bpmWar = String.format("%s:%s:war", ProjectService.GROUP_ID_ENTERPRISE, WPM_WEBAPP_ARTIFACTID);
+        // Install BPM WAR
+        final MavenDependency bpmWar = mavenDependencyService.createDependency(ProjectService.GROUP_ID_ENTERPRISE,
+                WPM_WEBAPP_ARTIFACTID, null, "war", null);
+        mavenCargoService.addDeployableToCargoRunner(context, bpmWar, WPM_WEBAPP_CONTEXT);
         mavenAssemblyService.addDependencySet("webapps-component.xml", "webapps",
                 "bpm.war", false, "provided", bpmWar);
-        final String servicesJar = String.format("%s:%s", ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
-        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", servicesJar);
 
         return InstructionStatus.SUCCESS;
     }
 
     @Override
     public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE,
-                "Adjust project in several ways to install the 'Projects' feature.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Resource '" + WPM_RESOURCE_NAME + "' to Tomcat context.xml.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + LOGGER_HST_BRANCH + "' to log4j2 configuration files.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + LOGGER_PROJECT + "' to log4j2 configuration files.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
+                + ":" + ENTERPRISE_SERVICES_ARTIFACTID + "' to shared classpath of the Maven cargo plugin configuration.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add deployable '" + WPM_WEBAPP_ARTIFACTID
+                + ".war' with context path '" + WPM_WEBAPP_CONTEXT + "' to deployables of Maven cargo plugin configuration.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add same web application to distribution configuration file 'webapps-component.xml'.");
     }
 }

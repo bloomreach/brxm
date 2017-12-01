@@ -22,16 +22,14 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.MavenCargoUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
 
 /**
  * Add JDBC resource to context.xml.
@@ -68,6 +66,7 @@ public class RelevanceInstruction implements Instruction {
     @Inject private ContextXmlService contextXmlService;
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
+    @Inject private MavenCargoService mavenCargoService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
@@ -77,8 +76,7 @@ public class RelevanceInstruction implements Instruction {
         projectService.getLog4j2Files()
                 .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, TARGETING_LOGGER, "warn"));
 
-        Model model = MavenModelUtils.readPom(getClass().getResourceAsStream("/relevance-pom-overlay.xml"));
-        MavenCargoUtils.mergeCargoProfile(context, model);
+        mavenCargoService.mergeCargoProfile(context, getClass().getResource("/relevance-pom-overlay.xml"));
 
         return InstructionStatus.SUCCESS;
     }
@@ -87,5 +85,6 @@ public class RelevanceInstruction implements Instruction {
         changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Resource '" + TARGETING_RESOURCE_NAME + "' to context.xml.");
         changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
     }
 }

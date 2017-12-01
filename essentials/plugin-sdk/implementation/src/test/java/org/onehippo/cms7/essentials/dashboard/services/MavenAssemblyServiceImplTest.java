@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
 
     private MavenAssemblyServiceImpl service = new MavenAssemblyServiceImpl();
+    private MavenDependencyServiceImpl depsFactory = new MavenDependencyServiceImpl();
 
     @Test
     public void add_dependency_set() throws Exception {
@@ -40,19 +42,20 @@ public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
         String before = contentOf(descriptor);
         assertFalse(before.contains("<dependencySets>"));
 
+        MavenDependency dependency = depsFactory.createDependency("group", "artifact");
         assertTrue(service.addDependencySet("descriptor.xml", "outDir",
-                "file.war", true, "scope", "include"));
+                "file.war", true, "scope", dependency));
 
         String after = contentOf(descriptor);
-        assertEquals(1, StringUtils.countMatches(after, "<include>include</include>"));
+        assertEquals(1, StringUtils.countMatches(after, "<include>group:artifact</include>"));
         assertEquals(1, StringUtils.countMatches(after, "<useProjectArtifact>true</useProjectArtifact>"));
 
         // add second dependency
         assertTrue(service.addDependencySet("descriptor.xml", "outDir",
-                "file.war", false, "scope", "include"));
+                "file.war", false, "scope", dependency));
 
         after = contentOf(descriptor);
-        assertEquals(2, StringUtils.countMatches(after, "<include>include</include>"));
+        assertEquals(2, StringUtils.countMatches(after, "<include>group:artifact</include>"));
         assertEquals(1, StringUtils.countMatches(after, "<useProjectArtifact>true</useProjectArtifact>"));
         assertEquals(1, StringUtils.countMatches(after, "<useProjectArtifact>false</useProjectArtifact>"));
     }
@@ -75,17 +78,18 @@ public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
                 "src/main/assembly/descriptor.xml");
 
         String before = contentOf(descriptor);
-        assertFalse(before.contains("<include>include</include>"));
+        assertFalse(before.contains("<include>group:artifact</include>"));
 
-        assertTrue(service.addIncludeToFirstDependencySet("descriptor.xml", "include"));
+        MavenDependency dependency = depsFactory.createDependency("group", "artifact");
+        assertTrue(service.addIncludeToFirstDependencySet("descriptor.xml", dependency));
 
         String after = contentOf(descriptor);
-        assertEquals(1, StringUtils.countMatches(after, "<include>include</include>"));
+        assertEquals(1, StringUtils.countMatches(after, "<include>group:artifact</include>"));
         assertEquals(1, StringUtils.countMatches(after, "<dependencySet>second</dependencySet"));
 
         // prevent duplicates
-        assertTrue(service.addIncludeToFirstDependencySet("descriptor.xml", "include"));
-        assertEquals(1, nrOfOccurrences(descriptor, "<include>include</include>"));
+        assertTrue(service.addIncludeToFirstDependencySet("descriptor.xml", dependency));
+        assertEquals(1, nrOfOccurrences(descriptor, "<include>group:artifact</include>"));
     }
 
     @Test
@@ -94,7 +98,7 @@ public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
                 "src/main/assembly/descriptor.xml");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addIncludeToFirstDependencySet("descriptor.xml", "include"));
+            assertFalse(service.addIncludeToFirstDependencySet("descriptor.xml", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }

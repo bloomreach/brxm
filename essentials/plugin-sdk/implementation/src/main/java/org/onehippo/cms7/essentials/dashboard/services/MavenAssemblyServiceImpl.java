@@ -21,6 +21,7 @@ import java.io.File;
 import javax.inject.Singleton;
 
 import org.dom4j.Element;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -32,7 +33,7 @@ public class MavenAssemblyServiceImpl implements MavenAssemblyService {
     @Override
     public boolean addDependencySet(final String descriptorFilename, final String outputDirectory,
                                     final String outputFileNameMapping, final boolean useProjectArtifact,
-                                    final String scope, final String include) {
+                                    final String scope, final MavenDependency dependency) {
         return update(descriptorFilename, doc -> {
             Element component = (Element) doc.getRootElement().selectSingleNode("/component");
             Element dependencySets = (Element) component.selectSingleNode("*[name()='dependencySets']");
@@ -45,26 +46,35 @@ public class MavenAssemblyServiceImpl implements MavenAssemblyService {
             Dom4JUtils.addIndentedElement(dependencySet, "outputFileNameMapping", outputFileNameMapping);
             Dom4JUtils.addIndentedElement(dependencySet, "scope", scope);
 
-            addIncludeToDependencySet(dependencySet, include);
+            addIncludeToDependencySet(dependencySet, dependency);
         });
     }
 
     @Override
-    public boolean addIncludeToFirstDependencySet(final String descriptorFilename, final String include) {
+    public boolean addIncludeToFirstDependencySet(final String descriptorFilename, final MavenDependency dependency) {
         return update(descriptorFilename, doc -> {
             Element dependencySet = (Element) doc.selectSingleNode("//*[name()='dependencySet']");
-            addIncludeToDependencySet(dependencySet, include);
+            addIncludeToDependencySet(dependencySet, dependency);
         });
     }
 
-    private void addIncludeToDependencySet(Element dependencySet, String include) {
+    private void addIncludeToDependencySet(final Element dependencySet, final MavenDependency dependency) {
         Element includes = (Element)dependencySet.selectSingleNode("./*[name()='includes']");
         if (includes == null) {
             includes = Dom4JUtils.addIndentedElement(dependencySet, "includes");
         }
+        final String include = makeInclude(dependency);
         if (includes.selectNodes("*[text()='" + include + "']").isEmpty()) {
             Dom4JUtils.addIndentedElement(includes, "include", include);
         }
+    }
+
+    private String makeInclude(final MavenDependency dependency) {
+        String include = String.format("%s:%s", dependency.getGroupId(), dependency.getArtifactId());
+        if (dependency.getType() != null) {
+            include  = String.format("%s:%s", include, dependency.getType());
+        }
+        return include;
     }
 
     private boolean update(final String descriptorFilename, final Dom4JUtils.Modifier modifier) {

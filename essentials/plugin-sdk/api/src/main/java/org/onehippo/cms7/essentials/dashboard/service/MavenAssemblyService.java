@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.service;
 
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
+
 /**
  * MavenAssemblyService provides methods to manipulate Maven Assembly descriptor files.
  *
@@ -32,11 +34,11 @@ public interface MavenAssemblyService {
      * @param outputFileNameMapping value for the &lt;outputFileNameMapping&gt; element
      * @param useProjectArtifact    boolean value for the &lt;useProjectArtifact&gt; element
      * @param scope                 value for the &lt;scope&gt; element
-     * @param include               value to wrap in a &lt;includes&gt;&lt;include&gt; element
+     * @param dependency            dependency to wrap in a &lt;includes&gt;&lt;include&gt; element
      * @return                      true if &lt;dependencySet&gt; was added successfully, false otherwise
      */
     boolean addDependencySet(String descriptorFilename, String outputDirectory, String outputFileNameMapping,
-                             boolean useProjectArtifact, String scope, String include);
+                             boolean useProjectArtifact, String scope, MavenDependency dependency);
 
     /**
      * Add a &lt;include&gt; element to the first &lt;dependencySet&gt; in the specified descriptor file.
@@ -46,8 +48,8 @@ public interface MavenAssemblyService {
      * the same value exists.
      *
      * @param descriptorFilename name of the descriptor file in the project's directory for assembly descriptors
-     * @param include            value for the new &lt;include&gt; element
+     * @param dependency         dependency to be included
      * @return                   true if &lt;include&gt; was added successfully, false otherwise
      */
-    boolean addIncludeToFirstDependencySet(String descriptorFilename, String include);
+    boolean addIncludeToFirstDependencySet(String descriptorFilename, MavenDependency dependency);
 }
