@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package org.onehippo.cms7.services.contenttype;
-
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public abstract class EffectiveNodeTypeItemImpl extends Sealable implements EffectiveNodeTypeItem {
     private final String name;
@@ -38,7 +36,6 @@ public abstract class EffectiveNodeTypeItemImpl extends Sealable implements Effe
         this.nodeType = nodeType;
     }
 
-    @JsonProperty
     public boolean isNodeType() {
         return nodeType;
     }
