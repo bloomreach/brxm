@@ -35,7 +35,7 @@
 
   <button mat-button (click)="change()"
           class="qa-submit-name-url"
-          [disabled]="isUrlBusyUpdating">
+          [disabled]="isUrlBusyUpdating || !urlNameFieldsValid()">
     {{ 'CHANGE' | translate | uppercase }}
   </button>
 </mat-dialog-actions>
