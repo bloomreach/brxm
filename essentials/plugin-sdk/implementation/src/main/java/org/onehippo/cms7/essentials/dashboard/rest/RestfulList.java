@@ -23,8 +23,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 

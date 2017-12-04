@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
