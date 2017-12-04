@@ -18,6 +18,11 @@ import MultiActionDialogCtrl from '../multiActionDialog/multiActionDialog.contro
 import multiActionDialogTemplate from '../multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
+  DOES_NOT_EXIST: {
+    title: 'FEEDBACK_NOT_FOUND_TITLE',
+    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
+    disableContentButtons: true,
+  },
   NO_CONTENT: {
     title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
