@@ -49,16 +49,6 @@ export class NameUrlFieldsDialogComponent {
     this.isUrlBusyUpdating = value;
   }
 
-  urlNameFieldsValid() {
-    const conditions = [
-      this.nameUrlFields.nameField.length !== 0, // name empty
-      this.nameUrlFields.urlField.length !== 0, // url empty
-      /\S/.test(this.nameUrlFields.nameField), // name is only whitespace(s)
-      /\S/.test(this.nameUrlFields.urlField) // url is only whitespaces
-    ];
-    return conditions.every((condition) => condition === true);
-  }
-
   change() {
     return this.dialogRef.close({
       name: this.nameUrlFields.nameField,

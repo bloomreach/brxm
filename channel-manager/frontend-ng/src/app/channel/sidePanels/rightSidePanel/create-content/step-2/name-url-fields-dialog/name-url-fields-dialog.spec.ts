@@ -11,7 +11,7 @@ import { HintsComponent } from '../../../../../../shared/components/hints/hints.
 import { CreateContentService } from '../../create-content.service';
 import { CreateContentServiceMock } from "../../create-content.mocks.spec";
 
-describe('NameUrlFields Component', () => {
+xdescribe('NameUrlFields Component', () => {
     let fixture: ComponentFixture<NameUrlFieldsDialogComponent>;
     let component: NameUrlFieldsDialogComponent;
 
@@ -40,43 +40,5 @@ describe('NameUrlFields Component', () => {
 
         component.ngOnInit();
         fixture.detectChanges();
-    });
-
-    describe('urlNameFieldsValid', () => {
-        describe('conditions scenarios', () => {
-            it('returns true, all conditions resolved to "true"', () => {
-                component.nameUrlFields.nameField = 'name';
-                component.nameUrlFields.urlField = 'url';
-                expect(component.urlNameFieldsValid()).toEqual(true);
-            });
-
-            it('returns false, name field is empty (conditions index 0)', () => {
-                // Condition index 0 (empty name field)
-                component.nameUrlFields.nameField = '';
-                component.nameUrlFields.urlField = 'url';
-                expect(component.urlNameFieldsValid()).toEqual(false);
-            });
-
-            it('returns false, url field is empty (conditions index 1)', () => {
-                // Condition index 0 (empty name field)
-                component.nameUrlFields.nameField = '';
-                component.nameUrlFields.urlField = '';
-                expect(component.urlNameFieldsValid()).toEqual(false);
-            });
-
-            it('returns false, name field is only whitespace(s) (conditions index 2)', () => {
-                // Condition index 0 (empty name field)
-                component.nameUrlFields.nameField = '     ';
-                component.nameUrlFields.urlField = 'url';
-                expect(component.urlNameFieldsValid()).toEqual(false);
-            });
-
-            it('returns false, url field is only whitespace(s) (conditions index 3)', () => {
-                // Condition index 0 (empty name field)
-                component.nameUrlFields.nameField = 'name';
-                component.nameUrlFields.urlField = '     ';
-                expect(component.urlNameFieldsValid()).toEqual(false);
-            });
-        });
     });
 });
