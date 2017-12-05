@@ -14,40 +14,41 @@
   limitations under the License.
   -->
 
-<md-sidenav
-  layout="column"
-  md-is-locked-open="RightSidePanelCtrl.isLockedOpen()"
-  class="md-sidenav-right right-side-panel qa-side-panel-right"
-  md-component-id="right-side-panel"
+<md-sidenav layout="column"
+            md-is-locked-open="RightSidePanelCtrl.isLockedOpen()"
+            class="md-sidenav-right right-side-panel qa-side-panel-right"
+            md-component-id="right-side-panel"
   md-disable-backdrop>
 
-  <resize-handle
-    element="RightSidePanelCtrl.$element"
-    on-resize="RightSidePanelCtrl.onResize(newWidth)"
-    ng-if="!RightSidePanelCtrl.isFullWidth">
+  <resize-handle element="RightSidePanelCtrl.$element"
+                 on-resize="RightSidePanelCtrl.onResize(newWidth)"
+                 ng-if="!RightSidePanelCtrl.isFullWidth">
   </resize-handle>
 
-  <hippo-edit-content
-    flex layout="column"
-    ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.edit"
-    requested-document="RightSidePanelCtrl.options"
-    on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-    on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)"
-    on-close="RightSidePanelCtrl.closePanel()">
+  <hippo-edit-content flex
+                      layout="column"
+                      ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.edit"
+                      requested-document="RightSidePanelCtrl.options"
+                      on-full-width="RightSidePanelCtrl.setFullWidth(state)"
+                      on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)"
+                      on-close="RightSidePanelCtrl.closePanel()">
   </hippo-edit-content>
 
-  <hippo-create-content-step-1
-    flex layout="column"
-    ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
-    [options]="RightSidePanelCtrl.options"
-    (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
-    (on-close)="RightSidePanelCtrl.closePanel()"
-    (on-continue)="RightSidePanelCtrl.switchCreateContentStep($event)"
-    (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
+  <hippo-create-content-step-1 flex
+                               layout="column"
+                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
+                               [options]="RightSidePanelCtrl.options"
+                               (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
+                               (on-close)="RightSidePanelCtrl.closePanel()"
+                               (on-continue)="RightSidePanelCtrl.switchCreateContentStep($event)"
+                               (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
   </hippo-create-content-step-1>
-  <hippo-create-content-step-2 flex layout="column"
+  <hippo-create-content-step-2 flex
+                               layout="column"
                                ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create2"
-                               [options]="RightSidePanelCtrl.options"(on-save)="RightSidePanelCtrl.editDocumentAndRefreshPage($event)"
+                               [options]="RightSidePanelCtrl.options"
+                               [is-full-width]="RightSidePanelCtrl.isFullWidth"
+                               (on-save)="RightSidePanelCtrl.editDocumentAndRefreshPage($event)"
                                (on-close)="RightSidePanelCtrl.closePanel()"
                                (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
                                (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">

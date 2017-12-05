@@ -15,7 +15,7 @@
  */
 
 import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import './step-2.scss';
 
@@ -40,12 +40,12 @@ export class CreateContentStep2Component implements OnInit {
   docType: any;
   editing: boolean;
   loading: boolean;
-  isFullWidth: boolean;
   feedback: any;
   title = 'Create new content';
   defaultTitle = 'Create new content';
   documentId: string;
   @Input() options: any;
+  @Input() isFullWidth: boolean;
   @Output() onSave: EventEmitter<any> = new EventEmitter();
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onBeforeStateChange: EventEmitter<any> = new EventEmitter();
