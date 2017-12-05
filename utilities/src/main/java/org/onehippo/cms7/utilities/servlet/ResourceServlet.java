@@ -363,7 +363,7 @@ public class ResourceServlet extends HttpServlet {
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        final URL resource = getResourceURL(resourcePath, queryParams, req);
+        final URL resource = getResourceURL(addIndexHtmlIfNeeded(resourcePath), queryParams, req);
         if (resource == null) {
             notFound(resp, resourcePath);
             return;
