@@ -62,11 +62,14 @@ public class CmsEventDispatcherServiceImpl implements CmsEventDispatcherService,
         if (StringUtils.isEmpty(nodePath)) {
             return;
         }
-        final boolean added = listeners.computeIfAbsent(nodePath, p -> new HashSet<>()).add(jcrListener);
-        if (added) {
-            log.debug("Added {} to listeners for path {}", jcrListener, nodePath);
-        } else {
-            log.debug("Listeners already contains {} for path {}", jcrListener, nodePath);
+        final Set<JcrListener> jcrListeners = listeners.computeIfAbsent(nodePath, p -> new HashSet<>());
+        synchronized (jcrListeners) {
+            final boolean added = jcrListeners.add(jcrListener);
+            if (added) {
+                log.debug("Added {} to listeners for path {}", jcrListener, nodePath);
+            } else {
+                log.debug("Listeners already contains {} for path {}", jcrListener, nodePath);
+            }
         }
     }
 
