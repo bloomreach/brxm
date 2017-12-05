@@ -31,17 +31,13 @@ import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
 import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Add WPM JDBC resource to context.xml.
  */
 public class ProjectsInstruction implements Instruction {
 
-    private static Logger log = LoggerFactory.getLogger(ProjectsInstruction.class);
     private static final String WPM_RESOURCE_NAME = "jdbc/wpmDS";
     private static final Map<String, String> WPM_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
     private static final String WPM_WEBAPP_ARTIFACTID = "hippo-addon-wpm-camunda";
@@ -49,6 +45,10 @@ public class ProjectsInstruction implements Instruction {
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
     private static final String LOGGER_HST_BRANCH = "com.onehippo.cms7.hst.configuration.branch";
     private static final String LOGGER_PROJECT = "com.onehippo.cms7.services.wpm.project";
+    private static final MavenDependency DEPENDENCY_ENTERPRISE_SERVICES
+            = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
+    private static final MavenDependency DEPENDENCY_BPM_WAR
+            = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, WPM_WEBAPP_ARTIFACTID, null, "war", null);
 
     static {
         WPM_RESOURCE_ATTRIBUTES.put("auth", "Container");
@@ -72,7 +72,6 @@ public class ProjectsInstruction implements Instruction {
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
     @Inject private MavenCargoService mavenCargoService;
-    @Inject private MavenDependencyService mavenDependencyService;
     @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
@@ -85,17 +84,13 @@ public class ProjectsInstruction implements Instruction {
         });
 
         // Install "enterprise services" JAR
-        final MavenDependency enterpriseServices
-                = mavenDependencyService.createDependency(ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
-        mavenCargoService.addDependencyToCargoSharedClasspath(context, enterpriseServices);
-        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", enterpriseServices);
+        mavenCargoService.addDependencyToCargoSharedClasspath(context, DEPENDENCY_ENTERPRISE_SERVICES);
+        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_ENTERPRISE_SERVICES);
 
         // Install BPM WAR
-        final MavenDependency bpmWar = mavenDependencyService.createDependency(ProjectService.GROUP_ID_ENTERPRISE,
-                WPM_WEBAPP_ARTIFACTID, null, "war", null);
-        mavenCargoService.addDeployableToCargoRunner(context, bpmWar, WPM_WEBAPP_CONTEXT);
+        mavenCargoService.addDeployableToCargoRunner(context, DEPENDENCY_BPM_WAR, WPM_WEBAPP_CONTEXT);
         mavenAssemblyService.addDependencySet("webapps-component.xml", "webapps",
-                "bpm.war", false, "provided", bpmWar);
+                "bpm.war", false, "provided", DEPENDENCY_BPM_WAR);
 
         return InstructionStatus.SUCCESS;
     }

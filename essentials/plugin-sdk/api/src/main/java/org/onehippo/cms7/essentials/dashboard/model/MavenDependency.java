@@ -16,20 +16,49 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-public interface MavenDependency {
-    String GROUP_ID = "groupId";
-    String ARTIFACT_ID = "artifactId";
-    String VERSION = "version";
-    String TYPE = "type";
-    String SCOPE = "scope";
+// TODO: consider merging with EssentialsDependency in order to reduce code duplication
+public class MavenDependency {
+    public static final String GROUP_ID = "groupId";
+    public static final String ARTIFACT_ID = "artifactId";
+    public static final String VERSION = "version";
+    public static final String TYPE = "type";
+    public static final String SCOPE = "scope";
 
-    String getGroupId();
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
+    private final String type;
+    private final String scope;
 
-    String getArtifactId();
+    public MavenDependency(final String groupId, final String artifactId) {
+        this(groupId, artifactId, null, null, null);
+    }
 
-    String getVersion();
+    public MavenDependency(final String groupId, final String artifactId, final String version, final String type, final String scope) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.type = type;
+        this.scope = scope;
+    }
 
-    String getScope();
+    public String getGroupId() {
+        return groupId;
+    }
 
-    String getType();
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public String getType() {
+        return type;
+    }
 }

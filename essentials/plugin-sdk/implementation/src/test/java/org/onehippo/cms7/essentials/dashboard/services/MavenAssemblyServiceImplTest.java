@@ -32,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
 
     private MavenAssemblyServiceImpl service = new MavenAssemblyServiceImpl();
-    private MavenDependencyServiceImpl depsFactory = new MavenDependencyServiceImpl();
 
     @Test
     public void add_dependency_set() throws Exception {
@@ -42,7 +41,7 @@ public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
         String before = contentOf(descriptor);
         assertFalse(before.contains("<dependencySets>"));
 
-        MavenDependency dependency = depsFactory.createDependency("group", "artifact");
+        MavenDependency dependency = new MavenDependency("group", "artifact");
         assertTrue(service.addDependencySet("descriptor.xml", "outDir",
                 "file.war", true, "scope", dependency));
 
@@ -80,7 +79,7 @@ public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
         String before = contentOf(descriptor);
         assertFalse(before.contains("<include>group:artifact</include>"));
 
-        MavenDependency dependency = depsFactory.createDependency("group", "artifact");
+        MavenDependency dependency = new MavenDependency("group", "artifact");
         assertTrue(service.addIncludeToFirstDependencySet("descriptor.xml", dependency));
 
         String after = contentOf(descriptor);

@@ -39,7 +39,6 @@ import static org.junit.Assert.assertTrue;
 public class MavenCargoServiceImplTest extends ResourceModifyingTest {
 
     private final MavenCargoServiceImpl service = new MavenCargoServiceImpl();
-    private final MavenDependencyServiceImpl depFactory = new MavenDependencyServiceImpl();
 
     @Test
     public void addCargoDeployableTest() throws Exception {
@@ -53,7 +52,7 @@ public class MavenCargoServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<groupId>test.group.id</groupId>"));
         assertFalse(before.contains("<artifactId>test-artifact-id</artifactId>"));
 
-        MavenDependency dependency = depFactory.createDependency("test.group.id", "test-artifact-id");
+        MavenDependency dependency = new MavenDependency("test.group.id", "test-artifact-id");
 
         assertTrue(service.addDeployableToCargoRunner(context, dependency, webappContext));
 
@@ -114,26 +113,13 @@ public class MavenCargoServiceImplTest extends ResourceModifyingTest {
         String before = contentOf(pomXml);
         assertEquals(0, StringUtils.countMatches(before, "<classpath>shared</classpath>"));
 
-        MavenDependency dependency = depFactory.createDependency(groupId, artifactId);
+        MavenDependency dependency = new MavenDependency(groupId, artifactId);
         assertTrue(service.addDependencyToCargoSharedClasspath(context, dependency));
         assertTrue(service.addDependencyToCargoSharedClasspath(context, dependency));
 
         String after = contentOf(pomXml);
         assertEquals(1, StringUtils.countMatches(after, "<classpath>shared</classpath>"));
     }
-
-    /*
-    @Test
-    public void addPropertyTest() throws Exception {
-        final PluginContext context = getContext();
-
-        createModifiableFile("/project/pom.xml", "pom.xml");
-
-        assertFalse(MavenCargoUtils.hasProfileProperty(context, "first.test.property"));
-        assertTrue(MavenCargoUtils.addPropertyToProfile(context, "first.test.property", "random"));
-        assertTrue(MavenCargoUtils.hasProfileProperty(context, "first.test.property"));
-    }
-*/
 
     @Test
     public void mergeModelTest() throws IOException, XmlPullParserException {
