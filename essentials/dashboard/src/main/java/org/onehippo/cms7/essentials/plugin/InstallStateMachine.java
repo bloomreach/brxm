@@ -76,13 +76,9 @@ class InstallStateMachine {
             throw new PluginException("Incorrect state to run setup.");
         }
 
-        if (PluginParameterServiceFactory.getParameterService(plugin).doesSetupRequireRebuild()) {
-            log.info("Setting to Installing for plugin " + plugin);
-            state = InstallState.INSTALLING;
-        } else {
-            log.info("Setting to Installed for plugin " + plugin);
-            state = InstallState.INSTALLED;
-        }
+        // For now, all plugins require a rebuild after the setup phase.
+        log.info("Setting to Installing for plugin " + plugin);
+        state = InstallState.INSTALLING;
 
         persistState();
         return state;
@@ -104,13 +100,9 @@ class InstallStateMachine {
     }
 
     private void shortCircuitOnBoardState() {
-        if (PluginParameterServiceFactory.getParameterService(plugin).hasSetup()) {
-            log.info("Promoting/Short-circuiting to onBoard for plugin " + plugin);
-            state = InstallState.ONBOARD;
-        } else {
-            log.info("Short-circuiting to Installed for plugin " + plugin);
-            state = InstallState.INSTALLED;
-        }
+        // All features go through a setup phase.
+        log.info("Promoting/Short-circuiting to onBoard for plugin " + plugin);
+        state = InstallState.ONBOARD;
     }
 
     private InstallState loadStateFromFileSystem() {

@@ -32,11 +32,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
@@ -57,11 +61,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * Created by tjeger on 10/11/14.
@@ -253,19 +252,7 @@ public class PluginStore {
     private static final Semaphore serverSemaphore = new Semaphore(1);
 
     private void processPlugins(final List<Plugin> plugins) {
-        for (Plugin plugin : plugins) {
-            final PluginDescriptor descriptor = plugin.getDescriptor();
-
-            final InstallState state = plugin.getInstallState();
-            if (state == InstallState.ONBOARD
-                    || state == InstallState.INSTALLING
-                    || state == InstallState.INSTALLED) {
-                final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-                descriptor.setHasConfiguration(params.hasConfiguration());
-            }
-
-            registerEndPoints(descriptor);
-        }
+        plugins.forEach(p -> registerEndPoints(p.getDescriptor()));
 
         // Make sure we only attempt starting the server once!
         if (application.getClasses().size() > 0 && serverSemaphore.drainPermits() > 0) {

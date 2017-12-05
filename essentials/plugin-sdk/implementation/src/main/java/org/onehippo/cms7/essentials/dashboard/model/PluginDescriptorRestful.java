@@ -55,7 +55,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     private List<String> imageUrls;
     private String id;
     private String packageClass;
-    private String parameterServiceClass;
     private boolean hasConfiguration = false;
     private String packageFile;
     private String type;
@@ -172,16 +171,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     @Override
     public void setPackageClass(final String packageClass) {
         this.packageClass = packageClass;
-    }
-
-    @Override
-    public String getParameterServiceClass() {
-        return parameterServiceClass;
-    }
-
-    @Override
-    public void setParameterServiceClass(final String parameterServiceClass) {
-        this.parameterServiceClass = parameterServiceClass;
     }
 
     @Override

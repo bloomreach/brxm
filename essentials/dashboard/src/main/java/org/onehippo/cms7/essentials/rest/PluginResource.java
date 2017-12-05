@@ -34,8 +34,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.collect.Multimap;
+
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
@@ -56,13 +57,11 @@ import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
-import org.onehippo.cms7.essentials.plugin.PluginParameterServiceFactory;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.project.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -312,8 +311,7 @@ public class PluginResource extends BaseResource {
         }
 
         final ProjectSettings settings = pluginStore.getProjectSettings();
-        final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
-        if (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters()) {
+        if (settings.isConfirmParams()) {
             return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 

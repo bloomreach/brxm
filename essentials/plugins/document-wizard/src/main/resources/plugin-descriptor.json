@@ -10,7 +10,7 @@
     "/essentials/feature/images/screenshots/documentwizard02.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
+  "hasConfiguration": true,
   "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"

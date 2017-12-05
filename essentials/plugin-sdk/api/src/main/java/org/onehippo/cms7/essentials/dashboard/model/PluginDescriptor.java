@@ -66,10 +66,6 @@ public interface PluginDescriptor extends Serializable {
 
     void setPackageClass(String packageClass);
 
-    String getParameterServiceClass();
-
-    void setParameterServiceClass(String parameterServiceClass);
-
     void setVendor(Vendor vendor);
 
     String getName();

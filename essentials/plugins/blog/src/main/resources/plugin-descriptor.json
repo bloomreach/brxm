@@ -12,7 +12,7 @@
     "/essentials/feature/images/screenshots/blog04.png"
   ],
   "packageFile": "/META-INF/blog_instructions.xml",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
+  "hasConfiguration": true,
   "restClasses": [],
   "type": "feature",
   "vendor": {
