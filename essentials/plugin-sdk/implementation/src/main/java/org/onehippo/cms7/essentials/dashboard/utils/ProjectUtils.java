@@ -255,19 +255,6 @@ public final class ProjectUtils {
 
     }
 
-    public static List<File> getLog4j2Files() {
-        try {
-            final FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
-            final File[] log4j2Files = getConfFolder().listFiles(log4j2Filter);
-            if (log4j2Files != null) {
-                return Arrays.asList(log4j2Files);
-            }
-        } catch (Exception e) {
-            log.error("No log4j2 configuration files found in {}", getConfFolder(), e);
-        }
-        return Collections.emptyList();
-    }
-
     public static List<File> getAssemblyFiles() {
         try {
             final FilenameFilter assemblyFilter = (dir, name) -> name.matches(".*\\.xml");
@@ -289,7 +276,7 @@ public final class ProjectUtils {
         return new File(getConfFolder(), CONTEXT_XML);
     }
 
-    private static File getConfFolder() {
+    public static File getConfFolder() {
         return new File(getProjectRootFolder(), FOLDER_CONF);
     }
 

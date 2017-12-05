@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
@@ -30,8 +31,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -75,10 +74,8 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Create repository folder '" + path + "'.");
-        return result;
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(getDefaultGroup(), "Create repository folder '" + path + "'.");
     }
 
     private InstructionStatus createFolders(final PluginContext context) {

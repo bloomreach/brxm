@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.File;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.Multimap;
 
@@ -30,30 +31,39 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MavenDependencyInstructionTest extends ResourceModifyingTest {
+    private int counter;
+
     @Test
     public void default_change_message() {
+        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
+            assertTrue(MessageGroup.EXECUTE == g);
+            assertEquals("Add Maven dependency group:artifact to module 'cms'.", m);
+            counter++;
+        };
         final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
         instruction.setGroupId("group");
         instruction.setArtifactId("artifact");
         instruction.setTargetPom("cms");
 
-        final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-
-        assertEquals(1, changeMessages.keySet().size());
-        assertTrue(changeMessages.containsKey(MessageGroup.EXECUTE));
-        assertEquals(1, changeMessages.get(MessageGroup.EXECUTE).size());
-        assertEquals("Add Maven dependency group:artifact to module 'cms'.",
-                changeMessages.get(MessageGroup.EXECUTE).iterator().next());
+        counter = 0;
+        instruction.populateChangeMessages(collector);
+        assertEquals(1, counter);
     }
 
     @Test
     public void xml_based_change_message() {
         final String message = "anything";
+        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
+            assertTrue(MessageGroup.EXECUTE == g);
+            assertEquals(message, m);
+            counter++;
+        };
         final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
         instruction.setMessage(message);
 
-        final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-        assertTrue(changeMessages.containsKey(MessageGroup.EXECUTE));
+        counter = 0;
+        instruction.populateChangeMessages(collector);
+        assertEquals(1, counter);
     }
 
     @Test

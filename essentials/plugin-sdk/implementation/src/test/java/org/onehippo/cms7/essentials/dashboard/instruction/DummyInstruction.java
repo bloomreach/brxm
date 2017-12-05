@@ -16,13 +16,21 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 public class DummyInstruction implements Instruction {
     @Override
     public InstructionStatus execute(final PluginContext context) {
         return InstructionStatus.SUCCESS;
+    }
+
+    @Override
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+
     }
 }

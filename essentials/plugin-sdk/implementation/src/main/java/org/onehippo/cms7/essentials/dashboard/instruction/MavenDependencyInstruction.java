@@ -16,13 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.common.collect.Multimap;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
@@ -49,10 +48,11 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
         return DependencyUtils.addDependency(context, dependency) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+    @Override
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         final String message = String.format("Add Maven dependency %s:%s to module '%s'.",
                 dependency.getGroupId(), dependency.getArtifactId(), dependency.getTargetPom());
-        return Instruction.makeChangeMessages(getDefaultGroup(), message);
+        changeMessageQueue.accept(getDefaultGroup(), message);
     }
 
     @XmlAttribute

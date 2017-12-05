@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import com.google.common.collect.Multimap;
 
 import org.junit.Test;
@@ -33,27 +35,39 @@ public class HstBeanClassesInstructionTest {
     private PluginContext relayedContext;
     private String relayedPattern;
     private boolean result;
+    private int counter;
 
     @Test
     public void default_change_message() {
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
+        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
+            assertTrue(g == MessageGroup.EXECUTE);
+            assertEquals("Add mapping 'foo' for annotated HST beans to Site web.xml.", m);
+            counter++;
+        };
         instruction.setPattern("foo");
-        final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-        assertEquals(1, changeMessages.keySet().size());
-        assertTrue(changeMessages.containsKey(MessageGroup.EXECUTE));
-        assertEquals(1, changeMessages.get(MessageGroup.EXECUTE).size());
-        assertEquals("Add mapping 'foo' for annotated HST beans to Site web.xml.",
-                changeMessages.get(MessageGroup.EXECUTE).iterator().next());
         assertEquals("foo", instruction.getPattern());
+
+        counter = 0;
+        instruction.populateChangeMessages(collector);
+        assertEquals(1, counter);
     }
 
     @Test
     public void xml_based_change_message() {
         final String message = "anything";
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
+        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
+            assertTrue(g == MessageGroup.EXECUTE);
+            assertEquals(message, m);
+            counter++;
+        };
         instruction.setMessage(message);
-        final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-        assertTrue(changeMessages.containsKey(MessageGroup.EXECUTE));
+        assertEquals(message, instruction.getMessage());
+
+        counter = 0;
+        instruction.populateChangeMessages(collector);
+        assertEquals(1, counter);
     }
 
     @Test

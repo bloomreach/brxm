@@ -85,8 +85,12 @@ public abstract class ResourceModifyingTest {
     }
 
     protected int nrOfOccurrences(final File file, final String value) throws IOException {
-        final String fileContent = com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
+        final String fileContent = contentOf(file);
         return StringUtils.countMatches(fileContent, value);
+    }
+
+    protected String contentOf(File file) throws IOException {
+        return com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
     }
 
     private void ensureContext() throws IOException {

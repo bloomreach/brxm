@@ -27,14 +27,13 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -90,14 +89,12 @@ public class FileInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         if (action == Action.COPY) {
-            result.put(MessageGroup.FILE_CREATE, "Create project file '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.FILE_CREATE, "Create project file '" + target + "'.");
         } else {
-            result.put(MessageGroup.FILE_DELETE, "Delete project file '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.FILE_DELETE, "Delete project file '" + target + "'.");
         }
-        return result;
     }
 
     private InstructionStatus copy() {
