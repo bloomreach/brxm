@@ -31,15 +31,12 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Modify the site's web.xml to install the rewrite filter.
  */
 public class UrlRewriterInstruction implements Instruction {
 
-    private static final Logger logger = LoggerFactory.getLogger(UrlRewriterInstruction.class);
     private static final String FILTER_CLASS = "org.onehippo.forge.rewriting.HippoRewriteFilter";
     private static final String FILTER_NAME = "RewriteFilter";
     private static final List<String> URL_PATTERNS = Collections.singletonList("/*");
@@ -66,7 +63,7 @@ public class UrlRewriterInstruction implements Instruction {
                 && webXmlService.addDispatchersToFilterMapping(context, MODULE, "HstFilter", DISPATCHERS)) {
             return InstructionStatus.SUCCESS;
         }
-        return InstructionStatus.SKIPPED;
+        return InstructionStatus.FAILED;
     }
 
     @Override
