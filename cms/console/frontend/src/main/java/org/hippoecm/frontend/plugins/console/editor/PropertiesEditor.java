@@ -64,7 +64,8 @@ public class PropertiesEditor extends DataView<Property> {
     static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
     private String namespacePrefix;
-    private final ConfigurationService cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
+    // the (transient, not serializable) HCM ConfigurationService, which is repo-static, but not the model, which can be updated
+    private transient ConfigurationService cfgService;
 
     public PropertiesEditor(String id, IDataProvider<Property> model) {
         super(id, model);
@@ -78,6 +79,19 @@ public class PropertiesEditor extends DataView<Property> {
         } else {
             namespacePrefix = namespace + ":";
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        cfgService = null;
+    }
+
+    private ConfigurationService getConfigurationService() {
+        if (cfgService == null) {
+            cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
+        }
+        return cfgService;
     }
 
     @Override
@@ -110,7 +124,7 @@ public class PropertiesEditor extends DataView<Property> {
             addLink.setVisible(definition.isMultiple() && !definition.isProtected());
 
             // HCM config-tracing info
-            final ConfigurationModel cfgModel = cfgService.getRuntimeConfigurationModel();
+            final ConfigurationModel cfgModel = getConfigurationService().getRuntimeConfigurationModel();
             String origin = getPropertyOrigin(model.getProperty().getPath(), cfgModel);
             item.add(new Label("origin", "").add(new OriginTitleBehavior(Model.of(origin))));
         } catch (RepositoryException e) {
