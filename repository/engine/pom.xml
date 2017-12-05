@@ -218,12 +218,39 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <excludes>
+            <exclude>**/RefreshTest.java</exclude>
+            <exclude>**/ExternalRepositorySyncRevisionServiceTest.java</exclude>
+            <exclude>**/ExternalRepositorySyncRevisionServiceNoClusterTest.java</exclude>
+          </excludes>
           <systemPropertyVariables>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
         </configuration>
       </plugin>
-   </plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>**/RefreshTest.java</include>
+            <include>**/ExternalRepositorySyncRevisionServiceTest.java</include>
+            <include>**/ExternalRepositorySyncRevisionServiceNoClusterTest.java</include>
+          </includes>
+          <systemPropertyVariables>
+            <org.onehippo.repository.test.keepserver>false</org.onehippo.repository.test.keepserver>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>
