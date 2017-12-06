@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
-  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/hippo-theme/dist/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.css?v=${project.version}"/>
   <script type="application/javascript">
-    window.SERVER_URL = '<%=request.getServerName()+':'+request.getServerPort()%>';
+    window.SERVER_URL = '<%=request.getScheme()+"://"+request.getServerName()+':'+request.getServerPort()%>';
   </script>
 
   <%-- HIPPO THEME DEPS --%>
@@ -121,7 +121,7 @@
   </div>
 </div>
 <!-- Include the loader.js script -->
-<script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://<%=request.getServerName()+':'+request.getServerPort()%>/essentials/rest/plugins/modules"></script>
+<script src="${pageContext.request.contextPath}/js/loader.js" data-modules="<%=request.getScheme()+"://"+request.getServerName()+':'+request.getServerPort()%>/essentials/rest/plugins/modules"></script>
 
 
 <style type="text/css">
