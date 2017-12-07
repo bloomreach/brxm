@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,24 +39,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -96,7 +89,6 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
         String numberStr = request.getParameter("number");
         long start = System.currentTimeMillis();
         if (numberStr != null) {
-            SAXParserFactoryImpl impl = new SAXParserFactoryImpl();
             SAXParser parser;
             int numberOfWikiDocs = 0;
             try {
@@ -168,7 +160,10 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             boolean addImages = (imageStr != null);
 
             try {
-                parser = impl.newSAXParser();
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                factory.setNamespaceAware(true);
+                factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+                parser = factory.newSAXParser();
                 InputStream wikiStream = null;
                 File f = null;
                 if (StringUtils.isEmpty(wikiContentFileSystem)) {
@@ -178,7 +173,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                     f = new File(wikiContentFileSystem);
                 }
 
-                WikiPediaToJCRHandler handler = null;
+                WikiPediaToJCRHandler handler;
 
                 try {
                     Session writableSession = this.getPersistableSession(request);
@@ -216,6 +211,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             } catch (ParserConfigurationException e) {
                 response.setRenderParameter("message", "Did not import wiki: " + e.toString());
                 return;
+            } catch (SAXException e) {
+                e.printStackTrace();
             }
             String relateString = request.getParameter("relate");
             if (relateString != null) {
@@ -281,7 +278,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 "junaid", "ate", "tjeerd", "verberg", "simon", "jannis"};
         private final Random rand;
 
-        public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
+        private WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
                 final int maxSubFolders, final boolean addImages) throws Exception {
             this.wikiFolder = wikiFolder;
             this.total = total;
@@ -446,19 +443,16 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             super.endElement(uri, localName, qName);
         }
 
-        private void addCategories(String text) throws ValueFormatException, VersionException, LockException,
-                ConstraintViolationException, RepositoryException {
+        private void addCategories(String text) throws RepositoryException {
             Matcher m = categoryPattern.matcher(text);
-            List<String> categories = new ArrayList<String>();
+            List<String> categories = new ArrayList<>();
             while (m.find()) {
                 categories.add(m.group(1));
             }
             doc.setProperty("demosite:categories", categories.toArray(new String[categories.size()]));
         }
 
-        private void createBlocks(String text) throws ItemExistsException, PathNotFoundException,
-                NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException,
-                RepositoryException {
+        private void createBlocks(String text) throws RepositoryException {
             //Divide text into blocks
             Matcher m = blockSeparatorPattern.matcher(text);
             int textProcessedIndex = 0;
@@ -474,9 +468,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
         }
 
-        private void createBlock(String textBlock) throws ItemExistsException, PathNotFoundException,
-                NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException,
-                RepositoryException {
+        private void createBlock(String textBlock) throws RepositoryException {
             Matcher m = blockSeparatorPattern.matcher(textBlock);
             Node block = doc.addNode("demosite:block", "demosite:contentblockcompound");
             String textBody = textBlock;
@@ -501,9 +493,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             body.setProperty("hippostd:content", textBody.trim());
         }
 
-        private String createImages(Node body, String text) throws ItemExistsException, PathNotFoundException,
-                NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException,
-                RepositoryException {
+        private String createImages(Node body, String text) throws RepositoryException {
             final Pattern pattern = Pattern.compile("\\[\\[(?:Image|File):([^|\\]]*)");
             Matcher matcher = pattern.matcher(text);
             while (matcher.find()) {
@@ -635,18 +625,14 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 }
 
                 return imgHandle.getIdentifier();
-            } catch (PathNotFoundException e) {
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IOException | RepositoryException e) {
                 e.printStackTrace();
             }
             return null;
         }
 
         @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             if (recording) {
                 fieldText.append(ch, start, length);
             }
@@ -669,12 +655,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
         }
     }
 
-    /**
-     * Relates the nodes to the previous nodes (in order of UUID)
-     *
-     * @param request
-     * @param response
-     */
+    /* Relates the nodes to the previous nodes (in order of UUID) */
     private void relateDocuments(HstRequest request, HstResponse response, Operation op, final int relations,
             String orderByProperty) {
         if (relations < 1) {
@@ -696,8 +677,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
             // Fill first queue with elements, which can't be fully linked yet
             Node current;
-            LinkedList<Node> firsts = new LinkedList<Node>();
-            LinkedList<Node> previous = new LinkedList<Node>();
+            LinkedList<Node> firsts = new LinkedList<>();
+            LinkedList<Node> previous = new LinkedList<>();
             while (it.hasNext() && firsts.size() != relations) {
                 current = it.nextNode();
                 firsts.add(current);
@@ -708,10 +689,9 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             int count = 1;
             while (it.hasNext()) {
                 current = it.nextNode();
-                Iterator<Node> qit = previous.listIterator();
 
-                while (qit.hasNext()) {
-                    op.perform(current, qit.next());
+                for (Node prev : previous) {
+                    op.perform(current, prev);
                 }
 
                 previous.remove();
@@ -892,13 +872,13 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
         return translatedFolder;
     }
 
-    class ForcedStopException extends RuntimeException {
+    private class ForcedStopException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
     }
 
     interface Operation {
-        public void perform(Node from, Node to);
+        void perform(Node from, Node to);
     }
 
 }
