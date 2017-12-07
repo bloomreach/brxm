@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,14 +24,15 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.xerces.parsers.DOMParser;
 import org.junit.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class ParseTextsTest  {
 
@@ -44,17 +45,15 @@ public class ParseTextsTest  {
     @Test
     public void testSimpleHrefWithSingleOrDoubleAndWithoutQuotes() {
         String text = "hello <a href='http://www.onehippo.org:80'>hello</a> and <A HREF=http://www.example.com/2 >hello2</A> and  <A HREF=\"http://www.example.com/3 \" >hello3</A>";
-        System.out.println(text);
         final List<String> links = PlainTextLinksExtractor.getLinks(text);
         assertEquals(3, links.size());
     }
 
     @Test
     public void testSimpleSrcWithSingleOrDoubleAndWithoutQuotes() {
-            String text = "hello <img src='http://www.example.com'/> and <IMG Src=http://www.example.com/2 /> and  <IMG src=\"http://www.example.com/3 \" />";
-            final List<String> links = PlainTextLinksExtractor.getLinks(text);
-            assertEquals(3, links.size());
-
+        String text = "hello <img src='http://www.example.com'/> and <IMG Src=http://www.example.com/2 /> and  <IMG src=\"http://www.example.com/3 \" />";
+        final List<String> links = PlainTextLinksExtractor.getLinks(text);
+        assertEquals(3, links.size());
     }
 
     @Test
@@ -101,13 +100,12 @@ public class ParseTextsTest  {
         assertEquals(2, PlainTextLinksExtractor.getLinks(text).size());
 
         text = "hello <img <a  />  \" src=http://www.onehippo.org:80/1 /> and <img <a href=\"http://localhost:foo\" /> src='";
-        final List<String> links = PlainTextLinksExtractor.getLinks(text);
 
         // it skips the first link src=http://www.onehippo.org:80/1 because there is an and tag from the <a element after the <img but before the src
         assertEquals(1, PlainTextLinksExtractor.getLinks(text).size());
     }
 
-        @Test
+    @Test
     public void testTexts() {
         String text = "<html><body>\n<H1>Lorem ipsum dolor <B><A HREF="+HREF1+">Lorem Ipsum</A></B> <B><A HREF="+HREF1+">Lorem Ipsum</A></B> sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et " +
                 "dolore magna aliqua. Ut enim ad minim veniam,  <B><A HREF="+HREF2+">Lorem Ipsum</A></B> quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
@@ -136,14 +134,14 @@ public class ParseTextsTest  {
 
     @Test
     public void testPerformance() {
-        String text = "<html><body>\n<H1>Lorem ipsum dolor <B><A HREF="+HREF1+">Lorem Ipsum</A></B> <B><A HREF="+HREF1+">Lorem Ipsum</A></B> sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et " +
-                "dolore magna aliqua. Ut enim ad minim veniam,  <B><A HREF="+HREF2+">Lorem Ipsum</A></B> quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
+        String text = "<html><body>\n<H1>Lorem ipsum dolor <B><A HREF='"+HREF1+"'>Lorem Ipsum</A></B> <B><A HREF='"+HREF1+"'>Lorem Ipsum</A></B> sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et " +
+                "dolore magna aliqua. Ut enim ad minim veniam,  <B><A HREF='"+HREF2+"'>Lorem Ipsum</A></B> quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
                 " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat " +
-                "cupidatat non proident,  <B><A HREF="+HREF3+">Lorem Ipsum</A></B> sunt in culpa" +
+                "cupidatat non proident,  <B><A HREF='"+HREF3+"'>Lorem Ipsum</A></B> sunt in culpa" +
                 " qui officia deserunt mollit anim id est laborum.</H1>" +
-                "<P>Sed ut perspiciatis unde omnis <IMG SRC="+SRC+"/> iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa " +
+                "<P>Sed ut perspiciatis unde omnis <IMG SRC='"+SRC+"'/> iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa " +
                 "quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit " +
-                "aspernatur aut odit aut fugit, <A HREF="+MAILTO+">Lorem Ipsum</A> sed quia consequuntur <IMG SRC="+SRC+"/> magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est," +
+                "aspernatur aut odit aut fugit, <A HREF='"+MAILTO+"'>Lorem Ipsum</A> sed quia consequuntur <IMG SRC='"+SRC+"'/> magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est," +
                 " qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore" +
                 " magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut" +
                 " aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil " +
@@ -175,29 +173,15 @@ public class ParseTextsTest  {
 
     private void parseWithDom(InputStream stream) {
         try {
-            DOMParser parser = new DOMParser();
-            parser.setErrorHandler(new ErrorHandler() {
-
-                @Override
-                public void warning(final SAXParseException exception) throws SAXException {
-                }
-
-                @Override
-                public void error(final SAXParseException exception) throws SAXException {
-                }
-
-                @Override
-                public void fatalError(final SAXParseException exception) throws SAXException {
-                }
-            });
-            parser.parse(new InputSource(stream));
-            Node node = parser.getDocument().getFirstChild();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document document = db.parse(stream);
+            Node node = document.getFirstChild();
             traverse(node);
-        } catch (SAXException ex) {
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            //
         }
     }
-
 
     private void traverse(Node node) {
         entering(node);
@@ -232,7 +216,6 @@ public class ParseTextsTest  {
                 String reference = href.getTextContent();
                 String protocol = (reference.contains("://") ? reference.substring(0, reference.indexOf("://")) : "").toLowerCase();
                 if (PROTOCOLS.contains(protocol)) {
-                    System.out.println("CHECK");
                     // nothing as is just for testing
                 }
             }
