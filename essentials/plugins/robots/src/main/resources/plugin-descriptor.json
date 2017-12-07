@@ -33,14 +33,12 @@
   },
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-robotstxt-addon-repository",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-robotstxt-hst-client",
       "scope": "compile",

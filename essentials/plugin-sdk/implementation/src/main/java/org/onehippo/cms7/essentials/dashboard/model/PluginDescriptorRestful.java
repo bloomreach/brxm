@@ -41,8 +41,7 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     @JsonDeserialize(as = VendorRestful.class)
     @JsonSerialize(as = VendorRestful.class)
     private Vendor vendor;
-    @JsonDeserialize(contentAs = DependencyRestful.class)
-    private List<EssentialsDependency> dependencies;
+    private List<ModuleMavenDependency> dependencies;
     @JsonDeserialize(contentAs = RepositoryRestful.class)
     private List<Repository> repositories;
     private String name;
@@ -209,10 +208,8 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.documentationLink = documentationLink;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
     @Override
-    public List<EssentialsDependency> getDependencies() {
+    public List<ModuleMavenDependency> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
         }
@@ -220,16 +217,8 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     }
 
     @Override
-    public void setDependencies(final List<EssentialsDependency> dependencies) {
+    public void setDependencies(final List<ModuleMavenDependency> dependencies) {
         this.dependencies = dependencies;
-    }
-
-    public void addDependency(final EssentialsDependency dependency) {
-        if (dependencies == null) {
-            dependencies = new ArrayList<>();
-        }
-        dependencies.add(dependency);
-
     }
 
     public void addRepository(final Repository repository) {

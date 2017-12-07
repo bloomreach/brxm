@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,18 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import org.apache.maven.model.Dependency;
-
 /**
- * @version "$Id$"
+ * ModuleMavenDependency should be phased out as soon as dependency support has been removed from the plugin descriptor
  */
-public interface EssentialsDependency {
+public class ModuleMavenDependency extends MavenDependency {
 
-    String getGroupId();
+    private String targetPom;
 
-    void setGroupId(String groupId);
+    public String getTargetPom() {
+        return targetPom;
+    }
 
-    String getArtifactId();
-
-    void setArtifactId(String artifactId);
-
-    String getVersion();
-
-    void setVersion(String version);
-
-    String getScope();
-
-    void setScope(String scope);
-
-    String getType();
-
-    void setType(String type);
-
-    String getTargetPom();
-
-    void setTargetPom(String targetPom);
-
-    TargetPom getDependencyTargetPom();
-
-
-    Dependency createMavenDependency();
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
+    }
 }

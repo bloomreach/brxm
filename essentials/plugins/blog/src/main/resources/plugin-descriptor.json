@@ -35,7 +35,6 @@
   },
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-essentials-components-cms",
       "scope": "compile",

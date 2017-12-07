@@ -17,22 +17,20 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.net.URL;
+
 import org.apache.maven.model.Model;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -60,41 +58,6 @@ public class DependencyUtilsTest extends BaseResourceTest {
         DependencyUtils.addRepository(getContext(), repository);
         hasRepo = DependencyUtils.hasRepository(getContext(), repository);
         assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
-    }
-
-    @Test
-    public void testHasDependency() throws Exception {
-
-        final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setTargetPom("cms");
-        dependency.setArtifactId("hippo-plugins-shared");
-        dependency.setVersion("1.01.00-SNAPSHOT");
-        dependency.setGroupId("org.onehippo.cms7.essentials");
-        assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
-        final boolean hasDep = DependencyUtils.hasDependency(getContext(), dependency);
-        assertTrue("Expected hippo-plugins-shared version", hasDep);
-
-    }
-
-    @Test
-    public void testAddRemoveDependency() throws Exception {
-        final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setTargetPom("cms");
-        dependency.setArtifactId("hippo-plugins-non-existing");
-        dependency.setVersion("1.01.00-SNAPSHOT");
-        dependency.setGroupId("org.onehippo.cms7.essentials");
-        assertEquals(TargetPom.CMS, dependency.getDependencyTargetPom());
-        final PluginContext context = getContext();
-        boolean hasDep = DependencyUtils.hasDependency(context, dependency);
-        assertFalse("Expected no dependency", hasDep);
-        // add
-        DependencyUtils.addDependency(context, dependency);
-        hasDep = DependencyUtils.hasDependency(context, dependency);
-        assertTrue("Expected hippo-plugins-non-existing", hasDep);
-        // remove
-        DependencyUtils.removeDependency(context, dependency);
-        hasDep = DependencyUtils.hasDependency(context, dependency);
-        assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
     }
 
     @Test

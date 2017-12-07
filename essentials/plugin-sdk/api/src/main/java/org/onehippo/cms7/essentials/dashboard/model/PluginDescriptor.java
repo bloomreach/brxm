@@ -81,9 +81,9 @@ public interface PluginDescriptor extends Serializable {
     void setType(String type);
 
 
-    List<EssentialsDependency> getDependencies();
+    List<ModuleMavenDependency> getDependencies();
 
-    void setDependencies(List<EssentialsDependency> dependencies);
+    void setDependencies(List<ModuleMavenDependency> dependencies);
 
     String getIntroduction();
 

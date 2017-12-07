@@ -19,20 +19,23 @@ package org.onehippo.cms7.essentials.plugin;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Strings;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import com.google.common.base.Strings;
 
 public class Plugin {
     private final static Logger log = LoggerFactory.getLogger(Plugin.class);
@@ -141,10 +144,11 @@ public class Plugin {
     }
 
     private void installDependencies() throws PluginException {
+        final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
         final StringBuilder builder = new StringBuilder();
 
-        for (EssentialsDependency dependency : descriptor.getDependencies()) {
-            if (!DependencyUtils.addDependency(context, dependency)) {
+        for (ModuleMavenDependency dependency : descriptor.getDependencies()) {
+            if (!dependencyService.addDependency(context, TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {
