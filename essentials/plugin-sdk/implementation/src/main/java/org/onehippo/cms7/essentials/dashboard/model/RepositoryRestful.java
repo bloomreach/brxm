@@ -20,12 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-
-@XmlRootElement(name = "repository")
 public class RepositoryRestful implements Repository, Restful {
 
     private static final long serialVersionUID = 1L;
@@ -77,7 +71,6 @@ public class RepositoryRestful implements Repository, Restful {
         this.url = url;
     }
 
-    @XmlElementRef(type = RepositoryPolicyRestful.class, name = "snapshots")
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryPolicyRestful.class, name = "snapshots")})
     @JsonTypeInfo(defaultImpl = RepositoryPolicyRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @Override
@@ -90,7 +83,6 @@ public class RepositoryRestful implements Repository, Restful {
         this.snapshots = snapshots;
     }
 
-    @XmlElementRef(type = RepositoryPolicyRestful.class, name = "releases")
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryPolicyRestful.class, name = "releases")})
     @JsonTypeInfo(defaultImpl = RepositoryPolicyRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @Override
@@ -113,7 +105,6 @@ public class RepositoryRestful implements Repository, Restful {
         this.targetPom = targetPom;
     }
 
-    @XmlTransient
     @JsonIgnore
     @Override
     public TargetPom getDependencyTargetPom() {

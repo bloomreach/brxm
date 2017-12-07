@@ -19,18 +19,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <bean id="jaxrsRestJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
-    <property name="annotationIntrospector" ref="jaxrsRestJacksonJaxbIntrospector"/>
-  </bean>
-
-  <bean id="jaxrsRestJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
-    <constructor-arg>
-      <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
-    </constructor-arg>
-    <constructor-arg>
+    <property name="annotationIntrospector">
       <bean class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector"/>
-    </constructor-arg>
+    </property>
   </bean>
-
 
   <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />

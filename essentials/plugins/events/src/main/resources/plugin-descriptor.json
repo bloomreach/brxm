@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "eventsPlugin",
   "name": "Events",
   "icon": "/essentials/feature/images/events-plugin-icon.png",
@@ -15,7 +14,6 @@
   "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

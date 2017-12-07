@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "taggingPlugin",
   "name": "Tagging",
   "icon": "/essentials/feature/images/tagging-plugin-icon.png",
@@ -17,7 +16,6 @@
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

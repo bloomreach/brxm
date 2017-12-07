@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -35,7 +32,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import com.google.common.base.Strings;
 
 
-@XmlRootElement(name = "plugin")
 public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     private static final long serialVersionUID = 1L;
@@ -184,12 +180,9 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     }
     
     @Override
-    @XmlElementRef(type = VendorRestful.class)
     public Vendor getVendor() {
         return vendor;
     }
-
-
 
     @Override
     public void setVendor(final Vendor vendor) {
@@ -216,7 +209,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.documentationLink = documentationLink;
     }
 
-    @XmlElementRef(type = DependencyRestful.class)
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
     @Override
@@ -297,7 +289,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.imageUrls = imageUrls;
     }
 
-    @XmlElementRef(type = RepositoryRestful.class)
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryRestful.class, name = "repository")})
     @Override

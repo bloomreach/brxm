@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "beanwriter",
   "name": "Bean Writer",
   "icon": "/essentials/tool/images/bean-writer-icon.png",
@@ -21,7 +20,6 @@
   },
   "type": "tool",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

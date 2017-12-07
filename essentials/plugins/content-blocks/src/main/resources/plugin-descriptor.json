@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "contentBlocks",
   "name": "Content Blocks",
   "icon": "/essentials/feature/images/content-blocks-plugin-icon.png",
@@ -16,7 +15,6 @@
     "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"
   ],
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

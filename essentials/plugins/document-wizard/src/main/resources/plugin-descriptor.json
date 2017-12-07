@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "documentWizardPlugin",
   "name": "Documents Wizard",
   "icon": "/essentials/feature/images/documents-wizard-plugin-icon.png",
@@ -17,7 +16,6 @@
   ],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "robotsPlugin",
   "name": "Robots.txt",
   "icon": "/essentials/feature/images/robots-plugin-icon.png",
@@ -14,7 +13,6 @@
   "packageFile": "/META-INF/robots_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

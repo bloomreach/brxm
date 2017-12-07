@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "enterpriseProject",
   "name": "Experience Project",
   "icon": "/essentials/feature/enterpriseProject/icon.png",
@@ -9,7 +8,6 @@
   "packageFile": "/META-INF/enterpriseproject_plugin_instructions.xml",
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

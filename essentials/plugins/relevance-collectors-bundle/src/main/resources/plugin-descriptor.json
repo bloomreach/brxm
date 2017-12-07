@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "relevanceCollectorsBundlePlugin",
   "name": "Relevance Collectors Bundle",
   "icon": "/essentials/feature/images/relevance-collectors-bundle-plugin-icon.png",
@@ -11,7 +10,6 @@
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

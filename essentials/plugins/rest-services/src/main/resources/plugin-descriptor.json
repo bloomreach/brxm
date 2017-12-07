@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "restServices",
   "name": "Rest Services Setup",
   "icon": "/essentials/tool/images/rest-services-icon.png",
@@ -9,7 +8,6 @@
   ],
   "type": "tool",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

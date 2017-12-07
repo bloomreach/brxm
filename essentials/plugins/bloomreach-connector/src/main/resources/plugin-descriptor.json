@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "bloomreachConnector",
   "name": "Personalization Connector",
   "icon": "/essentials/images/bloomreachConnector.png",
@@ -10,7 +9,6 @@
   ],
   "type": "tool",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

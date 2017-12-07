@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "blogPlugin",
   "name": "Blog",
   "icon": "/essentials/feature/images/blog-plugin-icon.png",
@@ -16,7 +15,6 @@
   "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },

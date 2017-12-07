@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "relatedDocumentsPlugin",
   "name": "Related Documents",
   "icon": "/essentials/feature/images/related-documents-plugin-icon.png",
@@ -17,7 +16,6 @@
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

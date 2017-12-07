@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "urlrewriterPlugin",
   "name": "URL Rewriter",
   "icon": "/essentials/feature/images/urlrewriter-plugin-icon.png",
@@ -13,7 +12,6 @@
   "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

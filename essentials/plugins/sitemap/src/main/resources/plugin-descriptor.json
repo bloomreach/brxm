@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "sitemapPlugin",
   "name": "Sitemap",
   "icon": "/essentials/feature/images/sitemap-plugin-icon.png",
@@ -10,7 +9,6 @@
   "restClasses": [],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
