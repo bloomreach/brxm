@@ -15,24 +15,11 @@
  */
 package org.onehippo.cms7.brokenlinks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import static org.junit.Assert.assertEquals;
 
 public class ParseTextsTest  {
 
@@ -129,96 +116,5 @@ public class ParseTextsTest  {
         // the mailto: does also count because the parser is not responsible for filtering out non http(s) urls by itself.
         assertEquals(5, links.size());
 
-    }
-
-
-    @Test
-    public void testPerformance() {
-        String text = "<html><body>\n<H1>Lorem ipsum dolor <B><A HREF='"+HREF1+"'>Lorem Ipsum</A></B> <B><A HREF='"+HREF1+"'>Lorem Ipsum</A></B> sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et " +
-                "dolore magna aliqua. Ut enim ad minim veniam,  <B><A HREF='"+HREF2+"'>Lorem Ipsum</A></B> quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
-                " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat " +
-                "cupidatat non proident,  <B><A HREF='"+HREF3+"'>Lorem Ipsum</A></B> sunt in culpa" +
-                " qui officia deserunt mollit anim id est laborum.</H1>" +
-                "<P>Sed ut perspiciatis unde omnis <IMG SRC='"+SRC+"'/> iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa " +
-                "quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit " +
-                "aspernatur aut odit aut fugit, <A HREF='"+MAILTO+"'>Lorem Ipsum</A> sed quia consequuntur <IMG SRC='"+SRC+"'/> magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est," +
-                " qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore" +
-                " magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut" +
-                " aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil " +
-                "molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</P>\n</body></html>\n";
-
-        // warm up
-        for (int i = 0; i < 1000 ; i ++) {
-            InputStream is = new ByteArrayInputStream(text.getBytes());
-            parseWithDom(is);
-            PlainTextLinksExtractor.getLinks(text);
-        }
-
-
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000 ; i ++) {
-            InputStream is = new ByteArrayInputStream(text.getBytes());
-            parseWithDom(is);
-        }
-
-        long domParsingTook = System.currentTimeMillis() - start;
-        long start2 = System.currentTimeMillis();
-        for (int i = 0; i < 1000 ; i ++) {
-            PlainTextLinksExtractor.getLinks(text);
-        }
-        long stringParsingTook = System.currentTimeMillis() - start2;
-
-        assertTrue("String parsing should be faster", stringParsingTook < domParsingTook);
-    }
-
-    private void parseWithDom(InputStream stream) {
-        try {
-            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document document = db.parse(stream);
-            Node node = document.getFirstChild();
-            traverse(node);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            //
-        }
-    }
-
-    private void traverse(Node node) {
-        entering(node);
-        if (node.hasChildNodes()) {
-            traverse(node.getFirstChild());
-        }
-        Node sibling = node.getNextSibling();
-        if (sibling != null) {
-            traverse(sibling);
-        }
-    }
-
-    private void entering(Node domNode) {
-        final String domNodeName = domNode.getNodeName();
-
-        if ("a".equalsIgnoreCase(domNodeName)) {
-            addReference(domNode, "href");
-        } else if ("img".equalsIgnoreCase(domNodeName)) {
-            addReference(domNode, "src");
-        }
-    }
-
-
-    private static final List<String> PROTOCOLS = Arrays.asList("http", "https");
-
-    private void addReference(final Node node, final String attribute) {
-        final NamedNodeMap attributes = node.getAttributes();
-
-        for (int i = 0; i < attributes.getLength(); i++) {
-            if (attributes.item(i).getNodeName().equalsIgnoreCase(attribute)) {
-                Node href = attributes.item(i);
-                String reference = href.getTextContent();
-                String protocol = (reference.contains("://") ? reference.substring(0, reference.indexOf("://")) : "").toLowerCase();
-                if (PROTOCOLS.contains(protocol)) {
-                    // nothing as is just for testing
-                }
-            }
-        }
     }
 }
