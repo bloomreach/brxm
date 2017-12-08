@@ -61,6 +61,15 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
     }
 
     @XmlAttribute
+    public String getTargetPom() {
+        return targetPom;
+    }
+
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
+    }
+
+    @XmlAttribute
     public String getGroupId() {
         return dependency.getGroupId();
     }
@@ -76,15 +85,6 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
 
     public void setArtifactId(final String artifactId) {
         dependency.setArtifactId(artifactId);
-    }
-
-    @XmlAttribute
-    public String getTargetPom() {
-        return targetPom;
-    }
-
-    public void setTargetPom(final String targetPom) {
-        this.targetPom = targetPom;
     }
 
     @XmlAttribute
