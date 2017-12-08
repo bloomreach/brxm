@@ -31,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -61,7 +59,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         final String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
+        final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
         assertEquals("about-us", deserializedAboutUs.get("name"));
         // TODO assertEquals("published", deserializedAboutUs.get("hippostd:state"));
         // TODO assertEquals("2010-01-21T12:34:11.055+02:00", deserializedAboutUs.get("hippostdpubwf:creationDate"));
@@ -100,7 +98,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
             assertTrue(deserializedAboutUs.get("name").equals("the-medusa-news"));
 
         } finally {
@@ -135,7 +133,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
             for (Map<String, Object> item : itemsList) {
@@ -159,7 +157,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -198,7 +196,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -237,7 +235,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -276,7 +274,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -384,7 +382,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        Map<String, Object> deserializedResponse = mapper.readerFor(Map.class).readValue(restResponse);
         return (Map<String, Object>) deserializedResponse.get("items");
     }
 
@@ -395,7 +393,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        Map<String, Object> deserializedResponse = mapper.readerFor(Map.class).readValue(restResponse);
         return (List) deserializedResponse.get("items");
     }
 
