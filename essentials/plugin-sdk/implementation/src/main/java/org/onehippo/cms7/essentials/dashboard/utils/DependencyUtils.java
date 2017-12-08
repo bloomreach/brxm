@@ -16,22 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.File;
-import java.util.List;
-
-import com.google.common.base.Strings;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
+import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_GROUP_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
@@ -44,77 +36,20 @@ import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO
  */
 public final class DependencyUtils {
 
-    private static final String DEFAULT_PROFILE_ID = "default";
-    private static Logger log = LoggerFactory.getLogger(DependencyUtils.class);
+    private static MavenRepository ENTERPRISE_REPOSITORY = new MavenRepository();
+    private static final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
 
+    static {
+        ENTERPRISE_REPOSITORY.setId(ENT_REPO_ID);
+        ENTERPRISE_REPOSITORY.setName(ENT_REPO_NAME);
+        ENTERPRISE_REPOSITORY.setUrl(ENT_REPO_URL);
+        final MavenRepository.Policy releasePolicy = new MavenRepository.Policy();
+        releasePolicy.setUpdatePolicy("never");
+        releasePolicy.setChecksumPolicy("fail");
+        ENTERPRISE_REPOSITORY.setReleasePolicy(releasePolicy);
+    }
 
     private DependencyUtils() {
-    }
-
-    /**
-     * Add maven repository node to pom model
-     *
-     * @param repository Repository instance
-     * @return true if tag is added or already exists
-     */
-    public static boolean addRepository(final PluginContext context, final Repository repository) {
-        final TargetPom targetPom = repository.getDependencyTargetPom();
-        if (targetPom == TargetPom.INVALID) {
-            return false;
-        }
-        final Model model = ProjectUtils.getPomModel(context, targetPom);
-        if (model == null) {
-            log.warn("Pom model was null for type: {}", targetPom);
-            return false;
-        }
-        if (!hasRepository(context, repository)) {
-            final org.apache.maven.model.Repository mavenRepository = repository.createMavenRepository();
-            model.addRepository(mavenRepository);
-            log.debug("Added new maven repository {}", repository);
-            final File pomFile = ProjectUtils.getPomFile(context, targetPom);
-            return MavenModelUtils.writePom(model, pomFile);
-        }
-        return true;
-    }
-
-    /**
-     * @deprecated Use {@link MavenModelUtils#writePom(Model, File)}
-     */
-    @Deprecated
-    public static boolean writePom(final String path, final Model model) {
-        return MavenModelUtils.writePom(model, new File(path));
-    }
-
-    /**
-     * Checks if repository entry already exists within pom model
-     *
-     * @param repository repository instance
-     * @return true if provided repository is invalid or when it exists within pom model with same url
-     */
-    public static boolean hasRepository(final PluginContext context, final Repository repository) {
-        final TargetPom type = repository.getDependencyTargetPom();
-        if (type == TargetPom.INVALID) {
-            return false;
-        }
-        final Model model = ProjectUtils.getPomModel(context, type);
-        if (model == null) {
-            return false;
-        }
-        final List<org.apache.maven.model.Repository> repositories = model.getRepositories();
-        for (org.apache.maven.model.Repository rep : repositories) {
-            final String url = repository.getUrl();
-            if (Strings.isNullOrEmpty(url)) {
-                log.warn("Invalid Repository defined {}", rep);
-                return false;
-            }
-            final String existingUrl = rep.getUrl();
-            final boolean hasRepo = url.equals(existingUrl);
-            if (hasRepo) {
-                log.debug("Found repository for url: {}", url);
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean upgradeToEnterpriseProject(final PluginContext context) {
@@ -122,17 +57,7 @@ public final class DependencyUtils {
             return true;
         }
 
-        final Repository repository = new RepositoryRestful();
-        repository.setId(ENT_REPO_ID);
-        repository.setName(ENT_REPO_NAME);
-        repository.setUrl(ENT_REPO_URL);
-        final RepositoryPolicy releases = new RepositoryPolicyRestful();
-        releases.setUpdatePolicy("never");
-        releases.setChecksumPolicy("fail");
-        repository.setReleases(releases);
-        repository.setTargetPom(TargetPom.PROJECT.getName());
-
-        addRepository(context, repository);
+        repositoryService.addRepository(context, TargetPom.PROJECT, ENTERPRISE_REPOSITORY);
 
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
         if (pomModel != null) {
@@ -176,6 +101,5 @@ public final class DependencyUtils {
         final String groupId = parent.getGroupId();
         final String artifactId = parent.getArtifactId();
         return groupId.equals(ENT_GROUP_ID) && artifactId.equals(ENT_RELEASE_ID);
-
     }
 }

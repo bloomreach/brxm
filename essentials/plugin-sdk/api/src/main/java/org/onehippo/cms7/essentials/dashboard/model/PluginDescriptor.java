@@ -89,9 +89,9 @@ public interface PluginDescriptor extends Serializable {
 
     void setIntroduction(String introduction);
 
-    List<Repository> getRepositories();
+    List<ModuleMavenRepository> getRepositories();
 
-    void setRepositories(List<Repository> repositories);
+    void setRepositories(List<ModuleMavenRepository> repositories);
 
     void setHasConfiguration(boolean hasConfiguration);
 

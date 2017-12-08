@@ -22,13 +22,10 @@ import org.apache.maven.model.Model;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -37,28 +34,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class DependencyUtilsTest extends BaseResourceTest {
 
-    private static final String NEW_REPO = "http://maven.onehippo.com/maven3/";
 
     private Logger log = LoggerFactory.getLogger(DependencyUtilsTest.class);
-
-    @Test
-    public void testRepositoryAdd() throws Exception {
-        final Repository repository = new RepositoryRestful();
-        repository.setTargetPom(TargetPom.PROJECT.getName());
-        repository.setUrl("https://maven.onehippo.com/maven2/");
-        repository.setId("hippo");
-        assertEquals(TargetPom.PROJECT, repository.getDependencyTargetPom());
-        boolean hasRepo = DependencyUtils.hasRepository(getContext(), repository);
-        assertTrue("Expected hippo maven repository", hasRepo);
-        // add new one:
-        repository.setUrl(NEW_REPO);
-        repository.setId("some-id");
-        hasRepo = DependencyUtils.hasRepository(getContext(), repository);
-        assertFalse("Expected no maven repository", hasRepo);
-        DependencyUtils.addRepository(getContext(), repository);
-        hasRepo = DependencyUtils.hasRepository(getContext(), repository);
-        assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
-    }
 
     @Test
     public void testIsEnterpriseProject() throws Exception {

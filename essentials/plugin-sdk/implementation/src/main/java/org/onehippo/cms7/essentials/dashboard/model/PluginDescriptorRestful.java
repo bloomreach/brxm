@@ -22,14 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
-
-
 import com.google.common.base.Strings;
+
+import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 
 
 public class PluginDescriptorRestful implements PluginDescriptor, Restful {
@@ -42,8 +39,7 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     @JsonSerialize(as = VendorRestful.class)
     private Vendor vendor;
     private List<ModuleMavenDependency> dependencies;
-    @JsonDeserialize(contentAs = RepositoryRestful.class)
-    private List<Repository> repositories;
+    private List<ModuleMavenRepository> repositories;
     private String name;
     private String introduction;
     private String description;
@@ -84,14 +80,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
         }
         this.libraries.addAll(libraries);
-    }
-
-    public void addAllRepositories(final List<Repository> repos) {
-        if (this.repositories == null) {
-            this.repositories = new ArrayList<>();
-
-        }
-        this.repositories.addAll(repos);
     }
 
     public List<PluginModuleRestful.PrefixedLibrary> getLibraries() {
@@ -221,13 +209,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.dependencies = dependencies;
     }
 
-    public void addRepository(final Repository repository) {
-        if (repositories == null) {
-            repositories = new ArrayList<>();
-        }
-        repositories.add(repository);
-    }
-
     @Override
     public String getIntroduction() {
         return introduction;
@@ -278,14 +259,17 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.imageUrls = imageUrls;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryRestful.class, name = "repository")})
     @Override
-    public List<Repository> getRepositories() {
+    public List<ModuleMavenRepository> getRepositories() {
         if (repositories == null) {
             return new ArrayList<>();
         }
         return repositories;
+    }
+
+    @Override
+    public void setRepositories(final List<ModuleMavenRepository> repositories) {
+        this.repositories = repositories;
     }
 
     @Override
@@ -299,11 +283,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     @Override
     public void setIcon(final String icon) {
         this.icon = icon;
-    }
-
-    @Override
-    public void setRepositories(final List<Repository> repositories) {
-        this.repositories = repositories;
     }
 
     @Override

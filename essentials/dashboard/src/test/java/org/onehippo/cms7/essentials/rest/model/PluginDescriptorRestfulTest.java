@@ -17,14 +17,13 @@
 package org.onehippo.cms7.essentials.rest.model;
 
 import java.util.Calendar;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.WebUtils;
+import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
+import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -56,39 +55,35 @@ public class PluginDescriptorRestfulTest {
         vendor.setName("hippo");
         value.setVendor(vendor);
 
-        final Repository repository = new RepositoryRestful();
+        final ModuleMavenRepository repository = new ModuleMavenRepository();
         repository.setId("myId");
         repository.setUrl("http://onehippo.com/maven2");
-        final RepositoryPolicy snapshots = new RepositoryPolicyRestful();
+        final MavenRepository.Policy snapshots = new MavenRepository.Policy();
         snapshots.setChecksumPolicy("test-snapshots-checksumpolicy");
         snapshots.setUpdatePolicy("test-snapshots-updatepolicy");
-        repository.setSnapshots(snapshots);
-        final RepositoryPolicy repositoryPolicy = new RepositoryPolicyRestful();
+        repository.setSnapshotPolicy(snapshots);
+        final MavenRepository.Policy repositoryPolicy = new MavenRepository.Policy();
         repositoryPolicy.setChecksumPolicy("testchecksumpolicy");
         repositoryPolicy.setUpdatePolicy("testupdatepolicy");
-        repository.setReleases(repositoryPolicy);
+        repository.setReleasePolicy(repositoryPolicy);
         repository.setTargetPom(TargetPom.PROJECT.getName());
-        value.addRepository(repository);
+        value.setRepositories(Collections.singletonList(repository));
 
         // test json:
 
         final String json = WebUtils.toJson(value);
-        log.info("value {}", value);
-        log.info("json {}", json);
         final PluginDescriptorRestful fromJson = value = WebUtils.fromJson(json, PluginDescriptorRestful.class);
-        log.info("fromJson {}", fromJson);
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromJson.getVendor().getName());
         assertEquals("Expected 1 prefixed library", 1, value.getLibraries().size());
         assertEquals("Expected 2 js libraries", 2, value.getLibraries().get(0).getItems().size());
         assertEquals("Expected 1 repository", 1, value.getRepositories().size());
-        assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleases().getChecksumPolicy());
-        assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleases().getUpdatePolicy());
-        assertEquals("Expected repository enabled not to be set", null, value.getRepositories().get(0).getReleases().getEnabled());
-        assertEquals("Expected repository snapshots checksum policy", "test-snapshots-checksumpolicy", value.getRepositories().get(0).getSnapshots().getChecksumPolicy());
-        assertEquals("Expected repository snapshots update policy", "test-snapshots-updatepolicy", value.getRepositories().get(0).getSnapshots().getUpdatePolicy());
-        assertEquals("Expected repository snapshots enabled not to be set", null, value.getRepositories().get(0).getSnapshots().getEnabled());
-
+        assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleasePolicy().getChecksumPolicy());
+        assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleasePolicy().getUpdatePolicy());
+        assertEquals("Expected repository enabled not to be set", null, value.getRepositories().get(0).getReleasePolicy().getEnabled());
+        assertEquals("Expected repository snapshots checksum policy", "test-snapshots-checksumpolicy", value.getRepositories().get(0).getSnapshotPolicy().getChecksumPolicy());
+        assertEquals("Expected repository snapshots update policy", "test-snapshots-updatepolicy", value.getRepositories().get(0).getSnapshotPolicy().getUpdatePolicy());
+        assertEquals("Expected repository snapshots enabled not to be set", null, value.getRepositories().get(0).getSnapshotPolicy().getEnabled());
     }
 }

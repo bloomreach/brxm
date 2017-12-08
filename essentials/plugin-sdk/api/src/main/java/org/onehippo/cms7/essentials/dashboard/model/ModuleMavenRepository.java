@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+public class ModuleMavenRepository extends MavenRepository {
+    private String targetPom;
 
-/**
- * @deprecated the definition of Snapshots for a maven Repository must now be done using a RepositoryPolicy
- */
-@XmlRootElement(name = "snapshots")
-@Deprecated
-public class SnapshotRestful implements Snapshot, Restful {
-
-    private static final long serialVersionUID = 1L;
-    private Boolean enabled;
-
-    @Override
-    public Boolean getEnabled() {
-        return enabled;
+    public String getTargetPom() {
+        return targetPom;
     }
 
-    @Override
-    public void setEnabled(final Boolean enabled) {
-        this.enabled = enabled;
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
     }
 }

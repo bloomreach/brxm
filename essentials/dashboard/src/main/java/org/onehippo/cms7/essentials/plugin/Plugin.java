@@ -23,13 +23,15 @@ import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenDependency;
+import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
+import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -125,10 +127,11 @@ public class Plugin {
     }
 
     private void installRepositories() throws PluginException {
+        final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
         final StringBuilder builder = new StringBuilder();
 
-        for (Repository repository : descriptor.getRepositories()) {
-            if (!DependencyUtils.addRepository(context, repository)) {
+        for (ModuleMavenRepository repository : descriptor.getRepositories()) {
+            if (!repositoryService.addRepository(context, TargetPom.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
