@@ -358,6 +358,35 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         }
     }
 
+    @Test
+    public void test_documents_resource_by_default_without_attributes() throws Exception {
+        RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
+
+        List<Map<String, Object>> listItems = renderAndGetListItems(requestResponse);
+        assertTrue(listItems.size() > 0);
+
+        for (Map<String, Object> item : listItems) {
+            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
+            assertEquals(0, documentItems.keySet().size());
+        }
+    }
+
+    @Test
+    public void test_detail_resource_by_default_with_all_attributes() throws Exception {
+        // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
+
+        final MockHttpServletResponse response = render(requestResponse);
+
+        final String restResponse = response.getContentAsString();
+
+        final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
+
+        assertEquals(4, ((Map) deserializedAboutUs.get("items")).size());
+    }
+
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> renderAndGetDocumentItems(final RequestResponseMock requestResponse) throws Exception {
         MockHttpServletResponse response = render(requestResponse);
