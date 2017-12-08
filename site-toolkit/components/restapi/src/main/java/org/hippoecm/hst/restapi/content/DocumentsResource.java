@@ -261,7 +261,7 @@ public class DocumentsResource extends AbstractResource {
                                        @QueryParam("_attributes") final String attributeString) {
         try {
             final List<String> includedAttributes = parseAttributes(attributeString);
-            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes, true);
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed

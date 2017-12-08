@@ -66,7 +66,10 @@ public class HippoDocumentVisitor extends DefaultNodeVisitor {
     protected boolean skipChild(final ResourceContext context, final ContentTypeChild childType,
                                 final Node child) throws RepositoryException {
 
-        if(context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(child.getName())) {
+        if (context.getIncludedAttributes().size() == 0 && !context.includeDocumentDataByDefault()) {
+            return true;
+        }
+        if (context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(child.getName())) {
             return true;
         }
         return super.skipChild(context, childType, child);

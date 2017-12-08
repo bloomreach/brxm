@@ -65,7 +65,10 @@ public class HippoPublicationWorkflowDocumentVisitor extends HippoPublishableDoc
         if (skipProperties.contains(property.getName())) {
             return true;
         }
-        if(context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(property.getName())) {
+        if (context.getIncludedAttributes().size() == 0 && !context.includeDocumentDataByDefault()) {
+            return true;
+        }
+        if (context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(property.getName())) {
             return true;
         }
         return super.skipProperty(context, propertyType, property);

@@ -31,4 +31,5 @@ public interface ResourceContext {
     NodeVisitor getPrimaryNodeTypeVisitor(Node node) throws RepositoryException;
     RestApiLinkCreator getRestApiLinkCreator();
     List<String> getIncludedAttributes();
+    boolean includeDocumentDataByDefault();
 }
