@@ -346,16 +346,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             assertNotNull(documentItems.get("unittestproject:title"));
             assertNotNull(documentItems.get("unittestproject:summary"));
         }
-
-        requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
-
-        listItems = renderAndGetListItems(requestResponse);
-        assertTrue(listItems.size() > 0);
-
-        for (Map<String, Object> item : listItems) {
-            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
-            assertTrue(documentItems.keySet().size() > 2);
-        }
     }
 
     @Test
@@ -366,8 +356,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         assertTrue(listItems.size() > 0);
 
         for (Map<String, Object> item : listItems) {
-            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
-            assertEquals(0, documentItems.keySet().size());
+            final Object documentItems = item.get("items");
+            assertNull(documentItems);
         }
     }
 
