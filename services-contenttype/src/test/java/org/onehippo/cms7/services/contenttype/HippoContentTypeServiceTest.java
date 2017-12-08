@@ -49,6 +49,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
         session.save();
         session.refresh(false);
+        System.setProperty("line.separator", "\n");
     }
 
     @Override
