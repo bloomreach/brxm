@@ -32,7 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
@@ -121,7 +121,7 @@ public class Plugin {
         if (categories != null) {
             final Set<String> licenses = categories.get("license");
             if (licenses != null && licenses.contains("enterprise")) {
-                DependencyUtils.upgradeToEnterpriseProject(context);
+                EnterpriseUtils.upgradeToEnterpriseProject(context);
             }
         }
     }
