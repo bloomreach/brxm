@@ -62,11 +62,11 @@ public interface PluginDescriptor extends Serializable {
 
     Vendor getVendor();
 
+    void setVendor(Vendor vendor);
+
     String getPackageClass();
 
     void setPackageClass(String packageClass);
-
-    void setVendor(Vendor vendor);
 
     String getName();
 

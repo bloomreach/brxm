@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
@@ -26,7 +27,6 @@ import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
-import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,15 +43,14 @@ public class PluginDescriptorRestfulTest {
         value.setName("com.foo.name");
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
-        value.addRestCLass("com.foo.Foo");
-        value.addRestCLass("com.foo.Bar");
+        value.setRestClasses(Arrays.asList("com.foo.Foo", "com.foo.Bar"));
         // add libraries:
         final PluginModuleRestful.PrefixedLibrary library = new PluginModuleRestful.PrefixedLibrary();
-        value.addLibrary(library);
+        value.setLibraries(Collections.singletonList(library));
         library.addLibrary(new PluginModuleRestful.Library("myPlugin", "foo.js"));
         library.addLibrary(new PluginModuleRestful.Library("myPlugin1", "foo1.js"));
 
-        final Vendor vendor = new VendorRestful();
+        final Vendor vendor = new Vendor();
         vendor.setName("hippo");
         value.setVendor(vendor);
 

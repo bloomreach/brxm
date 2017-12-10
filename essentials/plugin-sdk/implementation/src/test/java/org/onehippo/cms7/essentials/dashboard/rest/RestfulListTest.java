@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
-import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class RestfulListTest {
         RestfulList<Restful> myList = new RestfulList<>();
         final PluginDescriptorRestful plugin = new PluginDescriptorRestful();
         plugin.setDescription("test");
-        final Vendor vendor = new VendorRestful();
+        final Vendor vendor = new Vendor();
         vendor.setUrl("http://www.test.com");
         plugin.setVendor(vendor);
         myList.add(plugin);

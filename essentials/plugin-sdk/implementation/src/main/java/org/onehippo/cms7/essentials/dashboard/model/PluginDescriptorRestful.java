@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
@@ -31,12 +29,8 @@ import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 
 public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
-    private static final long serialVersionUID = 1L;
-
     private List<String> restClasses;
 
-    @JsonDeserialize(as = VendorRestful.class)
-    @JsonSerialize(as = VendorRestful.class)
     private Vendor vendor;
     private List<ModuleMavenDependency> dependencies;
     private List<ModuleMavenRepository> repositories;
@@ -58,6 +52,13 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     private Map<String, Set<String>> categories;
 
+    public PluginDescriptorRestful(final String name) {
+        this.name = name;
+    }
+
+    public PluginDescriptorRestful() {
+
+    }
 
     @Override
     public Map<String, Set<String>> getCategories() {
@@ -69,33 +70,12 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.categories = categories;
     }
 
-
-    public void addLibrary(final PluginModuleRestful.PrefixedLibrary library) {
-        libraries.add(library);
-    }
-
-    public void addAllLibraries(final List<PluginModuleRestful.PrefixedLibrary> libraries) {
-        if (this.libraries == null) {
-            this.libraries = new ArrayList<>();
-
-        }
-        this.libraries.addAll(libraries);
-    }
-
     public List<PluginModuleRestful.PrefixedLibrary> getLibraries() {
         return libraries;
     }
 
     public void setLibraries(final List<PluginModuleRestful.PrefixedLibrary> libraries) {
         this.libraries = libraries;
-    }
-
-    public PluginDescriptorRestful(final String name) {
-        this.name = name;
-    }
-
-    public PluginDescriptorRestful() {
-
     }
 
     public Calendar getDateInstalled() {
@@ -218,16 +198,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     public void setIntroduction(final String introduction) {
         this.introduction = introduction;
     }
-
-
-    public void addRestCLass(final String restClass) {
-
-        if (restClasses == null) {
-            restClasses = new ArrayList<>();
-        }
-        restClasses.add(restClass);
-    }
-
 
     @Override
     public List<String> getRestClasses() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,35 @@
 package org.onehippo.cms7.essentials.dashboard.model;
 
 /**
- * @version "$Id$"
+ * Data bean representing an Essentials Plugin Vendor
  */
+public class Vendor implements Restful {
 
-public interface Vendor {
+    private String name;
+    private String url;
+    private String logo;
 
-    String getUrl();
+    public String getName() {
+        return name;
+    }
 
-    void setUrl(String url);
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-    String getName();
+    public String getUrl() {
+        return url;
+    }
 
-    void setName(String name);
+    public void setUrl(final String url) {
+        this.url = url;
+    }
 
-    String getLogo();
+    public String getLogo() {
+        return logo;
+    }
 
-    void setLogo(String logo);
-
-    String getIntroduction();
-
-    void setIntroduction(String introduction);
-
-    String getContent();
-
-    void setContent(String content);
-
+    public void setLogo(final String logo) {
+        this.logo = logo;
+    }
 }
