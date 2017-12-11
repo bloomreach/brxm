@@ -16,13 +16,15 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +41,13 @@ import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO
 public final class EnterpriseUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnterpriseUtils.class);
-    private static MavenRepository ENTERPRISE_REPOSITORY = new MavenRepository();
+    private static final MavenRepository ENTERPRISE_REPOSITORY = new MavenRepository();
+    private static final MavenDependency EDITION_INDICATOR
+            = new MavenDependency(ENT_GROUP_ID, "hippo-addon-edition-indicator");
+    private static final MavenDependency APP_DEPENDENCIES_PACKAGE
+            = new MavenDependency(ENT_GROUP_ID, "hippo-enterprise-package-app-dependencies", null, "pom", null);
     private static final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
+    private static final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
 
     static {
         ENTERPRISE_REPOSITORY.setId(ENT_REPO_ID);
@@ -76,26 +83,7 @@ public final class EnterpriseUtils {
         }
 
         return repositoryService.addRepository(context, TargetPom.PROJECT, ENTERPRISE_REPOSITORY)
-                && addEnterpriseCmsDependencies(context);
-    }
-
-    private static boolean addEnterpriseCmsDependencies(final PluginContext context) {
-        final Model cmsModel = ProjectUtils.getPomModel(context, TargetPom.CMS);
-        if (cmsModel != null) {
-            final Dependency indicator = new Dependency();
-            indicator.setArtifactId("hippo-addon-edition-indicator");
-            indicator.setGroupId(ENT_GROUP_ID);
-            cmsModel.addDependency(indicator);
-
-            // add enterprise package of app dependencies
-            final Dependency enterpriseApp = new Dependency();
-            enterpriseApp.setGroupId(ENT_GROUP_ID);
-            enterpriseApp.setArtifactId("hippo-enterprise-package-app-dependencies");
-            enterpriseApp.setType("pom");
-            cmsModel.addDependency(enterpriseApp);
-
-            return MavenModelUtils.writePom(cmsModel, ProjectUtils.getPomFile(context, TargetPom.CMS));
-        }
-        return false;
+                && dependencyService.addDependency(context, TargetPom.CMS, EDITION_INDICATOR)
+                && dependencyService.addDependency(context, TargetPom.CMS, APP_DEPENDENCIES_PACKAGE);
     }
 }
