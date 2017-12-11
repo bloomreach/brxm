@@ -20,6 +20,7 @@ import java.util.Map;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceCacheResolvable;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -323,5 +324,14 @@ public interface ResourceServiceBroker {
      * @throws ResourceException if resource space is not found
      */
     ResourceDataCache getResourceDataCache(String resourceSpace) throws ResourceException;
+
+    /**
+     * Returns a proper {@link ResourceBeanMapper} for the given {@code resourceSpace}.
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @return a proper {@link ResourceBeanMapper} for the given {@code resourceSpace}
+     * @throws ResourceException if resource space is not found
+     * @throws UnsupportedOperationException if a {@link ResourceBeanMapper} is not supported for the {@code resourceSpace}
+     */
+    ResourceBeanMapper getResourceBeanMapper(String resourceSpace) throws ResourceException;
 
 }

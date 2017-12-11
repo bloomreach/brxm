@@ -264,4 +264,11 @@ public interface ResourceResolver extends ResourceCacheResolvable {
      */
     ResourceLinkResolver getResourceLinkResolver();
 
+    /**
+     * Returns a {@link ResourceBeanMapper}.
+     * @return a {@link ResourceBeanMapper}
+     * @throws UnsupportedOperationException if a {@link ResourceBeanMapper} is not supported
+     */
+    ResourceBeanMapper getResourceBeanMapper() throws ResourceException;
+
 }
