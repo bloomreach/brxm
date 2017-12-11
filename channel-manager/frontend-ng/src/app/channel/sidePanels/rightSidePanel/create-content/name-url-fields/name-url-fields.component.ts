@@ -68,6 +68,16 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
     return observable;
   }
 
+  validateFields() {
+    const conditions = [
+      this.nameField.length !== 0, // name empty
+      this.urlField.length !== 0, // url empty
+      /\S/.test(this.nameField), // name is only whitespace(s)
+      /\S/.test(this.urlField) // url is only whitespaces
+    ];
+    return conditions.every((condition) => condition === true);
+  }
+
   setManualUrlEditMode(state: boolean) {
     if (state) {
       this.isManualUrlMode = true;

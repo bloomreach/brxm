@@ -149,24 +149,38 @@ describe('NameUrlFields Component', () => {
         expect(component.urlField).toEqual('manual-edit-of-url');
       }));
     });
-});
 
-//   describe('setManualUrlEditable', () => {
-//     it('sets the urlEditMode state', () => {
-//       component.setManualUrlEditMode(true);
-//       expect(component.isManualUrlMode).toEqual(true);
-//
-//       component.setManualUrlEditMode(false);
-//       expect(component.isManualUrlMode).toEqual(false);
-//     });
-//
-//     it('regenerates URL if called with false', () => {
-//       setNameInputValue('Some document name');
-//       component.setManualUrlEditMode(true);
-//       component.urlField = 'some-temporary-value';
-//       component.setManualUrlEditMode(false);
-//       expect(spies.setDocumentUrlByName).toHaveBeenCalled();
-//       expect(component.urlField).toEqual('some-document-name');
-//     });
-//   });
-// });
+  describe('validateFields', () => {
+    describe('conditions scenarios', () => {
+      it('returns true, all conditions resolved to "true"', () => {
+        component.nameField = 'name';
+        component.urlField = 'url';
+        expect(component.validateFields()).toEqual(true);
+      });
+
+      it('returns false, name field is empty (conditions index 0)', () => {
+        component.nameField = '';
+        component.urlField = 'url';
+        expect(component.validateFields()).toEqual(false);
+      });
+
+      it('returns false, url field is empty (conditions index 1)', () => {
+        component.nameField = 'name';
+        component.urlField = '';
+        expect(component.validateFields()).toEqual(false);
+      });
+
+      it('returns false, name field is only whitespace(s) (conditions index 2)', () => {
+        component.nameField = '     ';
+        component.urlField = 'url';
+        expect(component.validateFields()).toEqual(false);
+      });
+
+      it('returns false, url field is only whitespace(s) (conditions index 3)', () => {
+        component.nameField = 'name';
+        component.urlField = '     ';
+        expect(component.validateFields()).toEqual(false);
+      });
+    });
+  });
+});

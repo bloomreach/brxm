@@ -19,7 +19,8 @@
     "startDist": "gulp startDist",
     "test": "gulp test",
     "testDebug": "gulp testDebug",
-    "testOnce": "gulp testOnce"
+    "testOnce": "gulp testOnce",
+    "conversionReport": "cd conversion-report && node ./generate-report --config=config.json && node ./print-report"
   },
   "dependencies": {
     "@angular/animations": "4.4.6",
