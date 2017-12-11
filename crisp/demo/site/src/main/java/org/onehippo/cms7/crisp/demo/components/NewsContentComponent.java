@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms7.crisp.demo.components;
 
-import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG;
-import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +27,15 @@ import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHintBuilder;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
 import org.onehippo.cms7.crisp.hst.module.CrispHstServices;
 import org.onehippo.cms7.essentials.components.EssentialsContentComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG;
+import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML;
 
 public class NewsContentComponent extends EssentialsContentComponent {
 
@@ -53,6 +54,15 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
         if (productCatalogs != null) {
             request.setAttribute("productCatalogs", productCatalogs);
+
+            if (productCatalogs.getChildCount() > 0) {
+                Resource firstChildResource = productCatalogs.getChildren(0, 1).get(0);
+                ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker.getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG);
+                Product firstProduct = resourceBeanMapper.map(firstChildResource, Product.class);
+                log.debug("==> First product: [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
+                        firstProduct.getDescription());
+            }
         }
 
         log.warn("\n\n===============================================================================\n"

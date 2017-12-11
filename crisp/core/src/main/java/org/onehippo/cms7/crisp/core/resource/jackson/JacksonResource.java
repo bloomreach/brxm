@@ -130,6 +130,10 @@ public class JacksonResource extends AbstractResource {
         }
     }
 
+    JsonNode getJsonNode() {
+        return jsonNode;
+    }
+
     private ValueMap getInternalValueMap() {
         if (internalValueMap == null) {
             ValueMap tempValueMap = new DefaultValueMap();

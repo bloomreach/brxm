@@ -139,4 +139,12 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
     public void setResourceLinkResolver(ResourceLinkResolver resourceLinkResolver) {
         this.resourceLinkResolver = resourceLinkResolver;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceBeanMapper getResourceBeanMapper() throws ResourceException {
+        throw new UnsupportedOperationException();
+    }
 }

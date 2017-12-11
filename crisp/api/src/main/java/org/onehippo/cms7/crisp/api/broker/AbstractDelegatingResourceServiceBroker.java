@@ -20,6 +20,7 @@ import java.util.Map;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
@@ -115,6 +116,11 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     @Override
     public ResourceDataCache getResourceDataCache(String resourceSpace) throws ResourceException {
         return delegated.getResourceDataCache(resourceSpace);
+    }
+
+    @Override
+    public ResourceBeanMapper getResourceBeanMapper(String resourceSpace) throws ResourceException {
+        return delegated.getResourceBeanMapper(resourceSpace);
     }
 
 }

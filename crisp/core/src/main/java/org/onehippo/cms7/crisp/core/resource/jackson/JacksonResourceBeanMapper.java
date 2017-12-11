@@ -15,40 +15,30 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
+import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
-import org.onehippo.cms7.crisp.core.resource.AbstractRestTemplateResourceResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class AbstractJacksonRestTemplateResourceResolver extends AbstractRestTemplateResourceResolver {
+/**
+ * Mapper to convert a {@link JacksonResource} object to a bean.
+ */
+public class JacksonResourceBeanMapper implements ResourceBeanMapper {
 
-    private ObjectMapper objectMapper;
-    private ResourceBeanMapper resourceBeanMapper;
+    private final ObjectMapper objectMapper;
 
-    public AbstractJacksonRestTemplateResourceResolver() {
-        super();
-    }
-
-    public ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
-
-        return objectMapper;
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
+    public JacksonResourceBeanMapper(final ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public ResourceBeanMapper getResourceBeanMapper() throws ResourceException {
-        if (resourceBeanMapper == null) {
-            resourceBeanMapper = new JacksonResourceBeanMapper(getObjectMapper());
+    public <T> T map(Resource resource, Class<T> beanType) throws ResourceException {
+        if (!(resource instanceof JacksonResource)) {
+            throw new ResourceException("Cannot convert resource because it's not a JacksonResource.");
         }
 
-        return resourceBeanMapper;
+        return objectMapper.convertValue(((JacksonResource) resource).getJsonNode(), beanType);
     }
 
 }
