@@ -28,11 +28,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-      ]
-    }
-  ]
+  }
 }

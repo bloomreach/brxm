@@ -21,6 +21,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.model.Library;
+import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,20 +38,20 @@ public class PluginModuleRestfulTest extends BaseTest {
     @Test
     public void testGetApplication() throws Exception {
         PluginModuleRestful restful = new PluginModuleRestful();
-        final PluginModuleRestful.PrefixedLibrary prefixedLibrary = new PluginModuleRestful.PrefixedLibrary("components");
-        prefixedLibrary.addLibrary(new PluginModuleRestful.Library("html5shiv", "excanvas.js", "IE <= 8"));
-        prefixedLibrary.addLibrary(new PluginModuleRestful.Library("ExplorerCanvas", "html5shiv-printshiv.js", "IE <= 8"));
+        final PrefixedLibraryList prefixedLibrary = new PrefixedLibraryList("components");
+        prefixedLibrary.addLibrary(new Library("html5shiv", "excanvas.js", "IE <= 8"));
+        prefixedLibrary.addLibrary(new Library("ExplorerCanvas", "html5shiv-printshiv.js", "IE <= 8"));
         restful.addLibrary("libraries", prefixedLibrary);
         //
-        final PluginModuleRestful.PrefixedLibrary hippoLibrary = new PluginModuleRestful.PrefixedLibrary();
-        hippoLibrary.addLibrary(new PluginModuleRestful.Library("components/hippo-plugins", "dist/js/main.js"));
+        final PrefixedLibraryList hippoLibrary = new PrefixedLibraryList();
+        hippoLibrary.addLibrary(new Library("components/hippo-plugins", "dist/js/main.js"));
         restful.addLibrary("hippo-plugins", hippoLibrary);
         final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(restful);
         log.info("json {}", json);
         restful = mapper.readValue(json, PluginModuleRestful.class);
         log.info("json {}", restful);
-        final Map<String, PluginModuleRestful.PrefixedLibrary> includes = restful.getIncludes();
+        final Map<String, PrefixedLibraryList> includes = restful.getIncludes();
         assertEquals("Expected 2 libraries", 2, includes.size());
     }
 }

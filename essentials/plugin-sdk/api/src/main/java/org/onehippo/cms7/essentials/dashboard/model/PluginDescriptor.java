@@ -24,10 +24,7 @@ import java.util.Set;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
-
-
-public class PluginDescriptorRestful implements PluginDescriptor, Restful {
+public class PluginDescriptor implements Restful {
 
     private List<String> restClasses;
 
@@ -48,33 +45,31 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     private Calendar dateInstalled;
     private String documentationLink;
-    private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
+    private List<PrefixedLibraryList> libraries = new ArrayList<>();
 
     private Map<String, Set<String>> categories;
 
-    public PluginDescriptorRestful(final String name) {
+    public PluginDescriptor(final String name) {
         this.name = name;
     }
 
-    public PluginDescriptorRestful() {
+    public PluginDescriptor() {
 
     }
 
-    @Override
     public Map<String, Set<String>> getCategories() {
         return categories;
     }
 
-    @Override
     public void setCategories(final Map<String, Set<String>> categories) {
         this.categories = categories;
     }
 
-    public List<PluginModuleRestful.PrefixedLibrary> getLibraries() {
+    public List<PrefixedLibraryList> getLibraries() {
         return libraries;
     }
 
-    public void setLibraries(final List<PluginModuleRestful.PrefixedLibrary> libraries) {
+    public void setLibraries(final List<PrefixedLibraryList> libraries) {
         this.libraries = libraries;
     }
 
@@ -86,97 +81,78 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         this.dateInstalled = dateInstalled;
     }
 
-    @Override
     public String getType() {
         return type;
     }
 
-    @Override
     public void setType(final String type) {
         this.type = type;
     }
 
-    @Override
     public String getInstallState() {
         return installState;
     }
 
-    @Override
     public void setInstallState(final String installState) {
         this.installState = installState;
     }
 
-    @Override
     public String getId() {
         return id;
     }
 
-    @Override
     public void setId(final String id) {
         this.id = id;
     }
 
-    @Override
     public String getPackageFile() {
         return packageFile;
     }
 
-    @Override
     public void setPackageFile(final String packageFile) {
         this.packageFile = packageFile;
     }
 
-    @Override
     public String getPackageClass() {
         return packageClass;
     }
 
-    @Override
     public void setPackageClass(final String packageClass) {
         this.packageClass = packageClass;
     }
 
-    @Override
     public void setHasConfiguration(final boolean hasConfiguration) {
         this.hasConfiguration = hasConfiguration;
     }
 
-    @Override
     public boolean getHasConfiguration() {
         return hasConfiguration;
     }
     
-    @Override
     public Vendor getVendor() {
         return vendor;
     }
 
-    @Override
     public void setVendor(final Vendor vendor) {
         this.vendor = vendor;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(final String name) {
         this.name = name;
     }
 
-    @Override
     public String getDocumentationLink() {
         return documentationLink;
     }
 
-    @Override
     public void setDocumentationLink(final String documentationLink) {
         this.documentationLink = documentationLink;
     }
 
-    @Override
     public List<ModuleMavenDependency> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
@@ -184,52 +160,42 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         return dependencies;
     }
 
-    @Override
     public void setDependencies(final List<ModuleMavenDependency> dependencies) {
         this.dependencies = dependencies;
     }
 
-    @Override
     public String getIntroduction() {
         return introduction;
     }
 
-    @Override
     public void setIntroduction(final String introduction) {
         this.introduction = introduction;
     }
 
-    @Override
     public List<String> getRestClasses() {
         return restClasses;
     }
 
-    @Override
     public void setRestClasses(final List<String> restClasses) {
         this.restClasses = restClasses;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public void setDescription(final String description) {
         this.description = description;
     }
 
-    @Override
     public List<String> getImageUrls() {
         return imageUrls;
     }
 
-    @Override
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
 
-    @Override
     public List<ModuleMavenRepository> getRepositories() {
         if (repositories == null) {
             return new ArrayList<>();
@@ -237,12 +203,10 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         return repositories;
     }
 
-    @Override
     public void setRepositories(final List<ModuleMavenRepository> repositories) {
         this.repositories = repositories;
     }
 
-    @Override
     public String getIcon() {
         if (Strings.isNullOrEmpty(icon)) {
             return "/essentials/images/icons/missing-icon.png";
@@ -250,7 +214,6 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
         return icon;
     }
 
-    @Override
     public void setIcon(final String icon) {
         this.icon = icon;
     }

@@ -22,7 +22,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class RestfulListTest {
     @Test
     public void testList() throws Exception {
         RestfulList<Restful> myList = new RestfulList<>();
-        final PluginDescriptorRestful plugin = new PluginDescriptorRestful();
+        final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setDescription("test");
         final Vendor vendor = new Vendor();
         vendor.setUrl("http://www.test.com");

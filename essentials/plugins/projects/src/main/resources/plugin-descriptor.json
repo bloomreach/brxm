@@ -26,9 +26,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-  ],
-  "dependencies": [
-  ]
+  }
 }

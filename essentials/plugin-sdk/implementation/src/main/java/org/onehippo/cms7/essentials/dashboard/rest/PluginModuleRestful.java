@@ -16,13 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 import io.swagger.annotations.ApiModel;
@@ -36,36 +35,22 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "module")
 public class PluginModuleRestful implements Restful {
 
+    public static final String DEFAULT_APP_NAME = "hippo.essentials";
+
     private static final long serialVersionUID = 1L;
 
-
-    /**
-     * Contains a list of all include libraries
-     */
-
-
-    public static final String DEFAULT_APP_NAME = "hippo.essentials";
-    /**
-     * Name fo module application,
-     */
     private String application = DEFAULT_APP_NAME;
+    private Map<String, PrefixedLibraryList> includes = new HashMap<>();
 
-
-    private Map<String, PrefixedLibrary> includes = new HashMap<>();
-
-
-    public void addLibrary(final String name, final PrefixedLibrary library) {
-
-        includes.put(name, library);
-
+    public void addLibrary(final String name, final PrefixedLibraryList libraryList) {
+        includes.put(name, libraryList);
     }
 
-
-    public Map<String, PrefixedLibrary> getIncludes() {
+    public Map<String, PrefixedLibraryList> getIncludes() {
         return includes;
     }
 
-    public void setIncludes(final Map<String, PrefixedLibrary> includes) {
+    public void setIncludes(final Map<String, PrefixedLibraryList> includes) {
         this.includes = includes;
     }
 
@@ -86,93 +71,4 @@ public class PluginModuleRestful implements Restful {
         sb.append('}');
         return sb.toString();
     }
-
-
-    //############################################
-    // HELPER CLASSES
-    //############################################
-
-
-    public static class PrefixedLibrary {
-
-        private String prefix;
-
-        public PrefixedLibrary(final String prefix) {
-            this.prefix = prefix;
-        }
-
-        public PrefixedLibrary() {
-        }
-
-        private List<Library> items = new ArrayList<>();
-
-        public void addLibrary(final Library library) {
-
-            items.add(library);
-
-        }
-
-        public List<Library> getItems() {
-            return items;
-        }
-
-        public void setItems(final List<Library> items) {
-            this.items = items;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(final String prefix) {
-            this.prefix = prefix;
-        }
-    }
-
-    public static class Library {
-        private String browser;
-        private String component;
-        private String file;
-
-
-        public Library(final String component, final String file, final String browser) {
-            this.component = component;
-            this.file = file;
-            this.browser = browser;
-        }
-
-        public Library(final String component, final String file) {
-            this.component = component;
-            this.file = file;
-        }
-
-        public Library() {
-        }
-
-        public String getBrowser() {
-            return browser;
-        }
-
-        public void setBrowser(final String browser) {
-            this.browser = browser;
-        }
-
-        public String getComponent() {
-            return component;
-        }
-
-        public void setComponent(final String component) {
-            this.component = component;
-        }
-
-        public String getFile() {
-            return file;
-        }
-
-        public void setFile(final String file) {
-            this.file = file;
-        }
-    }
-
-
 }

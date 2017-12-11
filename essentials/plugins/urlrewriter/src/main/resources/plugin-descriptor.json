@@ -26,8 +26,6 @@
       "enterprise"
     ]
   },
-  "libraries": [
-  ],
   "dependencies": [
     {
       "groupId": "com.onehippo.cms7",

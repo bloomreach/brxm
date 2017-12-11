@@ -40,7 +40,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
@@ -92,12 +92,12 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public RestfulList<PluginDescriptorRestful> getAllPlugins() {
-        final RestfulList<PluginDescriptorRestful> restfulList = new RestfulList<>();
+    public RestfulList<PluginDescriptor> getAllPlugins() {
+        final RestfulList<PluginDescriptor> restfulList = new RestfulList<>();
         final List<Plugin> plugins = pluginStore.getAllPlugins();
 
         for (Plugin plugin : plugins) {
-            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful) plugin.getDescriptor();
+            final PluginDescriptor descriptor = plugin.getDescriptor();
             descriptor.setInstallState(plugin.getInstallState().toString());
             restfulList.add(descriptor);
         }
@@ -109,7 +109,7 @@ public class PluginResource extends BaseResource {
     @ApiOperation(
             value = "Return plugin descriptor.",
             notes = "[API] plugin descriptor augmented with plugin's installState.",
-            response = PluginDescriptorRestful.class)
+            response = PluginDescriptor.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @GET
     @Path("/{" + PLUGIN_ID + '}')
@@ -286,17 +286,12 @@ public class PluginResource extends BaseResource {
         final PluginModuleRestful modules = new PluginModuleRestful();
         final List<Plugin> plugins = pluginStore.getAllPlugins();
         for (Plugin plugin : plugins) {
-            // TODO: why is getLibraries not part of the descriptor interface?
-            // re:mm
-            //  most probably because of concrete class
-            // (PluginModuleRestful.PrefixedLibrary) which is also not part of the api
-            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful) plugin.getDescriptor();
-            final List<PluginModuleRestful.PrefixedLibrary> libraries = descriptor.getLibraries();
+            final PluginDescriptor descriptor = plugin.getDescriptor();
+            final List<PrefixedLibraryList> libraries = descriptor.getLibraries();
             if (libraries != null) {
-                final String prefix = descriptor.getType();
-                for (PluginModuleRestful.PrefixedLibrary library : libraries) {
-                    // prefix libraries by plugin id:
-                    library.setPrefix(prefix);
+                final String pluginType = descriptor.getType();
+                for (PrefixedLibraryList library : libraries) {
+                    library.setPrefix(pluginType);
                     modules.addLibrary(plugin.getId(), library);
                 }
             }

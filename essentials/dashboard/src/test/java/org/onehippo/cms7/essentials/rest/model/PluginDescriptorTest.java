@@ -22,33 +22,34 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.WebUtils;
+import org.onehippo.cms7.essentials.dashboard.model.Library;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
-import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-public class PluginDescriptorRestfulTest {
+public class PluginDescriptorTest {
 
-    private static Logger log = LoggerFactory.getLogger(PluginDescriptorRestfulTest.class);
+    private static Logger log = LoggerFactory.getLogger(PluginDescriptorTest.class);
 
     @Test
     public void testJaxb() throws Exception {
-        PluginDescriptorRestful value = new PluginDescriptorRestful();
+        PluginDescriptor value = new PluginDescriptor();
         value.setName("com.foo.name");
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
         value.setRestClasses(Arrays.asList("com.foo.Foo", "com.foo.Bar"));
         // add libraries:
-        final PluginModuleRestful.PrefixedLibrary library = new PluginModuleRestful.PrefixedLibrary();
+        final PrefixedLibraryList library = new PrefixedLibraryList();
         value.setLibraries(Collections.singletonList(library));
-        library.addLibrary(new PluginModuleRestful.Library("myPlugin", "foo.js"));
-        library.addLibrary(new PluginModuleRestful.Library("myPlugin1", "foo1.js"));
+        library.addLibrary(new Library("myPlugin", "foo.js"));
+        library.addLibrary(new Library("myPlugin1", "foo1.js"));
 
         final Vendor vendor = new Vendor();
         vendor.setName("hippo");
@@ -71,7 +72,7 @@ public class PluginDescriptorRestfulTest {
         // test json:
 
         final String json = WebUtils.toJson(value);
-        final PluginDescriptorRestful fromJson = value = WebUtils.fromJson(json, PluginDescriptorRestful.class);
+        final PluginDescriptor fromJson = value = WebUtils.fromJson(json, PluginDescriptor.class);
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromJson.getVendor().getName());

@@ -37,16 +37,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
@@ -56,6 +52,9 @@ import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Api(value = "/documents", description = "Rest resource which provides information and actions for document types")
@@ -104,7 +103,7 @@ public class DocumentResource extends BaseResource {
     @ApiOperation(
             value = "Returns all documents of the specified type",
             notes = "Specify the document type as {namespace}:{typename}.",
-            response = PluginDescriptorRestful.class)
+            response = PluginDescriptor.class)
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")

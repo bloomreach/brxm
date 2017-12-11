@@ -16,8 +16,6 @@
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
-  "libraries": [
-  ],
   "categories": {
     "application": [
       "search",

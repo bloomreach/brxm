@@ -28,8 +28,6 @@
       "community"
     ]
   },
-  "libraries": [
-  ],
   "dependencies": [
     {
       "groupId": "org.onehippo.cms7",

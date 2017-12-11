@@ -46,7 +46,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -92,12 +91,12 @@ public class PluginStore {
      *
      * @see org.springframework.util.ResourceUtils
      */
-    private final LoadingCache<String, RestfulList<PluginDescriptorRestful>> pluginCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, RestfulList<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginDescriptorRestful>>() {
+            .build(new CacheLoader<String, RestfulList<PluginDescriptor>>() {
                 @Override
-                public RestfulList<PluginDescriptorRestful> load(final String url) throws Exception {
+                public RestfulList<PluginDescriptor> load(final String url) throws Exception {
                     String pluginJson = null;
 
                     if (url.startsWith("http")) {
@@ -123,8 +122,8 @@ public class PluginStore {
         final PluginContext context = contextFactory.getContext();
 
         // Read local descriptors
-        final List<PluginDescriptorRestful> localDescriptors = getLocalDescriptors();
-        for (PluginDescriptorRestful descriptor : localDescriptors) {
+        final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
+        for (PluginDescriptor descriptor : localDescriptors) {
             plugins.add(new Plugin(context, descriptor));
         }
 
@@ -133,10 +132,10 @@ public class PluginStore {
         final Set<String> pluginRepositories = getProjectSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
-                final RestfulList<PluginDescriptorRestful> descriptors = pluginCache.get(pluginRepository);
+                final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptorRestful descriptor : descriptors.getItems()) {
+                    for (PluginDescriptor descriptor : descriptors.getItems()) {
                         plugins.add(new Plugin(context, descriptor));
                     }
                 }
@@ -221,16 +220,16 @@ public class PluginStore {
         return contextFactory.getContext().getProjectSettings();
     }
 
-    private List<PluginDescriptorRestful> getLocalDescriptors() {
-        final List<PluginDescriptorRestful> descriptors = new ArrayList<>();
-        final Collection<PluginDescriptorRestful> values = EssentialsContextListener.getPluginCache().asMap().values();
+    private List<PluginDescriptor> getLocalDescriptors() {
+        final List<PluginDescriptor> descriptors = new ArrayList<>();
+        final Collection<PluginDescriptor> values = EssentialsContextListener.getPluginCache().asMap().values();
         descriptors.addAll(values);
         descriptors.addAll(loadPluginDescriptorsFromResource("/project_plugin_descriptor.json"));
 
         return descriptors;
     }
 
-    private List<PluginDescriptorRestful> loadPluginDescriptorsFromResource(final String resource) {
+    private List<PluginDescriptor> loadPluginDescriptorsFromResource(final String resource) {
         final InputStream stream = PluginStore.class.getResourceAsStream(resource);
         final String json = GlobalUtils.readStreamAsText(stream);
 
@@ -238,7 +237,7 @@ public class PluginStore {
     }
 
     @SuppressWarnings("unchecked")
-    private RestfulList<PluginDescriptorRestful> parsePlugins(final String jsonString) {
+    private RestfulList<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
                 return WebUtils.fromJson(jsonString, RestfulList.class);
