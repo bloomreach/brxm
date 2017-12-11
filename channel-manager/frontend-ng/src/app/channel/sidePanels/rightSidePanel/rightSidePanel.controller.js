@@ -55,12 +55,18 @@ const ERROR_MAP = {
   OTHER_PROJECT: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE',
-    hasUser: true,
   },
   CORE_PROJECT: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
-    hasUser: true,
+  },
+  PROJECT_INVALID_STATE: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_PROJECT_INVALID_STATE',
+  },
+  PROJECT_NOT_FOUND: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_PROJECT_NOT_FOUND',
   },
 };
 

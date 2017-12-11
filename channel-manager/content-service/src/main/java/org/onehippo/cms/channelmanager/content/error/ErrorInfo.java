@@ -62,6 +62,8 @@ public class ErrorInfo {
         OTHER_HOLDER,
         OTHER_PROJECT,
         CORE_PROJECT,
+        PROJECT_INVALID_STATE,
+        PROJECT_NOT_FOUND,
         REQUEST_PENDING,
         UNKNOWN_VALIDATOR
         // add more specific failure reasons here.
