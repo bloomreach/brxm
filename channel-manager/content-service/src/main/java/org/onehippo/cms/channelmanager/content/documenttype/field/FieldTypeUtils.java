@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -205,6 +206,15 @@ public class FieldTypeUtils {
                 .flatMap(NamespaceUtils::getPluginClassForField);
     }
 
+    public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
+        return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
+                .map(fieldSorter -> fieldSorter.sortFields(context).stream()
+                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).equals(""))
+                        .map(fieldTypeContext -> fieldTypeContext.getContentTypeItem().getItemType())
+                        .collect(Collectors.toSet())
+                )
+                .orElse(null);
+    }
 
     /**
      * Try to read a list of fields from a node into a map of values.

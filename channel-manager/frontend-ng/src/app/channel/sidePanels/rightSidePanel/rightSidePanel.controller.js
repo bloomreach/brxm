@@ -209,8 +209,8 @@ class RightSidePanelCtrl {
       this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
     }
     this._resizeTextareas();
-    if (!this.docType.allFieldsIncluded) {
-      this.CmsService.reportUsageStatistic('VisualEditingUnsupportedFields', { unsupportedFieldTypes: 'todo-add-types' });
+    if (this.docType.unsupportedFieldTypes) {
+      this.CmsService.reportUsageStatistic('VisualEditingUnsupportedFields', { unsupportedFieldTypes: this.docType.unsupportedFieldTypes.join(',') });
     }
   }
 
