@@ -16,12 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -77,6 +79,9 @@ public class FieldTypeUtils {
     // A map for associating supported JCR-level field types with relevant information
     public static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
+    public static final List<String> REPORTABLE_MISSING_FIELD_TYPES;
+    public static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES;
+
     static {
         IGNORED_VALIDATORS = new HashSet<>();
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
@@ -106,6 +111,11 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
+
+        REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList("Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown",
+                "Reference", "StaticDropdown");
+        REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList("hippo:", "hippogallerypicker:", "hippostd:", "hipposys:",
+                "hippotaxonomy:", "poll:", "selection:");
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
@@ -210,10 +220,20 @@ public class FieldTypeUtils {
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(fieldSorter -> fieldSorter.sortFields(context).stream()
                         .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).equals(""))
-                        .map(fieldTypeContext -> fieldTypeContext.getContentTypeItem().getItemType())
-                        .collect(Collectors.toSet())
+                        .map(FieldTypeUtils::mapFieldTypeName)
+                        .collect(Collectors.toCollection(TreeSet::new))
                 )
                 .orElse(null);
+    }
+
+    private static String mapFieldTypeName(final FieldTypeContext fieldTypeContext) {
+        final String name = fieldTypeContext.getContentTypeItem().getItemType();
+        if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
+                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
+            return name;
+        } else {
+            return "Custom";
+        }
     }
 
     /**
