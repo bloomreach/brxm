@@ -190,11 +190,10 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
      *
      * @param componentParameters the component parameters of the current container item
      * @param variantId           the variantId to remove
-     * @throws IllegalArgumentException when the variantId is the 'default' variantId
-     * @throws RepositoryException
+     * @throws IllegalStateException when the variantId is the 'default' variantId
      */
     private void deleteVariant(final HstComponentParameters componentParameters, final String variantId)
-            throws IllegalArgumentException, RepositoryException, IllegalStateException {
+            throws IllegalStateException {
         if (!componentParameters.removePrefix(variantId)) {
             throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
         }
@@ -202,7 +201,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
     private void setParameters(final HstComponentParameters componentParameters,
                                final String prefix,
-                               final MultivaluedMap<String, String> parameters) throws RepositoryException, IllegalStateException {
+                               final MultivaluedMap<String, String> parameters) throws IllegalStateException {
         componentParameters.removePrefix(prefix);
         for (String parameterName : parameters.keySet()) {
             // the Force-Client-Host is some 'magic' parameter we do not need to store
