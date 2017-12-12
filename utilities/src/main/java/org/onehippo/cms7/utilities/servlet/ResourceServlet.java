@@ -41,6 +41,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -53,18 +54,18 @@ import org.slf4j.LoggerFactory;
  * A typical configuration is to set classpath resource path and map a servlet path to this servlet.
  * <p>
  * <xmp>
- * <servlet>
- * <servlet-name>ExampleResourceServlet</servlet-name>
- * <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
- * <init-param>
- * <param-name>jarPathPrefix</param-name>
- * <param-value>/META-INF/example/myapp/skin</param-value>
- * </init-param>
- * </servlet>
- * <servlet-mapping>
- * <servlet-name>ExampleResourceServlet</servlet-name>
- * <url-pattern>/myapp/skin/*</url-pattern>
- * </servlet-mapping>
+ *     <servlet>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+ *         <init-param>
+ *             <param-name>jarPathPrefix</param-name>
+ *             <param-value>/META-INF/example/myapp/skin</param-value>
+ *         </init-param>
+ *     </servlet>
+ *     <servlet-mapping>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <url-pattern>/myapp/skin/*</url-pattern>
+ *     </servlet-mapping>
  * </xmp>
  * </p>
  * <p>
@@ -76,43 +77,43 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <p>The following init parameters are available:</p>
  * <table border="2">
- * <tr>
- * <th>Init parameter name</th>
- * <th>Description</th>
- * <th>Example value</th>
- * <th>Default value</th>
- * </tr>
- * <tr>
- * <td>jarPathPrefix</td>
- * <td>Classpath resource path prefix</td>
- * <td>META-INF/example/myapp/skin</td>
- * <td>META-INF</td>
- * </tr>
- * <tr>
- * <td>gzipEnabled</td>
- * <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by
- * 'compressedMimeTypes' init parameter.</td>
- * <td>false</td>
- * <td>true</td>
- * </tr>
- * <tr>
- * <td>webResourceEnabled</td>
- * <td>Flag to enable/disable to read resources from the servlet context on web application resources. If this is enabled,
+ *     <tr>
+ *         <th>Init parameter name</th>
+ *         <th>Description</th>
+ *         <th>Example value</th>
+ *         <th>Default value</th>
+ *     </tr>
+ *     <tr>
+ *         <td>jarPathPrefix</td>
+ *         <td>Classpath resource path prefix</td>
+ *         <td>META-INF/example/myapp/skin</td>
+ *         <td>META-INF</td>
+ *     </tr>
+ *     <tr>
+ *         <td>gzipEnabled</td>
+ *         <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by
+ *          'compressedMimeTypes' init parameter.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>webResourceEnabled</td>
+ *         <td>Flag to enable/disable to read resources from the servlet context on web application resources. If this is enabled,
  * then the servlet will try to read a resource from the web application first by the request path info. </td>
- * <td>false</td>
- * <td>true</td>
- * </tr>
- * <tr>
- * <td>jarResourceEnabled</td>
- * <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
- * <td>false</td>
- * <td>true</td>
- * </tr>
- * <tr>
- * <td>allowedResourcePaths</td>
- * <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
- * <td>
- * <pre>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>jarResourceEnabled</td>
+ *         <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>allowedResourcePaths</td>
+ *         <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
+ *         <td>
+ *             <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
@@ -123,9 +124,9 @@ import org.slf4j.LoggerFactory;
  *                 ^/.*\\.swf,
  *                 ^/.*\\.txt
  *             </pre>
- * </td>
- * <td>
- * <pre>
+ *         </td>
+ *         <td>
+ *             <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
@@ -363,7 +364,7 @@ public class ResourceServlet extends HttpServlet {
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        final URL resource = getResourceURL(addIndexHtmlIfNeeded(resourcePath), queryParams, req);
+        final URL resource = getResourceURL(resourcePath, queryParams, req);
         if (resource == null) {
             notFound(resp, resourcePath);
             return;
@@ -441,7 +442,6 @@ public class ResourceServlet extends HttpServlet {
     }
 
     private URL getResourceURL(final String resourcePath, final String queryParams, final HttpServletRequest request) throws MalformedURLException {
-
         if (!isAllowed(resourcePath, request)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
@@ -482,33 +482,14 @@ public class ResourceServlet extends HttpServlet {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
             return false;
         }
-        final String amendedResourcePath = addIndexHtmlIfNeeded(resourcePath);
+
         for (final Pattern p : allowedResourcePaths) {
-            if (p.matcher(amendedResourcePath).matches()) {
+            if (p.matcher(resourcePath).matches()) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Due to the pattern matching of resourcePaths, a resource path must end with a resource. A resource consists of
-     * a name part, and a suffix (e.g. html or jpeg) separated by a dot. The default convention for java servlets is
-     * that requesting a root path it is mapped to a resource configured in the welcome file list. The first resource
-     * that is found is then returned. For hippo, we always map it to index.html. So, when a resourcePath does not
-     * end  with a dot followed by a suffix we can assume it is a request for index.html and see if it indeed matches
-     * with an allowed index.html resource.
-     *
-     * @param resourcePath a path
-     * @return resource path, appended with index.html if needed.
-     */
-    private static String addIndexHtmlIfNeeded(String resourcePath) {
-        if (!resourcePath.endsWith(".") && StringUtils.substringAfterLast(resourcePath, ".").isEmpty()) {
-            // The welcome-file-list is configurable, but we assume that index.html is always present.
-            return StringUtils.substringBeforeLast(resourcePath, "/") + "/index.html";
-        }
-        return resourcePath;
     }
 
     private URL getJarResource(final String resourcePath) {
