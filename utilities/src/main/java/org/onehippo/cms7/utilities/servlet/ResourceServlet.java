@@ -504,7 +504,7 @@ public class ResourceServlet extends HttpServlet {
      * @return resource path, appended with index.html if needed.
      */
     private static String addIndexHtmlIfNeeded(String resourcePath) {
-        if (StringUtils.substringAfterLast(resourcePath, ".").isEmpty()) {
+        if (!resourcePath.endsWith(".") && StringUtils.substringAfterLast(resourcePath, ".").isEmpty()) {
             // The welcome-file-list is configurable, but we assume that index.html is always present.
             return StringUtils.substringBeforeLast(resourcePath, "/") + "/index.html";
         }
