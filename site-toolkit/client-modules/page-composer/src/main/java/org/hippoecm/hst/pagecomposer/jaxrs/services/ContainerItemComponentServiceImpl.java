@@ -162,6 +162,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
             final Node containerItem = getCurrentContainerItem();
             final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
             componentParameters.removePrefix(oldVariantId);
+            componentParameters.removePrefix(newVariantId);
             setParameters(componentParameters, newVariantId, params);
 
             componentParameters.save(versionStamp);
@@ -202,7 +203,6 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     private void setParameters(final HstComponentParameters componentParameters,
                                final String prefix,
                                final MultivaluedMap<String, String> parameters) throws IllegalStateException {
-        componentParameters.removePrefix(prefix);
         for (String parameterName : parameters.keySet()) {
             // the Force-Client-Host is some 'magic' parameter we do not need to store
             // this check can be removed once in all code, the Force-Client-Host parameter from the queryString
