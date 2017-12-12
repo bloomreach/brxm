@@ -15,8 +15,77 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
+import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
+import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.core.resource.AbstractRestTemplateResourceResolver;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractRestTemplateResourceResolver {
+
+    private Unmarshaller unmarshaller;
+    private String jaxbContextPath;
+    private Class<?>[] jaxbClassesToBeBound;
+    private String[] jaxbPackagesToScan;
+    private ResourceBeanMapper resourceBeanMapper;
+
+    public String getJaxbContextPath() {
+        return jaxbContextPath;
+    }
+
+    public void setJaxbContextPath(String jaxbContextPath) {
+        this.jaxbContextPath = jaxbContextPath;
+    }
+
+    public Class<?>[] getJaxbClassesToBeBound() {
+        return jaxbClassesToBeBound;
+    }
+
+    public void setJaxbClassesToBeBound(Class<?>[] jaxbClassesToBeBound) {
+        this.jaxbClassesToBeBound = jaxbClassesToBeBound;
+    }
+
+    public String[] getJaxbPackagesToScan() {
+        return jaxbPackagesToScan;
+    }
+
+    public void setJaxbPackagesToScan(String[] jaxbPackagesToScan) {
+        this.jaxbPackagesToScan = jaxbPackagesToScan;
+    }
+
+    public Unmarshaller getUnmarshaller() {
+        if (unmarshaller == null) {
+            unmarshaller = new Jaxb2Marshaller();
+
+            if (StringUtils.hasLength(jaxbContextPath)) {
+                ((Jaxb2Marshaller) unmarshaller).setContextPath(jaxbContextPath);
+            }
+
+            if (!ObjectUtils.isEmpty(jaxbClassesToBeBound)) {
+                ((Jaxb2Marshaller) unmarshaller).setClassesToBeBound(jaxbClassesToBeBound);
+            }
+
+            if (!ObjectUtils.isEmpty(jaxbPackagesToScan)) {
+                ((Jaxb2Marshaller) unmarshaller).setPackagesToScan(jaxbPackagesToScan);
+            }
+        }
+
+        return unmarshaller;
+    }
+
+    public void setUnmarshaller(Unmarshaller unmarshaller) {
+        this.unmarshaller = unmarshaller;
+    }
+
+    @Override
+    public ResourceBeanMapper getResourceBeanMapper() throws ResourceException {
+        if (resourceBeanMapper == null) {
+            resourceBeanMapper = new JdomResourceBeanMapper(getUnmarshaller());
+        }
+
+        return resourceBeanMapper;
+    }
 
 }

@@ -124,6 +124,8 @@
     <Logger name="org.apache.http.wire" level="debug" />
     <Logger name="org.onehippo.cms7.crisp" level="debug" />
 
+    <Logger name="org.springframework.oxm.jaxb" level="error" />
+
     <!-- project logging -->
     <Logger name="org.onehippo.cms7.crisp.demo" level="debug"/>
 

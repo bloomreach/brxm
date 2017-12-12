@@ -39,8 +39,10 @@ definitions:
         \        class=\"org.onehippo.cms7.crisp.core.resource.jdom.SimpleJdomRestTemplateResourceResolver\"\
         >\r\n    <property name=\"cacheEnabled\" value=\"${cache.enabled}\" />\r\n   \
         \ <property name=\"baseUri\" value=\"${example.commerce.api.base.uri}\" />\r\n\
-        \    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.web.client.RestTemplate\"\
-        >\r\n        <property name=\"requestFactory\" ref=\"org.springframework.http.client.ClientHttpRequestFactory\"\
+        \    <property name=\"jaxbPackagesToScan\">\r\n      <list>\r\n        <value>org.onehippo.cms7.crisp.demo.model</value>\r\
+        \n      </list>\r\n    </property>\r\n    <property name=\"restTemplate\">\r\n\
+        \      <bean class=\"org.springframework.web.client.RestTemplate\">\r\n      \
+        \  <property name=\"requestFactory\" ref=\"org.springframework.http.client.ClientHttpRequestFactory\"\
         \ />\r\n      </bean>\r\n    </property>\r\n    <property name=\"resourceLinkResolver\"\
         >\r\n      <bean class=\"org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver\"\
         >\r\n        <property name=\"templateSource\">\r\n          <value>http://www.example.com/products/${(preview\
