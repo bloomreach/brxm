@@ -209,6 +209,10 @@ public class JdomResource extends AbstractResource {
         xmlOutputter.output(jdomElem, writer);
     }
 
+    Element getJdomElement() {
+        return jdomElem;
+    }
+
     private ValueMap getInternalValueMap() {
         if (internalValueMap == null) {
             ValueMap tempValueMap = new DefaultValueMap();

@@ -13,11 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.crisp.demo.components;
+package org.onehippo.cms7.crisp.demo.model;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@XmlRootElement(name = "product")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 

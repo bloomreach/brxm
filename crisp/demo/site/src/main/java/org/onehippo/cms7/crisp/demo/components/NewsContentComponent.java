@@ -29,6 +29,7 @@ import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
+import org.onehippo.cms7.crisp.demo.model.Product;
 import org.onehippo.cms7.crisp.hst.module.CrispHstServices;
 import org.onehippo.cms7.essentials.components.EssentialsContentComponent;
 import org.slf4j.Logger;
@@ -47,6 +48,8 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
         NewsDocument document = (NewsDocument) request.getRequestContext().getContentBean();
 
+        ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+
         log.warn("\n\n===============================================================================\n"
                 + "  [INFO] JSON based Resource Retrieval DEMO\n"
                 + "===============================================================================\n\n");
@@ -56,10 +59,9 @@ public class NewsContentComponent extends EssentialsContentComponent {
             request.setAttribute("productCatalogs", productCatalogs);
 
             if (productCatalogs.getChildCount() > 0) {
-                Resource firstChildResource = productCatalogs.getChildren(0, 1).get(0);
-                ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+                Resource firstProductResource = productCatalogs.getChildren(0, 1).get(0);
                 ResourceBeanMapper resourceBeanMapper = resourceServiceBroker.getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG);
-                Product firstProduct = resourceBeanMapper.map(firstChildResource, Product.class);
+                Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
                 log.debug("==> First product: [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
                         firstProduct.getDescription());
             }
@@ -72,6 +74,15 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
         if (productCatalogsXml != null) {
             request.setAttribute("productCatalogsXml", productCatalogsXml);
+
+            if (productCatalogsXml.getChildCount() > 0) {
+                Resource products = (Resource) productCatalogsXml.getValue("products");
+                Resource firstProductResource = products.getChildren(0, 1).get(0);
+                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker.getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML);
+                Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
+                log.debug("==> First product (XML): [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
+                        firstProduct.getDescription());
+            }
         }
 
     }

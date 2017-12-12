@@ -80,6 +80,12 @@
     <Logger name="org.apache.jackrabbit.core.query.lucene.SearchIndex" level="info"/>
     <Logger name="org.apache.jackrabbit.core.query.lucene.ConsistencyCheck" level="info"/>
 
+    <Logger name="org.apache.http" level="info" />
+    <Logger name="org.apache.http.wire" level="info" />
+    <Logger name="org.onehippo.cms7.crisp" level="info" />
+
+    <Logger name="org.springframework.oxm.jaxb" level="error" />
+
     <!-- project logging -->
     <Logger name="org.onehippo.cms7.crisp.demo" level="info"/>
 
