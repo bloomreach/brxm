@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkLabel;
@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -52,7 +53,10 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
+import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
@@ -173,16 +177,47 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         search.add(new DefaultFocusBehavior());
         form.add(search);
 
+        final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                target.add(table);
+
+                /*if (hasSearchResult()) {
+                    collection.setSearchResult(NO_RESULTS);
+                    query = "";
+                } else {
+                    updateSearch(true);
+                }*/
+            }
+        };
+        browseLink.add(createSearchIcon("search-icon", null));
+        form.add(browseLink);
+
+
+        // TODO: to be removed
+/*
         form.add(new AjaxButton("search-button", form) {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 target.add(table);
             }
         });
+*/
 
         table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
+    }
+
+    private Component createSearchIcon(final String id, final DocumentCollection collection) {
+        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
+            @Override
+            protected Icon load() {
+                //return collection.getType() == DocumentCollection.DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
+                return Icon.SEARCH;
+            }
+        };
+        return HippoIcon.fromSprite(id, iconModel);
     }
 
     private class DeleteUserActionLink extends AjaxLinkLabel {
