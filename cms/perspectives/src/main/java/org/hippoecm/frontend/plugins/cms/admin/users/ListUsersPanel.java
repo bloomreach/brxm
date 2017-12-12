@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -74,6 +75,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
     private final IPluginContext context;
     private final AdminDataTable table;
     private final UserDataProvider userDataProvider;
+    private boolean searchActive = false;
 
     /**
      * Constructs a new ListUsersPanel.
@@ -180,44 +182,34 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                if (searchActive) {
+                    ListUsersPanel.this.userDataProvider.setSearchTerm(StringUtils.EMPTY);
+                }
+                searchActive = !searchActive;
                 target.add(table);
-
-                /*if (hasSearchResult()) {
-                    collection.setSearchResult(NO_RESULTS);
-                    query = "";
-                } else {
-                    updateSearch(true);
-                }*/
+                target.add(form);
             }
         };
-        browseLink.add(createSearchIcon("search-icon", null));
+        browseLink.add(createSearchIcon(ListUsersPanel.this.userDataProvider));
         form.add(browseLink);
-
-
-        // TODO: to be removed
-/*
-        form.add(new AjaxButton("search-button", form) {
-            @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
-                target.add(table);
-            }
-        });
-*/
 
         table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
     }
 
-    private Component createSearchIcon(final String id, final DocumentCollection collection) {
+    private Component createSearchIcon(final UserDataProvider userDataProvider) {
         final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
             @Override
             protected Icon load() {
-                //return collection.getType() == DocumentCollection.DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
-                return Icon.SEARCH;
+                if (StringUtils.isNotBlank(userDataProvider.getSearchTerm())) {
+                    return Icon.TIMES;
+                } else {
+                    return Icon.SEARCH;
+                }
             }
         };
-        return HippoIcon.fromSprite(id, iconModel);
+        return HippoIcon.fromSprite("search-icon", iconModel);
     }
 
     private class DeleteUserActionLink extends AjaxLinkLabel {
