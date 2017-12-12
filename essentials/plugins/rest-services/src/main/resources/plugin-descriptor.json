@@ -22,15 +22,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "restServices",
-          "file": "restServices.js"
-        }
-      ]
-    }
-  ]
+  }
 }

@@ -22,15 +22,5 @@
   "vendor": {
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "beanwriter",
-          "file": "beanwriter.js"
-        }
-      ]
-    }
-  ]
+  }
 }

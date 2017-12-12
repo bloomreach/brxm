@@ -16,13 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import java.util.Map;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.dashboard.model.Library;
-import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,21 +37,26 @@ public class PluginModuleRestfulTest extends BaseTest {
 
     @Test
     public void testGetApplication() throws Exception {
+        PluginDescriptor descriptor = new PluginDescriptor();
         PluginModuleRestful restful = new PluginModuleRestful();
-        final PrefixedLibraryList prefixedLibrary = new PrefixedLibraryList("components");
-        prefixedLibrary.addLibrary(new Library("html5shiv", "excanvas.js", "IE <= 8"));
-        prefixedLibrary.addLibrary(new Library("ExplorerCanvas", "html5shiv-printshiv.js", "IE <= 8"));
-        restful.addLibrary("libraries", prefixedLibrary);
-        //
-        final PrefixedLibraryList hippoLibrary = new PrefixedLibraryList();
-        hippoLibrary.addLibrary(new Library("components/hippo-plugins", "dist/js/main.js"));
-        restful.addLibrary("hippo-plugins", hippoLibrary);
+
+        restful.addFiles(descriptor); // not a tool, has-config flag not set
+
+        descriptor.setId("isTool");
+        descriptor.setType(PluginDescriptor.TYPE_TOOL);
+        restful.addFiles(descriptor);
+
+        descriptor.setId("hasConfiguration");
+        descriptor.setType(PluginDescriptor.TYPE_FEATURE);
+        descriptor.setHasConfiguration(true);
+        restful.addFiles(descriptor);
+
         final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(restful);
-        log.info("json {}", json);
         restful = mapper.readValue(json, PluginModuleRestful.class);
-        log.info("json {}", restful);
-        final Map<String, PrefixedLibraryList> includes = restful.getIncludes();
-        assertEquals("Expected 2 libraries", 2, includes.size());
+        final List<String> files = restful.getFiles();
+        assertEquals(2, files.size());
+        assertEquals("tool/isTool/isTool.js", files.get(0));
+        assertEquals("feature/hasConfiguration/hasConfiguration.js", files.get(1));
     }
 }

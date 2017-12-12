@@ -26,15 +26,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "bloomreachConnector",
-          "file": "bloomreachConnector.js"
-        }
-      ]
-    }
-  ]
+  }
 }

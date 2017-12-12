@@ -26,6 +26,9 @@ import com.google.common.base.Strings;
 
 public class PluginDescriptor implements Restful {
 
+    public static final String TYPE_TOOL = "tool";
+    public static final String TYPE_FEATURE = "feature";
+
     private List<String> restClasses;
 
     private Vendor vendor;
@@ -45,7 +48,6 @@ public class PluginDescriptor implements Restful {
 
     private Calendar dateInstalled;
     private String documentationLink;
-    private List<PrefixedLibraryList> libraries = new ArrayList<>();
 
     private Map<String, Set<String>> categories;
 
@@ -63,14 +65,6 @@ public class PluginDescriptor implements Restful {
 
     public void setCategories(final Map<String, Set<String>> categories) {
         this.categories = categories;
-    }
-
-    public List<PrefixedLibraryList> getLibraries() {
-        return libraries;
-    }
-
-    public void setLibraries(final List<PrefixedLibraryList> libraries) {
-        this.libraries = libraries;
     }
 
     public Calendar getDateInstalled() {

@@ -24,15 +24,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "galleryPlugin",
-          "file": "galleryPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

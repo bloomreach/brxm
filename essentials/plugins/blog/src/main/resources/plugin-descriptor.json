@@ -39,15 +39,5 @@
       "artifactId": "hippo-essentials-components-cms",
       "targetPom": "cms"
     }
-  ],
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "blogPlugin",
-          "file": "blogPlugin.js"
-        }
-      ]
-    }
   ]
 }

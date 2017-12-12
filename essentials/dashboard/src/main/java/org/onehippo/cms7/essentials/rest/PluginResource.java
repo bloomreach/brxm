@@ -40,7 +40,6 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
@@ -284,18 +283,7 @@ public class PluginResource extends BaseResource {
     @Path("/modules")
     public PluginModuleRestful getModules() {
         final PluginModuleRestful modules = new PluginModuleRestful();
-        final List<Plugin> plugins = pluginStore.getAllPlugins();
-        for (Plugin plugin : plugins) {
-            final PluginDescriptor descriptor = plugin.getDescriptor();
-            final List<PrefixedLibraryList> libraries = descriptor.getLibraries();
-            if (libraries != null) {
-                final String pluginType = descriptor.getType();
-                for (PrefixedLibraryList library : libraries) {
-                    library.setPrefix(pluginType);
-                    modules.addLibrary(plugin.getId(), library);
-                }
-            }
-        }
+        pluginStore.getAllPlugins().forEach(p -> modules.addFiles(p.getDescriptor()));
         return modules;
     }
 

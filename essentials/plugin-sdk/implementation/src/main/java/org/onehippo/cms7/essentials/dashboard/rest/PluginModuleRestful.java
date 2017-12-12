@@ -16,19 +16,19 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 import io.swagger.annotations.ApiModel;
 
 /**
  * Plugin javascript module descriptor.
- * Contains application name and plugin(s) javascript references.
+ * Contains application name and plugin's javascript references.
  */
 
 @ApiModel
@@ -40,18 +40,25 @@ public class PluginModuleRestful implements Restful {
     private static final long serialVersionUID = 1L;
 
     private String application = DEFAULT_APP_NAME;
-    private Map<String, PrefixedLibraryList> includes = new HashMap<>();
+    private List<String> files;
 
-    public void addLibrary(final String name, final PrefixedLibraryList libraryList) {
-        includes.put(name, libraryList);
+    public void addFiles(final PluginDescriptor descriptor) {
+        if (PluginDescriptor.TYPE_TOOL.equals(descriptor.getType())
+            || descriptor.getHasConfiguration()) {
+            if (files == null) {
+                files = new ArrayList<>();
+            }
+            final String pluginId = descriptor.getId();
+            files.add(descriptor.getType() + "/" + pluginId + "/" + pluginId + ".js");
+        }
     }
 
-    public Map<String, PrefixedLibraryList> getIncludes() {
-        return includes;
+    public List<String> getFiles() {
+        return files;
     }
 
-    public void setIncludes(final Map<String, PrefixedLibraryList> includes) {
-        this.includes = includes;
+    public void setFiles(final List<String> files) {
+        this.files = files;
     }
 
     public String getApplication() {
@@ -66,7 +73,7 @@ public class PluginModuleRestful implements Restful {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginModuleRestful{");
-        sb.append("includes=").append(includes);
+        sb.append("files=").append(files);
         sb.append(", application='").append(application).append('\'');
         sb.append('}');
         return sb.toString();

@@ -33,15 +33,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "taxonomyPlugin",
-          "file": "taxonomyPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

@@ -29,15 +29,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "relatedDocumentsPlugin",
-          "file": "relatedDocumentsPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

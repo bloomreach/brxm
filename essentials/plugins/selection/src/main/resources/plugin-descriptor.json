@@ -29,15 +29,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "selectionPlugin",
-          "file": "selectionPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

@@ -22,11 +22,9 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.model.Library;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PrefixedLibraryList;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.slf4j.Logger;
@@ -45,11 +43,6 @@ public class PluginDescriptorTest {
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
         value.setRestClasses(Arrays.asList("com.foo.Foo", "com.foo.Bar"));
-        // add libraries:
-        final PrefixedLibraryList library = new PrefixedLibraryList();
-        value.setLibraries(Collections.singletonList(library));
-        library.addLibrary(new Library("myPlugin", "foo.js"));
-        library.addLibrary(new Library("myPlugin1", "foo1.js"));
 
         final Vendor vendor = new Vendor();
         vendor.setName("hippo");
@@ -76,8 +69,6 @@ public class PluginDescriptorTest {
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromJson.getVendor().getName());
-        assertEquals("Expected 1 prefixed library", 1, value.getLibraries().size());
-        assertEquals("Expected 2 js libraries", 2, value.getLibraries().get(0).getItems().size());
         assertEquals("Expected 1 repository", 1, value.getRepositories().size());
         assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleasePolicy().getChecksumPolicy());
         assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleasePolicy().getUpdatePolicy());

@@ -30,15 +30,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "documentWizardPlugin",
-          "file": "documentWizardPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }
