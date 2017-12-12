@@ -59,7 +59,7 @@ public class HippoPublishableDocumentVisitor extends HippoDocumentVisitor {
 
     protected void addPropertyConditionally(final ResourceContext context, final String name, final String value,
                                             final Map<String, Object> response ) {
-        if(context.getIncludedAttributes().size() == 0 || context.getIncludedAttributes().contains(name)) {
+        if((context.getIncludedAttributes().size() == 0 && context.includeDocumentDataByDefault()) || context.getIncludedAttributes().contains(name)) {
             response.put(name, value);
         }
     }
