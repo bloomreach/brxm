@@ -259,28 +259,15 @@ public class PluginStore {
         plugins.forEach(p -> registerEndPoints(p.getDescriptor()));
 
         // Make sure we only attempt starting the server once!
-        if (application.getClasses().size() > 0 && serverSemaphore.drainPermits() > 0) {
+        if (!application.getSingletons().isEmpty() && serverSemaphore.drainPermits() > 0) {
             startServer();
         }
     }
 
     private void registerEndPoints(final PluginDescriptor descriptor) {
-        final List<String> pluginRestClasses = descriptor.getRestClasses();
-        if (pluginRestClasses != null) {
-            for (String restClassName : pluginRestClasses) {
-                final Class<?> endpointClass = GlobalUtils.loadCLass(restClassName);
-                if (endpointClass == null) {
-                    log.error("Failed to load REST endpoint class: {}", restClassName);
-                    continue;
-                }
-                final Set<Class<?>> classes = application.getClasses();
-                if (classes.contains(endpointClass)) {
-                    log.debug("REST endpoint class already loaded {}", restClassName);
-                    continue;
-                }
-                application.addClass(endpointClass);
-                log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
-            }
+        final List<String> restClasses = descriptor.getRestClasses();
+        if (restClasses != null) {
+            restClasses.forEach(application::addSingleton);
         }
     }
 

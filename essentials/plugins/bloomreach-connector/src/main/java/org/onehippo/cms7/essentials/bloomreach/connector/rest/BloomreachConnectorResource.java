@@ -34,10 +34,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -48,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("bloomreachConnector/")
-public class BloomreachConnectorResource extends BaseResource {
+public class BloomreachConnectorResource {
 
     private static final Logger log = LoggerFactory.getLogger(BloomreachConnectorResource.class);
     private static final String CRISP_GROUP_ID = "org.onehippo.cms7";
@@ -79,36 +76,35 @@ public class BloomreachConnectorResource extends BaseResource {
 
     @POST
     @Path("/install")
-    public RestfulList<MessageRestful> install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
+        final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
-        final RestfulList<MessageRestful> retVal = new RestfulList<>();
         boolean added = dependencyService.addDependency(context, TargetPom.CMS, CRISP_API)
                 && dependencyService.addDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
         if (added) {
-            retVal.add(new MessageRestful("Successfully added dependencies"));
+            feedback.addSuccess("Successfully added dependencies");
         } else {
-            retVal.add(new ErrorMessageRestful("Failed to add dependencies"));
+            feedback.addError("Failed to add dependencies");
         }
-        return retVal;
+        return feedback;
     }
 
     @POST
-    public RestfulList<MessageRestful> run(final ResourceData data, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback run(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         log.info("data = {}", data);
         // TODO validate data
 
+        final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
-        final RestfulList<MessageRestful> retVal = new RestfulList<>();
         try {
 
             final String basePath = data.getBasePath();
             final Node root = session.getNode(basePath);
             final String resourceName = data.getResourceName();
             if (root.hasNode(resourceName)) {
-                retVal.add(new MessageRestful("Resource with name" + resourceName + " already exists!"));
-                return retVal;
+                return feedback.addSuccess("Resource with name '" + resourceName + "' already exists.");
             }
             final Node node = root.addNode(resourceName, "crisp:resourceresolver");
             final InputStream stream = getClass().getResourceAsStream("/bloomreachResourcetemplate.xml");
@@ -150,12 +146,10 @@ public class BloomreachConnectorResource extends BaseResource {
 
             });
             session.save();
-            retVal.add(new MessageRestful("Successfully created Bloomreach CRSIP resource: " + resourceName));
+            feedback.addSuccess("Successfully created Bloomreach CRSIP resource: " + resourceName);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return retVal;
+        return feedback;
     }
-
-
 }

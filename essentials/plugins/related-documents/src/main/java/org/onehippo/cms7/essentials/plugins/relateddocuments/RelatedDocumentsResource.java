@@ -43,7 +43,6 @@ import com.google.common.base.Strings;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
@@ -59,11 +58,10 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("related-documents")
-public class RelatedDocumentsResource extends BaseResource {
+public class RelatedDocumentsResource {
 
-    private static Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
-
-    public static final String MIXIN_NAME = "relateddocs:relatabledocs";
+    private static final Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
+    private static final String MIXIN_NAME = "relateddocs:relatabledocs";
 
     @Inject private PluginContextFactory contextFactory;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 /**
  * @version "$Id$"
@@ -64,18 +63,18 @@ public final class BeanWriterUtils {
     }
 
 
-    public static void populateBeanwriterMessages(final PluginContext context, final RestfulList<MessageRestful> messages) {
+    public static void populateBeanwriterMessages(final PluginContext context, final UserFeedback feedback) {
         final Multimap<String, Object> pluginContextData = context.getPluginContextData();
         final Collection<Object> objects = pluginContextData.get(CONTEXT_DATA_KEY);
         for (Object object : objects) {
             final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
             final ActionType actionType = entry.getActionType();
             if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD || actionType == ActionType.DELETED_METHOD) {
-                messages.add(new MessageRestful(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName())));
+                feedback.addSuccess(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName()));
             } else if (actionType == ActionType.CREATED_CLASS) {
-                messages.add(new MessageRestful(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath())));
+                feedback.addSuccess(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath()));
             } else {
-                messages.add(new MessageRestful(entry.getMessage()));
+                feedback.addSuccess(entry.getMessage());
             }
         }
     }
@@ -84,9 +83,8 @@ public final class BeanWriterUtils {
     /**
      * Builds an in-memory graph by parsing XML namespaces. This graph can be used to write HST beans
      *
-     * @param directory       starting directory (where we scan for document templates)
      * @param context         plugin context instance
-     * @param sourceExtension extension used for source files e.g. {@code "java"}
+     * @param sourceFileExtension extension used for source files e.g. {@code "java"}
      * @return a list of MemoryBeans or empty list if nothing is found
      */
 

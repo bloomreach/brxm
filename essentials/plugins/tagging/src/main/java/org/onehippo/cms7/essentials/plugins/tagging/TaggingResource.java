@@ -43,7 +43,6 @@ import com.google.common.base.Strings;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -61,12 +60,10 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taggingplugin")
-public class TaggingResource extends BaseResource {
+public class TaggingResource {
 
     private static final Logger log = LoggerFactory.getLogger(TaggingResource.class);
-
-    public static final String MIXIN_NAME = "hippostd:taggable";
-
+    private static final String MIXIN_NAME = "hippostd:taggable";
     private static final String TAGS_FIELD = "tags";
     private static final String TAGSUGGEST_FIELD = "tagsuggest";
 

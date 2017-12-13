@@ -53,8 +53,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -72,7 +71,7 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("contentblocks")
-public class ContentBlocksResource extends BaseResource {
+public class ContentBlocksResource {
     private static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
     private static final String EDITOR_TEMPLATES_NODE = "editor:templates/_default_";
     private static final String ERROR_MSG = "The Content Blocks plugin encountered an error, check the log messages for more info.";
@@ -124,7 +123,7 @@ public class ContentBlocksResource extends BaseResource {
      */
     @POST
     @Path("/")
-    public MessageRestful update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
+    public UserFeedback update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
         final PluginContext context = contextFactory.getContext();
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
@@ -138,9 +137,11 @@ public class ContentBlocksResource extends BaseResource {
             updatersRun = executeUpdaters(session, updaters);
         } catch (RepositoryException e) {
             log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
-            return createErrorMessage(ERROR_MSG, response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError(ERROR_MSG);
         } catch (ContentBlocksException e) {
-            return createErrorMessage(e.getMessage(), response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError(e.getMessage());
         } finally {
             GlobalUtils.cleanupSession(session);
         }
@@ -152,7 +153,7 @@ public class ContentBlocksResource extends BaseResource {
                     + " on other environments, too.";
         }
 
-        return new MessageRestful(message);
+        return new UserFeedback().addSuccess(message);
     }
 
     @GET

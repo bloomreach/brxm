@@ -43,6 +43,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -50,8 +53,7 @@ import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -60,20 +62,17 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-
 /**
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taxonomyplugin")
-public class TaxonomyResource extends BaseResource {
+public class TaxonomyResource {
 
-    public static final String HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
-    public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
-    public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
+    private static final String HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
+    private static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
+    private static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
     private static final String TAXONOMY_FIELD_MARKER = "essentials-taxonomy-name";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
@@ -158,7 +157,7 @@ public class TaxonomyResource extends BaseResource {
      */
     @POST
     @Path("/taxonomies/add")
-    public MessageRestful createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
+    public UserFeedback createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
         final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
         try {
@@ -170,18 +169,20 @@ public class TaxonomyResource extends BaseResource {
             if (!Strings.isNullOrEmpty(taxonomyName)) {
                 final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
                 if (taxonomiesNode.hasNode(taxonomyName)) {
-                    return createErrorMessage("Taxonomy with name: " + taxonomyName + " already exists", response);
+                    response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                    return new UserFeedback().addError("Taxonomy with name: " + taxonomyName + " already exists");
                 }
                 addTaxonomyNode(session, taxonomiesNode, taxonomyName, locales);
 
-                return new MessageRestful("Successfully added taxonomy: " + taxonomyName);
+                return new UserFeedback().addSuccess("Successfully added taxonomy: " + taxonomyName);
             }
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy", e);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return createErrorMessage("Failed to create taxonomy", response);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        return new UserFeedback().addError("Failed to create taxonomy");
     }
 
     /**
@@ -193,14 +194,14 @@ public class TaxonomyResource extends BaseResource {
      */
     @POST
     @Path("/add")
-    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
+    public UserFeedback addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
         final Session session = context.createSession();
+        final Collection<String> changedDocuments = new HashSet<>();
         try {
             final Map<String, String> values = payloadRestful.getValues();
             final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
             final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
-            final Collection<String> changedDocuments = new HashSet<>();
             for (int i = 0; i < documentNames.length; i++) {
                 final String documentName = documentNames[i];
                 final String taxonomyName = taxonomyNames[i];
@@ -208,7 +209,8 @@ public class TaxonomyResource extends BaseResource {
                 DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
                 final String editorTemplatePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
                 if (!session.nodeExists(editorTemplatePath)) {
-                    return createErrorMessage("Document type '" + documentName + "' not suitable for adding taxonomy field", response);
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return new UserFeedback().addError("Document type '" + documentName + "' not suitable for adding taxonomy field");
                 }
 
                 final Node editorTemplateNode = session.getNode(editorTemplatePath);
@@ -222,24 +224,26 @@ public class TaxonomyResource extends BaseResource {
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     markAsTaxonomyField(fieldNode, taxonomyName);
                 } else {
-                    return createErrorMessage("For now, this feature allows only 1 taxonomy max per document type.",
-                            response);
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return new UserFeedback().addError("For now, this feature allows only 1 taxonomy max per document type.");
                 }
                 changedDocuments.add(documentName);
             }
             if (session.hasPendingChanges()) {
                 session.save();
             }
-            if (changedDocuments.size() > 0) {
-                return new MessageRestful("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
+            if (changedDocuments.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return new UserFeedback().addError("No taxonomy fields were added");
             }
-            return createErrorMessage("No taxonomy fields were added", response);
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy to a document", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Error adding taxonomy fields");
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return createErrorMessage("Error adding taxonomy fields", response);
+        return new UserFeedback().addSuccess("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
     }
 
     /**

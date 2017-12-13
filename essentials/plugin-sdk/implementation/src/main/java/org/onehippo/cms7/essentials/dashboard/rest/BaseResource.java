@@ -19,15 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletResponse;
 
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,8 +30,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class BaseResource {
 
-    private static Logger log = LoggerFactory.getLogger(BaseResource.class);
-
     @Singleton
     @Inject
     private AutowireCapableBeanFactory injector;
@@ -47,11 +38,6 @@ public class BaseResource {
     @Inject
     private ApplicationContext applicationContext;
 
-
-    public MessageRestful createErrorMessage(final String message, final HttpServletResponse response) {
-        response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-        return new ErrorMessageRestful(message);
-    }
 
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {

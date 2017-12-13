@@ -47,7 +47,9 @@
                         return;
                     }
                 }
-                if (error.data) {
+                if (error.data && error.data.feedbackMessages) {
+                    addFeedbackMessages($rootScope, error.data.feedbackMessages);
+                } else if (error.data) {
                     if (error.data.value) {
                         $rootScope.feedbackMessages.push({type: 'error', message: error.data.value});
                     } else {
@@ -71,6 +73,8 @@
                             $rootScope.feedbackMessages.push({type: 'info', message: v.value});
                         }
                     });
+                } else if (data.data && data.data.feedbackMessages) {
+                    addFeedbackMessages($rootScope, data.data.feedbackMessages);
                 }
                 else if (data.data && data.data.successMessage && data.data.globalMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
@@ -78,6 +82,15 @@
                     $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
                 }
 
+            }
+
+            function addFeedbackMessages($rootScope, messages) {
+                angular.forEach(messages, function (details) {
+                    $rootScope.feedbackMessages.push({
+                        type: details.error ? 'error' : 'info',
+                        message: details.message
+                    });
+                });
             }
 
             $provide.factory('MyHttpInterceptor', function ($q, $rootScope) {
