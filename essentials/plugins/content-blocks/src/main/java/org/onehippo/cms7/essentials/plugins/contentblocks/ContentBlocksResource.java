@@ -198,7 +198,8 @@ public class ContentBlocksResource extends BaseResource {
      */
     private void populateContentBlocksFields(final DocumentTypeRestful docType, final Session session) {
         final String primaryType = docType.getId();
-        docType.setContentBlocksFields(new ArrayList<ContentBlocksFieldRestful>());
+        final List<ContentBlocksFieldRestful> contentBlocksFields = new ArrayList<>();
+        docType.setContentBlocksFields(new ArrayList<>());
         try {
             final NodeIterator it = findContentBlockFields(primaryType, session);
 
@@ -211,15 +212,13 @@ public class ContentBlocksResource extends BaseResource {
                     field.setMaxItems(Long.parseLong(fieldNode.getNode(NODE_OPTIONS).getProperty(PROP_MAXITEMS).getString()));
                 }
                 final String[] compoundNames = fieldNode.getProperty(PROP_COMPOUNDLIST).getString().split(",");
-                for (String compoundName : compoundNames) {
-                    field.addCompoundRef(compoundName);
-                }
-
-                docType.addContentBlocksField(field);
+                field.setCompoundRefs(Arrays.asList(compoundNames));
+                contentBlocksFields.add(field);
             }
         } catch (RepositoryException e) {
             log.warn("Problem populating content blocks fields for primary type '" + primaryType + "'.", e);
         }
+        docType.setContentBlocksFields(contentBlocksFields);
     }
 
     /**

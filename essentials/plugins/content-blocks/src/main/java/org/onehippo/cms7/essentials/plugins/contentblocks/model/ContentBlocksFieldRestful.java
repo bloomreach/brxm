@@ -16,11 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 public class ContentBlocksFieldRestful implements Restful {
@@ -28,7 +25,7 @@ public class ContentBlocksFieldRestful implements Restful {
     private String originalName;
     private String pickerType;
     private long maxItems;
-    List<String> compoundRefs;
+    private List<String> compoundRefs;
 
     public String getName() {
         return name;
@@ -62,28 +59,11 @@ public class ContentBlocksFieldRestful implements Restful {
         this.maxItems = maxItems;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(String.class)
-    })
     public List<String> getCompoundRefs() {
         return compoundRefs;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(String.class)
-    })
     public void setCompoundRefs(final List<String> compoundRefs) {
         this.compoundRefs = compoundRefs;
     }
-
-    public void addCompoundRef(String compoundRef) {
-        if (compoundRefs == null) {
-            compoundRefs = new ArrayList<>();
-        }
-
-        compoundRefs.add(compoundRef);
-    }
-
 }

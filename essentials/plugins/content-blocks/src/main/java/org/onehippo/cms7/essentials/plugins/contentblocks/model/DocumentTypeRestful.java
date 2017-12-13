@@ -16,12 +16,9 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 public class DocumentTypeRestful implements Restful {
     private String id;
@@ -44,27 +41,11 @@ public class DocumentTypeRestful implements Restful {
         this.name = name;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
-    })
     public List<ContentBlocksFieldRestful> getContentBlocksFields() {
         return contentBlocksFields;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(ContentBlocksFieldRestful.class)
-    })
     public void setContentBlocksFields(final List<ContentBlocksFieldRestful> contentBlocksFields) {
         this.contentBlocksFields = contentBlocksFields;
-    }
-
-    public void addContentBlocksField(final ContentBlocksFieldRestful contentBlocksField) {
-        if (contentBlocksFields == null) {
-            contentBlocksFields = new ArrayList<>();
-        }
-
-        contentBlocksFields.add(contentBlocksField);
     }
 }
