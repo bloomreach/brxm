@@ -93,7 +93,7 @@
   "FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE": "Document has been edited on core",
   "FEEDBACK_PROJECT_INVALID_STATE": "Document has project {{projectName}} in invalid state {{projectState}}",
   "FEEDBACK_PROJECT_NOT_FOUND": "Document has project id {{projectId}} which does not exist (any more)",
-  "FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE": "Document is linked to project '{{projectName}}'",
+  "FEEDBACK_PART_OF_PROJECT_MESSAGE": "Part of project '{{projectName}}' ({{projectState}})",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "This document can only be edited in the content editor.",
   "FEEDBACK_NOT_A_DOCUMENT_MESSAGE": "Only documents can be edited here.",
   "FEEDBACK_NOT_A_DOCUMENT_TITLE": "Content not editable",

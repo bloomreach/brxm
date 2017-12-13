@@ -60,7 +60,7 @@ public class ErrorInfo {
         NO_HOLDER,
         NOT_A_DOCUMENT,
         OTHER_HOLDER,
-        OTHER_PROJECT,
+        PART_OF_PROJECT,
         CORE_PROJECT,
         PROJECT_INVALID_STATE,
         PROJECT_NOT_FOUND,

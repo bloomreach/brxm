@@ -52,9 +52,10 @@ const ERROR_MAP = {
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
-  OTHER_PROJECT: {
+  PART_OF_PROJECT: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_HELD_BY_OTHER_PROJECT_MESSAGE',
+    messageKey: 'FEEDBACK_PART_OF_PROJECT_MESSAGE',
+    hasUser: true,
   },
   CORE_PROJECT: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -253,8 +254,9 @@ class RightSidePanelCtrl {
     if (errorInfo.reason === 'OTHER_HOLDER') {
       params.user = errorInfo.params.userName || errorInfo.params.userId;
     }
-    if (errorInfo.reason === 'OTHER_PROJECT') {
+    if (errorInfo.reason === 'PART_OF_PROJECT') {
       params.projectName = errorInfo.params.projectName;
+      params.projectState = errorInfo.params.projectState;
     }
     return params;
   }
