@@ -40,7 +40,8 @@ public class PluginDescriptor implements Restful {
     private List<String> imageUrls;
     private String id;
     private String packageClass;
-    private boolean hasConfiguration = false;
+    private boolean hasConfiguration;
+    private boolean noRebuildAfterSetup;
     private String packageFile;
     private String type;
     private String installState;
@@ -121,6 +122,14 @@ public class PluginDescriptor implements Restful {
 
     public boolean getHasConfiguration() {
         return hasConfiguration;
+    }
+
+    public boolean isNoRebuildAfterSetup() {
+        return noRebuildAfterSetup;
+    }
+
+    public void setNoRebuildAfterSetup(final boolean noRebuildAfterSetup) {
+        this.noRebuildAfterSetup = noRebuildAfterSetup;
     }
     
     public Vendor getVendor() {

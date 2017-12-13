@@ -76,9 +76,13 @@ class InstallStateMachine {
             throw new PluginException("Incorrect state to run setup.");
         }
 
-        // For now, all plugins require a rebuild after the setup phase.
-        log.info("Setting to Installing for plugin " + plugin);
-        state = InstallState.INSTALLING;
+        if (plugin.getDescriptor().isNoRebuildAfterSetup()) {
+            log.info("Setting to Installed for plugin " + plugin);
+            state = InstallState.INSTALLED;
+        } else {
+            log.info("Setting to Installing for plugin " + plugin);
+            state = InstallState.INSTALLING;
+        }
 
         persistState();
         return state;
