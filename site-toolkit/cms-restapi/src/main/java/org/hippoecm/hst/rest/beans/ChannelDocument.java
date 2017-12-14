@@ -23,12 +23,9 @@ import java.io.Serializable;
  */
 public class ChannelDocument implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final int HASH_SEED = 17;
-    private static final int ODD_PRIME = 37;
-
     private String channelId;
     private String channelName;
+    private String branchId;
     private String contextPath;
     private String pathInfo;
     private String mountPath;
@@ -88,6 +85,14 @@ public class ChannelDocument implements Serializable {
         this.channelName = channelName;
     }
 
+    public void setBranchId(final String branchId) {
+        this.branchId = branchId;
+    }
+
+    public String getBranchId() {
+        return branchId;
+    }
+
     /**
      * @return Returns the contextpath of the URL 
      */
@@ -141,74 +146,43 @@ public class ChannelDocument implements Serializable {
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
-    
+
     @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        } else if (o instanceof ChannelDocument) {
-            ChannelDocument d = (ChannelDocument)o;
-            if(!equals(channelId, d.channelId)) {
-                return false;
-            }
-            if(!equals(channelName, d.channelName)) {
-                return false;
-            }
-            if(!equals(contextPath, d.contextPath)) {
-                return false;
-            }
-            if(!equals(pathInfo, d.pathInfo)) {
-                return false;
-            }
-            if(!equals(mountPath, d.mountPath)) {
-                return false;
-            }
-            if(!equals(hostName, d.hostName)) {
-                return false;
-            }
-            // all properties are equal, return true
-            return true;
-        }
-        return false;
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final ChannelDocument that = (ChannelDocument) o;
+
+        if (channelId != null ? !channelId.equals(that.channelId) : that.channelId != null) return false;
+        if (channelName != null ? !channelName.equals(that.channelName) : that.channelName != null) return false;
+        if (branchId != null ? !branchId.equals(that.branchId) : that.branchId != null) return false;
+        if (contextPath != null ? !contextPath.equals(that.contextPath) : that.contextPath != null) return false;
+        if (pathInfo != null ? !pathInfo.equals(that.pathInfo) : that.pathInfo != null) return false;
+        if (mountPath != null ? !mountPath.equals(that.mountPath) : that.mountPath != null) return false;
+        if (hostName != null ? !hostName.equals(that.hostName) : that.hostName != null) return false;
+        return cmsPreviewPrefix != null ? cmsPreviewPrefix.equals(that.cmsPreviewPrefix) : that.cmsPreviewPrefix == null;
     }
 
     @Override
     public int hashCode() {
-        int result = HASH_SEED;
-        if (channelId != null) {
-            result = ODD_PRIME * result + channelId.hashCode();
-        }
-        if (channelName != null) { 
-            result = ODD_PRIME * result + channelName.hashCode();
-        }
-        if (contextPath != null) { 
-            result = ODD_PRIME * result + contextPath.hashCode();
-        }
-        if (pathInfo != null) { 
-            result = ODD_PRIME * result + pathInfo.hashCode();
-        }
-        if (mountPath != null) { 
-            result = ODD_PRIME * result + mountPath.hashCode();
-        }
-        if (channelName != null) { 
-            result = ODD_PRIME * result + channelName.hashCode();
-        }
-        if (hostName != null) { 
-            result = ODD_PRIME * result + hostName.hashCode();
-        }
+        int result = channelId != null ? channelId.hashCode() : 0;
+        result = 31 * result + (channelName != null ? channelName.hashCode() : 0);
+        result = 31 * result + (branchId != null ? branchId.hashCode() : 0);
+        result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
+        result = 31 * result + (pathInfo != null ? pathInfo.hashCode() : 0);
+        result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
+        result = 31 * result + (hostName != null ? hostName.hashCode() : 0);
+        result = 31 * result + (cmsPreviewPrefix != null ? cmsPreviewPrefix.hashCode() : 0);
         return result;
-    }
-    
-    public static boolean equals(String str1, String str2) {
-        return str1 == null ? str2 == null : str1.equals(str2);
     }
 
     @Override
     public String toString() {
-        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", hostName=" + hostName
+        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", branchId= " + branchId +
+                ", hostName=" + hostName
                 + ", contextPath=" + contextPath + ", cmsPreviewPrefix=" + cmsPreviewPrefix + ", mountPath="
                 + mountPath + ", pathInfo=" + pathInfo + "]";
     }
-    
-    
+
 }

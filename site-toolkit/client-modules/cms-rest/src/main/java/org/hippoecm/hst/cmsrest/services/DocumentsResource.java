@@ -16,7 +16,6 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -78,6 +77,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             ChannelDocument document = new ChannelDocument();
             document.setChannelId(channel.getId());
             document.setChannelName(channel.getName());
+            document.setBranchId(channel.getBranchId());
             if (StringUtils.isNotEmpty(link.getPath())) {
                 document.setPathInfo("/" + link.getPath());
             } else {
