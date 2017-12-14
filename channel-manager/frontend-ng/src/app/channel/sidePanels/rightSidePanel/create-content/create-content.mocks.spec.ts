@@ -22,15 +22,15 @@ import { MatDialogRef } from '@angular/material';
 
 export class CreateContentServiceMock {
   getTemplateQuery(id) {
-    return Observable.of(null);
+    return Promise.resolve(null);
   }
 
   createDraft(documentDetails: DocumentDetails) {
-    return Observable.of(null);
+    return Promise.resolve(null);
   }
 
   generateDocumentUrlByName(name, locale: string = '') {
-    return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
+    return Promise.resolve(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 
   getDocument() {
