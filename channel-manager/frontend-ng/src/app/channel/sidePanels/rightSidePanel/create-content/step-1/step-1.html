@@ -77,7 +77,7 @@
     <button mat-button class="qa-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.urlField">
+            [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.validateFields()">
       {{ 'CONTINUE' | translate | uppercase }}
     </button>
   </div>

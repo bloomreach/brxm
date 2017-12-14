@@ -18,7 +18,7 @@
   <!-- Document name field -->
   <div class="field">
     <mat-form-field class="create-content-field qa-name-field">
-      <input matInput [(ngModel)]="nameField" name="name" placeholder="Document name" required #nameInputElement>
+      <input matInput [(ngModel)]="nameField" name="name" placeholder="Document name" required #nameInputElement autocomplete="off">
     </mat-form-field>
 
     <hippo-hints [data]="form.controls.name.errors" *ngIf="form.controls.name && form.controls.name.touched">
@@ -29,7 +29,7 @@
   <!-- Document URL field -->
   <div class="field">
     <mat-form-field class="create-content-field qa-url-field">
-      <input matInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!isManualUrlMode">
+      <input matInput [(ngModel)]="urlField" name="url" placeholder="URL" required [disabled]="!isManualUrlMode" autocomplete="off">
 
       <!-- Edit button -->
       <button *ngIf="!isManualUrlMode"
