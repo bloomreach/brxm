@@ -257,7 +257,7 @@ public class ResourceServlet extends HttpServlet {
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        final URL resource = getResourceURL(resourcePath);
+        final URL resource = getResourceURL(resourcePath, req);
         if (resource == null) {
             notFound(resp, resourcePath);
             return;
@@ -316,8 +316,8 @@ public class ResourceServlet extends HttpServlet {
         return set;
     }
 
-    private URL getResourceURL(final String resourcePath) throws MalformedURLException {
-        if (!isAllowed(resourcePath)) {
+    private URL getResourceURL(final String resourcePath, final HttpServletRequest request) throws MalformedURLException {
+        if (!isAllowed(resourcePath, request)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
@@ -338,7 +338,7 @@ public class ResourceServlet extends HttpServlet {
         return resource;
     }
 
-    protected boolean isAllowed(final String resourcePath) {
+    protected boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
             return false;
         }
