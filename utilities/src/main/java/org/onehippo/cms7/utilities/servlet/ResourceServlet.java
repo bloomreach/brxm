@@ -40,28 +40,72 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Serves resources from either web application or classpath. <p> </p> A typical configuration is to set classpath
- * resource path and map a servlet path to this servlet. <p> <xmp> <servlet> <servlet-name>ExampleResourceServlet</servlet-name>
- * <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class> <init-param>
- * <param-name>jarPathPrefix</param-name> <param-value>/META-INF/example/myapp/skin</param-value> </init-param>
- * </servlet> <servlet-mapping> <servlet-name>ExampleResourceServlet</servlet-name>
- * <url-pattern>/myapp/skin/*</url-pattern> </servlet-mapping> </xmp> </p> <p> With the configuration above, requests by
- * paths, "/myapp/skin/*", will be served by <CODE>ExampleResourceServlet</CODE>, which reads the target resource from
- * the configured classpath resource path, "/META-INF/example/myapp/skin". For example, if the request path info is
- * "/myapp/skin/example.png", then the servlet will find the corresponding classpath resource,
- * "classpath:META-INF/example/myapp/skin/example.png", to serve the request. </p> <p>The following init parameters are
- * available:</p> <table border="2"> <tr> <th>Init parameter name</th> <th>Description</th> <th>Example value</th>
- * <th>Default value</th> </tr> <tr> <td>jarPathPrefix</td> <td>Classpath resource path prefix</td>
- * <td>META-INF/example/myapp/skin</td> <td>META-INF</td> </tr> <tr> <td>gzipEnabled</td> <td>Flag to enable/disable
- * gzip encoded response for specified mimeTypes, which can be configured by 'compressedMimeTypes' init parameter.</td>
- * <td>false</td> <td>true</td> </tr> <tr> <td>webResourceEnabled</td> <td>Flag to enable/disable to read resources from
- * the servlet context on web application resources. If this is enabled, then the servlet will try to read a resource
- * from the web application first by the request path info. </td> <td>false</td> <td>true</td> </tr> <tr>
- * <td>jarResourceEnabled</td> <td> Flag to enable/disable to read resources from the classpath resources. If this is
- * enabled, then the servlet will try to read a resource from the classpath.</td> <td>false</td> <td>true</td> </tr>
- * <tr> <td>allowedResourcePaths</td> <td>Sets resource path regex patterns which are allowed to serve by this
- * servlet.</td> <td>
- * <pre>
+ * Serves resources from either web application or classpath.
+ * <p>
+ * </p>
+ * A typical configuration is to set classpath resource path and map a servlet path to this servlet.
+ * <p>
+ * <xmp>
+ *     <servlet>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+ *         <init-param>
+ *             <param-name>jarPathPrefix</param-name>
+ *             <param-value>/META-INF/example/myapp/skin</param-value>
+ *         </init-param>
+ *     </servlet>
+ *     <servlet-mapping>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <url-pattern>/myapp/skin/*</url-pattern>
+ *     </servlet-mapping>
+ * </xmp>
+ * </p>
+ * <p>
+ * With the configuration above, requests by paths, "/myapp/skin/*", will be served by
+ * <CODE>ExampleResourceServlet</CODE>, which reads the target resource from the configured classpath resource path,
+ * "/META-INF/example/myapp/skin". For example, if the request path info is "/myapp/skin/example.png", then the servlet
+ * will find the corresponding classpath resource, "classpath:META-INF/example/myapp/skin/example.png", to serve the
+ * request.
+ * </p>
+ * <p>The following init parameters are available:</p>
+ * <table border="2">
+ *     <tr>
+ *         <th>Init parameter name</th>
+ *         <th>Description</th>
+ *         <th>Example value</th>
+ *         <th>Default value</th>
+ *     </tr>
+ *     <tr>
+ *         <td>jarPathPrefix</td>
+ *         <td>Classpath resource path prefix</td>
+ *         <td>META-INF/example/myapp/skin</td>
+ *         <td>META-INF</td>
+ *     </tr>
+ *     <tr>
+ *         <td>gzipEnabled</td>
+ *         <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by
+ *          'compressedMimeTypes' init parameter.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>webResourceEnabled</td>
+ *         <td>Flag to enable/disable to read resources from the servlet context on web application resources. If this is enabled,
+ * then the servlet will try to read a resource from the web application first by the request path info. </td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>jarResourceEnabled</td>
+ *         <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>allowedResourcePaths</td>
+ *         <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
+ *         <td>
+ *             <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
@@ -72,8 +116,9 @@ import org.slf4j.LoggerFactory;
  *                 ^/.*\\.swf,
  *                 ^/.*\\.txt
  *             </pre>
- * </td> <td>
- * <pre>
+ *         </td>
+ *         <td>
+ *             <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
