@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
                     " FROM " + HippoNodeType.NT_GROUP +
                     " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
                           " (  " +
-                              "fn:name() = '{}' OR " +
+                              "contains(hippo:_localname, '{}') OR " +
                               "contains(hipposys:description, '{}') OR " +
                               "contains(hipposys:members, '{}') OR " +
                               "contains(hipposys:groups, '{}') " +

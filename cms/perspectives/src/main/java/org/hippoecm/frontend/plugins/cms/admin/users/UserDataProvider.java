@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +38,13 @@ public class UserDataProvider extends SearchableDataProvider<User> {
                +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
 
     private static final String QUERY_USER_LIST_TEMPLATE = "SELECT * " +
-                "  FROM " + HippoNodeType.NT_USER
-                +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
+                " FROM " + HippoNodeType.NT_USER +
+                " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
                             "(" +
-                                " fn:name() = '{}' OR " +
-                                " contains(hipposys:firstname, '{}') OR "+
-                                " contains(hipposys:lastname, '{}') OR "+
-                                " contains(hipposys:email, '{}')"+
+                                " contains(hippo:_localname, '{}') OR " +
+                                " contains(hipposys:firstname, '{}') OR " +
+                                " contains(hipposys:lastname, '{}') OR " +
+                                " contains(hipposys:email, '{}')" +
                             ")";
 
     private static final String HIPPO_USERS_NODE_PATH = "/hippo:configuration/hippo:users";
@@ -60,7 +60,6 @@ public class UserDataProvider extends SearchableDataProvider<User> {
     protected UserDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate) {
         super(searchAllSqlStatement, searchTermSqlStatementTemplate, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
-
     }
 
     @Override
