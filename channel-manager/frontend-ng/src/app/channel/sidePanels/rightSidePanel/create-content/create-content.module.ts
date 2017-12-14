@@ -20,7 +20,6 @@ import { FormsModule } from '@angular/forms';
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 import { CreateContentComponent } from './step-1/step-1.component';
 import { CreateContentStep2Component } from './step-2/step-2.component';
-import { CreateContentService } from './create-content.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { NameUrlFieldsComponent } from './name-url-fields/name-url-fields.component';
 import { FieldsEditorDirective } from '../fieldsEditor/fields-editor.component';
@@ -28,6 +27,7 @@ import { SharedspaceToolbarDirective } from '../fields/ckeditor/sharedspace-tool
 import { NameUrlFieldsDialogComponent } from './step-2/name-url-fields-dialog/name-url-fields-dialog';
 import { DocumentLocationFieldComponent } from './document-location/document-location-field.component';
 import { CapitalizePipe } from '../../../../shared/pipes/capitalize.pipe';
+import { CreateContentServiceProvider } from './create-content.service.provider';
 
 @NgModule({
   imports: [
@@ -53,7 +53,7 @@ import { CapitalizePipe } from '../../../../shared/pipes/capitalize.pipe';
     DocumentLocationFieldComponent
   ],
   providers: [
-    CreateContentService
+    CreateContentServiceProvider
   ]
 })
 export class CreateContentModule {}

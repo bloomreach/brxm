@@ -21,6 +21,7 @@ import fieldsEditorComponent from './fieldsEditor/fieldsEditor.ng1.component';
 
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
+import createContentModule from './create-content/createContent.module';
 
 import { CreateContentComponent } from './create-content/step-1/step-1.component.ts';
 import { CreateContentStep2Component } from './create-content/step-2/step-2.component.ts';
@@ -30,6 +31,7 @@ const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
     fieldsModule,
     resizeHandleModule,
+    createContentModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
   .component('hippoEditContent', editContentComponent)

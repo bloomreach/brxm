@@ -20,13 +20,14 @@ import { TranslateService } from '@ngx-translate/core';
 import './step-2.scss';
 
 import ContentService from '../../../../../services/content.service';
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { Document, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service.js';
+import 'rxjs/add/observable/fromPromise';
 
 @Component({
   selector: 'hippo-create-content-step-2',

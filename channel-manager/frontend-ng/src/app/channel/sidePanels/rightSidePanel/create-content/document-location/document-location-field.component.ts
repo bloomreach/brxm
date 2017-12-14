@@ -17,9 +17,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import ChannelService from '../../../../channel.service.js';
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import { Folder } from '../create-content.types';
 import { Channel } from '../../../../../shared/interfaces/channel.types';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
 
 @Component({
   selector: 'hippo-document-location-field',
@@ -86,12 +88,10 @@ export class DocumentLocationFieldComponent implements OnInit {
   }
 
   private setDocumentLocation(documentLocation: string) {
-    this.createContentService
-      .getFolders(documentLocation)
-      .subscribe(
-        (folders) => this.onLoadFolders(folders),
-        (error) => this.onError(error, 'Unknown error loading folders')
-      );
+    Observable.fromPromise(this.createContentService.getFolders(documentLocation)).subscribe(
+      (folders) => this.onLoadFolders(folders as any),
+      (error) => this.onError(error, 'Unknown error loading folders')
+    );
   }
 
   /**

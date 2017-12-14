@@ -22,7 +22,7 @@ import 'rxjs/add/observable/throw';
 
 import ChannelService from '../../../../channel.service';
 import FeedbackService from '../../../../../services/feedback.service';
-import {CreateContentService} from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import {DocumentTypeInfo} from '../create-content.types';
 import {ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock} from '../create-content.mocks.spec';
 import {CreateContentComponent} from './step-1.component';

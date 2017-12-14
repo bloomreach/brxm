@@ -17,7 +17,6 @@ import { Inject, OnInit, ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import './name-url-fields-dialog.scss';
-import { CreateContentService } from '../../create-content.service';
 import { NameUrlFieldsComponent } from '../../name-url-fields/name-url-fields.component';
 
 @Component({

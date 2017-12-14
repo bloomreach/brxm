@@ -20,7 +20,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/toPromise';
 
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../shared/shared.module';

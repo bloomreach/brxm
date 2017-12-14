@@ -8,7 +8,7 @@ import { NameUrlFieldsDialogComponent } from "./name-url-fields-dialog";
 import { NameUrlFieldsComponent } from './../../name-url-fields/name-url-fields.component';
 import { SharedModule } from '../../../../../../shared/shared.module';
 import { HintsComponent } from '../../../../../../shared/components/hints/hints.component';
-import { CreateContentService } from '../../create-content.service';
+import CreateContentService from '../../createContent.service.js';
 import { CreateContentServiceMock } from "../../create-content.mocks.spec";
 
 xdescribe('NameUrlFields Component', () => {
