@@ -182,6 +182,6 @@ describe('CmsService', () => {
   it('reports a usage statistic', () => {
     spyOn($window.parent.Hippo.Events, 'publish');
     CmsService.reportUsageStatistic('something');
-    expect($window.parent.Hippo.Events.publish).toHaveBeenCalledWith('something');
+    expect($window.parent.Hippo.Events.publish).toHaveBeenCalledWith('something', undefined);
   });
 });

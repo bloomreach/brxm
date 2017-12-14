@@ -20,12 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +61,9 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -738,4 +744,121 @@ public class FieldTypeUtilsTest {
         assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
         verify(field1, field2);
     }
+
+    @Test
+    public void unsupportedFieldTypesNone() {
+        final FieldSorter sorter = createMock(FieldSorter.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+
+        expect(context.getContentTypeRoot()).andReturn(null);
+        expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
+        expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
+        expect(fieldContext.getContentTypeItem()).andReturn(item);
+        expect(item.getItemType()).andReturn("String");
+
+        PowerMock.replayAll(sorter, context, fieldContext, item, fieldType);
+
+        assertThat(FieldTypeUtils.getUnsupportedFieldTypes(context).size(), equalTo(0));
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void unsupportedFieldTypesCustom() {
+        final FieldSorter sorter = createMock(FieldSorter.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+
+        expect(context.getContentTypeRoot()).andReturn(null);
+        expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
+        expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
+        expect(fieldContext.getContentTypeItem()).andReturn(item).times(2);
+        expect(item.getItemType()).andReturn("someCustomType").times(2);
+        expect(item.isProperty()).andReturn(true);
+
+        PowerMock.replayAll(sorter, context, fieldContext, item, fieldType);
+
+        final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
+        assertThat(unsupportedFieldTypes.size(), equalTo(1));
+        assertThat(unsupportedFieldTypes.iterator().next(), equalTo("Custom"));
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void unsupportedFieldTypesKnown() {
+        final FieldSorter sorter = createMock(FieldSorter.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final ContentTypeItem item2 = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+        final List<FieldTypeContext> fieldTypeContexts = new ArrayList<>();
+        fieldTypeContexts.add(fieldContext);
+        fieldTypeContexts.add(fieldContext2);
+
+        expect(context.getContentTypeRoot()).andReturn(null);
+        expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
+        expect(sorter.sortFields(context)).andReturn(fieldTypeContexts);
+
+        expect(fieldContext.getContentTypeItem()).andReturn(item).times(2);
+        expect(item.getItemType()).andReturn("selection:AnyProperty").times(2);
+
+        expect(fieldContext2.getContentTypeItem()).andReturn(item2).times(2);
+        expect(item2.getItemType()).andReturn("Boolean").times(2);
+
+        expect(item.isProperty()).andReturn(true);
+        expect(item2.isProperty()).andReturn(true);
+
+        PowerMock.replayAll(sorter, context, fieldContext, fieldContext2, item, item2, fieldType);
+
+        final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
+        assertThat(unsupportedFieldTypes.size(), equalTo(2));
+        final Iterator<String> iterator = unsupportedFieldTypes.iterator();
+        assertThat(iterator.next(), equalTo("Boolean"));
+        assertThat(iterator.next(), equalTo("selection:AnyProperty"));
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void supportedFieldTypesFiltered() {
+        final FieldSorter sorter = createMock(FieldSorter.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final ContentTypeItem item2 = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+        final List<FieldTypeContext> fieldTypeContexts = new ArrayList<>();
+        fieldTypeContexts.add(fieldContext);
+        fieldTypeContexts.add(fieldContext2);
+
+        expect(context.getContentTypeRoot()).andReturn(null);
+        expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
+        expect(sorter.sortFields(context)).andReturn(fieldTypeContexts);
+
+        expect(fieldContext.getContentTypeItem()).andReturn(item);
+        expect(item.getItemType()).andReturn("Double");
+
+        expect(fieldContext2.getContentTypeItem()).andReturn(item2).times(2);
+        expect(item2.getItemType()).andReturn("Boolean").times(2);
+
+        expect(item2.isProperty()).andReturn(true);
+
+        PowerMock.replayAll(sorter, context, fieldContext, fieldContext2, item, item2, fieldType);
+
+        final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
+        assertThat(unsupportedFieldTypes.size(), equalTo(1));
+        assertThat(unsupportedFieldTypes.iterator().next(), equalTo("Boolean"));
+
+        PowerMock.verifyAll();
+    }
+
 }
