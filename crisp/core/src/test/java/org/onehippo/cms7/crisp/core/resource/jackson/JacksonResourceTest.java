@@ -16,17 +16,12 @@
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
-import org.onehippo.cms7.crisp.core.resource.jackson.model.Image;
-import org.onehippo.cms7.crisp.core.resource.jackson.model.Widget;
-import org.onehippo.cms7.crisp.core.resource.jackson.model.Window;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +39,6 @@ public class JacksonResourceTest {
     private JsonNode rootNode;
     private Resource rootResource;
     private ObjectMapper objectMapper;
-    private ResourceBeanMapper resourceBeanMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -58,8 +52,6 @@ public class JacksonResourceTest {
         } finally {
             IOUtils.closeQuietly(input);
         }
-
-        resourceBeanMapper = new JacksonResourceBeanMapper(objectMapper);
     }
 
     @Test
@@ -256,35 +248,4 @@ public class JacksonResourceTest {
         }
     }
 
-    @Test
-    public void testBeanMapping() throws Exception {
-        Resource widgetRes = rootResource.getValueMap().get("widget", Resource.class);
-        Widget widget = resourceBeanMapper.map(widgetRes, Widget.class);
-        assertEquals("on", widget.getDebug());
-
-        Window window = widget.getWindow();
-        assertNotNull(window);
-        assertEquals("Sample Konfabulator Widget", window.getTitle());
-        assertEquals("main_window", window.getName());
-        assertEquals(500, window.getWidth());
-        assertEquals(500, window.getHeight());
-
-        List<Image> images = widget.getImages();
-        assertNotNull(images);
-        assertEquals(2, images.size());
-
-        Image image = images.get(0);
-        assertEquals("Images/Sun.png", image.getSource());
-        assertEquals("sun1", image.getName());
-        assertEquals(250, image.gethOffset());
-        assertEquals(250, image.getvOffset());
-        assertEquals("center", image.getAlignment());
-
-        image = images.get(1);
-        assertEquals("Images/Moon.png", image.getSource());
-        assertEquals("moon1", image.getName());
-        assertEquals(100, image.gethOffset());
-        assertEquals(100, image.getvOffset());
-        assertEquals("left", image.getAlignment());
-    }
 }

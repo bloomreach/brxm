@@ -18,8 +18,8 @@ package org.onehippo.cms7.crisp.core.resource.jdom;
 import java.io.IOException;
 
 import org.jdom2.transform.JDOMSource;
+import org.onehippo.cms7.crisp.api.resource.AbstractResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -27,7 +27,7 @@ import org.springframework.oxm.XmlMappingException;
 /**
  * Mapper to convert a {@link JdomResource} object to a bean.
  */
-public class JdomResourceBeanMapper implements ResourceBeanMapper {
+public class JdomResourceBeanMapper extends AbstractResourceBeanMapper {
 
     private final Unmarshaller unmarshaller;
 
