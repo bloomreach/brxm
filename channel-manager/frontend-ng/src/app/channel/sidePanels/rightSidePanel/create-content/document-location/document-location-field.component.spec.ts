@@ -137,77 +137,62 @@ describe('DocumentLocationField Component', () => {
       component.rootPath = rootPath;
       component.defaultPath = defaultPath;
       component.ngOnInit();
+      tick();
     };
 
     it('uses displayName(s) for the document location label', fakeAsync(() => {
       setup('/root', '', ['R00T']);
-      tick();
       expect(component.documentLocationLabel).toBe('R00T');
 
       setup('/root', 'bloom', ['R00T', 'bl00m']);
-      tick();
       expect(component.documentLocationLabel).toBe('R00T/bl00m');
     }));
 
     it('uses only one folder of root path if default path is empty', fakeAsync(() => {
       setup('', '', ['channel', 'content']);
-      tick();
       expect(component.documentLocationLabel).toBe('content');
 
       setup('root', '', ['channel', 'content', 'root']);
-      tick();
       expect(component.documentLocationLabel).toBe('root');
 
       setup('/root', '', ['root']);
-      tick();
       expect(component.documentLocationLabel).toBe('root');
 
       setup('root/path', '', ['channel', 'content', 'root', 'path']);
-      tick();
       expect(component.documentLocationLabel).toBe('path');
 
       setup('/root/path', '', ['root', 'path']);
-      tick();
       expect(component.documentLocationLabel).toBe('path');
     }));
 
     it('uses only one folder of root path if default path depth is less than 3', fakeAsync(() => {
       setup('', 'some', ['channel', 'content', 'some']);
-      tick();
       expect(component.documentLocationLabel).toBe('content/some');
 
       setup('', 'some/folder', ['channel', 'content', 'some', 'folder']);
-      tick();
       expect(component.documentLocationLabel).toBe('content/some/folder');
 
       setup('root', 'some/folder', ['channel', 'content', 'root', 'some', 'folder']);
-      tick();
       expect(component.documentLocationLabel).toBe('root/some/folder');
 
       setup('/root', 'some/folder', ['root', 'some', 'folder']);
-      tick();
       expect(component.documentLocationLabel).toBe('root/some/folder');
     }));
 
     it('always shows a maximum of 3 folders', fakeAsync(() => {
       setup('root', 'folder/with/document', ['channel', 'content', 'root', 'folder', 'with', 'document']);
-      tick();
       expect(component.documentLocationLabel).toBe('folder/with/document');
 
       setup('/root', 'folder/with/document', ['root', 'folder', 'with', 'document']);
-      tick();
       expect(component.documentLocationLabel).toBe('folder/with/document');
 
       setup('/root', 'folder/with/some/document', ['root', 'folder', 'with', 'some', 'document']);
-      tick();
       expect(component.documentLocationLabel).toBe('with/some/document');
 
       setup('/root', 'folder/with/some/nested/document', ['root', 'folder', 'with', 'some', 'nested', 'document']);
-      tick();
       expect(component.documentLocationLabel).toBe('some/nested/document');
 
       setup('/root/path', 'folder/with/some/nested/document', ['root', 'path', 'folder', 'with', 'some', 'nested', 'document']);
-      tick();
       expect(component.documentLocationLabel).toBe('some/nested/document');
     }));
   });

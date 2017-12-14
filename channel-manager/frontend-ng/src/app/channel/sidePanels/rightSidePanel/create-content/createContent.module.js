@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
-
 import CreateContentService from './createContent.service';
 
 const createContentModule = angular

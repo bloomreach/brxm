@@ -27,7 +27,6 @@ import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.compo
 import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { Document, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service.js';
-import 'rxjs/add/observable/fromPromise';
 
 @Component({
   selector: 'hippo-create-content-step-2',
