@@ -109,7 +109,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
-        final List<IColumn> columns = new ArrayList<>();
+        final List<IColumn<User, String>> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-username"), "username") {
             @Override
@@ -120,7 +120,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         });
         columns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
         columns.add(new PropertyColumn<>(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
-        columns.add(new AbstractColumn(new ResourceModel("user-email")) {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-email")) {
             @Override
             public void populateItem(final Item cellItem, final String componentId, final IModel rowModel) {
                 cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<>(rowModel, "email")));
@@ -169,7 +169,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         };
         add(searchTermPanel);
 
-        table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
+        table = new AdminDataTable<>("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
     }
