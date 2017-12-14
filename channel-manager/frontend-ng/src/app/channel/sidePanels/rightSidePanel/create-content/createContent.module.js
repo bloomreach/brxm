@@ -15,9 +15,14 @@
  */
 
 import CreateContentService from './createContent.service';
+import documentLocationFieldComponent from './documentLocation/documentLocationField.component';
+import { downgradeComponent } from '@angular/upgrade/static';
+import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 
 const createContentModule = angular
   .module('hippo-cm.channel.createContentModule', [])
+  .component('hippoHints', downgradeComponent(HintsComponent))
+  .component('documentLocationField', documentLocationFieldComponent)
   .service('CreateContentService', CreateContentService);
 
 export default createContentModule.name;
