@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<products>
+  <product>
+    <SKU>4150349</SKU>
+    <description>MultiSync X431BT - 109.22 cm (43 &quot;) , 1920 x 480, 16:4, 500 cd/m&#178;, 3000:1, 8 ms</description>
+    <name>NEC MultiSync X431BT</name>
+    <extendedData>
+      <title>NEC MultiSync X431BT</title>
+      <type>Link</type>
+      <uri>Incentro-HIC-Site/-/products/4150349</uri>
+      <description>MultiSync X431BT - 109.22 cm (43 &quot;) , 1920 x 480, 16:4, 500 cd/m&#178;, 3000:1, 8 ms</description>
+    </extendedData>
+  </product>
+  <product>
+    <SKU>4696003</SKU>
+    <description>PA271W, 68.58 cm (27 &quot;) LCD, 2560 x 1440, 6ms, 1000:1, 300cd/m2, 1.073B</description>
+    <name>NEC PA271W</name>
+    <extendedData>
+      <title>NEC PA271W</title>
+      <type>Link</type>
+      <uri>Incentro-HIC-Site/-/products/4696003</uri>
+      <description>PA271W, 68.58 cm (27 &quot;) LCD, 2560 x 1440, 6ms, 1000:1, 300cd/m2, 1.073B</description>
+    </extendedData>
+  </product>
+  <product>
+    <SKU>4017125</SKU>
+    <description>LCD/TFT desk mount</description>
+    <name>Newstar FPMA-D700D</name>
+    <extendedData>
+      <title>Newstar FPMA-D700D</title>
+      <type>Link</type>
+      <uri>Incentro-HIC-Site/-/products/4017125</uri>
+      <description>LCD/TFT desk mount</description>
+    </extendedData>
+  </product>
+</products>

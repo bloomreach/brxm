@@ -15,8 +15,8 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
+import org.onehippo.cms7.crisp.api.resource.AbstractResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Mapper to convert a {@link JacksonResource} object to a bean.
  */
-public class JacksonResourceBeanMapper implements ResourceBeanMapper {
+public class JacksonResourceBeanMapper extends AbstractResourceBeanMapper {
 
     private final ObjectMapper objectMapper;
 

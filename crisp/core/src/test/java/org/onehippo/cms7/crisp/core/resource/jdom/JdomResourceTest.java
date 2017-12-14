@@ -16,7 +16,6 @@
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -25,12 +24,7 @@ import org.jdom2.input.SAXBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceBeanMapper;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
-import org.onehippo.cms7.crisp.core.resource.jdom.model.Image;
-import org.onehippo.cms7.crisp.core.resource.jdom.model.Widget;
-import org.onehippo.cms7.crisp.core.resource.jdom.model.Window;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,9 +35,7 @@ import static org.junit.Assert.fail;
 
 public class JdomResourceTest {
 
-    private Element rootElem;
     private Resource rootResource;
-    private ResourceBeanMapper resourceBeanMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -53,15 +45,11 @@ public class JdomResourceTest {
             input = JdomResourceTest.class.getResourceAsStream("widget.xml");
             SAXBuilder jdomBuilder = new SAXBuilder();
             Document jdomDocument = jdomBuilder.build(input);
-            rootElem = jdomDocument.getRootElement();
+            Element rootElem = jdomDocument.getRootElement();
             rootResource = new JdomResource(rootElem);
         } finally {
             IOUtils.closeQuietly(input);
         }
-
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setPackagesToScan(Widget.class.getPackage().getName());
-        resourceBeanMapper = new JdomResourceBeanMapper(marshaller);
     }
 
     @Test
@@ -257,35 +245,4 @@ public class JdomResourceTest {
         }
     }
 
-    @Test
-    public void testBeanMapping() throws Exception {
-        Resource widgetRes = rootResource.getValueMap().get("widget", Resource.class);
-        Widget widget = resourceBeanMapper.map(widgetRes, Widget.class);
-        assertEquals("on", widget.getDebug());
-
-        Window window = widget.getWindow();
-        assertNotNull(window);
-        assertEquals("Sample Konfabulator Widget", window.getTitle());
-        assertEquals("main_window", window.getName());
-        assertEquals(500, window.getWidth());
-        assertEquals(500, window.getHeight());
-
-        List<Image> images = widget.getImages();
-        assertNotNull(images);
-        assertEquals(2, images.size());
-
-        Image image = images.get(0);
-        assertEquals("Images/Sun.png", image.getSource());
-        assertEquals("sun1", image.getName());
-        assertEquals(250, image.gethOffset());
-        assertEquals(250, image.getvOffset());
-        assertEquals("center", image.getAlignment());
-
-        image = images.get(1);
-        assertEquals("Images/Moon.png", image.getSource());
-        assertEquals("moon1", image.getName());
-        assertEquals(100, image.gethOffset());
-        assertEquals(100, image.getvOffset());
-        assertEquals("left", image.getAlignment());
-    }
 }
