@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 
@@ -29,7 +30,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
  * This bean represents a document type, known to the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(Include.NON_DEFAULT)
 public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;

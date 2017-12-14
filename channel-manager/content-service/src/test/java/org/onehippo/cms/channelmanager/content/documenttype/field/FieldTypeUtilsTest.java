@@ -28,6 +28,8 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +61,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -758,7 +761,7 @@ public class FieldTypeUtilsTest {
 
         PowerMock.replayAll(sorter, context, fieldContext, item, fieldType);
 
-        assertEquals(FieldTypeUtils.getUnsupportedFieldTypes(context).size(), 0);
+        assertThat(FieldTypeUtils.getUnsupportedFieldTypes(context).size(), equalTo(0));
 
         PowerMock.verifyAll();
     }
@@ -781,8 +784,8 @@ public class FieldTypeUtilsTest {
         PowerMock.replayAll(sorter, context, fieldContext, item, fieldType);
 
         final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
-        assertEquals(unsupportedFieldTypes.size(), 1);
-        assertEquals(unsupportedFieldTypes.iterator().next(), "Custom");
+        assertThat(unsupportedFieldTypes.size(), equalTo(1));
+        assertThat(unsupportedFieldTypes.iterator().next(), equalTo("Custom"));
 
         PowerMock.verifyAll();
     }
@@ -816,13 +819,46 @@ public class FieldTypeUtilsTest {
         PowerMock.replayAll(sorter, context, fieldContext, fieldContext2, item, item2, fieldType);
 
         final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
-        assertEquals(unsupportedFieldTypes.size(), 2);
+        assertThat(unsupportedFieldTypes.size(), equalTo(2));
         final Iterator<String> iterator = unsupportedFieldTypes.iterator();
-        assertEquals(iterator.next(), "Boolean");
-        assertEquals(iterator.next(), "selection:AnyProperty");
+        assertThat(iterator.next(), equalTo("Boolean"));
+        assertThat(iterator.next(), equalTo("selection:AnyProperty"));
 
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void supportedFieldTypesFiltered() {
+        final FieldSorter sorter = createMock(FieldSorter.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final ContentTypeItem item2 = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+        final List<FieldTypeContext> fieldTypeContexts = new ArrayList<>();
+        fieldTypeContexts.add(fieldContext);
+        fieldTypeContexts.add(fieldContext2);
+
+        expect(context.getContentTypeRoot()).andReturn(null);
+        expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
+        expect(sorter.sortFields(context)).andReturn(fieldTypeContexts);
+
+        expect(fieldContext.getContentTypeItem()).andReturn(item);
+        expect(item.getItemType()).andReturn("Double");
+
+        expect(fieldContext2.getContentTypeItem()).andReturn(item2).times(2);
+        expect(item2.getItemType()).andReturn("Boolean").times(2);
+
+        expect(item2.isProperty()).andReturn(true);
+
+        PowerMock.replayAll(sorter, context, fieldContext, fieldContext2, item, item2, fieldType);
+
+        final Set<String> unsupportedFieldTypes = FieldTypeUtils.getUnsupportedFieldTypes(context);
+        assertThat(unsupportedFieldTypes.size(), equalTo(1));
+        assertThat(unsupportedFieldTypes.iterator().next(), equalTo("Boolean"));
+
+        PowerMock.verifyAll();
+    }
 
 }
