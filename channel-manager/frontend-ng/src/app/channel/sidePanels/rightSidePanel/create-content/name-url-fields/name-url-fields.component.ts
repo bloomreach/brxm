@@ -18,9 +18,10 @@ import {
   Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild, Output,
   EventEmitter
 } from '@angular/core';
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/do';
@@ -61,9 +62,9 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
   }
 
   setDocumentUrlByName() {
-    const observable = this.createContentService.generateDocumentUrlByName(this.nameField, this.locale);
+    const observable = Observable.fromPromise(this.createContentService.generateDocumentUrlByName(this.nameField, this.locale));
     observable.subscribe((slug) => {
-      this.urlField = slug;
+      this.urlField = slug as any;
     });
     return observable;
   }

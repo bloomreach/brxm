@@ -20,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import './step-2.scss';
 
 import ContentService from '../../../../../services/content.service';
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';

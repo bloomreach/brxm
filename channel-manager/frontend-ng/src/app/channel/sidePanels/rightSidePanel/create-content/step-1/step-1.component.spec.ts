@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
 import ChannelService from '../../../../channel.service';
 import FeedbackService from '../../../../../services/feedback.service';
-import {CreateContentService} from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import {DocumentTypeInfo} from '../create-content.types';
 import {ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock} from '../create-content.mocks.spec';
 import {CreateContentComponent} from './step-1.component';
@@ -77,36 +76,36 @@ describe('Create content step 1 component', () => {
       }).toThrowError('Configuration option "templateQuery" is required');
     });
 
-    it('loads documentTypes from the templateQuery', () => {
+    it('loads documentTypes from the templateQuery', fakeAsync(() => {
       const documentTypes: Array<DocumentTypeInfo> = [
         {id: 'test-id1', displayName: 'test-name 1'},
         {id: 'test-id2', displayName: 'test-name 2'},
       ];
       const spy = spyOn(createContentService, 'getTemplateQuery')
-        .and.returnValue(Observable.of({documentTypes}));
+        .and.returnValue(Promise.resolve({documentTypes}));
 
       component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
-
+      tick();
       expect(spy).toHaveBeenCalledWith('test-template-query');
       expect(component.documentType).toBeUndefined();
       expect(component.documentTypes).toBe(documentTypes);
-    });
+    }));
 
-    it('pre-selects the documentType if only one is returned from the templateQuery', () => {
+    it('pre-selects the documentType if only one is returned from the templateQuery', fakeAsync(() => {
       const documentTypes: Array<DocumentTypeInfo> = [{id: 'test-id1', displayName: 'test-name 1'}];
-      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({documentTypes}));
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Promise.resolve({documentTypes}));
 
       component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
-
+      tick();
       expect(component.documentType).toBe('test-id1');
-    });
+    }));
 
-    it('sends feedback as error when server returns 500', async(() => {
+    it('sends feedback as error when server returns 500', fakeAsync(() => {
       const feedbackSpy = spyOn(feedbackService, 'showError');
       spyOn(createContentService, 'getTemplateQuery')
-        .and.returnValue(Observable.throw({
+        .and.returnValue(Promise.reject({
         status: 500,
         data: {
           'reason': 'INVALID_TEMPLATE_QUERY',
@@ -118,7 +117,7 @@ describe('Create content step 1 component', () => {
 
       component.options = {templateQuery: 'test-template-query'};
       fixture.detectChanges();
-
+      tick();
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', {'templateQuery': 'new-document'});
     }));
   });
@@ -135,7 +134,7 @@ describe('Create content step 1 component', () => {
       const documentTypes: Array<DocumentTypeInfo> = [
         {id: 'test-id1', displayName: 'test-name 1'},
       ];
-      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Observable.of({documentTypes}));
+      spyOn(createContentService, 'getTemplateQuery').and.returnValue(Promise.resolve({documentTypes}));
     });
 
     it('assembles document object and sends it to the server', () => {
@@ -154,7 +153,7 @@ describe('Create content step 1 component', () => {
         defaultPath: '2017/12',
       };
       const spy = spyOn(createContentService, 'createDraft')
-        .and.returnValue(Observable.of('resolved'));
+        .and.returnValue(Promise.resolve('resolved'));
 
       component.submit();
       fixture.detectChanges();
@@ -162,10 +161,10 @@ describe('Create content step 1 component', () => {
       expect(spy).toHaveBeenCalledWith(data);
     });
 
-    it('sends feedback as error when server returns 500', async(() => {
+    it('sends feedback as error when server returns 500', fakeAsync(() => {
       const feedbackSpy = spyOn(feedbackService, 'showError');
       spyOn(createContentService, 'createDraft')
-        .and.returnValue(Observable.throw({
+        .and.returnValue(Promise.reject({
         status: 500,
         data: {
           'reason': 'INVALID_DOCUMENT_DETAILS',
@@ -174,7 +173,7 @@ describe('Create content step 1 component', () => {
 
       component.submit();
       fixture.detectChanges();
-
+      tick();
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_DOCUMENT_DETAILS');
     }));
   });

@@ -17,12 +17,14 @@
 import { Component, OnInit, EventEmitter, Input, Output, ViewChild, HostListener } from '@angular/core';
 import './step-1.scss';
 
-import { CreateContentService } from '../create-content.service';
-import { CreateContentOptions, DocumentDetails, DocumentTypeInfo } from '../create-content.types';
+import CreateContentService from '../createContent.service.js';
+import { CreateContentOptions, DocumentDetails, DocumentTypeInfo, TemplateQuery } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
 import { DocumentLocationFieldComponent } from '../document-location/document-location-field.component';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
 
 @Component({
   selector: 'hippo-create-content-step-1',
@@ -64,11 +66,12 @@ export class CreateContentComponent implements OnInit {
       throw new Error('Configuration option "templateQuery" is required');
     }
 
-    this.createContentService
-      .getTemplateQuery(this.options.templateQuery)
-      .subscribe(
-        (templateQuery) => this.onLoadDocumentTypes(templateQuery.documentTypes),
-        (error) => this.onErrorLoadingTemplateQuery(error),
+    Observable.fromPromise(this.createContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
+      (templateQuery) => {
+        const tplQuery = templateQuery as TemplateQuery;
+        this.onLoadDocumentTypes(tplQuery.documentTypes)
+      },
+      (error) => this.onErrorLoadingTemplateQuery(error),
     );
   }
 
@@ -91,8 +94,7 @@ export class CreateContentComponent implements OnInit {
       defaultPath: this.documentLocationField.defaultPath,
     };
 
-    this.createContentService
-      .createDraft(document)
+    Observable.fromPromise(this.createContentService.createDraft(document))
       .subscribe(
       (response) => this.onContinue.emit({
       name: this.nameUrlFields.nameField,

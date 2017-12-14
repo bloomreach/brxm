@@ -23,7 +23,7 @@ import 'rxjs/add/observable/throw';
 import { NameUrlFieldsComponent } from './name-url-fields.component';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { SharedModule } from '../../../../../shared/shared.module';
-import { CreateContentService } from '../create-content.service';
+import CreateContentService from '../createContent.service.js';
 import { ChannelServiceMock, CreateContentServiceMock } from '../create-content.mocks.spec';
 import ChannelService from '../../../../channel.service';
 
