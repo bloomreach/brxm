@@ -21,10 +21,8 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkLabel;
@@ -35,14 +33,11 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -53,11 +48,8 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
-import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
-import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
@@ -75,7 +67,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
     private final IPluginContext context;
     private final AdminDataTable table;
     private final UserDataProvider userDataProvider;
-    private boolean searchActive = false;
 
     /**
      * Constructs a new ListUsersPanel.
@@ -168,59 +159,19 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             }
         });
 
-        final Form form = new Form("search-form");
-        form.setOutputMarkupId(true);
-        add(form);
-
-        final TextField<String> search = new SubmittingTextField("search-query",
-                                                               new PropertyModel<>(userDataProvider, "searchTerm")) {
+        final SearchTermPanel searchTermPanel = new SearchTermPanel("search-field") {
             @Override
-            public void onEnter(final AjaxRequestTarget target) {
-                super.onEnter(target);
-                processSubmit(target, form);
+            public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
+                super.processSubmit(target, form, searchTerm);
+                userDataProvider.setSearchTerm(searchTerm);
+                target.add(table);
             }
         };
-        search.add(StringValidator.minimumLength(1));
-        search.setRequired(false);
-        search.add(new DefaultFocusBehavior());
-        form.add(search);
-
-        final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
-            @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
-                // when searchActive this link is the remove link
-                if (searchActive) {
-                    userDataProvider.setSearchTerm(StringUtils.EMPTY);
-                }
-                processSubmit(target, form);
-            }
-        };
-        browseLink.add(createSearchIcon(userDataProvider));
-        form.add(browseLink);
+        add(searchTermPanel);
 
         table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
-    }
-
-    private void processSubmit(final AjaxRequestTarget target, final Form<?> form) {
-        searchActive = StringUtils.isNotBlank(userDataProvider.getSearchTerm());
-        target.add(table);
-        target.add(form);
-    }
-
-    private Component createSearchIcon(final UserDataProvider userDataProvider) {
-        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
-            @Override
-            protected Icon load() {
-                if (StringUtils.isNotBlank(userDataProvider.getSearchTerm())) {
-                    return Icon.TIMES;
-                } else {
-                    return Icon.SEARCH;
-                }
-            }
-        };
-        return HippoIcon.fromSprite("search-icon", iconModel);
     }
 
     private class DeleteUserActionLink extends AjaxLinkLabel {

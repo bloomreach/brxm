@@ -24,14 +24,7 @@
   </ul>
   <div>
     <h3><wicket:message key="user-overview-list-title"/></h3>
-    <form wicket:id="search-form">
-      <div class="section-search-input">
-        <input type="text" size="35" class="search-input" wicket:id="search-query" wicket:message="title:user-search-help,placeholder:search-field-placeholder"/>
-        <a wicket:id="toggle">
-          <span wicket:id="search-icon" />
-        </a>
-      </div>
-    </form>
+    <span wicket:id="search-field"></span>
     <br/>
     <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
   </div>
