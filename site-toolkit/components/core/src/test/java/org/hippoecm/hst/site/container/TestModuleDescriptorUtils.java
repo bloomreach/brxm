@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class TestModuleDescriptorUtils {
     
@@ -79,6 +80,38 @@ public class TestModuleDescriptorUtils {
         ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics.with.parent");
         assertEquals("org.example.analytics.with.parent", moduleDef.getName());
         assertEquals("org.example.analytics", moduleDef.getParent());
+    }
+
+    @Test
+    public void test_module_envelope_for_actual_modules() throws Exception {
+        List<ModuleDefinition> moduleDefs =
+                ModuleDescriptorUtils.collectAllModuleDefinitions(Thread.currentThread().getContextClassLoader(), "META-INF/hst-assembly/addon/module-envelope-for-actual-modules.xml");
+        assertEquals("Expected 4 modules since 2 <module> elements are only used as envelope", 4, moduleDefs.size());
+
+
+        {
+            ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.noparent.reports");
+            assertNull(moduleDef.getParent());
+            assertNull(moduleDef.getModuleDefinitions());
+        }
+        {
+            ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics1.reports");
+            assertEquals("org.example.analytics1", moduleDef.getParent());
+            assertNull(moduleDef.getModuleDefinitions());
+        }
+        {
+            ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics2.statistics");
+            assertEquals("org.example.analytics2", moduleDef.getParent());
+            assertNull(moduleDef.getModuleDefinitions());
+        }
+        {
+            ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics3.statistics");
+            assertEquals("org.example.analytics3", moduleDef.getParent());
+            assertEquals(2, moduleDef.getModuleDefinitions().size());
+            assertNotNull(findModuleDefinitionByName(moduleDef.getModuleDefinitions(), "sub1"));
+            assertNotNull(findModuleDefinitionByName(moduleDef.getModuleDefinitions(), "sub2"));
+        }
+
     }
 
     @Test
