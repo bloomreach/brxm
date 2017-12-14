@@ -19,19 +19,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
@@ -41,79 +34,34 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Serves resources from either web application or classpath.
- * <p>
- * </p>
- * A typical configuration is to set classpath resource path and map a servlet path to this servlet.
- * <p>
- * <xmp>
- *     <servlet>
- *         <servlet-name>ExampleResourceServlet</servlet-name>
- *         <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
- *         <init-param>
- *             <param-name>jarPathPrefix</param-name>
- *             <param-value>/META-INF/example/myapp/skin</param-value>
- *         </init-param>
- *     </servlet>
- *     <servlet-mapping>
- *         <servlet-name>ExampleResourceServlet</servlet-name>
- *         <url-pattern>/myapp/skin/*</url-pattern>
- *     </servlet-mapping>
- * </xmp>
- * </p>
- * <p>
- * With the configuration above, requests by paths, "/myapp/skin/*", will be served by
- * <CODE>ExampleResourceServlet</CODE>, which reads the target resource from the configured classpath resource path,
- * "/META-INF/example/myapp/skin". For example, if the request path info is "/myapp/skin/example.png", then the servlet
- * will find the corresponding classpath resource, "classpath:META-INF/example/myapp/skin/example.png", to serve the
- * request.
- * </p>
- * <p>The following init parameters are available:</p>
- * <table border="2">
- *     <tr>
- *         <th>Init parameter name</th>
- *         <th>Description</th>
- *         <th>Example value</th>
- *         <th>Default value</th>
- *     </tr>
- *     <tr>
- *         <td>jarPathPrefix</td>
- *         <td>Classpath resource path prefix</td>
- *         <td>META-INF/example/myapp/skin</td>
- *         <td>META-INF</td>
- *     </tr>
- *     <tr>
- *         <td>gzipEnabled</td>
- *         <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by
- *          'compressedMimeTypes' init parameter.</td>
- *         <td>false</td>
- *         <td>true</td>
- *     </tr>
- *     <tr>
- *         <td>webResourceEnabled</td>
- *         <td>Flag to enable/disable to read resources from the servlet context on web application resources. If this is enabled,
- * then the servlet will try to read a resource from the web application first by the request path info. </td>
- *         <td>false</td>
- *         <td>true</td>
- *     </tr>
- *     <tr>
- *         <td>jarResourceEnabled</td>
- *         <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
- *         <td>false</td>
- *         <td>true</td>
- *     </tr>
- *     <tr>
- *         <td>allowedResourcePaths</td>
- *         <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
- *         <td>
- *             <pre>
+ * Serves resources from either web application or classpath. <p> </p> A typical configuration is to set classpath
+ * resource path and map a servlet path to this servlet. <p> <xmp> <servlet> <servlet-name>ExampleResourceServlet</servlet-name>
+ * <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class> <init-param>
+ * <param-name>jarPathPrefix</param-name> <param-value>/META-INF/example/myapp/skin</param-value> </init-param>
+ * </servlet> <servlet-mapping> <servlet-name>ExampleResourceServlet</servlet-name>
+ * <url-pattern>/myapp/skin/*</url-pattern> </servlet-mapping> </xmp> </p> <p> With the configuration above, requests by
+ * paths, "/myapp/skin/*", will be served by <CODE>ExampleResourceServlet</CODE>, which reads the target resource from
+ * the configured classpath resource path, "/META-INF/example/myapp/skin". For example, if the request path info is
+ * "/myapp/skin/example.png", then the servlet will find the corresponding classpath resource,
+ * "classpath:META-INF/example/myapp/skin/example.png", to serve the request. </p> <p>The following init parameters are
+ * available:</p> <table border="2"> <tr> <th>Init parameter name</th> <th>Description</th> <th>Example value</th>
+ * <th>Default value</th> </tr> <tr> <td>jarPathPrefix</td> <td>Classpath resource path prefix</td>
+ * <td>META-INF/example/myapp/skin</td> <td>META-INF</td> </tr> <tr> <td>gzipEnabled</td> <td>Flag to enable/disable
+ * gzip encoded response for specified mimeTypes, which can be configured by 'compressedMimeTypes' init parameter.</td>
+ * <td>false</td> <td>true</td> </tr> <tr> <td>webResourceEnabled</td> <td>Flag to enable/disable to read resources from
+ * the servlet context on web application resources. If this is enabled, then the servlet will try to read a resource
+ * from the web application first by the request path info. </td> <td>false</td> <td>true</td> </tr> <tr>
+ * <td>jarResourceEnabled</td> <td> Flag to enable/disable to read resources from the classpath resources. If this is
+ * enabled, then the servlet will try to read a resource from the classpath.</td> <td>false</td> <td>true</td> </tr>
+ * <tr> <td>allowedResourcePaths</td> <td>Sets resource path regex patterns which are allowed to serve by this
+ * servlet.</td> <td>
+ * <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
@@ -124,9 +72,8 @@ import org.slf4j.LoggerFactory;
  *                 ^/.*\\.swf,
  *                 ^/.*\\.txt
  *             </pre>
- *         </td>
- *         <td>
- *             <pre>
+ * </td> <td>
+ * <pre>
  *                 ^/.*\\.js,
  *                 ^/.*\\.css,
  *                 ^/.*\\.png,
@@ -200,11 +147,6 @@ public class ResourceServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceServlet.class);
 
-    private static final String PROXY_FROM_TO_SEPARATOR = "@";
-    private static final String PROXY_SEPARATOR = ",";
-    private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
-    private static final String PROXY_ENABLED_MESSAGE = "Resource proxy enabled with the following mapping(s)";
-
     private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
 
     private static final String HTTP_IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
@@ -215,6 +157,8 @@ public class ResourceServlet extends HttpServlet {
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
 
     private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<>();
+    private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<>();
+    private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<>();
 
     static {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.html"));
@@ -235,8 +179,6 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff2"));
     }
-
-    private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<>();
 
     static {
         DEFAULT_MIME_TYPES.put(".html", "text/html");
@@ -261,8 +203,6 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".woff2", "font/woff2");
     }
 
-    private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<>();
-
     static {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
@@ -276,7 +216,6 @@ public class ResourceServlet extends HttpServlet {
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
-    private Map<String, String> proxies;
 
     @Override
     public void init() throws ServletException {
@@ -306,54 +245,8 @@ public class ResourceServlet extends HttpServlet {
             }
         }
 
-        proxies = initProxies(jarPathPrefix);
     }
 
-    /**
-     * Examples configurations and mapping
-     * - jarPath=/angular
-     * - from=angular/hippo-cm
-     * - to=http://localhost:9090
-     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/"
-     * <p>
-     * - jarPath=/angular
-     * - from=angular/hippo-cm
-     * - to=http://localhost:9090/cms/angular/hippo-cm
-     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
-     */
-    private static HashMap<String, String> initProxies(final String jarPathPrefix) {
-        final HashMap<String, String> proxies = new HashMap<>();
-        final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
-
-        if (StringUtils.isNotBlank(proxiesAsString)) {
-            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
-                    .filter(StringUtils::isNotBlank)
-                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
-                    .forEach(fromTo -> {
-                        if (fromTo.length > 1) {
-                            String from = StringUtils.trim(fromTo[0]);
-                            from = prependIfMissing(from, "/");
-                            from = appendIfMissing(from, "/");
-                            String to = StringUtils.trim(fromTo[1]);
-                            to = appendIfMissing(to, "/");
-                            if (from.startsWith(jarPathPrefix + "/")) {
-                                from = StringUtils.removeStart(from, jarPathPrefix);
-                                proxies.put(from, to);
-                            }
-                        }
-                    });
-        }
-
-        if (!proxies.isEmpty()) {
-            final List<String> messages = new ArrayList<>(proxies.size() + 1);
-            messages.add(PROXY_ENABLED_MESSAGE);
-            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
-
-            logBorderedMessage(messages);
-        }
-
-        return proxies;
-    }
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -364,7 +257,7 @@ public class ResourceServlet extends HttpServlet {
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        final URL resource = getResourceURL(resourcePath, queryParams, req);
+        final URL resource = getResourceURL(resourcePath);
         if (resource == null) {
             notFound(resp, resourcePath);
             return;
@@ -377,24 +270,6 @@ public class ResourceServlet extends HttpServlet {
         }
 
         final long modifiedSince = req.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
-
-        if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
-
-            if (modifiedSince >= 0) {
-                conn.setIfModifiedSince(modifiedSince);
-            }
-
-            final HttpURLConnection httpConn = (HttpURLConnection) conn;
-            try {
-                if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    notFound(resp, resourcePath);
-                    return;
-                }
-            } catch (final ConnectException e) {
-                log.error("Failed to connect to proxy URL {}", resource);
-                throw e;
-            }
-        }
 
         final long lastModified = conn.getLastModified();
 
@@ -441,26 +316,13 @@ public class ResourceServlet extends HttpServlet {
         return set;
     }
 
-    private URL getResourceURL(final String resourcePath, final String queryParams, final HttpServletRequest request) throws MalformedURLException {
-        if (!isAllowed(resourcePath, request)) {
+    private URL getResourceURL(final String resourcePath) throws MalformedURLException {
+        if (!isAllowed(resourcePath)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
 
             return null;
-        }
-
-        for (final Entry<String, String> entry : proxies.entrySet()) {
-            final String from = entry.getKey();
-            final String to = entry.getValue();
-
-            if (resourcePath.startsWith(from)) {
-                final String url = to + StringUtils.substringAfter(resourcePath, from) + queryParams;
-
-                log.debug("Loading resource from proxy {}", url);
-
-                return new URL(url);
-            }
         }
 
         URL resource = null;
@@ -469,16 +331,14 @@ public class ResourceServlet extends HttpServlet {
             resource = getServletContext().getResource(resourcePath);
         }
 
-        if (resource == null) {
-            if (jarResourceEnabled) {
-                resource = getJarResource(resourcePath);
-            }
+        if (resource == null && jarResourceEnabled) {
+            resource = getJarResource(resourcePath);
         }
 
         return resource;
     }
 
-    protected boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
+    protected boolean isAllowed(final String resourcePath) {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
             return false;
         }
@@ -506,7 +366,7 @@ public class ResourceServlet extends HttpServlet {
         return getDefaultClassLoader().getResource(jarResourcePath);
     }
 
-    private void prepareResponse(final HttpServletResponse response, final URL resource, final long lastModified, final int contentLength) throws IOException {
+    private void prepareResponse(final HttpServletResponse response, final URL resource, final long lastModified, final int contentLength) {
         final String resourcePath = resource.getPath();
         String mimeType = null;
 
@@ -573,10 +433,6 @@ public class ResourceServlet extends HttpServlet {
         return value;
     }
 
-    private boolean hasInitParameter(final String name) {
-        return getServletConfig().getInitParameter(name) != null;
-    }
-
     private ClassLoader getDefaultClassLoader() {
         ClassLoader cl = null;
         try {
@@ -591,37 +447,6 @@ public class ResourceServlet extends HttpServlet {
         return cl;
     }
 
-    private static void logBorderedMessage(final List<String> messages) {
-        final String prefix = "** ";
-        final String suffix = " **";
-        final int fixLength = prefix.length() + suffix.length();
-
-        // find longest message
-        messages.stream().max(Comparator.comparingInt(String::length)).ifPresent(longest -> {
-            final int width = longest.length() + fixLength;
-            final String border = StringUtils.repeat("*", width);
-            log.info(border);
-            messages.forEach(msg -> {
-                final String rightPadding = StringUtils.repeat(" ", width - fixLength - msg.length());
-                log.info(prefix + msg + rightPadding + suffix);
-            });
-            log.info(border);
-        });
-    }
-
-    private static String prependIfMissing(final String str, final String prefix) {
-        if (str == null || StringUtils.isEmpty(prefix) || StringUtils.startsWith(str, prefix)) {
-            return str;
-        }
-        return prefix + str;
-    }
-
-    private static String appendIfMissing(final String str, final String suffix) {
-        if (str == null || StringUtils.isEmpty(suffix) || StringUtils.endsWith(str, suffix)) {
-            return str;
-        }
-        return str + suffix;
-    }
 
     private class GZIPResponseStream extends ServletOutputStream {
 
