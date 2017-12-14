@@ -41,9 +41,15 @@ public class DocumentsResource extends BaseResource implements DocumentService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
     private HstLinkCreator hstLinkCreator;
+    // default a noop context augmenter
+    private List<DocumentContextAugmenter> documentContextAugmenters = new ArrayList<>();
 
     public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
         this.hstLinkCreator = hstLinkCreator;
+    }
+
+    public void addDocumentContextAugmenter(final DocumentContextAugmenter documentContextAugmenter) {
+        documentContextAugmenters.add(documentContextAugmenter);
     }
 
     public ChannelDocumentDataset getChannels(String uuid) {
@@ -51,6 +57,8 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         final ChannelDocumentDataset dataset = new ChannelDocumentDataset();
 
         HstRequestContext requestContext = RequestContextProvider.get();
+
+        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
@@ -114,6 +122,9 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         }
 
         HstRequestContext requestContext = RequestContextProvider.get();
+
+        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
+
         final MutableResolvedMount resolvedMount = (MutableResolvedMount) requestContext.getResolvedMount();
         final Mount previewDecoratedMount = resolvedMount.getMount();
         if (Mount.LIVE_NAME.equals(type)) {
@@ -155,7 +166,6 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         if (handle == null) {
             return null;
         }
-
         final String hostGroupNameForCmsHost = getHostGroupNameForCmsHost();
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, type, hostGroupNameForCmsHost);
 
