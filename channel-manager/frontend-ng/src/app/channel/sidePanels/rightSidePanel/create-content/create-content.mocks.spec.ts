@@ -21,15 +21,15 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 export class CreateContentServiceMock {
-  getTemplateQuery(id): Observable<TemplateQuery> {
+  getTemplateQuery(id) {
     return Observable.of(null);
   }
 
-  createDraft(documentDetails: DocumentDetails): Observable<TemplateQuery> {
+  createDraft(documentDetails: DocumentDetails) {
     return Observable.of(null);
   }
 
-  generateDocumentUrlByName(name, locale: string = ''): Observable<string> {
+  generateDocumentUrlByName(name, locale: string = '') {
     return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 
@@ -44,8 +44,8 @@ export class CreateContentServiceMock {
     };
   }
 
-  getFolders(path: string): Observable<Array<Folder>> {
-    return Observable.of([]);
+  getFolders(path: string) {
+    return Promise.resolve([]);
   }
 
   setDraftNameUrl(documentId: string, data: { name, url }) {

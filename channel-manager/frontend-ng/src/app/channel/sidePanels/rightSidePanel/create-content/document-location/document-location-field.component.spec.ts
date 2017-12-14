@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/observable/of';
 
 import { DocumentLocationFieldComponent } from './document-location-field.component';
@@ -109,20 +108,22 @@ describe('DocumentLocationField Component', () => {
   });
 
   describe('setting the document location', () => {
-    it('stores the path of the last folder returned by the create-content-service', () => {
+    it('stores the path of the last folder returned by the create-content-service', fakeAsync(() => {
       const folders = [{path: '/root'}, {path: '/root/path'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
+      getFolderSpy.and.returnValue(Promise.resolve(folders));
       component.ngOnInit();
+      tick();
       expect(component.documentLocation).toBe('/root/path');
-    });
+    }));
 
-    it('stores the value of defaultPath returned by the create-content-service', () => {
+    it('stores the value of defaultPath returned by the create-content-service', fakeAsync(() => {
       component.rootPath = '/root';
       const folders = [{name: 'root'}, {name: 'default'}, {name: 'path'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
+      getFolderSpy.and.returnValue(Promise.resolve(folders));
       component.ngOnInit();
+      tick();
       expect(component.defaultPath).toBe('default/path');
-    });
+    }));
   });
 
   describe('setting the document location label', () => {
@@ -131,80 +132,96 @@ describe('DocumentLocationField Component', () => {
       displayNames.forEach((displayName) => {
         folders.push({ displayName, path: '' });
       });
-      getFolderSpy.and.returnValue(Observable.of(folders));
+      getFolderSpy.and.returnValue(Promise.resolve(folders));
 
       component.rootPath = rootPath;
       component.defaultPath = defaultPath;
       component.ngOnInit();
     };
 
-    it('uses displayName(s) for the document location label', () => {
+    it('uses displayName(s) for the document location label', fakeAsync(() => {
       setup('/root', '', ['R00T']);
+      tick();
       expect(component.documentLocationLabel).toBe('R00T');
 
       setup('/root', 'bloom', ['R00T', 'bl00m']);
+      tick();
       expect(component.documentLocationLabel).toBe('R00T/bl00m');
-    });
+    }));
 
-    it('uses only one folder of root path if default path is empty', () => {
+    it('uses only one folder of root path if default path is empty', fakeAsync(() => {
       setup('', '', ['channel', 'content']);
+      tick();
       expect(component.documentLocationLabel).toBe('content');
 
       setup('root', '', ['channel', 'content', 'root']);
+      tick();
       expect(component.documentLocationLabel).toBe('root');
 
       setup('/root', '', ['root']);
+      tick();
       expect(component.documentLocationLabel).toBe('root');
 
       setup('root/path', '', ['channel', 'content', 'root', 'path']);
+      tick();
       expect(component.documentLocationLabel).toBe('path');
 
       setup('/root/path', '', ['root', 'path']);
+      tick();
       expect(component.documentLocationLabel).toBe('path');
-    });
+    }));
 
-    it('uses only one folder of root path if default path depth is less than 3', () => {
+    it('uses only one folder of root path if default path depth is less than 3', fakeAsync(() => {
       setup('', 'some', ['channel', 'content', 'some']);
+      tick();
       expect(component.documentLocationLabel).toBe('content/some');
 
       setup('', 'some/folder', ['channel', 'content', 'some', 'folder']);
+      tick();
       expect(component.documentLocationLabel).toBe('content/some/folder');
 
       setup('root', 'some/folder', ['channel', 'content', 'root', 'some', 'folder']);
+      tick();
       expect(component.documentLocationLabel).toBe('root/some/folder');
 
       setup('/root', 'some/folder', ['root', 'some', 'folder']);
+      tick();
       expect(component.documentLocationLabel).toBe('root/some/folder');
-    });
+    }));
 
-    it('always shows a maximum of 3 folders', () => {
+    it('always shows a maximum of 3 folders', fakeAsync(() => {
       setup('root', 'folder/with/document', ['channel', 'content', 'root', 'folder', 'with', 'document']);
+      tick();
       expect(component.documentLocationLabel).toBe('folder/with/document');
 
       setup('/root', 'folder/with/document', ['root', 'folder', 'with', 'document']);
+      tick();
       expect(component.documentLocationLabel).toBe('folder/with/document');
 
       setup('/root', 'folder/with/some/document', ['root', 'folder', 'with', 'some', 'document']);
+      tick();
       expect(component.documentLocationLabel).toBe('with/some/document');
 
       setup('/root', 'folder/with/some/nested/document', ['root', 'folder', 'with', 'some', 'nested', 'document']);
+      tick();
       expect(component.documentLocationLabel).toBe('some/nested/document');
 
       setup('/root/path', 'folder/with/some/nested/document', ['root', 'path', 'folder', 'with', 'some', 'nested', 'document']);
+      tick();
       expect(component.documentLocationLabel).toBe('some/nested/document');
-    });
+    }));
   });
 
   describe('the locale @Output', () => {
-    it('emits the locale when component is initialized', () => {
+    it('emits the locale when component is initialized', fakeAsync(() => {
       let changedLocale: string;
       component.changeLocale.subscribe((locale: string) => changedLocale = locale);
 
       const folders = [{path: '/root'}, {path: '/root/path', locale: 'de'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
+      getFolderSpy.and.returnValue(Promise.resolve(folders));
       component.ngOnInit();
-
+      tick();
       expect(changedLocale).toBe('de');
-    });
+    }));
   });
 });
