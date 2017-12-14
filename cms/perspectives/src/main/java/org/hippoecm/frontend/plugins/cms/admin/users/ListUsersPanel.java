@@ -54,7 +54,7 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
-import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
+import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.skin.Icon;
@@ -172,8 +172,14 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         form.setOutputMarkupId(true);
         add(form);
 
-        final TextField<String> search = new TextField<>("search-query",
-                                                               new PropertyModel<String>(userDataProvider, "searchTerm"));
+        final TextField<String> search = new SubmittingTextField("search-query",
+                                                               new PropertyModel<>(userDataProvider, "searchTerm")) {
+            @Override
+            public void onEnter(final AjaxRequestTarget target) {
+                super.onEnter(target);
+                processSubmit(target, form);
+            }
+        };
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
@@ -182,20 +188,25 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                // when searchActive this link is the remove link
                 if (searchActive) {
-                    ListUsersPanel.this.userDataProvider.setSearchTerm(StringUtils.EMPTY);
+                    userDataProvider.setSearchTerm(StringUtils.EMPTY);
                 }
-                searchActive = !searchActive;
-                target.add(table);
-                target.add(form);
+                processSubmit(target, form);
             }
         };
-        browseLink.add(createSearchIcon(ListUsersPanel.this.userDataProvider));
+        browseLink.add(createSearchIcon(userDataProvider));
         form.add(browseLink);
 
         table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
+    }
+
+    private void processSubmit(final AjaxRequestTarget target, final Form<?> form) {
+        searchActive = StringUtils.isNotBlank(userDataProvider.getSearchTerm());
+        target.add(table);
+        target.add(form);
     }
 
     private Component createSearchIcon(final UserDataProvider userDataProvider) {
