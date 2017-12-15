@@ -230,6 +230,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
 
     @Override
     protected void onRemovedFromBreadCrumbsBar() {
+        userDataProvider.setSearchTerm(null);
         context.unregisterService(this, IObserver.class.getName());
     }
 

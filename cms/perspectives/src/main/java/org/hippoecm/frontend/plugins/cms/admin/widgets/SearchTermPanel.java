@@ -60,7 +60,7 @@ public class SearchTermPanel extends Panel {
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 // when searchActive this link is the remove link
                 if (searchActive) {
-                    searchTerm = StringUtils.EMPTY;
+                    searchTerm = null;
                 }
                 processSubmit(target, form, searchTerm);
             }

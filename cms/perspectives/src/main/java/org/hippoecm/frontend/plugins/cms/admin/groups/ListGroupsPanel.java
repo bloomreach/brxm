@@ -118,6 +118,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
     @Override
     protected void onRemovedFromBreadCrumbsBar() {
+        groupDataProvider.setSearchTerm(null);
         context.unregisterService(this, IObserver.class.getName());
     }
 
