@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.text.CollationKey;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +28,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
-import org.hippoecm.frontend.plugins.cms.admin.comparators.PropertyComparator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -100,4 +100,20 @@ public class UserDataProvider extends SearchableDataProvider<User> {
 
         return userList.subList((int) first, (int) Math.min(first + count, userList.size())).iterator();
     }
+
+    private static class PropertyComparator implements Comparator<String> {
+        private final Collator collator;
+
+        PropertyComparator(Collator collator) {
+            this.collator = collator;
+        }
+
+        @Override
+        public int compare(final String property1, final String property2) {
+            final CollationKey key1 = collator.getCollationKey(property1);
+            final CollationKey key2 = collator.getCollationKey(property2);
+            return key1.compareTo(key2);
+        }
+    }
+
 }
