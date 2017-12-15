@@ -18,14 +18,12 @@
   <!-- Document location field -->
   <div class="field">
     <md-input-container class="create-content-field qa-document-location">
-      <md-input ng-model="$ctrl.documentLocationLabel" name="documentLocation"
+      <input ng-model="$ctrl.documentLocationLabel" name="documentLocation"
              placeholder="Document location" required disabled>
-    </md-input-container>
 
-    <hippo-hints
-      [data]="form.controls.documentLocation.errors"
-      *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-      <div hint="required">This field is required</div>
-    </hippo-hints>
+      <div ng-messages="form.controls.documentLocation && form.controls.documentLocation.touched">
+        <div ng-message="required">This field is required</div>
+      </div>
+    </md-input-container>
   </div>
 </form>

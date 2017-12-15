@@ -26,7 +26,6 @@ class DocumentLocationFieldController {
     this.rootPathDepth = 0;
     this.documentLocationLabel = '';
     this.documentLocation = '';
-  // @ViewChild('form') form: HTMLFormElement;
   }
 
 
@@ -61,7 +60,7 @@ class DocumentLocationFieldController {
     }
 
     const channel = this.ChannelService.getChannel();
-    this.rootPath = this.parseRootPath(this.rootPath, channel.contentRoot);
+    this.rootPath = DocumentLocationFieldController.parseRootPath(this.rootPath, channel.contentRoot);
     this.rootPathDepth = (this.rootPath.match(/\//g) || []).length;
 
     let documentLocationPath = this.rootPath;

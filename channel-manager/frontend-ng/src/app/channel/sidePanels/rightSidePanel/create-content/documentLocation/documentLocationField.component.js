@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import './rightSidePanel.scss';
 import template from './documentLocationField.html';
 import controller from './documentLocationField.controller';
+import './documentLocationField.scss';
 
 const documentLocationFieldComponent = {
   controller,
