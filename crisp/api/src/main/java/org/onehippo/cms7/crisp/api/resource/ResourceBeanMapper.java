@@ -44,39 +44,46 @@ public interface ResourceBeanMapper {
             throws ResourceException;
 
     /**
-     * Map the child resources of the {@link ResourceCollection} to the given {@code beanCollection} of {@code beanType}.
-     * <P>
-     * This method does not create a new collection of {@code beanType}, but push mapped beans into the given {@code beanCollection}
-     * and return it.
-     * </P>
+     * Map the child resources of the {@link ResourceCollection} to a new collection of {@code beanType} to return.
      *
      * @param resourceCollection a {@link ResourceCollection} object
      * @param beanType type of bean to which the {@link Resource} should be mapped
-     * @param beanCollection target collection of beans converted from the child resources of the {@code resourceCollection}.
-     * @return collection of beans converted from the child resources of the {@code resourceCollection}
+     * @param offset start index of {@code resourceCollection} to convert from.
+     *        If offset is a negative value, it's ignored, meaning zero index being effective.
+     * @param limit max size of {@code resourceCollection} to convert from {@code offset} index.
+     *        If limit is a negative value, it's ignored, meaning no limit being applied.
+     * @return a new collection of beans converted from the child resources of the {@code resourceCollection}
      * @throws ResourceException if a {@code resource} cannot be mapped to the {@code beanType}
      */
-    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
-            Collection<T> beanCollection) throws ResourceException;
+    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType, int offset,
+            int limit) throws ResourceException;
 
     /**
-     * Map the child resources of the {@link ResourceCollection} to the given {@code beanCollection} of {@code beanType}
-     * from the {@code offset} index up to {@code legnth} size at max.
-     * <P>
-     * This method does not create a new collection of {@code beanType}, but push mapped beans into the given {@code beanCollection}
-     * by converting {@link Resource} items in {@code resourceCollection} from the given {@code offset} index
-     * up to max {@code length} size items.
-     * </P>
+     * Map the child resources of the {@link ResourceCollection} and push them to the given {@code targetBeanCollection}
+     * of {@code beanType}.
      *
      * @param resourceCollection a {@link ResourceCollection} object
      * @param beanType type of bean to which the {@link Resource} should be mapped
-     * @param beanCollection target collection of beans converted from the child resources of the {@code resourceCollection}.
-     * @param offset start index of {@code resourceCollection} to convert from.
-     * @param length max size of {@code resourceCollection} to convert from {@code offset} index.
-     * @return collection of beans converted from the child resources of the {@code resourceCollection}
+     * @param targetBeanCollection target collection of beans converted from the child resources of the {@code resourceCollection}.
      * @throws ResourceException if a {@code resource} cannot be mapped to the {@code beanType}
      */
-    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
-            Collection<T> beanCollection, int offset, int length) throws ResourceException;
+    public <T> void mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
+            Collection<T> targetBeanCollection) throws ResourceException;
+
+    /**
+     * Map the child resources of the {@link ResourceCollection} and push them to the given {@code targetBeanCollection}
+     * of {@code beanType} from the {@code offset} index up to {@code limit} size at max.
+     *
+     * @param resourceCollection a {@link ResourceCollection} object
+     * @param beanType type of bean to which the {@link Resource} should be mapped
+     * @param targetBeanCollection target collection of beans converted from the child resources of the {@code resourceCollection}.
+     * @param offset start index of {@code resourceCollection} to convert from.
+     *        If offset is a negative value, it's ignored, meaning zero index being effective.
+     * @param limit max size of {@code resourceCollection} to convert from {@code offset} index.
+     *        If limit is a negative value, it's ignored, meaning no limit being applied.
+     * @throws ResourceException if a {@code resource} cannot be mapped to the {@code beanType}
+     */
+    public <T> void mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
+            Collection<T> targetBeanCollection, int offset, int limit) throws ResourceException;
 
 }

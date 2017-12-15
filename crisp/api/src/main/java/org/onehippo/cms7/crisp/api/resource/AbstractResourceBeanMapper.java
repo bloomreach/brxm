@@ -27,25 +27,34 @@ public abstract class AbstractResourceBeanMapper implements ResourceBeanMapper {
     @Override
     public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType)
             throws ResourceException {
-        Collection<T> beanCollection = new LinkedList<>();
-        return mapCollection(resourceCollection, beanType, beanCollection);
+        Collection<T> targetBeanCollection = new LinkedList<>();
+        mapCollection(resourceCollection, beanType, targetBeanCollection);
+        return targetBeanCollection;
     }
 
     @Override
-    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
-            Collection<T> beanCollection) throws ResourceException {
-        return mapCollection(resourceCollection, beanType, beanCollection, 0, resourceCollection.size());
+    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType, int offset,
+            int limit) throws ResourceException {
+        Collection<T> targetBeanCollection = new LinkedList<>();
+        mapCollection(resourceCollection, beanType, targetBeanCollection, offset, limit);
+        return targetBeanCollection;
     }
 
     @Override
-    public <T> Collection<T> mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
-            Collection<T> beanCollection, int offset, int length) throws ResourceException {
-        if (beanCollection == null) {
-            beanCollection = new LinkedList<>();
+    public <T> void mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
+            Collection<T> targetBeanCollection) throws ResourceException {
+        mapCollection(resourceCollection, beanType, targetBeanCollection, 0, resourceCollection.size());
+    }
+
+    @Override
+    public <T> void mapCollection(ResourceCollection resourceCollection, Class<T> beanType,
+            Collection<T> targetBeanCollection, int offset, int length) throws ResourceException {
+        if (targetBeanCollection == null) {
+            throw new IllegalArgumentException("target bean collection must not be null.");
         }
 
         if (length == 0) {
-            return beanCollection;
+            return;
         }
 
         Iterator<Resource> resourceIt = resourceCollection.iterator();
@@ -56,7 +65,7 @@ public abstract class AbstractResourceBeanMapper implements ResourceBeanMapper {
             }
         }
 
-        final Collection<T> beanCol = beanCollection;
+        final Collection<T> beanCol = targetBeanCollection;
 
         if (length < 0) {
             while (resourceIt.hasNext()) {
@@ -69,8 +78,6 @@ public abstract class AbstractResourceBeanMapper implements ResourceBeanMapper {
                 count++;
             }
         }
-
-        return beanCollection;
     }
 
 }
