@@ -21,18 +21,13 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.ActionType;
-import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,31 +49,9 @@ public final class BeanWriterUtils {
             .build();
 
 
-    public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
-
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
-
-    private BeanWriterUtils() {
-    }
-
-
-    public static void populateBeanwriterMessages(final PluginContext context, final UserFeedback feedback) {
-        final Multimap<String, Object> pluginContextData = context.getPluginContextData();
-        final Collection<Object> objects = pluginContextData.get(CONTEXT_DATA_KEY);
-        for (Object object : objects) {
-            final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
-            final ActionType actionType = entry.getActionType();
-            if (actionType == ActionType.CREATED_METHOD || actionType == ActionType.MODIFIED_METHOD || actionType == ActionType.DELETED_METHOD) {
-                feedback.addSuccess(String.format("%s in HST bean: %s", entry.getMessage(), entry.getBeanName()));
-            } else if (actionType == ActionType.CREATED_CLASS) {
-                feedback.addSuccess(String.format("%s (%s)", entry.getMessage(), entry.getBeanPath()));
-            } else {
-                feedback.addSuccess(entry.getMessage());
-            }
-        }
-    }
-
+    private BeanWriterUtils() { }
 
     /**
      * Builds an in-memory graph by parsing XML namespaces. This graph can be used to write HST beans
@@ -126,8 +99,5 @@ public final class BeanWriterUtils {
         }
 
         return existingBeans;
-
     }
-
-
 }

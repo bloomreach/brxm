@@ -29,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -38,9 +37,6 @@ import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 
 
 /**
@@ -51,54 +47,23 @@ import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGe
 @Path("beanwriter/")
 public class BeanWriterResource {
 
-
     @Inject private EventBus eventBus;
+    @Inject private ContentBeansService contentBeansService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
     public UserFeedback runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
         final PluginContext context = contextFactory.getContext();
-        //############################################
-        //############################################
-        // USE SERVICES
-        //############################################
         final UserFeedback feedback = new UserFeedback();
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
-        final String updateImageMethods = values.get("updateImageMethods");
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
-        // check if we are using custom image set:
-        java.nio.file.Path path = null;
-        final boolean hippoStandardType = imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN) || imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_CLASS);
-        if (!Strings.isNullOrEmpty(imageSet) || !hippoStandardType) {
-            final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
-            path = existingImageTypes.get(imageSet);
-            if (path != null) {
-                context.addPluginContextData(ContentBeansService.CONTEXT_BEAN_IMAGE_SET, path);
 
-            }
+        contentBeansService.createBeans(context, feedback, imageSet);
+        if ("true".equals(values.get("updateImageMethods"))) {
+            contentBeansService.convertImageMethodsForClassname(imageSet, context, feedback);
         }
-        // create beans
-        contentBeansService.createBeans();
-        // check if we need to upgrade beans
-        if (!Strings.isNullOrEmpty(imageSet) && !Strings.isNullOrEmpty(updateImageMethods) && updateImageMethods.equals("true")) {
-            if(path !=null){
-                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-                if (annotation == null || Strings.isNullOrEmpty(annotation.getInternalName())) {
-                    feedback.addError("Could not find selected Image Set: " + imageSet);
-                } else {
-                    contentBeansService.convertImageMethods(annotation.getInternalName());
-                }
-            }
-            else if(hippoStandardType){
-                contentBeansService.convertImageMethods(imageSet);
-            }
-        }
+        contentBeansService.cleanupMethods(context, feedback);
 
-        // cleanup
-        contentBeansService.cleanupMethods();
-        // user feedback
-        BeanWriterUtils.populateBeanwriterMessages(context, feedback);
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("All beans were up to date");
         } else {
@@ -109,15 +74,10 @@ public class BeanWriterResource {
         return feedback;
     }
 
-
     @GET
     @Path("/imagesets")
-    public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
+    public Set<String> getImageSets() throws Exception {
         final PluginContext context = contextFactory.getContext();
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
-        final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
-        return existingImageTypes.keySet();
+        return contentBeansService.getExistingImageTypes(context).keySet();
     }
-
-
 }

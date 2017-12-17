@@ -54,7 +54,6 @@ import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GalleryUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -78,6 +77,7 @@ public class GalleryPluginResource extends BaseResource {
     private static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
     @Inject private PluginContextFactory contextFactory;
+    @Inject private ContentBeansService contentBeansService;
 
     /**
      * Updates an image model
@@ -224,12 +224,8 @@ public class GalleryPluginResource extends BaseResource {
                     }
                 }
                 // update HST beans, create new ones and update image sets:
-                final ContentBeansService beansService = new ContentBeansService(context);
-                beansService.createBeans();
-                beansService.convertImageMethods(newImageNamespace);
-                // add beanwriter messages
-                BeanWriterUtils.populateBeanwriterMessages(context, feedback);
-
+                contentBeansService.createBeans(context, feedback, null);
+                contentBeansService.convertImageMethods(newImageNamespace, context, feedback);
             } else {
                 // just create a new folder for new image types:
                 final String absPath = "/content/gallery/" + context.getProjectNamespacePrefix();
@@ -241,10 +237,7 @@ public class GalleryPluginResource extends BaseResource {
                     feedback.addSuccess("Successfully created image folder: " + absPath + '/' + imageSetName);
                 }
                 // update HST beans, create new ones and *do not* update image sets:
-                final ContentBeansService beansService = new ContentBeansService(context);
-                beansService.createBeans();
-                // add beanwriter messages
-                BeanWriterUtils.populateBeanwriterMessages(context, feedback);
+                contentBeansService.createBeans(context, feedback, null);
             }
 
             session.save();
@@ -352,14 +345,12 @@ public class GalleryPluginResource extends BaseResource {
             final List<String> existingImageSets = CndUtils.getNodeTypesOfType(context, HIPPOGALLERY_IMAGE_SET, true);
 
             for (String existingImageSet : existingImageSets) {
+                if (existingImageSet.equals(HIPPOGALLERY_IMAGE_SET)) {
+                    continue; // mm: for time being, we'll not return internal imageset
+                }
                 final String[] ns = NS_PATTERN.split(existingImageSet);
                 final List<ImageModel> imageModels = loadImageSet(ns[0], ns[1], context);
                 final GalleryModel galleryModel = new GalleryModel(existingImageSet);
-                if (existingImageSet.equals(HIPPOGALLERY_IMAGE_SET)) {
-                    galleryModel.setReadOnly(true);
-                    // mm: for time being, we'll not return internal imageset
-                    continue;
-                }
                 galleryModel.setModels(imageModels);
                 // retrieve parent path: we *should* always have original and thumbnail:
                 if (imageModels.size() > 0) {

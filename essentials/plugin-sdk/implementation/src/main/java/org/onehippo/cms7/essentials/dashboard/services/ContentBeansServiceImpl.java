@@ -39,7 +39,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jdt.core.dom.AST;
@@ -49,9 +48,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.ActionType;
-import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -67,92 +64,82 @@ import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @version "$Id$"
  */
-public class ContentBeansService {
+@Service
+public class ContentBeansServiceImpl implements ContentBeansService {
 
-    public static final String HIPPO_GALLERY_IMAGE_SET_BEAN = "HippoGalleryImageSetBean";
-    public static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
-    public static final String RELATED_MIXIN = "relateddocs:relatabledocs";
-    public static final String DOCBASE = "Docbase";
-    public static final String RESOURCE = "hippo:resource";
-    private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentBeansServiceImpl.class);
 
-    private final PluginContext context;
-    private final String baseSupertype;
+    private static final String HIPPO_GALLERY_IMAGE_SET_BEAN = "HippoGalleryImageSetBean";
+    private static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
+    private static final String RELATED_MIXIN = "relateddocs:relatabledocs";
+    private static final String DOCBASE = "Docbase";
+    private static final String RESOURCE = "hippo:resource";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
-    public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
-    public static final String CONTEXT_BEAN_DATA = BeanWriterUtils.class.getName();
-    public static final String CONTEXT_BEAN_IMAGE_SET = BeanWriterUtils.class.getName() + "imageset";
 
-    private final Set<HippoContentBean> contentBeans;
     /**
      * How many loops we run (beans extending none existing beans)
      */
     private static final int MISSING_DEPTH_MAX = 5;
     private int missingBeansDepth = 0;
 
-    public ContentBeansService(final PluginContext context) {
-        this.context = context;
-        this.baseSupertype = context.getProjectNamespacePrefix() + ':' + "basedocument";
-        this.contentBeans = getContentBeans();
-    }
-
-
-    public void createBeans() throws RepositoryException {
-
-        final Map<String, Path> existing = findExistingBeans();
-        final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(existing));
+    @Override
+    public void createBeans(final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
+        final Set<HippoContentBean> contentBeans = getContentBeans(context);
+        final Map<String, Path> existing = findExistingBeans(context);
+        final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(contentBeans, existing));
         final Iterator<HippoContentBean> missingBeanIterator = missingBeans.iterator();
         for (; missingBeanIterator.hasNext(); ) {
             final HippoContentBean missingBean = missingBeanIterator.next();
             // check if directly extending compound:
             final Set<String> superTypes = missingBean.getSuperTypes();
             if (superTypes.size() == 1 && superTypes.iterator().next().equals(BASE_COMPOUND_TYPE)) {
-                createCompoundBaseBean(missingBean);
+                createCompoundBaseBean(missingBean, context, feedback);
                 missingBeanIterator.remove();
             } else {
-                final String parent = findExistingParent(missingBean, existing);
+                final String parent = findExistingParent(missingBean, existing, context);
                 if (parent != null) {
                     log.debug("found parent: {}, {}", parent, missingBean);
                     missingBeanIterator.remove();
                     final Path parentPath = existing.get(parent);
                     if (parentPath == null) {
                         log.error("Couldn't find parent bean for: {}", parent);
-                        if (parent.equals(baseSupertype)) {
+                        if (parent.equals(getBaseSupertype(context))) {
                             log.error("Base document type is missing: {}", parent);
                         }
                         continue;
                     }
-                    createBean(missingBean, parentPath);
+                    createBean(missingBean, parentPath, context, feedback);
                 }
             }
         }
         // process beans without resolved parent beans
-        processMissing(missingBeans);
-        processProperties();
+        processMissing(missingBeans, context, feedback, imageSetClassName);
+        processProperties(contentBeans, context, feedback, imageSetClassName);
         // check if still missing(beans that extended missing beans)
-        final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(findExistingBeans());
+        final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(contentBeans, findExistingBeans(context));
         final boolean hasNonCreatedBeans = extendedMissing.hasNext();
         if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
             missingBeansDepth++;
-            createBeans();
+            createBeans(context, feedback, imageSetClassName);
         } else if (hasNonCreatedBeans) {
             log.error("Not all beans were created: {}", extendedMissing);
         }
-        processRelatedDocuments();
-
+        processRelatedDocuments(contentBeans, context, feedback);
     }
 
 
     /**
      * Removes methods which are annotated but missing within content services
      */
-    public void cleanupMethods() {
-        final Set<HippoContentBean> beans = getContentBeans();
-        final Map<String, Path> existing = findExistingBeans();
+    @Override
+    public void cleanupMethods(final PluginContext context, final UserFeedback feedback) {
+        final Set<HippoContentBean> beans = getContentBeans(context);
+        final Map<String, Path> existing = findExistingBeans(context);
         for (HippoContentBean bean : beans) {
             final Path path = existing.get(bean.getName());
             if (path != null) {
@@ -174,21 +161,20 @@ public class ContentBeansService {
                         final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
                         final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
                         final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
+                        final String methodName = method.getMethodName();
                         if (!allowClassUpdate) {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method should be deleted, but modifications are disabled on the Bean class level: "
-                                    + internalName + " for class at " + path.toString()));
+                            logClassModificationDisabled(path, methodName, feedback);
                         } else if (allowMethodUpdate) {
                             log.info("@Missing declaration for: {}. Method will be deleted", internalName);
                             final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
-                            final String methodName = method.getMethodName();
                             if (deleted) {
-                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), methodName, ActionType.DELETED_METHOD));
+                                logMethodDeleted(path, methodName, feedback);
                             } else {
-                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(String.format("Failed to  delete method: %s", methodName)));
+                                final String message = String.format("Failed to delete method '%s' from bean '%s'.", methodName, path);
+                                feedback.addError(message);
                             }
                         } else {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method should be removed, but modifications are disabled: "
-                                    + method.getInternalName() + ", " + method.getMethodName()));
+                            logMethodModificationDisabled(path, methodName, feedback);
                         }
                     }
                 }
@@ -216,7 +202,7 @@ public class ContentBeansService {
     }
 
 
-    private void processRelatedDocuments() {
+    private void processRelatedDocuments(final Set<HippoContentBean> contentBeans, final PluginContext context, final UserFeedback feedback) {
         boolean hasRelatedDocs = false;
         for (HippoContentBean contentBean : contentBeans) {
             if (contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
@@ -227,17 +213,15 @@ public class ContentBeansService {
             return;
         }
 
-        Map<String, Path> existing = findExistingBeans();
+        Map<String, Path> existing = findExistingBeans(context);
         for (HippoContentBean contentBean : contentBeans) {
             final Path path = existing.get(contentBean.getName());
             if (path != null && contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
                 final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
                 final Set<String> methodInternalNames = methodCollection.getMethodInternalNames();
                 if (!methodInternalNames.contains(EssentialConst.RELATEDDOCS_DOCS)) {
-                    log.debug("Adding related docs method to: ", path);
                     JavaSourceUtils.addRelatedDocsMethod(EssentialConst.METHOD_RELATED_DOCUMENTS, path);
-                    log.debug(MSG_ADDED_METHOD, EssentialConst.METHOD_RELATED_DOCUMENTS);
-                    context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), EssentialConst.METHOD_RELATED_DOCUMENTS, ActionType.CREATED_METHOD));
+                    logMethodCreated(path, EssentialConst.METHOD_RELATED_DOCUMENTS, feedback);
                 }
             }
         }
@@ -257,7 +241,7 @@ public class ContentBeansService {
     }
 
 
-    private Iterator<HippoContentBean> filterMissingBeans(final Map<String, Path> existing) {
+    private Iterator<HippoContentBean> filterMissingBeans(final Set<HippoContentBean> contentBeans, final Map<String, Path> existing) {
         final Iterable<HippoContentBean> missingBeans = Iterables.filter(contentBeans, new Predicate<HippoContentBean>() {
             @Override
             public boolean apply(HippoContentBean b) {
@@ -269,22 +253,22 @@ public class ContentBeansService {
     }
 
 
-    private void processProperties() {
-        final Map<String, Path> existing = findExistingBeans();
+    private void processProperties(final Set<HippoContentBean> contentBeans, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
+        final Map<String, Path> existing = findExistingBeans(context);
         for (HippoContentBean bean : contentBeans) {
             final Path beanPath = existing.get(bean.getName());
             if (beanPath != null) {
-                final String parent = findExistingParent(bean, existing);
+                final String parent = findExistingParent(bean, existing, context);
                 final Path parentPath = existing.get(parent);
                 if (parentPath != null) {
                     final ExistingMethodsVisitor parentMethodCollection = JavaSourceUtils.getMethodCollection(parentPath);
                     final ExistingMethodsVisitor ownMethodCollection = JavaSourceUtils.getMethodCollection(beanPath);
                     final Set<String> existingMethods = ownMethodCollection.getMethodInternalNames();
                     existingMethods.addAll(parentMethodCollection.getMethodInternalNames());
-                    addMethods(bean, beanPath, existingMethods);
+                    addMethods(bean, beanPath, existingMethods, context, feedback, imageSetClassName);
                 } else {
                     final ExistingMethodsVisitor ownMethodCollection = JavaSourceUtils.getMethodCollection(beanPath);
-                    addMethods(bean, beanPath, ownMethodCollection.getMethodInternalNames());
+                    addMethods(bean, beanPath, ownMethodCollection.getMethodInternalNames(), context, feedback, imageSetClassName);
                 }
 
             }
@@ -292,21 +276,22 @@ public class ContentBeansService {
     }
 
 
-    private void processMissing(final List<HippoContentBean> missingBeans) {
+    private void processMissing(final List<HippoContentBean> missingBeans, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
         for (HippoContentBean missingBean : missingBeans) {
             final SortedSet<String> mySupertypes = missingBean.getContentType().getSuperTypes();
             if (mySupertypes.contains("hippogallery:relaxed")) {
-                final Path javaClass = createJavaClass(missingBean);
+                final Path javaClass = createJavaClass(missingBean, context, feedback);
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
                 JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_CLASS);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
-                addMethods(missingBean, javaClass, new ArrayList<>());
+                addMethods(missingBean, javaClass, new ArrayList<>(), context, feedback, imageSetClassName);
             }
         }
     }
 
-    private String findExistingParent(final HippoContentBean missingBean, final Map<String, Path> existing) {
+    private String findExistingParent(final HippoContentBean missingBean, final Map<String, Path> existing, final PluginContext context) {
         final Set<String> superTypes = missingBean.getSuperTypes();
+        final String baseSupertype = getBaseSupertype(context);
         if (superTypes.size() == 1 && superTypes.iterator().next().equals(baseSupertype)) {
             return baseSupertype;
         }
@@ -321,10 +306,10 @@ public class ContentBeansService {
     }
 
 
-    public final Set<HippoContentBean> getContentBeans() {
+    private Set<HippoContentBean> getContentBeans(final PluginContext context) {
         try {
             final Set<HippoContentBean> beans = new HashSet<>();
-            final Set<ContentType> projectContentTypes = getProjectContentTypes();
+            final Set<ContentType> projectContentTypes = getProjectContentTypes(context);
             for (ContentType projectContentType : projectContentTypes) {
                 final HippoContentBean bean = new HippoContentBean(context, projectContentType);
                 beans.add(bean);
@@ -343,7 +328,7 @@ public class ContentBeansService {
      * @return empty collection if no types are found
      * @throws RepositoryException for unexpected Repository situations
      */
-    public Set<ContentType> getProjectContentTypes() throws RepositoryException {
+    public Set<ContentType> getProjectContentTypes(final PluginContext context) throws RepositoryException {
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Set<ContentType> projectContentTypes = new HashSet<>();
         final Session session = context.createSession();
@@ -371,7 +356,7 @@ public class ContentBeansService {
     //############################################
 
 
-    private Map<String, Path> findExistingBeans() {
+    private Map<String, Path> findExistingBeans(final PluginContext context) {
         final Path startDir = context.getBeansPackagePath();
         final Map<String, Path> existingBeans = new HashMap<>();
         final List<Path> directories = new ArrayList<>();
@@ -394,19 +379,19 @@ public class ContentBeansService {
     }
 
 
-    private void createCompoundBaseBean(final HippoContentBean bean) {
-        final Path javaClass = createJavaClass(bean);
+    private void createCompoundBaseBean(final HippoContentBean bean, final PluginContext context, final UserFeedback feedback) {
+        final Path javaClass = createJavaClass(bean, context, feedback);
         JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
         JavaSourceUtils.addExtendsClass(javaClass, "HippoCompound");
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_COMPOUND_IMPORT);
     }
 
 
-    private void addMethods(final HippoContentBean bean, final Path beanPath, final Collection<String> existing) {
+    private void addMethods(final HippoContentBean bean, final Path beanPath, final Collection<String> existing, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
         final List<HippoContentProperty> properties = bean.getProperties();
         for (HippoContentProperty property : properties) {
             final String name = property.getName();
-            if (!hasChange(name, existing, beanPath, property.isMultiple())) {
+            if (!hasChange(name, existing, beanPath, property.isMultiple(), feedback)) {
                 continue;
             }
             String type = property.getType();
@@ -433,38 +418,38 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
 
                 case "Date":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case "Boolean":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case "Long":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodLong(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case "Double":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case DOCBASE:
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodDocbase(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 default:
                     final String message = String.format("TODO: Beanwriter: Failed to create getter for property: %s of type: %s", property.getName(), type);
@@ -476,10 +461,11 @@ public class ContentBeansService {
         //############################################
         // NODE TYPES
         //############################################
+        final Path imageSetBeanPath = getBeanPathForImageSet(imageSetClassName, context);
         final List<HippoContentChildNode> children = bean.getChildren();
         for (HippoContentChildNode child : children) {
             final String name = child.getName();
-            if (!hasChange(name, existing, beanPath, child.isMultiple())) {
+            if (!hasChange(name, existing, beanPath, child.isMultiple(), feedback)) {
                 continue;
             }
             final String type = child.getType();
@@ -496,47 +482,46 @@ public class ContentBeansService {
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
 
                 case "hippogallerypicker:imagelink":
                     methodName = GlobalUtils.createMethodName(name);
-                    final Path path = extractPath();
-                    if (path == null) {
+                    if (imageSetBeanPath == null) {
                         JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
                     } else {
-                        final String className = JavaSourceUtils.getClassName(path);
-                        final String importName = JavaSourceUtils.getImportName(path);
+                        final String className = JavaSourceUtils.getClassName(imageSetBeanPath);
+                        final String importName = JavaSourceUtils.getImportName(imageSetBeanPath);
                         JavaSourceUtils.addBeanMethodInternalImageSet(beanPath, className, importName, methodName, name, multiple);
                     }
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case "hippo:mirror":
                     // TODO: we could add a note to define more specific type instead of HippoBean
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case "hippogallery:image":
 
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 case RESOURCE:
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoResource(beanPath, methodName, name, multiple);
                     existing.add(name);
-                    logMessage(beanPath, methodName);
+                    logMethodCreated(beanPath, methodName, feedback);
                     break;
                 default:
                     // check if project type is used:
                     final String prefix = child.getPrefix();
                     if (prefix.equals(context.getProjectNamespacePrefix())) {
-                        final Map<String, Path> existingBeans = findExistingBeans();
+                        final Map<String, Path> existingBeans = findExistingBeans(context);
                         for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
                             final Path myBeanPath = entry.getValue();
                             final HippoEssentialsGeneratedObject a = JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
@@ -545,7 +530,7 @@ public class ContentBeansService {
                                 methodName = GlobalUtils.createMethodName(name);
                                 final String importPath = JavaSourceUtils.getImportName(myBeanPath);
                                 JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName, name, multiple);
-                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                                logMethodCreated(beanPath, methodName, feedback);
                                 return;
                             }
                         }
@@ -559,45 +544,69 @@ public class ContentBeansService {
     }
 
 
-    private void logMessage(final Path beanPath, final String methodName) {
-        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-        log.debug(MSG_ADDED_METHOD, methodName);
-    }
 
-
-    private Path extractPath() {
-        final Multimap<String, Object> pluginContextData = context.getPluginContextData();
-        final Collection<Object> data = pluginContextData.get(CONTEXT_BEAN_IMAGE_SET);
-        Path path = null;
-        if (data != null && data.size() == 1) {
-            final Object next = data.iterator().next();
-            if (next instanceof Path) {
-                path = (Path) next;
-            }
-        }
-        return path;
-    }
-
-
-    public Map<String, Path> getExistingImageTypes() {
-        final Map<String, Path> existing = findExistingBeans();
+    @Override
+    public Map<String, Path> getExistingImageTypes(final PluginContext context) {
+        final Map<String, Path> existing = findExistingBeans(context);
         final Map<String, Path> imageTypes = new HashMap<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, null);
         for (Path path : existing.values()) {
             final String myClass = JavaSourceUtils.getClassName(path);
             final String extendsClass = JavaSourceUtils.getExtendsClass(path);
-            if (!Strings.isNullOrEmpty(extendsClass) && extendsClass.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
+            if (HIPPO_GALLERY_IMAGE_SET_CLASS.equals(extendsClass)) {
                 imageTypes.put(myClass, path);
             }
-
         }
         return imageTypes;
     }
 
+    private Path getBeanPathForImageSet(final String imageSetClassName, final PluginContext context) {
+        final Map<String, Path> existing = findExistingBeans(context);
+        for (Path path : existing.values()) {
+            final String className = JavaSourceUtils.getClassName(path);
+            if (className.equals(imageSetClassName)) {
+                return path;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void convertImageMethodsForClassname(final String classname, final PluginContext context, final UserFeedback feedback) {
+        if (Strings.isNullOrEmpty(classname)) {
+            return;
+        }
+
+        final String jcrName = jcrNameForClassName(classname, context);
+        if (jcrName != null) {
+            convertImageMethods(jcrName, context, feedback);
+        } else {
+            feedback.addError("Could not find selected Image Set: " + classname);
+        }
+    }
+
+    private String jcrNameForClassName(final String className, final PluginContext context) {
+        if (className.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)
+                || className.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
+            return className; // ContentBeansService API accepts classname as jcrname for build-in image sets (weird!)
+        }
+
+        final Map<String, Path> existingImageTypes = getExistingImageTypes(context);
+        final Path customImageSetBeanPath = existingImageTypes.get(className);
+        if (customImageSetBeanPath != null) {
+            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(customImageSetBeanPath);
+            if (annotation != null && !Strings.isNullOrEmpty(annotation.getInternalName())) {
+                return annotation.getInternalName();
+            }
+        }
+
+        return null;
+    }
 
     @SuppressWarnings("rawtypes")
-    public void convertImageMethods(final String newImageNamespace) {
-        final Map<String, Path> existing = findExistingBeans();
+    @Override
+    public void convertImageMethods(final String jcrName, final PluginContext context, final UserFeedback feedback) {
+        final Map<String, Path> existing = findExistingBeans(context);
         final Map<String, String> imageTypes = new HashMap<>();
         final Set<Path> imageTypePaths = new HashSet<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
@@ -611,15 +620,15 @@ public class ContentBeansService {
                 imageTypes.put(myClass, JavaSourceUtils.getImportName(path));
                 imageTypePaths.add(path);
             }
-            if (annotation != null && newImageNamespace.equals(annotation.getInternalName())) {
+            if (annotation != null && jcrName.equals(annotation.getInternalName())) {
                 newReturnType = myClass;
             }
         }
-        if (newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_BEAN) || newImageNamespace.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
+        if (jcrName.equals(HIPPO_GALLERY_IMAGE_SET_BEAN) || jcrName.equals(HIPPO_GALLERY_IMAGE_SET_CLASS)) {
             newReturnType = HIPPO_GALLERY_IMAGE_SET_CLASS;
         }
         if (Strings.isNullOrEmpty(newReturnType)) {
-            log.warn("Could not find return type for image set namespace: {}", newImageNamespace);
+            log.warn("Could not find return type for image set namespace: {}", jcrName);
             return;
         }
         log.info("Converting existing image beans to new type: {}", newReturnType);
@@ -646,13 +655,11 @@ public class ContentBeansService {
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
                         if (!allowClassUpdate) {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled at the Bean class level: "
-                                    + m.getInternalName() + " in the class at " + path.toString()));
+                            logClassModificationDisabled(path, m.getMethodName(), feedback);
                         } else if (allowMethodUpdate) {
-                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
                         } else {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled: "
-                                    + m.getInternalName() + ", " + m.getMethodName()));
+                            logMethodModificationDisabled(path, m.getMethodName(), feedback);
                         }
                     }
                 } else if (JavaSourceUtils.getParameterizedType(type) != null) {
@@ -660,10 +667,9 @@ public class ContentBeansService {
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
                         if (!allowClassUpdate) {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled at the Bean class level: "
-                                    + m.getInternalName() + " in the class at " + path.toString()));
+                            logClassModificationDisabled(path, m.getMethodName(), feedback);
                         } else if (allowMethodUpdate) {
-                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
                         }
                     }
                 }
@@ -672,7 +678,7 @@ public class ContentBeansService {
     }
 
 
-    private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement) {
+    private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement, final UserFeedback feedback) {
         final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
         final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
         final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
@@ -726,8 +732,7 @@ public class ContentBeansService {
                 } else {
                     JavaSourceUtils.addBeanMethodInternalImageSet(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
                 }
-                log.debug("Replaced old method: {} with new return type: {}", oldMethod.getMethodName(), newReturnType);
-                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), oldMethod.getMethodName(), ActionType.MODIFIED_METHOD));
+                logMethodModified(path, oldMethod.getMethodName(), feedback);
             }
         }
     }
@@ -739,8 +744,8 @@ public class ContentBeansService {
      * @param bean       none existing bean
      * @param parentPath existing parent bean
      */
-    private void createBean(final HippoContentBean bean, final Path parentPath) {
-        final Path javaClass = createJavaClass(bean);
+    private void createBean(final HippoContentBean bean, final Path parentPath, final PluginContext context, final UserFeedback feedback) {
+        final Path javaClass = createJavaClass(bean, context, feedback);
         JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
@@ -748,20 +753,19 @@ public class ContentBeansService {
     }
 
 
-    private Path createJavaClass(final HippoContentBean bean) {
+    private Path createJavaClass(final HippoContentBean bean, final PluginContext context, final UserFeedback feedback) {
         String name = bean.getName();
         if (name.indexOf(',') != -1) {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
         final Path path = JavaSourceUtils.createJavaClass(context.getBeansRootPath().toString(), className, context.beansPackageName(), null);
-        context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(ActionType.CREATED_CLASS, path.toString(), className));
-
+        logClassCreated(path, className, feedback);
         return path;
     }
 
 
-    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple) {
+    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple, final UserFeedback feedback) {
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
@@ -776,22 +780,17 @@ public class ContentBeansService {
                 if (name.equals(internalName)) {
                     // check if single/multiple  changed:
                     if (generatedMethod.isMultiType() != multiple) {
+                        log.debug("Property changed (single/multiple): trying to update method '{}' of bean '{}'.",
+                                generatedMethod.getMethodName(), beanPath);
                         if (!allowClassUpdate) {
-                            // there was a change, however, class is marked as read only
-                            log.warn("Property changed (single/multiple): {}, but bean class changes not allowed", internalName);
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled on the Bean class level: "
-                                    + generatedMethod.getMethodName() + " for class at " + beanPath.toString()));
+                            logClassModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
                             return false;
                         }
                         if (allowMethodUpdate) {
                             log.info("Property changed (single/multiple): {}", internalName);
                             return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
                         } else {
-                            // there was a change, however, method is marked as read only
-                            log.warn("Property changed (single/multiple): {}, but changes not allowed", internalName);
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled: "
-                                    + internalName + ", " + generatedMethod.getMethodName()));
-
+                            logMethodModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
                             return false;
                         }
                     }
@@ -803,5 +802,49 @@ public class ContentBeansService {
         return true;
     }
 
+    private String getBaseSupertype(final PluginContext context) {
+        return context.getProjectNamespacePrefix() + ":basedocument";
+    }
 
+    private void logClassCreated(final Path beanPath, final String className, final UserFeedback feedback) {
+        final String message = String.format("Created HST bean '%s' (%s).", className, beanPath);
+        logUserFeedback(message, true, feedback);
+    }
+
+    private void logMethodCreated(final Path beanPath, final String methodName, final UserFeedback feedback) {
+        final String message = String.format("Created method: '%s' in HST bean: '%s'.", methodName, beanPath);
+        logUserFeedback(message, true, feedback);
+    }
+
+    private void logMethodModified(final Path beanPath, final String methodName, final UserFeedback feedback) {
+        final String message = String.format("Re-created method '%s' in HST bean '%s'.", methodName, beanPath);
+        logUserFeedback(message, true, feedback);
+    }
+
+    private void logMethodDeleted(final Path beanPath, final String methodName, final UserFeedback feedback) {
+        final String message = String.format("Deleted method '%s' in HST bean '%s'.", methodName, beanPath);
+        logUserFeedback(message, true, feedback);
+    }
+
+    private void logMethodModificationDisabled(final Path beanPath, final String methodName, final UserFeedback feedback) {
+        final String message = String.format("Return type of method '%s' in bean '%s' should be changed, " +
+                "but modifications are disabled at method level.", methodName, beanPath);
+        logUserFeedback(message, false, feedback);
+    }
+
+    private void logClassModificationDisabled(final Path beanPath, final String methodName, final UserFeedback feedback) {
+        final String message = String.format("Return type of method '%s' in bean '%s' should be changed, " +
+                "but modifications are disabled at the class level.", methodName, beanPath);
+        logUserFeedback(message, false, feedback);
+    }
+
+    private void logUserFeedback(final String message, final boolean success, final UserFeedback feedback) {
+        if (success) {
+            feedback.addSuccess(message);
+            log.info("@@@ {}", message);
+        } else {
+            feedback.addError(message);
+            log.warn("@@@ {}", message);
+        }
+    }
 }
