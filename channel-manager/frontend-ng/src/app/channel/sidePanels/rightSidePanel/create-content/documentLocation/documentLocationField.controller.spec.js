@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('DocumentLocationField', () => {
+describe('DocumentLocationField', () => {
   let $componentController;
   let $q;
   let $rootScope;
@@ -25,6 +25,7 @@ fdescribe('DocumentLocationField', () => {
   let component;
   let $scope;
   let getFolderSpy;
+  let getChannelSpy;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
@@ -42,48 +43,51 @@ fdescribe('DocumentLocationField', () => {
     component = $componentController('documentLocationField');
 
     getFolderSpy = spyOn(CreateContentService, 'getFolders').and.returnValue($q.resolve());
+    getChannelSpy = spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/channel/content' });
+    component.changeLocale = () => angular.noop();
   });
 
 
   describe('parsing the rootPath @Input', () => {
     it('defaults to the channel root if not set', () => {
-      // $rootScope.$apply();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content');
     });
 
     it('overrides the channel root path if absolute', () => {
       component.rootPath = '/root/path';
-      $rootScope.$apply();
+      component.$onInit();
       expect(component.rootPath).toBe('/root/path');
     });
 
     it('is concatenated wth the channel\'s root path if relative', () => {
       component.rootPath = 'some/path';
-      $rootScope.$apply();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content/some/path');
     });
 
     it('never ends with a slash', () => {
+      getChannelSpy.and.returnValue({ contentRoot: '/channel/content' });
       component.rootPath = '/root/path/';
-      $rootScope.$apply();
+      component.$onInit();
       expect(component.rootPath).toBe('/root/path');
 
       component.rootPath = 'some/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content/some/path');
     });
 
     it('detects the root path depth', () => {
       component.rootPath = '/root';
-      $rootScope.$apply();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(1);
 
       component.rootPath = '/root/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(2);
 
       component.rootPath = 'some/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(4);
     });
   });
@@ -91,7 +95,7 @@ fdescribe('DocumentLocationField', () => {
   describe('parsing the defaultPath @Input', () => {
     it('throws an error if defaultPath is absolute', () => {
       component.defaultPath = '/path';
-      expect(() => $rootScope.$apply()).toThrow(new Error('The defaultPath option can only be a relative path'));
+      expect(() => component.$onInit()).toThrow(new Error('The defaultPath option can only be a relative path'));
     });
   });
 
@@ -99,7 +103,10 @@ fdescribe('DocumentLocationField', () => {
     it('stores the path of the last folder returned by the create-content-service', () => {
       const folders = [{path: '/root'}, {path: '/root/path'}];
       getFolderSpy.and.returnValue($q.resolve(folders));
+
       component.$onInit();
+      $rootScope.$apply();
+
       expect(component.documentLocation).toBe('/root/path');
     });
 
@@ -107,7 +114,10 @@ fdescribe('DocumentLocationField', () => {
       component.rootPath = '/root';
       const folders = [{name: 'root'}, {name: 'default'}, {name: 'path'}];
       getFolderSpy.and.returnValue($q.resolve(folders));
+
       component.$onInit();
+      $rootScope.$apply();
+
       expect(component.defaultPath).toBe('default/path');
     });
   });
@@ -185,13 +195,14 @@ fdescribe('DocumentLocationField', () => {
 
   describe('the locale @Output', () => {
     it('emits the locale when component is initialized', () => {
-      let changedLocale;
-      component.changeLocale.subscribe((locale) => changedLocale = locale);
-
+      spyOn(component, 'changeLocale');
       const folders = [{path: '/root'}, {path: '/root/path', locale: 'de'}];
       getFolderSpy.and.returnValue($q.resolve(folders));
+
       component.$onInit();
-      expect(changedLocale).toBe('de');
+      $rootScope.$apply();
+
+      expect(component.changeLocale).toHaveBeenCalledWith('de');
     });
   });
 });
