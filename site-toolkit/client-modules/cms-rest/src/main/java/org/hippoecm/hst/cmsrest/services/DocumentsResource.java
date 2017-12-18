@@ -122,9 +122,6 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         }
 
         HstRequestContext requestContext = RequestContextProvider.get();
-
-        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
-
         final MutableResolvedMount resolvedMount = (MutableResolvedMount) requestContext.getResolvedMount();
         final Mount previewDecoratedMount = resolvedMount.getMount();
         if (Mount.LIVE_NAME.equals(type)) {
