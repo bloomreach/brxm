@@ -17,11 +17,13 @@
 <form #form="ngForm">
   <!-- Document location field -->
   <div class="field">
-    <mat-form-field 
-      (click)="openPicker()"
+    <mat-form-field
       class="create-content-field qa-document-location create-content-field-clickable">
-      <input matInput [(ngModel)]="documentLocationLabel" name="documentLocation"
-             placeholder="Document location" required disabled>
+      <input matInput required readonly
+             name="documentLocation"
+             placeholder="Document location"
+             (click)="openPicker()"
+             [(ngModel)]="documentLocationLabel">
     </mat-form-field>
 
     <hippo-hints
