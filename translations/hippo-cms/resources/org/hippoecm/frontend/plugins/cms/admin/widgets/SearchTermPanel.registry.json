@@ -1,0 +1,15 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "search-field-placeholder" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    }
+  }
+}
