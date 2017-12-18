@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -31,14 +30,11 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -47,7 +43,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,22 +97,15 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         columns.add(new PropertyColumn<>(new ResourceModel("group-description"), "description"));
         columns.add(new GroupDeleteLinkColumn(new ResourceModel("group-view-actions-title")));
 
-        final Form form = new Form("search-form");
-        form.setOutputMarkupId(true);
-        add(form);
-
-        final TextField<String> search = new TextField<>("search-query", PropertyModel.of(groupDataProvider, "searchTerm"));
-        search.add(StringValidator.minimumLength(1));
-        search.setRequired(false);
-        search.add(new DefaultFocusBehavior());
-        form.add(search);
-
-        form.add(new AjaxButton("search-button", form) {
+        final SearchTermPanel searchTermPanel = new SearchTermPanel("search-field") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
+                super.processSubmit(target, form, searchTerm);
+                groupDataProvider.setSearchTerm(searchTerm);
                 target.add(table);
             }
-        });
+        };
+        add(searchTermPanel);
 
         table = new AdminDataTable<>("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
@@ -129,6 +118,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
     @Override
     protected void onRemovedFromBreadCrumbsBar() {
+        groupDataProvider.setSearchTerm(null);
         context.unregisterService(this, IObserver.class.getName());
     }
 
