@@ -23,9 +23,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
@@ -42,7 +42,8 @@ public class SearchTermPanel extends Panel {
         form.setOutputMarkupId(true);
         add(form);
 
-        final TextField<String> search = new SubmittingTextField("search-query", new PropertyModel<>(this, "searchTerm")) {
+        final TextField<String> search =
+                new SubmittingTextField("search-query", new PropertyModel<>(this, "searchTerm")) {
             @Override
             public void onEnter(final AjaxRequestTarget target) {
                 super.onEnter(target);
@@ -75,16 +76,8 @@ public class SearchTermPanel extends Panel {
     }
 
     private Component createSearchIcon() {
-        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
-            @Override
-            protected Icon load() {
-                if (StringUtils.isNotBlank(searchTerm)) {
-                    return Icon.TIMES;
-                } else {
-                    return Icon.SEARCH;
-                }
-            }
-        };
+        final IModel<Icon> iconModel =
+                ReadOnlyModel.of(() -> StringUtils.isNotBlank(searchTerm) ? Icon.TIMES : Icon.SEARCH);
         return HippoIcon.fromSprite("search-icon", iconModel);
     }
 }
