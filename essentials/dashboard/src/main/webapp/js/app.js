@@ -183,8 +183,6 @@
             $rootScope.REST = {
                 root: root,
                 menus: root + '/menus/',
-                jcr: root + '/jcr/',
-                jcrQuery: root + '/jcr/query/',
                 dynamic: root + '/dynamic/',
 
                 /**
@@ -206,13 +204,6 @@
                     settings:    projectStem + '/settings',
                     coordinates: projectStem + '/coordinates'
                 },
-
-                //############################################
-                // NODE
-                //############################################
-                node: root + '/node/',
-                getProperty: root + '/node/property',
-                setProperty: root + '/node/property/save',
 
                 //############################################
                 // DOCUMENTS
