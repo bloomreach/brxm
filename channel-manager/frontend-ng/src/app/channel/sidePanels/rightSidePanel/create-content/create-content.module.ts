@@ -48,7 +48,6 @@ import { CreateContentServiceProvider } from './create-content.service.provider'
     CreateContentComponent,
     CreateContentStep2Component,
     HintsComponent,
-    NameUrlFieldsComponent,
     NameUrlFieldsDialogComponent
   ],
   providers: [

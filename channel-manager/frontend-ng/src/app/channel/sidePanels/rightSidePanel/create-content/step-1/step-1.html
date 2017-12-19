@@ -44,7 +44,7 @@
           class="form-dense-layout create-content-form">
 
       <!-- Name and URL fields (as a separate component) -->
-      <hippo-name-url-fields [locale]="locale"></hippo-name-url-fields>
+      <hippo-name-url-fields [(nameField)]="nameField" [(urlField)]="urlField" [locale]="locale"></hippo-name-url-fields>
 
       <!-- Document type field -->
       <div class="field">
@@ -74,10 +74,11 @@
       {{ 'CANCEL' | translate | uppercase }}
     </button>
 
+    <!--TODO: Add form validation for nameUrlFields-->
     <button mat-button class="qa-continue"
             type="submit"
             (click)="submit(form)"
-            [disabled]="form.invalid || nameUrlFields.form.invalid || !nameUrlFields.validateFields()">
+            [disabled]="form.invalid">
       {{ 'CONTINUE' | translate | uppercase }}
     </button>
   </div>
