@@ -22,7 +22,9 @@ import { UpgradeComponent } from '@angular/upgrade/static';
 })
 export class DocumentLocationFieldComponent extends UpgradeComponent {
   @Input() rootPath: string;
+  @Output() rootPathChange: EventEmitter<string> = new EventEmitter();
   @Input() defaultPath: string;
+  @Output() defaultPathChange: EventEmitter<string> = new EventEmitter();
   @Output() changeLocale: EventEmitter<string> = new EventEmitter();
 
   constructor(elementRef: ElementRef, injector: Injector) {
