@@ -224,14 +224,14 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }, RepositoryClusterService.class);
         } catch (MalformedURLException ex) {
-            log.error("MalformedURLException exception: " + bindingAddress, ex);
-            throw new ServletException("RemoteException: " + ex.getMessage());
+            log.error("MalformedURLException exception: {}", bindingAddress, ex);
+            throw new ServletException(ex);
         } catch (RemoteException ex) {
-            log.error("Generic remoting exception: " + bindingAddress, ex);
-            throw new ServletException("RemoteException: " + ex.getMessage());
+            log.error("Generic remoting exception: {}", bindingAddress, ex);
+            throw new ServletException(ex);
         } catch (RepositoryException ex) {
             log.error("Error while setting up JCR repository: ", ex);
-            throw new ServletException("RepositoryException: " + ex.getMessage());
+            throw new ServletException(ex);
         }
 
         freeMarkerConfiguration = createFreemarkerConfiguration();
