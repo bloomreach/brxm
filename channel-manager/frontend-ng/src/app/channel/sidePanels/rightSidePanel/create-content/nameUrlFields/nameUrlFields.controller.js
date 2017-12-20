@@ -15,14 +15,13 @@
  */
 
 class NameUrlFieldsController {
-  constructor ($element, $timeout, $scope, CreateContentService) {
+  constructor ($element, $timeout, CreateContentService) {
     'ngInject';
 
     this.createContentService = CreateContentService;
     this.nameInputField = $element.find('#nameInputElement');
     this.isManualUrlMode = false;
     this.$timeout = $timeout;
-    this.$scope = $scope;
     this.locale = 'en';
   }
 
@@ -35,10 +34,10 @@ class NameUrlFieldsController {
         return;
       }
 
-      this.urlUpdate(true);
+      this.urlUpdate = true;
       this.$timeout(() => {
         this.setDocumentUrlByName();
-        this.urlUpdate(false);
+        this.urlUpdate=  false;
       }, 1000);
     });
   }

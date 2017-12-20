@@ -24,7 +24,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { NameUrlFieldsComponent } from './name-url-fields/name-url-fields.component';
 import { FieldsEditorDirective } from '../fieldsEditor/fields-editor.component';
 import { SharedspaceToolbarDirective } from '../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
-import { NameUrlFieldsDialogComponent } from './step-2/name-url-fields-dialog/name-url-fields-dialog';
 import { DocumentLocationFieldComponent } from './document-location/document-location-field.component';
 import { CapitalizePipe } from '../../../../shared/pipes/capitalize.pipe';
 import { CreateContentServiceProvider } from './create-content.service.provider';
@@ -41,14 +40,12 @@ import { CreateContentServiceProvider } from './create-content.service.provider'
     CreateContentStep2Component,
     HintsComponent,
     NameUrlFieldsComponent,
-    NameUrlFieldsDialogComponent,
     DocumentLocationFieldComponent
   ],
   entryComponents: [
     CreateContentComponent,
     CreateContentStep2Component,
     HintsComponent,
-    NameUrlFieldsDialogComponent
   ],
   providers: [
     CreateContentServiceProvider

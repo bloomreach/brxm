@@ -14,17 +14,15 @@
   limitations under the License.
   -->
 
-<form name="$ctrl.nameUrlForm">
+<form name="nameUrlForm">
   <!-- Document name field -->
-  <div class="field">
-    <md-input-container class="create-content-field qa-name-field">
-      <input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement">
-    </md-input-container>
+  <md-input-container class="create-content-field qa-name-field">
+    <input ng-model="$ctrl.nameField" name="nameField" placeholder="Document name" required autocomplete="off" id="nameInputElement">
 
-    <div ng-messages="$ctrl.nameUrlForm.name.errors && $ctrl.nameUrlForm.name.touched">
+    <div ng-messages="nameUrlForm.name.$error && nameUrlForm.name.$touched">
       <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
     </div>
-  </div>
+  </md-input-container>
 
   <!-- Document URL field -->
   <div class="field">
@@ -48,7 +46,7 @@
         <md-icon>autorenew</md-icon>
       </md-button>
 
-      <div ng-messages="$ctrl.nameUrlForm.url.errors && $ctrl.nameUrlForm.url.touched">
+      <div ng-messages="nameUrlForm.url.$error && nameUrlForm.url.$touched">
         <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
         <!--<div ng-message="invalidUrl">{{ ::'INVALID_URL' | translate }}</div>-->
       </div>

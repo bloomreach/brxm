@@ -13,29 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<mat-dialog-content>
+<div>
   <div class="md-dialog-content name-url-fields-dialog">
-    <h3 mat-dialog-title>{{ title }}</h3>
+    <h3 class="md-headline">{{ $ctrl.title }}</h3>
 
-    <hippo-name-url-fields
-      [nameField]="name"
-      [urlField]="url"
-      [locale]="locale"
-      (urlUpdate)="onUrlUpdate($event)">
-    </hippo-name-url-fields>
-
+    <name-url-fields
+      name-field="$ctrl.nameField"
+      url-field="$ctrl.urlField"
+      locale="$ctrl.locale"
+      url-update="$ctrl.isUrlBusyUpdating">
+    </name-url-fields>
   </div>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions class="create-content-actions">
-  <button mat-button (click)="cancel() || !name.length || !url.length"
+<div class="create-content-actions">
+  <md-button ng-click="$ctrl.cancel()"
           class="qa-cancel">
     {{ 'CANCEL' | translate | uppercase }}
-  </button>
+  </md-button>
 
-  <button mat-button (click)="change()"
+  <md-button mat-button ng-click="$ctrl.submit()"
           class="qa-submit-name-url"
-          [disabled]="isUrlBusyUpdating || !nameUrlFields.validateFields()">
+          ng-disabled="$ctrl.isUrlBusyUpdating || !$ctrl.validateFields()">
     {{ 'CHANGE' | translate | uppercase }}
-  </button>
-</mat-dialog-actions>
+  </md-button>
+</div>

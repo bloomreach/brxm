@@ -26,7 +26,6 @@ export class NameUrlFieldsComponent extends UpgradeComponent {
   @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
   @Input() urlField: string;
   @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
-  @Output() urlUpdate: EventEmitter<boolean> = new EventEmitter();
 
   constructor(elementRef: ElementRef, injector: Injector) {
     super('nameUrlFields', elementRef, injector);

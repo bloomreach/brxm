@@ -14,7 +14,8 @@
 
 @import 'variables';
 
-mat-dialog-content {
+.dialog-content {
+  width: 600px;
   hippo-hints div {
     color: $red-500;
     font-size: 12px;

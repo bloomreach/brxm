@@ -37,7 +37,6 @@ import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { DocumentTypeInfo, Document } from '../create-content.types';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
 describe('Create content step 2 component', () => {
@@ -49,7 +48,6 @@ describe('Create content step 2 component', () => {
   let fieldService: FieldService;
   let feedbackService: FeedbackService;
   let matDialog: MatDialog;
-  let dialog: MatDialogRef<any>;
 
   const testDocument: Document = {
     id: 'testId',
@@ -71,7 +69,6 @@ describe('Create content step 2 component', () => {
         NameUrlFieldsComponent,
         SharedspaceToolbarDirective,
         FieldsEditorDirective,
-        NameUrlFieldsDialogComponent
       ],
       imports: [
         SharedModule,
@@ -82,16 +79,8 @@ describe('Create content step 2 component', () => {
         { provide: ContentService, useClass: ContentServiceMock },
         { provide: DialogService, useClass: DialogServiceMock },
         { provide: FieldService, useClass: FieldServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
-        { provide: MatDialog },
-        { provide: MatDialogRef }
+        { provide: FeedbackService, useClass: FeedbackServiceMock }
       ]
-    });
-
-    TestBed.overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [NameUrlFieldsDialogComponent],
-      },
     });
 
     fixture = TestBed.createComponent(CreateContentStep2Component);
@@ -102,7 +91,6 @@ describe('Create content step 2 component', () => {
     fieldService = fixture.debugElement.injector.get(FieldService);
     feedbackService = fixture.debugElement.injector.get(FeedbackService);
     matDialog = fixture.debugElement.injector.get(MatDialog);
-    dialog = fixture.debugElement.injector.get(MatDialogRef);
 
     spyOn(contentService, 'getDocumentType').and.callThrough();
     spyOn(createContentService, 'getDocument').and.callThrough();

@@ -42,7 +42,6 @@ describe('NameUrlFields', () => {
     element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement"></form>');
     component = $componentController('nameUrlFields', {
       $element: element,
-      $scope: scope,
     });
 
     spies.generateDocumentUrlByName = spyOn(CreateContentService, 'generateDocumentUrlByName').and.returnValue($q.resolve());
