@@ -264,16 +264,21 @@ public class BinariesServlet extends HttpServlet {
                 binariesCache.setHstCache(cache);
             }
         }
-        
-        final BinaryPage page = getPageFromCacheOrLoadPage(request);
+        try {
+            final BinaryPage page = getPageFromCacheOrLoadPage(request);
 
-        if (page.getStatus() != HttpServletResponse.SC_OK) {
-            // nothing left to do
-            response.sendError(page.getStatus());
+            if (page.getStatus() != HttpServletResponse.SC_OK) {
+                // nothing left to do
+                response.sendError(page.getStatus());
+                return;
+            }
+
+            writeResponse(request, response, page);
+        } catch (IllegalStateException e) {
+            log.info("Could not serve request '{}' : {}", request, e.toString());
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
         }
-
-        writeResponse(request, response, page);
     }
 
     protected void writeResponse(final HttpServletRequest request, final HttpServletResponse response, final BinaryPage page) throws IOException {
@@ -511,10 +516,10 @@ public class BinariesServlet extends HttpServlet {
             } else {
                 log.warn("Repository exception while resolving binaries request '{}'. {}", request.getRequestURI(), e);
             }
+            throw new IllegalStateException(String.format("Repository exception while resolving binaries request '%s' : %s", request.getRequestURI(), e.toString()));
         } finally {
             SessionUtils.releaseSession(request, session);
         }
-        return null;
     }
 
     /**
@@ -541,6 +546,10 @@ public class BinariesServlet extends HttpServlet {
             log.info("Page loaded: {}", page);
             return page;
         } catch (RepositoryException e) {
+            if (session == null) {
+                // NoAvailableSessionException is wrapped in RepositoryException
+                throw new IllegalStateException(String.format("Repository exception while resolving binaries request '%s' : %s", request.getRequestURI(), e.toString()));
+            }
             BinaryPage errorPage = new BinaryPage(resourcePath);
             // error page requires the same cachekey but is not set through the constructor. Unfortunately....
             // if we don't set the cache, the blocking cache will never release the lock
