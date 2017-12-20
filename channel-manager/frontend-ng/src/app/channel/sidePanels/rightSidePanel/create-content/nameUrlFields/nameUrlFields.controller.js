@@ -15,20 +15,22 @@
  */
 
 class NameUrlFieldsController {
-  constructor ($element, $timeout, CreateContentService) {
+  constructor ($element, $timeout, $scope, CreateContentService) {
     'ngInject';
 
     this.createContentService = CreateContentService;
-    this.$element = $element.find('#nameInputElement');
+    this.nameInputField = $element.find('#nameInputElement');
     this.isManualUrlMode = false;
     this.$timeout = $timeout;
+    this.$scope = $scope;
+    this.locale = 'en';
   }
 
 
   $onInit() {
     this.nameField = this.nameField || '';
     this.urlField = this.urlField || '';
-    this.$element.on('keyup', () => {
+    this.nameInputField.on('keyup', () => {
       if (this.isManualUrlMode) {
         return;
       }
@@ -37,15 +39,15 @@ class NameUrlFieldsController {
       this.$timeout(() => {
         this.setDocumentUrlByName();
         this.urlUpdate(false);
-      }, 1000)
+      }, 1000);
     });
   }
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes.hasOwnProperty('locale') && this.form.controls.name) {
-  //     this.setDocumentUrlByName();
-  //   }
-  // }
+  $onChanges(changes) {
+    if (changes.hasOwnProperty('locale')) {
+      this.setDocumentUrlByName();
+    }
+  }
 
   setDocumentUrlByName() {
     return this.createContentService.generateDocumentUrlByName(this.nameField, this.locale).then((slug) => {

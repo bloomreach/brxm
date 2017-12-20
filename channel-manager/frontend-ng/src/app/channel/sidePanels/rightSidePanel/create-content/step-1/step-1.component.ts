@@ -60,7 +60,6 @@ export class CreateContentComponent implements OnInit {
     private translate: TranslateService) {}
 
   ngOnInit() {
-    console.log(this.nameUrlFields);
     if (!this.options) {
       throw new Error('Input "options" is required');
     }

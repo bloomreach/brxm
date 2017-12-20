@@ -17,8 +17,8 @@
 <form name="$ctrl.nameUrlForm">
   <!-- Document name field -->
   <div class="field">
-    <md-input-container class="create-content-field qa-name-field" id="nameInputElement">
-      <input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off">
+    <md-input-container class="create-content-field qa-name-field">
+      <input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement">
     </md-input-container>
 
     <div ng-messages="$ctrl.nameUrlForm.name.errors && $ctrl.nameUrlForm.name.touched">
