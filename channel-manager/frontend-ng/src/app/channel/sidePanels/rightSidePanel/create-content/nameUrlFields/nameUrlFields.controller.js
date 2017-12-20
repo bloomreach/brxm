@@ -22,7 +22,6 @@ class NameUrlFieldsController {
     this.nameInputField = $element.find('#nameInputElement');
     this.isManualUrlMode = false;
     this.$timeout = $timeout;
-    this.locale = 'en';
   }
 
 
@@ -43,7 +42,7 @@ class NameUrlFieldsController {
   }
 
   $onChanges(changes) {
-    if (changes.hasOwnProperty('locale')) {
+    if (changes.hasOwnProperty('locale') && !changes.locale.isFirstChange()) {
       this.setDocumentUrlByName();
     }
   }
