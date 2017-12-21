@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.service;
+package org.onehippo.cms7.essentials;
 
-import java.io.File;
-import java.util.List;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
-/**
- * ProjectService provides access to the project, and in particular to the file resources of a project.
- *
- * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
- */
-public interface ProjectService {
-    final String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
-    final String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
+@Profile("repository-test")
+@Configuration
+public class TestSpringConfiguration {
 
-    /**
-     * Retrieve a list of the log4j2 files of the project.
-     */
-    List<File> getLog4j2Files();
+    @Bean
+    @Primary
+    public JcrService getJcrService() {
+        return new TestJcrService();
+    }
 }

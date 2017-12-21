@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 
 /**
  * ContentBeansService provides support for updating the project's (HST) content beans, to be used typically after
@@ -40,19 +41,21 @@ public interface ContentBeansService {
      *
      * During the process, user-level feedback messages get populated.
      *
+     * @param jcrService        for accessing the JCR repository
      * @param context           for accessing the project (namespace, beans path etc.)
      * @param feedback          to populate user feedback
      * @param imageSetClassName when specified, newly created getters for image links will return this type of images
      */
-    void createBeans(PluginContext context, UserFeedback feedback, String imageSetClassName);
+    void createBeans(JcrService jcrService, PluginContext context, UserFeedback feedback, String imageSetClassName);
 
     /**
      * Clean-up Essentials-generated getters if the corresponding document type field no longer exists.
      *
-     * @param context  for accessing the project
-     * @param feedback to populate user feedback
+     * @param jcrService for accessing the JCR repository
+     * @param context    for accessing the project
+     * @param feedback   to populate user feedback
      */
-    void cleanupMethods(PluginContext context, UserFeedback feedback);
+    void cleanupMethods(JcrService jcrService, PluginContext context, UserFeedback feedback);
 
     /**
      * Retrieve a <classname, beanpath> map of the project's custom image sets,

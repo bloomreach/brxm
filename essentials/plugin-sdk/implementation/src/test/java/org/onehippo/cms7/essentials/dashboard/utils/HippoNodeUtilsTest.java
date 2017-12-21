@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testGetProjectNamespaces() throws Exception {
-        Session session = getSession();
+        Session session = jcrService.createSession();
         final List<String> projectNamespaces = HippoNodeUtils.getProjectNamespaces(session);
         final Set<String> reserved = EssentialConst.HIPPO_BUILT_IN_NAMESPACES;
         for (String r : reserved) {
             assertFalse(projectNamespaces.contains(r));
         }
-        session.logout();
+        jcrService.destroySession(session);
     }
 
     @Test
@@ -67,10 +67,10 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testGetCompounds() throws Exception {
-        Session session = getSession();
+        Session session = jcrService.createSession();
         final Set<String> compounds = HippoNodeUtils.getCompounds(session);
         assertTrue(compounds.size() == 0);
-        session.logout();
+        jcrService.destroySession(session);
     }
 
     @Test(expected = Exception.class)

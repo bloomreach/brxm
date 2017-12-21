@@ -21,7 +21,7 @@ import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 /**
  * MavenAssemblyService provides methods to manipulate Maven Assembly descriptor files.
  *
- * It can be @Inject-ed into an Essentials plugin's REST resource ({@code BaseResource}) or custom {@code Instruction}.
+ * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
 public interface MavenAssemblyService {
     /**

@@ -21,8 +21,6 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Map;
 
-import javax.jcr.Session;
-
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
@@ -37,15 +35,6 @@ public interface PluginContext extends Serializable {
     ProjectSettings getProjectSettings();
 
     void setProjectSettings(ProjectSettings projectSettings);
-
-    /**
-     * Returns JCR session for logged in user.
-     * <p>NOTE: session is managed by plugin itself, so logout etc. must be done by plugin</p>
-     * <p>Sessions will be logout after plugin is unloaded by plugin framework</p>
-     *
-     * @return instance of JCR session, with admin rights
-     */
-    Session createSession();
 
     /**
      * Returns root of the site directory

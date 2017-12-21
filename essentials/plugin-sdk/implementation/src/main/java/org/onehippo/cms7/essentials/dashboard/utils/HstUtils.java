@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,8 @@ public final class HstUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HstUtils.class);
 
-    public static Set<Node> getHstMounts(final PluginContext context) {
-        final Session session = context.createSession();
+    public static Set<Node> getHstMounts(final JcrService jcrService) {
+        final Session session = jcrService.createSession();
 
         try {
             final Workspace workspace = session.getWorkspace();
@@ -61,7 +62,7 @@ public final class HstUtils {
         } catch (RepositoryException e) {
             log.error("Error fetching hst:host nodes", e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return Collections.emptySet();
 
@@ -72,22 +73,21 @@ public final class HstUtils {
         // utility
     }
 
-    public static void erasePreview(final PluginContext context) {
-        final Session session = context.createSession();
+    public static void erasePreview(final JcrService jcrService, final PluginContext context) {
         final String namespace = context.getProjectSettings().getProjectNamespace();
         final String preview = namespace + "-preview";
+        final Session session = jcrService.createSession();
 
         try {
             final Node configurations = session.getNode("/hst:hst/hst:configurations");
             if (configurations.hasNode(preview)) {
                 configurations.getNode(preview).remove();
             }
-
             session.save();
         } catch (RepositoryException ex) {
             log.warn("Unable to delete preview configuration", ex);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
     }
 }

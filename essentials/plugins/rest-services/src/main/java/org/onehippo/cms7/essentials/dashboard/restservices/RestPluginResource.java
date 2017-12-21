@@ -56,6 +56,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -70,6 +71,7 @@ public class RestPluginResource extends BaseResource {
 
     @Inject private EventBus eventBus;
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @GET
     @Path("/beans")
@@ -89,8 +91,7 @@ public class RestPluginResource extends BaseResource {
     @Path("/mounts")
     public List<MountRestful> getHippoSites(@Context ServletContext servletContext) throws RepositoryException {
 
-        final PluginContext context = contextFactory.getContext();
-        final Set<Node> hstMounts = HstUtils.getHstMounts(context);
+        final Set<Node> hstMounts = HstUtils.getHstMounts(jcrService);
         final List<MountRestful> list = new ArrayList<>();
         for (Node m : hstMounts) {
             list.add(new MountRestful(m.getIdentifier(), m.getPath(), m.getName()));

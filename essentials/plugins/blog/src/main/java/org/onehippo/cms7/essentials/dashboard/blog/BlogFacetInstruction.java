@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,8 +27,8 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,16 +44,21 @@ public class BlogFacetInstruction implements Instruction {
             "                {name:'Last 6 months',resolution:'day', begin:-182, end:1},\n" +
             "                {name:'Last year',resolution:'day', begin:-365, end:1}\n" +
             "                ]";
-    public static final long DEFAULT_FACET_LIMIT = 100L;
+    private static final long DEFAULT_FACET_LIMIT = 100L;
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
+
+    @Inject private JcrService jcrService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
         final String namespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
         final String targetNode = "/content/documents/" + namespace;
-        Session session = null;
+        final Session session = jcrService.createSession();
+        if (session == null) {
+            return InstructionStatus.FAILED;
+        }
+
         try {
-            session = context.createSession();
             final Node root = session.getNode(targetNode);
             final String facetName = "blogFacets";
             if (root.hasNode(facetName)) {
@@ -70,14 +76,12 @@ public class BlogFacetInstruction implements Instruction {
             blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});
             blogFacets.setProperty("hippofacnav:limit", DEFAULT_FACET_LIMIT);
             session.save();
-
         } catch (RepositoryException e) {
             log.error("Error creating blog facet", e);
             return InstructionStatus.FAILED;
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-
 
         return InstructionStatus.SUCCESS;
     }

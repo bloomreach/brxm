@@ -16,20 +16,33 @@
 
 package org.onehippo.cms7.essentials.dashboard.service;
 
-import java.io.File;
-import java.util.List;
+import javax.jcr.Session;
 
 /**
- * ProjectService provides access to the project, and in particular to the file resources of a project.
+ * JcrService provides an abstraction layer for easing a number of high- and low-level JCR operations.
  *
  * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
-public interface ProjectService {
-    final String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
-    final String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
+public interface JcrService {
+    /**
+     * Login a fresh session with admin privileges.
+     *
+     * @return JCR session or null
+     */
+    Session createSession();
 
     /**
-     * Retrieve a list of the log4j2 files of the project.
+     * Call Session#refresh, send potential RepositoryException to service logger.
+     *
+     * @param session JCR session to refresh
+     * @param keepChanges See Session#refresh
      */
-    List<File> getLog4j2Files();
+    void refreshSession(Session session, boolean keepChanges);
+
+    /**
+     * Logout the session.
+     *
+     * @param session JCR session
+     */
+    void destroySession(Session session);
 }

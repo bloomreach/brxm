@@ -63,6 +63,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -82,13 +83,14 @@ public class SelectionResource {
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
     @Inject private EventBus eventBus;
+    @Inject private JcrService jcrService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
     public UserFeedback addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final Session session = contextFactory.getContext().createSession();
         final UserFeedback feedback = new UserFeedback();
+        final Session session = jcrService.createSession();
 
         try {
             final int status = addField(session, payloadRestful.getValues(), feedback);
@@ -100,7 +102,7 @@ public class SelectionResource {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             feedback.addError("Failed to add new selection field to document type. Check logs.");
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return feedback;
     }
@@ -109,14 +111,14 @@ public class SelectionResource {
     @Path("/fieldsfor/{docType}/")
     public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = contextFactory.getContext().createSession();
+        final Session session = jcrService.createSession();
 
         try {
             addSelectionFields(fields, docType, session);
         } catch (RepositoryException e) {
             log.warn("Exception trying to retrieve selection fields for document type '{}'", docType, e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
 
         return fields;

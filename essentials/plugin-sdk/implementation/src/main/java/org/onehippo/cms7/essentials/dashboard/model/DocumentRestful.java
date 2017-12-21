@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -54,22 +53,21 @@ public class DocumentRestful implements Restful {
     private Set<String> superTypes;
     private Set<String> fieldLocations;
 
-    public DocumentRestful(final ContentType contentType, final PluginContext context) {
+    public DocumentRestful(final ContentType contentType, final Session session, final PluginContext context) {
         this.fullName = extractFullName(contentType.getName(), context);
         this.prefix = extractPrefix(contentType.getPrefix(), fullName);
         this.mixin = contentType.isMixin();
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
         this.name = extractName(fullName);
-        setDraftType(context, prefix, name);
+        setDraftType(session, prefix, name);
     }
 
     /**
      * Scheck if document is in draft mode:
      */
-    private void setDraftType(final PluginContext context, final String prefix, final String name) {
+    private void setDraftType(final Session session, final String prefix, final String name) {
 
-        final Session session = context.createSession();
         try {
             final String absPath = "/hippo:namespaces/" + prefix + '/' + name + "/hipposysedit:prototypes";
             if (session.nodeExists(absPath)) {
@@ -82,10 +80,7 @@ public class DocumentRestful implements Restful {
             }
         } catch (RepositoryException e) {
             log.error("Error checking draft node", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
     }
 
     private String extractPrefix(final String prefix, final String name) {

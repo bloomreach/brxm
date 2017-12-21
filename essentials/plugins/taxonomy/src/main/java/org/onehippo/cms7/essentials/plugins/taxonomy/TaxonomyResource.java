@@ -55,8 +55,8 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -77,6 +77,7 @@ public class TaxonomyResource {
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
+    @Inject private JcrService jcrService;
     @Inject private PluginContextFactory contextFactory;
 
     /**
@@ -89,8 +90,7 @@ public class TaxonomyResource {
     @Path("/taxonomies")
     public List<TaxonomyRestful> getTaxonomies(@Context ServletContext servletContext) {
         final List<TaxonomyRestful> taxonomies = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
 
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -112,7 +112,7 @@ public class TaxonomyResource {
         } catch (RepositoryException e) {
             log.error("Error fetching taxonomies", e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
 
         return taxonomies;
@@ -125,7 +125,7 @@ public class TaxonomyResource {
 
         final PluginContext context = contextFactory.getContext();
         final String prefix = context.getProjectNamespacePrefix();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             final String editorTemplatePath =
                     MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
@@ -142,7 +142,7 @@ public class TaxonomyResource {
         } catch (RepositoryException ex) {
             log.error("Problem checking taxonomy fields for document " + documentName, ex);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
 
         return fields;
@@ -158,8 +158,7 @@ public class TaxonomyResource {
     @POST
     @Path("/taxonomies/add")
     public UserFeedback createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             final String taxonomyName = taxonomyRestful.getName();
             String[] locales = taxonomyRestful.getLocales();
@@ -179,7 +178,7 @@ public class TaxonomyResource {
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy", e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return new UserFeedback().addError("Failed to create taxonomy");
@@ -196,7 +195,7 @@ public class TaxonomyResource {
     @Path("/add")
     public UserFeedback addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         final Collection<String> changedDocuments = new HashSet<>();
         try {
             final Map<String, String> values = payloadRestful.getValues();
@@ -206,7 +205,7 @@ public class TaxonomyResource {
                 final String documentName = documentNames[i];
                 final String taxonomyName = taxonomyNames[i];
                 final String prefix = context.getProjectNamespacePrefix();
-                DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
+                DocumentTemplateUtils.addMixinToTemplate(jcrService, context, documentName, HIPPOTAXONOMY_MIXIN, true);
                 final String editorTemplatePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
                 if (!session.nodeExists(editorTemplatePath)) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -241,7 +240,7 @@ public class TaxonomyResource {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return new UserFeedback().addError("Error adding taxonomy fields");
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return new UserFeedback().addSuccess("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
     }

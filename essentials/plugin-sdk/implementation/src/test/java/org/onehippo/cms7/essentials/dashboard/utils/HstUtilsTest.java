@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,21 +25,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 import static org.junit.Assert.assertEquals;
 
 public class HstUtilsTest extends BaseRepositoryTest{
 
-
-
-
     @Test
     public void testGetHstMounts() throws Exception {
-        final Set<Node> hstMounts = HstUtils.getHstMounts(getContext());
+        final Set<Node> hstMounts = HstUtils.getHstMounts(jcrService);
         assertEquals("expected 3 mounts, hst:root and 2 added by us", 3, hstMounts.size());
     }
-
-
 
     @Override
     @After
@@ -47,16 +43,13 @@ public class HstUtilsTest extends BaseRepositoryTest{
         super.tearDown();
     }
 
-
-
-
-
     @Override
     @Before
     public void setUp() throws Exception {
+        final PluginContext context = getContext();
         super.setUp();
-        createHstRootConfig();
-        final Session session = getContext().createSession();
+        jcrService.createHstRootConfig(context.getProjectNamespacePrefix());
+        final Session session = jcrService.createSession();
         final Node hstRoot = session.getNode("/hst:hst");
         final Node virtualHost = hstRoot.addNode("hst:hosts", "hst:virtualhosts");
         final Node hostGroup = virtualHost.addNode("localhost-group", "hst:virtualhostgroup");
@@ -65,7 +58,6 @@ public class HstUtilsTest extends BaseRepositoryTest{
         root.addNode("restone", "hst:mount");
         root.addNode("resttwo", "hst:mount");
         session.save();
+        jcrService.destroySession(session);
     }
-
-
 }

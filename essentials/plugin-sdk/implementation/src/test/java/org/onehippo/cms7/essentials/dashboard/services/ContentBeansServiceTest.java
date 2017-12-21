@@ -38,17 +38,17 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         final UserFeedback feedback = new UserFeedback();
         context.addPlaceholderData(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS, "true");
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-        context.setUseHippoSession(true);
-        context.setHippoRepository(repository);
+        jcrService.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
-        contentBeansService.createBeans(context, feedback, null);
+        contentBeansService.createBeans(jcrService, context, feedback, null);
         contentBeansService.convertImageMethods("testproject:testasasasas", context, feedback);
 
     }
 
+    // TODO: still needed? or use getContext instead?
     private TestPluginContext getTestContext() {
 
-        final TestPluginContext testPluginContext = new TestPluginContext(repository);
+        final TestPluginContext testPluginContext = new TestPluginContext();
         testPluginContext.setComponentsPackageName("org.example.components");
         testPluginContext.setBeansPackageName("org.example.beans");
         testPluginContext.setRestPackageName("org.example.rest");
@@ -61,11 +61,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        // skip the setup of the memory
         projectSetup();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 }

@@ -29,7 +29,7 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -43,8 +43,9 @@ import com.google.common.base.Strings;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
@@ -64,12 +65,14 @@ public class RelatedDocumentsResource {
     private static final String MIXIN_NAME = "relateddocs:relatabledocs";
 
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @POST
     @Path("/")
-    public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public UserFeedback addDocuments(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+        final Collection<String> changedDocuments = new HashSet<>();
         final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();
             final String documents = values.get("documents");
@@ -77,8 +80,6 @@ public class RelatedDocumentsResource {
 
             final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
             final String templateSuggestDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_suggestion_template.xml"));
-
-            final Collection<String> changedDocuments = new HashSet<>();
 
             if (!Strings.isNullOrEmpty(documents)) {
 
@@ -94,7 +95,7 @@ public class RelatedDocumentsResource {
                         log.info("Suggest field path: [{}] already exists.", fieldImportPath);
                         continue;
                     }
-                    DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
+                    DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, String> templateData = new HashMap<>(values);
                     final Node editorTemplate = session.getNode(fieldImportPath);
@@ -111,22 +112,19 @@ public class RelatedDocumentsResource {
                     changedDocuments.add(document);
                     idx++;
                 }
-
-
             }
-            if (changedDocuments.size() > 0) {
-                final String join = Joiner.on(',').join(changedDocuments);
-                return new MessageRestful("Added related document fields to following documents: " + join);
-            }
-
-
         } catch (RepositoryException | IOException e) {
             log.error("Error adding related documents field", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failed to add related documents field: " + e.getMessage());
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return new MessageRestful("No related document fields were added");
 
+        if (changedDocuments.size() > 0) {
+            final String join = Joiner.on(',').join(changedDocuments);
+            return new UserFeedback().addSuccess("Added related document fields to following documents: " + join);
+        }
+        return new UserFeedback().addSuccess("No related document fields were added");
     }
-
 }

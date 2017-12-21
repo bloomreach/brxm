@@ -35,6 +35,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -58,12 +59,13 @@ public class BloomreachConnectorResource {
 
     @Inject private PluginContextFactory contextFactory;
     @Inject private MavenDependencyService dependencyService;
+    @Inject private JcrService jcrService;
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
         final PluginContext context = contextFactory.getContext();
-        final boolean exists = CndUtils.nodeTypeExists(context, CRISP_NODE);
+        final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
         final boolean hasDependency = dependencyService.hasDependency(context, TargetPom.CMS, CRISP_API)
                 && dependencyService.hasDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
 
@@ -96,10 +98,13 @@ public class BloomreachConnectorResource {
         // TODO validate data
 
         final UserFeedback feedback = new UserFeedback();
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
-        try {
+        final Session session = jcrService.createSession();
+        if (session == null) {
+            // set response status
+            return feedback.addError("Failed to access JCR repository.");
+        }
 
+        try {
             final String basePath = data.getBasePath();
             final Node root = session.getNode(basePath);
             final String resourceName = data.getResourceName();
@@ -148,7 +153,7 @@ public class BloomreachConnectorResource {
             session.save();
             feedback.addSuccess("Successfully created Bloomreach CRSIP resource: " + resourceName);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return feedback;
     }

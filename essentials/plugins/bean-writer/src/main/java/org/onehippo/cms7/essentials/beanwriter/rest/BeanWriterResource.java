@@ -36,6 +36,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 
 
@@ -48,6 +49,7 @@ import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 public class BeanWriterResource {
 
     @Inject private EventBus eventBus;
+    @Inject private JcrService jcrService;
     @Inject private ContentBeansService contentBeansService;
     @Inject private PluginContextFactory contextFactory;
 
@@ -58,11 +60,11 @@ public class BeanWriterResource {
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
 
-        contentBeansService.createBeans(context, feedback, imageSet);
+        contentBeansService.createBeans(jcrService, context, feedback, imageSet);
         if ("true".equals(values.get("updateImageMethods"))) {
             contentBeansService.convertImageMethodsForClassname(imageSet, context, feedback);
         }
-        contentBeansService.cleanupMethods(context, feedback);
+        contentBeansService.cleanupMethods(jcrService, context, feedback);
 
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("All beans were up to date");

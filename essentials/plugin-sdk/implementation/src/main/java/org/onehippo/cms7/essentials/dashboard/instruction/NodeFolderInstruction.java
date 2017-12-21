@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -54,6 +56,8 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     private static Logger log = LoggerFactory.getLogger(NodeFolderInstruction.class);
     private String template;
     private String path;
+
+    @Inject JcrService jcrService;
 
     public NodeFolderInstruction() {
         super(MessageGroup.XML_NODE_FOLDER_CREATE);
@@ -79,9 +83,7 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     }
 
     private InstructionStatus createFolders(final PluginContext context) {
-
-        final Session session = context.createSession();
-
+        final Session session = jcrService.createSession();
         InputStream stream = null;
         try {
             if (session.itemExists(path)) {
@@ -113,10 +115,9 @@ public class NodeFolderInstruction extends BuiltinInstruction {
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error creating folders" + this, e);
-            GlobalUtils.refreshSession(session, false);
         } finally {
             IOUtils.closeQuietly(stream);
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return InstructionStatus.FAILED;
     }

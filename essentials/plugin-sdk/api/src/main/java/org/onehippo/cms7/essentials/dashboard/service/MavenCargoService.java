@@ -25,7 +25,7 @@ import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
  * MavenCargoService provides methods to manipulate the configuration of the Maven Cargo plugin,
  * located in the project's root pom.xml file.
  *
- * It can be @Inject-ed into an Essentials plugin's REST resource ({@code BaseResource}) or custom {@code Instruction}.
+ * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
 public interface MavenCargoService {
     /**

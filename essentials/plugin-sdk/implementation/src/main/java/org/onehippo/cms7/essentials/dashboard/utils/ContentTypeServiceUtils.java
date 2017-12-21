@@ -38,6 +38,7 @@ import javax.jcr.Value;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
@@ -56,9 +57,10 @@ public class ContentTypeServiceUtils {
      * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final PluginContext context,
+    public static List<DocumentRestful> fetchDocumentsFromOwnNamespace(final JcrService jcrService,
+                                                                       final PluginContext context,
                                                                        final Predicate<ContentType> filter) {
-        return fetchDocuments(context, filter, true);
+        return fetchDocuments(jcrService, context, filter, true);
     }
 
     /**
@@ -67,11 +69,12 @@ public class ContentTypeServiceUtils {
      * @param filter for filtering document types. May be null.
      * @return filtered list of document types
      */
-    public static List<DocumentRestful> fetchDocuments(final PluginContext context,
+    public static List<DocumentRestful> fetchDocuments(final JcrService jcrService,
+                                                       final PluginContext context,
                                                        final Predicate<ContentType> filter,
                                                        final boolean ownNamespaceOnly) {
         final List<DocumentRestful> documents = new ArrayList<>();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
             final ContentTypes contentTypes = service.getContentTypes();
@@ -90,7 +93,7 @@ public class ContentTypeServiceUtils {
             // filter on document type
             for (ContentType doc : filteredContentTypes) {
                 if (filter == null || filter.test(doc)) {
-                    documents.add(new DocumentRestful(doc, context));
+                    documents.add(new DocumentRestful(doc, session, context));
                 }
             }
 
@@ -119,7 +122,7 @@ public class ContentTypeServiceUtils {
         } catch (RepositoryException e) {
             log.error("Error fetching document types", e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         // sort documents by name:
         documents.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(d1.getName(), d2.getName()));

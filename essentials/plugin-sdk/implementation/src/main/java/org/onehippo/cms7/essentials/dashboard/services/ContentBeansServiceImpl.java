@@ -49,6 +49,7 @@ import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -88,8 +89,8 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     private int missingBeansDepth = 0;
 
     @Override
-    public void createBeans(final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
-        final Set<HippoContentBean> contentBeans = getContentBeans(context);
+    public void createBeans(final JcrService jcrService, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
+        final Set<HippoContentBean> contentBeans = getContentBeans(jcrService, context);
         final Map<String, Path> existing = findExistingBeans(context);
         final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(contentBeans, existing));
         final Iterator<HippoContentBean> missingBeanIterator = missingBeans.iterator();
@@ -125,7 +126,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         final boolean hasNonCreatedBeans = extendedMissing.hasNext();
         if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
             missingBeansDepth++;
-            createBeans(context, feedback, imageSetClassName);
+            createBeans(jcrService, context, feedback, imageSetClassName);
         } else if (hasNonCreatedBeans) {
             log.error("Not all beans were created: {}", extendedMissing);
         }
@@ -137,8 +138,8 @@ public class ContentBeansServiceImpl implements ContentBeansService {
      * Removes methods which are annotated but missing within content services
      */
     @Override
-    public void cleanupMethods(final PluginContext context, final UserFeedback feedback) {
-        final Set<HippoContentBean> beans = getContentBeans(context);
+    public void cleanupMethods(final JcrService jcrService, final PluginContext context, final UserFeedback feedback) {
+        final Set<HippoContentBean> beans = getContentBeans(jcrService, context);
         final Map<String, Path> existing = findExistingBeans(context);
         for (HippoContentBean bean : beans) {
             final Path path = existing.get(bean.getName());
@@ -306,10 +307,10 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     }
 
 
-    private Set<HippoContentBean> getContentBeans(final PluginContext context) {
+    private Set<HippoContentBean> getContentBeans(final JcrService jcrService, final PluginContext context) {
         try {
             final Set<HippoContentBean> beans = new HashSet<>();
-            final Set<ContentType> projectContentTypes = getProjectContentTypes(context);
+            final Set<ContentType> projectContentTypes = getProjectContentTypes(jcrService, context);
             for (ContentType projectContentType : projectContentTypes) {
                 final HippoContentBean bean = new HippoContentBean(context, projectContentType);
                 beans.add(bean);
@@ -328,10 +329,10 @@ public class ContentBeansServiceImpl implements ContentBeansService {
      * @return empty collection if no types are found
      * @throws RepositoryException for unexpected Repository situations
      */
-    public Set<ContentType> getProjectContentTypes(final PluginContext context) throws RepositoryException {
+    private Set<ContentType> getProjectContentTypes(final JcrService jcrService, final PluginContext context) throws RepositoryException {
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Set<ContentType> projectContentTypes = new HashSet<>();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
             final ContentTypes contentTypes = service.getContentTypes();
@@ -345,7 +346,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                 }
             }
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return Collections.emptySet();
     }

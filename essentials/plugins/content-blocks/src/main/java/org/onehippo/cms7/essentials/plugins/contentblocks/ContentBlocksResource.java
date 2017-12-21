@@ -54,9 +54,9 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
@@ -86,31 +86,33 @@ public class ContentBlocksResource {
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
 
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, NO_IMAGE_FILTER);
+        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(jcrService, context, NO_IMAGE_FILTER);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
-        final Session session = GlobalUtils.createSession();
-        try {
-            for (DocumentRestful documentType : documents) {
-                if ("basedocument".equals(documentType.getName())) {
-                    continue; // don't expose the base document as you can't instantiate it.
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                for (DocumentRestful documentType : documents) {
+                    if ("basedocument".equals(documentType.getName())) {
+                        continue; // don't expose the base document as you can't instantiate it.
+                    }
+                    final String primaryType = documentType.getFullName();
+                    final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
+                    cbDocument.setId(primaryType);
+                    cbDocument.setName(makeDisplayName(session, primaryType));
+                    populateContentBlocksFields(cbDocument, session);
+                    cbDocuments.add(cbDocument);
                 }
-                final String primaryType = documentType.getFullName();
-                final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
-                cbDocument.setId(primaryType);
-                cbDocument.setName(makeDisplayName(session, primaryType));
-                populateContentBlocksFields(cbDocument, session);
-                cbDocuments.add(cbDocument);
+            } finally {
+                jcrService.destroySession(session);
             }
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
         return cbDocuments;
     }
 
@@ -127,23 +129,25 @@ public class ContentBlocksResource {
         final PluginContext context = contextFactory.getContext();
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
-        final Session session = GlobalUtils.createSession();
 
-        try {
-            for (DocumentTypeRestful docType : docTypes) {
-                updateDocumentType(context, docType, session, updaters);
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                for (DocumentTypeRestful docType : docTypes) {
+                    updateDocumentType(context, docType, session, updaters);
+                }
+                session.save();
+                updatersRun = executeUpdaters(session, updaters);
+            } catch (RepositoryException e) {
+                log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return new UserFeedback().addError(ERROR_MSG);
+            } catch (ContentBlocksException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return new UserFeedback().addError(e.getMessage());
+            } finally {
+                jcrService.destroySession(session);
             }
-            session.save();
-            updatersRun = executeUpdaters(session, updaters);
-        } catch (RepositoryException e) {
-            log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new UserFeedback().addError(ERROR_MSG);
-        } catch (ContentBlocksException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new UserFeedback().addError(e.getMessage());
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
 
         String message = "Successfully updated content blocks settings.";
@@ -160,7 +164,7 @@ public class ContentBlocksResource {
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(context, ContentType::isCompoundType, false);
+        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(jcrService, context, ContentType::isCompoundType, false);
         List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
                 "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?
                 "hippo:resource",
@@ -173,21 +177,22 @@ public class ContentBlocksResource {
             compoundTypeNames.add(compoundType.getFullName());
         }
 
-        final Session session = GlobalUtils.createSession();
-        try {
-            for (String primaryType : compoundTypeNames) {
-                if ("hippo:compound".equals(primaryType)) {
-                    continue; // don't expose the base compound as you don't want to instantiate it.
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                for (String primaryType : compoundTypeNames) {
+                    if ("hippo:compound".equals(primaryType)) {
+                        continue; // don't expose the base compound as you don't want to instantiate it.
+                    }
+                    final CompoundRestful cbCompound = new CompoundRestful();
+                    cbCompound.setId(primaryType);
+                    cbCompound.setName(makeDisplayName(session, primaryType));
+                    cbCompounds.add(cbCompound);
                 }
-                final CompoundRestful cbCompound = new CompoundRestful();
-                cbCompound.setId(primaryType);
-                cbCompound.setName(makeDisplayName(session, primaryType));
-                cbCompounds.add(cbCompound);
+            } finally {
+                jcrService.destroySession(session);
             }
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
         return cbCompounds;
     }
 
@@ -341,7 +346,7 @@ public class ContentBlocksResource {
                 options.setProperty(PROP_MAXITEMS, field.getMaxItems());
             }
         } catch (RepositoryException | IOException e) {
-            GlobalUtils.refreshSession(session, false);
+            jcrService.refreshSession(session, false);
             log.error("Error in content bocks plugin", e);
             throw new ContentBlocksException(errorMsg);
         } finally {
@@ -461,7 +466,7 @@ public class ContentBlocksResource {
                     session.save();
                     updatersRun++;
                 } catch (RepositoryException | IOException e) {
-                    GlobalUtils.refreshSession(session, false);
+                    jcrService.refreshSession(session, false);
                     log.error("Error scheduling updater", e);
                 } finally {
                     IOUtils.closeQuietly(in);
