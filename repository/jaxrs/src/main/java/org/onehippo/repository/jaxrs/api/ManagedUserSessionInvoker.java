@@ -61,7 +61,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
     @Override
     public Session getSystemSession(final HttpServletRequest servletRequest) {
         Session system = (Session) servletRequest.getAttribute(ATTRIBUTE_SYSTEM_SESSION);
-        if (system != null) {
+        if (system != null && system.isLive()) {
             return system;
         }
         try {
