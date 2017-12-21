@@ -77,7 +77,14 @@ describe('NameUrlFields', () => {
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'en');
 
       component.locale = 'de';
-      component.$onChanges({ locale: component.locale });
+      const changes = {
+        locale: {
+          currentValue: component.locale,
+          previousValue: 'en',
+          isFirstChange: () => false,
+        }
+      };
+      component.$onChanges(changes);
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
     });
