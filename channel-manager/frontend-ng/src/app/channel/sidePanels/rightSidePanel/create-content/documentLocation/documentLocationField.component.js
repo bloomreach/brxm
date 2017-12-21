@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-import CreateContentService from './createContent.service';
-import documentLocationFieldComponent from './documentLocation/documentLocationField.component';
+import template from './documentLocationField.html';
+import controller from './documentLocationField.controller';
+import './documentLocationField.scss';
 
-const createContentModule = angular
-  .module('hippo-cm.channel.createContentModule', [])
-  .component('documentLocationField', documentLocationFieldComponent)
-  .service('CreateContentService', CreateContentService);
+const documentLocationFieldComponent = {
+  controller,
+  template,
+  bindings: {
+    rootPath: '=',
+    defaultPath: '=',
+    changeLocale: '&',
+  },
+};
 
-export default createContentModule.name;
+export default documentLocationFieldComponent;

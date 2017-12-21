@@ -14,18 +14,16 @@
   limitations under the License.
   -->
 
-<form #form="ngForm">
+<form name="$ctrl.form">
   <!-- Document location field -->
   <div class="field">
-    <mat-form-field class="create-content-field qa-document-location">
-      <input matInput [(ngModel)]="documentLocationLabel" name="documentLocation"
+    <md-input-container class="create-content-field qa-document-location">
+      <input ng-model="$ctrl.documentLocationLabel" name="documentLocation"
              placeholder="Document location" required disabled>
-    </mat-form-field>
 
-    <hippo-hints
-      [data]="form.controls.documentLocation.errors"
-      *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-      <div hint="required">This field is required</div>
-    </hippo-hints>
+      <div ng-messages="form.controls.documentLocation && form.controls.documentLocation.touched">
+        <div ng-message="required">This field is required</div>
+      </div>
+    </md-input-container>
   </div>
 </form>
