@@ -15,7 +15,7 @@
  */
 
 class DocumentLocationFieldController {
-  constructor (ChannelService, CreateContentService, FeedbackService) {
+  constructor(ChannelService, CreateContentService, FeedbackService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
@@ -39,7 +39,7 @@ class DocumentLocationFieldController {
    * @param rootPath the component's rootPath
    * @param channelRootPath the channel's rootPath
    */
-  static parseRootPath (rootPath, channelRootPath) {
+  static parseRootPath(rootPath, channelRootPath) {
     if (!rootPath) {
       return channelRootPath;
     }
@@ -49,7 +49,7 @@ class DocumentLocationFieldController {
     }
 
     if (!rootPath.startsWith('/')) {
-      rootPath = channelRootPath + '/' + rootPath;
+      rootPath = `${channelRootPath}/${rootPath}`;
     }
     return rootPath;
   }
@@ -65,7 +65,7 @@ class DocumentLocationFieldController {
 
     let documentLocationPath = this.rootPath;
     if (this.defaultPath) {
-      documentLocationPath += '/' + this.defaultPath;
+      documentLocationPath += `/${this.defaultPath}`;
     }
 
     this.setDocumentLocation(documentLocationPath);
@@ -74,8 +74,8 @@ class DocumentLocationFieldController {
   setDocumentLocation(documentLocation) {
     this.CreateContentService.getFolders(documentLocation).then(
       folders => this.onLoadFolders(folders),
-      (error) => this.onError(error, 'Unknown error loading folders')
-    )
+      error => this.onError(error, 'Unknown error loading folders'),
+    );
   }
 
   /**

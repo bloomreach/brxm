@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-describe('DocumentLocationField', () => {
+fdescribe('DocumentLocationField', () => {
   let $componentController;
   let $q;
   let $rootScope;
   let ChannelService;
   let CreateContentService;
-  let FeedbackService;
 
   let component;
-  let $scope;
   let getFolderSpy;
   let getChannelSpy;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_, _CreateContentService_, _FeedbackService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_, _CreateContentService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CreateContentService = _CreateContentService_;
-      FeedbackService = _FeedbackService_;
     });
 
-    $scope = $rootScope.$new();
     component = $componentController('documentLocationField');
 
     getFolderSpy = spyOn(CreateContentService, 'getFolders').and.returnValue($q.resolve());
@@ -101,7 +97,7 @@ describe('DocumentLocationField', () => {
 
   describe('setting the document location', () => {
     it('stores the path of the last folder returned by the create-content-service', () => {
-      const folders = [{path: '/root'}, {path: '/root/path'}];
+      const folders = [{ path: '/root' }, { path: '/root/path' }];
       getFolderSpy.and.returnValue($q.resolve(folders));
 
       component.$onInit();
@@ -112,7 +108,7 @@ describe('DocumentLocationField', () => {
 
     it('stores the value of defaultPath returned by the create-content-service', () => {
       component.rootPath = '/root';
-      const folders = [{name: 'root'}, {name: 'default'}, {name: 'path'}];
+      const folders = [{ name: 'root' }, { name: 'default' }, { name: 'path' }];
       getFolderSpy.and.returnValue($q.resolve(folders));
 
       component.$onInit();
@@ -196,7 +192,7 @@ describe('DocumentLocationField', () => {
   describe('the locale @Output', () => {
     it('emits the locale when component is initialized', () => {
       spyOn(component, 'changeLocale');
-      const folders = [{path: '/root'}, {path: '/root/path', locale: 'de'}];
+      const folders = [{ path: '/root' }, { path: '/root/path', locale: 'de' }];
       getFolderSpy.and.returnValue($q.resolve(folders));
 
       component.$onInit();
