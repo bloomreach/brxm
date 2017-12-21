@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
+
 class NameUrlFieldsController {
   constructor ($element, $timeout, CreateContentService) {
     'ngInject';
@@ -28,17 +34,16 @@ class NameUrlFieldsController {
   $onInit() {
     this.nameField = this.nameField || '';
     this.urlField = this.urlField || '';
-    this.nameInputField.on('keyup', () => {
-      if (this.isManualUrlMode) {
-        return;
-      }
 
-      this.urlUpdate = true;
-      this.$timeout(() => {
+    Observable.fromEvent(this.nameInputField, 'keyup')
+      .filter(() => !this.isManualUrlMode)
+      .do(() => this.urlUpdate = true)
+      .debounceTime(1000)
+      .subscribe(() => {
+        console.log(this.form);
         this.setDocumentUrlByName();
-        this.urlUpdate=  false;
-      }, 1000);
-    });
+        this.urlUpdate = false;
+      });
   }
 
   $onChanges(changes) {

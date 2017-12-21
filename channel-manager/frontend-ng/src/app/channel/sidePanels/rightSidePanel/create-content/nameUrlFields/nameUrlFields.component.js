@@ -26,7 +26,7 @@ const nameUrlFieldsComponent = {
     nameField: '=',
     urlField: '=',
     urlUpdate: '=',
-  }
+  },
 };
 
 export default nameUrlFieldsComponent;

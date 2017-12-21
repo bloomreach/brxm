@@ -14,12 +14,11 @@
   limitations under the License.
   -->
 
-<form name="nameUrlForm">
+<form name="$ctrl.form" novalidate>
   <!-- Document name field -->
   <md-input-container class="create-content-field qa-name-field">
-    <input ng-model="$ctrl.nameField" name="nameField" placeholder="Document name" required autocomplete="off" id="nameInputElement">
-
-    <div ng-messages="nameUrlForm.name.$error && nameUrlForm.name.$touched">
+    <input ng-model="$ctrl.nameField" name="nameField" placeholder="Document name" type="text" required autocomplete="off" id="nameInputElement">
+    <div ng-messages="$ctrl.form.nameField.$error && $ctrl.form.nameField.$touched">
       <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>
@@ -28,27 +27,26 @@
   <div class="field">
 
     <md-input-container class="create-content-field qa-url-field">
-      <input ng-model="$ctrl.urlField" name="url" placeholder="URL" ng-disabled="!$ctrl.isManualUrlMode" autocomplete="off" required>
+      <input ng-model="$ctrl.urlField" name="url" placeholder="URL" type="text" ng-disabled="!$ctrl.isManualUrlMode" autocomplete="off" required>
 
       <!-- Edit button -->
       <md-button ng-if="!$ctrl.isManualUrlMode"
-              type="button"
-              ng-click="$ctrl.setManualUrlEditMode(true)"
-              class="qa-edit-url md-icon-button input-icon-button">
+                 type="button"
+                 ng-click="$ctrl.setManualUrlEditMode(true)"
+                 class="qa-edit-url md-icon-button input-icon-button">
         <md-icon>mode_edit</md-icon>
       </md-button>
 
       <!-- Regenerate button -->
       <md-button ng-if="$ctrl.isManualUrlMode"
-              type="button"
-              ng-click="$ctrl.setManualUrlEditMode(false)"
-              class="qa-generate-url md-icon-button input-icon-button">
+                 type="button"
+                 ng-click="$ctrl.setManualUrlEditMode(false)"
+                 class="qa-generate-url md-icon-button input-icon-button">
         <md-icon>autorenew</md-icon>
       </md-button>
 
-      <div ng-messages="nameUrlForm.url.$error && nameUrlForm.url.$touched">
+      <div ng-messages="$ctrl.form.url.$error && $ctrl.form.url.$touched">
         <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
-        <!--<div ng-message="invalidUrl">{{ ::'INVALID_URL' | translate }}</div>-->
       </div>
     </md-input-container>
 
