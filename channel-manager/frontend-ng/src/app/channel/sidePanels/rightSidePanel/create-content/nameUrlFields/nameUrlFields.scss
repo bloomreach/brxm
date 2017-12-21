@@ -14,6 +14,8 @@
 
 @import 'variables';
 
+// Remove this block when only AngularJS version is used
+// without the Angualr4 upgraded directive
 hippo-name-url-fields {
   md-input-container {
     width: 100%;
@@ -22,7 +24,7 @@ hippo-name-url-fields {
   .input-icon-button {
     position: absolute;
     right: 0;
-    top: 0;
+    top: -2px;
   }
 }
 
@@ -34,7 +36,7 @@ name-url-fields {
   .input-icon-button {
     position: absolute;
     right: 0;
-    top: 0;
+    top: -2px;
   }
 }
 
