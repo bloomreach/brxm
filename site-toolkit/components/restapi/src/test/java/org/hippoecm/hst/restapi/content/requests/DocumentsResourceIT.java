@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.restapi.content.requests;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -217,6 +218,43 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             }
 
             assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_max_and_offset() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE);
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            final List<Node> allResults = new ArrayList<>();
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                allResults.add(handleNode);
+            }
+
+            for (int i = 0; i < allResults.size(); i++) {
+                final StringBuilder queryString = new StringBuilder("_orderBy=").append(PROPERTY_TITLE).append("&_max=1&_offset=").append(i);
+                final RequestResponseMock max1AndOffset = mockGetRequestResponse(
+                        "http", "onehippo.io", "/myhippoproject/documents/", queryString.toString());
+                final MockHttpServletResponse max1Response = render(max1AndOffset);
+                final String max1RestResponse = max1Response.getContentAsString();
+                final Map<String, Object> max1Result = mapper.readerFor(Map.class).readValue(max1RestResponse);
+                final List<Map<String, Object>> itemMax1List = getItemsFromSearchResult(max1Result);
+                assertEquals("1 item expected because max 1",1, itemMax1List.size());
+                final Node handleNode = liveUser.getNodeByIdentifier((String) itemMax1List.get(0).get("id"));
+                assertTrue("Expected results in the same order as without the max/offset.", handleNode.isSame(allResults.get(i)));
+            }
 
         } finally {
             if (liveUser != null) {

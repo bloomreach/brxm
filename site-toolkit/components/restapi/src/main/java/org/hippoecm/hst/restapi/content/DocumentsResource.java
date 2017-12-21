@@ -213,9 +213,8 @@ public class DocumentsResource extends AbstractResource {
                 andClause = andClause.and(new ExistsConstraint(ob));
             }
 
-            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders);
-            query.offsetBy(offset)
-                 .limitTo(max);
+            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders).offsetBy(offset)
+                    .limitTo(max);
 
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
