@@ -41,16 +41,6 @@ public class UserDataProvider extends SearchableDataProvider<User> {
                 " FROM " + HippoNodeType.NT_USER
                +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
 
-    private static final String QUERY_USER_LIST_TEMPLATE = "SELECT * " +
-                " FROM " + HippoNodeType.NT_USER +
-                " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
-                            "(" +
-                                " contains(hippo:_localname, '{}') OR " +
-                                " contains(hipposys:firstname, '{}') OR " +
-                                " contains(hipposys:lastname, '{}') OR " +
-                                " contains(hipposys:email, '{}')" +
-                            ")";
-
     private static final String HIPPO_USERS_NODE_PATH = "/hippo:configuration/hippo:users";
 
     private static final Collator collator = Collator.getInstance(UserSession.get().getLocale());
@@ -60,16 +50,18 @@ public class UserDataProvider extends SearchableDataProvider<User> {
     private static final Comparator<User> usernameComparator = comparing(User::getUsername, propertyComparator);
 
     public UserDataProvider() {
-        super(QUERY_USER_LIST, QUERY_USER_LIST_TEMPLATE, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+        super(QUERY_USER_LIST, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
+        setIncludePrimaryTypes(new String[]{HippoNodeType.NT_USER});
     }
 
     /**
      * Support overriding the query statements in instantiation by subclasses.
      */
-    protected UserDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate) {
-        super(searchAllSqlStatement, searchTermSqlStatementTemplate, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+    protected UserDataProvider(final String searchAllSqlStatement) {
+        super(searchAllSqlStatement, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
+        setIncludePrimaryTypes(new String[]{HippoNodeType.NT_USER});
     }
 
     @Override

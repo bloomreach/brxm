@@ -41,22 +41,14 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
                 " FROM " + HippoNodeType.NT_GROUP +
                 " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
 
-    private static final String QUERY_GROUP_LIST_TEMPLATE = "SELECT * " +
-                    " FROM " + HippoNodeType.NT_GROUP +
-                    " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
-                          " (  " +
-                              "contains(hippo:_localname, '{}') OR " +
-                              "contains(hipposys:description, '{}') OR " +
-                              "contains(hipposys:members, '{}') OR " +
-                              "contains(hipposys:groups, '{}') " +
-                            ") ";
     private static final Collator collator = Collator.getInstance(UserSession.get().getLocale());
     private static final Comparator<String> propertyComparator = new PropertyComparator(collator);
     private static final Comparator<Group> groupnameComparator = comparing(Group::getGroupname, propertyComparator);
 
     public GroupDataProvider() {
-        super(QUERY_ALL_GROUP_LIST, QUERY_GROUP_LIST_TEMPLATE, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
+        super(QUERY_ALL_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
         setSort("groupname", SortOrder.ASCENDING);
+        setIncludePrimaryTypes(new String[] {HippoNodeType.NT_GROUP});
     }
 
     @Override

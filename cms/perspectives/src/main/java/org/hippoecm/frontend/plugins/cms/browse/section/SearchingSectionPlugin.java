@@ -51,6 +51,7 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.search.GeneralSearchBuilder;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -206,7 +207,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 collection.setSearchResult(NO_RESULTS);
             } else {
                 final String queryName = StringUtils.startsWith(scope, GALLERY_PATH) ?
-                        IMAGE_QUERY_NAME : TextSearchBuilder.TEXT_QUERY_NAME;
+                        IMAGE_QUERY_NAME : GeneralSearchBuilder.TEXT_QUERY_NAME;
                 final TextSearchBuilder sb = new TextSearchBuilder(queryName);
                 sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);

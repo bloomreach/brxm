@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,15 +21,14 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TextSearchTest extends PluginTest {
@@ -66,113 +65,9 @@ public class TextSearchTest extends PluginTest {
     };
 
     @Test
-    public void wildcardsAreIgnored() throws RepositoryException {
-        build(session, content);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setText("*itle");
-        BrowserSearchResult result = tsb.getResultModel().getObject();
-        QueryResult qr = result.getQueryResult();
-        assertFalse(qr.getNodes().hasNext());
-
-        tsb.setText("?itle");
-        qr = tsb.getResultModel().getObject().getQueryResult();
-        assertFalse(qr.getNodes().hasNext());
-    }
-    
-    @Test
-    public void specialCharactersAreIgnored() throws RepositoryException {
-        build(session, content);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setText("|!(){}[]^title\"~*?:\\");
-        BrowserSearchResult result = tsb.getResultModel().getObject();
-        QueryResult qr = result.getQueryResult();
-        assertTrue(qr.getNodes().hasNext());
-    }
-    
-    @Test
-    public void keywordsSmallerThanThreeLettersAreNotIgnored() throws RepositoryException {
-        build(session, content);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setText("ab");
-        BrowserSearchResult result = tsb.getResultModel().getObject();
-        QueryResult qr = result.getQueryResult();
-        assertTrue(qr.getNodes().hasNext());
-    }
-
-    @Test
-    public void multipleKeywordsAreAllPresent() throws RepositoryException {
-        build(session, content);
-        build(session, alternative);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setWildcardSearch(true);
-        tsb.setText("tit intr");
-        assertNotNull(tsb.getResultModel());
-        BrowserSearchResult bsr = tsb.getResultModel().getObject();
-        int count = 0;
-        for (NodeIterator iter = bsr.getQueryResult().getNodes(); iter.hasNext();) {
-            iter.next();
-            count++;
-        }
-        assertEquals(1, count);
-    }
-
-    @Test
-    public void shortKeywordsAreNotIgnored() throws RepositoryException {
-        build(session, content);
-        build(session, alternative);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setWildcardSearch(true);
-        tsb.setText("tit i");
-        assertNotNull(tsb.getResultModel());
-        BrowserSearchResult bsr = tsb.getResultModel().getObject();
-        int count = 0;
-        for (NodeIterator iter = bsr.getQueryResult().getNodes(); iter.hasNext();) {
-            iter.nextNode();
-            count++;
-        }
-        assertEquals(2, count);
-    }
-
-    @Test
-    public void wildcardSearchFindsWordHead() throws RepositoryException {
-        build(session, content);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setText("tit");
-        tsb.setWildcardSearch(true);
-        BrowserSearchResult result = tsb.getResultModel().getObject();
-        QueryResult qr = result.getQueryResult();
-        assertTrue(qr.getNodes().hasNext());
-    }
-
-    @Test
-    public void excludedTypesAreNotFound() throws RepositoryException {
-        build(session, content);
-        session.save();
-
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        tsb.setText("title");
-        tsb.setExcludedPrimaryTypes(new String[] { "frontendtest:document" });
-        BrowserSearchResult result = tsb.getResultModel().getObject();
-        QueryResult qr = result.getQueryResult();
-        assertFalse(qr.getNodes().hasNext());
-    }
-
-    @Test
     public void onlyDocumentsInScopeAreFound() throws RepositoryException {
-        build(session, content);
-        build(session, alternative);
+        build(content, session);
+        build(alternative, session);
         session.save();
 
         TextSearchBuilder tsb = new TextSearchBuilder();
@@ -187,9 +82,21 @@ public class TextSearchTest extends PluginTest {
     }
 
     @Test
+    public void queryWithExcludedTypes() throws RepositoryException {
+        build(content, session);
+        session.save();
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("title");
+        tsb.setExcludedPrimaryTypes(new String[] { "frontend:document", "backend:document" });
+        StringBuilder query = tsb.getQueryStringBuilder();
+        final String xpathQuery = query.toString();
+        assertThat(xpathQuery, is("//element(*, hippo:document)[not(@jcr:primaryType='frontend:document' or @jcr:primaryType='backend:document') and (hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')] order by @jcr:score descending"));
+    }
+
+    @Test
     public void unReferenceableScopeIsIgnored() throws RepositoryException {
-        build(session, content);
-        build(session, nonreferenceable);
+        build(content, session);
+        build(nonreferenceable, session);
         session.save();
 
         TextSearchBuilder tsb = new TextSearchBuilder();
@@ -202,7 +109,7 @@ public class TextSearchTest extends PluginTest {
                 (query.toString()).equals(expectedQuery));
         BrowserSearchResult result = tsb.getResultModel().getObject();
         NodeIterator nodes = result.getQueryResult().getNodes();
-        Set<String> paths = new TreeSet<String>();
+        Set<String> paths = new TreeSet<>();
         while (nodes.hasNext()) {
             paths.add(nodes.nextNode().getPath());
         }
@@ -228,7 +135,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("title");
         tsb.setIncludePrimaryTypes(new String[]{"frontend:document"});
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//node()[@jcr:primaryType='frontend:document']" +
+        String expectedQuery = "//element()[@jcr:primaryType='frontend:document']" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -240,7 +147,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("title");
         tsb.setIncludePrimaryTypes(new String[]{"frontend:document", "backend:document"});
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//node()[@jcr:primaryType='frontend:document' or @jcr:primaryType='backend:document']" +
+        String expectedQuery = "//element()[@jcr:primaryType='frontend:document' or @jcr:primaryType='backend:document']" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -316,6 +223,7 @@ public class TextSearchTest extends PluginTest {
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
     }
+
 
     @Test
     public void queryWildcards() throws Exception {
@@ -439,6 +347,7 @@ public class TextSearchTest extends PluginTest {
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
     }
+
     private void validateQueryWithWildcardInjection(String queryString, String expectationNoWildcard, String expectationWithWildcard) {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setWildcardSearch(true);
@@ -448,17 +357,6 @@ public class TextSearchTest extends PluginTest {
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'"+expectationNoWildcard+"') or jcr:contains(.,'"+expectationWithWildcard+"'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
-    }
-
-    @Test
-    public void queryWordsWithApostrophe(){
-        TextSearchBuilder tsb = new TextSearchBuilder();
-        // set wildcards to true
-        tsb.setWildcardSearch(true);
-        tsb.setText(" doesn't  ");
-        StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:document)" +
-                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'doesn''t')] order by @jcr:score descending";
     }
 
 }
