@@ -14,77 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild, Output,
-  EventEmitter
-} from '@angular/core';
-import CreateContentService from '../createContent.service.js';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/do';
+import { Directive, ElementRef, EventEmitter, Injector, Input, Output, SimpleChanges } from '@angular/core';
+import { UpgradeComponent } from '@angular/upgrade/static';
 
-@Component({
+@Directive({
   selector: 'hippo-name-url-fields',
-  templateUrl: 'name-url-fields.html'
 })
-export class NameUrlFieldsComponent implements OnInit, OnChanges {
-  @ViewChild('form') form: HTMLFormElement;
-  @ViewChild('nameInputElement') nameInputElement: ElementRef;
+export class NameUrlFieldsComponent extends UpgradeComponent {
   @Input() locale: string;
   @Input() nameField: string;
+  @Output() nameFieldChange: EventEmitter<string> = new EventEmitter();
   @Input() urlField: string;
-  @Output() urlUpdate: EventEmitter<boolean> = new EventEmitter();
-  public isManualUrlMode = false;
+  @Output() urlFieldChange: EventEmitter<string> = new EventEmitter();
 
-  constructor(private createContentService: CreateContentService) {}
-
-  ngOnInit() {
-    this.nameField = this.nameField || '';
-    this.urlField = this.urlField || '';
-
-    Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
-      .filter(() => !this.isManualUrlMode)
-      .do(() => this.urlUpdate.emit(true))
-      .debounceTime(1000)
-      .subscribe(() => {
-        this.setDocumentUrlByName();
-        this.urlUpdate.emit(false);
-      });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty('locale') && this.form.controls.name) {
-      this.setDocumentUrlByName();
-    }
-  }
-
-  setDocumentUrlByName() {
-    const observable = Observable.fromPromise(this.createContentService.generateDocumentUrlByName(this.nameField, this.locale));
-    observable.subscribe((slug) => {
-      this.urlField = slug as any;
-    });
-    return observable;
-  }
-
-  validateFields() {
-    const conditions = [
-      this.nameField.length !== 0, // name empty
-      this.urlField.length !== 0, // url empty
-      /\S/.test(this.nameField), // name is only whitespace(s)
-      /\S/.test(this.urlField) // url is only whitespaces
-    ];
-    return conditions.every((condition) => condition === true);
-  }
-
-  setManualUrlEditMode(state: boolean) {
-    if (state) {
-      this.isManualUrlMode = true;
-    } else {
-      this.isManualUrlMode = false;
-      this.setDocumentUrlByName();
-    }
+  constructor(elementRef: ElementRef, injector: Injector) {
+    super('nameUrlFields', elementRef, injector);
   }
 }

@@ -15,7 +15,6 @@
  */
 
 import { Component, OnInit, EventEmitter, Output, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import './step-2.scss';
 
@@ -24,14 +23,13 @@ import CreateContentService from '../createContent.service.js';
 import DialogService from '../../../../../services/dialog.service';
 import FieldService from '../../fields/field.service';
 import { NameUrlFieldsComponent } from '../name-url-fields/name-url-fields.component';
-import { NameUrlFieldsDialogComponent } from './name-url-fields-dialog/name-url-fields-dialog';
+import NameUrlFieldsDialogController from './nameUrlFieldsDialog/nameUrlFieldsDialog.controller.js';
 import { Document, DocumentTypeInfo } from '../create-content.types';
 import FeedbackService from '../../../../../services/feedback.service.js';
 
 @Component({
   selector: 'hippo-create-content-step-2',
   templateUrl: './step-2.html',
-  entryComponents: [NameUrlFieldsDialogComponent]
 })
 export class CreateContentStep2Component implements OnInit {
   private documentUrl: string;
@@ -67,8 +65,7 @@ export class CreateContentStep2Component implements OnInit {
               private fieldService: FieldService,
               private dialogService: DialogService,
               private feedbackService: FeedbackService,
-              private translate: TranslateService,
-              public dialog: MatDialog) {}
+              private translate: TranslateService) {}
 
   ngOnInit() {
     this.loadNewDocument();
@@ -90,23 +87,22 @@ export class CreateContentStep2Component implements OnInit {
   }
 
   openEditNameUrlDialog() {
-    const dialog = this.dialog.open(NameUrlFieldsDialogComponent, {
-      height: '280px',
-      width: '600px',
-      data: {
+    const dialog = {
+      templateUrl: './nameUrlFieldsDialog/nameUrlFieldsDialog.html',
+      controller: NameUrlFieldsDialogController,
+      locals: {
         title: this.translate.instant('CHANGE_DOCUMENT_NAME'),
-        name: this.doc.displayName,
-        url: this.documentUrl,
-        locale: this.documentLocale
-      }
+        nameField: this.doc.displayName,
+        urlField: this.documentUrl,
+        locale: this.documentLocale,
+      },
+      controllerAs: '$ctrl',
+      bindToController: true,
+    };
+
+    return this.dialogService.show(dialog).then((result: { name: string, url: string }) => {
+      this.onEditNameUrlDialogClose(result);
     });
-    dialog.beforeClose().subscribe((result: { name: string, url: string }) => {
-      // If dialog was not cancelled (has a result)
-      if (result) {
-        this.onEditNameUrlDialogClose(result)
-      }
-    });
-    return dialog;
   }
 
   private async onEditNameUrlDialogClose(data: { name: string, url: string }) {
@@ -115,7 +111,7 @@ export class CreateContentStep2Component implements OnInit {
       this.doc.displayName = result.displayName;
       this.documentUrl = result.urlName;
     } catch (error) {
-        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`)
+        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
         this.feedbackService.showError(errorKey, error.data.params);
     }
   }

@@ -36,6 +36,8 @@ export class CreateContentComponent implements OnInit {
   documentTypes: Array<DocumentTypeInfo> = [];
   isFullWidth: boolean;
   title = 'Create new content';
+  nameField: string;
+  urlField: string;
 
   @Input() options: CreateContentOptions;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
@@ -86,8 +88,8 @@ export class CreateContentComponent implements OnInit {
 
   submit() {
     const document: DocumentDetails = {
-      name: this.nameUrlFields.nameField,
-      slug: this.nameUrlFields.urlField,
+      name: this.nameField,
+      slug: this.urlField,
       templateQuery: this.options.templateQuery,
       documentTypeId: this.documentType,
       rootPath: this.documentLocationField.rootPath,
