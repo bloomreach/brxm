@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -41,8 +41,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({
-            @JsonSubTypes.Type(PluginDescriptorRestful.class),
-            @JsonSubTypes.Type(VendorRestful.class),
+            @JsonSubTypes.Type(PluginDescriptor.class),
             @JsonSubTypes.Type(MessageRestful.class),
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(PostPayloadRestful.class),
@@ -53,6 +52,4 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     public List<T> getItems() {
         return super.getItems();
     }
-
-
 }

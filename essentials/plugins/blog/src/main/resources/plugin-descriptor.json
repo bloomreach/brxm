@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "blogPlugin",
   "name": "Blog",
   "icon": "/essentials/feature/images/blog-plugin-icon.png",
@@ -12,11 +11,10 @@
     "/essentials/feature/images/screenshots/blog04.png"
   ],
   "packageFile": "/META-INF/blog_instructions.xml",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogParameterService",
+  "hasConfiguration": true,
   "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -37,21 +35,9 @@
   },
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-essentials-components-cms",
-      "scope": "compile",
       "targetPom": "cms"
-    }
-  ],
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "blogPlugin",
-          "file": "blogPlugin.js"
-        }
-      ]
     }
   ]
 }

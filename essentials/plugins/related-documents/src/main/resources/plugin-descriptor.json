@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "relatedDocumentsPlugin",
   "name": "Related Documents",
   "icon": "/essentials/feature/images/related-documents-plugin-icon.png",
@@ -10,14 +9,13 @@
     "/essentials/feature/images/screenshots/relateddocuments02.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
+  "hasConfiguration": true,
   "packageFile": "/META-INF/related_documents_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -31,15 +29,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "relatedDocumentsPlugin",
-          "file": "relatedDocumentsPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

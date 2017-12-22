@@ -16,19 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-// TODO: consider merging with EssentialsDependency in order to reduce code duplication
-public class MavenDependency {
+public class MavenDependency implements Restful {
     public static final String GROUP_ID = "groupId";
     public static final String ARTIFACT_ID = "artifactId";
     public static final String VERSION = "version";
     public static final String TYPE = "type";
     public static final String SCOPE = "scope";
 
-    private final String groupId;
-    private final String artifactId;
-    private final String version;
-    private final String type;
-    private final String scope;
+    private String groupId;
+    private String artifactId;
+    private String version;
+    private String type;
+    private String scope;
+
+    public MavenDependency() {}
 
     public MavenDependency(final String groupId, final String artifactId) {
         this(groupId, artifactId, null, null, null);
@@ -46,19 +47,51 @@ public class MavenDependency {
         return groupId;
     }
 
+    public void setGroupId(final String groupId) {
+        this.groupId = groupId;
+    }
+
     public String getArtifactId() {
         return artifactId;
+    }
+
+    public void setArtifactId(final String artifactId) {
+        this.artifactId = artifactId;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public String getScope() {
-        return scope;
+    public void setVersion(final String version) {
+        this.version = version;
     }
 
     public String getType() {
         return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(final String scope) {
+        this.scope = scope;
+    }
+
+    public static class WithModule extends MavenDependency {
+        private String targetPom;
+
+        public String getTargetPom() {
+            return targetPom;
+        }
+
+        public void setTargetPom(final String targetPom) {
+            this.targetPom = targetPom;
+        }
     }
 }

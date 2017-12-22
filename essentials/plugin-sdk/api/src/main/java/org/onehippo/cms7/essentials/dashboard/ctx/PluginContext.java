@@ -96,13 +96,6 @@ public interface PluginContext extends Serializable {
     File getEssentialsDirectory();
 
     /**
-     * Check if Hippo  Enterprise project
-     *
-     * @return true if enterprise project
-     */
-    boolean isEnterpriseProject();
-
-    /**
      * Package name used for HippoBeans
      *
      * @return beans package name, might be null if not configured

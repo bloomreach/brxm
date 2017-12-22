@@ -26,6 +26,7 @@ import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -79,6 +80,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
         final File pom = createModifiableFile("/instructions/maven-dependency/pom.xml", "cms/pom.xml");
 
         final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
+        instruction.dependencyService = new MavenDependencyServiceImpl();
         instruction.setGroupId(groupId);
         instruction.setArtifactId(artifactId);
         instruction.setVersion(version);

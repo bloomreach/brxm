@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "relevancePlugin",
   "name": "Relevance",
   "icon": "/essentials/feature/images/relevance-plugin-icon.png",
@@ -15,7 +14,6 @@
   "packageFile": "/META-INF/relevance_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -31,7 +29,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-  ]
+  }
 }
