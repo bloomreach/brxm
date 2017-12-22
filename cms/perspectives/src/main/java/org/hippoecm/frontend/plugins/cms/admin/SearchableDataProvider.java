@@ -56,7 +56,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
 
     private final String searchAllSqlStatement;
     private final String observePath;
-    private final String[] observeNodeTypes; // TODO: why do we observe changes on folder types?
+    private final String[] observeNodeTypes;
     private String searchTerm;
     private String[] includePrimaryTypes = new String[] {};
     private List<T> list = new ArrayList<T>();

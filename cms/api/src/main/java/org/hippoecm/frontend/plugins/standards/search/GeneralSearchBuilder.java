@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.jcr.query.InvalidQueryException;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 public class GeneralSearchBuilder {
 
@@ -96,11 +99,11 @@ public class GeneralSearchBuilder {
         if (value == null) {
             throw new IllegalArgumentException("Text may not be null.");
         }
-        text = value.trim();
+        text = value;
     }
 
     public String getText() {
-        return text;
+        return text.trim();
     }
 
     public void setMinimalLength(final int minimalLength) {
@@ -149,7 +152,7 @@ public class GeneralSearchBuilder {
      * @return StringBuilder that represents the JCR Xpath query
      */
     protected StringBuilder getQueryStringBuilder() {
-        final String searchTerm = isoLatin1AccentReplacer(getText().trim());
+        final String searchTerm = isoLatin1AccentReplacer(getText());
         final StringBuilder queryStringBuilder = new StringBuilder();
 
         try {
@@ -179,17 +182,16 @@ public class GeneralSearchBuilder {
     }
 
     protected void appendIncludedPrimaryNodeTypeFilter(final StringBuilder sb) {
-        if (includePrimaryTypes == null || includePrimaryTypes.length == 0) {
-            sb.append("//element()");
-        } else {
-            sb.append("//element()[");
+        sb.append("//element()");
+        if (includePrimaryTypes != null && includePrimaryTypes.length > 0) {
+            sb.append("[");
             sb.append(buildTypesString(includePrimaryTypes));
             sb.append(']');
         }
     }
 
     protected void appendExcludedPrimaryNodeTypeFilter(final StringBuilder sb) {
-        if (excludedPrimaryTypes.length > 0) {
+        if (excludedPrimaryTypes != null && excludedPrimaryTypes.length > 0) {
             sb.append("not(");
             sb.append(buildTypesString(excludedPrimaryTypes));
             sb.append(")");
@@ -206,38 +208,37 @@ public class GeneralSearchBuilder {
     }
 
     protected void appendContains(final StringBuilder queryStringBuilder, final String searchTerm) throws InvalidQueryException {
-        boolean valid = false;
-
-        if (StringUtils.isNotBlank(searchTerm)) {
-            if (!queryStringBuilder.toString().endsWith("[")) {
-                queryStringBuilder.append(" and ");
-            }
-            final String whereClause = getWhereClause(searchTerm, false);
-            if (isWildcardSearch()) {
-                final String whereClauseWildCards = getWhereClause(searchTerm, true);
-                if (!whereClauseWildCards.isEmpty()) {
-                    valid = true;
-                    if (!whereClause.isEmpty()) {
-                        queryStringBuilder.append("(");
-                        queryStringBuilder.append(formatJcrContains(whereClause));
-                        queryStringBuilder.append(" or ");
-                        queryStringBuilder.append(formatJcrContains(whereClauseWildCards));
-                        queryStringBuilder.append(")");
-                    } else {
-                        queryStringBuilder.append(formatJcrContains(whereClauseWildCards));
-                    }
-                } else if (!whereClause.isEmpty()) {
-                    valid = true;
-                    queryStringBuilder.append(formatJcrContains(whereClause));
-                }
-            } else if (!whereClause.isEmpty()) {
-                valid = true;
-                queryStringBuilder.append(formatJcrContains(whereClause));
-            }
+        if (StringUtils.isBlank(searchTerm)) {
+            throw new InvalidQueryException();
         }
 
-        if (!valid) {
+        if (!queryStringBuilder.toString().endsWith("[")) {
+            queryStringBuilder.append(" and ");
+        }
+
+        final List<String> clauses = new ArrayList<>();
+        clauses.add(getWhereClause(searchTerm, false));
+        if (isWildcardSearch()) {
+            clauses.add(getWhereClause(searchTerm, true));
+        }
+
+        final List<String> validClauses = clauses.stream()
+                .filter(StringUtils::isNotBlank)
+                .map(GeneralSearchBuilder::formatJcrContains)
+                .collect(toList());
+
+        if (validClauses.isEmpty()) {
             throw new InvalidQueryException();
+        }
+
+        if (validClauses.size() > 1) {
+            queryStringBuilder.append("(");
+        }
+
+        queryStringBuilder.append(validClauses.stream().collect(joining(" or ")));
+
+        if (validClauses.size() > 1) {
+            queryStringBuilder.append(")");
         }
     }
 
