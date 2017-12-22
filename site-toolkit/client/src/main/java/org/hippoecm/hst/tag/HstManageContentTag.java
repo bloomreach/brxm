@@ -65,7 +65,7 @@ public class HstManageContentTag extends TagSupport {
     private String templateQuery;
 
     @Override
-    public int doStartTag() throws JspException {
+    public int doStartTag() {
         return EVAL_BODY_INCLUDE;
     }
 
@@ -180,12 +180,12 @@ public class HstManageContentTag extends TagSupport {
     private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
                        final boolean isRelativePathParameter) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final Map<?, ?> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
+        final Map<String, Object> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
         final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
-    private Map<?, ?> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
+    private Map<String, Object> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
                                       final boolean isRelativePathParameter) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
