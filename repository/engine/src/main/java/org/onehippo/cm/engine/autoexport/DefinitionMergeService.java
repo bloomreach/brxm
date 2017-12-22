@@ -87,9 +87,11 @@ import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionItem;
 import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,8 @@ import com.google.common.collect.Sets;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
@@ -781,7 +785,9 @@ public class DefinitionMergeService {
      * model's configurationNode tree to be updated to match the new state of definitions before the recursive call
      * is made as the final step of this method. The only exception to these expectations is that createNewNode()
      * will fully handle all child nodes of the new "diff" definition in a single recursive step, performing the
-     * relevant recursion itself via recursiveAdd()+recursiveCopy() as needed.
+     * relevant recursion itself via recursiveAdd()+recursiveCopy() as needed. There is now also a gap in
+     * {@link #mergePropertyThatShouldExist(DefinitionPropertyImpl, ConfigurationNodeImpl, ConfigurationPropertyImpl)},
+     * where properties that are removed from local modules are not updated in the ConfigurationNode tree.
      * @param incomingDefNode a "diff" definition that should be merged into the toExport modules
      */
     protected void mergeConfigDefinitionNode(final DefinitionNodeImpl incomingDefNode) {
@@ -831,8 +837,12 @@ public class DefinitionMergeService {
                 reorderRegistry.add(incomingDefNode.getJcrPath().getParent());
             }
 
+
+            final List<DefinitionPropertyImpl> properties =
+                    new ArrayList<>(incomingDefNode.getModifiableProperties().values());
+
             // handle properties, then child nodes
-            for (final DefinitionPropertyImpl defProperty : incomingDefNode.getProperties().values()) {
+            for (final DefinitionPropertyImpl defProperty : properties) {
                 // handle properties on an existing node
                 mergeProperty(defProperty, incomingConfigNode);
             }
@@ -1544,7 +1554,6 @@ public class DefinitionMergeService {
     /**
      * Remove an entire Definition, and if it is the last Definition in its Source, also remove the Source.
      * @param definition the definition to remove
-     *
      */
     protected void removeDefinition(final ConfigDefinitionImpl definition) {
         // remove the definition from its source and from its module
@@ -1678,14 +1687,26 @@ public class DefinitionMergeService {
                 localPropDef.updateFrom(defProperty);
                 localPropDef.getDefinition().getSource().markChanged();
 
-                // update the model incrementally, since a new local def should be available for other props
-                final ConfigurationTreeBuilder builder =
-                        new ConfigurationTreeBuilder(model.getConfigurationRootNode());
+                // now that we know what the new value will be, check whether that is identical with the upstream value
+                // in that case, we can remove our newly-redundant local property definition(s)
+                final ConfigurationPropertyImpl upstreamProperty = buildUpstreamProperty(configProperty);
+                final boolean localPropertyShouldBeRemoved = upstreamProperty != null
+                        && propertiesAreIdentical(localPropDef, upstreamProperty);
 
-                // build the property back up from scratch using all of the definitions
-                configNode.removeProperty(defProperty.getName());
-                for (final DefinitionPropertyImpl def : defsForConfigProperty) {
-                    builder.mergeProperty(configNode, def);
+                if (localPropertyShouldBeRemoved) {
+                    removeUpstreamPropertyFromSource(configNode, defProperty, localPropDef.getName());
+
+                    // in this case, it is logically impossible for another change to affect this property, and we
+                    // rebuild the whole tree anyway, so we don't bother updating the "live" ConfigurationModel tree
+                } else {
+                    // update the model incrementally, since a new local def should be available for other props
+                    final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder(model.getConfigurationRootNode());
+
+                    // build the property back up from scratch using all of the definitions
+                    configNode.removeProperty(defProperty.getName());
+                    for (final DefinitionPropertyImpl def : defsForConfigProperty) {
+                        builder.mergeProperty(configNode, def);
+                    }
                 }
             }
             else {
@@ -1701,6 +1722,84 @@ public class DefinitionMergeService {
             log.debug(".. which is totally new", defProperty.getJcrPath());
 
             addLocalProperty(defProperty, configNode);
+        }
+    }
+
+    /**
+     * Remove upstream property from the autoexport modules sources
+     * @param configNode Parent node
+     * @param incomingPropertyDef
+     * @param upstreamPropertyName Name of the property
+     */
+
+    private void removeUpstreamPropertyFromSource(final ConfigurationNodeImpl configNode,
+                                                  final DefinitionPropertyImpl incomingPropertyDef,
+                                                  final String upstreamPropertyName) {
+
+        final List<DefinitionNodeImpl> localNodeDefs = Lists.reverse(getLocalDefs(configNode.getDefinitions()));
+
+        boolean isLastDef = true;
+
+        final Map<String, DefinitionPropertyImpl> incomingPropertyDefs = incomingPropertyDef
+                .getParent().getModifiableProperties();
+        incomingPropertyDefs.remove(upstreamPropertyName);
+        for (final DefinitionNodeImpl localNodeDef : localNodeDefs) {
+
+            if (localNodeDef.getProperties().containsKey(upstreamPropertyName)) {
+                //Remove the property definition from node definition
+                localNodeDef.getModifiableProperties().remove(upstreamPropertyName);
+
+                final Map<String, DefinitionPropertyImpl> localNodeProperties = localNodeDef
+                        .getModifiableProperties().entrySet().stream()
+                        .filter(e -> !e.getKey().equals(JcrConstants.JCR_PRIMARY_TYPE))
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                if (localNodeProperties.isEmpty() && (!isLastDef || incomingPropertyDefs.isEmpty())) {
+                    //If there is no more property definitions within current local node definition
+                    //and if it is not last definition or there are no new incoming properties
+                    //then remove definition
+                    removeDefinition(localNodeDef);
+                }
+            }
+
+            isLastDef = false;
+        }
+    }
+
+    private void removeDefinition(final DefinitionNodeImpl moduleNodeDef) {
+        final DefinitionNodeImpl rootNode = moduleNodeDef.getDefinition().getNode();
+        rootNode.getModifiableNodes().remove(moduleNodeDef.getName());
+
+        if (rootNode.getNodes().isEmpty()) {
+            removeDefinition((ConfigDefinitionImpl) moduleNodeDef.getDefinition());
+        }
+    }
+
+    /**
+     * Build property by using only definitions from upstream modules
+     * @param configProperty source property
+     * @return property constructed from only upstream modules. Null if there is no upstream definitions for configProperty
+     */
+    private ConfigurationPropertyImpl buildUpstreamProperty(final ConfigurationPropertyImpl configProperty) {
+        final ConfigurationNodeImpl configurationNode = new ConfigurationNodeImpl();
+        final ConfigurationTreeBuilder propertyMerger = new ConfigurationTreeBuilder(configurationNode);
+        configProperty.getDefinitions().stream()
+                .filter(isUpstreamDef())
+                .forEach(def -> propertyMerger.mergeProperty(configurationNode, def));
+        final ConfigurationNodeImpl buildNode = propertyMerger.build();
+        return buildNode.getProperty(configProperty.getName());
+    }
+
+    /**
+     * Validate if properties and their's types equal
+     * @param property1
+     * @param property2
+     */
+    private boolean propertiesAreIdentical(ModelProperty property1, ModelProperty property2) {
+        try {
+            return ValueProcessor.propertyIsIdentical(property1, property2);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not compare properties", e);
         }
     }
 
@@ -1791,20 +1890,34 @@ public class DefinitionMergeService {
     }
 
     protected <C extends ConfigurationItemImpl<D>, D extends DefinitionItemImpl>
-        Optional<D> getLastLocalDef(final C item) {
+    Optional<D> getLastLocalDef(final C item) {
+        return getLastDefinition(item, isLocalDef());
+    }
+
+    protected <C extends ConfigurationItemImpl<D>, D extends DefinitionItemImpl>
+    Optional<D> getLastUpstreamDef(final C item) {
+        return getLastDefinition(item, isUpstreamDef());
+    }
+
+    protected <C extends ConfigurationItemImpl<D>, D extends DefinitionItemImpl>
+    Optional<D> getLastDefinition(final C item, Predicate<DefinitionItem> condition) {
         final List<D> existingDefs = item.getDefinitions();
         return Lists.reverse(existingDefs).stream()
-                .filter(isLocalDef())
+                .filter(condition)
                 .findFirst();
     }
 
     protected <D extends DefinitionItemImpl> List<D> getLocalDefs(final List<D> defsForNode) {
         return defsForNode.stream()
-                .filter(isLocalDef()).collect(Collectors.toList());
+                .filter(isLocalDef()).collect(toList());
     }
 
     protected boolean isLastDefLocal(final List<? extends DefinitionItem> definitionItems) {
         return isLocalDef().test(definitionItems.get(definitionItems.size()-1));
+    }
+
+    protected Predicate<DefinitionItem> isUpstreamDef() {
+        return def -> !toExport.containsKey(getMvnPathFromDefinitionItem(def));
     }
 
     protected Predicate<DefinitionItem> isLocalDef() {
@@ -1865,8 +1978,8 @@ public class DefinitionMergeService {
         final SortedMap<JcrPath, ContentDefinitionImpl> allContentSourcesByNodePath =
                 // except only do the work if we actually plan to use it
                 !contentChangesByPath.isEmpty()?
-                collectContentSourcesByNodePath(false):
-                Collections.emptySortedMap();
+                        collectContentSourcesByNodePath(false):
+                        Collections.emptySortedMap();
 
         for (final String changePath : contentChangesByPath) {
             // is there an existing source for this exact path? if so, use that
@@ -2041,9 +2154,9 @@ public class DefinitionMergeService {
 
         // if there's already a source with this path, generate a unique name
         final Predicate<String> sourceExists = s ->
-            destModule.getModifiableSources().stream()
-                .filter(SourceType.CONTENT::isOfType)
-                .anyMatch(source -> source.getPath().equals(s));
+                destModule.getModifiableSources().stream()
+                        .filter(SourceType.CONTENT::isOfType)
+                        .anyMatch(source -> source.getPath().equals(s));
 
         final String uniqueSourcePath =
                 FilePathUtils.generateUniquePath(sourcePath, sourceExists, 0);

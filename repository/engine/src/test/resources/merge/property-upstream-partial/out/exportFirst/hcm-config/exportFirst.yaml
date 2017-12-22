@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /a/b:
+      property: anothervalue

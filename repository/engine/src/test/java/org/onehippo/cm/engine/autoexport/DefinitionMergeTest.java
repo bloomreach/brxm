@@ -16,6 +16,7 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
@@ -111,6 +112,23 @@ public class DefinitionMergeTest {
     }
 
     @Test
+    public void property_upstream_identical() throws Exception {
+        new MergeFixture("property-upstream-identical", "/", "",
+                true, new String[]{"exportFirst"}).test();
+    }
+
+    @Test
+    public void property_upstream_partial() throws Exception {
+        new MergeFixture("property-upstream-partial").test();
+    }
+
+    @Test
+    public void property_upstream_multi() throws Exception {
+        new MergeFixture("property-upstream-multi", "/", "",
+                true, new String[]{"exportFirst"}).test();
+    }
+
+    @Test
     public void restore_property_identical() throws Exception {
         new MergeFixture("restore-property-identical").test();
     }
@@ -131,13 +149,21 @@ public class DefinitionMergeTest {
         }
 
         public MergeFixture(final String testName, final String firstModulePaths, final String secondModulePaths) {
-            this.testName = testName;
+            this(testName, firstModulePaths, secondModulePaths, false, new String[] {"exportFirst", "exportSecond"});
+        }
 
+        public MergeFixture(final String testName, final String firstModulePaths, final String secondModulePaths,
+                            final boolean singleModule, String[] toExport) {
+            this.testName = testName;
+            this.toExport = toExport;
             Map<String, Collection<String>> modules = new HashMap<>();
             modules.put("exportFirst", parsePathString(firstModulePaths));
-            modules.put("exportSecond", parsePathString(secondModulePaths));
+            if (!singleModule) {
+                modules.put("exportSecond", parsePathString(secondModulePaths));
+            }
             autoExportConfig = new AutoExportConfig(true, modules, null, null);
         }
+
 
         private List<String> parsePathString(final String string) {
             if (string == null || string.equals("")) {
@@ -245,7 +271,7 @@ public class DefinitionMergeTest {
             // since the normal mvn resource copy will not recreate empty dirs in target
             final Path expectedRoot = out(testName, module);
             if (!expectedRoot.toFile().exists()) {
-                expectedRoot.toFile().mkdir();
+                Files.createDirectories(expectedRoot.toAbsolutePath());
             }
 
             // compare output to expected

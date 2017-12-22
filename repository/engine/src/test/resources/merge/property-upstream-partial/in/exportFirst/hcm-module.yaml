@@ -1,0 +1,6 @@
+# This file is used by ClasspathConfigurationModelReaderTest and needs to be at the root of test-classes during test
+group: test-group
+project: test-project
+module:
+    name: exportFirst
+    after: [topmost,upstream]
