@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+
 public class MavenRepository implements Restful {
 
     private String id;
@@ -102,6 +104,18 @@ public class MavenRepository implements Restful {
 
         public void setChecksumPolicy(final String checksumPolicy) {
             this.checksumPolicy = checksumPolicy;
+        }
+    }
+
+    public static class WithModule extends MavenRepository {
+        private String targetPom;
+
+        public String getTargetPom() {
+            return targetPom;
+        }
+
+        public void setTargetPom(final String targetPom) {
+            this.targetPom = targetPom;
         }
     }
 }

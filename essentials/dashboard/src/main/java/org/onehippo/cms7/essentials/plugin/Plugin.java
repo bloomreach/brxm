@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenDependency;
-import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
+import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
@@ -132,7 +132,7 @@ public class Plugin {
     private void installRepositories() throws PluginException {
         final StringBuilder builder = new StringBuilder();
 
-        for (ModuleMavenRepository repository : descriptor.getRepositories()) {
+        for (MavenRepository.WithModule repository : descriptor.getRepositories()) {
             if (!repositoryService.addRepository(context, TargetPom.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
@@ -151,7 +151,7 @@ public class Plugin {
     private void installDependencies() throws PluginException {
         final StringBuilder builder = new StringBuilder();
 
-        for (ModuleMavenDependency dependency : descriptor.getDependencies()) {
+        for (MavenDependency.WithModule dependency : descriptor.getDependencies()) {
             if (!dependencyService.addDependency(context, TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");

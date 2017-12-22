@@ -82,4 +82,16 @@ public class MavenDependency implements Restful {
     public void setScope(final String scope) {
         this.scope = scope;
     }
+
+    public static class WithModule extends MavenDependency {
+        private String targetPom;
+
+        public String getTargetPom() {
+            return targetPom;
+        }
+
+        public void setTargetPom(final String targetPom) {
+            this.targetPom = targetPom;
+        }
+    }
 }

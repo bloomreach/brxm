@@ -23,7 +23,6 @@ import java.util.Collections;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
-import org.onehippo.cms7.essentials.dashboard.model.ModuleMavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
@@ -48,7 +47,7 @@ public class PluginDescriptorTest {
         vendor.setName("hippo");
         value.setVendor(vendor);
 
-        final ModuleMavenRepository repository = new ModuleMavenRepository();
+        final MavenRepository.WithModule repository = new MavenRepository.WithModule();
         repository.setId("myId");
         repository.setUrl("http://onehippo.com/maven2");
         final MavenRepository.Policy snapshots = new MavenRepository.Policy();

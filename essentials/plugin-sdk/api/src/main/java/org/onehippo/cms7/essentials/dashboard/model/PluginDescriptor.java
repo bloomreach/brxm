@@ -32,8 +32,8 @@ public class PluginDescriptor implements Restful {
     private List<String> restClasses;
 
     private Vendor vendor;
-    private List<ModuleMavenDependency> dependencies;
-    private List<ModuleMavenRepository> repositories;
+    private List<MavenDependency.WithModule> dependencies;
+    private List<MavenRepository.WithModule> repositories;
     private String name;
     private String introduction;
     private String description;
@@ -156,14 +156,14 @@ public class PluginDescriptor implements Restful {
         this.documentationLink = documentationLink;
     }
 
-    public List<ModuleMavenDependency> getDependencies() {
+    public List<MavenDependency.WithModule> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
         }
         return dependencies;
     }
 
-    public void setDependencies(final List<ModuleMavenDependency> dependencies) {
+    public void setDependencies(final List<MavenDependency.WithModule> dependencies) {
         this.dependencies = dependencies;
     }
 
@@ -199,14 +199,14 @@ public class PluginDescriptor implements Restful {
         this.imageUrls = imageUrls;
     }
 
-    public List<ModuleMavenRepository> getRepositories() {
+    public List<MavenRepository.WithModule> getRepositories() {
         if (repositories == null) {
             return new ArrayList<>();
         }
         return repositories;
     }
 
-    public void setRepositories(final List<ModuleMavenRepository> repositories) {
+    public void setRepositories(final List<MavenRepository.WithModule> repositories) {
         this.repositories = repositories;
     }
 
