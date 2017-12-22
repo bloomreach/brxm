@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,17 +26,7 @@ public class SystemUserDataProvider extends UserDataProvider {
             " FROM " + HippoNodeType.NT_USER
             +" WHERE hipposys:system = 'true'";
 
-    private static final String QUERY_USER_LIST_TEMPLATE =
-            "  SELECT * FROM " + HippoNodeType.NT_USER
-            +" WHERE hipposys:system = 'true' AND " +
-                    "(" +
-                        " fn:name() = '{}' OR " +
-                        " contains(hipposys:firstname, '{}') OR "+
-                        " contains(hipposys:lastname, '{}') OR "+
-                        " contains(hipposys:email, '{}')"+
-                    ")";
-
     public SystemUserDataProvider() {
-        super(QUERY_SYSTEM_USER_LIST, QUERY_USER_LIST_TEMPLATE);
+        super(QUERY_SYSTEM_USER_LIST);
     }
 }
