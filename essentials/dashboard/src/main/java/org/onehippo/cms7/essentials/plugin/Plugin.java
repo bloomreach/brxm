@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.plugin;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -30,8 +32,6 @@ import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
-import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -45,6 +45,9 @@ public class Plugin {
     private final PluginDescriptor descriptor;
     private final InstallStateMachine stateMachine;
     private final PluginContext context;
+
+    @Inject private MavenDependencyService dependencyService;
+    @Inject private MavenRepositoryService repositoryService;
 
     public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
         this.context = context;
@@ -121,13 +124,12 @@ public class Plugin {
         if (categories != null) {
             final Set<String> licenses = categories.get("license");
             if (licenses != null && licenses.contains("enterprise")) {
-                EnterpriseUtils.upgradeToEnterpriseProject(context);
+                EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService);
             }
         }
     }
 
     private void installRepositories() throws PluginException {
-        final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
         final StringBuilder builder = new StringBuilder();
 
         for (ModuleMavenRepository repository : descriptor.getRepositories()) {
@@ -147,7 +149,6 @@ public class Plugin {
     }
 
     private void installDependencies() throws PluginException {
-        final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
         final StringBuilder builder = new StringBuilder();
 
         for (ModuleMavenDependency dependency : descriptor.getDependencies()) {

@@ -49,13 +49,13 @@ import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -73,6 +73,7 @@ public class PluginStore {
 
     @Inject private RebuildProjectEventListener rebuildListener;
     @Inject private PluginContextFactory contextFactory;
+    @Inject private AutowireCapableBeanFactory injector;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -124,7 +125,9 @@ public class PluginStore {
         // Read local descriptors
         final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
         for (PluginDescriptor descriptor : localDescriptors) {
-            plugins.add(new Plugin(context, descriptor));
+            final Plugin plugin = new Plugin(context, descriptor);
+            injector.autowireBean(plugin);
+            plugins.add(plugin);
         }
 
         // Read remote descriptors
@@ -136,7 +139,9 @@ public class PluginStore {
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
                     for (PluginDescriptor descriptor : descriptors.getItems()) {
-                        plugins.add(new Plugin(context, descriptor));
+                        final Plugin plugin = new Plugin(context, descriptor);
+                        injector.autowireBean(plugin);
+                        plugins.add(plugin);
                     }
                 }
             } catch (Exception e) {
@@ -280,7 +285,7 @@ public class PluginStore {
     }
 
     private void startServer() {
-        ApplicationModule.getInjector().autowireBean(application);
+        injector.autowireBean(application);
 
         final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
         final RuntimeDelegate delegate = RuntimeDelegate.getInstance();

@@ -24,8 +24,6 @@ import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
-import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +44,6 @@ public final class EnterpriseUtils {
             = new MavenDependency(ENT_GROUP_ID, "hippo-addon-edition-indicator");
     private static final MavenDependency APP_DEPENDENCIES_PACKAGE
             = new MavenDependency(ENT_GROUP_ID, "hippo-enterprise-package-app-dependencies", null, "pom", null);
-    private static final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
-    private static final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
 
     static {
         ENTERPRISE_REPOSITORY.setId(ENT_REPO_ID);
@@ -62,7 +58,9 @@ public final class EnterpriseUtils {
     private EnterpriseUtils() {
     }
 
-    public static boolean upgradeToEnterpriseProject(final PluginContext context) {
+    public static boolean upgradeToEnterpriseProject(final PluginContext context,
+                                                     final MavenDependencyService dependencyService,
+                                                     final MavenRepositoryService repositoryService) {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
         if (pomModel == null) {
             return false;

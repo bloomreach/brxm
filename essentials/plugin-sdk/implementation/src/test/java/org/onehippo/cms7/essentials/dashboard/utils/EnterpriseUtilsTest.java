@@ -22,6 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
+import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,6 +35,9 @@ import static org.junit.Assert.assertTrue;
  * @version "$Id$"
  */
 public class EnterpriseUtilsTest extends ResourceModifyingTest {
+
+    final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
+    final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
 
     @Test
     public void testUpgradeToEnterpriseProject() throws Exception {
@@ -43,8 +50,8 @@ public class EnterpriseUtilsTest extends ResourceModifyingTest {
         assertFalse(before.contains("<name>" + ProjectUtils.ENT_REPO_NAME + "</name>"));
         assertFalse(before.contains("<url>" + ProjectUtils.ENT_REPO_URL + "</url>"));
 
-        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context));
-        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context));
+        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService));
+        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService));
 
         String after = contentOf(projectPomXml);
         assertEquals(1, StringUtils.countMatches(after, "<id>" + ProjectUtils.ENT_REPO_ID + "</id>"));
