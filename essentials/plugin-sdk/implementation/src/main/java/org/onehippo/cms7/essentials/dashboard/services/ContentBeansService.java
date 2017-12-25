@@ -37,6 +37,14 @@ import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 public interface ContentBeansService {
 
     /**
+     * Find all Hippo Beans (related to document types) of the project.
+     *
+     * @param context for accessing the project
+     * @return        a mapping of (prefixed) JCR node name to bean class path
+     */
+    Map<String, Path> findBeans(PluginContext context);
+
+    /**
      * (Re)create the content beans for all document types of the project's namespace.
      *
      * During the process, user-level feedback messages get populated.

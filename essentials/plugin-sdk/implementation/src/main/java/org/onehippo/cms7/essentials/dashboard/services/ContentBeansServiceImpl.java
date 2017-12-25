@@ -91,7 +91,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     @Override
     public void createBeans(final JcrService jcrService, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
         final Set<HippoContentBean> contentBeans = getContentBeans(jcrService, context);
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         final List<HippoContentBean> missingBeans = Lists.newArrayList(filterMissingBeans(contentBeans, existing));
         final Iterator<HippoContentBean> missingBeanIterator = missingBeans.iterator();
         for (; missingBeanIterator.hasNext(); ) {
@@ -122,7 +122,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         processMissing(missingBeans, context, feedback, imageSetClassName);
         processProperties(contentBeans, context, feedback, imageSetClassName);
         // check if still missing(beans that extended missing beans)
-        final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(contentBeans, findExistingBeans(context));
+        final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(contentBeans, findBeans(context));
         final boolean hasNonCreatedBeans = extendedMissing.hasNext();
         if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
             missingBeansDepth++;
@@ -140,7 +140,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     @Override
     public void cleanupMethods(final JcrService jcrService, final PluginContext context, final UserFeedback feedback) {
         final Set<HippoContentBean> beans = getContentBeans(jcrService, context);
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         for (HippoContentBean bean : beans) {
             final Path path = existing.get(bean.getName());
             if (path != null) {
@@ -214,7 +214,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
             return;
         }
 
-        Map<String, Path> existing = findExistingBeans(context);
+        Map<String, Path> existing = findBeans(context);
         for (HippoContentBean contentBean : contentBeans) {
             final Path path = existing.get(contentBean.getName());
             if (path != null && contentBean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
@@ -255,7 +255,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
 
     private void processProperties(final Set<HippoContentBean> contentBeans, final PluginContext context, final UserFeedback feedback, final String imageSetClassName) {
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         for (HippoContentBean bean : contentBeans) {
             final Path beanPath = existing.get(bean.getName());
             if (beanPath != null) {
@@ -351,13 +351,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         return Collections.emptySet();
     }
 
-
-    //############################################
-    // UTILS
-    //############################################
-
-
-    private Map<String, Path> findExistingBeans(final PluginContext context) {
+    public Map<String, Path> findBeans(final PluginContext context) {
         final Path startDir = context.getBeansPackagePath();
         final Map<String, Path> existingBeans = new HashMap<>();
         final List<Path> directories = new ArrayList<>();
@@ -522,7 +516,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                     // check if project type is used:
                     final String prefix = child.getPrefix();
                     if (prefix.equals(context.getProjectNamespacePrefix())) {
-                        final Map<String, Path> existingBeans = findExistingBeans(context);
+                        final Map<String, Path> existingBeans = findBeans(context);
                         for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
                             final Path myBeanPath = entry.getValue();
                             final HippoEssentialsGeneratedObject a = JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
@@ -548,7 +542,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
     @Override
     public Map<String, Path> getExistingImageTypes(final PluginContext context) {
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         final Map<String, Path> imageTypes = new HashMap<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, null);
         for (Path path : existing.values()) {
@@ -562,7 +556,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     }
 
     private Path getBeanPathForImageSet(final String imageSetClassName, final PluginContext context) {
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         for (Path path : existing.values()) {
             final String className = JavaSourceUtils.getClassName(path);
             if (className.equals(imageSetClassName)) {
@@ -607,7 +601,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     @SuppressWarnings("rawtypes")
     @Override
     public void convertImageMethods(final String jcrName, final PluginContext context, final UserFeedback feedback) {
-        final Map<String, Path> existing = findExistingBeans(context);
+        final Map<String, Path> existing = findBeans(context);
         final Map<String, String> imageTypes = new HashMap<>();
         final Set<Path> imageTypePaths = new HashSet<>();
         imageTypes.put(HIPPO_GALLERY_IMAGE_SET_CLASS, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");

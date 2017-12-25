@@ -41,14 +41,13 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
-import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,15 +68,16 @@ public class DocumentResource extends BaseResource {
 
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
             response = RestfulList.class)
     @GET
     @Path("/")
-    public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(jcrService, context, null);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
     }
 
     @ApiOperation(
@@ -85,9 +85,9 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/documents")
-    public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(jcrService, context, type -> !type.isCompoundType());
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, type -> !type.isCompoundType());
     }
 
     @ApiOperation(
@@ -95,9 +95,9 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/compounds")
-    public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
+    public List<ContentType> getCompounds(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(jcrService, context, ContentType::isCompoundType);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, ContentType::isCompoundType);
     }
 
 

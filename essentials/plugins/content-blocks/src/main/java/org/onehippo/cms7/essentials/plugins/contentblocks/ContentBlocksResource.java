@@ -23,8 +23,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
@@ -52,18 +54,15 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
-import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +71,7 @@ import org.slf4j.LoggerFactory;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("contentblocks")
 public class ContentBlocksResource {
+    private static final Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
     private static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
     private static final String EDITOR_TEMPLATES_NODE = "editor:templates/_default_";
     private static final String ERROR_MSG = "The Content Blocks plugin encountered an error, check the log messages for more info.";
@@ -81,31 +81,35 @@ public class ContentBlocksResource {
     private static final String PROP_MAXITEMS = "maxitems";
     private static final String PROP_PATH = "hipposysedit:path";
     private static final String PROP_PICKERTYPE = "contentPickerType";
-    private static final Predicate<ContentType> NO_IMAGE_FILTER = type -> !type.isContentType("hippogallery:imageset");
+    private static final Predicate<ContentType> NO_IMAGE_FILTER
+        = type -> !type.getFullName().equals("hippogallery:imageset") && !type.getSuperTypes().contains("hippogallery:imageset");
 
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
+    // These "compounds" don't have the compoundType flag set internally.
+    private static final Set<String> BUILTIN_COMPOUNDS
+            = new HashSet<>(Arrays.asList("hippo:mirror", "hippo:resource", "hippostd:html", "hippogallerypicker:imagelink"));
 
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
 
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(jcrService, context, NO_IMAGE_FILTER);
+        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace(context, NO_IMAGE_FILTER);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
-                for (DocumentRestful documentType : documents) {
+                for (ContentType documentType : documents) {
                     if ("basedocument".equals(documentType.getName())) {
                         continue; // don't expose the base document as you can't instantiate it.
                     }
                     final String primaryType = documentType.getFullName();
                     final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
                     cbDocument.setId(primaryType);
-                    cbDocument.setName(makeDisplayName(session, primaryType));
+                    cbDocument.setName(documentType.getDisplayName());
                     populateContentBlocksFields(cbDocument, session);
                     cbDocuments.add(cbDocument);
                 }
@@ -163,35 +167,19 @@ public class ContentBlocksResource {
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
+        final Predicate<ContentType> considerCompound = ct -> ct.isCompoundType() || BUILTIN_COMPOUNDS.contains(ct.getFullName());
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(jcrService, context, ContentType::isCompoundType, false);
-        List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
-                "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?
-                "hippo:resource",
-                "hippostd:html",
-                "hippogallerypicker:imagelink"
-        ));
-        List<CompoundRestful> cbCompounds = new ArrayList<>();
+        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(context, considerCompound, false);
+        final List<CompoundRestful> cbCompounds = new ArrayList<>();
 
-        for (DocumentRestful compoundType : compoundTypes) {
-            compoundTypeNames.add(compoundType.getFullName());
-        }
-
-        final Session session = jcrService.createSession();
-        if (session != null) {
-            try {
-                for (String primaryType : compoundTypeNames) {
-                    if ("hippo:compound".equals(primaryType)) {
-                        continue; // don't expose the base compound as you don't want to instantiate it.
-                    }
-                    final CompoundRestful cbCompound = new CompoundRestful();
-                    cbCompound.setId(primaryType);
-                    cbCompound.setName(makeDisplayName(session, primaryType));
-                    cbCompounds.add(cbCompound);
-                }
-            } finally {
-                jcrService.destroySession(session);
+        for (ContentType compoundType : compoundTypes) {
+            if ("hippo:compound".equals(compoundType.getFullName())) {
+                continue; // don't expose the base compound as you don't want to instantiate it.
             }
+            final CompoundRestful cbCompound = new CompoundRestful();
+            cbCompound.setId(compoundType.getFullName());
+            cbCompound.setName(compoundType.getDisplayName());
+            cbCompounds.add(cbCompound);
         }
         return cbCompounds;
     }
@@ -476,16 +464,6 @@ public class ContentBlocksResource {
         return updatersRun;
     }
 
-    private String makeDisplayName(final Session session, final String primaryType) {
-        String name = primaryType;
-        try {
-            name = HippoNodeUtils.getDisplayValue(session, primaryType);
-        } catch (RepositoryException e) {
-            log.warn("Problem retrieving translated name for primary type '" + primaryType + "'.", e);
-        }
-        return name;
-    }
-
     private String makeNodeName(final String caption) {
         return NodeNameCodec.encode(caption);
     }
@@ -501,9 +479,9 @@ public class ContentBlocksResource {
 
     private NodeIterator findContentBlockFields(final String primaryType, final Session session) throws RepositoryException {
         final String queryString = MessageFormat.format("{0}//element(*, frontend:plugin)[@compoundList]",
-                                                        HippoNodeUtils.resolvePath(primaryType).substring(1));
+                                                        contentTypeService.jcrBasePathForContentType(primaryType).substring(1));
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
+        final Query query = queryManager.createQuery(queryString, "xpath");
         final QueryResult execute = query.execute();
         return execute.getNodes();
     }
