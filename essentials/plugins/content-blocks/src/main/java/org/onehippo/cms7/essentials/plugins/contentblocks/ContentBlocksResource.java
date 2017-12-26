@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +27,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -47,9 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -58,7 +52,6 @@ import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
@@ -66,7 +59,6 @@ import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("contentblocks")
@@ -273,7 +265,6 @@ public class ContentBlocksResource {
         final String primaryType = docType.getId();
         final String errorMsg = "Failed to create content blocks field '" + field.getName() + "' for document type '"
                               + docType.getName() + "'.";
-        InputStream in = null;
 
         try {
             final Node docTypeNode = getDocTypeNode(session, primaryType);
@@ -310,35 +301,21 @@ public class ContentBlocksResource {
             data.put("compoundList", makeCompoundList(field));
             data.put("fieldType", fieldType);
 
-            // Import nodetype
-            String parsed = TemplateUtils.injectTemplate("content_blocks_nodetype.xml", data, getClass());
-            if (parsed == null) {
-                log.error("Can't read resource 'content_blocks_nodetype.xml'.");
+            if (!jcrService.importResource(nodeTypeNode, "/content_blocks_nodetype.xml", data)
+                    || !jcrService.importResource(editorTemplateNode, "/content_blocks_template.xml", data)) {
+                jcrService.refreshSession(session, false);
                 throw new ContentBlocksException(errorMsg);
             }
-            in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            session.importXML(nodeTypeNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
-
-            // Import editor template
-            parsed = TemplateUtils.injectTemplate("content_blocks_template.xml", data, getClass());
-            if (parsed == null) {
-                log.error("Can't read resource 'content_blocks_template.xml'.");
-                throw new ContentBlocksException(errorMsg);
-            }
-            in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            session.importXML(editorTemplateNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
             // Set maxitems
             if (field.getMaxItems() > 0) {
                 final Node options = editorTemplateNode.getNode(field.getName() + "/" + NODE_OPTIONS);
                 options.setProperty(PROP_MAXITEMS, field.getMaxItems());
             }
-        } catch (RepositoryException | IOException e) {
+        } catch (RepositoryException e) {
             jcrService.refreshSession(session, false);
             log.error("Error in content bocks plugin", e);
             throw new ContentBlocksException(errorMsg);
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 
@@ -388,7 +365,7 @@ public class ContentBlocksResource {
                 vars.put("oldNodeName", oldNodeCaption);
                 vars.put("newNodePath", newNodePath);
                 vars.put("newNodeName", field.getName());
-                updaters.add(new UpdateRequest("content-updater.xml", vars));
+                updaters.add(new UpdateRequest("/content-updater.xml", vars));
             }
 
             fieldNode.setProperty(PROP_CAPTION, field.getName());
@@ -432,7 +409,7 @@ public class ContentBlocksResource {
             vars.put("docName", docType.getName());
             vars.put("nodePath", nodePath);
             vars.put("nodeName", nodeName);
-            updaters.add(new UpdateRequest("content-deleter.xml", vars));
+            updaters.add(new UpdateRequest("/content-deleter.xml", vars));
         } catch (RepositoryException e) {
             final String msg = "Failed to remove content blocks field '" + fieldName + "' from document type '"
                     + docType.getName() + "'.";
@@ -443,23 +420,16 @@ public class ContentBlocksResource {
 
     private int executeUpdaters(final Session session, final List<UpdateRequest> updaters) {
         int updatersRun = 0;
-        for (UpdateRequest updater : updaters) {
-            final String parsed = TemplateUtils.injectTemplate(updater.getResource(), updater.getVars(), getClass());
-            if (parsed != null) {
-                InputStream in = null;
-                try {
-                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-                    session.importXML("/hippo:configuration/hippo:update/hippo:queue", in,
-                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+        try {
+            final Node targetNode = session.getNode("/hippo:configuration/hippo:update/hippo:queue");
+            for (UpdateRequest updater : updaters) {
+                if (jcrService.importResource(targetNode, updater.getResource(), updater.getVars())) {
                     session.save();
                     updatersRun++;
-                } catch (RepositoryException | IOException e) {
-                    jcrService.refreshSession(session, false);
-                    log.error("Error scheduling updater", e);
-                } finally {
-                    IOUtils.closeQuietly(in);
                 }
             }
+        } catch (RepositoryException e) {
+            log.error("Failed retrieving updater queue node.", e);
         }
         return updatersRun;
     }

@@ -26,10 +26,11 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.services.JcrServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestJcrService implements JcrService {
+public class TestJcrService extends JcrServiceImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestJcrService.class);
 
@@ -82,19 +83,5 @@ public class TestJcrService implements JcrService {
             LOG.error("Failed to create JCR session.", e);
         }
         return null;
-    }
-
-    @Override
-    public void refreshSession(final Session session, final boolean keepChanges) {
-        try {
-            session.refresh(keepChanges);
-        } catch (RepositoryException e) {
-            LOG.error("Failed to refresh session.", e);
-        }
-    }
-
-    @Override
-    public void destroySession(final Session session) {
-        session.logout();
     }
 }

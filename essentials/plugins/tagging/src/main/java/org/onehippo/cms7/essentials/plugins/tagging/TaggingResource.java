@@ -108,7 +108,7 @@ public class TaggingResource {
 
                 DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
                 // add place holders:
-                final Map<String, String> templateData = new HashMap<>(values);
+                final Map<String, Object> templateData = new HashMap<>(values);
                 final Node editorTemplate = session.getNode(fieldImportPath);
                 templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
                 templateData.put("prefix", prefix);
@@ -116,20 +116,20 @@ public class TaggingResource {
                 // import field:
                 final String tagsPath = fieldImportPath + '/' + TAGS_FIELD;
                 if (!session.nodeExists(tagsPath)) {
-                    final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
+                    final String fieldData = TemplateUtils.replaceTemplateData(templateTags, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                 }
 
                 // import suggest field:
                 final String suggestPath = fieldImportPath + '/' + TAGSUGGEST_FIELD;
                 if (!session.nodeExists(suggestPath)) {
-                    final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
+                    final String suggestData = TemplateUtils.replaceTemplateData(templateSuggest, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                 }
 
                 // import field translations
                 if (session.nodeExists("/hippo:configuration/hippo:translations")) {
-                    final String json = TemplateUtils.replaceStringPlaceholders(templateTranslations, templateData);
+                    final String json = TemplateUtils.replaceTemplateData(templateTranslations, templateData);
                     TranslationsUtils.importTranslations(json, session);
                 }
 

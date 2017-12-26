@@ -97,16 +97,16 @@ public class RelatedDocumentsResource {
                     }
                     DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
                     // add place holders:
-                    final Map<String, String> templateData = new HashMap<>(values);
+                    final Map<String, Object> templateData = new HashMap<>(values);
                     final Node editorTemplate = session.getNode(fieldImportPath);
                     templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
                     templateData.put("searchPaths", searchPaths[idx]);
                     templateData.put("numberOfSuggestions", suggestions[idx]);
                     // import field:
-                    final String fieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, templateData);
+                    final String fieldData = TemplateUtils.replaceTemplateData(templateRelatedDocs, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     // import suggest field:
-                    final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggestDocs, templateData);
+                    final String suggestData = TemplateUtils.replaceTemplateData(templateSuggestDocs, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     session.save();
                     changedDocuments.add(document);

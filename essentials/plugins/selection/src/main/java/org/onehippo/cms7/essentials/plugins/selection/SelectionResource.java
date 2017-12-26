@@ -320,6 +320,12 @@ public class SelectionResource {
      */
     private int addField(final Session session, final Map<String, String> values, final UserFeedback feedback)
             throws RepositoryException, IOException {
+        final Map<String, Object> placeholderData = new HashMap<>();
+
+        for (String key : values.keySet()) {
+            placeholderData.put(key, values.get(key));
+        }
+
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
         final String documentType = values.get("namespace") + ':' + values.get("documentType");
@@ -335,7 +341,7 @@ public class SelectionResource {
 
         // Check if the field name is valid. If so, normalize it.
         final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
-        values.put("normalizedFieldName", normalized);
+        placeholderData.put("normalizedFieldName", normalized);
 
         // Check if the fieldName is already in use
         if (nodeType.hasNode(normalized)
@@ -346,20 +352,20 @@ public class SelectionResource {
         }
 
         // Put the new field to the default location
-        values.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+        placeholderData.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
 
         String presentationType = "DynamicDropdown";
         if ("single".equals(values.get("selectionType"))) {
             if ("radioboxes".equals(values.get("presentation"))) {
                 presentationType = "selection:RadioGroup";
             }
-            values.put("presentationType", presentationType);
+            placeholderData.put("presentationType", presentationType);
 
-            importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
-            importXml("/xml/single-field-node-type.xml", values, nodeType);
+            importXml("/xml/single-field-editor-template.xml", placeholderData, editorTemplate);
+            importXml("/xml/single-field-node-type.xml", placeholderData, nodeType);
         } else if ("multiple".equals(values.get("selectionType"))) {
-            importXml("/xml/multi-field-editor-template.xml", values, editorTemplate);
-            importXml("/xml/multi-field-node-type.xml", values, nodeType);
+            importXml("/xml/multi-field-editor-template.xml", placeholderData, editorTemplate);
+            importXml("/xml/multi-field-node-type.xml", placeholderData, nodeType);
         }
         session.save();
 
@@ -400,11 +406,11 @@ public class SelectionResource {
      * @throws IOException
      * @throws RepositoryException
      */
-    private void importXml(final String resourcePath, final Map<String, String> placeholderMap, final Node destination)
+    private void importXml(final String resourcePath, final Map<String, Object> placeholderMap, final Node destination)
         throws IOException, RepositoryException
     {
         final InputStream stream = getClass().getResourceAsStream(resourcePath);
-        final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
+        final String processedXml = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), placeholderMap);
 
         destination.getSession().importXML(destination.getPath(),
                 IOUtils.toInputStream(processedXml, StandardCharsets.UTF_8),

@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.service;
 
+import java.util.Map;
+
+import javax.jcr.Node;
 import javax.jcr.Session;
 
 /**
@@ -45,4 +48,16 @@ public interface JcrService {
      * @param session JCR session
      */
     void destroySession(Session session);
+
+    /**
+     * Interpolate and import an XML (classpath) resource into the repository.
+     *
+     * Does *not* save changes.
+     *
+     * @param targetNode      JCR node to import the resource to
+     * @param resourcePath    absolute resource path
+     * @param placeholderData data to fill placeholders in the input XML
+     * @return true if the resource was found and imported successfully, false otherwise.
+     */
+    boolean importResource(Node targetNode, String resourcePath, Map<String, Object> placeholderData);
 }
