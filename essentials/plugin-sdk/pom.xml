@@ -132,6 +132,11 @@
         <artifactId>org.eclipse.jdt.core</artifactId>
         <version>${core.jdt.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

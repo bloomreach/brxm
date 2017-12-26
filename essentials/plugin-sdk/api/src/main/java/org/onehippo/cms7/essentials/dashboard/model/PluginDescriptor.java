@@ -235,4 +235,34 @@ public class PluginDescriptor implements Restful {
         sb.append('}');
         return sb.toString();
     }
+
+    public static class Vendor implements Restful {
+        private String name;
+        private String url;
+        private String logo;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public void setLogo(final String logo) {
+            this.logo = logo;
+        }
+    }
 }

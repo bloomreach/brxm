@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
-import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.model.Vendor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class PluginDescriptorTest {
 
-    private static Logger log = LoggerFactory.getLogger(PluginDescriptorTest.class);
+    private static final ObjectMapper JSON = new ObjectMapper();
 
     @Test
     public void testJaxb() throws Exception {
@@ -43,7 +38,7 @@ public class PluginDescriptorTest {
         value.setDateInstalled(today);
         value.setRestClasses(Arrays.asList("com.foo.Foo", "com.foo.Bar"));
 
-        final Vendor vendor = new Vendor();
+        final PluginDescriptor.Vendor vendor = new PluginDescriptor.Vendor();
         vendor.setName("hippo");
         value.setVendor(vendor);
 
@@ -63,8 +58,8 @@ public class PluginDescriptorTest {
 
         // test json:
 
-        final String json = WebUtils.toJson(value);
-        final PluginDescriptor fromJson = value = WebUtils.fromJson(json, PluginDescriptor.class);
+        final String json = JSON.writeValueAsString(value);
+        final PluginDescriptor fromJson = value = JSON.readValue(json, PluginDescriptor.class);
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromJson.getVendor().getName());
