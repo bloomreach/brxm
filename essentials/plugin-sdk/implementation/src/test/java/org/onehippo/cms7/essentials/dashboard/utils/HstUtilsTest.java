@@ -21,11 +21,9 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,23 +36,15 @@ public class HstUtilsTest extends BaseRepositoryTest{
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @Override
     @Before
     public void setUp() throws Exception {
-        final PluginContext context = getContext();
         super.setUp();
-        jcrService.createHstRootConfig(context.getProjectNamespacePrefix());
         final Session session = jcrService.createSession();
-        final Node hstRoot = session.getNode("/hst:hst");
-        final Node virtualHost = hstRoot.addNode("hst:hosts", "hst:virtualhosts");
-        final Node hostGroup = virtualHost.addNode("localhost-group", "hst:virtualhostgroup");
-        final Node localhost = hostGroup.addNode("localhost", "hst:virtualhost");
-        final Node root = localhost.addNode("hst:root", "hst:mount");
+        final Node root = session.getNode("/hst:hst")
+                .addNode("hst:hosts", "hst:virtualhosts")
+                .addNode("localhost-group", "hst:virtualhostgroup")
+                .addNode("localhost", "hst:virtualhost")
+                .addNode("hst:root", "hst:mount");
         root.addNode("restone", "hst:mount");
         root.addNode("resttwo", "hst:mount");
         session.save();

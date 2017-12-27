@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials;
 
 import javax.inject.Inject;
 
-import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -50,19 +49,6 @@ public abstract class BaseRepositoryTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         jcrService = (TestJcrService) injectedJcrService;
-        jcrService.setUp();
-
-        projectSetup();
-    }
-
-    public void projectSetup() throws Exception {
         super.setUp();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        jcrService.tearDown();
-        super.tearDown();
     }
 }

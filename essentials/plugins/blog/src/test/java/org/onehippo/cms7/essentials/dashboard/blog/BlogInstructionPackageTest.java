@@ -25,7 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
@@ -50,8 +49,6 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
         jcrService.registerNodeTypes("/test-selection-types.cnd");
         jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT)
                 + File.separator + "essentials" + File.separator +"blog");
-        final PluginContext context = getContext();
-        jcrService.createHstRootConfig(context.getProjectNamespacePrefix());
     }
 
     @Test
@@ -74,5 +71,7 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
         if (jspDirectory != null && jspDirectory.exists()) {
             FileUtils.deleteDirectory(jspDirectory);
         }
+
+        jcrService.reset();
     }
 }

@@ -19,13 +19,11 @@ package org.onehippo.cms7.essentials;
 import java.io.IOException;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.services.JcrServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,53 +33,42 @@ public class TestJcrService extends JcrServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(TestJcrService.class);
 
     private HippoRepository hippoRepository;
-    private MemoryRepository memoryRepository;
-
-    public void setUp() throws Exception {
-        memoryRepository = new MemoryRepository();
-    }
-
-    public void tearDown() {
-        if (memoryRepository != null) {
-            memoryRepository.shutDown();
-        }
-    }
+    private boolean initialized;
 
     public void setHippoRepository(final HippoRepository hippoRepository) {
         this.hippoRepository = hippoRepository;
     }
 
-    public void createHstRootConfig(final String projectNamespacePrefix) throws RepositoryException {
-        final Session session = memoryRepository.getSession();
-        final Node rootNode = session.getRootNode();
-        final Node siteRootNode = rootNode.addNode("hst:hst", "hst:hst");
-        final Node configs = siteRootNode.addNode("hst:configurations", "hst:configurations");
-        final Node siteNode = configs.addNode(projectNamespacePrefix, "hst:configuration");
-        siteNode.addNode("hst:sitemap", "hst:sitemap");
-        siteNode.addNode("hst:pages", "hst:pages");
-        siteNode.addNode("hst:components", "hst:components");
-        siteNode.addNode("hst:catalog", "hst:catalog");
-        siteNode.addNode("hst:sitemenus", "hst:sitemenus");
-        siteNode.addNode("hst:templates", "hst:templates");
-        session.save();
-        session.logout();
+    public void reset() {
+        ensureRepository();
+        MemoryRepository.reset();
     }
 
     public void registerNodeTypes(final String cndResourcePath) throws RepositoryException, IOException {
-        memoryRepository.registerNodeTypes(cndResourcePath);
+        ensureRepository();
+        MemoryRepository.registerNodeTypes(cndResourcePath);
     }
 
     @Override
     public Session createSession() {
-        try {
-            if (hippoRepository != null) {
+        if (hippoRepository != null) {
+            try {
                 Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
                 return hippoRepository.login(credentials);
+            } catch (RepositoryException e) {
+                LOG.error("Failed to create JCR session.", e);
+                return null;
             }
-            return memoryRepository.getSession();
-        } catch (RepositoryException e) {
-            LOG.error("Failed to create JCR session.", e);
         }
-        return null;
+
+        ensureRepository();
+        return MemoryRepository.createSession();
+    }
+
+    private void ensureRepository() {
+        if (!initialized) {
+            MemoryRepository.initialize();
+            initialized = true;
+        }
     }
 }

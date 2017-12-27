@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -56,12 +55,5 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         testPluginContext.setProjectPackageName("org.example");
 
         return testPluginContext;
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        // skip the setup of the memory
-        projectSetup();
     }
 }
