@@ -28,6 +28,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         try (LazyCloseableSession lazyCloseableSession = createLazyCloseableSession()) {
             if (rootNode == null) {
                 rootNode = new HstNodeImpl(lazyCloseableSession.getSession().getNode(rootPath), null);
+                HstServices.setHstConfigurationNodesLoaded(true);
                 events = null;
             } else if (events != null) {
                 // reload only certain parts

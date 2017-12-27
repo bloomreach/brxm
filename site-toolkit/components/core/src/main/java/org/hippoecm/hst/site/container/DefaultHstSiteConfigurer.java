@@ -292,7 +292,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
                 // triggers the loading of all the hst configuration nodes
                 hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
-                HstServices.setHstConfigurationNodesLoaded(true);
                 log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
             }
             log.info(INIT_DONE_MSG);
