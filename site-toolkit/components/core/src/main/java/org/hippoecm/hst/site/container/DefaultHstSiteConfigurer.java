@@ -36,6 +36,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -148,6 +149,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private boolean hstSystemPropertiesOverride = true;
 
+    private boolean lazyHstConfigurationLoading = false;
+
     private String hstConfigEnvProperties = HST_CONFIG_ENV_PROPERTIES;
 
     // -------------------------------------------------------------------
@@ -193,6 +196,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         if (!forcefulReinitialization && HstServices.isAvailable()) {
             return;
         }
+
+        lazyHstConfigurationLoading = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_LAZY_HST_CONFIGURATION_LOADING_PARAM, "false"));
 
         hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
         hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
@@ -281,8 +286,18 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 }
             }
 
-            this.initialized = true;
+            if (!HstServices.isHstConfigurationNodesLoaded() && !lazyHstConfigurationLoading) {
+                log.info("Trigger HST Configuration nodes to be loaded");
+                final long start = System.currentTimeMillis();
+                final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
+                // triggers the loading of all the hst configuration nodes
+                hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                HstServices.setHstConfigurationNodesLoaded(true);
+                log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
+            }
             log.info(INIT_DONE_MSG);
+            this.initialized = true;
+
         } catch (Exception e) {
             log.error("HstSiteConfigServlet: ComponentManager initialization failed.", e);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,14 @@ public interface HstSiteConfigurer extends Serializable {
      * e.g, ${catalina.base}/conf/hst.properties
      */
     String HST_CONFIG_ENV_PROPERTIES_PARAM = "hst-env-config-properties";
+
+    /**
+     * Flag to make the initial loading of all hst configuration jcr nodes lazy (waiting for the first request) instead
+     * of all the config nodes being actively fetched directly after the HST Spring Component Manager creation
+     * Either "true" or "false". lazyHstConfigurationLoading
+     */
+    String HST_LAZY_HST_CONFIGURATION_LOADING_PARAM = "hst-lazy-configuration-loading";
+
 
     /**
      * Loads configuration and initialize HST Container.

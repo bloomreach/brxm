@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public class HstServices {
     private static final Logger log = LoggerFactory.getLogger(HstServices.class);
     private static boolean available;
+    private static boolean hstConfigurationNodesLoaded;
     private static ComponentManager componentManager;
     private static String HST_VERSION;
 
@@ -55,7 +56,18 @@ public class HstServices {
     public static boolean isAvailable() {
         return HstServices.available;
     }
-    
+
+    /**
+     * @return {@code true} when the hst configuration JCR nodes have been loaded from the database into memory already
+     */
+    public static boolean isHstConfigurationNodesLoaded() {
+        return hstConfigurationNodesLoaded;
+    }
+
+    public static void setHstConfigurationNodesLoaded(final boolean hstConfigurationNodesLoaded) {
+        HstServices.hstConfigurationNodesLoaded = hstConfigurationNodesLoaded;
+    }
+
     /**
      * @return Returns the {@link HstRequestProcessor} component to serve requests.
      * @deprecated since CMS 10.0 (hst 2.30). If needed, use
