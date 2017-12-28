@@ -33,20 +33,22 @@ import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypes;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -63,19 +65,10 @@ import static org.junit.Assert.assertTrue;
 @Configuration
 public class ContentTypeServiceImplTest extends BaseRepositoryTest {
 
-    @Inject private AutowireCapableBeanFactory injector;
-    private ContentTypes contentTypes;
-    private final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl() {
-        @Override
-        ContentTypes getContentTypes() {
-            return contentTypes;
-        }
-    };
+    @Inject private ContentTypeService contentTypeService;
 
-    @Before
-    public void wiring() {
-        injector.autowireBean(contentTypeService);
-    }
+    private TestContentTypeService testContentTypeService;
+    private ContentTypes contentTypes;
 
     @Test
     public void base_path_for_content_type() {
@@ -85,9 +78,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
 
     @Test
     public void fetch_own_document_types() throws Exception {
+        final PluginContext context = getContext();
         setupTestContentTypes();
 
-        final PluginContext context = getContext();
         final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
 
         assertEquals(4, cts.size());
@@ -96,6 +89,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         assertFalse(cts.get(0).isDraftMode());
         assertEquals("Compound.java", cts.get(0).getJavaName());
         assertEquals("/path/to/Compound.java", cts.get(0).getFullPath());
+        assertEquals("testnamespace:compoundWithBean", cts.get(0).getDisplayName());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithoutBean', name='compoundWithoutBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(1).toString());
         assertTrue(cts.get(1).isDraftMode());
@@ -107,10 +101,10 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
 
     @Test
     public void fetch_filtered_document_types() throws Exception {
-        setupTestContentTypes();
-
         final PluginContext context = getContext();
         final Predicate<ContentType> filter = ContentType::isCompoundType;
+        setupTestContentTypes();
+
         final List<ContentType> cts = contentTypeService.fetchContentTypes(context, filter, false);
 
         assertEquals(3, cts.size());
@@ -149,6 +143,17 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         prototype2.setProperty("hippostd:stateSummary", "foo");
         session.save();
         jcrService.destroySession(session);
+
+        testContentTypeService = new TestContentTypeService();
+        HippoServiceRegistry.registerService(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
+    }
+
+    @After
+    public void cleanup() {
+        if (testContentTypeService != null) {
+            HippoServiceRegistry.unregisterService(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
+            testContentTypeService = null;
+        }
     }
 
     @Bean
@@ -304,6 +309,18 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         @Override
         public ContentTypeItem getItem(final String s) {
             return null;
+        }
+    }
+
+    private class TestContentTypeService implements org.onehippo.cms7.services.contenttype.ContentTypeService {
+        @Override
+        public EffectiveNodeTypes getEffectiveNodeTypes() throws RepositoryException {
+            return null;
+        }
+
+        @Override
+        public ContentTypes getContentTypes() throws RepositoryException {
+            return contentTypes;
         }
     }
 }

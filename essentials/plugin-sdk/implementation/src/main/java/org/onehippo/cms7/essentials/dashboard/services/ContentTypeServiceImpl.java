@@ -61,7 +61,8 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Session session = jcrService.createSession();
         try {
-            final ContentTypes contentTypes = getContentTypes();
+            final ContentTypes contentTypes = HippoServiceRegistry
+                    .getService(org.onehippo.cms7.services.contenttype.ContentTypeService.class).getContentTypes();
             final Map<String, Set<org.onehippo.cms7.services.contenttype.ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
 
             // filter on own namespace
@@ -92,12 +93,6 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         } else {
             return "/hippo:namespaces/system/" + jcrType;
         }
-    }
-
-
-    // not private for testability
-    ContentTypes getContentTypes() throws RepositoryException {
-        return HippoServiceRegistry.getService(org.onehippo.cms7.services.contenttype.ContentTypeService.class).getContentTypes();
     }
 
     private ContentType createContentTypeFor(final org.onehippo.cms7.services.contenttype.ContentType contentType,

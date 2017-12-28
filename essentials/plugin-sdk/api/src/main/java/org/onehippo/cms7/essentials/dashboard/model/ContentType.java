@@ -19,20 +19,20 @@ package org.onehippo.cms7.essentials.dashboard.model;
 import java.util.Set;
 
 /**
- * Serializable representation of a project's document type.
+ * Serializable representation of a project's content type.
  */
 public class ContentType implements Restful {
 
-    private String displayName;
-    private String javaName;
-    private String fullPath;
-    private String fullName;
-    private String name;
-    private String prefix;
-    private boolean mixin;
-    private boolean draftMode;
-    private boolean compoundType;
-    private Set<String> superTypes;
+    private String displayName; // "localized" (English) display name
+    private String javaName;    // name of the Java bean class
+    private String fullPath;    // filesystem path to the Java bean class
+    private String fullName;    // full JCR type name
+    private String name;        // non-prefixed JCR type name
+    private String prefix;      // JCR type prefix
+    private boolean mixin;      // flag if content type is a mixin
+    private boolean draftMode;  // flag if content type is currently being edited (in CMS' document type editor)
+    private boolean compoundType; // flag if content type is a compound
+    private Set<String> superTypes; // list of JCR type names
 
     public String getDisplayName() {
         return displayName;
