@@ -100,6 +100,11 @@
   </filter>
 
   <filter>
+    <filter-name>PingFilter</filter-name>
+    <filter-class>org.hippoecm.hst.container.PingFilter</filter-class>
+  </filter>
+
+  <filter>
     <filter-name>HstFilter</filter-name>
     <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>
   </filter>
@@ -142,6 +147,12 @@
   </filter-mapping>
 
   <filter-mapping>
+    <filter-name>PingFilter</filter-name>
+    <url-pattern>/ping/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
     <filter-name>HstFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
@@ -162,7 +173,7 @@
 
   <!-- Bootstrap listener to start up root web application context. -->
   <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    <listener-class>org.hippoecm.hst.site.container.HstDelayedContextLoaderListener</listener-class>
   </listener>
 
   <!-- Listener that dispatches http session events to ComponentManager. -->
@@ -173,11 +184,6 @@
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
-  </servlet>
-
-  <servlet>
-    <servlet-name>PingServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.HstPingServlet</servlet-class>
   </servlet>
 
   <servlet>
@@ -260,11 +266,6 @@
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>PingServlet</servlet-name>
-    <url-pattern>/ping/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
