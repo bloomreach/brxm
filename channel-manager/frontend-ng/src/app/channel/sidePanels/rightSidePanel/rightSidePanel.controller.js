@@ -154,6 +154,7 @@ class RightSidePanelCtrl {
   }
 
   setFullWidth(state) {
+    console.log('state', state);
     if (state === true) {
       this.$element.addClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(false);
