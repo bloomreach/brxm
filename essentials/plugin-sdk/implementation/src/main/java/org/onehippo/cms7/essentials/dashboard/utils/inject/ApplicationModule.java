@@ -21,7 +21,6 @@ import javax.inject.Singleton;
 
 import com.google.common.eventbus.EventBus;
 
-import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -45,9 +44,6 @@ public class ApplicationModule {
 
     private static final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
-    @Inject
-    private RebuildProjectEventListener rebuildProjectEventListener;
-
     private static volatile boolean initialized = false;
 
     @Inject
@@ -60,7 +56,6 @@ public class ApplicationModule {
     public EventBus getEventBus() {
         if (!initialized) {
             applicationContextRef = applicationContext;
-            eventBus.register(rebuildProjectEventListener);
             initialized = true;
         }
         return eventBus;

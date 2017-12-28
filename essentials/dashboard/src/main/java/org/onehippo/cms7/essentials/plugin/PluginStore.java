@@ -43,11 +43,10 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
@@ -71,7 +70,7 @@ public class PluginStore {
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildProjectEventListener rebuildListener;
+    @Inject private RebuildService rebuildService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private AutowireCapableBeanFactory injector;
 
@@ -207,9 +206,8 @@ public class PluginStore {
         }
 
         // check if we have external rebuild events:
-        final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
-        for (RebuildEvent rebuildEvent : rebuildEvents) {
-            final String pluginId = rebuildEvent.getPluginId();
+        final Set<String> pluginIds = rebuildService.getRequestingPluginIds();
+        for (String pluginId : pluginIds) {
             for (Plugin plugin : plugins) {
                 if (plugin.getId().equals(pluginId)) {
                     systemInfo.setNeedsRebuild(true);

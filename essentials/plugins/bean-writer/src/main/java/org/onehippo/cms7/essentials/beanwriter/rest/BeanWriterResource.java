@@ -29,14 +29,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.eventbus.EventBus;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 
 
@@ -48,7 +46,7 @@ import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 @Path("beanwriter/")
 public class BeanWriterResource {
 
-    @Inject private EventBus eventBus;
+    @Inject private RebuildService rebuildService;
     @Inject private JcrService jcrService;
     @Inject private ContentBeansService contentBeansService;
     @Inject private PluginContextFactory contextFactory;
@@ -69,9 +67,8 @@ public class BeanWriterResource {
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("All beans were up to date");
         } else {
-            final String message = "Hippo Beans are changed, project rebuild needed";
-            eventBus.post(new RebuildEvent("beanwriter", message));
-            feedback.addSuccess(message);
+            rebuildService.requestRebuild("beanwriter");
+            feedback.addSuccess("Hippo Beans are changed, project rebuild needed");
         }
         return feedback;
     }

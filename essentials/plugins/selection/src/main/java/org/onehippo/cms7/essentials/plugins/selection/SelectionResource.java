@@ -46,7 +46,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -58,11 +57,11 @@ import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -81,7 +80,7 @@ public class SelectionResource {
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
-    @Inject private EventBus eventBus;
+    @Inject private RebuildService rebuildService;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
     @Inject private PluginContextFactory contextFactory;
@@ -191,10 +190,10 @@ public class SelectionResource {
             return new UserFeedback().addError("Failure storing the Spring configuration.");
         }
 
-        final String message = "Spring configuration updated, project rebuild needed";
-        eventBus.post(new RebuildEvent("selectionPlugin", message));
-
-        return new UserFeedback().addSuccess("Successfully updated the Spring configuration");
+        rebuildService.requestRebuild("selectionPlugin");
+        return new UserFeedback()
+                .addSuccess("Successfully updated the Spring configuration")
+                .addSuccess("Spring configuration updated, project rebuild needed");
     }
 
     /**

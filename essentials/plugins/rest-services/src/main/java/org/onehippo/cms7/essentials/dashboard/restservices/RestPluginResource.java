@@ -39,11 +39,9 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -57,6 +55,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -69,7 +68,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
 
-    @Inject private EventBus eventBus;
+    @Inject private RebuildService rebuildService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
 
@@ -151,9 +150,8 @@ public class RestPluginResource extends BaseResource {
             instructionPackage.getProperties().put("beans", validBeans);
             instructionPackage.execute(context);
 
-            final String message = "Spring configuration changed, project rebuild needed.";
-            eventBus.post(new RebuildEvent("restServices", message));
-            feedback.addSuccess(message);
+            rebuildService.requestRebuild("restServices");
+            feedback.addSuccess("Spring configuration changed, project rebuild needed.");
         }
 
         if (isGenericApiEnabled) {
