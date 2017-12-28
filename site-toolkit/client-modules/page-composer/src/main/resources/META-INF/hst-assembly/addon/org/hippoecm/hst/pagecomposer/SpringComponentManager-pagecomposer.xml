@@ -107,7 +107,7 @@
   </bean>
 
   <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
-    <constructor-arg value="/hst:hst/hst:configurations"/>
+    <constructor-arg value="${hst.configuration.rootPath}/hst:configurations"/>
   </bean>
 
   <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
