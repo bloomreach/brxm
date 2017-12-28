@@ -702,7 +702,7 @@ describe('OverlayService', () => {
     });
   });
 
-  describe('Manage content dial button', () => {
+  describe('Manage content dial button(s)', () => {
     beforeEach(() => {
       ChannelService.isEditable = () => true;
     });
@@ -723,14 +723,69 @@ describe('OverlayService', () => {
       expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
     });
 
-    describe('Dial buttons', () => {
-      function manageContentScenario(scenarioNumber, callback) {
-        loadIframeFixture(() => {
-          const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
-          callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
-        });
+    describe('_initManageContentConfig', () => {
+      function mockManageContentConfig(uuid = false, templateQuery = false, componentParameter = false, locked = false) {
+        const enclosing = {
+          isLocked: () => locked,
+        };
+        const config = {
+          getUuid: () => uuid,
+          getTemplateQuery: () => templateQuery,
+          getComponentParameter: () => componentParameter,
+          getComponentPickerConfig: () => null,
+          getComponentValue: () => null,
+          getDefaultPath: () => null,
+          getRootPath: () => null,
+          getEnclosingElement: () => enclosing,
+        };
+        return OverlayService._initManageContentConfig(config);
       }
 
+      it('does not filter out config properties when channel is editable', () => {
+        const config = mockManageContentConfig(true, true, true);
+        expect(config.documentUuid).toBe(true);
+        expect(config.templateQuery).toBe(true);
+        expect(config.componentParameter).toBe(true);
+      });
+
+      describe('when channel is not editable', () => {
+        beforeEach(() => {
+          ChannelService.isEditable = () => false;
+        });
+
+        it('always filters out property componentParameter', () => {
+          const config = mockManageContentConfig(false, false, true);
+          expect(config.componentParameter).not.toBeDefined();
+        });
+
+        it('filters out property templateQuery when documentUuid is set', () => {
+          let config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBeDefined();
+
+          config = mockManageContentConfig(true, true);
+          expect(config.templateQuery).not.toBeDefined();
+        });
+
+        it('filters all properties when componentParameter is set but documentId is not', () => {
+          const config = mockManageContentConfig(false, true, true);
+          expect(config).toEqual({});
+        });
+
+        it('does not filter templateQuery when componentParameter and documentId are not set', () => {
+          const config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBe(true);
+        });
+      });
+    });
+
+    function manageContentScenario(scenarioNumber, callback) {
+      loadIframeFixture(() => {
+        const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+        callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+      });
+    }
+
+    describe('Dial button scenario\'s for unlocked containers', () => {
       it('Scenario 1', (done) => {
         manageContentScenario(1, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
@@ -805,6 +860,45 @@ describe('OverlayService', () => {
           expect(optionButtons.children().length).toBe(2);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+    });
+
+    describe('when channel is not editable', () => {
+      beforeEach(() => {
+        ChannelService.isEditable = () => false;
+      });
+
+      it('Scenario 5 does not show any button(s)', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.length).toBe(0);
+          expect(optionButtons.length).toBe(0);
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+    });
+
+    describe('when container is locked', () => {
+      it('alway shows an edit button when documentUuid is set', (done) => {
+        manageContentScenario(7, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(0);
+
+          done();
+        });
+      });
+
+      it('does not show any button(s)', (done) => {
+        manageContentScenario(8, (mainButton, optionButtons) => {
+          expect(mainButton.length).toBe(0);
+          expect(optionButtons.length).toBe(0);
+          expect(optionButtons.children().length).toBe(0);
           done();
         });
       });
