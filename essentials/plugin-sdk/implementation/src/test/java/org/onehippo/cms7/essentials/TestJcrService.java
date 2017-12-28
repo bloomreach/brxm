@@ -65,6 +65,10 @@ public class TestJcrService extends JcrServiceImpl {
         return MemoryRepository.createSession();
     }
 
+    void resetNodes() {
+        initialized = false;
+    }
+
     private void ensureRepository() {
         if (!initialized) {
             MemoryRepository.initialize();

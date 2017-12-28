@@ -34,7 +34,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.LocalizationUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
@@ -105,7 +105,7 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         final ContentType documentType = new ContentType();
         final String fullName = extractFullName(contentType.getName(), prefix);
 
-        documentType.setDisplayName(extractDisplayName(session, fullName));
+        documentType.setDisplayName(LocalizationUtils.getContentTypeDisplayName(fullName));
         documentType.setFullName(fullName);
         documentType.setPrefix(extractPrefix(contentType.getPrefix(), fullName));
         documentType.setMixin(contentType.isMixin());
@@ -136,16 +136,6 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         }
 
         return split.iterator().next();
-    }
-
-    private String extractDisplayName(final Session session, final String primaryType) {
-        String name = primaryType;
-        try {
-            name = HippoNodeUtils.getDisplayValue(session, primaryType);
-        } catch (RepositoryException e) {
-            LOG.warn("Problem retrieving translated name for primary type '" + primaryType + "'.", e);
-        }
-        return name;
     }
 
     private String extractName(final String fullName) {

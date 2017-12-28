@@ -16,28 +16,19 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.util.Locale;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id: HippoNodeUtils.java 169724 2013-07-05 08:32:08Z dvandiepen $"
  */
 public final class HippoNodeUtils {
     public static final String HIPPOSYSEDIT_PATH = HippoNodeType.HIPPO_PATH;
-    private static final String HIPPO_TRANSLATION = "hippo:translation";
     private static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
-
-    private static Logger log = LoggerFactory.getLogger(HippoNodeUtils.class);
 
     private HippoNodeUtils() {
     }
@@ -116,41 +107,5 @@ public final class HippoNodeUtils {
 
     private static Node getSupertypeNode(final Node namespaceNode) throws RepositoryException {
         return namespaceNode.getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE).getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE);
-    }
-
-    // TODO: this logic no longer seems to match the CMS' L10N mechanisms. Can we use the CMS' utilities instead?
-    public static String getDisplayValue(final Session session, final String type) throws RepositoryException {
-        String name = type;
-        final String resolvedPath = resolvePath(type);
-        if (session.itemExists(resolvedPath)) {
-            Node node = session.getNode(resolvedPath);
-            try {
-                name = NodeNameCodec.decode(node.getName());
-                if (node.isNodeType("hippo:translated")) {
-                    Locale locale = Locale.getDefault();
-                    NodeIterator nodes = node.getNodes(HIPPO_TRANSLATION);
-                    while (nodes.hasNext()) {
-                        Node child = nodes.nextNode();
-                        if (child.isNodeType(HIPPO_TRANSLATION) && !child.hasProperty("hippo:property")) {
-                            String language = child.getProperty("hippo:language").getString();
-                            if (locale.getLanguage().equals(language)) {
-                                return child.getProperty("hippo:message").getString();
-                            }
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
-        return name;
-    }
-
-    static String resolvePath(String type) {
-        if (type.contains(":")) {
-            return "/hippo:namespaces/" + type.replace(':', '/');
-        } else {
-            return "/hippo:namespaces/system/" + type;
-        }
     }
 }

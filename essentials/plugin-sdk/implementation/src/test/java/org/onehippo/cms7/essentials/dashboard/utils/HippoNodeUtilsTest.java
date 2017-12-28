@@ -33,10 +33,4 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
         assertEquals(null, HippoNodeUtils.getPrefixFromType("name"));
         assertEquals(null, HippoNodeUtils.getPrefixFromType(""));
     }
-
-    @Test
-    public void testResolvePath() throws Exception {
-        assertEquals("/hippo:namespaces/someprefix/document", HippoNodeUtils.resolvePath("someprefix:document"));
-        assertEquals("/hippo:namespaces/system/String", HippoNodeUtils.resolvePath("String"));
-    }
 }

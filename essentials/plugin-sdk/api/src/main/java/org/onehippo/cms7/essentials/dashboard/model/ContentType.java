@@ -116,7 +116,7 @@ public class ContentType implements Restful {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DocumentRestful{");
+        final StringBuilder sb = new StringBuilder("ContentType{");
         sb.append("fullName='").append(fullName).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", prefix='").append(prefix).append('\'');

@@ -49,6 +49,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         jcrService = (TestJcrService) injectedJcrService;
+        jcrService.resetNodes();
         super.setUp();
     }
 }
