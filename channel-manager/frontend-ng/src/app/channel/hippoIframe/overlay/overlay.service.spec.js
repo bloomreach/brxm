@@ -216,13 +216,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(5);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(6);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(8);
       done();
     });
   });
@@ -281,7 +281,7 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(5);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
@@ -293,7 +293,7 @@ describe('OverlayService', () => {
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(5);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -318,7 +318,7 @@ describe('OverlayService', () => {
 
   it('renders lock icons for disabled containers', (done) => {
     loadIframeFixture(() => {
-      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -330,8 +330,9 @@ describe('OverlayService', () => {
 
   it('does not render lock icons for enabled containers', (done) => {
     loadIframeFixture(() => {
-      const enabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(1);
-      expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
+      const containers = iframe('.hippo-overlay > .hippo-overlay-element-container');
+      expect(containers.eq(0).find('.hippo-overlay-lock').length).toBe(0);
+      expect(containers.eq(1).find('.hippo-overlay-lock').length).toBe(0);
       done();
     });
   });
@@ -590,7 +591,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -603,7 +604,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(15);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(18);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
