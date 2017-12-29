@@ -17,17 +17,21 @@
 import { Observable } from 'rxjs';
 
 class RightSidePanelCtrl {
-  constructor(CreateContentService) {
+  constructor ($translate,
+               CreateContentService,
+               FeedbackService) {
     'ngInject';
 
+    this.$translate = $translate;
     this.CreateContentService = CreateContentService;
+    this.FeedbackService = FeedbackService;
 
     this.isFullWidth = false;
     this.urlUpdate = false;
     this.documentType = null;
   }
 
-  $onInit() {
+  $onInit () {
     if (!this.options) {
       throw new Error('Input "options" is required');
     }
@@ -42,12 +46,12 @@ class RightSidePanelCtrl {
     );
   }
 
-  setWidthState(state) {
+  setWidthState (state) {
     this.isFullWidth = state;
     this.onFullWidth({ state });
   }
 
-  _onLoadDocumentTypes(types) {
+  _onLoadDocumentTypes (types) {
     this.documentTypes = types;
 
     if (this.documentTypes.length === 1) {
@@ -55,8 +59,14 @@ class RightSidePanelCtrl {
     }
   }
 
-  _onErrorLoadingTemplateQuery(error) {
-    // TODO: implement
+  _onErrorLoadingTemplateQuery (error) {
+    if (error.data && error.data.reason) {
+      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+      this.FeedbackService.showError(errorKey);
+    } else {
+      console.error('Unknown error creating new draft document', error);
+    }
   }
 }
+
 export default RightSidePanelCtrl;
