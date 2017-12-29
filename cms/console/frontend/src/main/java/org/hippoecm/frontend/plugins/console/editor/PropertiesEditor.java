@@ -156,7 +156,7 @@ public class PropertiesEditor extends DataView<Property> {
             // TODO: mark system-with-initial-value in a special way?
         }
         else if (propCat.equals(ConfigurationItemCategory.CONTENT)) {
-            final ContentDefinition def = getNearestContentDef(propertyPath, cfgModel);
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(propertyPath);
             origin = (def==null)
                     ? "<content>"
                     : def.getOrigin();
@@ -183,7 +183,7 @@ public class PropertiesEditor extends DataView<Property> {
                     : cfgNode.getDefinitions().stream().map(ModelItem::getOrigin).collect(joining("\n"));
         }
         else if (nodeCat.equals(ConfigurationItemCategory.CONTENT)) {
-            final ContentDefinition def = getNearestContentDef(nodePath, cfgModel);
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(nodePath);
             nodeOrigin = (def==null)
                     ? "<content>"
                     : def.getOrigin();
@@ -192,18 +192,6 @@ public class PropertiesEditor extends DataView<Property> {
             nodeOrigin = "<system>";
         }
         return nodeOrigin;
-    }
-
-    public static ContentDefinition getNearestContentDef(final String path, final ConfigurationModel cfgModel) {
-        String originPath = "";
-        ContentDefinition defValue = null;
-        for (ContentDefinition def : cfgModel.getContentDefinitions()) {
-            if (path.startsWith(def.getRootPath()) && (def.getRootPath().length() > originPath.length())) {
-                originPath = def.getRootPath();
-                defValue = def;
-            }
-        }
-        return defValue;
     }
 
     /**
