@@ -33,44 +33,9 @@
             $scope.sampleData = true;
             $scope.templateName = 'jsp';
 
-            // TODO: Check if the use of the package_install service here is correct. We separated the setup phase
-            // (handled by the dashboard) from the configuration phase (here), and if the setup phase used different
-            // parameters from the global project settings (why would it?), this may go wrong. Needs to be tested.
-            $scope.execute = function () {
-                var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
-                Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
-                if ($scope.setupImport) {
-                    // prefix importer values, so we have no key clashes:
-                    var prefix = "importer_";
-                    Essentials.addPayloadData('importer_setupImport', true, payload);
-                    for (var key in $scope.importConfig) {
-                        if ($scope.importConfig.hasOwnProperty(key)) {
-                            var value = $scope.importConfig[key];
-                            if (key == 'urls') {
-                                var suffix = 0;
-                                angular.forEach(value, function (val) {
-                                    suffix++;
-                                    var v = val.value;
-                                    var author = val.author;
-                                    var k = 'url' + suffix;
-                                    var keyAuthor = 'author' + suffix;
-                                    Essentials.addPayloadData(prefix + k, v, payload);
-                                    Essentials.addPayloadData(prefix + keyAuthor, author, payload);
-
-                                });
-                            } else {
-                                Essentials.addPayloadData(prefix + key, value, payload);
-                            }
-
-                        }
-                    }
-                }
-
-                $http.post($rootScope.REST.PLUGINS.setupById('blogPlugin'), payload).success(function (data) {
-                    // globally handled
-                });
+            $scope.configure = function () {
+                $http.post($rootScope.REST.dynamic + 'blog/', $scope.importConfig); // user feedback is handled globally
             };
-
 
             $scope.addUrl = function () {
                 $scope.importConfig.urls.push({'value': ''});

@@ -59,6 +59,8 @@ class MemoryRepository {
             "/test_editor.cnd",
             "/test_hippogallerypicker.cnd",
             "/test_hippo_gal.cnd",
+            "/test_hippofacnav.cnd",
+            "/test_selection_types.cnd",
             "/mytestproject.cnd",
             "/testnamespace.cnd");
     private static final Logger log = LoggerFactory.getLogger(MemoryRepository.class);
