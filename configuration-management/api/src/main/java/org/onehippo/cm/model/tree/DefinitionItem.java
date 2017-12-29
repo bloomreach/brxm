@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.model.tree;
 
-import org.onehippo.cm.model.definition.ContentDefinition;
+import org.onehippo.cm.model.definition.TreeDefinition;
 
 /**
  * Represents the (potential) state of a JCR Node or Property as specified in a DefinitionItem tree.
@@ -30,7 +30,7 @@ public interface DefinitionItem extends ModelItem {
     /**
      * @return the ContentDefinition (or ConfigDefinition) in which this item is defined
      */
-    ContentDefinition getDefinition();
+    TreeDefinition<?> getDefinition();
 
     /**
      * @return an object representing a precise position in a Source where this item is defined

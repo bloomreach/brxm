@@ -18,16 +18,16 @@ package org.onehippo.cm.model.impl.definition;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 
-public abstract class AbstractDefinitionImpl implements Definition {
+public abstract class AbstractDefinitionImpl<S extends SourceImpl> implements Definition<S> {
 
-    private SourceImpl source;
+    private S source;
 
-    public AbstractDefinitionImpl(final SourceImpl source) {
+    public AbstractDefinitionImpl(final S source) {
         this.source = source;
     }
 
     @Override
-    public SourceImpl getSource() {
+    public S getSource() {
         return source;
     }
 

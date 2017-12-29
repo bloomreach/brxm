@@ -80,6 +80,7 @@ public abstract class SourceImpl implements Source {
         return definitions;
     }
 
+    // todo: replace all usages with addDefinition()/removeDefinition() to limit reordering
     public List<AbstractDefinitionImpl> getModifiableDefinitions() {
         return modifiableDefinitions;
     }

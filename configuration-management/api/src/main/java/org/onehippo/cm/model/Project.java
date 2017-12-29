@@ -23,6 +23,7 @@ import java.util.List;
  * management system.
  */
 public interface Project extends OrderableByName {
+
     /**
      * @return the {@link Group} to which this Project belongs
      */
@@ -32,4 +33,5 @@ public interface Project extends OrderableByName {
      * @return The immutable list of {@link Module}s currently in this Project.
      */
     List<? extends Module> getModules();
+
 }

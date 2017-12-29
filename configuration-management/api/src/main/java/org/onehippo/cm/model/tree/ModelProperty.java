@@ -34,9 +34,7 @@ public interface ModelProperty extends ModelItem {
     /**
      * @return true iff this is a multi-valued property
      */
-    default boolean isMultiple() {
-        return getType().isMultiple();
-    }
+    boolean isMultiple();
 
     /**
      * @return the Value of this property

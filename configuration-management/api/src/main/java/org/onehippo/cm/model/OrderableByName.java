@@ -35,4 +35,5 @@ public interface OrderableByName {
      * this {@link OrderableByName} instance should be sorted.
      */
     Set<String> getAfter();
+
 }

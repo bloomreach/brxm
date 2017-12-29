@@ -20,20 +20,16 @@ import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 
-public class ConfigDefinitionImpl extends ContentDefinitionImpl implements ConfigDefinition {
+public class ConfigDefinitionImpl extends TreeDefinitionImpl<ConfigSourceImpl>
+        implements ConfigDefinition<ConfigSourceImpl> {
 
-    public ConfigDefinitionImpl(final SourceImpl source) {
+    public ConfigDefinitionImpl(final ConfigSourceImpl source) {
         super(source);
     }
 
     @Override
     public DefinitionType getType() {
         return DefinitionType.CONFIG;
-    }
-
-    @Override
-    public ConfigSourceImpl getSource() {
-        return (ConfigSourceImpl) super.getSource();
     }
 
 }

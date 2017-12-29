@@ -75,8 +75,9 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                 final ConfigDefinitionImpl def;
                 if (isTranslationMode()) {
                     Optional<ConfigDefinitionImpl> first = source.getDefinitions().stream()
-                            .filter(d -> ((ConfigDefinitionImpl)d).getNode() != null)
-                            .map(d -> (ConfigDefinitionImpl)d).filter(d -> bundlePath.equals(d.getNode().getJcrPath())).findFirst();
+                            .map(ConfigDefinitionImpl.class::cast)
+                            .filter(d -> d.getNode() != null)
+                            .filter(d -> d.getNode().getJcrPath().equals(bundlePath)).findFirst();
                     def = first.orElseGet(source::addConfigDefinition);
                 } else {
                     def = source.addConfigDefinition();

@@ -71,6 +71,11 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     @Override
+    public boolean isMultiple() {
+        return getType().isMultiple();
+    }
+
+    @Override
     public ValueImpl getValue() throws ValueFormatException {
         if (value == null) {
             throw new ValueFormatException("Property contains multiple values");

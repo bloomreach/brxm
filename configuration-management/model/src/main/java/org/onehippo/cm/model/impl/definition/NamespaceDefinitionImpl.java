@@ -23,13 +23,14 @@ import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 
-public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements NamespaceDefinition {
+public class NamespaceDefinitionImpl extends AbstractDefinitionImpl<ConfigSourceImpl>
+        implements NamespaceDefinition<ConfigSourceImpl> {
 
     private final String prefix;
     private final URI uri;
     private final ValueImpl cndPath;
 
-    public NamespaceDefinitionImpl(final SourceImpl source, final String prefix, final URI uri, final ValueImpl cndPath) {
+    public NamespaceDefinitionImpl(final ConfigSourceImpl source, final String prefix, final URI uri, final ValueImpl cndPath) {
         super(source);
         this.prefix = prefix;
         this.uri = uri;
@@ -58,11 +59,6 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
     @Override
     public ValueImpl getCndPath() {
         return cndPath;
-    }
-
-    @Override
-    public ConfigSourceImpl getSource() {
-        return (ConfigSourceImpl) super.getSource();
     }
 
     public String toString() {

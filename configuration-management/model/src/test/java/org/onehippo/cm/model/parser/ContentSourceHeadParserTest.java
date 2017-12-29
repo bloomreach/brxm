@@ -23,10 +23,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
-import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
@@ -130,14 +130,14 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         m2.build();
 
         assertEquals(1, m1.getContentDefinitions().size());
-        final ContentDefinition d1 = m1.getContentDefinitions().get(0);
+        final ContentDefinitionImpl d1 = m1.getContentDefinitions().get(0);
         assertEquals("/content/documents/myhippoproject", d1.getRootPath());
         assertEquals("test", d1.getNode().getOrderBefore());
         assertTrue(d1.getNode().getProperties().isEmpty());
         assertTrue(d1.getNode().getNodes().isEmpty());
 
         assertEquals(1, m2.getContentDefinitions().size());
-        final ContentDefinition d2 = m2.getContentDefinitions().get(0);
+        final ContentDefinitionImpl d2 = m2.getContentDefinitions().get(0);
         assertEquals("/content/documents/myhippoproject", d2.getRootPath());
         assertEquals("test", d2.getNode().getOrderBefore());
         assertFalse(d2.getNode().getProperties().isEmpty());
@@ -160,7 +160,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         stopWatch.start();
         parser1.parse(this.getClass().getResourceAsStream("/library.yaml"), "location", "location", m1);
         m1.build();
-        final ContentDefinition d1 = m1.getContentDefinitions().get(0);
+        final ContentDefinitionImpl d1 = m1.getContentDefinitions().get(0);
         assertEquals("trails", d1.getNode().getOrderBefore());
         stopWatch.stop();
         System.out.println("loading huge content head only: "+stopWatch.toString());
@@ -170,7 +170,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         stopWatch.start();
         parser2.parse(this.getClass().getResourceAsStream("/library.yaml"), "location", "location", m2);
         m2.build();
-        final ContentDefinition d2 = m2.getContentDefinitions().get(0);
+        final ContentDefinitionImpl d2 = m2.getContentDefinitions().get(0);
         assertEquals("trails", d2.getNode().getOrderBefore());
         stopWatch.stop();
         System.out.println("loading huge content: "+stopWatch.toString());

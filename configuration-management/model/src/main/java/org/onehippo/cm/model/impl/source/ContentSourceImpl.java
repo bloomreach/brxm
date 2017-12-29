@@ -17,12 +17,13 @@ package org.onehippo.cm.model.impl.source;
 
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
+import org.onehippo.cm.model.source.ContentSource;
 import org.onehippo.cm.model.source.SourceType;
 
-public class ContentSourceImpl extends SourceImpl {
+public class ContentSourceImpl extends SourceImpl implements ContentSource {
 
     public ContentSourceImpl(String path, ModuleImpl module) {
         super(path, module);
@@ -32,7 +33,7 @@ public class ContentSourceImpl extends SourceImpl {
         return SourceType.CONTENT;
     }
 
-    public ContentDefinitionImpl getDefinition() {
+    public ContentDefinitionImpl getContentDefinition() {
         return (ContentDefinitionImpl) getDefinitions().get(0);
     }
 

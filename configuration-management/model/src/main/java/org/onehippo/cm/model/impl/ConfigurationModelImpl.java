@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
@@ -67,7 +68,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     private final List<ContentDefinitionImpl> modifiableContentDefinitions = new ArrayList<>();
     private final List<ContentDefinitionImpl> contentDefinitions = Collections.unmodifiableList(modifiableContentDefinitions);
     private final List<ConfigDefinitionImpl> modifiableConfigDefinitions = new ArrayList<>();
-    private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
+//    private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
     private final Map<JcrPath, ConfigurationNodeImpl> modifiableDeletedConfigNodes = new HashMap<>();
     private final Map<JcrPath, ConfigurationNodeImpl> deletedConfigNodes = Collections.unmodifiableMap(modifiableDeletedConfigNodes);
 
@@ -107,11 +108,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     @Override
-    public ConfigurationNodeImpl getConfigurationRootNode() {
-        return configurationRootNode;
-    }
-
-    @Override
     public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
         return webFileBundleDefinitions;
     }
@@ -119,6 +115,11 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     @Override
     public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
+    }
+
+    @Override
+    public ConfigurationNodeImpl getConfigurationRootNode() {
+        return configurationRootNode;
     }
 
     public Map<JcrPath, ConfigurationNodeImpl> getDeletedConfigNodes() {
@@ -133,19 +134,19 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableConfigDefinitions.addAll(definitions);
     }
 
-    private void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
+    private void addNamespaceDefinitions(final Collection<NamespaceDefinitionImpl> definitions) {
         modifiableNamespaceDefinitions.addAll(definitions);
     }
 
-    private void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
-        this.configurationRootNode = configurationRootNode;
-    }
-
-    private void addWebFileBundleDefinitions(final List<WebFileBundleDefinitionImpl> definitions) {
+    private void addWebFileBundleDefinitions(final Collection<WebFileBundleDefinitionImpl> definitions) {
         for (WebFileBundleDefinitionImpl definition : definitions) {
             ensureUniqueBundleName(definition);
         }
         modifiableWebFileBundleDefinitions.addAll(definitions);
+    }
+
+    private void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
+        this.configurationRootNode = configurationRootNode;
     }
 
     public ConfigurationModelImpl addGroup(final GroupImpl group) {
@@ -230,6 +231,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                     log.info("Merging module {}", module.getFullName());
                     addNamespaceDefinitions(module.getNamespaceDefinitions());
                     addConfigDefinitions(module.getConfigDefinitions());
+                    // todo: why create this HashSet?
                     addContentDefinitions(new HashSet<>(module.getContentDefinitions()));
                     addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                     module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
@@ -424,6 +426,26 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         else {
             return node.getProperty(path.getLastSegment().toString());
         }
+    }
+
+    @Override
+    public ContentDefinitionImpl getNearestContentDefinition(final String path) {
+        return getNearestContentDefinition(JcrPaths.getPath(path));
+    }
+
+    public ContentDefinitionImpl getNearestContentDefinition(final JcrPath path) {
+        String originPath = "";
+        ContentDefinitionImpl defValue = null;
+        for (ContentDefinitionImpl def : getContentDefinitions()) {
+            // this def is a better candidate if it has a starting substring match
+            if (path.startsWith(def.getRootPath())
+                    // and that subpath is longer than the previous match
+                    && (def.getRootPath().length() > originPath.length())) {
+                originPath = def.getRootPath();
+                defValue = def;
+            }
+        }
+        return defValue;
     }
 
     @Override

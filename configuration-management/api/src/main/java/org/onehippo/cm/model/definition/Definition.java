@@ -20,7 +20,7 @@ import org.onehippo.cm.model.source.Source;
 /**
  * Represents a definition as found in a Source.
  */
-public interface Definition {
+public interface Definition<S extends Source> {
     /**
      * @return the type of this definition, i.e. what sort of data is defined
      */
@@ -29,7 +29,7 @@ public interface Definition {
     /**
      * @return the Source file where this definition is located
      */
-    Source getSource();
+    S getSource();
 
     /**
      * @return a String describing the source of this item for error-reporting purposes

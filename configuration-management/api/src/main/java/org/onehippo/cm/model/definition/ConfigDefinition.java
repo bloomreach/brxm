@@ -15,11 +15,13 @@
  */
 package org.onehippo.cm.model.definition;
 
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 
 /**
  * Represents the definition of a JCR node tree in a {@link Source} of type {@link SourceType#CONFIG}, including metadata.
+ * {@link #getType()} always returns {@link DefinitionType#CONFIG}.
  */
-public interface ConfigDefinition extends ContentDefinition {
+public interface ConfigDefinition<S extends ConfigSource> extends TreeDefinition<S> {
 }

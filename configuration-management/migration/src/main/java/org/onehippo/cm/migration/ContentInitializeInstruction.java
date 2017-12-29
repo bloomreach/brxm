@@ -22,16 +22,16 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
@@ -68,7 +68,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         return path.equals("") ? "/" : path;
     }
 
-    public void processContentInstruction(final SourceImpl source,
+    public void processContentInstruction(final ConfigSourceImpl source,
                                           final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                           Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final String nodePath = getNodePath();
@@ -140,7 +140,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 + " defined at " + getInstructionNode().getSourceLocation()
                                 + ": node not found in this module, manual conversion required");
                     }
-                    ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
+                    ConfigDefinitionImpl def = source.addConfigDefinition();
                     node = new DefinitionNodeImpl(nodePath, name, def);
                     def.setNode(node);
                     node.setDelete(true);
@@ -411,9 +411,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         }
     }
 
-    protected void deleteDefinition(final Definition definition) {
+    protected void deleteDefinition(final TreeDefinitionImpl definition) {
         // remove definition from source
-        SourceImpl defSource = (SourceImpl) definition.getSource();
+        SourceImpl defSource = definition.getSource();
         for (Iterator<AbstractDefinitionImpl> defIterator = defSource.getModifiableDefinitions().iterator(); defIterator.hasNext(); ) {
             if (defIterator.next() == definition) {
                 defIterator.remove();

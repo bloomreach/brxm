@@ -45,6 +45,7 @@ import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
@@ -102,6 +103,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private ResourceInputProvider contentResourceInputProvider;
 
+//    private ResourceInputProvider resourceInputProvider;
+
     // store marker here to indicate whether this came from a filesystem mvn path at startup
     private String mvnPath;
 
@@ -132,6 +135,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         configResourceInputProvider = module.getConfigResourceInputProvider();
         contentResourceInputProvider = module.getContentResourceInputProvider();
         lastExecutedAction = module.lastExecutedAction;
+//        resourceInputProvider = module.getResourceInputProvider();
         actionsMap.putAll(module.getActionsMap());
 
         // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
@@ -200,13 +204,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     public ContentSourceImpl addContentSource(final String path) {
-        final SourceImpl source = new ContentSourceImpl(path, this);
-        return (ContentSourceImpl) addSource(source);
+        return addSource(new ContentSourceImpl(path, this));
     }
 
     public ConfigSourceImpl addConfigSource(final String path) {
-        final SourceImpl source = new ConfigSourceImpl(path, this);
-        return (ConfigSourceImpl) addSource(source);
+        return addSource(new ConfigSourceImpl(path, this));
     }
 
     public Optional<ConfigSourceImpl> getConfigSource(final String path) {
@@ -245,8 +247,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * @param source
      * @return
      */
-    private SourceImpl addSource(SourceImpl source) {
-        return sortedSources.add(source) ? source : sortedSources
+    @SuppressWarnings("unchecked") // source.equals does a class.equals check
+    private <S extends SourceImpl> S addSource(S source) {
+        return sortedSources.add(source) ? source : (S) sortedSources
                 .stream()
                 .filter(source::equals)
                 .findFirst().get();
@@ -308,6 +311,16 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
+//    @Override
+//    public ResourceInputProvider getResourceInputProvider() {
+//        return resourceInputProvider;
+//    }
+//
+//    public ModuleImpl setResourceInputProvider(final ResourceInputProvider resourceInputProvider) {
+//        this.resourceInputProvider = resourceInputProvider;
+//        return this;
+//    }
+
     /**
      * This property stores the String used to find mvn source files relative to the project.basedir. This is
      * the input expected from repo.bootstrap.modules and autoexport:config's autoexport:modules properties.
@@ -354,6 +367,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     public ModuleImpl build() {
+        // TODO: add safety check to prevent stale calls to getXxxDefinitions() after addSource() but before build()
+
         // clear and sort definitions into the different types
         namespaceDefinitions.clear();
         configDefinitions.clear();
@@ -381,8 +396,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
 
         // sort the content/config definitions, all other remain in insertion order
-        configDefinitions.sort(new ContentDefinitionComparator());
-        contentDefinitions.sort(new ContentDefinitionComparator());
+        configDefinitions.sort(new UniquenessCheckingTreeDefinitionComparator());
+        contentDefinitions.sort(new UniquenessCheckingTreeDefinitionComparator());
 
         return this;
     }
@@ -430,12 +445,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         digestResource(null, "/../" + ACTIONS_YAML, null, rip, items);
 
         // for each content source
-        for (SourceImpl source : this.getContentSources()) {
-            // assume that there is exactly one content definition here, as required
-            ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
-
-            // add the first definition path to manifest
-            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getJcrPath().toString());
+        for (ContentSourceImpl source : this.getContentSources()) {
+            // add the definition path to manifest
+            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), source.getContentDefinition().getNode().getJcrPath().toString());
         }
 
         // for each config source
@@ -609,8 +621,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
-    private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
-        public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
+    private class UniquenessCheckingTreeDefinitionComparator implements Comparator<TreeDefinitionImpl> {
+        public int compare(final TreeDefinitionImpl def1, final TreeDefinitionImpl def2) {
             final JcrPath rootPath1 = def1.getNode().getJcrPath();
             final JcrPath rootPath2 = def2.getNode().getJcrPath();
 
@@ -692,7 +704,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
     }
 
-    protected String getFullSourcePath(final SourceImpl source, final ResourceInputProvider rip) {
+    private String getFullSourcePath(final SourceImpl source, final ResourceInputProvider rip) {
         if (rip instanceof FileResourceInputProvider) {
             return ((FileResourceInputProvider)rip).getFullSourcePath(source);
         }

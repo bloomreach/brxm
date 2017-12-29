@@ -23,20 +23,39 @@ import java.io.InputStream;
  * or the JCR.
  */
 public interface ResourceInputProvider {
+
+//    /**
+//     * Can an InputStream be created for a given module resource, using a path relative to the module's base path?
+//     * @param moduleResourcePath a relative path from the module's base path to the desired resource
+//     * @return true iff this provider can create an InputStream for a resource at the given path
+//     */
+//    boolean hasResource(final String moduleResourcePath);
+//
+//    /**
+//     * Get an InputStream to resolve a resource reference relative to the module's base path. Note, caller is
+//     * responsible for closing the stream when finished with it.
+//     * @param moduleResourcePath a relative path from the module's base path to the desired resource
+//     * @throws IOException in case of any unexpected problem in opening the desired InputStream
+//     */
+//    InputStream getResourceInputStream(final String moduleResourcePath) throws IOException;
+
     /**
      * Can an InputStream be created for a given resource reference, relative to the given YAML Source or relative to
-     * a base path within a module.
-     * @param source the base YAML Source from which a reference should be resolved, or null if the base path should be used
-     * @param resourcePath a relative path from the source, or an absolute path from the base path, to the desired resource
+     * the config or content base path within a module?
+     * @param source the base YAML Source from which a reference should be resolved -- should not be null
+     * @param resourcePath a relative path from the source (if no leading slash), or an absolute path from the base path
+     *                     (if a leading slash is present), to the desired resource
      */
     boolean hasResource(final Source source, final String resourcePath);
 
     /**
      * Get an InputStream to resolve a resource reference in a YAML Source or relative to
-     * a base path within a module. Note, caller is responsible for closing the stream when finished with it.
-     * @param source the base YAML Source from which a reference should be resolved, or null if the base path should be used
-     * @param resourcePath a relative path from the source, or an absolute path from the base path, to the desired resource
-     * @throws IOException
+     * the config or content base path within a module. Note, caller is responsible for closing the stream when finished
+     * with it.
+     * @param source the base YAML Source from which a reference should be resolved -- should not be null
+     * @param resourcePath a relative path from the source (if no leading slash), or an absolute path from the base path
+     *                     (if a leading slash is present), to the desired resource
+     * @throws IOException in case of any unexpected problem in opening the desired InputStream
      */
     InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
 

@@ -47,6 +47,11 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionP
     }
 
     @Override
+    public boolean isMultiple() {
+        return getType().isMultiple();
+    }
+
+    @Override
     public ValueImpl getValue() throws ValueFormatException {
         return value;
     }

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -104,7 +104,7 @@ public class ConfigurationTreeBuilder {
     }
 
     /**
-     * Call after all calls to {@link #push(ContentDefinitionImpl)} have been completed for a particular Module.
+     * Call after all calls to {@link #push(ConfigDefinitionImpl)} have been completed for a particular Module.
      * This checks for error conditions that must be validated in the context of a complete set of a Module's definitions.
      * (Currently, this includes only .meta:order-before directives that may span multiple source files.
      * @return this
@@ -129,7 +129,7 @@ public class ConfigurationTreeBuilder {
         return root;
     }
 
-    public ConfigurationTreeBuilder push(final ContentDefinitionImpl definition) {
+    public ConfigurationTreeBuilder push(final ConfigDefinitionImpl definition) {
         final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
         if (rootForDefinition != null) {
@@ -354,7 +354,7 @@ public class ConfigurationTreeBuilder {
         return this;
     }
 
-    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
+    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ConfigDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getNode();
         final JcrPath definitionRootPath = definitionNode.getJcrPath();
         final JcrPathSegment[] pathSegments = definitionRootPath.toArray();

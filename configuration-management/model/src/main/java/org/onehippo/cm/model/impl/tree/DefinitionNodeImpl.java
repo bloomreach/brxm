@@ -28,10 +28,8 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -39,6 +37,8 @@ import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
 import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.ValueType;
+
+import com.google.common.collect.Maps;
 
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
@@ -57,15 +57,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
-    public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
+    public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }
 
-    public DefinitionNodeImpl(final String path, final String name, final ContentDefinitionImpl definition) {
+    public DefinitionNodeImpl(final String path, final String name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }
 
-    public DefinitionNodeImpl(final String path, final ContentDefinitionImpl definition) {
+    public DefinitionNodeImpl(final String path, final TreeDefinitionImpl definition) {
         super(path, definition);
     }
 

@@ -16,7 +16,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -27,11 +27,11 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
 
     private JcrPath path;
     private DefinitionNodeImpl parent;
-    private ContentDefinitionImpl definition;
+    private TreeDefinitionImpl definition;
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
         if (path == null) {
             throw new IllegalArgumentException("Item path must not be null!");
         }
@@ -43,7 +43,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         this.sourceLocation = new SourceLocationImpl();
     }
 
-    public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final String path, final String name, final TreeDefinitionImpl definition) {
         if (StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("Item path must not be blank! name="+name);
         }
@@ -60,7 +60,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         this.sourceLocation = new SourceLocationImpl();
     }
 
-    public DefinitionItemImpl(final String path, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final String path, final TreeDefinitionImpl definition) {
         this(path, StringUtils.substringAfterLast(path, "/"), definition);
     }
 
@@ -115,7 +115,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public ContentDefinitionImpl getDefinition() {
+    public TreeDefinitionImpl getDefinition() {
         return definition;
     }
 

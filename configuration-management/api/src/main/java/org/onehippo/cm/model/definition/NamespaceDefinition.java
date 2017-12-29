@@ -17,6 +17,7 @@ package org.onehippo.cm.model.definition;
 
 import java.net.URI;
 
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.Value;
@@ -25,7 +26,7 @@ import org.onehippo.cm.model.tree.Value;
  * Represents the definition of a JCR node type namespace and (potentially) an associated CND resource defining JCR node
  * types in a {@link Source} of type {@link SourceType#CONFIG}.
  */
-public interface NamespaceDefinition extends Definition {
+public interface NamespaceDefinition<S extends ConfigSource> extends Definition<S> {
     /**
      * @return the JCR name prefix for this namespace
      */

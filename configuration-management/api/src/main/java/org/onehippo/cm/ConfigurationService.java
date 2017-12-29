@@ -39,7 +39,7 @@ public interface ConfigurationService {
     ConfigurationModel getRuntimeConfigurationModel();
 
     /**
-     * @return Returns true if AutoExport is allowed (though perhaps still disabled)
+     * @return Returns true if AutoExport is allowed (though perhaps currently disabled)
      */
     boolean isAutoExportAvailable();
 
@@ -74,4 +74,5 @@ public interface ConfigurationService {
      * @param parentNode parent {@link Node}
      */
     void importPlainYaml(final InputStream inputStream, final Node parentNode) throws RepositoryException;
+
 }

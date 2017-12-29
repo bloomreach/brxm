@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.source.ConfigSource;
+import org.onehippo.cm.model.source.ContentSource;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 
@@ -59,13 +61,14 @@ public interface Module extends OrderableByName {
      * @return The immutable set of content {@link Source}s of this module, ordered by path ({@link Source#getPath()})
      *         relative to the module's base resource path.
      */
-    Set<? extends Source> getContentSources();
+    Set<? extends ContentSource> getContentSources();
 
     /**
      * @return The immutable set of config {@link Source}s of this module, ordered by path ({@link Source#getPath()})
      *         relative to the module's base resource path.
      */
-    Set<? extends Source> getConfigSources();
+    Set<? extends ConfigSource> getConfigSources();
+
 
     /**
      * @return A helper object to access raw streams for configuration files.
@@ -77,15 +80,17 @@ public interface Module extends OrderableByName {
      */
     ResourceInputProvider getContentResourceInputProvider();
 
-    /**
-     * @return the current "sequence number" of this module, which describes the most recent set of actions from
-     * {@link #getActionsMap()} that have been applied to the JCR
-     */
-    String getLastExecutedAction();
+//    ResourceInputProvider getResourceInputProvider();
 
     /**
      * @return The immutable map of action items per version, which describe how to handle content source bootstrapping
      */
     Map<String, Set<ActionItem>> getActionsMap();
+
+    /**
+     * @return the current "sequence number" of this module, which describes the most recent set of actions from
+     * {@link #getActionsMap()} that have been applied to the JCR
+     */
+    String getLastExecutedAction();
 
 }

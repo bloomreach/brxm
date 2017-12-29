@@ -81,7 +81,7 @@ public class HippoImageFileMapperTest {
         GroupImpl group = new GroupImpl("dummyGroup");
         ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
-        SourceImpl source = new ConfigSourceImpl("somePath", module);
+        ConfigSourceImpl source = new ConfigSourceImpl("somePath", module);
         ConfigDefinitionImpl definition = new ConfigDefinitionImpl(source);
         DefinitionNodeImpl parentNode = new DefinitionNodeImpl("/path/to/", "parentNode", definition);
 

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
@@ -67,7 +67,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      property2: bla2";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
+        final ConfigDefinitionImpl definition = (ConfigDefinitionImpl)definitions.get(0);
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -98,7 +98,7 @@ public class ConfigurationTreeBuilderTest {
                 + "          property5: bla5";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
+        final ConfigDefinitionImpl definition = (ConfigDefinitionImpl)definitions.get(0);
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -126,7 +126,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      property1: bla1";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
+        final ConfigDefinitionImpl definition = (ConfigDefinitionImpl)definitions.get(0);
 
         try {
             builder.push(definition);
@@ -147,7 +147,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        property2: [bla2, bla3]";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
+        final ConfigDefinitionImpl definition = (ConfigDefinitionImpl)definitions.get(0);
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -183,8 +183,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
@@ -219,7 +219,7 @@ public class ConfigurationTreeBuilderTest {
                 + "          property5: bla5";
 
         final List<AbstractDefinitionImpl> definitions1 = ModelTestUtils.parseNoSort(yaml1);
-        builder.push((ContentDefinitionImpl)definitions1.get(0));
+        builder.push((ConfigDefinitionImpl)definitions1.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -235,7 +235,7 @@ public class ConfigurationTreeBuilderTest {
                 + "          property9: bla9";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl)definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
@@ -271,9 +271,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: '' (first) for node '/a/b'")));
         }
@@ -300,9 +300,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: 'c' for node '/a/b'")));
         }
@@ -329,8 +329,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -358,8 +358,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -387,8 +387,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -413,8 +413,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -441,8 +441,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -471,8 +471,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -509,9 +509,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(2));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -536,8 +536,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -561,8 +561,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -595,8 +595,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -619,7 +619,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(0));
+            builder.push((ConfigDefinitionImpl)definitions.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Deleting the root node is not supported.", e.getMessage());
@@ -644,9 +644,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(2));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -672,9 +672,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(2));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -695,10 +695,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string]: Trying to delete node /a/b/c that does not exist.")));
         }
@@ -723,10 +723,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml, true);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
@@ -752,10 +752,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string]: Trying to delete node /a/b/c that does not exist.")));
         }
@@ -782,10 +782,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml, true);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
@@ -815,9 +815,9 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2, true);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try {
-            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string]].", e.getMessage());
@@ -842,9 +842,9 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2, true);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try {
-            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("test-group/test-project/test-module [config: string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [config: string]].", e.getMessage());
@@ -869,10 +869,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(2));
+            builder.push((ConfigDefinitionImpl)definitions.get(2));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("[test-group/test-project/test-module [config: string], test-group/test-project/test-module [config: string]] tries to modify already deleted node '/a/b/c', skipping.")));
         }
@@ -906,10 +906,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(2));
+            builder.push((ConfigDefinitionImpl)definitions.get(2));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("[test-group/test-project/test-module [config: string], test-group/test-project/test-module [config: string]] tries to modify already deleted node '/a/b/c/d', skipping.")));
         }
@@ -937,8 +937,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
@@ -975,12 +975,12 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 /* TODO: restore after HCM-166
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [config: string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [config: string]]'.")));
         }
@@ -1006,7 +1006,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -1015,10 +1015,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
 
-        builder.push((ContentDefinitionImpl)definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 /* TODO: restore after HCM-166
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [config: string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [config: string]]'.")));
         }
@@ -1050,12 +1050,12 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 /* TODO: restore after HCM-166
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [config: string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [config: string]]'.")));
         }
@@ -1083,7 +1083,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -1095,7 +1095,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             assertEquals(0, interceptor.getEvents().size());
         }
 
@@ -1122,8 +1122,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1152,7 +1152,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1178,11 +1178,11 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 /* TODO: restore after HCM-166
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [config: string]' specifies values equivalent to existing property, defined in '[test-group/test-project/test-module [config: string]]'.")));
         }
@@ -1211,8 +1211,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1240,9 +1240,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property2' defined in 'test-group/test-project/test-module [config: string]' claims to ADD values, but property doesn't exist yet. Applying default behaviour.")));
         }
@@ -1269,10 +1269,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/b/property2 already exists with type 'single', as determined by [test-group/test-project/test-module [config: string]], but type 'list' is requested in test-group/test-project/test-module [config: string].", e.getMessage());
@@ -1295,8 +1295,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1320,10 +1320,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/b/property2 already exists with value type 'string', as determined by [test-group/test-project/test-module [config: string]], but value type 'long' is requested in test-group/test-project/test-module [config: string].", e.getMessage());
@@ -1347,8 +1347,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1369,10 +1369,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property jcr:primaryType is already defined on node /a/b as determined by [test-group/test-project/test-module [config: string]], but change is requested in test-group/test-project/test-module [config: string]. Use 'operation: override' if you really intend to change the value of this property.", e.getMessage());
@@ -1392,15 +1392,15 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 /* TODO: restore after HCM-166
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/jcr:primaryType' defined in 'test-group/test-project/test-module [config: string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [config: string]]'.")));
         }
 */
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1423,8 +1423,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1448,8 +1448,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1471,8 +1471,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1494,10 +1494,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property jcr:mixinTypes is already defined on node /a/b, and replace operation of test-group/test-project/test-module [config: string] would remove values [bla2]. Use 'operation: override' if you really intend to remove these values.", e.getMessage());
@@ -1520,8 +1520,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1544,8 +1544,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1565,7 +1565,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(0));
+            builder.push((ConfigDefinitionImpl)definitions.get(0));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string]: Trying to delete property /a/property1 that does not exist.")));
         }
@@ -1591,10 +1591,10 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(2));
+            builder.push((ConfigDefinitionImpl)definitions.get(2));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/c/property1' defined in 'test-group/test-project/test-module [config: string]' has already been deleted. This property is not re-created.")));
         }
@@ -1620,9 +1620,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: false' for node '/a/b'")));
         }
@@ -1642,9 +1642,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: true' for node '/a/b'")));
         }
@@ -1664,9 +1664,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
         }
@@ -1686,9 +1686,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
         }
@@ -1712,9 +1712,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Potential unnecessary orderBefore: 'c' for node '/a/b' defined in " +
                             "'test-group/test-project/test-module [config: string]': " +
@@ -1743,7 +1743,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void simple_sns_definition() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl test = root.getNode("a[1]");
@@ -1756,7 +1756,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void no_index_merges_with_index_1() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -1764,7 +1764,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[1]:\n"
                 + "        property2: value2";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -1775,7 +1775,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void delete_first_sns() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -1783,7 +1783,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns:\n"
                 + "        .meta:delete: true";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -1796,7 +1796,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void delete_middle_sns() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String delete = "definitions:\n"
                 + "  config:\n"
@@ -1804,7 +1804,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[2]:\n"
                 + "        .meta:delete: true";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(delete);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -1817,7 +1817,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void delete_last_sns() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String delete = "definitions:\n"
                 + "  config:\n"
@@ -1825,7 +1825,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[3]:\n"
                 + "        .meta:delete: true";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(delete);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -1838,7 +1838,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void delete_all_sns() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String delete = "definitions:\n"
                 + "  config:\n"
@@ -1846,9 +1846,9 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[1]:\n"
                 + "        .meta:delete: true";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(delete);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
-        builder.push((ContentDefinitionImpl) definition2.get(0));
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
@@ -1859,7 +1859,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void reorder_existing_sns_to_earlier() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String orderBefore = "definitions:\n"
                 + "  config:\n"
@@ -1867,7 +1867,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[3]:\n"
                 + "        .meta:order-before: sns[1]";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(orderBefore);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1880,7 +1880,7 @@ public class ConfigurationTreeBuilderTest {
     @Test
     public void reorder_existing_sns_to_later() throws Exception {
         final List<AbstractDefinitionImpl> definition1 = ModelTestUtils.parseNoSort(snsFixture);
-        builder.push((ContentDefinitionImpl) definition1.get(0));
+        builder.push((ConfigDefinitionImpl)definition1.get(0));
 
         final String orderBefore = "definitions:\n"
                 + "  config:\n"
@@ -1888,7 +1888,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /sns[1]:\n"
                 + "        .meta:order-before: sns[3]";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(orderBefore);
-        builder.push((ContentDefinitionImpl) definition2.get(0));
+        builder.push((ConfigDefinitionImpl)definition2.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1910,7 +1910,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(0));
+            builder.push((ConfigDefinitionImpl)definitions.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("test-group/test-project/test-module [config: string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
@@ -1928,9 +1928,9 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         try {
-            builder.push((ContentDefinitionImpl) definitions.get(1));
+            builder.push((ConfigDefinitionImpl)definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("test-group/test-project/test-module [config: string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
@@ -1948,7 +1948,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1968,7 +1968,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: []\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1986,7 +1986,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      property: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -1995,7 +1995,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2012,7 +2012,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      property: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2023,7 +2023,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         try {
-            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/property already exists with type 'single', as determined by [test-group/test-project/test-module [config: string]], but type 'list' is requested in test-group/test-project/test-module [config: string]."
@@ -2040,7 +2040,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      property: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2051,7 +2051,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: [value]\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2070,7 +2070,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2081,7 +2081,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: true\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2101,7 +2101,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2111,7 +2111,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: updated\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2131,7 +2131,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        value: value\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2142,7 +2142,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         try {
-            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/property already exists with type 'single', as determined by [test-group/test-project/test-module [config: string]], but type 'list' is requested in test-group/test-project/test-module [config: string]."
@@ -2181,7 +2181,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        jcr:primaryType: foo\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         // test both as root and as node as they have different code paths
         final String yaml2 = "definitions:\n"
@@ -2193,8 +2193,8 @@ public class ConfigurationTreeBuilderTest {
                 + "      .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
-        builder.push((ContentDefinitionImpl) definitions2.get(1));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(1));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2224,8 +2224,8 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2245,8 +2245,8 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 
         // test both as root and as node as they have different code paths
         final String yaml2 = "definitions:\n"
@@ -2260,8 +2260,8 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl)definitions2.get(0));
-            builder.push((ContentDefinitionImpl)definitions2.get(1));
+            builder.push((ConfigDefinitionImpl)definitions2.get(0));
+            builder.push((ConfigDefinitionImpl)definitions2.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-group/test-project/test-module [config: string] tries to modify non-configuration node '/a', skipping.")));
             assertTrue(interceptor.messages()
@@ -2276,7 +2276,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions3 = ModelTestUtils.parseNoSort(yaml3);
 
         try {
-            builder.push((ContentDefinitionImpl)definitions3.get(0));
+            builder.push((ConfigDefinitionImpl)definitions3.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("test-group/test-project/test-module [config: string] contains definition rooted at unreachable node '/a/b'. Closest ancestor is at '/'.", e.getMessage());
@@ -2299,7 +2299,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         final String yaml2 = "definitions:\n"
                 + "  config:\n"
@@ -2312,7 +2312,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: config\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
-        builder.push((ContentDefinitionImpl) definitions2.get(0));
+        builder.push((ConfigDefinitionImpl)definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2335,8 +2335,8 @@ public class ConfigurationTreeBuilderTest {
                 + "      .meta:residual-child-node-category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(1));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getNode("b[1]").getResidualNodeCategory());
@@ -2356,7 +2356,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: content\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildNodeCategory("default[1]"));
@@ -2383,7 +2383,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: content\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
@@ -2412,7 +2412,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
@@ -2436,7 +2436,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:order-before: second\n";
 
         List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         yaml = "definitions:\n"
                 + "  config:\n"
@@ -2445,7 +2445,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        jcr:primaryType: foo\n";
         definitions = ModelTestUtils.parseNoSort(yaml);
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-            builder.push((ContentDefinitionImpl) definitions.get(0));
+            builder.push((ConfigDefinitionImpl)definitions.get(0));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Unnecessary orderBefore: 'second' for node '/node/first' defined in 'test-group/test-project/test-module [config: string]': already ordered before sibling 'second[1]'.")));
         }
@@ -2468,7 +2468,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:order-before: doesnotexist\n";
 
         List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
 
         yaml = "definitions:\n"
                 + "  config:\n"
@@ -2476,7 +2476,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /second:\n"
                 + "        jcr:primaryType: foo\n";
         definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ConfigDefinitionImpl)definitions.get(0));
         builder.finishModule().build();
     }
 }

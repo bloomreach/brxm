@@ -34,7 +34,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -170,7 +170,7 @@ public abstract class AbstractBaseTest {
         return node;
     }
 
-    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
+    protected DefinitionNodeImpl assertNode(final TreeDefinitionImpl parent,
                               final String path,
                               final String name,
                               final AbstractDefinitionImpl definition,
@@ -180,7 +180,7 @@ public abstract class AbstractBaseTest {
         return assertNode(parent, path, name, definition, false, null, nodeCount, propertyCount);
     }
 
-    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
+    protected DefinitionNodeImpl assertNode(final TreeDefinitionImpl parent,
                               final String path,
                               final String name,
                               final AbstractDefinitionImpl definition,

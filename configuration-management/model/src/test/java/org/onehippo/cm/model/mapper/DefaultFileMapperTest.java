@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
@@ -37,10 +37,10 @@ public class DefaultFileMapperTest {
         final ProjectImpl project = new ProjectImpl("project", new GroupImpl("group"));
         final ModuleImpl module = new ModuleImpl("module", project);
         final ConfigSourceImpl source = new ConfigSourceImpl("path/to/content.yaml", module);
-        final ContentDefinitionImpl contentDefinition = new ContentDefinitionImpl(source);
+        final ConfigDefinitionImpl configDefinition = new ConfigDefinitionImpl(source);
 
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(JcrPaths.getPath("/path/to"),
-                JcrPaths.getSegment("node"), contentDefinition);
+                JcrPaths.getSegment("node"), configDefinition);
 
         final ValueImpl valueImpl = new ValueImpl("SomeStringValue");
         valueImpl.makeStringResourceValue("/path/to/resource.yaml");

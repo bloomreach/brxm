@@ -21,11 +21,12 @@ import org.onehippo.cm.model.definition.WebFileBundleDefinition;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 
-public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implements WebFileBundleDefinition {
+public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl<ConfigSourceImpl>
+        implements WebFileBundleDefinition<ConfigSourceImpl> {
 
     private final String name;
 
-    public WebFileBundleDefinitionImpl(final SourceImpl source, final String name) {
+    public WebFileBundleDefinitionImpl(final ConfigSourceImpl source, final String name) {
         super(source);
 
         this.name = name;
@@ -39,11 +40,6 @@ public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implemen
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public ConfigSourceImpl getSource() {
-        return (ConfigSourceImpl) super.getSource();
     }
 
     public String toString() {

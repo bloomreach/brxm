@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.source;
 
-import java.util.List;
+import org.onehippo.cm.model.definition.ContentDefinition;
 
 /**
- * Represents the first level of a three-level hierarchy used for managing dependency relationships between
- * {@link Module}s. This is intended to equate conceptually to the level of Maven group IDs in that dependency
- * management system.
+ * Represents a single content source file, which may contain only a single content definition.
+ * {@link #getType()} will always return {@link SourceType#CONTENT}.
  */
-public interface Group extends OrderableByName {
+public interface ContentSource extends Source {
 
     /**
-     * @return The immutable list of {@link Project}s currently in this Group.
+     * @return the ContentDefinition in this Source, or null if none exists
      */
-    List<? extends Project> getProjects();
+    ContentDefinition getContentDefinition();
 
 }

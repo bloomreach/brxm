@@ -22,7 +22,9 @@ import java.util.stream.Stream;
 /**
  * Represents a multi-segment JCR node path with possible same-named-sibling indices on each segment.
  * Note that this is essentially an analogy to the {@link java.nio.file.Path} API, and instances can be used in a way
- * familiar to users of that class.
+ * familiar to users of that class. Note that this class deliberately does not handle the full JCR spec for node
+ * references, and in particular does not support UUID-based node references. Note also that the current implementation
+ * does not fully respect the differences between relative and absolute paths, treating all paths as absolute.
  */
 public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
 
@@ -143,23 +145,29 @@ public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
     JcrPath toAbsolutePath();
 
     /**
-     * @return a NodePath equivalent to this one, except that each segment has had forceIndex() applied to it
+     * @return a {@link JcrPath} equivalent to this one, except that each segment has had forceIndex() applied to it
      */
     JcrPath toFullyIndexedPath();
 
     /**
-     * @return a NodePath equivalent to this one, except that each segment has had suppressIndex() applied to it
+     * @return a {@link JcrPath} equivalent to this one, except that each segment has had suppressIndex() applied to it
      */
     JcrPath toMinimallyIndexedPath();
 
     /**
-     * @return an ordered, serial stream of NodePathSegments in the same order used by {@link #getSegment(int)}
+     * @return an ordered, serial stream of {@link JcrPathSegment}s in the same order used by {@link #getSegment(int)}
      */
     Stream<JcrPathSegment> stream();
 
+    /**
+     * @return an ordered, iterator of {@link JcrPathSegment}s in the same order used by {@link #getSegment(int)}
+     */
     @Override
     Iterator<JcrPathSegment> iterator();
 
+    /**
+     * @return an array of JcrPathSegment in the same order used by {@link #getSegment(int)}
+     */
     JcrPathSegment[] toArray();
 
     /**

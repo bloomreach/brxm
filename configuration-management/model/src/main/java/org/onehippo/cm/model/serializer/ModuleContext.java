@@ -25,8 +25,8 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -181,7 +181,7 @@ public class ModuleContext {
                 switch (definition.getType()) {
                     case CONFIG:
                     case CONTENT:
-                        collectResourcePathsForNode(resourceNameResolver, ((ContentDefinitionImpl)definition).getNode());
+                        collectResourcePathsForNode(resourceNameResolver, ((TreeDefinitionImpl)definition).getNode());
                         break;
                     case NAMESPACE:
                         collectResourcePathForNamespace(resourceNameResolver, (NamespaceDefinitionImpl)definition);

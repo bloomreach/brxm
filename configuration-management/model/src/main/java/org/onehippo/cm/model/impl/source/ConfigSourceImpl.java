@@ -16,25 +16,25 @@
 package org.onehippo.cm.model.impl.source;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.model.definition.DefinitionType.CONFIG;
+import com.google.common.collect.ImmutableList;
 
-public class ConfigSourceImpl extends SourceImpl {
+public class ConfigSourceImpl extends SourceImpl implements ConfigSource {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigSourceImpl.class);
 
@@ -44,6 +44,26 @@ public class ConfigSourceImpl extends SourceImpl {
 
     public final SourceType getType() {
         return SourceType.CONFIG;
+    }
+
+    @Override
+    public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
+        return getDefinitionsOfType(NamespaceDefinitionImpl.class);
+    }
+
+    @Override
+    public List<ConfigDefinitionImpl> getConfigDefinitions() {
+        return getDefinitionsOfType(ConfigDefinitionImpl.class);
+    }
+
+    @Override
+    public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
+        return getDefinitionsOfType(WebFileBundleDefinitionImpl.class);
+    }
+
+    protected <T extends AbstractDefinitionImpl> List<T> getDefinitionsOfType(Class<T> type) {
+        return modifiableDefinitions.stream().filter(type::isInstance).map(type::cast)
+                .collect(ImmutableList.toImmutableList());
     }
 
     public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri, final ValueImpl cndPath) {
@@ -70,17 +90,6 @@ public class ConfigSourceImpl extends SourceImpl {
         return definition;
     }
 
-    public void cleanEmptyDefinitions() {
-        Set<AbstractDefinitionImpl> toRemove = new HashSet<>();
-        for (AbstractDefinitionImpl def : getDefinitions()) {
-            if (CONFIG.isOfType(def)
-                    && ((ConfigDefinitionImpl)def).getNode().isEmpty()) {
-                toRemove.add(def);
-            }
-        }
-        toRemove.forEach(this::removeDefinition);
-    }
-
     /**
      * Get or create a definition in configSource to contain data for jcrPath.
      * @param jcrPath the path for which we want a definition
@@ -96,19 +105,14 @@ public class ConfigSourceImpl extends SourceImpl {
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
      */
     public DefinitionNodeImpl getOrCreateDefinitionFor(final JcrPath jcrPath) {
-        // try to find an existing definition for defRoot
-        for (AbstractDefinitionImpl def : getDefinitions()) {
-            if (def.getType().equals(CONFIG)) {
-                final ConfigDefinitionImpl configDef = (ConfigDefinitionImpl) def;
-                if (configDef.getNode().getJcrPath().equals(jcrPath)) {
-                    return configDef.getNode();
-                }
-            }
-        }
+        // try to find an existing definition for jcrPath
+        return modifiableDefinitions.stream()
+                .filter(ConfigDefinitionImpl.class::isInstance).map(ConfigDefinitionImpl.class::cast)
+                .filter((configDef) -> configDef.getNode().getJcrPath().equals(jcrPath)).findAny()
 
-        // if we haven't returned yet, we didn't find a matching def
-        // build a new def
-        return addConfigDefinition().withRoot(jcrPath.toString());
+                // if we didn't find a matching def, build a new def
+                .map(ConfigDefinitionImpl::getNode)
+                .orElseGet(() -> addConfigDefinition().withRoot(jcrPath));
     }
 
 }

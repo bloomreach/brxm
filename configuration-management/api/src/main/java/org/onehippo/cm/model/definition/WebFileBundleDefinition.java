@@ -17,6 +17,7 @@
 package org.onehippo.cm.model.definition;
 
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 
@@ -24,7 +25,7 @@ import org.onehippo.cm.model.source.SourceType;
  * Represents a location of a Hippo CMS webfile bundle within the containing {@link Module}. Definitions of
  * this type are found in a {@link Source} of type {@link SourceType#CONFIG}.
  */
-public interface WebFileBundleDefinition extends Definition {
+public interface WebFileBundleDefinition<S extends ConfigSource> extends Definition<S> {
     /**
      * @return the name of a single Hippo CMS webfile bundle
      */

@@ -57,20 +57,6 @@ public interface ConfigurationModel extends Closeable {
     ConfigurationNode<? extends DefinitionNode> getConfigurationRootNode();
 
     /**
-     * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
-     * A String.equals() comparison of this digest should be sufficient to detect changes in any config definitions,
-     * actions, or the root definition paths for content definitions, at minimum.
-     * @return a String containing a digest of model contents, in a format determined by the implementation
-     */
-    String getDigest();
-
-    /**
-     * When processing of this model is complete, this method must be closed to free up resources used by
-     * ResourceInputProviders to access raw data streams from underlying storage.
-     */
-    void close();
-
-    /**
      * Find a ConfigurationNode by its absolute path.
      * @param path the path of a node
      * @return a ConfigurationNode or null, if no node exists with this path
@@ -83,5 +69,26 @@ public interface ConfigurationModel extends Closeable {
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
     ConfigurationProperty<? extends DefinitionProperty> resolveProperty(String path);
+
+    /**
+     * @param path a JCR path
+     * @return the ContentDefinition defined in this model with the longest starting subpath match with path, or null if
+     *      no content definition has a starting subpath match with its root path
+     */
+    ContentDefinition getNearestContentDefinition(String path);
+
+    /**
+     * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
+     * A String.equals() comparison of this digest should be sufficient to detect changes in any config definitions,
+     * actions, or the root definition paths for content definitions, at minimum.
+     * @return a String containing a digest of model contents, in a format determined by the implementation
+     */
+    String getDigest();
+
+    /**
+     * When processing of this model is complete, this method must be closed to free up resources used by
+     * ResourceInputProviders to access raw data streams from underlying storage.
+     */
+    void close();
 
 }

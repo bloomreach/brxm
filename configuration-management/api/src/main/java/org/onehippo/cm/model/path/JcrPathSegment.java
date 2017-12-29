@@ -34,7 +34,7 @@ public interface JcrPathSegment extends Comparable<JcrPathSegment> {
             Comparator.comparing(JcrPathSegment::getName).thenComparingInt(JcrPathSegment::getIndex);
 
     /**
-     * @return true iff this NodePathSegment is the singleton instance representing a root node
+     * @return true iff this JcrPathSegment is the singleton instance representing a root node
      */
     boolean isRoot();
 

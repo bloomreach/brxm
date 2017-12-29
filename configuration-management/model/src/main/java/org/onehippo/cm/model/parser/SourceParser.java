@@ -27,7 +27,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
@@ -119,7 +119,7 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     protected abstract void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException;
 
-    protected void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) throws ParserException {
+    protected void constructDefinitionNode(final String path, final Node value, final TreeDefinitionImpl definition) throws ParserException {
         final String name = StringUtils.substringAfterLast(path, "/");
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
         definition.setNode(definitionNode);

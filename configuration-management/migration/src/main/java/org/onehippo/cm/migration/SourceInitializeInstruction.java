@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
@@ -270,7 +270,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             if (parentNode != null) {
                 defNode = parentNode.addNode(newNodeName);
             } else {
-                ContentDefinitionImpl def;
+                TreeDefinitionImpl def;
                 if (isContent(path)) {
                     def = ((ContentSourceImpl) source).addContentDefinition();
                 } else {
