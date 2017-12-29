@@ -21,7 +21,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +83,10 @@ public class HippoImageFileMapper extends AbstractFileMapper {
     }
 
     private Optional<Integer> calculateArrayIndex(DefinitionProperty property, Value value) {
-        if (property.getType() == PropertyType.LIST || property.getType() == PropertyType.SET) {
-            return Optional.of(Arrays.asList(property.getValues()).indexOf(value));
+        if (property.isMultiple()) {
+            return Optional.of(property.getValues().indexOf(value));
         }
         return Optional.empty();
     }
+
 }

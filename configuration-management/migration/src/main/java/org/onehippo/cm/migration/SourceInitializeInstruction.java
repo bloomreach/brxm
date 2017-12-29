@@ -525,7 +525,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         return;
                     }
                 } else if (JCR_MIXINTYPES.equals(propertyName)) {
-                    Set<String> oldMixins = Arrays.stream(prop.getValues()).map(Value::getString).collect(toSet());
+                    Set<String> oldMixins = prop.getValues().stream().map(Value::getString).collect(toSet());
                     Set<String> newMixins = property.getValues().stream().map(EsvValue::getString).collect(toSet());
                     if (!oldMixins.equals(newMixins)) {
                         if (!node.isDeltaOverlay()) {

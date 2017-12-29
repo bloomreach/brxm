@@ -15,15 +15,19 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
 
+import static java.util.Arrays.asList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -32,15 +36,15 @@ import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
 
 public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty, Comparable<DefinitionProperty> {
 
-    private PropertyType propertyType;
+    private PropertyKind kind;
     private ValueType valueType;
     private ValueImpl value;
-    private ValueImpl[] values;
+    private List<ValueImpl> values;
     private PropertyOperation operation = PropertyOperation.REPLACE;
 
     public DefinitionPropertyImpl(final String name, final ValueImpl value, final DefinitionNodeImpl parent) {
         super(name, parent);
-        this.propertyType = PropertyType.SINGLE;
+        this.kind = PropertyKind.SINGLE;
         this.valueType = value.getType();
         this.value = value;
         this.values = null;
@@ -48,21 +52,21 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         value.setParent(this);
     }
 
-    public DefinitionPropertyImpl(final String name, final ValueType valueType, final ValueImpl[] values, final DefinitionNodeImpl parent) {
+    public DefinitionPropertyImpl(final String name, final ValueType valueType, final List<ValueImpl> values, final DefinitionNodeImpl parent) {
         super(name, parent);
-        this.propertyType = PropertyType.LIST;
+        this.kind = PropertyKind.LIST;
         this.valueType = valueType;
         this.value = null;
-        this.values = values;
+        this.values = new ArrayList<>(values);
 
-        for (ValueImpl value : values) {
+        for (final ValueImpl value : this.values) {
             value.setParent(this);
         }
     }
 
     @Override
-    public PropertyType getType() {
-        return propertyType;
+    public PropertyKind getKind() {
+        return kind;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
     @Override
     public boolean isMultiple() {
-        return getType().isMultiple();
+        return getKind().isMultiple();
     }
 
     @Override
@@ -84,7 +88,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     @Override
-    public ValueImpl[] getValues() throws ValueFormatException {
+    public List<ValueImpl> getValues() throws ValueFormatException {
         if (values == null) {
             throw new ValueFormatException("Property contains single value");
         }
@@ -119,8 +123,8 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     public boolean isEmptySystemProperty() {
         return getCategory() == ConfigurationItemCategory.SYSTEM
                 && getValueType() == ValueType.STRING
-                && getType() != PropertyType.SINGLE
-                && getValues().length == 0
+                && getKind() != PropertyKind.SINGLE
+                && getValues().size() == 0
                 && getOperation() == PropertyOperation.REPLACE;
     }
 
@@ -139,9 +143,9 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                 // replace operation does not change value type or property type
                 // but override does, and doing it for replace operation should be safe
                 this.valueType = other.valueType;
-                this.propertyType = other.propertyType;
+                this.kind = other.kind;
 
-                if (propertyType == PropertyType.SINGLE) {
+                if (kind == PropertyKind.SINGLE) {
                     this.values = null;
                     this.value = other.value.clone();
                     value.setParent(this);
@@ -158,19 +162,11 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
                 // an add operation is only valid for a property that is already multi-valued
                 // (i.e. an add to a single-valued property would need to be an override instead)
-                if (other.propertyType == PropertyType.SINGLE) {
-                    ValueImpl[] tmp = new ValueImpl[values.length + 1];
-                    System.arraycopy(this.values, 0, tmp, 0, values.length);
-                    tmp[tmp.length - 1] = other.value.clone();
-                    tmp[tmp.length - 1].setParent(this);
-                    this.values = tmp;
+                if (other.kind == PropertyKind.SINGLE) {
+                    this.values.add(other.value.clone().setParent(this));
                 }
                 else {
-                    ValueImpl[] tmp = new ValueImpl[values.length + other.values.length];
-                    System.arraycopy(this.values, 0, tmp, 0, values.length);
-                    ValueImpl[] tmp2 = other.cloneValues(this);
-                    System.arraycopy(tmp2, 0, tmp, this.values.length, tmp2.length);
-                    this.values = tmp;
+                    this.values.addAll(other.cloneValues(this));
                 }
                 break;
             case DELETE:
@@ -182,16 +178,14 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     /**
-     * Clone the values array of this Property and set the parent of the newly-created clones to newParent.
+     * Clone the values of this Property and set the parent of the newly-created clones to newParent.
      * @param newParent the parent of the new Values
      * @return the newly-created cloned Values
      */
-    protected ValueImpl[] cloneValues(final DefinitionPropertyImpl newParent) {
-        final ValueImpl[] cloned = new ValueImpl[values.length];
-
-        for (int i = 0; i < values.length; i++) {
-            cloned[i] = values[i].clone();
-            cloned[i].setParent(newParent);
+    protected List<ValueImpl> cloneValues(final DefinitionPropertyImpl newParent) {
+        final List<ValueImpl> cloned = new ArrayList<>();
+        for (final ValueImpl value : values) {
+            cloned.add(value.clone().setParent(newParent));
         }
         return cloned;
     }
@@ -243,7 +237,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     @Override
     public String toString() {
         return getClass().getSimpleName()+"{path='"+ getPath()+"', "
-                + ( getType().isMultiple()? ("values=" + Arrays.toString(getValues())): ("value=" + getValue().toString()) )
+                + ( getKind().isMultiple()? ("values=" + getValues()): ("value=" + getValue().toString()) )
                 + "}";
     }
 }

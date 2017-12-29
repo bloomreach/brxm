@@ -27,6 +27,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.tree.ValueType;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -98,7 +99,7 @@ public class HippoImageFileMapperTest {
         ValueImpl arrValue0 = new ValueImpl("v1".getBytes());
         ValueImpl arrValue1 = new ValueImpl("v2".getBytes());
         arrValue2 = new ValueImpl("v3".getBytes());
-        childNode2.addProperty("dataProperty", ValueType.BINARY, new ValueImpl[]{arrValue0, arrValue1, arrValue2});
+        childNode2.addProperty("dataProperty", ValueType.BINARY, asList(arrValue0, arrValue1, arrValue2));
 
         DefinitionNodeImpl imageSetNode = new DefinitionNodeImpl("imageSetNode", parentNode);
         ValueImpl imageSetTypevalue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGESET);
@@ -115,6 +116,6 @@ public class HippoImageFileMapperTest {
         ValueImpl garrValue1 = new ValueImpl("v2".getBytes());
         ValueImpl garrValue2 = new ValueImpl("v3".getBytes());
 
-        galleryImage.addProperty("dataProperty", ValueType.BINARY, new ValueImpl[]{garrValue0, garrValue1, garrValue2});
+        galleryImage.addProperty("dataProperty", ValueType.BINARY, asList(garrValue0, garrValue1, garrValue2));
     }
 }

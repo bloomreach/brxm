@@ -36,7 +36,7 @@ import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 
 import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
@@ -207,7 +207,7 @@ public class ModuleContext {
             return;
         }
 
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             final ValueImpl value = property.getValue();
             if (value.isResource() && !value.isNewResource()) {
                 resourceNameResolver.seedName(value.getString());

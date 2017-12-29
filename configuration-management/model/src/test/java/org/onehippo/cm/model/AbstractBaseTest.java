@@ -325,9 +325,9 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        assertEquals(values.length, property.getValues().length);
+        assertEquals(values.length, property.getValues().size());
         for (int i = 0; i < values.length; i++) {
-            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property, property.getValues()[i]);
+            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property, property.getValues().get(i));
         }
         return property;
     }

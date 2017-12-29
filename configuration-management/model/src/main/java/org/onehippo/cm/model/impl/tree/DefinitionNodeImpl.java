@@ -35,7 +35,7 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueType;
 
 import com.google.common.collect.Maps;
@@ -268,7 +268,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return property;
     }
 
-    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final ValueImpl[] values) {
+    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final List<ValueImpl> values) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         modifiableProperties.put(name, property);
         return property;
@@ -280,7 +280,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
      * @return the new property
      */
     public DefinitionPropertyImpl addProperty(final DefinitionPropertyImpl other) {
-        if (other.getType() == PropertyType.SINGLE) {
+        if (other.getKind() == PropertyKind.SINGLE) {
             DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValue().clone());
             newProp.setOperation(other.getOperation());
             return newProp;
@@ -347,7 +347,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     public void visitResources(ValueConsumer consumer) throws RepositoryException, IOException {
         // find resource values
         for (DefinitionPropertyImpl dp : getProperties().values()) {
-            switch (dp.getType()) {
+            switch (dp.getKind()) {
                 case SINGLE:
                     final ValueImpl val = dp.getValue();
                     if (val.isResource()) {

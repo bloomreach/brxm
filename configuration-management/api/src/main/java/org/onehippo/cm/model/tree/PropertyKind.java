@@ -18,7 +18,7 @@ package org.onehippo.cm.model.tree;
 /**
  * Represents the multiplicity of a ModelProperty and whether ordering is significant as an enum.
  */
-public enum PropertyType {
+public enum PropertyKind {
     /**
      * A single-valued property.
      */

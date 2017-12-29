@@ -32,7 +32,7 @@ import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -46,7 +46,7 @@ public class ConfigurationTreeBuilderTest {
     private final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder();
 
     private String valuesToString(final ConfigurationProperty property) {
-        return Arrays.stream(property.getValues()).map(Value::getString).collect(Collectors.toList()).toString();
+        return property.getValues().stream().map(Value::getString).collect(Collectors.toList()).toString();
     }
 
     private String valueToString(final ConfigurationProperty property) {
@@ -152,11 +152,11 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes, property1]", sortedCollectionToString(root.getProperties()));
-        assertEquals(PropertyType.SINGLE, root.getProperty("property1").getType());
+        assertEquals(PropertyKind.SINGLE, root.getProperty("property1").getKind());
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getProperties()));
-        assertEquals(PropertyType.LIST, a.getProperty("property2").getType());
+        assertEquals(PropertyKind.LIST, a.getProperty("property2").getKind());
         assertEquals("[]", sortedCollectionToString(a.getNodes()));
     }
 
@@ -950,7 +950,7 @@ public class ConfigurationTreeBuilderTest {
         assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
         assertEquals("[]", sortedCollectionToString(b.getNodes()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
-        assertEquals(PropertyType.SINGLE, property2.getType());
+        assertEquals(PropertyKind.SINGLE, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
         assertEquals("bla3", property2.getValue().getString());
 
@@ -1130,10 +1130,10 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
-        assertEquals(PropertyType.LIST, property2.getType());
+        assertEquals(PropertyKind.LIST, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
-        assertEquals("bla3", property2.getValues()[0].getString());
-        assertEquals("bla4", property2.getValues()[1].getString());
+        assertEquals("bla3", property2.getValues().get(0).getString());
+        assertEquals("bla4", property2.getValues().get(1).getString());
     }
 
 
@@ -1159,9 +1159,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
-        assertEquals(PropertyType.LIST, property2.getType());
+        assertEquals(PropertyKind.LIST, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
-        assertEquals(0, property2.getValues().length);
+        assertEquals(0, property2.getValues().size());
     }
 
     @Test

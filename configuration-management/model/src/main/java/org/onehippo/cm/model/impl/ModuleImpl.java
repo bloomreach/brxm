@@ -505,7 +505,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                 }
             };
 
-            switch (dp.getType()) {
+            switch (dp.getKind()) {
                 case SINGLE:
                     digester.accept(dp.getValue());
                     break;
