@@ -683,7 +683,7 @@ public class DefinitionMergeService {
         final Set<JcrPath> allExportableContentPaths = collectContentSourcesByNodePath(true).keySet();
 
         getChangedContentSourcesStream().forEach(source -> {
-            final ContentDefinitionImpl def = source.getDefinition();
+            final ContentDefinitionImpl def = source.getContentDefinition();
             final JcrPath defPath = def.getNode().getJcrPath();
 
             // exclude all paths that have their own sources
@@ -719,10 +719,10 @@ public class DefinitionMergeService {
         if (found.isPresent()) {
             // this is an update to an existing namespace def
             // find the corresponding source by path
-            final Source oldSource = found.get().getSource();
+            final SourceImpl oldSource = found.get().getSource();
 
             // this source will have a reference to a module in the baseline, not our clones, so lookup by mvnPath
-            final ModuleImpl newModule = toExport.get(((ModuleImpl)oldSource.getModule()).getMvnPath());
+            final ModuleImpl newModule = toExport.get(oldSource.getModule().getMvnPath());
 
             // short-circuit this loop iteration if we cannot create a valid merged definition
             if (newModule == null) {
@@ -730,11 +730,8 @@ public class DefinitionMergeService {
                 return;
             }
 
-            final String oldSourcePath = oldSource.getPath();
-            final SourceImpl newSource = newModule.getModifiableSources().stream()
-                    .filter(SourceType.CONFIG::isOfType)
-                    .filter(source -> source.getPath().equals(oldSourcePath))
-                    .findFirst().get();
+            // since the old module had a source at this path, we can assume the new module cloned from it does, too
+            final ConfigSourceImpl newSource = newModule.getConfigSource(oldSource.getPath()).get();
 
             log.debug("Merging namespace definition: {} to module: {} aka {} in file {}",
                     nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
@@ -744,7 +741,7 @@ public class DefinitionMergeService {
                 Definition def = defs.get(i);
 
                 // find the corresponding def within the source by type and namespace prefix
-                if (def.getType().equals(NAMESPACE) && ((NamespaceDefinition)def).getPrefix().equals(nsd.getPrefix())) {
+                if (def.getType().equals(NAMESPACE) && ((NamespaceDefinitionImpl)def).getPrefix().equals(nsd.getPrefix())) {
                     // replace the def with a clone of the new def
                     final NamespaceDefinitionImpl newNsd =
                             new NamespaceDefinitionImpl(newSource, nsd.getPrefix(), nsd.getURI(), cndPath);
@@ -950,13 +947,13 @@ public class DefinitionMergeService {
      * @param module module to search definition in
      */
     private DefinitionNodeImpl findDefinitionNode(final JcrPath path, final ModuleImpl module) {
-        for (ConfigDefinition configDefinition : module.getConfigDefinitions()) {
-            final DefinitionNodeImpl definitionNode = (DefinitionNodeImpl) configDefinition.getNode();
+        for (ConfigDefinitionImpl configDefinition : module.getConfigDefinitions()) {
+            final DefinitionNodeImpl definitionNode = configDefinition.getNode();
             if (path.equals(definitionNode.getJcrPath())) {
                 return definitionNode;
             } else if (path.startsWith(definitionNode.getJcrPath())) {
                 final JcrPath pathDiff = definitionNode.getJcrPath().relativize(path);
-                DefinitionNodeImpl currentNode = (DefinitionNodeImpl) configDefinition.getNode();
+                DefinitionNodeImpl currentNode = configDefinition.getNode();
                 for (final JcrPathSegment jcrPathSegment : pathDiff) {
                     currentNode = currentNode.getModifiableNodes().getOrDefault(jcrPathSegment.toString(),
                             currentNode.getModifiableNodes().get(jcrPathSegment.forceIndex().toString()));
@@ -1029,7 +1026,7 @@ public class DefinitionMergeService {
 
                 // now update all the other (possible) defs that were split off into new source files
                 for (final DefinitionNodeImpl newDef : newDefs) {
-                    builder.push(newDef.getDefinition());
+                    builder.push((ConfigDefinitionImpl) newDef.getDefinition());
                 }
             }
             else {
@@ -1050,7 +1047,7 @@ public class DefinitionMergeService {
         // update model
         final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder(model.getConfigurationRootNode());
         for (final DefinitionNodeImpl newDef : newDefs) {
-            builder.push(newDef.getDefinition());
+            builder.push((ConfigDefinitionImpl) newDef.getDefinition());
         }
     }
 
@@ -1382,7 +1379,7 @@ public class DefinitionMergeService {
 
                 // since there's also an upstream def, we want to collapse all local references to a single delete def
                 // if exists, change one local def to delete and remove other properties and subnodes
-                final DefinitionNodeImpl defToKeep = (DefinitionNodeImpl) localDefs.get(0);
+                final DefinitionNodeImpl defToKeep = localDefs.get(0);
 
                 // mark chosen node as a delete
                 final ConfigDefinitionImpl defToKeepDefinition = (ConfigDefinitionImpl) defToKeep.getDefinition();
@@ -1663,7 +1660,7 @@ public class DefinitionMergeService {
                     }
 
                     if (defProperty.getOperation() == PropertyOperation.OVERRIDE) {
-                        final DefinitionPropertyImpl nextUpDefProperty = (DefinitionPropertyImpl)
+                        final DefinitionPropertyImpl nextUpDefProperty =
                                 defsForConfigProperty.get(defsForConfigProperty.size() - 2);
                         final boolean diffMatchesNextUp =
                                 defProperty.getType() == nextUpDefProperty.getType()
@@ -1885,7 +1882,7 @@ public class DefinitionMergeService {
 
             // update the model incrementally, since a new local def should be available for other props
             new ConfigurationTreeBuilder(model.getConfigurationRootNode())
-                    .push(newDefNode.getDefinition()).pruneDeletedItems(configNode);
+                    .push((ConfigDefinitionImpl) newDefNode.getDefinition()).pruneDeletedItems(configNode);
         }
     }
 
@@ -1900,7 +1897,7 @@ public class DefinitionMergeService {
     }
 
     protected <C extends ConfigurationItemImpl<D>, D extends DefinitionItemImpl>
-    Optional<D> getLastDefinition(final C item, Predicate<DefinitionItem> condition) {
+    Optional<D> getLastDefinition(final C item, Predicate<DefinitionItemImpl> condition) {
         final List<D> existingDefs = item.getDefinitions();
         return Lists.reverse(existingDefs).stream()
                 .filter(condition)
@@ -1912,20 +1909,20 @@ public class DefinitionMergeService {
                 .filter(isLocalDef()).collect(toList());
     }
 
-    protected boolean isLastDefLocal(final List<? extends DefinitionItem> definitionItems) {
+    protected boolean isLastDefLocal(final List<? extends DefinitionItemImpl> definitionItems) {
         return isLocalDef().test(definitionItems.get(definitionItems.size()-1));
     }
 
-    protected Predicate<DefinitionItem> isUpstreamDef() {
+    protected Predicate<DefinitionItemImpl> isUpstreamDef() {
         return def -> !toExport.containsKey(getMvnPathFromDefinitionItem(def));
     }
 
-    protected Predicate<DefinitionItem> isLocalDef() {
+    protected Predicate<DefinitionItemImpl> isLocalDef() {
         return def -> toExport.containsKey(getMvnPathFromDefinitionItem(def));
     }
 
-    protected static String getMvnPathFromDefinitionItem(final DefinitionItem item) {
-        return ((ModuleImpl)item.getDefinition().getSource().getModule()).getMvnPath();
+    protected static String getMvnPathFromDefinitionItem(final DefinitionItemImpl item) {
+        return item.getDefinition().getSource().getModule().getMvnPath();
     }
 
     protected void mergeContentDefinitions(final Set<String> contentAdded,
@@ -2040,7 +2037,7 @@ public class DefinitionMergeService {
         }
 
         getChangedContentSourcesStream().forEach(source ->
-                reorderRegistry.add(source.getDefinition().getNode().getJcrPath().getParent())
+                reorderRegistry.add(source.getContentDefinition().getNode().getJcrPath().getParent())
         );
     }
 

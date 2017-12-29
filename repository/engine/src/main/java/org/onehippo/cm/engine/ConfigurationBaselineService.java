@@ -77,9 +77,9 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
+import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
-import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
@@ -350,7 +350,7 @@ public class ConfigurationBaselineService {
                     NT_HCM_CONTENT_FOLDER, NT_HCM_CONTENT_SOURCE);
 
             // assume that there is exactly one content definition here, as required
-            ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
+            ContentDefinitionImpl firstDef = source.getContentDefinition();
 
             // set content path property and order before
             sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
