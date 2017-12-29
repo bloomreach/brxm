@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
+import { downgradeComponent } from '@angular/upgrade/static';
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
@@ -24,7 +24,6 @@ import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 import createContentModule from './create-content/createContent.module';
 
-// import { CreateContentComponent } from './create-content/step-1/step-1.component.ts';
 import { CreateContentStep2Component } from './create-content/step-2/step-2.component.ts';
 import { NameUrlFieldsComponent } from './create-content/name-url-fields/name-url-fields.component.ts';
 
@@ -39,7 +38,6 @@ const rightSidePanelModule = angular
   .component('fieldsEditor', fieldsEditorComponent)
   .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }))
   .component('createContentStep1', createContentStep1Component)
-  // .directive('hippoCreateContentStep1', downgradeComponent({ component: CreateContentComponent }))
   .directive('hippoCreateContentStep2', downgradeComponent({ component: CreateContentStep2Component }));
 export default rightSidePanelModule.name;
 

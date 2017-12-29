@@ -28,8 +28,18 @@ class RightSidePanelCtrl {
 
     this.title = 'Create new content';
     this.isFullWidth = false;
-    this.urlUpdate = false;
     this.documentType = null;
+
+    this.nameUrlFields = {
+      nameField: '',
+      urlField: '',
+      urlUpdate: false,
+    };
+
+    this.documentLocationField = {
+      rootPath: null,
+      defaultPath: null,
+    };
   }
 
   $onInit () {
@@ -47,13 +57,35 @@ class RightSidePanelCtrl {
     );
   }
 
+  submit () {
+    const document = {
+      name: this.nameUrlFields.nameField,
+      slug: this.nameUrlFields.urlField,
+      templateQuery: this.options.templateQuery,
+      documentTypeId: this.documentType,
+      rootPath: this.documentLocationField.rootPath,
+      defaultPath: this.documentLocationField.defaultPath,
+    };
+
+    Observable.fromPromise(this.CreateContentService.createDraft(document)).subscribe(
+      () => {
+        this.onContinue({ data: {
+          name: this.nameUrlFields.nameField,
+          url: this.nameUrlFields.urlField,
+          locale: this.locale,
+        }})
+      },
+      (error) => this._onErrorCreatingDraft(error),
+    );
+  }
+
   setWidthState (state) {
     this.isFullWidth = state;
     this.onFullWidth({ state });
   }
 
   setLocale (locale) {
-      this.locale = locale;
+    this.locale = locale;
   }
 
   _onLoadDocumentTypes (types) {
@@ -65,6 +97,15 @@ class RightSidePanelCtrl {
   }
 
   _onErrorLoadingTemplateQuery (error) {
+    if (error.data && error.data.reason) {
+      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+      this.FeedbackService.showError(errorKey);
+    } else {
+      console.error('Unknown error loading template query', error);
+    }
+  }
+
+  _onErrorCreatingDraft (error) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey);

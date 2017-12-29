@@ -40,9 +40,9 @@
         name="$ctrl.form"
         class="form-dense-layout edit-content-form">
     <!-- Name and URL fields (as a separate component) -->
-    <name-url-fields name-field="$ctrl.nameField"
-                     url-field="$ctrl.urlField"
-                     url-update="$ctrl.urlUpdate"
+    <name-url-fields name-field="$ctrl.nameUrlFields.nameField"
+                     url-field="$ctrl.nameUrlFields.urlField"
+                     url-update="$ctrl.nameUrlFields.urlUpdate"
                      locale="$ctrl.locale">
     </name-url-fields>
 
@@ -57,8 +57,8 @@
     </md-select>
 
     <!-- Document location field -->
-    <document-location-field root-path="$ctrl.options.rootPath"
-                             default-path="$ctrl.options.defaultPath"
+    <document-location-field root-path="$ctrl.documentLocationField.rootPath"
+                             default-path="$ctrl.documentLocationField.defaultPath"
                              change-locale="$ctrl.setLocale(locale)">
     </document-location-field>
   </form>
