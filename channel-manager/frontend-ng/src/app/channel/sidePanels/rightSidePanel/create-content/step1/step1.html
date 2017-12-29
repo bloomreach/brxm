@@ -44,6 +44,7 @@
                    locale="$ctrl.locale">
   </name-url-fields>
 
+  <!-- Document type field -->
   <md-select ng-model="$ctrl.documentType" name="documentType" required
               placeholder="Document type" ng-disabled="$ctrl.documentTypes.length === 1"
               class="input-document-type create-content-field qa-document-type-select"
@@ -51,6 +52,12 @@
     <md-option ng-repeat="documentType in $ctrl.documentTypes"
                 value="{{ documentType.id }}">{{ documentType.displayName }}</md-option>
   </md-select>
+
+  <!-- Document location field -->
+  <document-location-field root-path="$ctrl.options.rootPath"
+                           default-path="$ctrl.options.defaultPath"
+                           change-locale="$ctrl.setLocale(locale)">
+  </document-location-field>
 
   <!-- Footer -->
   <md-toolbar>

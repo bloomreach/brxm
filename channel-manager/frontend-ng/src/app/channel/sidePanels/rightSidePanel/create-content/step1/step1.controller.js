@@ -52,6 +52,10 @@ class RightSidePanelCtrl {
     this.onFullWidth({ state });
   }
 
+  setLocale (locale) {
+      this.locale = locale;
+  }
+
   _onLoadDocumentTypes (types) {
     this.documentTypes = types;
 
