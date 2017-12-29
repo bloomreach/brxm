@@ -15,7 +15,7 @@
  */
 
 class NameUrlFieldsDialogController {
-  constructor ($mdDialog, title, nameField, urlField, locale) {
+  constructor($mdDialog, title, nameField, urlField, locale) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
@@ -33,9 +33,9 @@ class NameUrlFieldsDialogController {
       this.nameField.length !== 0, // name empty
       this.urlField.length !== 0, // url empty
       /\S/.test(this.nameField), // name is only whitespace(s)
-      /\S/.test(this.urlField) // url is only whitespaces
+      /\S/.test(this.urlField), // url is only whitespaces
     ];
-    return conditions.every((condition) => condition === true);
+    return conditions.every(condition => condition === true);
   }
 
   submit() {

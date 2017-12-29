@@ -31,7 +31,7 @@ class CreateContentService {
   }
 
   createDraft(documentDetails) {
-    return this.ContentService._send('POST', ['documents'], documentDetails).then(doc => this.doc = doc);
+    return this.ContentService._send('POST', ['documents'], documentDetails).then((doc) => { this.doc = doc; });
   }
 
   generateDocumentUrlByName(name, locale) {

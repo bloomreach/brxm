@@ -17,9 +17,10 @@
 import { Observable } from 'rxjs';
 
 class RightSidePanelCtrl {
-  constructor ($translate,
-               CreateContentService,
-               FeedbackService) {
+  constructor(
+    $translate,
+    CreateContentService,
+    FeedbackService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -42,7 +43,7 @@ class RightSidePanelCtrl {
     };
   }
 
-  $onInit () {
+  $onInit() {
     if (!this.options) {
       throw new Error('Input "options" is required');
     }
@@ -52,12 +53,12 @@ class RightSidePanelCtrl {
     }
 
     Observable.fromPromise(this.CreateContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
-      (templateQuery) => this._onLoadDocumentTypes(templateQuery.documentTypes),
-      (error) => this._onErrorLoadingTemplateQuery(error)
+      templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes),
+      error => this._onErrorLoadingTemplateQuery(error),
     );
   }
 
-  submit () {
+  submit() {
     const document = {
       name: this.nameUrlFields.nameField,
       slug: this.nameUrlFields.urlField,
@@ -69,26 +70,28 @@ class RightSidePanelCtrl {
 
     Observable.fromPromise(this.CreateContentService.createDraft(document)).subscribe(
       () => {
-        this.onContinue({ data: {
-          name: this.nameUrlFields.nameField,
-          url: this.nameUrlFields.urlField,
-          locale: this.locale,
-        }})
+        this.onContinue({
+          data: {
+            name: this.nameUrlFields.nameField,
+            url: this.nameUrlFields.urlField,
+            locale: this.locale,
+          },
+        });
       },
-      (error) => this._onErrorCreatingDraft(error),
+      error => this._onErrorCreatingDraft(error),
     );
   }
 
-  setWidthState (state) {
+  setWidthState(state) {
     this.isFullWidth = state;
     this.onFullWidth({ state });
   }
 
-  setLocale (locale) {
+  setLocale(locale) {
     this.locale = locale;
   }
 
-  _onLoadDocumentTypes (types) {
+  _onLoadDocumentTypes(types) {
     this.documentTypes = types;
 
     if (this.documentTypes.length === 1) {
@@ -96,7 +99,7 @@ class RightSidePanelCtrl {
     }
   }
 
-  _onErrorLoadingTemplateQuery (error) {
+  _onErrorLoadingTemplateQuery(error) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey);
@@ -105,7 +108,7 @@ class RightSidePanelCtrl {
     }
   }
 
-  _onErrorCreatingDraft (error) {
+  _onErrorCreatingDraft(error) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey);

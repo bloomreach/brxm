@@ -21,7 +21,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/do';
 
 class NameUrlFieldsController {
-  constructor ($element, $timeout, CreateContentService) {
+  constructor($element, $timeout, CreateContentService) {
     'ngInject';
 
     this.createContentService = CreateContentService;
@@ -37,7 +37,7 @@ class NameUrlFieldsController {
 
     Observable.fromEvent(this.nameInputField, 'keyup')
       .filter(() => !this.isManualUrlMode)
-      .do(() => this.urlUpdate = true)
+      .do(() => { this.urlUpdate = true; })
       .debounceTime(1000)
       .subscribe(() => {
         console.log(this.form);
@@ -63,9 +63,9 @@ class NameUrlFieldsController {
       this.nameField.length !== 0, // name empty
       this.urlField.length !== 0, // url empty
       /\S/.test(this.nameField), // name is only whitespace(s)
-      /\S/.test(this.urlField) // url is only whitespaces
+      /\S/.test(this.urlField), // url is only whitespaces
     ];
-    return conditions.every((condition) => condition === true);
+    return conditions.every(condition => condition === true);
   }
 
   setManualUrlEditMode(state) {

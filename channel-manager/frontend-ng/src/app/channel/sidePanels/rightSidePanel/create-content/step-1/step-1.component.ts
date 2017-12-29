@@ -71,7 +71,7 @@ export class CreateContentComponent implements OnInit {
     Observable.fromPromise(this.createContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
       (templateQuery) => {
         const tplQuery = templateQuery as TemplateQuery;
-        this.onLoadDocumentTypes(tplQuery.documentTypes)
+        this.onLoadDocumentTypes(tplQuery.documentTypes);
       },
       (error) => this.onErrorLoadingTemplateQuery(error),
     );
@@ -99,10 +99,10 @@ export class CreateContentComponent implements OnInit {
     Observable.fromPromise(this.createContentService.createDraft(document))
       .subscribe(
       (response) => this.onContinue.emit({
-      name: this.nameUrlFields.nameField,
+          name: this.nameUrlFields.nameField,
           url: this.nameUrlFields.urlField,
           locale: this.locale
-        }),(error) => this.onErrorCreatingDraft(error),
+        }), (error) => this.onErrorCreatingDraft(error),
     );
   }
 
