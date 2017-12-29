@@ -26,6 +26,7 @@ class RightSidePanelCtrl {
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
 
+    this.title = 'Create new content';
     this.isFullWidth = false;
     this.urlUpdate = false;
     this.documentType = null;
