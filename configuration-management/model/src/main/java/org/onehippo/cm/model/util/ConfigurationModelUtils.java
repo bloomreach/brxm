@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 // TODO: IMHO, these should be public instance methods on ConfigurationModelImpl
 public class ConfigurationModelUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationModelUtils.class);
-    private static final String SEPARATOR = "/";
 
     private ConfigurationModelUtils() { }
 
@@ -90,7 +89,7 @@ public class ConfigurationModelUtils {
             final Function<String, ConfigurationItemCategory> residualNodeCategoryOverrideResolver) {
 
         final JcrPath itemPath = JcrPaths.getPath(absoluteItemPath);
-        if (itemPath.equals(JcrPaths.ROOT)) {
+        if (itemPath.isRoot()) {
             return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
 

@@ -35,12 +35,22 @@ public class JcrPaths {
     /**
      * A constant value representing the path of the JCR root node.
      */
-    public static final JcrPath ROOT = new JcrPathImpl(ImmutableList.of(), false, true);
+    public static final JcrPath ROOT = new JcrPathImpl(ImmutableList.of(), false, true) {
+        @Override
+        public boolean isRoot() {
+            return true;
+        }
+    };
 
     /**
      * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link org.onehippo.cm.model.impl.path.JcrPath}.
      */
-    public static final JcrPathSegment ROOT_NAME = new JcrPathSegmentImpl("", 0);
+    public static final JcrPathSegment ROOT_NAME = new JcrPathSegmentImpl("", 0) {
+        @Override
+        public boolean isRoot() {
+            return true;
+        }
+    };
 
     /**
      * Static factory for JcrPath instances.

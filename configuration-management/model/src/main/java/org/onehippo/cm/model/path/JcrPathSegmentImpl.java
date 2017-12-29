@@ -93,7 +93,8 @@ class JcrPathSegmentImpl implements JcrPathSegment {
 
     @Override
     public boolean isRoot() {
-        return this == JcrPaths.ROOT_NAME;
+        // default return value is false, but ROOT_NAME overrides this to return true
+        return false;
     }
 
     @Override
