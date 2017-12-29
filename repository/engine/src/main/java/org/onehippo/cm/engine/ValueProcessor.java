@@ -247,21 +247,21 @@ public abstract class ValueProcessor {
     }
 
     public static boolean propertyIsIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
-        return p1.getType() == p2.getType()
+        return p1.getKind() == p2.getKind()
                 && p1.getValueType() == p2.getValueType()
                 && valuesAreIdentical(p1, p2);
     }
 
     public static boolean valuesAreIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
         if (p1.isMultiple()) {
-            final Value[] v1 = p1.getValues();
-            final Value[] v2 = p2.getValues();
+            final List<? extends Value> v1 = p1.getValues();
+            final List<? extends Value> v2 = p2.getValues();
 
-            if (v1.length != v2.length) {
+            if (v1.size() != v2.size()) {
                 return false;
             }
-            for (int i = 0; i < v1.length; i++) {
-                if (!valueIsIdentical(v1[i], v2[i])) {
+            for (int i = 0; i < v1.size(); i++) {
+                if (!valueIsIdentical(v1.get(i), v2.get(i))) {
                     return false;
                 }
             }
@@ -284,11 +284,11 @@ public abstract class ValueProcessor {
         return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
-    public static ValueImpl[] valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+    public static List<ValueImpl> valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
         final javax.jcr.Value[] jcrValues = property.getValues();
-        final ValueImpl[] values = new ValueImpl[jcrValues.length];
+        final List<ValueImpl> values = new ArrayList<>(jcrValues.length);
         for (int i = 0; i < jcrValues.length; i++) {
-            values[i] = valueFrom(property, jcrValues[i], i, definitionNode);
+            values.add(valueFrom(property, jcrValues[i], i, definitionNode));
         }
         return values;
     }

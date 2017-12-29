@@ -60,9 +60,7 @@ import org.onehippo.cm.engine.autoexport.orderbeforeholder.OrderBeforeUtils;
 import org.onehippo.cm.engine.autoexport.orderbeforeholder.UpstreamConfigOrderBeforeHolder;
 import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.ActionType;
-import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.model.definition.Definition;
-import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
@@ -85,7 +83,6 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
-import org.onehippo.cm.model.tree.DefinitionItem;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -1663,7 +1660,7 @@ public class DefinitionMergeService {
                         final DefinitionPropertyImpl nextUpDefProperty =
                                 defsForConfigProperty.get(defsForConfigProperty.size() - 2);
                         final boolean diffMatchesNextUp =
-                                defProperty.getType() == nextUpDefProperty.getType()
+                                defProperty.getKind() == nextUpDefProperty.getKind()
                                         && defProperty.getValueType() == nextUpDefProperty.getValueType();
                         if (diffMatchesNextUp) {
                             // 4. local is override, diff is override, upstream is same as diff => replace
@@ -2086,7 +2083,7 @@ public class DefinitionMergeService {
      * the resources at those paths.
      */
     protected void removeResources(final DefinitionPropertyImpl dp) {
-        switch (dp.getType()) {
+        switch (dp.getKind()) {
             case SINGLE:
                 removeResourceIfNecessary(dp.getValue());
                 break;

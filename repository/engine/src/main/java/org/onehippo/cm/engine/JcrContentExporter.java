@@ -220,7 +220,7 @@ public class JcrContentExporter {
                 values.add(new ValueImpl(mixinNodeType.getName()));
             }
             values.sort(Comparator.comparing(ValueImpl::getString));
-            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.NAME, values.toArray(new ValueImpl[values.size()]));
+            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.NAME, values);
         }
     }
 }

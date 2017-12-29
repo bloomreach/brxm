@@ -18,9 +18,11 @@ package org.onehippo.cm.engine.autoexport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -50,6 +52,7 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -309,7 +312,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         for (final String configProperty : configNode.getProperties().keySet()) {
             if (!jcrNode.hasProperty(configProperty)) {
                 defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                defNode.addProperty(configProperty, null, new ValueImpl[0]).setOperation(PropertyOperation.DELETE);
+                defNode.addProperty(configProperty, null, emptyList()).setOperation(PropertyOperation.DELETE);
             }
         }
         return defNode;
@@ -342,10 +345,10 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
             PropertyOperation op = null;
             if (mixinsProperty != null) {
-                if (Arrays.stream(mixinsProperty.getValues()).anyMatch(v -> !jcrMixins.contains(v.getString()))) {
+                if (mixinsProperty.getValues().stream().anyMatch(v -> !jcrMixins.contains(v.getString()))) {
                     op = PropertyOperation.OVERRIDE;
                 } else {
-                    Arrays.stream(mixinsProperty.getValues()).forEach(v->jcrMixins.remove(v.getString()));
+                    mixinsProperty.getValues().stream().forEach(v->jcrMixins.remove(v.getString()));
                     if (!jcrMixins.isEmpty()) {
                         op = PropertyOperation.ADD;
                     }
@@ -354,14 +357,14 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             if (!jcrMixins.isEmpty()) {
                 definitionNode = createDefNodeIfNecessary(definitionNode, jcrNode, configSource);
                 DefinitionPropertyImpl propertyDef = definitionNode.addProperty(JCR_MIXINTYPES,
-                        ValueType.NAME,jcrMixins.stream().map(ValueImpl::new).toArray(ValueImpl[]::new));
+                        ValueType.NAME, jcrMixins.stream().map(ValueImpl::new).collect(Collectors.toList()));
                 if (op != null) {
                     propertyDef.setOperation(op);
                 }
             }
         } else if (mixinsProperty != null) {
             definitionNode = createDefNodeIfNecessary(definitionNode, jcrNode, configSource);
-            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.NAME, new ValueImpl[0])
+            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.NAME, emptyList())
                     .setOperation(PropertyOperation.DELETE);
         }
         return definitionNode;

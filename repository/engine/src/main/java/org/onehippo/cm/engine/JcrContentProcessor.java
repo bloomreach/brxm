@@ -40,7 +40,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
@@ -332,7 +332,7 @@ public class JcrContentProcessor {
         }
 
         final List<Value> modelValues = new ArrayList<>();
-        if (modelProperty.getType() == PropertyType.SINGLE) {
+        if (modelProperty.getKind() == PropertyKind.SINGLE) {
             collectVerifiedValue(modelProperty, modelProperty.getValue(), modelValues, jcrNode.getSession());
         } else {
             for (Value value : modelProperty.getValues()) {
@@ -341,7 +341,7 @@ public class JcrContentProcessor {
         }
 
         try {
-            if (modelProperty.getType() == PropertyType.SINGLE) {
+            if (modelProperty.getKind() == PropertyKind.SINGLE) {
                 if (modelValues.size() > 0) {
                     jcrNode.setProperty(modelProperty.getName(), valueFrom(modelValues.get(0), jcrNode.getSession()));
                 }

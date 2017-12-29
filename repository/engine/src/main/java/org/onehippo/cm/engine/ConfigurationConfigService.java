@@ -50,17 +50,17 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
@@ -74,6 +74,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import static java.util.Collections.emptyList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -373,8 +374,8 @@ public class ConfigurationConfigService {
         final ConfigurationProperty updateMixinProperty = updateNode.getProperty(JCR_MIXINTYPES);
 
         // Update the mixin types, if needed
-        final Value[] updateMixinValues = updateMixinProperty != null ? updateMixinProperty.getValues() : new Value[0];
-        final Value[] baselineMixinValues = baselineMixinProperty != null ? baselineMixinProperty.getValues() : new Value[0];
+        final List<? extends Value> updateMixinValues = updateMixinProperty != null ? updateMixinProperty.getValues() : emptyList();
+        final List<? extends Value> baselineMixinValues = baselineMixinProperty != null ? baselineMixinProperty.getValues() : emptyList();
 
         // Add / restore mixin types
         for (Value mixinValue : updateMixinValues) {
@@ -426,8 +427,8 @@ public class ConfigurationConfigService {
         return Arrays.stream(node.getMixinNodeTypes()).anyMatch(mixinType -> mixinType.getName().equals(mixin));
     }
 
-    private boolean hasMixin(final Value[] mixinValues, final String mixin) {
-        return Arrays.stream(mixinValues).anyMatch(mixinValue -> mixinValue.getString().equals(mixin));
+    private boolean hasMixin(final List<? extends Value> mixinValues, final String mixin) {
+        return mixinValues.stream().anyMatch(mixinValue -> mixinValue.getString().equals(mixin));
     }
 
     private void removeMixin(final Node node, final String mixin) throws RepositoryException {
@@ -642,7 +643,7 @@ public class ConfigurationConfigService {
         final ConfigurationNodeImpl child = new ConfigurationNodeImpl();
         final ConfigurationPropertyImpl property = new ConfigurationPropertyImpl();
         property.setName(JCR_PRIMARYTYPE);
-        property.setType(PropertyType.SINGLE);
+        property.setKind(PropertyKind.SINGLE);
         property.setValueType(ValueType.NAME);
         property.setValue(new ValueImpl(primaryType));
         child.addProperty(property.getName(), property);
