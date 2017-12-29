@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugins.docwiz;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,11 +28,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Strings;
-
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugins.docwiz.model.DocumentWizardConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,15 +50,9 @@ public class DocumentWizardResource {
 
     @POST
     @Path("/")
-    public UserFeedback addWizard(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final Map<String, String> values = payloadRestful.getValues();
-        final String shortcutName = values.get("shortcutName");
-        final String classificationType = values.get("classificationType");
-        final String documentType = values.get("documentType");
-        final String baseFolder = values.get("baseFolder");
-        final String valueListPath = values.get("valueListPath");
-        final String query = values.get("documentQuery");
-        if (Strings.isNullOrEmpty(shortcutName)) {
+    public UserFeedback addWizard(DocumentWizardConfiguration configuration, @Context HttpServletResponse response) {
+        final String shortcutName = configuration.getShortcutName();
+        if (StringUtils.isBlank(shortcutName)) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
             return new UserFeedback().addError("You must specify a shortcut name.");
         }
@@ -77,26 +68,26 @@ public class DocumentWizardResource {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                 return new UserFeedback().addError("Shortcut name '" + shortcutName + "' already exists.");
             }
+            final String classificationType = configuration.getClassificationType();
             final Node node = root.addNode(shortcutName, "frontend:plugin");
             node.setProperty("browser.id", "service.browse");
             node.setProperty("wicket.id", "shortcut");
             node.setProperty("workaround", "4");
             node.setProperty("plugin.class", "org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin");
-            node.setProperty("baseFolder", baseFolder);
-            node.setProperty("query", query);
-            node.setProperty("documentType", documentType);
+            node.setProperty("baseFolder", configuration.getBaseFolder());
+            node.setProperty("query", configuration.getDocumentQuery());
+            node.setProperty("documentType", configuration.getDocumentType());
             node.setProperty("classificationType", classificationType);
-            if (classificationType.equals("list")) {
-                node.setProperty("valueListPath", valueListPath);
-            }
-            // add translation node:
+
             final Node translationNode = node.addNode("en", "frontend:pluginconfig");
-            translationNode.setProperty("shortcut-link-label", values.get("shortcutLinkLabel"));
-            translationNode.setProperty("name-label", values.get("nameLabel"));
+            translationNode.setProperty("shortcut-link-label", configuration.getShortcutLinkLabel());
+            translationNode.setProperty("name-label", configuration.getNameLabel());
+
             if (classificationType.equals("list")) {
-                translationNode.setProperty("list-label", values.get("listLabel"));
+                node.setProperty("valueListPath", configuration.getValueListPath());
+                translationNode.setProperty("list-label", configuration.getListLabel());
             } else {
-                translationNode.setProperty("date-label", values.get("dateLabel"));
+                translationNode.setProperty("date-label", configuration.getDateLabel());
             }
             session.save();
         } catch (RepositoryException e) {
