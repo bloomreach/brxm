@@ -36,4 +36,30 @@
       </md-button>
     </div>
   </md-toolbar>
+
+  <!-- Name and URL fields (as a separate component) -->
+  <name-url-fields name-field="$ctrl.nameField"
+                   url-field="$ctrl.urlField"
+                   url-update="$ctrl.urlUpdate"
+                   locale="$ctrl.locale">
+  </name-url-fields>
+
+  <!-- Footer -->
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span flex></span>
+
+      <md-button class="qa-close"
+                 ng-click="$ctrl.close()">
+        {{ 'CANCEL' | translate }}
+      </md-button>
+
+      <md-button class="qa-continue"
+                 ng-click="$ctrl.submit()"
+                 ng-disabled="true">
+        {{ 'CONTINUE' | translate }}
+      </md-button>
+    </div>
+  </md-toolbar>
+
 </div>

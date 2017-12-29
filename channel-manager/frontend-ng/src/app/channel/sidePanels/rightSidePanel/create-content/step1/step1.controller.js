@@ -19,6 +19,7 @@ class RightSidePanelCtrl {
     'ngInject';
 
     this.isFullWidth = false;
+    this.urlUpdate = false;
   }
 
   $onInit() {
