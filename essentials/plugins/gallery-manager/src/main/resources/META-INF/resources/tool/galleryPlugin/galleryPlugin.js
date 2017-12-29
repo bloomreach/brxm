@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -313,10 +313,6 @@
                 });
             };
 
-            $scope.init = function () {
-                loadImageSets();
-            };
-
             function loadImageSets(imageSetNameToSelect) {
                 return $http.get(endpoint).success(function (data) {
                     $scope.imageSets = data;
@@ -343,11 +339,7 @@
             //############################################
             // INIT APP
             //############################################
-
-            $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
-                var coordinates = Essentials.keyValueAsDict(data.items);
-                $scope.imageSetPrefix = coordinates ? coordinates.namespace : '';
-            });
-            $scope.init();
+            $scope.imageSetPrefix = $rootScope.projectSettings.projectNamespace;
+            loadImageSets();
         }]);
 }());

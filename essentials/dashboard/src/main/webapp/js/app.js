@@ -201,8 +201,7 @@
                  */
                 project: projectStem,
                 PROJECT: { // Front-end API
-                    settings:    projectStem + '/settings',
-                    coordinates: projectStem + '/coordinates'
+                    settings: projectStem + '/settings'
                 },
 
                 //############################################

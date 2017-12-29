@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.rest;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -30,24 +29,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Strings;
+
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.project.ProjectUtils;
-import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -140,26 +137,5 @@ public class ProjectResource {
         }
 
         return new MessageRestful("Project settings saved.");
-    }
-
-
-    @ApiOperation(
-            value = "Return list of project coordinates like project namespace, project path etc.",
-            notes = "[API]",
-            response = RestfulList.class)
-    @GET
-    @Path("/coordinates")
-    public RestfulList<KeyValueRestful> getProjectCoordinates() {
-        final PluginContext context = contextFactory.getContext();
-        final Map<String, Object> placeholderData = context.getPlaceholderData();
-        final RestfulList<KeyValueRestful> list = new RestList<>();
-        for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
-            final Object value = entry.getValue();
-            if (value instanceof String) {
-                final KeyValueRestful keyValueRestful = new KeyValueRestful(entry.getKey(), (String) value);
-                list.add(keyValueRestful);
-            }
-        }
-        return list;
     }
 }

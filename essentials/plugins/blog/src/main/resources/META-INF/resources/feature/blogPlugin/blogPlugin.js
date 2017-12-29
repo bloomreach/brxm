@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,19 +56,14 @@
                     $scope.plugin = p;
                 });
 
-                $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
-                    var coordinates = Essentials.keyValueAsDict(data.items);
-                    $scope.importConfig.blogsBasePath = '/content/documents/' + coordinates.namespace + '/blog';
-                    $scope.importConfig.authorsBasePath = '/content/documents/' + coordinates.namespace + '/blog' + '/authors';
-                    $scope.importConfig.projectNamespace = coordinates.namespace;
-
-                });
-
                 $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
                     $scope.projectSettings = data;
                     // set some defaults
                     $scope.templateLanguage = data.templateLanguage;
                     $scope.useSamples = data.useSamples;
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + data.projectNamespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + data.projectNamespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = data.projectNamespace;
                 });
             };
 
