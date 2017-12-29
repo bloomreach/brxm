@@ -14,21 +14,49 @@
  * limitations under the License.
  */
 
+import { Observable } from 'rxjs';
+
 class RightSidePanelCtrl {
-  constructor() {
+  constructor(CreateContentService) {
     'ngInject';
+
+    this.CreateContentService = CreateContentService;
 
     this.isFullWidth = false;
     this.urlUpdate = false;
+    this.documentType = null;
   }
 
   $onInit() {
-    console.log(this);
+    if (!this.options) {
+      throw new Error('Input "options" is required');
+    }
+
+    if (!this.options.templateQuery) {
+      throw new Error('Configuration option "templateQuery" is required');
+    }
+
+    Observable.fromPromise(this.CreateContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
+      (templateQuery) => this._onLoadDocumentTypes(templateQuery.documentTypes),
+      (error) => this._onErrorLoadingTemplateQuery(error)
+    );
   }
 
   setWidthState(state) {
     this.isFullWidth = state;
     this.onFullWidth({ state });
+  }
+
+  _onLoadDocumentTypes(types) {
+    this.documentTypes = types;
+
+    if (this.documentTypes.length === 1) {
+      this.documentType = this.documentTypes[0].id;
+    }
+  }
+
+  _onErrorLoadingTemplateQuery(error) {
+    // TODO: implement
   }
 }
 export default RightSidePanelCtrl;
