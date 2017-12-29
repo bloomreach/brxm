@@ -36,28 +36,32 @@
       </md-button>
     </div>
   </md-toolbar>
+  <form novalidate
+        name="$ctrl.form"
+        class="form-dense-layout edit-content-form">
+    <!-- Name and URL fields (as a separate component) -->
+    <name-url-fields name-field="$ctrl.nameField"
+                     url-field="$ctrl.urlField"
+                     url-update="$ctrl.urlUpdate"
+                     locale="$ctrl.locale">
+    </name-url-fields>
 
-  <!-- Name and URL fields (as a separate component) -->
-  <name-url-fields name-field="$ctrl.nameField"
-                   url-field="$ctrl.urlField"
-                   url-update="$ctrl.urlUpdate"
-                   locale="$ctrl.locale">
-  </name-url-fields>
+    <!-- Document type field -->
+    <md-select ng-model="$ctrl.documentType" name="documentType" required
+               placeholder="Document type" ng-disabled="$ctrl.documentTypes.length === 1"
+               class="input-document-type create-content-field qa-document-type-select"
+               ng-class="{ 'hide-select-arrow': documentTypes.length === 1 }">
+      <md-option ng-repeat="documentType in $ctrl.documentTypes"
+                 value="{{ documentType.id }}">{{ documentType.displayName }}
+      </md-option>
+    </md-select>
 
-  <!-- Document type field -->
-  <md-select ng-model="$ctrl.documentType" name="documentType" required
-              placeholder="Document type" ng-disabled="$ctrl.documentTypes.length === 1"
-              class="input-document-type create-content-field qa-document-type-select"
-              ng-class="{ 'hide-select-arrow': documentTypes.length === 1 }">
-    <md-option ng-repeat="documentType in $ctrl.documentTypes"
-                value="{{ documentType.id }}">{{ documentType.displayName }}</md-option>
-  </md-select>
-
-  <!-- Document location field -->
-  <document-location-field root-path="$ctrl.options.rootPath"
-                           default-path="$ctrl.options.defaultPath"
-                           change-locale="$ctrl.setLocale(locale)">
-  </document-location-field>
+    <!-- Document location field -->
+    <document-location-field root-path="$ctrl.options.rootPath"
+                             default-path="$ctrl.options.defaultPath"
+                             change-locale="$ctrl.setLocale(locale)">
+    </document-location-field>
+  </form>
 
   <!-- Footer -->
   <md-toolbar>
@@ -70,11 +74,11 @@
       </md-button>
 
       <md-button class="qa-continue"
+                 type="submit"
                  ng-click="$ctrl.submit()"
-                 ng-disabled="true">
+                 ng-disabled="$ctrl.form.$invalid">
         {{ 'CONTINUE' | translate }}
       </md-button>
     </div>
   </md-toolbar>
-
 </div>
