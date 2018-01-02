@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
+import { fakeAsync, tick } from '@angular/core/testing';
+import { DocumentTypeInfo } from '../create-content.types';
+
 describe('Create content step 1 component', () => {
   let $componentController;
+  let $rootScope;
+  let $q;
   let CreateContentService;
   let FeedbackService;
 
@@ -25,28 +30,85 @@ describe('Create content step 1 component', () => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
     inject((
+      _$componentController_,
+      _$rootScope_,
+      _$q_,
       _CreateContentService_,
       _FeedbackService_,
     ) => {
+      $componentController = _$componentController_;
+      $rootScope = _$rootScope_;
+      $q = _$q_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
     });
 
     component = $componentController('createContentStep1');
-
-    angular.noop(CreateContentService);
-    angular.noop(FeedbackService);
   });
 
   fdescribe('DocumentType', () => {
     it('throws an error if options are not set', () => {
       expect(() => {
         component.options = null;
-      }).toThrowError('Input "options" is required');
+        component.$onInit();
+      }).toThrow();
     });
 
-    it('true', () => {
-      expect(true).toBe(true);
+    it('throws an error if templateQuery is not set', () => {
+      expect(() => {
+        component.options = { templatQuery: null };
+        component.$onInit();
+      }).toThrow();
+    });
+
+    it('loads documentTypes from the templateQuery', () => {
+      const documentTypes = [
+        { id: 'test-id1', displayName: 'test-name 1' },
+        { id: 'test-id2', displayName: 'test-name 2' },
+      ];
+
+      const spy = spyOn(CreateContentService, 'getTemplateQuery')
+        .and.returnValue($q.resolve({ documentTypes }));
+
+      component.options = { templateQuery: 'test-template-query' };
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(spy).toHaveBeenCalledWith('test-template-query');
+      expect(component.documentType).toBeNull();
+      expect(component.documentTypes).toBe(documentTypes);
+    });
+
+    it('pre-selects the documentType if only one is returned from the templateQuery', () => {
+      const documentTypes = [{ id: 'test-id1', displayName: 'test-name 1' }];
+      spyOn(CreateContentService, 'getTemplateQuery')
+        .and.returnValue($q.resolve({ documentTypes }));
+
+      component.options = { templateQuery: 'test-template-query' };
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(component.documentType).toBe('test-id1');
+    });
+
+    it('sends feedback as error when server returns 500', () => {
+      const feedbackSpy = spyOn(FeedbackService, 'showError');
+      spyOn(CreateContentService, 'getTemplateQuery')
+        .and.returnValue($q.reject({
+          status: 500,
+          data: {
+            reason: 'INVALID_TEMPLATE_QUERY',
+            params: {
+              templateQuery: 'new-document',
+            },
+          },
+        }));
+
+      component.options = { templateQuery: 'test-template-query' };
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { templateQuery: 'new-document' });
     });
   });
 });

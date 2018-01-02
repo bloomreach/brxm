@@ -52,13 +52,20 @@ class RightSidePanelCtrl {
       throw new Error('Configuration option "templateQuery" is required');
     }
 
-    Observable.fromPromise(this.CreateContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
-      templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes),
-      error => this._onErrorLoadingTemplateQuery(error),
-    );
+    this.CreateContentService.getTemplateQuery(this.options.templateQuery)
+      .then(templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes))
+      .catch(error => this._onErrorLoadingTemplateQuery(error));
   }
 
   submit() {
+    if (!this.options) {
+      throw new Error('Input "options" is required');
+    }
+
+    if (!this.options.templateQuery) {
+      throw new Error('Configuration option "templateQuery" is required');
+    }
+
     const document = {
       name: this.nameUrlFields.nameField,
       slug: this.nameUrlFields.urlField,
@@ -71,7 +78,7 @@ class RightSidePanelCtrl {
     Observable.fromPromise(this.CreateContentService.createDraft(document)).subscribe(
       () => {
         this.onContinue({
-          data: {
+          options: {
             name: this.nameUrlFields.nameField,
             url: this.nameUrlFields.urlField,
             locale: this.locale,
@@ -106,7 +113,7 @@ class RightSidePanelCtrl {
   _onErrorLoadingTemplateQuery(error) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-      this.FeedbackService.showError(errorKey);
+      this.FeedbackService.showError(errorKey, error.data.params);
     } else {
       console.error('Unknown error loading template query', error);
     }
