@@ -91,6 +91,10 @@ class RightSidePanelCtrl {
     this.locale = locale;
   }
 
+  close() {
+    this.onClose();
+  }
+
   _onLoadDocumentTypes(types) {
     this.documentTypes = types;
 
