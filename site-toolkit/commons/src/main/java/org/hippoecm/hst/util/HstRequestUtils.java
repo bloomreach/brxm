@@ -64,7 +64,7 @@ public class HstRequestUtils {
     /**
      * Array of the default HTTP Forwarded-For header name(s). <code>{ "X-Forwarded-For" }</code> by default.
      */
-    private static final String[] DEFAULT_HTTP_FORWARDED_FOR_HEADERS = { "X-Forwarded-For" };
+    private static final String[] DEFAULT_HTTP_FORWARDED_FOR_HEADERS = { DEFAULT_HTTP_FORWARDED_FOR_HEADER };
 
     /**
      * Servlet context init parameter name for custom HTTP Forwarded-For header name.
