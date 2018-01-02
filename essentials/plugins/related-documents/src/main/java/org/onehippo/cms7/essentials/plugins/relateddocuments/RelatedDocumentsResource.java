@@ -16,11 +16,11 @@
 
 package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -34,16 +34,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
+import org.onehippo.cms7.essentials.plugins.relateddocuments.model.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,50 +52,37 @@ public class RelatedDocumentsResource {
     private static final Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
     private static final String MIXIN_NAME = "relateddocs:relatabledocs";
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
 
     @POST
     @Path("/")
-    public UserFeedback addDocuments(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+    public UserFeedback addDocuments(final Configuration configuration, @Context HttpServletResponse response) {
         final Collection<String> changedDocuments = new HashSet<>();
-        final PluginContext context = contextFactory.getContext();
         final Session session = jcrService.createSession();
         try {
-            final Map<String, String> values = payloadRestful.getValues();
-            final String documents = values.get("documents");
-            final String prefix = context.getProjectNamespacePrefix();
-
-            if (!Strings.isNullOrEmpty(documents)) {
-
-                final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
-                final String[] searchPaths = PayloadUtils.extractValueArray(values.get("searchPaths"));
-                final String[] suggestions = PayloadUtils.extractValueArray(values.get("numberOfSuggestions"));
-
-                for (int idx = 0; idx < docs.length; idx++) {
-                    final String document = docs[idx];
-                    final String jcrContentType = prefix + ":" + document;
-                    final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
-                    final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
-                    if (session.nodeExists(suggestFieldPath)) {
-                        log.info("Suggest field path: [{}] already exists.", fieldImportPath);
-                        continue;
-                    }
-                    contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
-                    // add place holders:
-                    final Map<String, Object> templateData = new HashMap<>(values);
-                    templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
-                    templateData.put("searchPaths", searchPaths[idx]);
-                    templateData.put("numberOfSuggestions", suggestions[idx]);
-
-                    final Node targetNode = session.getNode(fieldImportPath);
-                    jcrService.importResource(targetNode, "/related_documents_template.xml", templateData);
-                    jcrService.importResource(targetNode, "/related_documents_suggestion_template.xml", templateData);
-                    session.save();
-                    changedDocuments.add(document);
+            for (Configuration.Field field : configuration.getFields()) {
+                final String jcrContentType = field.getJcrContentType();
+                final String basePath = contentTypeService.jcrBasePathForContentType(jcrContentType);
+                final String fieldImportPath = basePath + "/editor:templates/_default_";
+                final String suggestFieldPath = fieldImportPath + "/relateddocs";
+                if (session.nodeExists(suggestFieldPath)) {
+                    log.info("Suggest field path: [{}] already exists.", fieldImportPath);
+                    continue;
                 }
+                contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
+                // add place holders:
+                final Map<String, Object> templateData = new HashMap<>();
+                templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
+                templateData.put("searchPaths", field.getSearchPath());
+                templateData.put("numberOfSuggestions", field.getNrOfSuggestions());
+
+                final Node targetNode = session.getNode(fieldImportPath);
+                jcrService.importResource(targetNode, "/related_documents_template.xml", templateData);
+                jcrService.importResource(targetNode, "/related_documents_suggestion_template.xml", templateData);
+                changedDocuments.add(jcrContentType);
             }
+            session.save();
         } catch (RepositoryException e) {
             log.error("Error adding related documents field", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -111,8 +92,8 @@ public class RelatedDocumentsResource {
         }
 
         if (changedDocuments.size() > 0) {
-            final String join = Joiner.on(',').join(changedDocuments);
-            return new UserFeedback().addSuccess("Added related document fields to following documents: " + join);
+            final String docTypeList = changedDocuments.stream().collect(Collectors.joining(", "));
+            return new UserFeedback().addSuccess("Added related document fields to following documents: " + docTypeList);
         }
         return new UserFeedback().addSuccess("No related document fields were added");
     }
