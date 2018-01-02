@@ -198,7 +198,7 @@ describe('DocumentLocationField', () => {
       component.$onInit();
       $rootScope.$apply();
 
-      expect(component.changeLocale).toHaveBeenCalledWith('de');
+      expect(component.changeLocale).toHaveBeenCalledWith({ locale: 'de' });
     });
   });
 });

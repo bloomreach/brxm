@@ -18,7 +18,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
-import { CreateContentComponent } from './step-1/step-1.component';
 import { CreateContentStep2Component } from './step-2/step-2.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { NameUrlFieldsComponent } from './name-url-fields/name-url-fields.component';
@@ -36,14 +35,12 @@ import { CreateContentServiceProvider } from './create-content.service.provider'
   declarations: [
     SharedspaceToolbarDirective,
     FieldsEditorDirective,
-    CreateContentComponent,
     CreateContentStep2Component,
     HintsComponent,
     NameUrlFieldsComponent,
     DocumentLocationFieldComponent
   ],
   entryComponents: [
-    CreateContentComponent,
     CreateContentStep2Component,
     HintsComponent,
   ],
