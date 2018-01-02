@@ -34,4 +34,5 @@ public enum ActionType {
      * Delete node and descendants, with no replacement.
      */
     DELETE
+
 }

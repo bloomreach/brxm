@@ -57,10 +57,12 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
+    // TODO: clarify if path includes name or not, and possibly remove separate name param
     public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }
 
+    // TODO: clarify if path includes name or not, and possibly remove separate name param
     public DefinitionNodeImpl(final String path, final String name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }

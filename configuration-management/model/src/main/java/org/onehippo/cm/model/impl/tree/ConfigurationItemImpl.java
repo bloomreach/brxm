@@ -55,11 +55,6 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
     }
 
     @Override
-    public JcrPathSegment getJcrName() {
-        return name;
-    }
-
-    @Override
     public ConfigurationNodeImpl getParent() {
         return parent;
     }

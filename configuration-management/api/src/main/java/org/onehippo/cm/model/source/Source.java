@@ -54,12 +54,8 @@ public interface Source {
     List<? extends Definition> getDefinitions();
 
     /**
-     * @return has this source been modified in memory since it was loaded from its persistent representation?
-     */
-    boolean hasChangedSinceLoad();
-
-    /**
      * @return a String describing this item for error-reporting purposes
      */
     String getOrigin();
+
 }

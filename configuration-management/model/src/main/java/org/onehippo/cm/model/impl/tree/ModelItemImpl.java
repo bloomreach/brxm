@@ -29,6 +29,11 @@ public abstract class ModelItemImpl implements ModelItem {
         return name.toString();
     }
 
+    @Override
+    public JcrPathSegment getJcrName() {
+        return name;
+    }
+
     public void setName(final String name) {
         this.name = JcrPaths.getSegment(name);
     }
@@ -41,7 +46,6 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public abstract JcrPath getJcrPath();
-    public abstract JcrPathSegment getJcrName();
 
     public String toString() {
         return getClass().getSimpleName()+"{path='"+ getPath()+"'}";

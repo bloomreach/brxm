@@ -19,6 +19,7 @@ package org.onehippo.cm.model.tree;
  * Defines the category of a ConfigurationItem, which determines its handling during various processing operations.
  */
 public enum ConfigurationItemCategory {
+
     /**
      * Configuration data that is expected to be provided in detail by Hippo CMS projects and may include metadata.
      */
@@ -37,4 +38,5 @@ public enum ConfigurationItemCategory {
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

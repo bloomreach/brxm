@@ -26,8 +26,10 @@ import org.onehippo.cm.model.source.SourceType;
  * this type are found in a {@link Source} of type {@link SourceType#CONFIG}.
  */
 public interface WebFileBundleDefinition<S extends ConfigSource> extends Definition<S> {
+
     /**
      * @return the name of a single Hippo CMS webfile bundle
      */
     String getName();
+
 }

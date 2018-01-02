@@ -22,6 +22,7 @@ import java.util.List;
  * @param <D> the type of DefinitionItem expected from {@link #getDefinitions()}
  */
 public interface ConfigurationItem<D extends DefinitionItem> extends ModelItem {
+
     /**
      * @return the parent node for this item
      */
@@ -35,4 +36,5 @@ public interface ConfigurationItem<D extends DefinitionItem> extends ModelItem {
      * merging the final state of this item.
      */
     List<D> getDefinitions();
+
 }

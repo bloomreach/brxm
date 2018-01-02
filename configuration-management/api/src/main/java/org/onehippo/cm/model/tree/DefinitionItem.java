@@ -21,6 +21,7 @@ import org.onehippo.cm.model.definition.TreeDefinition;
  * Represents the (potential) state of a JCR Node or Property as specified in a DefinitionItem tree.
  */
 public interface DefinitionItem extends ModelItem {
+
     /**
      * @return the parent node for this item
      */
@@ -41,4 +42,5 @@ public interface DefinitionItem extends ModelItem {
      * @return the category of this item, or null if no specific category has been specified for this item
      */
     ConfigurationItemCategory getCategory();
+
 }

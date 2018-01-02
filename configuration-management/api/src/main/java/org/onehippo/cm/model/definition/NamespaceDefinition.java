@@ -27,6 +27,7 @@ import org.onehippo.cm.model.tree.Value;
  * types in a {@link Source} of type {@link SourceType#CONFIG}.
  */
 public interface NamespaceDefinition<S extends ConfigSource> extends Definition<S> {
+
     /**
      * @return the JCR name prefix for this namespace
      */
@@ -42,4 +43,5 @@ public interface NamespaceDefinition<S extends ConfigSource> extends Definition<
      *     associated with any node type definitions (e.g. if it is only used for property names)
      */
     Value getCndPath();
+
 }

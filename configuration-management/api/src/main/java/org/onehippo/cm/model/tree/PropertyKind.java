@@ -19,6 +19,7 @@ package org.onehippo.cm.model.tree;
  * Represents the multiplicity of a ModelProperty and whether ordering is significant as an enum.
  */
 public enum PropertyKind {
+
     /**
      * A single-valued property.
      */
@@ -44,4 +45,5 @@ public enum PropertyKind {
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

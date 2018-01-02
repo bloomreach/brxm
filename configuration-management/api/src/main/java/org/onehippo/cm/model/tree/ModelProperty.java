@@ -49,4 +49,5 @@ public interface ModelProperty extends ModelItem {
      * @throws ValueFormatException if the property is single-valued.
      */
     List<? extends Value> getValues() throws ValueFormatException;
+
 }

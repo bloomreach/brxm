@@ -35,4 +35,5 @@ public interface Definition<S extends Source> {
      * @return a String describing the source of this item for error-reporting purposes
      */
     String getOrigin();
+
 }

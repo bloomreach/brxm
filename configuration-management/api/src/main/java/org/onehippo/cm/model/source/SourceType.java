@@ -41,4 +41,5 @@ public enum SourceType {
     public final boolean isOfType(final Source source) {
         return this == source.getType();
     }
+
 }

@@ -97,11 +97,6 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public JcrPathSegment getJcrName() {
-        return name;
-    }
-
-    @Override
     public DefinitionNodeImpl getParent() {
         if (parent == null) {
             throw new IllegalStateException("Root node does not have a parent");

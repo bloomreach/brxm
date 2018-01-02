@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.model.definition;
 
+import org.onehippo.cm.model.path.JcrPath;
+
 /**
  * Represents an action item, which describes a bootstrap behavior {@link ActionType} for a specific path.
  */
@@ -22,10 +24,11 @@ public interface ActionItem {
     /**
      * @return the JCR node path to which this action applies
      */
-    String getPath();
+    JcrPath getPath();
 
     /**
      * @return the {@link ActionType} that should be applied to the node at {@link #getPath()}
      */
     ActionType getType();
+
 }

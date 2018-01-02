@@ -41,7 +41,7 @@ public enum ValueType {
      * @param jcrType an integer value representing a JCR data type, as returned by e.g. {@link Property#getType()}
      * @return a ValueType enum value representing the jcrType
      */
-    public static final ValueType fromJcrType(final int jcrType) {
+    public static ValueType fromJcrType(final int jcrType) {
         return values()[jcrType];
     }
 
