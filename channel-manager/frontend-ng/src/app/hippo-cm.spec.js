@@ -19,10 +19,12 @@ import 'angular-mocks';
 
 describe('The hippo-cm module', () => {
   let configService;
+  let $http;
   let $httpBackend;
   let $rootScope;
   let $state;
   let $translate;
+  let $window;
 
   const MOCK_TRANSLATIONS = {
     en: {
@@ -40,12 +42,14 @@ describe('The hippo-cm module', () => {
       $translateProvider.translations('nl', MOCK_TRANSLATIONS.nl);
     });
 
-    inject((ConfigService, _$httpBackend_, _$rootScope_, _$state_, _$translate_) => {
+    inject((ConfigService, _$http_, _$httpBackend_, _$rootScope_, _$state_, _$translate_, _$window_) => {
       configService = ConfigService;
+      $http = _$http_;
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
+      $window = _$window_;
     });
   });
 
@@ -73,5 +77,15 @@ describe('The hippo-cm module', () => {
     $rootScope.$apply();
 
     expect($translate.instant('HIPPO')).toEqual('Hippo');
+  });
+
+  it('reports user activity to the CMS when the backend is called', () => {
+    spyOn($window.APP_TO_CMS, 'publish');
+    $httpBackend.expectGET('/some-url', {
+      Accept: 'application/json, text/plain, */*',
+    }).respond(200);
+    $http.get('/some-url');
+    $httpBackend.flush();
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
   });
 });
