@@ -8,7 +8,6 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/seo-support/about.html",
   "packageFile": "/META-INF/seoPlugin_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor" : {
     "name" : "BloomReach",

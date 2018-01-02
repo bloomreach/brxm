@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class PluginDescriptor implements Restful {
     private String packageClass;
     private boolean hasConfiguration;
     private boolean noRebuildAfterSetup;
+    private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
     private String packageFile;
     private String type;
     private String installState;
@@ -234,6 +235,14 @@ public class PluginDescriptor implements Restful {
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean hasSetupParameters() {
+        return setupParameters;
+    }
+
+    public void setSetupParameters(final boolean noSetupParameters) {
+        this.setupParameters = noSetupParameters;
     }
 
     public static class Vendor implements Restful {

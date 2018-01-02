@@ -10,6 +10,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/tagging/about.html",
   "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/tagging_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"

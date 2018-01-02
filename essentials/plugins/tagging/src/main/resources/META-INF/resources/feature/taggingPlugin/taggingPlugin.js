@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('taggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
-            $scope.pluginId = "taggingPlugin";
             var endpointDocuments = $rootScope.REST.documents;
             var endpointTagging = $scope.endpoint = $rootScope.REST.dynamic + 'taggingplugin/';
             $scope.widgetCols = 20;
@@ -54,9 +53,6 @@
                 });
             });
 
-            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
             //############################################
             // HELPERS
             //############################################

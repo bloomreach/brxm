@@ -11,7 +11,6 @@
     "/essentials/feature/images/screenshots/faq04.png"
   ],
   "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",

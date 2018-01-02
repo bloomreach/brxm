@@ -8,7 +8,6 @@
     "/essentials/feature/images/screenshots/googlemaps01.png"
   ],
   "packageFile": "/META-INF/googlemaps_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",

@@ -8,7 +8,6 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/list-component.html",
   "packageFile": "/META-INF/list_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",

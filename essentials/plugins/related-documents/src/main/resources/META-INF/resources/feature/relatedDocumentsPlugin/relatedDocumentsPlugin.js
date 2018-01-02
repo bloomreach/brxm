@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('relatedDocumentsCtrl', function ($scope, $rootScope, $http) {
-            var endpoint = $rootScope.REST.dynamic + 'related-documents';
-            $scope.pluginId = "relatedDocumentsPlugin";
             $scope.fieldsAdded = false;
             $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
             $scope.addDocs = function () {
@@ -35,17 +33,10 @@
                         });
                     }
                 });
-                $http.post(endpoint, configuration).success(function () {
+                $http.post($rootScope.REST.dynamic + 'related-documents', configuration).success(function () {
                     $scope.fieldsAdded = true;
                 });
             };
-
-            //############################################
-            // INIT
-            //############################################
-            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
 
             $http.get($rootScope.REST.documents).success(function (docTypes) {
                 // Filter out basedocument

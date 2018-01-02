@@ -9,7 +9,6 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/search-component.html",
   "packageFile": "/META-INF/searchPlugin_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor" : {
     "name" : "BloomReach",

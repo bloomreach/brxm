@@ -10,7 +10,6 @@
     "/essentials/feature/images/screenshots/poll03.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/poll/about.html",
-  "restClasses": [],
   "packageFile": "/META-INF/poll_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

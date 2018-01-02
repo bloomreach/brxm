@@ -10,7 +10,8 @@
     "/essentials/feature/images/screenshots/audiences-realtime.png",
     "/essentials/feature/images/screenshots/audiences-segments.png",
     "/essentials/feature/images/screenshots/audiences-trends.png"
-  ],  "restClasses": [],
+  ],
+  "setupParameters": false,
   "packageFile": "/META-INF/relevance_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

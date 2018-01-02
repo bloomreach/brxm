@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             var endpointQueries = $rootScope.REST.documents_template_queries;
-            $scope.pluginId = "documentWizardPlugin";
             $scope.valueListPath = null;
             $scope.documentQuery = null;
             $scope.selectedDocument = null;
@@ -67,9 +66,6 @@
             //############################################
             // INIT
             //############################################
-            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });

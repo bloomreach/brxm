@@ -12,7 +12,6 @@
     "/essentials/feature/images/screenshots/news04.png"
   ],
   "packageFile": "/META-INF/news_package_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",
