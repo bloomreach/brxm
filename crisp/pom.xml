@@ -27,7 +27,7 @@
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
@@ -92,7 +92,7 @@
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-crisp.git</connection>
     <developerConnection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-crisp.git</developerConnection>
     <url>https://code.onehippo.org/cms-community/hippo-addon-crisp</url>
-    <tag>hippo-addon-crisp-2.1.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencyManagement>

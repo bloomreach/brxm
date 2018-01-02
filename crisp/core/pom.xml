@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-addon-crisp</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Addon CRISP Core</name>
