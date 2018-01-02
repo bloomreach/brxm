@@ -15,9 +15,15 @@
  */
 
 class DocumentLocationFieldController {
-  constructor(ChannelService, CreateContentService, FeedbackService) {
+  constructor(
+    $log,
+    ChannelService,
+    CreateContentService,
+    FeedbackService,
+  ) {
     'ngInject';
 
+    this.$log = $log;
     this.ChannelService = ChannelService;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
@@ -102,7 +108,7 @@ class DocumentLocationFieldController {
       const errorKey = `ERROR_${error.data.reason}`;
       this.FeedbackService.showError(errorKey, error.data.params);
     } else {
-      console.error(unknownErrorMessage, error);
+      this.$log.error(unknownErrorMessage, error);
     }
   }
 

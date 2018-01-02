@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { fakeAsync, tick } from '@angular/core/testing';
-import { DocumentTypeInfo } from '../create-content.types';
-
 describe('Create content step 1 component', () => {
   let $componentController;
   let $rootScope;
@@ -44,9 +41,11 @@ describe('Create content step 1 component', () => {
     });
 
     component = $componentController('createContentStep1');
+    component.onClose = () => {};
+    component.onContinue = () => {};
   });
 
-  fdescribe('DocumentType', () => {
+  describe('DocumentType', () => {
     it('throws an error if options are not set', () => {
       expect(() => {
         component.options = null;
@@ -109,6 +108,66 @@ describe('Create content step 1 component', () => {
       $rootScope.$apply();
 
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { templateQuery: 'new-document' });
+    });
+  });
+
+  describe('Creating a new draft', () => {
+    beforeEach(() => {
+      // Mock templateQuery calls that gets executed on "onInit"
+      // Disabling this will fail the tests
+      component.options = {
+        templateQuery: 'test-template-query',
+        rootPath: '/content/documents/hap/news',
+        defaultPath: '2017/12',
+      };
+      const documentTypes = [
+        { id: 'test-id1', displayName: 'test-name 1' },
+      ];
+      spyOn(CreateContentService, 'getTemplateQuery')
+        .and.returnValue($q.resolve({ documentTypes }));
+    });
+
+    it('assembles document object and sends it to the server', () => {
+      component.$onInit();
+
+      component.nameUrlFields.nameField = 'New doc';
+      component.nameUrlFields.urlField = 'new-doc';
+      component.documentType = 'hap:contentdocument';
+      component.documentLocationField.rootPath = '/content/documents/hap/news';
+      component.documentLocationField.defaultPath = '2017/12';
+
+      const data = {
+        name: 'New doc',
+        slug: 'new-doc',
+        templateQuery: 'test-template-query',
+        documentTypeId: 'hap:contentdocument',
+        rootPath: '/content/documents/hap/news',
+        defaultPath: '2017/12',
+      };
+
+      const spy = spyOn(CreateContentService, 'createDraft')
+        .and.returnValue($q.resolve('resolved'));
+
+      component.submit();
+      $rootScope.$apply();
+
+      expect(spy).toHaveBeenCalledWith(data);
+    });
+
+    it('sends feedback as error when server returns 500', () => {
+      const feedbackSpy = spyOn(FeedbackService, 'showError');
+      spyOn(CreateContentService, 'createDraft')
+        .and.returnValue($q.reject({
+          status: 500,
+          data: {
+            reason: 'INVALID_DOCUMENT_DETAILS',
+          },
+        }));
+
+      component.submit();
+      $rootScope.$apply();
+
+      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_DOCUMENT_DETAILS');
     });
   });
 });

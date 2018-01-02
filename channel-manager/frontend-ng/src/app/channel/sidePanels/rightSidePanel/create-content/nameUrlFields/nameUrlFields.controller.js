@@ -40,7 +40,6 @@ class NameUrlFieldsController {
       .do(() => { this.urlUpdate = true; })
       .debounceTime(1000)
       .subscribe(() => {
-        console.log(this.form);
         this.setDocumentUrlByName();
         this.urlUpdate = false;
       });

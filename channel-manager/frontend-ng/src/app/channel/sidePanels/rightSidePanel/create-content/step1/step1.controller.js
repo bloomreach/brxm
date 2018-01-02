@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs';
-
 class RightSidePanelCtrl {
   constructor(
     $translate,
+    $log,
     CreateContentService,
-    FeedbackService) {
+    FeedbackService,
+  ) {
     'ngInject';
 
     this.$translate = $translate;
+    this.$log = $log;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
 
@@ -75,18 +76,15 @@ class RightSidePanelCtrl {
       defaultPath: this.documentLocationField.defaultPath,
     };
 
-    Observable.fromPromise(this.CreateContentService.createDraft(document)).subscribe(
-      () => {
-        this.onContinue({
-          options: {
-            name: this.nameUrlFields.nameField,
-            url: this.nameUrlFields.urlField,
-            locale: this.locale,
-          },
-        });
-      },
-      error => this._onErrorCreatingDraft(error),
-    );
+    this.CreateContentService.createDraft(document)
+      .then(() => this.onContinue({
+        options: {
+          name: this.nameUrlFields.nameField,
+          url: this.nameUrlFields.urlField,
+          locale: this.locale,
+        },
+      }))
+      .catch(error => this._onErrorCreatingDraft(error));
   }
 
   setWidthState(state) {
@@ -115,7 +113,7 @@ class RightSidePanelCtrl {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey, error.data.params);
     } else {
-      console.error('Unknown error loading template query', error);
+      this.$log.error('Unknown error loading template query', error);
     }
   }
 
@@ -124,7 +122,7 @@ class RightSidePanelCtrl {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey);
     } else {
-      console.error('Unknown error creating new draft document', error);
+      this.$log.error('Unknown error creating new draft document', error);
     }
   }
 }
