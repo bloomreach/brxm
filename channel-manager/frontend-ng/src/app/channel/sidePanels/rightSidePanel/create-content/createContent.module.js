@@ -17,10 +17,13 @@
 import CreateContentService from './createContent.service';
 import documentLocationFieldComponent from './documentLocation/documentLocationField.component';
 import nameUrlFieldsComponent from './nameUrlFields/nameUrlFields.component';
+import createContentStep1Component from './step1/step1.component';
+
 
 const createContentModule = angular
   .module('hippo-cm.channel.createContentModule', [])
   .component('documentLocationField', documentLocationFieldComponent)
+  .component('createContentStep1', createContentStep1Component)
   .component('nameUrlFields', nameUrlFieldsComponent)
   .service('CreateContentService', CreateContentService);
 

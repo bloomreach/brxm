@@ -18,7 +18,6 @@ import { downgradeComponent } from '@angular/upgrade/static';
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
 import fieldsEditorComponent from './fieldsEditor/fieldsEditor.ng1.component';
-import createContentStep1Component from './create-content/step1/step1.component';
 
 import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
@@ -37,7 +36,6 @@ const rightSidePanelModule = angular
   .component('hippoEditContent', editContentComponent)
   .component('fieldsEditor', fieldsEditorComponent)
   .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }))
-  .component('createContentStep1', createContentStep1Component)
   .directive('hippoCreateContentStep2', downgradeComponent({ component: CreateContentStep2Component }));
 export default rightSidePanelModule.name;
 
