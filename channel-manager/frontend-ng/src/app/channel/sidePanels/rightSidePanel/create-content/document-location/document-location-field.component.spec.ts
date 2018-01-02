@@ -28,7 +28,7 @@ import { CreateContentService } from '../create-content.service';
 import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
 import ChannelService from '../../../../channel.service.js';
 
-describe('DocumentLocationField Component', () => {
+xdescribe('DocumentLocationField Component', () => {
   let component: DocumentLocationFieldComponent;
   let fixture: ComponentFixture<DocumentLocationFieldComponent>;
   let createContentService: CreateContentService;

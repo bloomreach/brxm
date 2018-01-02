@@ -98,7 +98,7 @@ export class CreateContentComponent implements OnInit {
       name: this.nameUrlFields.nameField,
           url: this.nameUrlFields.urlField,
           locale: this.locale
-        }),(error) => this.onErrorCreatingDraft(error),
+        }), (error) => this.onErrorCreatingDraft(error),
     );
   }
 

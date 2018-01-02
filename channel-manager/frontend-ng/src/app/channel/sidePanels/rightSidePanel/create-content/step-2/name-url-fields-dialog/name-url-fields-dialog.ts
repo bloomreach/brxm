@@ -17,20 +17,19 @@ import { Inject, OnInit, ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import './name-url-fields-dialog.scss';
-import { CreateContentService } from '../../create-content.service';
 import { NameUrlFieldsComponent } from '../../name-url-fields/name-url-fields.component';
 
 @Component({
   selector: 'hippo-name-url-fields-dialog',
   templateUrl: 'name-url-fields-dialog.html',
 })
-export class NameUrlFieldsDialogComponent {
+export class NameUrlFieldsDialogComponent implements OnInit {
   private initialValues: { name: string, url: string };
   title: string = this.data.title;
   name: string = this.data.name;
   url: string = this.data.url;
   locale: string = this.data.locale;
-  isUrlBusyUpdating: boolean = false;
+  isUrlBusyUpdating = false;
   @ViewChild(NameUrlFieldsComponent) nameUrlFields: NameUrlFieldsComponent;
 
   constructor(
@@ -42,7 +41,7 @@ export class NameUrlFieldsDialogComponent {
     this.initialValues = {
       name: this.data.name,
       url: this.data.url
-    }
+    };
   }
 
   onUrlUpdate(value: boolean) {

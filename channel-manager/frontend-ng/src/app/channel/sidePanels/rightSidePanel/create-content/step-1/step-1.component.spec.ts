@@ -31,7 +31,7 @@ import {HintsComponent} from '../../../../../shared/components/hints/hints.compo
 import {NameUrlFieldsComponent} from '../name-url-fields/name-url-fields.component';
 import {SharedModule} from '../../../../../shared/shared.module';
 
-describe('Create content step 1 component', () => {
+xdescribe('Create content step 1 component', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
