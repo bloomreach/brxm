@@ -532,7 +532,7 @@ public class DefinitionMergeService {
                 ConfigurationContentService.collectNewActions(null, module.getActionsMap());
 
         for (final ActionItem actionItem : actionItems) {
-            final JcrPath actionItemJcrPath = JcrPaths.getPath(actionItem.getPath());
+            final JcrPath actionItemJcrPath = actionItem.getPath();
             if (actionItem.getType() == ActionType.DELETE && isRelevantContentDefinition(actionItemJcrPath, path)) {
                 intermediate.remove(actionItemJcrPath.getLastSegment());
             }
