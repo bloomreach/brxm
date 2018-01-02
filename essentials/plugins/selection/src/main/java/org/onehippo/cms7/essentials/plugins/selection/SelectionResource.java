@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -49,7 +47,6 @@ import javax.ws.rs.core.MediaType;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
-import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
@@ -63,11 +60,10 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +80,7 @@ public class SelectionResource {
 
     @Inject private EventBus eventBus;
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
@@ -352,7 +349,7 @@ public class SelectionResource {
         }
 
         // Put the new field to the default location
-        placeholderData.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+        placeholderData.put("fieldPosition", contentTypeService.determineDefaultFieldPosition(documentType));
 
         String presentationType = "DynamicDropdown";
         if ("single".equals(values.get("selectionType"))) {
@@ -361,11 +358,11 @@ public class SelectionResource {
             }
             placeholderData.put("presentationType", presentationType);
 
-            importXml("/xml/single-field-editor-template.xml", placeholderData, editorTemplate);
-            importXml("/xml/single-field-node-type.xml", placeholderData, nodeType);
+            jcrService.importResource(editorTemplate, "/xml/single-field-editor-template.xml", placeholderData);
+            jcrService.importResource(nodeType, "/xml/single-field-node-type.xml", placeholderData);
         } else if ("multiple".equals(values.get("selectionType"))) {
-            importXml("/xml/multi-field-editor-template.xml", placeholderData, editorTemplate);
-            importXml("/xml/multi-field-node-type.xml", placeholderData, nodeType);
+            jcrService.importResource(editorTemplate, "/xml/multi-field-editor-template.xml", placeholderData);
+            jcrService.importResource(nodeType, "/xml/multi-field-node-type.xml", placeholderData);
         }
         session.save();
 
@@ -395,26 +392,6 @@ public class SelectionResource {
             }
         }
         return false;
-    }
-
-    /**
-     * Import an XML resource into the repository, after mustache-processing.
-     *
-     * @param resourcePath   path to obtain resource.
-     * @param placeholderMap map with placeholder values
-     * @param destination    target parent JCR node for the import
-     * @throws IOException
-     * @throws RepositoryException
-     */
-    private void importXml(final String resourcePath, final Map<String, Object> placeholderMap, final Node destination)
-        throws IOException, RepositoryException
-    {
-        final InputStream stream = getClass().getResourceAsStream(resourcePath);
-        final String processedXml = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), placeholderMap);
-
-        destination.getSession().importXML(destination.getPath(),
-                IOUtils.toInputStream(processedXml, StandardCharsets.UTF_8),
-                ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
 
     private Document readSpringConfiguration(final PluginContext context) {

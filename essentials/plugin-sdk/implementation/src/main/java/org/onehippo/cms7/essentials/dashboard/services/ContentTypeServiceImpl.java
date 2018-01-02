@@ -18,18 +18,25 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
@@ -45,6 +52,8 @@ import org.springframework.stereotype.Service;
 public class ContentTypeServiceImpl implements ContentTypeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContentTypeServiceImpl.class);
+    private static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
+
 
     @Inject private JcrService jcrService;
     @Inject private ContentBeansService beansService;
@@ -93,6 +102,97 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         } else {
             return "/hippo:namespaces/system/" + jcrType;
         }
+    }
+
+    @Override
+    public boolean addMixinToContentType(final String jcrContentType, final String mixinName,
+                                         final boolean updateExisting) {
+        final String contentTypeNodePath = String.format("/hippo:namespaces/%s",
+                jcrContentType.replace(':', '/'));
+
+        final Session session = jcrService.createSession();
+        if (session == null) {
+            return false;
+        }
+
+        try {
+            final Node contentTypeNode = session.getNode(contentTypeNodePath);
+
+            // add mixin as supertype
+            final Node nodeTypeNode = contentTypeNode.getNode("hipposysedit:nodetype/hipposysedit:nodetype");
+            final Property superTypes = nodeTypeNode.getProperty(HIPPOSYSEDIT_SUPERTYPE);
+            final Set<String> augmentedSuperTypes = new HashSet<>();
+            for (Value superType : superTypes.getValues()) {
+                augmentedSuperTypes.add(superType.getString());
+            }
+            if (!augmentedSuperTypes.contains(mixinName)) {
+                augmentedSuperTypes.add(mixinName);
+            }
+            superTypes.setValue(augmentedSuperTypes.toArray(new String[augmentedSuperTypes.size()]));
+
+            // add mixin to prototype
+            addMixin(contentTypeNode.getNode("hipposysedit:prototypes/hipposysedit:prototype"), mixinName);
+
+            if (updateExisting) {
+                addMixinToContent(session, jcrContentType, mixinName);
+            }
+            session.save();
+        } catch (RepositoryException e) {
+            final String message = String.format("Failed to add mixin '%s' to content type '%s'.", mixinName, jcrContentType);
+            LOG.error(message, e);
+            return false;
+        } finally {
+            jcrService.destroySession(session);
+        }
+
+        return true;
+    }
+
+    @Override
+    public String determineDefaultFieldPosition(final String jcrContentType) {
+        final String editorTemplateNodePath = String.format("/hippo:namespaces/%s/editor:templates/_default_/root",
+                jcrContentType.replace(':', '/'));
+
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                final Node root = session.getNode(editorTemplateNodePath);
+                if (root.hasProperty("wicket.extensions")) {
+                    final Value[] extensions = root.getProperty("wicket.extensions").getValues();
+                    return root.getProperty(extensions[0].getString()).getString() + ".item";
+                }
+                return "${cluster.id}.field";
+            } catch (RepositoryException e) {
+                LOG.error("Failed to determine default field position for content type '{}'.", jcrContentType, e);
+            } finally {
+                jcrService.destroySession(session);
+            }
+        }
+        return null;
+    }
+
+    private void addMixinToContent(final Session session, final String jcrContentType, final String mixinName)
+            throws RepositoryException {
+        final NodeIterator nodes = session
+                .getWorkspace()
+                .getQueryManager()
+                .createQuery(String.format("//content//element(*,%s)", jcrContentType), "xpath")
+                .execute()
+                .getNodes();
+
+        while (nodes.hasNext()) {
+            addMixin(nodes.nextNode(), mixinName);
+        }
+    }
+
+    private void addMixin(final Node node, final String mixinName) throws RepositoryException {
+        for (NodeType mixin : node.getMixinNodeTypes()) {
+            if (mixin.getName().equals(mixinName)) {
+                return;
+            }
+        }
+        JcrUtils.ensureIsCheckedOut(node);
+        node.addMixin(mixinName);
     }
 
     private ContentType createContentTypeFor(final org.onehippo.cms7.services.contenttype.ContentType contentType,

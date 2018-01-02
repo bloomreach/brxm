@@ -45,8 +45,8 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -68,6 +68,7 @@ public class TaggingResource {
     private static final String TAGSUGGEST_FIELD = "tagsuggest";
 
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
@@ -101,16 +102,17 @@ public class TaggingResource {
             for (final String document : docs) {
                 final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
                 final String suggestFieldPath = MessageFormat.format("{0}/" + TAGSUGGEST_FIELD, fieldImportPath);
+                final String jcrContentType = prefix + ":" + document;
                 if (session.nodeExists(suggestFieldPath)) {
                     log.info("Suggest field path: [{}] already exists.", suggestFieldPath);
                     continue;
                 }
 
-                DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
+                contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
                 // add place holders:
                 final Map<String, Object> templateData = new HashMap<>(values);
                 final Node editorTemplate = session.getNode(fieldImportPath);
-                templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+                templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
                 templateData.put("prefix", prefix);
                 templateData.put("document", document);
                 // import field:

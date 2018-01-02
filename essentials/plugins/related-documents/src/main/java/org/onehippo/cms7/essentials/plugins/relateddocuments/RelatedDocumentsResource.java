@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -40,16 +37,13 @@ import javax.ws.rs.core.MediaType;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
-import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +60,7 @@ public class RelatedDocumentsResource {
 
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
 
     @POST
     @Path("/")
@@ -78,42 +73,36 @@ public class RelatedDocumentsResource {
             final String documents = values.get("documents");
             final String prefix = context.getProjectNamespacePrefix();
 
-            final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
-            final String templateSuggestDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_suggestion_template.xml"));
-
             if (!Strings.isNullOrEmpty(documents)) {
 
-                final String[] suggestions = PayloadUtils.extractValueArray(values.get("numberOfSuggestions"));
-                final String[] searchPaths = PayloadUtils.extractValueArray(values.get("searchPaths"));
                 final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
+                final String[] searchPaths = PayloadUtils.extractValueArray(values.get("searchPaths"));
+                final String[] suggestions = PayloadUtils.extractValueArray(values.get("numberOfSuggestions"));
 
-                int idx = 0;
-                for (final String document : docs) {
+                for (int idx = 0; idx < docs.length; idx++) {
+                    final String document = docs[idx];
+                    final String jcrContentType = prefix + ":" + document;
                     final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
                     final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
                     if (session.nodeExists(suggestFieldPath)) {
                         log.info("Suggest field path: [{}] already exists.", fieldImportPath);
                         continue;
                     }
-                    DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
+                    contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, Object> templateData = new HashMap<>(values);
-                    final Node editorTemplate = session.getNode(fieldImportPath);
-                    templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+                    templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
                     templateData.put("searchPaths", searchPaths[idx]);
                     templateData.put("numberOfSuggestions", suggestions[idx]);
-                    // import field:
-                    final String fieldData = TemplateUtils.replaceTemplateData(templateRelatedDocs, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-                    // import suggest field:
-                    final String suggestData = TemplateUtils.replaceTemplateData(templateSuggestDocs, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+
+                    final Node targetNode = session.getNode(fieldImportPath);
+                    jcrService.importResource(targetNode, "/related_documents_template.xml", templateData);
+                    jcrService.importResource(targetNode, "/related_documents_suggestion_template.xml", templateData);
                     session.save();
                     changedDocuments.add(document);
-                    idx++;
                 }
             }
-        } catch (RepositoryException | IOException e) {
+        } catch (RepositoryException e) {
             log.error("Error adding related documents field", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return new UserFeedback().addError("Failed to add related documents field: " + e.getMessage());
