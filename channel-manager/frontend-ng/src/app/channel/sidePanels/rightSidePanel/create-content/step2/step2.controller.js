@@ -69,7 +69,10 @@ class Step2Controller {
       } catch (error) {
         const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
         this.FeedbackService.showError(errorKey, error.data.params);
+        return Promise.reject();
       }
+
+      return Promise.resolve();
     });
   }
 
@@ -85,12 +88,13 @@ class Step2Controller {
     return (this.doc && this.doc.info && this.doc.info.dirty);
   }
 
-    close() {
+  close() {
     return this.discardAndClose()
       .then(() => {
         this._resetState();
         this.onClose();
-      });
+      })
+      .catch(() => angular.noop());
   }
 
   openEditNameUrlDialog() {
@@ -113,7 +117,7 @@ class Step2Controller {
   }
 
   _onEditNameUrlDialogClose(data) {
-    this.CreateContentService.setDraftNameUrl(this.doc.id, data)
+    return this.CreateContentService.setDraftNameUrl(this.doc.id, data)
       .then((result) => {
         this.doc.displayName = result.displayName;
         this.documentUrl = result.urlName;

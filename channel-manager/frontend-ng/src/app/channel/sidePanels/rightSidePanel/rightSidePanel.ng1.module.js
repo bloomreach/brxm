@@ -23,7 +23,6 @@ import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 import createContentModule from './create-content/createContent.module';
 
-import { CreateContentStep2Component } from './create-content/step-2/step-2.component.ts';
 import { NameUrlFieldsComponent } from './create-content/name-url-fields/name-url-fields.component.ts';
 
 const rightSidePanelModule = angular
@@ -36,6 +35,5 @@ const rightSidePanelModule = angular
   .component('hippoEditContent', editContentComponent)
   .component('fieldsEditor', fieldsEditorComponent)
   .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }))
-  .directive('hippoCreateContentStep2', downgradeComponent({ component: CreateContentStep2Component }));
 export default rightSidePanelModule.name;
 

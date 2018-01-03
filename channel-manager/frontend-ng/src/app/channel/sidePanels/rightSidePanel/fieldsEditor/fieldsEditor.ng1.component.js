@@ -15,7 +15,7 @@
  */
 
 import template from './fieldsEditor.html';
-import '../create-content/step-2/step-2.scss';
+import '../create-content/step2/step2.scss';
 
 const fieldsEditorComponent = {
   template,
