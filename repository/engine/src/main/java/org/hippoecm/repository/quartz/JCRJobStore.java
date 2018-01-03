@@ -584,8 +584,8 @@ public class JCRJobStore implements JobStore {
                     }
                     LockResource lockResource = lock(jobNode, triggerNode);
                     if (lockResource != null) {
-                        session.refresh(false);
                         try {
+                            refreshSession(session);
                             // double check nextFireTime now that we have a lock
                             if (isPendingTrigger(triggerNode, noLaterThan)) {
                                 if (triggers == null) {
