@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,3 +13,53 @@
 // limitations under the License.
 
 @import 'variables';
+@import '../../../../../shared/material/material';
+
+create-content-step-2 {
+
+  .right-side-panel-content {
+    overflow: auto;
+  }
+
+  document-fields {
+    padding: 12px 12px 0;
+  }
+
+  .edit-title-toolbar {
+    background: $white;
+  }
+
+  .editable-title-toolbar {
+    background-color: $grey-100;
+    box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
+    height: 56px;
+    min-height: 56px;
+    width: 100%;
+    z-index: 3 !important;
+
+    h6 {
+      margin: 0;
+    }
+
+    md-icon {
+      &:hover {
+        cursor: pointer;
+      }
+
+      color: $grey-600;
+    }
+  }
+
+  primitive-field,
+  compound-field,
+  choice-field {
+    > .field {
+      padding-left: 0;
+    }
+  }
+}
+
+.feedback {
+  background-color: mat-color($hippo-warn, 50);
+  padding: 16px;
+}

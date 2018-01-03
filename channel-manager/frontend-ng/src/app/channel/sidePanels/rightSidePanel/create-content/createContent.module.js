@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import fieldsModule from '../fields/fields.ng1.module';
 import CreateContentService from './createContent.service';
 import documentLocationFieldComponent from './documentLocation/documentLocationField.component';
 import nameUrlFieldsComponent from './nameUrlFields/nameUrlFields.component';
@@ -22,7 +23,9 @@ import createContentStep2Component from './step2/step2.component';
 
 
 const createContentModule = angular
-  .module('hippo-cm.channel.createContentModule', [])
+  .module('hippo-cm.channel.createContentModule', [
+    fieldsModule,
+  ])
   .component('documentLocationField', documentLocationFieldComponent)
   .component('createContentStep1', createContentStep1Component)
   .component('createContentStep2', createContentStep2Component)

@@ -15,12 +15,120 @@
  */
 
 class Step2Controller {
-  constructor() {
+  constructor(
+    $translate,
+    CreateContentService,
+    FieldService,
+    ContentService,
+    DialogService,
+    FeedbackService,
+  ) {
     'ngInject';
+
+    this.$translate = $translate;
+    this.CreateContentService = CreateContentService;
+    this.FieldService = FieldService;
+    this.ContentService = ContentService;
+    this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
 
     this.title = 'Create new content';
     this.defaultTitle = 'Create new title';
     this.isFullWidth = false;
+    this.loading = false;
+
+    this.doc = null;
+    this.docType = null;
+  }
+
+  $onInit() {
+    this.loadNewDocument();
+    this._resetBeforeStateChange();
+  }
+
+  loadNewDocument() {
+    const doc = this.CreateContentService.getDocument();
+    this.documentId = doc.id;
+    this.FieldService.setDocumentId(doc.id);
+    this.loading = true;
+    return this.ContentService.getDocumentType(doc.info.type.id)
+      .then((docType) => {
+        this._onLoadSuccess(doc, docType);
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      });
+  }
+
+  discardAndClose() {
+    return this._confirmDiscardChanges().then(async () => {
+      try {
+        await this.CreateContentService.deleteDraft(this.documentId);
+      } catch (error) {
+        const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+        this.FeedbackService.showError(errorKey, error.data.params);
+      }
+    });
+  }
+
+  saveDocument() {
+    this.ContentService.saveDraft(this.doc)
+      .then(() => {
+        this.onBeforeStateChange({ callback: () => Promise.resolve() });
+        this.onSave({ documentId: this.doc.id });
+      });
+  }
+
+  isDocumentDirty() {
+    return (this.doc && this.doc.info && this.doc.info.dirty);
+  }
+
+  close() {
+    return this.discardAndClose()
+      .then(() => {
+        this._resetState();
+        this.onClose();
+      });
+  }
+
+  openNameUrlDialog() {
+    // TODO
+  }
+
+  _resetState() {
+    delete this.doc;
+    delete this.documentId;
+    delete this.docType;
+    delete this.feedback;
+    this.title = this.defaultTitle;
+    this.onBeforeStateChange({ callback: () => Promise.resolve() });
+  }
+
+  _onLoadSuccess(doc, docTypeInfo) {
+    this.doc = doc;
+    this.docType = docTypeInfo;
+    this.title = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docTypeInfo.displayName });
+    this.doc.displayName = this.options.name;
+    this.documentUrl = this.options.url;
+    this.documentLocale = this.options.locale;
+  }
+
+  _resetBeforeStateChange() {
+    this.onBeforeStateChange({ callback: () => this.discardAndClose() });
+  }
+
+  _confirmDiscardChanges() {
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
+
+    const confirm = this.DialogService.confirm()
+      .title(this.$translate.instant('DISCARD_DOCUMENT', messageParams))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
   }
 
   setWidthState(state) {
