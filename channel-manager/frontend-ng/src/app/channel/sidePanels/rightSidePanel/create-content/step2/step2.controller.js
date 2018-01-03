@@ -18,6 +18,14 @@ class Step2Controller {
   constructor() {
     'ngInject';
 
+    this.title = 'Create new content';
+    this.defaultTitle = 'Create new title';
+    this.isFullWidth = false;
+  }
+
+  setWidthState(state) {
+    this.isFullWidth = state;
+    this.onFullWidth({ state });
   }
 }
 

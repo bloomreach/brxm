@@ -22,6 +22,12 @@ const createContentStep2Component = {
   controller,
   template,
   bindings: {
+    options: '=',
+    isFullWidth: '=',
+    onSave: '&',
+    onClose: '&',
+    onFullWidth: '&',
+    onBeforeStateChange: '&',
   },
 };
 

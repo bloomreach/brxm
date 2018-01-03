@@ -14,4 +14,27 @@
   limitations under the License.
 -->
 
-Step2
+<div class="create-content-container">
+  <md-toolbar class="edit-title-toolbar">
+    <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate">
+        {{ $ctrl.title }}
+      </h1>
+
+      <span flex></span>
+
+      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+                 ng-click="$ctrl.setWidthState(true)"
+                 ng-show="!$ctrl.isFullWidth"
+                 title="{{ ::'FULL_WIDTH' | translate }}">
+        <md-icon md-svg-icon="maximize-sidepanel"></md-icon>
+      </md-button>
+      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+                 ng-click="$ctrl.setWidthState(false)"
+                 ng-show="$ctrl.isFullWidth"
+                 title="{{ ::'RESTORE_WIDTH' | translate }}">
+        <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+</div>
