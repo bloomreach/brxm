@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import nameUrlFieldsDialogController from '../step2/nameUrlFieldsDialog/nameUrlFieldsDialog.controller';
+
 class Step2Controller {
   constructor(
     $translate,
@@ -83,7 +85,7 @@ class Step2Controller {
     return (this.doc && this.doc.info && this.doc.info.dirty);
   }
 
-  close() {
+    close() {
     return this.discardAndClose()
       .then(() => {
         this._resetState();
@@ -91,8 +93,35 @@ class Step2Controller {
       });
   }
 
-  openNameUrlDialog() {
-    // TODO
+  openEditNameUrlDialog() {
+    const dialog = {
+      templateUrl: './nameUrlFieldsDialog/nameUrlFieldsDialog.html',
+      controller: nameUrlFieldsDialogController,
+      locals: {
+        title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
+        nameField: this.doc.displayName,
+        urlField: this.documentUrl,
+        locale: this.documentLocale,
+      },
+      controllerAs: '$ctrl',
+      bindToController: true,
+    };
+
+    return this.DialogService.show(dialog).then((result) => {
+      this._onEditNameUrlDialogClose(result);
+    });
+  }
+
+  _onEditNameUrlDialogClose(data) {
+    this.CreateContentService.setDraftNameUrl(this.doc.id, data)
+      .then((result) => {
+        this.doc.displayName = result.displayName;
+        this.documentUrl = result.urlName;
+      })
+      .catch((error) => {
+        const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+        this.FeedbackService.showError(errorKey, error.data.params);
+      });
   }
 
   _resetState() {

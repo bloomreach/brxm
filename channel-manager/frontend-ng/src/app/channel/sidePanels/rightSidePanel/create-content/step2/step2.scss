@@ -46,6 +46,10 @@ create-content-step-2 {
         cursor: pointer;
       }
 
+      &:focus {
+        outline: none;
+      }
+
       color: $grey-600;
     }
   }
