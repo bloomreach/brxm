@@ -80,6 +80,21 @@ import org.onehippo.cms7.services.SingletonService;
  *     of {@link java.util.concurrent.locks.ReentrantLock#tryLock(long, TimeUnit)} you can use
  *     {@link LockManagerUtils#waitForLock(LockManager, String, long, long)}.
  * </p>
+ * <p>
+ *     <strong>Usage in combination with JCR:</strong>
+ *     <br/>
+ *     When you use this {@link LockManager} to obtain a cluster wide lock after which the code is doing JCR node manipulation,
+ *     eg updating the last modification timestamp on a JCR node, then make sure to always invoke
+ *     <code>
+ *         <pre>
+ *             session.refresh(true|false);
+ *         </pre>
+ *     </code>
+ *     after obtaining the {@link LockResource}. The reason for this is that in the cluster wide 'synchronized' part of
+ *     the code, you want to make sure that all JCR nodes the code is going to touch are in sync with the latest cluster
+ *     state and that the code is not chatting with local stale JCR nodes. Thus make sure to always invoke
+ *     {@code session.refresh(true|false);} when dealing with JCR nodes in a cluster wide locked code block.
+ * </p>
  *
  */
 @SingletonService
