@@ -34,6 +34,7 @@ const rightSidePanelModule = angular
   .component('rightSidePanel', rightSidePanelComponent)
   .component('hippoEditContent', editContentComponent)
   .component('fieldsEditor', fieldsEditorComponent)
-  .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }))
+  .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }));
+
 export default rightSidePanelModule.name;
 

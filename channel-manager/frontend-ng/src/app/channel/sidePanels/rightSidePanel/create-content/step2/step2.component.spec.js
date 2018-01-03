@@ -246,12 +246,12 @@ describe('Create content step 2 component', () => {
       expect(component.onSave).toHaveBeenCalledWith({ documentId: testDocument.id });
     });
 
-    it('does not trigger a discardAndClose dialog by resetting onBeforeStateChange', fakeAsync(() => {
+    it('does not trigger a discardAndClose dialog by resetting onBeforeStateChange', () => {
       saveDraftSpy.and.returnValue($q.resolve());
       spyOn(component, 'onBeforeStateChange');
       component.saveDocument();
       $rootScope.$apply();
       expect(component.onBeforeStateChange).toHaveBeenCalled();
-    }));
+    });
   });
 });
