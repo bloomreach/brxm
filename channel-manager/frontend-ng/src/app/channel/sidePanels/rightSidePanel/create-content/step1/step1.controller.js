@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class RightSidePanelCtrl {
+class Step1Controller {
   constructor(
     $translate,
     $log,
@@ -127,4 +127,4 @@ class RightSidePanelCtrl {
   }
 }
 
-export default RightSidePanelCtrl;
+export default Step1Controller;
