@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,4 +60,16 @@ public interface JcrService {
      * @return true if the resource was found and imported successfully, false otherwise.
      */
     boolean importResource(Node targetNode, String resourcePath, Map<String, Object> placeholderData);
+
+    /**
+     * Interpolate and import a JSON (classpath) resource containing translations into the repository.
+     *
+     * Does *not* save changes.
+     *
+     * @param session         JCR session to import the translations
+     * @param resourcePath    absolute resource path
+     * @param placeholderData data to fill placeholders in the input JSON
+     * @return true if the resource was found and imported successfully, false otherwise.
+     */
+    boolean importTranslationsResource(Session session, String resourcePath, Map<String, Object> placeholderData);
 }

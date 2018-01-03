@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -31,9 +29,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TranslationsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -42,7 +37,7 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name = "translations", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class TranslationsInstruction extends BuiltinInstruction {
 
-    private static final Logger log = LoggerFactory.getLogger(TranslationsInstruction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TranslationsInstruction.class);
 
     @Inject private JcrService jcrService;
 
@@ -64,16 +59,16 @@ public class TranslationsInstruction extends BuiltinInstruction {
     @Override
     public InstructionStatus execute(final PluginContext context) {
         final Session session = jcrService.createSession();
-        try (final InputStream in = getClass().getClassLoader().getResourceAsStream(source)) {
-            final String json = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(in), context.getPlaceholderData());
-            TranslationsUtils.importTranslations(json, session);
-        } catch (IOException | RepositoryException e) {
-            log.error("Failed to import translations", e);
-            return InstructionStatus.FAILED;
+        boolean success = false;
+        try {
+            success = jcrService.importTranslationsResource(session, source, context.getPlaceholderData());
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error("Failed to import translations into repository.", e);
         } finally {
             jcrService.destroySession(session);
         }
-        return InstructionStatus.SUCCESS;
+        return success ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
     @Override

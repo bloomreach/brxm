@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
   <instructionSet>
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
-    <translations source="json/translations/eventstypes-translations.json" />
-    <translations source="json/translations/eventstemplates-translations.json" />
+    <translations source="/json/translations/eventstypes-translations.json" />
+    <translations source="/json/translations/eventstemplates-translations.json" />
   </instructionSet>
 
   <instructionSet group="jsp">

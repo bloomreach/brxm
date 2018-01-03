@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,18 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     public void base_path_for_content_type() {
         assertEquals("/hippo:namespaces/system/foo", contentTypeService.jcrBasePathForContentType("foo"));
         assertEquals("/hippo:namespaces/namespace/bar", contentTypeService.jcrBasePathForContentType("namespace:bar"));
+    }
+
+    @Test
+    public void extract_prefix() {
+        assertEquals("foo", contentTypeService.extractPrefix("foo:bar"));
+        assertEquals("system", contentTypeService.extractPrefix("foobar"));
+    }
+
+    @Test
+    public void extract_short_name() {
+        assertEquals("bar", contentTypeService.extractShortName("foo:bar"));
+        assertEquals("foobar", contentTypeService.extractShortName("foobar"));
     }
 
     @Test

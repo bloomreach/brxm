@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,18 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     }
 
     @Override
+    public String extractPrefix(final String jcrType) {
+        int idx = jcrType.indexOf(':');
+        return idx < 0 ? "system" : jcrType.substring(0, idx);
+    }
+
+    @Override
+    public String extractShortName(final String jcrType) {
+        int idx = jcrType.indexOf(':');
+        return idx < 0 ? jcrType : jcrType.substring(idx + 1);
+    }
+
+    @Override
     public boolean addMixinToContentType(final String jcrContentType, final String mixinName,
                                          final boolean updateExisting) {
         final String contentTypeNodePath = String.format("/hippo:namespaces/%s",
@@ -206,7 +218,7 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         documentType.setMixin(contentType.isMixin());
         documentType.setCompoundType(contentType.isCompoundType());
         documentType.setSuperTypes(contentType.getSuperTypes());
-        documentType.setName(extractName(fullName));
+        documentType.setName(extractShortName(fullName));
         documentType.setDraftMode(determineDraftMode(documentType, session));
 
         final Path beanPath = beans.get(fullName);
@@ -231,14 +243,6 @@ public class ContentTypeServiceImpl implements ContentTypeService {
         }
 
         return split.iterator().next();
-    }
-
-    private String extractName(final String fullName) {
-        final int idx = fullName.indexOf(':');
-        if (idx != -1) {
-            return fullName.substring(idx + 1);
-        }
-        return fullName;
     }
 
     private String extractPrefix(final String prefix, final String fullName) {

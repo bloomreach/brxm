@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@
     <xml action="copy" source="xml/namespaces/author.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
     <!-- translations -->
-    <translations source="json/translations/blogtypes-translations.json" />
-    <translations source="json/translations/blogtemplates-translations.json" />
+    <translations source="/json/translations/blogtypes-translations.json" />
+    <translations source="/json/translations/blogtemplates-translations.json" />
     <!-- beans-->
     <file action="copy" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
     <file action="copy" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
