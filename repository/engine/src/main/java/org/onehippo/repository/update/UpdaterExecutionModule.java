@@ -143,10 +143,15 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
         @Override
         public void run() {
-            try (LockResource lock = lockManager.lock(UPDATE_PATH)){
+            try (LockResource ignore = lockManager.lock(UPDATE_PATH)){
+                // make sure to trigger a JCR cluster sync after the lock is obtained to make sure the
+                // #executeUpdatersInQueue does not happen agains stale jcr nodes
+                session.refresh(false);
                 executeUpdatersInQueue();
             } catch (LockException e) {
                 log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
+            }  catch (RepositoryException e) {
+                log.error("RepositoryException while refreshing session.", e);
             } finally {
                 synchronized (monitor) {
                     task = null;
