@@ -20,7 +20,6 @@ import 'angular-mocks';
 describe('HstService', () => {
   let $q;
   let $httpBackend;
-  let $window;
   let hstService;
   let ConfigServiceMock;
 
@@ -45,10 +44,9 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$httpBackend_, _$window_, _HstService_) => {
+    inject((_$q_, _$httpBackend_, _HstService_) => {
       $q = _$q_;
       $httpBackend = _$httpBackend_;
-      $window = _$window_;
       hstService = _HstService_;
     });
   });
@@ -341,18 +339,6 @@ describe('HstService', () => {
       'Content-Type': 'application/json;charset=utf-8',
     }).respond(200);
     hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
-
-  it('reports user activity to the CMS when the backend is called', () => {
-    spyOn($window.APP_TO_CMS, 'publish');
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
-      'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
-      Accept: 'application/json, text/plain, */*',
-    }).respond(200);
-    hstService.doGet('some-uuid', 'one', 'two', 'three');
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
     $httpBackend.flush();
   });
 });

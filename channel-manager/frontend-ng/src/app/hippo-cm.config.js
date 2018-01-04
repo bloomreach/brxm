@@ -18,6 +18,7 @@ import template from './hippo-cm.html';
 
 function config(
   $compileProvider,
+  $httpProvider,
   $mdIconProvider,
   $mdThemingProvider,
   $stateProvider,
@@ -169,6 +170,18 @@ function config(
   // only enable Angular debug information when the CMS runs in 'Wicket development mode'
   const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
   $compileProvider.debugInfoEnabled(devMode);
+
+  // report all HTTP requests as 'user activity' to the CMS to prevent active logout
+  $httpProvider.interceptors.push((CmsService) => {
+    'ngInject';
+
+    return {
+      request: (httpConfig) => {
+        CmsService.publish('user-activity');
+        return httpConfig;
+      },
+    };
+  });
 }
 
 export default config;
