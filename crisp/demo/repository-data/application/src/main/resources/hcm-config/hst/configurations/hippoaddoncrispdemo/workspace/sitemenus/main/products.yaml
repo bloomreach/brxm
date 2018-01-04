@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hippoaddoncrispdemo/hst:workspace/hst:sitemenus/main/products:
+      jcr:primaryType: hst:sitemenuitem
+      hst:referencesitemapitem: products

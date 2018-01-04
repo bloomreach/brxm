@@ -23,3 +23,6 @@ definitions:
       /newspage-main:
         jcr:primaryType: hst:template
         hst:renderpath: webfile:/freemarker/hstdefault/newspage-main.ftl
+      /productspage-main:
+        jcr:primaryType: hst:template
+        hst:renderpath: webfile:/freemarker/hippoaddoncrispdemo/productspage-main.ftl

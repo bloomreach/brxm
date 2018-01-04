@@ -1,0 +1,35 @@
+[
+  {
+    "SKU": "4150349",
+    "description": "MultiSync X431BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms",
+    "name": "NEC MultiSync X431BT",
+    "extendedData": {
+      "title": "NEC MultiSync X431BT",
+      "type": "Link",
+      "uri": "Incentro-HIC-Site\/-\/products\/4150349",
+      "description": "MultiSync X431BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms"
+    }
+  },
+  {
+    "SKU": "4696003",
+    "description": "PA271W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B",
+    "name": "NEC PA271W",
+    "extendedData": {
+      "title": "NEC PA271W",
+      "type": "Link",
+      "uri": "Incentro-HIC-Site\/-\/products\/4696003",
+      "description": "PA271W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B"
+    }
+  },
+  {
+    "SKU": "4017125",
+    "description": "LCD\/TFT desk mount",
+    "name": "Newstar FPMA-D700D",
+    "extendedData": {
+      "title": "Newstar FPMA-D700D",
+      "type": "Link",
+      "uri": "Incentro-HIC-Site\/-\/products\/4017125",
+      "description": "LCD\/TFT desk mount"
+    }
+  }
+]
