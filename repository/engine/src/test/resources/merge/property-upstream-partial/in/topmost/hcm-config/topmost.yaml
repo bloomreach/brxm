@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost:
+      jcr:primaryType: nt:unstructured
+      /subnode:
+        jcr:primaryType: nt:unstructured
+        topmostvalue: topmostvalue

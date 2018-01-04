@@ -116,7 +116,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
         }
 
         @Override
-        public void close() {
+        public synchronized void close() {
             if (!closed) {
                 closed = true;
                 unlock(this);
@@ -124,7 +124,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
         }
 
         @Override
-        public MutableLock getLock() {
+        public Lock getLock() {
             return lock;
         }
 

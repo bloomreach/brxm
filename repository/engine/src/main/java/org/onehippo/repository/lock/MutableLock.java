@@ -16,6 +16,7 @@
 package org.onehippo.repository.lock;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.onehippo.cms7.services.lock.Lock;
 
@@ -23,13 +24,13 @@ public class MutableLock extends Lock {
 
     private final WeakReference<Thread> thread;
 
-    private int holdCount;
+    private final AtomicInteger holdCount;
 
     public MutableLock(final String lockKey, final String lockOwner, final String lockThread,
                        final long creationTime, final String status) {
         super(lockKey, lockOwner, lockThread, creationTime, status);
         thread = new WeakReference<>(Thread.currentThread());
-        holdCount = 1;
+        holdCount = new AtomicInteger(1);
     }
 
     public WeakReference<Thread> getThread() {
@@ -37,15 +38,15 @@ public class MutableLock extends Lock {
     }
 
     public void increment() {
-        holdCount++;
+        holdCount.incrementAndGet();
     }
 
     public void decrement() {
-        holdCount--;
+        holdCount.decrementAndGet();
     }
 
     public int getHoldCount() {
-        return holdCount;
+        return holdCount.get();
     }
 
 }

@@ -124,6 +124,8 @@ public class ConfigurationBaselineService {
     public void storeBaseline(final ConfigurationModelImpl model, final Session session) throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
+            // Ensure/force cluster synchronization in case another instance just modified the baseline
+            session.refresh(true);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
@@ -194,6 +196,8 @@ public class ConfigurationBaselineService {
             throws RepositoryException, IOException, ParserException {
         configurationLockManager.lock();
         try {
+            // Ensure/force cluster synchronization in case another instance just modified the baseline
+            session.refresh(true);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
@@ -570,6 +574,8 @@ public class ConfigurationBaselineService {
         else {
             configurationLockManager.lock();
             try {
+                // Ensure/force cluster synchronization in case another instance just modified the baseline
+                session.refresh(true);
                 StopWatch stopWatch = new StopWatch();
                 stopWatch.start();
 

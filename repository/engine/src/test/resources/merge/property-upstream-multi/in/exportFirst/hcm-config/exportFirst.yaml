@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost:
+      /node1:
+        multiproperty: [topmostValue, upstreamValue, exportValue]
+      /node2:
+        multiproperty: [topmostValue]
