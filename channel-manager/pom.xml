@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>5.2.0-create-content-SNAPSHOT</version>
+  <version>5.2.0-angularjs-downgrade-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
