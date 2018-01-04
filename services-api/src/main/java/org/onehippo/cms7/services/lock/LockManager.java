@@ -40,7 +40,7 @@ import org.onehippo.cms7.services.SingletonService;
  *         <pre>
  *             public void run() {
  *                try (LockResource ignore = lockManager.lock(key)){
- *                   // session.refresh(true|false) is JCR nodes are involved
+ *                   // session.refresh(true|false) if JCR nodes are involved
  *                   // Do work
  *                } catch (AlreadyLockedException e) {
  *                   log.info("'{}' is already locked", key, e);
@@ -58,7 +58,7 @@ import org.onehippo.cms7.services.SingletonService;
  *                try {
  *                   lockManager.lock(key);
  *                   locked = true;
- *                   // session.refresh(true|false) is JCR nodes are involved
+ *                   // session.refresh(true|false) if JCR nodes are involved
  *                   // Do work
  *                } catch (AlreadyLockedException e) {
  *                   log.info("'{}' is already locked", key, e);
