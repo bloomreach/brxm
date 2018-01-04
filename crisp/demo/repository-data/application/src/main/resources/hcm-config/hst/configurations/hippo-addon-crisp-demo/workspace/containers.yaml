@@ -79,3 +79,10 @@ definitions:
             hst:componentclassname: org.onehippo.cms7.crisp.demo.components.NewsContentComponent
             hst:template: newspage-main
             hst:xtype: hst.item
+      /productspage:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          hst:label: Products Page Main
+          hst:xtype: hst.vbox

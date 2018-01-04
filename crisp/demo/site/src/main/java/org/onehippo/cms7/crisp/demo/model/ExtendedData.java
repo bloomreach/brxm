@@ -18,26 +18,42 @@ package org.onehippo.cms7.crisp.demo.model;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+@XmlRootElement(name="extendedData")
+public class ExtendedData {
 
-@XmlRootElement(name = "product")
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Product {
+    private String title;
 
-    private String sku;
+    private String type;
+
+    private String uri;
+
     private String description;
-    private String name;
-    private ExtendedData extendedData;
 
-    @XmlElement(name = "SKU")
-    @JsonProperty("SKU")
-    public String getSku() {
-        return sku;
+    @XmlElement
+    public String getTitle() {
+        return title;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public void setTitle(String value) {
+        this.title = value;
+    }
+
+    @XmlElement
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String value) {
+        this.type = value;
+    }
+
+    @XmlElement
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String value) {
+        this.uri = value;
     }
 
     @XmlElement
@@ -45,26 +61,8 @@ public class Product {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @XmlElement
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @XmlElement
-    public ExtendedData getExtendedData() {
-        return extendedData;
-    }
-
-    public void setExtendedData(ExtendedData value) {
-        this.extendedData = value;
+    public void setDescription(String value) {
+        this.description = value;
     }
 
 }

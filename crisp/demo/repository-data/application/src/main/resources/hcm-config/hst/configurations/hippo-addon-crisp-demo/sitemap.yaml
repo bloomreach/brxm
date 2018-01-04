@@ -37,3 +37,6 @@ definitions:
           jcr:primaryType: hst:sitemapitem
           hst:componentconfigurationid: hst:pages/newslist
           hst:relativecontentpath: ${parent}/${1}
+      /products:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/productspage

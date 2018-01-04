@@ -65,6 +65,8 @@
     <hippo.addon-crisp.version>${project.version}</hippo.addon-crisp.version>
     <!-- ***END temporary override of versions*** -->
 
+    <hystrix-javanica.version>1.5.12</hystrix-javanica.version>
+
     <forge.exdocpickerbase.version>5.0.2</forge.exdocpickerbase.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -123,6 +125,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
         <version>${hippo.addon-crisp.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.netflix.hystrix</groupId>
+        <artifactId>hystrix-javanica</artifactId>
+        <version>${hystrix-javanica.version}</version>
       </dependency>
 
       <dependency>
