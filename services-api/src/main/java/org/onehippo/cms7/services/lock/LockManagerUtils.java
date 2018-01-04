@@ -20,7 +20,19 @@ import java.util.concurrent.TimeoutException;
 public class LockManagerUtils {
 
     /**
-     * Utility method to create and if needed wait indefinitely (unless interrupted) for a {@link LockManager#lock(String)}
+     * <p>
+     *   Utility method to create and if needed wait indefinitely (unless interrupted) for a {@link LockManager#lock(String)}.
+     * </p>
+     * <p>
+     *   Make sure that after obtaining the cluster-wide lock, that in you are doing JCR node invocations, you first invoke
+     *   <code>
+     *       <pre>
+     *           session.refresh(true|false)
+     *       </pre>
+     *   </code>
+     *   to make sure the latest global JCR cluster changes are retrieved locally.
+     * </p>
+     *
      * @param lockManager lockManager
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @param waitInterval time in milliseconds to wait before retrying creating the lock
@@ -39,7 +51,18 @@ public class LockManagerUtils {
     }
 
     /**
-     * Utility method to create and if needed wait for a maximum amount of time (unless interrupted) for a {@link LockManager#lock(String)}
+     * <p>
+     *    Utility method to create and if needed wait for a maximum amount of time (unless interrupted) for a {@link LockManager#lock(String)} *
+     * </p>
+     * <p>
+     *   Make sure that after obtaining the cluster-wide lock, that in you are doing JCR node invocations, you first invoke
+     *   <code>
+     *       <pre>
+     *           session.refresh(true|false)
+     *       </pre>
+     *   </code>
+     *   to make sure the latest global JCR cluster changes are retrieved locally.
+     * </p>
      * @param lockManager lockManager
      * @param key the key for the {@link Lock} where {@code key} is now allowed to exceed 256 chars
      * @param waitInterval time in milliseconds to wait before retrying creating the lock

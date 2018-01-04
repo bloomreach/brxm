@@ -40,6 +40,7 @@ import org.onehippo.cms7.services.SingletonService;
  *         <pre>
  *             public void run() {
  *                try (LockResource ignore = lockManager.lock(key)){
+ *                   // session.refresh(true|false) is JCR nodes are involved
  *                   // Do work
  *                } catch (AlreadyLockedException e) {
  *                   log.info("'{}' is already locked", key, e);
@@ -57,6 +58,7 @@ import org.onehippo.cms7.services.SingletonService;
  *                try {
  *                   lockManager.lock(key);
  *                   locked = true;
+ *                   // session.refresh(true|false) is JCR nodes are involved
  *                   // Do work
  *                } catch (AlreadyLockedException e) {
  *                   log.info("'{}' is already locked", key, e);
@@ -93,7 +95,7 @@ import org.onehippo.cms7.services.SingletonService;
  *     after obtaining the {@link LockResource}. The reason for this is that in the cluster wide 'synchronized' part of
  *     the code, you want to make sure that all JCR nodes the code is going to touch are in sync with the latest cluster
  *     state and that the code is not chatting with local stale JCR nodes. Thus make sure to always invoke
- *     {@code session.refresh(true|false);} when dealing with JCR nodes in a cluster wide locked code block.
+ *     {@code session.refresh(true|false);} when dealing with JCR nodes in a cluster wide synchronized code block.
  * </p>
  *
  */
