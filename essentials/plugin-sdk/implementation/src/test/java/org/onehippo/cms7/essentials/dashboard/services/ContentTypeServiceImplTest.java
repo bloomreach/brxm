@@ -30,7 +30,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -39,8 +38,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.spi.Name;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -61,7 +58,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 
-import groovy.util.logging.Log4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -138,10 +134,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", true));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, true));
 
         // check supertypes
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
@@ -183,10 +178,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", false));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, false));
 
         // check mixins of content nodes
         final Node instanceNoMixins = session.getNode("/content/instanceNoMixins");
@@ -205,10 +199,10 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "mix:referenceable", false));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "mix:referenceable", session, false));
+
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(3, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
         final Node prototypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:prototypes/hipposysedit:prototype");
@@ -221,14 +215,14 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
+        final Session session = jcrService.createSession();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ContentTypeServiceImpl.class).build()) {
-            assertFalse(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "foo:bar", false));
+            assertFalse(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "foo:bar", session, false));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add mixin 'foo:bar' to content type 'testnamespace:basedocument'.")));
         }
 
-        final Session session = jcrService.createSession();
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(2, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
         jcrService.destroySession(session);

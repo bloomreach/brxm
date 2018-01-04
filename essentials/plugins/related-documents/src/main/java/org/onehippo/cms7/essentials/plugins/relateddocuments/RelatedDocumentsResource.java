@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public class RelatedDocumentsResource {
     @Path("/")
     public UserFeedback addDocuments(final Configuration configuration, @Context HttpServletResponse response) {
         final Collection<String> changedDocuments = new HashSet<>();
+        final UserFeedback feedback = new UserFeedback();
         final Session session = jcrService.createSession();
         try {
             for (Configuration.Field field : configuration.getFields()) {
@@ -70,7 +71,10 @@ public class RelatedDocumentsResource {
                     log.info("Suggest field path: [{}] already exists.", fieldImportPath);
                     continue;
                 }
-                contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
+                if (!contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, session, true)) {
+                    feedback.addError("Failed to add related documents field for type '" + jcrContentType + "'.");
+                    continue;
+                }
                 // add place holders:
                 final Map<String, Object> templateData = new HashMap<>();
                 templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
@@ -80,21 +84,21 @@ public class RelatedDocumentsResource {
                 final Node targetNode = session.getNode(fieldImportPath);
                 jcrService.importResource(targetNode, "/related_documents_template.xml", templateData);
                 jcrService.importResource(targetNode, "/related_documents_suggestion_template.xml", templateData);
+                session.save();
                 changedDocuments.add(jcrContentType);
             }
-            session.save();
         } catch (RepositoryException e) {
             log.error("Error adding related documents field", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new UserFeedback().addError("Failed to add related documents field: " + e.getMessage());
+            return feedback.addError("Failed to add related documents field: " + e.getMessage());
         } finally {
             jcrService.destroySession(session);
         }
 
         if (changedDocuments.size() > 0) {
             final String docTypeList = changedDocuments.stream().collect(Collectors.joining(", "));
-            return new UserFeedback().addSuccess("Added related document fields to following documents: " + docTypeList);
+            return feedback.addSuccess("Added related document fields to following documents: " + docTypeList);
         }
-        return new UserFeedback().addSuccess("No related document fields were added");
+        return feedback.addSuccess("No related document fields were added");
     }
 }

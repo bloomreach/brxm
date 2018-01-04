@@ -17,20 +17,20 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('taxonomyPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+        .controller('taxonomyPluginCtrl', function ($scope, $rootScope, $http) {
             var endpointDocuments = $rootScope.REST.documents;
             var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + 'taxonomyplugin/';
             $scope.addDocuments = function () {
-                var selectedDocumentNames = [];
-                var selectedTaxonomyNames = [];
-                var documents = $filter('filter')($scope.documentTypes, {checked: true});
-                angular.forEach(documents, function (value) {
-                    selectedDocumentNames.push(value.name);
-                    selectedTaxonomyNames.push(value.selectedTaxonomy.name);
+                var taxonomyFields = [];
+                angular.forEach($scope.documentTypes, function (docType) {
+                    if (docType.checked) {
+                        taxonomyFields.push({
+                            jcrContentType: docType.fullName,
+                            taxonomyName: docType.selectedTaxonomy.name
+                        });
+                    }
                 });
-                var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
-                Essentials.addPayloadData("taxonomies", selectedTaxonomyNames.join(','), payload);
-                $http.post(endpointTaxonomy + 'add', payload).success(function () {
+                $http.post(endpointTaxonomy + 'add', taxonomyFields).success(function () {
                     $scope.fieldsAdded = true;
                     updateDocumentTypes();
                 });
@@ -99,7 +99,7 @@
                     $scope.typesWithTaxonomyField = 0;
 
                     // update list of per-document used taxonomies
-                    $http.get(endpointTaxonomy + 'taxonomies/' + docType.name).success(function (taxonomies) {
+                    $http.get(endpointTaxonomy + 'taxonomies/' + docType.fullName).success(function (taxonomies) {
                         docType.taxonomies = taxonomies;
                         docType.taxonomiesString = taxonomies.join(', ');
                         docType.hasTaxonomyFields = !!docType.taxonomiesString;
@@ -114,10 +114,11 @@
 
             // Make string array of checked Locales
             function extractLocales(l) {
-                var loc = $filter('filter')(l, {checked: true});
                 var locales = [];
-                angular.forEach(loc, function (value) {
-                    locales.push(value.name);
+                angular.forEach(l, function (locale) {
+                    if (locale.checked) {
+                        locales.push(locale.name);
+                    }
                 });
                 return locales;
             }

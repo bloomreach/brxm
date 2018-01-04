@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.service;
 import java.util.List;
 import java.util.function.Predicate;
 
+import javax.jcr.Session;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 
@@ -73,12 +75,16 @@ public interface ContentTypeService {
      * Adding a mixin to a content type has the effect that future instances of that content type will have the
      * specified mixin. Optionally, you can request that all existing instances of that document type are updated.
      *
+     * Upon success, this method does push changes into the JCR session, but not save them to the repository.
+     * Upon failure, all pending changes in the session are wiped.
+     *
      * @param jcrContentType prefixed JCR name of a content type (document or compound)
      * @param mixinName      prefixed JCR name of the mixin
+     * @param session        JCR session to access the repository
      * @param updateExisting when true, also add the mixin to all existing instances (nodes) of the content type
      * @return               true if the content type has the mixin upon returning, false otherwise.
      */
-    boolean addMixinToContentType(String jcrContentType, String mixinName, boolean updateExisting);
+    boolean addMixinToContentType(String jcrContentType, String mixinName, Session session, boolean updateExisting);
 
     /**
      * Determine the value for the 'wicket.id' property of a new field in the CMS' editor template.

@@ -118,14 +118,9 @@ public class ContentTypeServiceImpl implements ContentTypeService {
 
     @Override
     public boolean addMixinToContentType(final String jcrContentType, final String mixinName,
-                                         final boolean updateExisting) {
+                                         final Session session, final boolean updateExisting) {
         final String contentTypeNodePath = String.format("/hippo:namespaces/%s",
                 jcrContentType.replace(':', '/'));
-
-        final Session session = jcrService.createSession();
-        if (session == null) {
-            return false;
-        }
 
         try {
             final Node contentTypeNode = session.getNode(contentTypeNodePath);
@@ -148,13 +143,10 @@ public class ContentTypeServiceImpl implements ContentTypeService {
             if (updateExisting) {
                 addMixinToContent(session, jcrContentType, mixinName);
             }
-            session.save();
         } catch (RepositoryException e) {
-            final String message = String.format("Failed to add mixin '%s' to content type '%s'.", mixinName, jcrContentType);
-            LOG.error(message, e);
+            jcrService.refreshSession(session, false);
+            LOG.error("Failed to add mixin '{}' to content type '{}'.", mixinName, jcrContentType, e);
             return false;
-        } finally {
-            jcrService.destroySession(session);
         }
 
         return true;
