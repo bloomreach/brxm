@@ -30,6 +30,11 @@ import org.springframework.stereotype.Service;
 public class ProjectServiceImpl implements ProjectService {
 
     @Override
+    public String getBasePath() {
+        return ProjectUtils.getBaseProjectDirectory();
+    }
+
+    @Override
     public List<File> getLog4j2Files() {
         final FilenameFilter log4j2Filter = (dir, name) -> name.matches("log4j2.*\\.xml");
         final File[] log4j2Files = ProjectUtils.getConfFolder().listFiles(log4j2Filter);

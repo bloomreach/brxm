@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-import javax.xml.bind.annotation.XmlRootElement;
+public class SelectionFieldRestful {
 
-import io.swagger.annotations.ApiModel;
-
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
-
-@ApiModel
-@XmlRootElement(name = "selectionField")
-public class SelectionFieldRestful implements Restful{
-
-    private static final long serialVersionUID = 1L;
     private String nameSpace;
     private String documentName;
     private String name;
@@ -71,15 +62,5 @@ public class SelectionFieldRestful implements Restful{
 
     public void setValueList(final String valueList) {
         this.valueList = valueList;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("SelectionFieldRestful{");
-        sb.append("nameSpace='").append(nameSpace).append('\'');
-        sb.append(", documentName='").append(documentName).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * UserFeedback encapsulates one or more messages to be displayed to a user of the dashboard web application,
  * as feedback for some user-triggered action.
@@ -27,6 +29,7 @@ import java.util.List;
  * UserFeedback will typically be serialized to JSON and sent to the front-end in the response of a REST call.
  * The field 'feedbackMessages' is used by the front-end to detect feedback messages in arbitrary REST call responses.
  */
+@ApiModel
 public class UserFeedback implements Serializable {
     private final List<Details> feedbackMessages = new ArrayList<>();
 
@@ -44,7 +47,7 @@ public class UserFeedback implements Serializable {
         return this; // for chaining
     }
 
-    public void addMessage(final String message, final boolean error) {
+    private void addMessage(final String message, final boolean error) {
         final Details details = new Details();
 
         details.message = message;

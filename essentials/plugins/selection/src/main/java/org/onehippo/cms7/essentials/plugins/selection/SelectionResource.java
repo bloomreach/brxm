@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,8 +44,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
@@ -58,12 +55,10 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,18 +76,19 @@ public class SelectionResource {
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
     @Inject private RebuildService rebuildService;
+    @Inject private ProjectService projectService;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
-    public UserFeedback addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+    public UserFeedback addField(final Map<String, Object> parameters, @Context HttpServletResponse response) {
         final UserFeedback feedback = new UserFeedback();
         final Session session = jcrService.createSession();
 
         try {
-            final int status = addField(session, payloadRestful.getValues(), feedback);
+            final int status = addField(session, parameters, feedback);
             if (Response.Status.Family.familyOf(status) != SUCCESSFUL) {
                 response.setStatus(status);
             }
@@ -200,43 +196,37 @@ public class SelectionResource {
      * Add all selection fields of a document type to a list.
      *
      * @param fields  list of selection fields
-     * @param docType namespaced name of document type
+     * @param jcrContentType namespaced name of document type
      * @param session JCR session to read configuration
      * @throws RepositoryException
      */
-    private void addSelectionFields(final List<SelectionFieldRestful> fields, final String docType, final Session session)
+    private void addSelectionFields(final List<SelectionFieldRestful> fields, final String jcrContentType, final Session session)
         throws RepositoryException
     {
-        final String[] parts = docType.split(":");
-        if (parts.length != 2) {
-            log.warn("Unexpected document type '{}'.", docType);
-            return ;
-        }
-        final String nameSpace = parts[0];
-        final String docName = parts[1];
-        final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/", nameSpace, docName);
-        final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
-        final Node nodeType = session.getNode(docTypeBase + "hipposysedit:nodetype/hipposysedit:nodetype");
+        final String contentTypeBasePath = contentTypeService.jcrBasePathForContentType(jcrContentType);
+        final Node editorTemplate = session.getNode(contentTypeBasePath + "/editor:templates/_default_");
+        final Node nodeType = session.getNode(contentTypeBasePath + "/hipposysedit:nodetype/hipposysedit:nodetype");
 
-        addSingleSelectFields(fields, nameSpace, docName, nodeType, editorTemplate);
-        addMultiSelectFields(fields, nameSpace, docName, editorTemplate);
+        addSingleSelectFields(fields, jcrContentType, nodeType, editorTemplate);
+        addMultiSelectFields(fields, jcrContentType, editorTemplate);
     }
 
     /**
      * Find all single selection fields of the document type and add them to the list of selection fields.
      *
      * @param fields         list of selection fields
-     * @param nameSpace      document type namespace
-     * @param documentName   document type name
+     * @param jcrContentType JCR content type name
      * @param nodeType       node type root node
      * @param editorTemplate editor template root node
      * @throws RepositoryException
      */
-    private void addSingleSelectFields(final List<SelectionFieldRestful> fields, final String nameSpace,
-                                       final String documentName, final Node nodeType, final Node editorTemplate)
+    private void addSingleSelectFields(final List<SelectionFieldRestful> fields, final String jcrContentType,
+                                       final Node nodeType, final Node editorTemplate)
         throws RepositoryException
     {
         final String pluginClass = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
+        final String namespace = contentTypeService.extractPrefix(jcrContentType);
+        final String shortName = contentTypeService.extractShortName(jcrContentType);
         final NodeIterator children = nodeType.getNodes();
         while (children.hasNext()) {
             final Node child = children.nextNode();
@@ -250,8 +240,8 @@ public class SelectionResource {
 
                         final SelectionFieldRestful field = new SelectionFieldRestful();
                         field.setType("single");
-                        field.setNameSpace(nameSpace);
-                        field.setDocumentName(documentName);
+                        field.setNameSpace(namespace);
+                        field.setDocumentName(shortName);
                         field.setName(editorField.getProperty("caption").getString());
                         field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                         fields.add(field);
@@ -285,15 +275,15 @@ public class SelectionResource {
      * Find all multiple selection fields of the document type and add them to the list of selection fields.
      *
      * @param fields         list of selection fields
-     * @param nameSpace      document type namespace
-     * @param documentName   document type name
+     * @param jcrContentType JCR content type name
      * @param editorTemplate editor template root node
      * @throws RepositoryException
      */
-    private void addMultiSelectFields(final List<SelectionFieldRestful> fields, final String nameSpace,
-                                      final String documentName, final Node editorTemplate)
+    private void addMultiSelectFields(final List<SelectionFieldRestful> fields, final String jcrContentType, final Node editorTemplate)
             throws RepositoryException
     {
+        final String namespace = contentTypeService.extractPrefix(jcrContentType);
+        final String shortName = contentTypeService.extractShortName(jcrContentType);
         final NodeIterator editorFields = editorTemplate.getNodes();
         while (editorFields.hasNext()) {
             final Node editorField = editorFields.nextNode();
@@ -301,8 +291,8 @@ public class SelectionResource {
                     editorField.hasProperty("plugin.class") && MULTISELECT_PLUGIN_CLASS.equals(editorField.getProperty("plugin.class").getString())) {
                 final SelectionFieldRestful field = new SelectionFieldRestful();
                 field.setType("multiple");
-                field.setNameSpace(nameSpace);
-                field.setDocumentName(documentName);
+                field.setNameSpace(namespace);
+                field.setDocumentName(shortName);
                 field.setName(editorField.getProperty("caption").getString());
                 field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                 fields.add(field);
@@ -314,62 +304,58 @@ public class SelectionResource {
      * Add a new selection field to a document type.
      *
      * @param session JCR session for persisting the changes
-     * @param values  parameters of new selection field (See selectionPlugin.js for keys).
+     * @param parameters  parameters of new selection field (See selectionPlugin.js for keys).
      * @return        message to be sent back to front-end.
      */
-    private int addField(final Session session, final Map<String, String> values, final UserFeedback feedback)
+    private int addField(final Session session, final Map<String, Object> parameters, final UserFeedback feedback)
             throws RepositoryException, IOException {
-        final Map<String, Object> placeholderData = new HashMap<>();
+        final String jcrContentType = (String) parameters.get("jcrContentType");
+        final String namespace = contentTypeService.extractPrefix(jcrContentType);
+        parameters.put("namespace", namespace);
 
-        for (String key : values.keySet()) {
-            placeholderData.put(key, values.get(key));
-        }
-
-        final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
-                values.get("namespace"), values.get("documentType"));
-        final String documentType = values.get("namespace") + ':' + values.get("documentType");
-
-        final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
-        final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
+        final String contentTypeBackPath = contentTypeService.jcrBasePathForContentType(jcrContentType);
+        final Node editorTemplate = session.getNode(contentTypeBackPath + "/editor:templates/_default_");
+        final Node nodeTypeHandle = session.getNode(contentTypeBackPath + "/hipposysedit:nodetype");
         if (nodeTypeHandle.getNodes().getSize() > 1) {
-            feedback.addError("Document type '" + documentType + "' is currently being edited in the CMS, "
+            feedback.addError("Document type '" + jcrContentType + "' is currently being edited in the CMS, "
                     + "please commit any pending changes before adding a selection field.");
             return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
         final Node nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
 
         // Check if the field name is valid. If so, normalize it.
-        final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
-        placeholderData.put("normalizedFieldName", normalized);
+        final String fieldName = (String) parameters.get("fieldName");
+        final String normalized = NodeNameCodec.encode(fieldName.toLowerCase().replaceAll("\\s", ""));
+        parameters.put("normalizedFieldName", normalized);
 
         // Check if the fieldName is already in use
         if (nodeType.hasNode(normalized)
             || editorTemplate.hasNode(normalized)
-            || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
+            || isPropertyNameInUse(nodeType, namespace, normalized)) {
             feedback.addError("Field name '" + normalized + "' is already in use for this document type.");
             return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
 
         // Put the new field to the default location
-        placeholderData.put("fieldPosition", contentTypeService.determineDefaultFieldPosition(documentType));
+        parameters.put("fieldPosition", contentTypeService.determineDefaultFieldPosition(jcrContentType));
 
         String presentationType = "DynamicDropdown";
-        if ("single".equals(values.get("selectionType"))) {
-            if ("radioboxes".equals(values.get("presentation"))) {
+        if ("single".equals(parameters.get("selectionType"))) {
+            if ("radioboxes".equals(parameters.get("presentation"))) {
                 presentationType = "selection:RadioGroup";
             }
-            placeholderData.put("presentationType", presentationType);
+            parameters.put("presentationType", presentationType);
 
-            jcrService.importResource(editorTemplate, "/xml/single-field-editor-template.xml", placeholderData);
-            jcrService.importResource(nodeType, "/xml/single-field-node-type.xml", placeholderData);
-        } else if ("multiple".equals(values.get("selectionType"))) {
-            jcrService.importResource(editorTemplate, "/xml/multi-field-editor-template.xml", placeholderData);
-            jcrService.importResource(nodeType, "/xml/multi-field-node-type.xml", placeholderData);
+            jcrService.importResource(editorTemplate, "/xml/single-field-editor-template.xml", parameters);
+            jcrService.importResource(nodeType, "/xml/single-field-node-type.xml", parameters);
+        } else if ("multiple".equals(parameters.get("selectionType"))) {
+            jcrService.importResource(editorTemplate, "/xml/multi-field-editor-template.xml", parameters);
+            jcrService.importResource(nodeType, "/xml/multi-field-node-type.xml", parameters);
         }
         session.save();
 
-        final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
-                values.get("fieldName"), documentType);
+        final String successMessage = String.format("Successfully added new selection field '%s' to document type '%s'.",
+                fieldName, jcrContentType);
         feedback.addSuccess(successMessage);
         return HttpServletResponse.SC_CREATED;
     }
@@ -430,12 +416,8 @@ public class SelectionResource {
     }
 
     private File getSpringFile(final PluginContext context) {
-        final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
-        if (Strings.isNullOrEmpty(baseDir)) {
-            return null;
-        }
         String springFilePath = new StringBuilder()
-                .append(baseDir)
+                .append(projectService.getBasePath())
                 .append(File.separator)
                 .append(context.getProjectSettings().getSiteModule())
                 .append(File.separator)

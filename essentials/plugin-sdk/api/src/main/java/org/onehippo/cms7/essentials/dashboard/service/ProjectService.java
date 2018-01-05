@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,10 @@ import java.util.List;
  * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
 public interface ProjectService {
-    final String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
-    final String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
+    String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
+    String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
+
+    String getBasePath();
 
     /**
      * Retrieve a list of the log4j2 files of the project.

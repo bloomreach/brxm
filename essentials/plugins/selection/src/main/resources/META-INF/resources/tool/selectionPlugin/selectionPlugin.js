@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,17 +37,14 @@
             $scope.addField = function() {
                var maxRows = isNaN(parseInt($scope.data.maxRows)) ? 10: parseInt($scope.data.maxRows);
                 var payload = {
-                    values: {
-                        namespace:     $scope.data.selectedDocumentType.prefix,
-                        documentType:  $scope.data.selectedDocumentType.name,
-                        fieldName:     $scope.data.fieldName,
-                        selectionType: $scope.data.selectionType,
-                        valueList:     $scope.data.selectedValueList.value,
-                        presentation:  $scope.data.presentation.id,
-                        orientation:   $scope.data.orientation,
-                        maxRows:       maxRows,
-                        allowOrdering: $scope.data.allowOrdering
-                    }
+                    jcrContentType: $scope.data.selectedDocumentType.fullName,
+                    fieldName:      $scope.data.fieldName,
+                    selectionType:  $scope.data.selectionType,
+                    valueList:      $scope.data.selectedValueList.value,
+                    presentation:   $scope.data.presentation.id,
+                    orientation:    $scope.data.orientation,
+                    maxRows:        maxRows,
+                    allowOrdering:  $scope.data.allowOrdering
                 };
                 $http.post(restEndpoint + 'addfield/', payload).success(function () {
                     resetAddFieldForm();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,19 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
 
 public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     private ProjectServiceImpl projectService = new ProjectServiceImpl();
+
+    @Test
+    public void get_base_path() {
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/foo/bar");
+        assertEquals("/foo/bar", projectService.getBasePath());
+    }
 
     @Test
     public void testGetLog4jFiles() throws Exception {
