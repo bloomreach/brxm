@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 class NameUrlFieldsDialogController {
-  constructor ($mdDialog, title, nameField, urlField, locale) {
+  constructor($mdDialog, title, nameField, urlField, locale) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
@@ -33,9 +33,9 @@ class NameUrlFieldsDialogController {
       this.nameField.length !== 0, // name empty
       this.urlField.length !== 0, // url empty
       /\S/.test(this.nameField), // name is only whitespace(s)
-      /\S/.test(this.urlField) // url is only whitespaces
+      /\S/.test(this.urlField), // url is only whitespaces
     ];
-    return conditions.every((condition) => condition === true);
+    return conditions.every(condition => condition === true);
   }
 
   submit() {

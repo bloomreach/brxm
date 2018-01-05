@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ export class CreateContentComponent implements OnInit {
     Observable.fromPromise(this.createContentService.getTemplateQuery(this.options.templateQuery)).subscribe(
       (templateQuery) => {
         const tplQuery = templateQuery as TemplateQuery;
-        this.onLoadDocumentTypes(tplQuery.documentTypes)
+        this.onLoadDocumentTypes(tplQuery.documentTypes);
       },
       (error) => this.onErrorLoadingTemplateQuery(error),
     );
@@ -98,11 +98,12 @@ export class CreateContentComponent implements OnInit {
 
     Observable.fromPromise(this.createContentService.createDraft(document))
       .subscribe(
-      (response) => this.onContinue.emit({
-      name: this.nameUrlFields.nameField,
+        () => this.onContinue.emit({
+          name: this.nameUrlFields.nameField,
           url: this.nameUrlFields.urlField,
           locale: this.locale
-        }),(error) => this.onErrorCreatingDraft(error),
+        }),
+       (error) => this.onErrorCreatingDraft(error),
     );
   }
 
