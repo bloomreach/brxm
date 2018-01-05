@@ -21,7 +21,7 @@ import ngMessages from 'angular-messages';
 import ngTranslate from 'angular-translate';
 import ngLocalStorage from 'angular-local-storage';
 import 'angular-translate-loader-static-files';
-import uiRouter from 'angular-ui-router';
+import uiRouter from '@uirouter/angularjs';
 import ngDeviceDetector from 'ng-device-detector';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules

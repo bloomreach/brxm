@@ -12,6 +12,16 @@
       "resolved": "https://registry.npmjs.org/@bloomreach/frontend-build/-/frontend-build-6.0.5.tgz",
       "dev": true
     },
+    "@uirouter/angularjs": {
+      "version": "1.0.12",
+      "from": "@uirouter/angularjs@1.0.12",
+      "resolved": "https://registry.npmjs.org/@uirouter/angularjs/-/angularjs-1.0.12.tgz"
+    },
+    "@uirouter/core": {
+      "version": "5.0.13",
+      "from": "@uirouter/core@5.0.13",
+      "resolved": "https://registry.npmjs.org/@uirouter/core/-/core-5.0.13.tgz"
+    },
     "abbrev": {
       "version": "1.0.9",
       "from": "abbrev@>=1.0.0 <1.1.0",
@@ -185,11 +195,6 @@
       "version": "2.15.1",
       "from": "angular-translate-loader-static-files@2.15.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/angular-translate-loader-static-files/-/angular-translate-loader-static-files-2.15.1.tgz"
-    },
-    "angular-ui-router": {
-      "version": "1.0.0-rc.1",
-      "from": "angular-ui-router@1.0.0-rc.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/angular-ui-router/-/angular-ui-router-1.0.0-rc.1.tgz"
     },
     "angular-ui-tree": {
       "version": "2.22.5",
@@ -9744,11 +9749,6 @@
           }
         }
       }
-    },
-    "ui-router-core": {
-      "version": "3.1.0",
-      "from": "ui-router-core@3.1.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ui-router-core/-/ui-router-core-3.1.0.tgz"
     },
     "ultron": {
       "version": "1.0.2",
