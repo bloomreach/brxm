@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-function run(BrowserService) {
+import { Visualizer } from '@uirouter/visualizer';
+
+function run(BrowserService, $uiRouter) {
   'ngInject';
 
   // add ie11 class for ie11 specific hacks
   if (BrowserService.isIE()) {
     $('body').addClass('ie11');
+  }
+
+  const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
+  if (devMode) {
+    $uiRouter.plugin(Visualizer);
   }
 }
 
