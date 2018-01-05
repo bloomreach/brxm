@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import ngAnimate from 'angular-animate';
+import ngMaterial from 'angular-material';
+import ngMessages from 'angular-messages';
+import ngTranslate from 'angular-translate';
+import ngLocalStorage from 'angular-local-storage';
+import 'angular-translate-loader-static-files';
+import uiRouter from 'angular-ui-router';
+import ngDeviceDetector from 'ng-device-detector';
+
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './services/browser.service';
 import CatalogService from './services/catalog.service';
@@ -39,19 +49,20 @@ import getByPropertyFilter from './filters/getByProperty.filter';
 import incrementPropertyFilter from './filters/incrementProperty.filter';
 import HippoGlobal from './services/hippoGlobal.service';
 
-import channelModule from './channel/channel.ng1.module';
+
+import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
 
-const hippoCmModule = angular
+const hippoCmng = angular
   .module('hippo-cm', [
-    'ngMessages',
-    'ngMaterial',
-    'pascalprecht.translate',
-    'ngAnimate',
-    'LocalStorageModule',
-    'ng.deviceDetector',
-    'ui.router',
+    ngMessages,
+    ngMaterial,
+    ngTranslate,
+    ngAnimate,
+    ngLocalStorage,
+    uiRouter,
+    ngDeviceDetector,
     channelModule.name,
   ])
   .config(config)
@@ -80,4 +91,4 @@ const hippoCmModule = angular
   .filter('incrementProperty', incrementPropertyFilter)
   .filter('startWithSlash', startWithSlashFilter);
 
-export default hippoCmModule.name;
+export default hippoCmng;
