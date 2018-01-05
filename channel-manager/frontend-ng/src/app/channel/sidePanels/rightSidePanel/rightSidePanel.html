@@ -25,6 +25,9 @@
                  ng-if="!$ctrl.isFullWidth">
   </resize-handle>
 
+  <ui-view name="header"></ui-view>
+  <ui-view name="main"></ui-view>
+<!--
   <md-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ $ctrl.doc.displayName }}">
@@ -77,7 +80,7 @@
                   ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
                   md-colors="{background: 'hippo-grey-200'}">
       <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
-      <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+      &lt;!&ndash; use double quotes in the click action expression so we can use single quotes in the translation value &ndash;&gt;
       <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>
     </md-subheader>
 
@@ -123,4 +126,5 @@
       </md-button>
     </div>
   </md-toolbar>
+-->
 </md-sidenav>

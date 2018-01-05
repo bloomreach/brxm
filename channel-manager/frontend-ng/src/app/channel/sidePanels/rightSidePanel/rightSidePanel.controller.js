@@ -59,7 +59,9 @@ class RightSidePanelCtrl {
     $scope,
     $element,
     $mdConstant,
+    $state,
     $timeout,
+    $transitions,
     $translate,
     $q,
     SidePanelService,
@@ -77,6 +79,7 @@ class RightSidePanelCtrl {
     this.$scope = $scope;
     this.$element = $element;
     this.$timeout = $timeout;
+    this.$transitions = $transitions;
     this.$translate = $translate;
     this.$q = $q;
 
@@ -126,6 +129,14 @@ class RightSidePanelCtrl {
 
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
+
+    this.$transitions.onBefore({ to: 'hippo-cm.channel.**' },
+      () => this.SidePanelService.open('right'),
+    );
+
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' },
+      () => this._closePanel(),
+    );
   }
 
   openDocument(documentId) {

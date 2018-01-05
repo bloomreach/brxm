@@ -105,11 +105,6 @@ class ChannelCtrl {
     this.showSubpage('menu-editor');
   }
 
-  editContent(contentUuid) {
-    this.SidePanelService.open('right', contentUuid);
-    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
-  }
-
   getRenderVariant() {
     return this.PageMetaDataService.getRenderVariant();
   }

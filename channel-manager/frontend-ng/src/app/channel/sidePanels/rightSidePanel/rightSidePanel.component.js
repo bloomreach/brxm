@@ -15,11 +15,11 @@
  */
 
 import './rightSidePanel.scss';
+import controller from './rightSidePanel.controller';
 import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
 
 const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
+  controller,
   template,
 };
 

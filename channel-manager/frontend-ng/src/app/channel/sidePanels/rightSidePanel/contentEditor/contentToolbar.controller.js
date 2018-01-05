@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-import template from './channel.html';
+class ContentToolbarCtrl {
+  constructor($uiRouterGlobals) {
+    'ngInject';
 
-function config($stateProvider) {
-  'ngInject';
+    this.$uiRouterGlobals = $uiRouterGlobals;
+  }
 
-  $stateProvider.state({
-    name: 'hippo-cm.channel',
-    url: '{channelId}',
-    controller: 'ChannelCtrl as channelCtrl',
-    template,
-    params: {
-      initialRenderPath: '',
-    },
-  });
+  $onInit() {
+    this.documentId = this.$uiRouterGlobals.params.documentId;
+  }
 }
 
-export default config;
+export default ContentToolbarCtrl;

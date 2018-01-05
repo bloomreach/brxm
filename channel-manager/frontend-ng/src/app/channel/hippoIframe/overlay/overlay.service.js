@@ -26,6 +26,7 @@ class OverlayService {
   constructor(
     $log,
     $rootScope,
+    $state,
     $translate,
     CmsService,
     DomService,
@@ -38,6 +39,7 @@ class OverlayService {
 
     this.$log = $log;
     this.$rootScope = $rootScope;
+    this.$state = $state;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
@@ -47,7 +49,6 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = true;
@@ -62,10 +63,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -316,7 +313,10 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.$state.go('hippo-cm.channel.edit-content', {
+          documentId: structureElement.getUuid(),
+        });
+        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
   }

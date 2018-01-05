@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-import template from './channel.html';
+import controller from './contentToolbar.controller';
+import template from './contentToolbar.html';
 
-function config($stateProvider) {
-  'ngInject';
+const contentToolbarComponent = {
+  controller,
+  template,
+};
 
-  $stateProvider.state({
-    name: 'hippo-cm.channel',
-    url: '{channelId}',
-    controller: 'ChannelCtrl as channelCtrl',
-    template,
-    params: {
-      initialRenderPath: '',
-    },
-  });
-}
-
-export default config;
+export default contentToolbarComponent;

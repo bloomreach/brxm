@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import config from './rightSidePanel.config';
+import contentEditorComponent from './contentEditor/contentEditor.component';
+import contentToolbarComponent from './contentEditor/contentToolbar.component';
 import rightSidePanelComponent from './rightSidePanel.component';
 import fieldsModule from './fields/fields.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.module';
@@ -22,6 +25,9 @@ const rightSidePanelModule = angular
     fieldsModule,
     resizeHandleModule,
   ])
+  .config(config)
+  .component('contentEditor', contentEditorComponent)
+  .component('contentToolbar', contentToolbarComponent)
   .component('rightSidePanel', rightSidePanelComponent);
 
 export default rightSidePanelModule.name;
