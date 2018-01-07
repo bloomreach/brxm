@@ -57,8 +57,8 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -73,6 +73,7 @@ public class RestPluginResource extends BaseResource {
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ProjectService projectService;
+    @Inject private SettingsService settingsService;
 
     @GET
     @Path("/beans")
@@ -122,7 +123,7 @@ public class RestPluginResource extends BaseResource {
 
             final InstructionExecutor executor = new PluginInstructionExecutor();
             final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
-            final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
+            final Set<ValidBean> validBeans = annotateBeans(selectedBeans);
 
             for (ValidBean validBean : validBeans) {
                 final Map<String, Object> properties = new HashMap<>();
@@ -187,7 +188,7 @@ public class RestPluginResource extends BaseResource {
         return instruction;
     }
 
-    private Set<ValidBean> annotateBeans(final String input, final PluginContext context) {
+    private Set<ValidBean> annotateBeans(final String input) {
         final Set<ValidBean> validBeans = new HashSet<>();
 
         if (Strings.isNullOrEmpty(input)) {
@@ -220,7 +221,7 @@ public class RestPluginResource extends BaseResource {
                 bean.setBeanPackage(JavaSourceUtils.getPackageName(filePath));
                 final String qualifiedClassName = JavaSourceUtils.getFullQualifiedClassName(filePath);
                 bean.setFullQualifiedName(qualifiedClassName);
-                final String resourceName = MessageFormat.format("{0}.{1}Resource", context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_REST_PACKAGE), className);
+                final String resourceName = MessageFormat.format("{0}.{1}Resource", settingsService.getSettings().getSelectedRestPackage(), className);
                 bean.setFullQualifiedResourceName(resourceName);
                 validBeans.add(bean);
             }

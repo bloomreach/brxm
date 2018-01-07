@@ -34,7 +34,7 @@ public class FilePluginServiceTest extends BaseTest {
     public void testPluginService() throws Exception {
 
         try (PluginConfigService service = new FilePluginService(projectService)) {
-            final ProjectSettings bean = new ProjectSettingsBean();
+            final ProjectSettingsBean bean = new ProjectSettingsBean();
             bean.setSetupDone(true);
             bean.setProjectNamespace("myNamespace");
             bean.setSelectedBeansPackage("testBeanPackage");

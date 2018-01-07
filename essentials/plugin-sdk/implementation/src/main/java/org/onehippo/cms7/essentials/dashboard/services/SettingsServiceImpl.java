@@ -16,11 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.services;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class SettingsServiceImpl implements SettingsService {
     @Inject private ProjectService projectService;
 
     private ProjectSettingsBean settings; // in-memory cached copy of settings
+    private File projectSettingsFile;
+    private long lastModified;            // last modified timestamp for reloading settings upon FS change
 
     @Override
     public ProjectSettings getSettings() {
@@ -40,7 +45,14 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     public ProjectSettingsBean getModifiableSettings() {
-        if (settings == null) {
+        if (projectSettingsFile == null) {
+            projectSettingsFile = projectService.getResourcesRootPathForModule(TargetPom.ESSENTIALS)
+                    .resolve("project-settings.xml").toFile();
+        }
+
+        final long lastModified = projectSettingsFile.lastModified();
+        if (settings == null || lastModified != this.lastModified) {
+            this.lastModified = lastModified;
             settings = new FilePluginService(projectService).read(DEFAULT_NAME, ProjectSettingsBean.class);
         }
 

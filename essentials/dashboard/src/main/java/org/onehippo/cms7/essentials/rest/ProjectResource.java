@@ -66,7 +66,7 @@ public class ProjectResource {
     @Path("/status")
     public StatusRestful getProjectStatus() {
         final StatusRestful status = new StatusRestful();
-        final ProjectSettings settings = settingsService.getSettings();
+        final ProjectSettingsBean settings = settingsService.getModifiableSettings();
         if (settings != null && settings.getSetupDone()) {
             status.setProjectInitialized(true);
         }

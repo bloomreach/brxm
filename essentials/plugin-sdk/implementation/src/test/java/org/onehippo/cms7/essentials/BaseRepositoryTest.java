@@ -29,12 +29,12 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class BaseRepositoryTest extends BaseTest {
 
     @Inject private JcrService injectedJcrService;
-    protected TestJcrService jcrService;
+    protected TestJcrService.Service jcrService;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        jcrService = (TestJcrService) injectedJcrService;
+        jcrService = (TestJcrService.Service) injectedJcrService;
         jcrService.resetNodes();
         super.setUp();
     }

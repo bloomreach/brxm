@@ -172,9 +172,8 @@ public class GalleryPluginResource extends BaseResource {
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
 
         final String imageSetPrefix = values.get("imageSetPrefix");
-        final PluginContext context = contextFactory.getContext();
         final UserFeedback feedback = new UserFeedback();
-        final int status = createImageSet(context, imageSetPrefix, imageSetName, feedback);
+        final int status = createImageSet(imageSetPrefix, imageSetName, feedback);
         if (Response.Status.Family.familyOf(status) != SUCCESSFUL) {
             response.setStatus(status);
             return feedback;
@@ -228,8 +227,8 @@ public class GalleryPluginResource extends BaseResource {
                     }
                 }
                 // update HST beans, create new ones and update image sets:
-                contentBeansService.createBeans(jcrService, context, feedback, null);
-                contentBeansService.convertImageMethods(newImageNamespace, context, feedback);
+                contentBeansService.createBeans(jcrService, feedback, null);
+                contentBeansService.convertImageMethods(newImageNamespace, feedback);
             } else {
                 // just create a new folder for new image types:
                 final String absPath = "/content/gallery/" + settingsService.getSettings().getProjectNamespace();
@@ -241,7 +240,7 @@ public class GalleryPluginResource extends BaseResource {
                     feedback.addSuccess("Successfully created image folder: " + absPath + '/' + imageSetName);
                 }
                 // update HST beans, create new ones and *do not* update image sets:
-                contentBeansService.createBeans(jcrService, context, feedback, null);
+                contentBeansService.createBeans(jcrService, feedback, null);
             }
 
             session.save();
@@ -283,7 +282,6 @@ public class GalleryPluginResource extends BaseResource {
         }
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        final PluginContext context = contextFactory.getContext();
         final boolean created = GalleryUtils.createImagesetVariant(jcrService, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
         if (created) {
             // add processor node:
@@ -342,9 +340,7 @@ public class GalleryPluginResource extends BaseResource {
     @GET
     @Path("/")
     public List<GalleryModel> fetchExisting() {
-
         final List<GalleryModel> models = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
         try {
             final List<String> existingImageSets = CndUtils.getNodeTypesOfType(jcrService, HIPPOGALLERY_IMAGE_SET, true);
 
@@ -517,7 +513,7 @@ public class GalleryPluginResource extends BaseResource {
     }
 
 
-    private int createImageSet(final PluginContext context, final String prefix, final String name, final UserFeedback feedback) {
+    private int createImageSet(final String prefix, final String name, final UserFeedback feedback) {
         if (Strings.isNullOrEmpty(prefix) || Strings.isNullOrEmpty(name)) {
             feedback.addError("Both prefix and name of the image set must be specified.");
             return HttpServletResponse.SC_PRECONDITION_FAILED;

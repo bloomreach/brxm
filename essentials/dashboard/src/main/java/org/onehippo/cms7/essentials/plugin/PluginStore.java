@@ -29,7 +29,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import com.google.common.base.Strings;
@@ -41,12 +40,12 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
-import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
+import org.onehippo.cms7.essentials.dashboard.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
@@ -64,14 +63,14 @@ import org.springframework.web.context.ContextLoader;
  * Created by tjeger on 10/11/14.
  */
 @Component
-@Singleton
 public class PluginStore {
 
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
     @Inject private RebuildService rebuildService;
-    @Inject private SettingsService settingsService;
+    @Inject private ProjectService projectService;
+    @Inject private SettingsServiceImpl settingsService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private AutowireCapableBeanFactory injector;
 
@@ -120,26 +119,25 @@ public class PluginStore {
 
     public List<Plugin> getAllPlugins() {
         final List<Plugin> plugins = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
 
         // Read local descriptors
         final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
         for (PluginDescriptor descriptor : localDescriptors) {
-            final Plugin plugin = new Plugin(context, descriptor);
+            final Plugin plugin = new Plugin(descriptor, projectService);
             injector.autowireBean(plugin);
             plugins.add(plugin);
         }
 
         // Read remote descriptors
 
-        final Set<String> pluginRepositories = settingsService.getSettings().getPluginRepositories();
+        final Set<String> pluginRepositories = settingsService.getModifiableSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
                 final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
                     for (PluginDescriptor descriptor : descriptors.getItems()) {
-                        final Plugin plugin = new Plugin(context, descriptor);
+                        final Plugin plugin = new Plugin(descriptor, projectService);
                         injector.autowireBean(plugin);
                         plugins.add(plugin);
                     }

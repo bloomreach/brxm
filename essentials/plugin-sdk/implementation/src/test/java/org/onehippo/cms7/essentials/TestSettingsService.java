@@ -30,9 +30,9 @@ public class TestSettingsService {
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
 
     private static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
-    private static final ProjectSettingsBean projectSettings;
+    private final ProjectSettingsBean projectSettings;
 
-    static {
+    public TestSettingsService() {
         projectSettings = new ProjectSettingsBean();
 
         projectSettings.setProjectNamespace(PROJECT_NAMESPACE_TEST);

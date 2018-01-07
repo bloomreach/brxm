@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
@@ -44,16 +43,15 @@ public class Plugin {
     private final static Logger log = LoggerFactory.getLogger(Plugin.class);
 
     private final PluginDescriptor descriptor;
+    private final ProjectService projectService;
     private final InstallStateMachine stateMachine;
-    private final PluginContext context;
 
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
-    @Inject private ProjectService projectService;
 
-    public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
-        this.context = context;
+    public Plugin(final PluginDescriptor descriptor, final ProjectService projectService) {
         this.descriptor = descriptor;
+        this.projectService = projectService;
         this.stateMachine = new InstallStateMachine(this, projectService);
     }
 

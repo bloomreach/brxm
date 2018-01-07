@@ -18,12 +18,9 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.function.BiConsumer;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
@@ -33,8 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HstBeanClassesInstructionTest extends BaseTest {
-
-    @Inject private PluginContextFactory contextFactory;
 
     private String relayedPattern;
     private boolean result;
@@ -81,7 +76,7 @@ public class HstBeanClassesInstructionTest extends BaseTest {
                 return result;
             }
         };
-        final PluginContext context = contextFactory.getContext();
+        final PluginContext context = getContext();
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
         instruction.setPattern("foo");
         instruction.webXmlService = webXmlService;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,92 +16,112 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import java.util.Set;
-
 import org.onehippo.cms7.essentials.dashboard.config.Document;
 
 /**
- * ProjectSettings is used for storing global Essentials dashboard settings (user settings).
+ * ProjectSettings exposes Essentials' project settings to Essentials plugins. The typical way to programmatically
+ * obtain the current project settings is to @Inject the SettingsService into the plugin code and call #get on it.
  *
- * @version "$Id$"
+ * The project settings can partially be adjusted in the dashboard's #introduction page, or completely by editing
+ * the file src/main/resources/project-settings.xml in your project's Essentials module.
  */
 public interface ProjectSettings extends Document {
 
-
-    String getBeansFolder();
-
-    void setBeansFolder(String beansFolder);
-
+    /**
+     * The name of the project root-level directory representing the 'site' module, defaults to 'site'.
+     */
     String getSiteModule();
 
-    void setSiteModule(String siteFolder);
-
+    /**
+     * The name of the project root-level directory representing the 'cms' module, defaults to 'cms'.
+     */
     String getCmsModule();
 
-    void setCmsModule(String cmsFolder);
-
+    /**
+     * The name of the project root-level directory representing the repository data module, defaults to 'repository-data'.
+     */
     String getRepositoryDataModule();
 
-    void setRepositoryDataModule(String repositoryDataFolder);
-
+    /**
+     * The name of the sub-directory of the repository data module, representing the application module, defaults to 'application'.
+     */
     String getApplicationSubModule();
 
-    void setApplicationSubModule(String applicationSubModule);
-
+    /**
+     * The name of the sub-directory of the repository data module, representing the development module, defaults to 'development'.
+     */
     String getDevelopmentSubModule();
 
-    void setDevelopmentSubModule(String developmentSubModule);
-
+    /**
+     * The name of the sub-directory of the repository data module, representing the web files module, defaults to 'webfiles'.
+     */
     String getWebfilesSubModule();
 
-    void setWebfilesSubModule(String webfilesFolder);
-
-    Boolean getSetupDone();
-
-    void setSetupDone(Boolean setupDone);
-
+    /**
+     * The primary JCR namespace used by the project, for example 'myhippoproject'.
+     */
     String getProjectNamespace();
 
-    void setProjectNamespace(String projectNamespace);
-
-    String getSelectedRestPackage();
-
-    void setSelectedRestPackage(String selectedRestPackage);
-
-    String getSelectedBeansPackage();
-
-    void setSelectedBeansPackage(String selectedBeansPackage);
-
-    String getSelectedComponentsPackage();
-
-    void setSelectedComponentsPackage(String selectedComponentsPackage);
-
+    /**
+     * The nested Java package name used primarily throughout the project, for example 'com.myhippoproject'.
+     */
     String getSelectedProjectPackage();
 
-    void setSelectedProjectPackage(String selectedProjectPackage);
+    /**
+     * The nested Java package name containing the project's REST resources, typically below the 'project package'.
+     */
+    String getSelectedRestPackage();
 
+    /**
+     * The nested Java package name containing the project's HST bean classes, typically below the 'project package'.
+     */
+    String getSelectedBeansPackage();
+
+    /**
+     * The nested Java package name containing the project's HST component classes, typically below the 'project package'.
+     */
+    String getSelectedComponentsPackage();
+
+    /**
+     * The templating language used primarily by the project. Supported are 'jsp' and 'freemarker'.
+     */
     String getTemplateLanguage();
 
-    void setTemplateLanguage(String templateLanguage);
-
+    /**
+     * Flag indicating that, unless specified otherwise, when installing a plugin, samples also should be installed
+     * (if available in the plugin).
+     */
     boolean isUseSamples();
 
-    void setUseSamples(boolean useSamples);
-
+    /**
+     * Flag indicating if plugins pertaining to enterprise features should be displayed in the dashboard application.
+     *
+     * Note that in order to *use* enterprise features successfully, you need access to BloomReach's enterprise maven
+     * repository.
+     */
     boolean isEnterprise();
 
-    void setEnterprise(boolean enterprise);
-
+    /**
+     * Flag indicating that for every plugin which has installation parameters, the dashboard user should be prompted
+     * to set or confirm the parmeters before installation.
+     */
     boolean isConfirmParams();
 
-    void setConfirmParams(boolean confirmParams);
-
-    Set<String> getPluginRepositories();
-
-    void setPluginRepositories(Set<String> pluginRepositories);
-
+    /**
+     * Flag indicating that, unless specified otherwise, when installing a plugin, extra templates should be installed
+     * (if available in the plugin).
+     */
     boolean isExtraTemplates();
 
-    void setExtraTemplates(boolean extraTemplates);
-
+    /**
+     * Optional alternative directory path relative to the project's root directory to point to the Java sources
+     * root of the module where your HST beans live, i.e. relative to which the 'selectedBeansPackage' is applicable.
+     *
+     * When specified, make sure to use the appropriate directory separator character used for your operating system.
+     * Development environments with different separators (i.e. Unix vs. Windows) is currently not supported for this
+     * parameter.
+     *
+     * Example/default: 'site/src/main/java'
+     */
+    String getBeansFolder();
 }

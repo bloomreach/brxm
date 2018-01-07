@@ -40,8 +40,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -67,7 +65,6 @@ public class DocumentResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
 
@@ -77,7 +74,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/")
     public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext());
+        return contentTypeService.fetchContentTypesFromOwnNamespace();
     }
 
     @ApiOperation(
@@ -86,7 +83,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+        return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(type -> !type.isCompoundType())
                 .collect(Collectors.toList());
@@ -98,7 +95,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<ContentType> getCompounds(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+        return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(ContentType::isCompoundType)
                 .collect(Collectors.toList());

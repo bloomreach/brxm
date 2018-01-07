@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -49,20 +47,18 @@ public class BeanWriterResource {
     @Inject private RebuildService rebuildService;
     @Inject private JcrService jcrService;
     @Inject private ContentBeansService contentBeansService;
-    @Inject private PluginContextFactory contextFactory;
 
     @POST
     public UserFeedback runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
-        final PluginContext context = contextFactory.getContext();
         final UserFeedback feedback = new UserFeedback();
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
 
-        contentBeansService.createBeans(jcrService, context, feedback, imageSet);
+        contentBeansService.createBeans(jcrService, feedback, imageSet);
         if ("true".equals(values.get("updateImageMethods"))) {
-            contentBeansService.convertImageMethodsForClassname(imageSet, context, feedback);
+            contentBeansService.convertImageMethodsForClassname(imageSet, feedback);
         }
-        contentBeansService.cleanupMethods(jcrService, context, feedback);
+        contentBeansService.cleanupMethods(jcrService, feedback);
 
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("All beans were up to date");
@@ -76,7 +72,6 @@ public class BeanWriterResource {
     @GET
     @Path("/imagesets")
     public Set<String> getImageSets() throws Exception {
-        final PluginContext context = contextFactory.getContext();
-        return contentBeansService.getExistingImageTypes(context).keySet();
+        return contentBeansService.getExistingImageTypes().keySet();
     }
 }

@@ -40,7 +40,6 @@ import javax.jcr.nodetype.NodeType;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -98,7 +97,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     public void fetch_own_document_types() throws Exception {
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(getContext());
+        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace();
 
         assertEquals(4, cts.size());
 
@@ -120,7 +119,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     public void fetch_all_document_types() throws Exception {
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypes(getContext(), false);
+        final List<ContentType> cts = contentTypeService.fetchContentTypes(false);
 
         assertEquals(6, cts.size());
 
@@ -343,7 +342,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     public ContentBeansService getContentBeansService() {
         return new ContentBeansServiceImpl() {
             @Override
-            public Map<String, Path> findBeans(final PluginContext context) {
+            public Map<String, Path> findBeans() {
                 final Map<String, Path> beansMap = new HashMap<>();
 
                 beansMap.put(PROJECT_NAMESPACE_TEST + ":compoundWithBean", Paths.get("/path/to/Compound.java"));

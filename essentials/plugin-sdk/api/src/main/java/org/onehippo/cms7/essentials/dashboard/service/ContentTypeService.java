@@ -17,11 +17,9 @@
 package org.onehippo.cms7.essentials.dashboard.service;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 
 /**
@@ -35,19 +33,17 @@ public interface ContentTypeService {
     /**
      * Specialized version of fetchContentTypes.
      *
-     * @param context access to the project
      * @return        Filtered and sorted list of ContentTypes
      */
-    List<ContentType> fetchContentTypesFromOwnNamespace(PluginContext context);
+    List<ContentType> fetchContentTypesFromOwnNamespace();
 
     /**
      * Fetch content types from the repository's ContentTypeService.
      *
-     * @param context access to the project
      * @param ownNamespaceOnly additional filtering flag to only allow content types of the project's namespace
      * @return        Filtered and sorted list of ContentTypes
      */
-    List<ContentType> fetchContentTypes(PluginContext context, boolean ownNamespaceOnly);
+    List<ContentType> fetchContentTypes(boolean ownNamespaceOnly);
 
     /**
      * Translate a JCR type name into the JCR base path for the corresponding content type's definition

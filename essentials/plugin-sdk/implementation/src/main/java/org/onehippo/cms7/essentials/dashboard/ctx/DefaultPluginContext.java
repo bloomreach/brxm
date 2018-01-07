@@ -132,10 +132,10 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_RESOURCES, webFilesResourcesRoot);
         final Path webFilesRoot = webFilesResourcesRoot.resolve("site");
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_ROOT, webFilesRoot);
-        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_FREEMARKER_ROOT, webFilesResourcesRoot.resolve("freemarker"));
-        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_CSS_ROOT, webFilesResourcesRoot.resolve("css"));
-        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_JS_ROOT, webFilesResourcesRoot.resolve("js"));
-        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_IMAGES_ROOT, webFilesResourcesRoot.resolve("images"));
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_FREEMARKER_ROOT, webFilesRoot.resolve("freemarker"));
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_CSS_ROOT, webFilesRoot.resolve("css"));
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_JS_ROOT, webFilesRoot.resolve("js"));
+        placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_IMAGES_ROOT, webFilesRoot.resolve("images"));
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_PREFIX, EssentialConst.WEBFILES_PREFIX);
         // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, settingsService.getSettings().getSelectedBeansPackage());

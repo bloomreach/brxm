@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,55 +24,71 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.services.JcrServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
-public class TestJcrService extends JcrServiceImpl {
+@Profile("repository-test")
+@Configuration
+public class TestJcrService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestJcrService.class);
-
-    private HippoRepository hippoRepository;
-    private boolean initialized;
-
-    public void setHippoRepository(final HippoRepository hippoRepository) {
-        this.hippoRepository = hippoRepository;
+    @Bean
+    @Primary
+    public JcrService getJcrService() {
+        return new TestJcrService.Service();
     }
 
-    public void reset() {
-        ensureRepository();
-        MemoryRepository.reset();
-    }
+    public static class Service extends JcrServiceImpl {
 
-    public void registerNodeTypes(final String cndResourcePath) throws RepositoryException, IOException {
-        ensureRepository();
-        MemoryRepository.registerNodeTypes(cndResourcePath);
-    }
+        private static final Logger LOG = LoggerFactory.getLogger(TestJcrService.class);
 
-    @Override
-    public Session createSession() {
-        if (hippoRepository != null) {
-            try {
-                Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
-                return hippoRepository.login(credentials);
-            } catch (RepositoryException e) {
-                LOG.error("Failed to create JCR session.", e);
-                return null;
-            }
+        private HippoRepository hippoRepository;
+        private boolean initialized;
+
+        public void setHippoRepository(final HippoRepository hippoRepository) {
+            this.hippoRepository = hippoRepository;
         }
 
-        ensureRepository();
-        return MemoryRepository.createSession();
-    }
+        public void reset() {
+            ensureRepository();
+            MemoryRepository.reset();
+        }
 
-    void resetNodes() {
-        initialized = false;
-    }
+        public void registerNodeTypes(final String cndResourcePath) throws RepositoryException, IOException {
+            ensureRepository();
+            MemoryRepository.registerNodeTypes(cndResourcePath);
+        }
 
-    private void ensureRepository() {
-        if (!initialized) {
-            MemoryRepository.initialize();
-            initialized = true;
+        @Override
+        public Session createSession() {
+            if (hippoRepository != null) {
+                try {
+                    Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
+                    return hippoRepository.login(credentials);
+                } catch (RepositoryException e) {
+                    LOG.error("Failed to create JCR session.", e);
+                    return null;
+                }
+            }
+
+            ensureRepository();
+            return MemoryRepository.createSession();
+        }
+
+        void resetNodes() {
+            initialized = false;
+        }
+
+        private void ensureRepository() {
+            if (!initialized) {
+                MemoryRepository.initialize();
+                initialized = true;
+            }
         }
     }
 }

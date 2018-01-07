@@ -29,7 +29,7 @@ import com.google.common.base.Strings;
 @XmlRootElement(name = "project")
 public class ProjectSettingsBean extends BaseDocument implements ProjectSettings {
 
-    public static final String DEFAULT_NAME = "project-settings";
+    private static final String DEFAULT_NAME = "project-settings";
 
     private String projectNamespace;
 
@@ -37,7 +37,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String selectedProjectPackage;
     private String selectedComponentsPackage;
     private String selectedRestPackage;
-    private Boolean setupDone;
 
     private String templateLanguage;
     private boolean useSamples;
@@ -53,13 +52,18 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String webfilesSubModule;
     private String beansFolder;
 
+    private boolean setupDone;
+    private Set<String> pluginRepositories = new HashSet<>();
+
+    public ProjectSettingsBean() {
+        super(DEFAULT_NAME);
+    }
 
     @Override
     public String getBeansFolder() {
         return beansFolder;
     }
 
-    @Override
     public void setBeansFolder(final String beansFolder) {
         this.beansFolder = beansFolder;
     }
@@ -72,7 +76,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return siteModule;
     }
 
-    @Override
     public void setSiteModule(final String siteModule) {
         this.siteModule = siteModule;
     }
@@ -85,7 +88,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return cmsModule;
     }
 
-    @Override
     public void setCmsModule(final String cmsModule) {
         this.cmsModule = cmsModule;
     }
@@ -98,7 +100,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return repositoryDataModule;
     }
 
-    @Override
     public void setRepositoryDataModule(final String repositoryDataFolder) {
         repositoryDataModule = repositoryDataFolder;
     }
@@ -111,7 +112,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return applicationSubModule;
     }
 
-    @Override
     public void setApplicationSubModule(final String applicationSubModule) {
         this.applicationSubModule = applicationSubModule;
     }
@@ -124,7 +124,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return developmentSubModule;
     }
 
-    @Override
     public void setDevelopmentSubModule(final String developmentSubModule) {
         this.developmentSubModule = developmentSubModule;
     }
@@ -137,43 +136,15 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return webfilesSubModule;
     }
 
-    @Override
     public void setWebfilesSubModule(final String webfilesSubModule) {
         this.webfilesSubModule = webfilesSubModule;
     }
-
-    private Set<String> pluginRepositories = new HashSet<>();
-
-
-    public ProjectSettingsBean() {
-        super(DEFAULT_NAME);
-    }
-
-    public ProjectSettingsBean(final String name) {
-        super(name);
-    }
-
-    @Override
-    public Boolean getSetupDone() {
-        return setupDone == null ? false : setupDone;
-    }
-
-    @Override
-    public void setSetupDone(final Boolean setupDone) {
-        if (setupDone == null) {
-            this.setupDone = false;
-        } else {
-            this.setupDone = setupDone;
-        }
-    }
-
 
     @Override
     public String getProjectNamespace() {
         return projectNamespace;
     }
 
-    @Override
     public void setProjectNamespace(final String projectNamespace) {
         this.projectNamespace = projectNamespace;
     }
@@ -183,7 +154,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return selectedRestPackage;
     }
 
-    @Override
     public void setSelectedRestPackage(final String selectedRestPackage) {
         this.selectedRestPackage = selectedRestPackage;
     }
@@ -193,7 +163,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return selectedBeansPackage;
     }
 
-    @Override
     public void setSelectedBeansPackage(final String selectedBeansPackage) {
         this.selectedBeansPackage = selectedBeansPackage;
     }
@@ -203,7 +172,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return selectedComponentsPackage;
     }
 
-    @Override
     public void setSelectedComponentsPackage(final String selectedComponentsPackage) {
         this.selectedComponentsPackage = selectedComponentsPackage;
     }
@@ -213,7 +181,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return this.selectedProjectPackage;
     }
 
-    @Override
     public void setSelectedProjectPackage(final String selectedProjectPackage) {
         this.selectedProjectPackage = selectedProjectPackage;
     }
@@ -223,7 +190,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return templateLanguage;
     }
 
-    @Override
     public void setTemplateLanguage(final String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
@@ -233,7 +199,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return useSamples;
     }
 
-    @Override
     public void setUseSamples(final boolean useSamples) {
         this.useSamples = useSamples;
     }
@@ -243,7 +208,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return enterprise;
     }
 
-    @Override
     public void setEnterprise(final boolean enterprise) {
         this.enterprise = enterprise;
     }
@@ -253,24 +217,8 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return confirmParams;
     }
 
-    @Override
     public void setConfirmParams(final boolean confirmParams) {
         this.confirmParams = confirmParams;
-    }
-
-    @Override
-    public Set<String> getPluginRepositories() {
-        return pluginRepositories;
-    }
-
-    @Override
-    public void setPluginRepositories(final Set<String> pluginRepositories) {
-        this.pluginRepositories = pluginRepositories;
-
-    }
-
-    public void addPluginRepository(final String path) {
-        pluginRepositories.add(path);
     }
 
     @Override
@@ -278,9 +226,24 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         return extraTemplates;
     }
 
-    @Override
     public void setExtraTemplates(final boolean extraTemplates) {
         this.extraTemplates = extraTemplates;
+    }
+
+    public boolean getSetupDone() {
+        return setupDone;
+    }
+
+    public void setSetupDone(final boolean setupDone) {
+        this.setupDone = setupDone;
+    }
+
+    public Set<String> getPluginRepositories() {
+        return pluginRepositories;
+    }
+
+    public void setPluginRepositories(final Set<String> pluginRepositories) {
+        this.pluginRepositories = pluginRepositories;
     }
 }
 

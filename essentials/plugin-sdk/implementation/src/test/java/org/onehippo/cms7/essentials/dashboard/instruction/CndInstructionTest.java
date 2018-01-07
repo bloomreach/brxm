@@ -37,13 +37,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class CndInstructionTest extends BaseRepositoryTest {
 
-    public static final String TEST_URI = "http://www.test.com";
-    public static final String TEST_PREFIX = "test";
+    private static final String TEST_URI = "http://www.test.com";
+    private static final String TEST_PREFIX = "test";
 
-    @Inject
-    private InstructionExecutor executor;
-    @Inject
-    private CndInstruction cndInstruction;
+    @Inject private InstructionExecutor executor;
+    @Inject private CndInstruction cndInstruction;
     @Inject private SettingsServiceImpl settingsService;
 
     @Ignore("Ignore temporary to fix windows testcase errors")

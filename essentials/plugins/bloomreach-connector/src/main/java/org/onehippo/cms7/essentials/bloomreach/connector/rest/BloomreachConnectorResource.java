@@ -30,8 +30,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
@@ -57,14 +55,12 @@ public class BloomreachConnectorResource {
     private static final MavenDependency CRISP_REPOSITORY
             = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-repository", CRISP_VERSION, null, null);
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private MavenDependencyService dependencyService;
     @Inject private JcrService jcrService;
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
-        final PluginContext context = contextFactory.getContext();
         final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
         final boolean hasDependency = dependencyService.hasDependency(TargetPom.CMS, CRISP_API)
                 && dependencyService.hasDependency(TargetPom.CMS, CRISP_REPOSITORY);
@@ -81,7 +77,6 @@ public class BloomreachConnectorResource {
     public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
         final UserFeedback feedback = new UserFeedback();
-        final PluginContext context = contextFactory.getContext();
         boolean added = dependencyService.addDependency(TargetPom.CMS, CRISP_API)
                 && dependencyService.addDependency(TargetPom.CMS, CRISP_REPOSITORY);
         if (added) {

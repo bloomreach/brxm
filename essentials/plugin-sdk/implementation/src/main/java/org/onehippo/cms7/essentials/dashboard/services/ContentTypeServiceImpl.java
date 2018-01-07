@@ -36,7 +36,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -59,14 +58,14 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     @Inject private SettingsService settingsService;
 
     @Override
-    public List<ContentType> fetchContentTypesFromOwnNamespace(final PluginContext context) {
-        return fetchContentTypes(context, true);
+    public List<ContentType> fetchContentTypesFromOwnNamespace() {
+        return fetchContentTypes(true);
     }
 
     @Override
-    public List<ContentType> fetchContentTypes(final PluginContext context, final boolean ownNamespaceOnly) {
+    public List<ContentType> fetchContentTypes(final boolean ownNamespaceOnly) {
         final List<ContentType> documents = new ArrayList<>();
-        final Map<String, Path> beans = beansService.findBeans(context);
+        final Map<String, Path> beans = beansService.findBeans();
         final String namespacePrefix = settingsService.getSettings().getProjectNamespace();
         final Session session = jcrService.createSession();
         try {
