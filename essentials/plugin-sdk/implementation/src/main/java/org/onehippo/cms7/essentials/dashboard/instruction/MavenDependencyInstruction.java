@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
 
     public InstructionStatus execute(final PluginContext context) {
         final TargetPom module = TargetPom.pomForName(targetPom);
-        return module != TargetPom.INVALID && dependencyService.addDependency(context, module, dependency)
+        return module != TargetPom.INVALID && dependencyService.addDependency(module, dependency)
                 ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 

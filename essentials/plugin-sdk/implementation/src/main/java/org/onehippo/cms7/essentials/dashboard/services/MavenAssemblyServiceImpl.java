@@ -18,15 +18,20 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.dom4j.Element;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MavenAssemblyServiceImpl implements MavenAssemblyService {
+
+    @Inject private ProjectService projectService;
+
     @Override
     public boolean addDependencySet(final String descriptorFilename, final String outputDirectory,
                                     final String outputFileNameMapping, final boolean useProjectArtifact,
@@ -75,7 +80,7 @@ public class MavenAssemblyServiceImpl implements MavenAssemblyService {
     }
 
     private boolean update(final String descriptorFilename, final Dom4JUtils.Modifier modifier) {
-        final File descriptorFile = ProjectUtils.getAssemblyFile(descriptorFilename);
+        final File descriptorFile = projectService.getAssemblyFolderPath().resolve(descriptorFilename).toFile();
         return Dom4JUtils.update(descriptorFile, modifier);
     }
 }

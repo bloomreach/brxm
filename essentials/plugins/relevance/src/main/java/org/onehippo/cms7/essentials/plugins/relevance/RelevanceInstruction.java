@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class RelevanceInstruction implements Instruction {
         projectService.getLog4j2Files()
                 .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, TARGETING_LOGGER, "warn"));
 
-        mavenCargoService.mergeCargoProfile(context, getClass().getResource("/relevance-pom-overlay.xml"));
+        mavenCargoService.mergeCargoProfile(getClass().getResource("/relevance-pom-overlay.xml"));
 
         return InstructionStatus.SUCCESS;
     }

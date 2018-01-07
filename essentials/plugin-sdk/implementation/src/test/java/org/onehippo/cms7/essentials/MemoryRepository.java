@@ -173,7 +173,7 @@ class MemoryRepository {
             //       /hst:templates
             final Node siteNode = rootNode.addNode("hst:hst", "hst:hst")
                     .addNode("hst:configurations", "hst:configurations")
-                    .addNode(BaseTest.PROJECT_NAMESPACE_TEST, "hst:configuration");
+                    .addNode(TestSettingsService.PROJECT_NAMESPACE_TEST, "hst:configuration");
             siteNode.addNode("hst:catalog", "hst:catalog");
             siteNode.addNode("hst:components", "hst:components");
             siteNode.addNode("hst:pages", "hst:pages");

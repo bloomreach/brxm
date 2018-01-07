@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,28 +21,39 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Charsets;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
+import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 /**
  * ResourceModifyingTest provides you with an extended PluginContext suitable for testing the modification of
  * project resources without affecting other test cases.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
+@ActiveProfiles("base-test")
 public abstract class ResourceModifyingTest {
+
+    @Inject private PluginContextFactory contextFactory;
+    @Inject private AutowireCapableBeanFactory injector;
 
     private PluginContext context;
     private String oldProjectBaseDir;
     private Path projectRootPath;
-
-    public PluginContext getContext() throws IOException {
-        ensureContext();
-        return context;
-    }
 
     @After
     public void after() throws IOException {
@@ -93,6 +104,10 @@ public abstract class ResourceModifyingTest {
         return com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
     }
 
+    protected void autoWire(final Object bean) {
+        injector.autowireBean(bean);
+    }
+
     private void ensureContext() throws IOException {
         if (context == null) {
             // create a temporary directory representing the root of modifiable project files
@@ -100,7 +115,7 @@ public abstract class ResourceModifyingTest {
             oldProjectBaseDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, projectRootPath.toString());
 
-            context = new MockPluginContext();
+            context = contextFactory.getContext();
         }
     }
 }

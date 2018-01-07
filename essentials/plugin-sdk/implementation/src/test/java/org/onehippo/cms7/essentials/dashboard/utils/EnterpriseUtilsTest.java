@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
-import org.onehippo.cms7.essentials.dashboard.services.MavenRepositoryServiceImpl;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,12 +36,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class EnterpriseUtilsTest extends ResourceModifyingTest {
 
-    final MavenDependencyService dependencyService = new MavenDependencyServiceImpl();
-    final MavenRepositoryService repositoryService = new MavenRepositoryServiceImpl();
+    @Inject private ProjectService projectService;
+    @Inject private MavenDependencyService dependencyService;
+    @Inject private MavenRepositoryService repositoryService;
 
     @Test
     public void testUpgradeToEnterpriseProject() throws Exception {
-        final PluginContext context = getContext();
         File projectPomXml = createModifiableFile("/project/pom.xml", "pom.xml");
         createModifiableFile("/project/cms/pom.xml", "cms/pom.xml");
 
@@ -50,8 +50,8 @@ public class EnterpriseUtilsTest extends ResourceModifyingTest {
         assertFalse(before.contains("<name>" + ProjectUtils.ENT_REPO_NAME + "</name>"));
         assertFalse(before.contains("<url>" + ProjectUtils.ENT_REPO_URL + "</url>"));
 
-        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService));
-        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService));
+        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(projectService, dependencyService, repositoryService));
+        assertTrue(EnterpriseUtils.upgradeToEnterpriseProject(projectService, dependencyService, repositoryService));
 
         String after = contentOf(projectPomXml);
         assertEquals(1, StringUtils.countMatches(after, "<id>" + ProjectUtils.ENT_REPO_ID + "</id>"));

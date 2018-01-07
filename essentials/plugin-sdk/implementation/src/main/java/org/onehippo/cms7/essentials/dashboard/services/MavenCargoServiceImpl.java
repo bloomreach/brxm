@@ -21,16 +21,17 @@ import java.net.URL;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.inject.Inject;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,11 @@ public class MavenCargoServiceImpl implements MavenCargoService {
     private static final String CARGO_PROFILE_ID = "cargo.run";
     private static final String CARGO_MAVEN2_PLUGIN = "cargo-maven2-plugin";
 
+    @Inject private ProjectService projectService;
+
     @Override
-    public boolean addDependencyToCargoSharedClasspath(final PluginContext context, final MavenDependency dependency) {
-        return updatePluginConfig(context, cargoPlugin -> {
+    public boolean addDependencyToCargoSharedClasspath(final MavenDependency dependency) {
+        return updatePluginConfig(cargoPlugin -> {
             Xpp3Dom configuration = (Xpp3Dom) cargoPlugin.getConfiguration();
             Xpp3Dom container = configuration.getChild("container");
 
@@ -73,8 +76,8 @@ public class MavenCargoServiceImpl implements MavenCargoService {
     }
 
     @Override
-    public boolean addDeployableToCargoRunner(final PluginContext context, final MavenDependency dependency, final String webappContext) {
-        return updatePluginConfig(context, cargoPlugin -> {
+    public boolean addDeployableToCargoRunner(final MavenDependency dependency, final String webappContext) {
+        return updatePluginConfig(cargoPlugin -> {
             Xpp3Dom configuration = (Xpp3Dom) cargoPlugin.getConfiguration();
             Xpp3Dom deployables = configuration.getChild("deployables");
             Xpp3Dom deployable = getDeployableForContext(deployables, webappContext);
@@ -93,8 +96,8 @@ public class MavenCargoServiceImpl implements MavenCargoService {
         });
     }
 
-    private boolean updatePluginConfig(final PluginContext context, final Consumer<Plugin> modifier) {
-        return updateProjectPom(context, pomModel -> {
+    private boolean updatePluginConfig(final Consumer<Plugin> modifier) {
+        return updateProjectPom(pomModel -> {
             final Plugin cargoPlugin = getCargoPlugin(pomModel);
             if (cargoPlugin == null) {
                 LOG.error("Failed to locate profile '{}' in project root pom.xml.", CARGO_PROFILE_ID);
@@ -112,8 +115,8 @@ public class MavenCargoServiceImpl implements MavenCargoService {
      * https://issues.apache.org/jira/browse/ARCHETYPE-535
      */
     @Override
-    public boolean mergeCargoProfile(final PluginContext context, final URL incomingDefinitions) {
-        return updateProjectPom(context, pomModel -> {
+    public boolean mergeCargoProfile(final URL incomingDefinitions) {
+        return updateProjectPom(pomModel -> {
             final Profile modelProfile = getCargoProfile(pomModel);
 
             final Model incomingModel = MavenModelUtils.readPom(incomingDefinitions);
@@ -135,15 +138,14 @@ public class MavenCargoServiceImpl implements MavenCargoService {
         });
     }
 
-    private boolean updateProjectPom(final PluginContext context, final Function<Model, Boolean> modifier) {
-        final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+    private boolean updateProjectPom(final Function<Model, Boolean> modifier) {
+        final File pom = projectService.getPomPathForModule(TargetPom.PROJECT).toFile();
+        final Model pomModel = MavenModelUtils.readPom(pom);
         if (pomModel == null) {
-            LOG.error("Failed to load POM model for project root pom.xml.");
             return false;
         }
 
-        final File pomFile = ProjectUtils.getPomFile(context, TargetPom.PROJECT);
-        return modifier.apply(pomModel) && MavenModelUtils.writePom(pomModel, pomFile);
+        return modifier.apply(pomModel) && MavenModelUtils.writePom(pomModel, pom);
     }
 
     private Xpp3Dom getDeployableForContext(final Xpp3Dom deployables, final String webappContext) {

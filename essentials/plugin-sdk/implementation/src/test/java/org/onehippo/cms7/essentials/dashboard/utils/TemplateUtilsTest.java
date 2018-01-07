@@ -21,10 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +35,6 @@ public class TemplateUtilsTest extends BaseTest {
 
     private static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        populateExistingBeans();
-
-    }
 
     @Test
     public void testWhitespaceNewlines() throws Exception {
@@ -111,11 +101,6 @@ public class TemplateUtilsTest extends BaseTest {
         log.info("result {}", result);
         assertTrue("Expected " + BEAN_REF, result.contains(BEAN_REF));*/
 
-    }
-
-    private void populateExistingBeans() {
-        final PluginContext context = getContext();
-        context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
     }
 
     public class TemplateObject {

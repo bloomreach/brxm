@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,6 +30,8 @@ import static org.junit.Assert.assertNull;
  * @version "$Id: GalleryUtilsTest.java 172469 2013-08-01 12:02:04Z mmilicevic $"
  */
 public class GalleryUtilsTest extends BaseRepositoryTest{
+
+    @Inject private SettingsService settingsService;
 
     private static final String SOME_NAMESPACE_PREFIX = "someprefix";
 
@@ -39,12 +44,12 @@ public class GalleryUtilsTest extends BaseRepositoryTest{
 
     @Test
     public void testGetGalleryUriWhenPrefixIsBlank() throws Exception {
-        assertNull(GalleryUtils.getGalleryURI(jcrService, getContext(), ""));
+        assertNull(GalleryUtils.getGalleryURI(jcrService, settingsService, ""));
     }
 
     @Test
     public void testGetGalleryUriWhenPrefixIsNotBlank() throws Exception {
-        assertEquals("http://www.onehippo.org/gallery/test/nt/1.0", GalleryUtils.getGalleryURI(jcrService, getContext(), "test"));
+        assertEquals("http://www.onehippo.org/gallery/test/nt/1.0", GalleryUtils.getGalleryURI(jcrService, settingsService, "test"));
     }
 
     @Test

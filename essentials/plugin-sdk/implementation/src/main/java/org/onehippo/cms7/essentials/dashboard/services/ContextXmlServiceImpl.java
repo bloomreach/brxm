@@ -19,15 +19,19 @@ package org.onehippo.cms7.essentials.dashboard.services;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ContextXmlServiceImpl implements ContextXmlService {
+
+    @Inject private ProjectService projectService;
 
     @Override
     public boolean addResource(final String name, final Map<String, String> attributes) {
@@ -40,7 +44,7 @@ public class ContextXmlServiceImpl implements ContextXmlService {
     }
 
     private boolean addContextElement(final String elementType, final String name, final Map<String, String> attributes) {
-        return Dom4JUtils.update(ProjectUtils.getContextXml(), doc -> {
+        return Dom4JUtils.update(projectService.getContextXmlPath().toFile(), doc -> {
             Element element = contextElementFor(doc, elementType, name);
             if (element == null) {
                 element = createContextElement(doc, elementType, name);

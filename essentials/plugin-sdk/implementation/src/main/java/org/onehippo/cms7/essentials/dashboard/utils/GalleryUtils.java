@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,13 +88,13 @@ public final class GalleryUtils {
      * @param prefix the imageset prefix
      * @return the uri
      */
-    public static String getGalleryURI(final JcrService jcrService, final PluginContext context, final String prefix) {
+    public static String getGalleryURI(final JcrService jcrService, final SettingsService settingsService, final String prefix) {
         if (StringUtils.isBlank(prefix)) {
             return null;
         }
         // check if project namespace:
 
-        if (context.getProjectNamespacePrefix().equals(prefix)){
+        if (settingsService.getSettings().getProjectNamespace().equals(prefix)){
             final Session session  = jcrService.createSession();
 
             try {
@@ -121,8 +121,8 @@ public final class GalleryUtils {
      * @return the created imageset node
      * @throws RepositoryException when an exception in the repository occurs while creating the node
      */
-    public static Node createImagesetNamespace(final JcrService jcrService, final PluginContext context, final Session session, final String prefix, final String name) throws RepositoryException {
-        return createImagesetNamespace(jcrService, context, session, prefix, name, DEFAULT_IMAGESET_BLUEPRINT);
+    public static Node createImagesetNamespace(final JcrService jcrService, final SettingsService settingsService, final Session session, final String prefix, final String name) throws RepositoryException {
+        return createImagesetNamespace(jcrService, settingsService, session, prefix, name, DEFAULT_IMAGESET_BLUEPRINT);
     }
 
     /**
@@ -136,7 +136,7 @@ public final class GalleryUtils {
      * @return the created imageset node
      * @throws RepositoryException when an exception in the repository occurs while creating the node
      */
-    public static Node createImagesetNamespace(final JcrService jcrService, final PluginContext context, final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
+    public static Node createImagesetNamespace(final JcrService jcrService, final SettingsService settingsService, final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
         final String namespacePath = getNamespacePathForPrefix(prefix);
         if (!session.nodeExists(namespacePath)) {
             // create namespace root:
@@ -152,7 +152,7 @@ public final class GalleryUtils {
         final Node original = session.getNode(blueprintPath);
         final Node imageNode = JcrUtils.copy(session, original.getPath(), destinationImagesetPath);
         HippoNodeUtils.setSupertype(imageNode, HIPPOGALLERY_IMAGE_SET, HIPPOGALLERY_RELAXED);
-        HippoNodeUtils.setUri(imageNode, getGalleryURI(jcrService, context, prefix));
+        HippoNodeUtils.setUri(imageNode, getGalleryURI(jcrService, settingsService, prefix));
         HippoNodeUtils.setNodeType(imageNode, getImagesetName(prefix, name));
         // add default height and width (otherwise error is thrown within template editor)
         final Node originalImage = imageNode.getNode("hipposysedit:prototypes/hipposysedit:prototype/hippogallery:original");

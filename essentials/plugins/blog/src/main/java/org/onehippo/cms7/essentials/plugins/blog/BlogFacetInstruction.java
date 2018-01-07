@@ -28,6 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +48,11 @@ public class BlogFacetInstruction implements Instruction {
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
     @Inject private JcrService jcrService;
+    @Inject private SettingsService settingsService;
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
-        final String namespace = context.getProjectNamespacePrefix();
+        final String namespace = settingsService.getSettings().getProjectNamespace();
         final String targetNode = "/content/documents/" + namespace;
         final Session session = jcrService.createSession();
         if (session == null) {

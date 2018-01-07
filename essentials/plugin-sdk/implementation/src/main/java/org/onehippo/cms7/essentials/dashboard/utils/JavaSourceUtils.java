@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ComponentInformation;
@@ -308,36 +310,6 @@ public final class JavaSourceUtils {
         }
         // TODO add complex (wildcard etc types)
         return null;
-
-    }
-
-    /**
-     * Writes a component
-     *
-     * @param info    component information
-     * @param context plugin context
-     * @return path of created file
-     */
-    public static Path writeEssentialsComponent(final ComponentInformation info, final PluginContext context) {
-        final File siteDirectory = context.getSiteDirectory();
-        final String sitePath = siteDirectory.getAbsolutePath();
-        final Path path = createJavaClass(sitePath, info.getTargetClassName(), info.getTargetPackageName(), EssentialConst.FILE_EXTENSION_JAVA);
-        final CompilationUnit unit = getCompilationUnit(path);
-        unit.recordModifications();
-        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
-        final AST ast = unit.getAST();
-        unit.getPackage().setName(ast.newName(DOT_SPLITTER.split(info.getTargetPackageName())));
-        // import declaration essentials:
-        final List<String> imports = info.getImports();
-        for (String anImport : imports) {
-            addImport(unit, ast, anImport);
-        }
-        // add extends:
-        classType.setSuperclassType(ast.newSimpleType(ast.newSimpleName(info.getExtendingComponentName())));
-        addHippoGeneratedAnnotation(info.getTargetClassName(), unit, classType, ast);
-        replaceFile(path, unit, ast);
-        return path;
-
 
     }
 

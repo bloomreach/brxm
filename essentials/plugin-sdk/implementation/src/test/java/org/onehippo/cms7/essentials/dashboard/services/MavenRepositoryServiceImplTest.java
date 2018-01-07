@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
@@ -33,11 +34,10 @@ import static org.junit.Assert.assertTrue;
 
 public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
 
-    private MavenRepositoryService service = new MavenRepositoryServiceImpl();
+    @Inject private MavenRepositoryService service;
 
     @Test
     public void test_add_repository() throws Exception {
-        PluginContext context = getContext();
         File pomXml = createModifiableFile("/services/mavenrepository/pom.xml", "pom.xml");
 
         final MavenRepository repository = new MavenRepository();
@@ -61,8 +61,8 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<checksumPolicy>checksum-policy</checksumPolicy>"));
         assertFalse(before.contains("<snapshots />"));
 
-        assertTrue(service.addRepository(context, TargetPom.PROJECT, repository));
-        assertTrue(service.addRepository(context, TargetPom.PROJECT, repository));
+        assertTrue(service.addRepository(TargetPom.PROJECT, repository));
+        assertTrue(service.addRepository(TargetPom.PROJECT, repository));
 
         String after = contentOf(pomXml);
         assertEquals(1, StringUtils.countMatches(after, "<id>test</id>"));
@@ -75,7 +75,6 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void test_invalid_input() throws Exception {
-        PluginContext context = getContext();
         createModifiableFile("/services/mavenrepository/pom.xml", "pom.xml");
 
         final MavenRepository repository = new MavenRepository();
@@ -84,7 +83,7 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
         // no URL
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MavenRepositoryServiceImpl.class).build()) {
-            assertFalse(service.addRepository(context, TargetPom.PROJECT, repository));
+            assertFalse(service.addRepository(TargetPom.PROJECT, repository));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add Maven repository 'MavenRepository{id='test', name='Test Repository', url='null'}'"
                     + " to module 'project', no repository URL specified.")));
@@ -93,14 +92,13 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void test_invalid_pom() throws Exception {
-        PluginContext context = getContext();
         createModifiableFile("/services/mavenrepository/pom.xml", "foo.xml");
 
         final MavenRepository repository = new MavenRepository();
         repository.setUrl("boo");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MavenRepositoryServiceImpl.class).build()) {
-            assertFalse(service.addRepository(context, TargetPom.PROJECT, repository));
+            assertFalse(service.addRepository(TargetPom.PROJECT, repository));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Unable to load model for pom.xml of module 'project'.")));
         }

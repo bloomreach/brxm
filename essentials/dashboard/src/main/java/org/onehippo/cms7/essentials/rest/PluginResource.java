@@ -51,6 +51,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -58,7 +59,7 @@ import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.project.ProjectUtils;
+import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,9 +78,8 @@ public class PluginResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
     private static final Lock setupLock = new ReentrantLock();
 
-    @Inject
-    private PluginStore pluginStore;
-
+    @Inject private PluginStore pluginStore;
+    @Inject private SettingsService settingsService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
 
@@ -253,7 +253,7 @@ public class PluginResource extends BaseResource {
                     builder.append(msg).append(" - ");
                 }
             }
-            ProjectUtils.setInitialized(true);
+            DashboardUtils.setInitialized(true);
         } finally {
             setupLock.unlock();
         }
@@ -293,7 +293,7 @@ public class PluginResource extends BaseResource {
             return null; // auto-setup not possible
         }
 
-        final ProjectSettings settings = pluginStore.getProjectSettings();
+        final ProjectSettings settings = settingsService.getSettings();
         if (settings.isConfirmParams() && plugin.getDescriptor().hasSetupParameters()) {
             return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
@@ -308,7 +308,7 @@ public class PluginResource extends BaseResource {
         final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
-        HstUtils.erasePreview(jcrService, context);
+        HstUtils.erasePreview(jcrService, settingsService);
 
         // execute skeleton
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
@@ -328,7 +328,7 @@ public class PluginResource extends BaseResource {
     }
 
     private void preProcessSetupProperties(final Map<String, Object> properties) {
-        final ProjectSettings settings = pluginStore.getProjectSettings();
+        final ProjectSettings settings = settingsService.getSettings();
 
         if (!properties.containsKey(EssentialConst.PROP_SAMPLE_DATA)) {
             properties.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());

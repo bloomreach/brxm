@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Pattern;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import com.google.common.collect.ImmutableSet;
+
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
@@ -48,7 +47,6 @@ public class HippoContentBean {
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
     private static final Pattern COMMA_SPLITTER = Pattern.compile(",");
     private final ContentType contentType;
-    private final PluginContext context;
     private final String prefix;
     private final String shortName;
     private final String name;
@@ -59,12 +57,11 @@ public class HippoContentBean {
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
 
 
-    public HippoContentBean(final PluginContext context, final ContentType contentType) {
-        this.context = context;
+    public HippoContentBean(final String projectNamespace, final ContentType contentType) {
         this.contentType = contentType;
 
         final String originalName = contentType.getName();
-        name = extractName(originalName);
+        name = extractName(originalName, projectNamespace);
         if (name.indexOf(':') != -1) {
             final String[] fullName = PREFIX_SPLITTER.split(name);
             this.shortName = fullName[1];
@@ -78,13 +75,13 @@ public class HippoContentBean {
         processSupertypes();
     }
 
-    private String extractName(final String originalName) {
+    private String extractName(final String originalName, final String projectNamespace) {
         String myName = originalName;
         if (originalName.indexOf(',') != -1) {
             final String[] names = COMMA_SPLITTER.split(originalName);
             myName = names[0];
             for (String n : names) {
-                if (n.startsWith(context.getProjectNamespacePrefix())) {
+                if (n.startsWith(projectNamespace)) {
                     myName = n;
                 }
             }
@@ -198,7 +195,6 @@ public class HippoContentBean {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");
-        sb.append(", context=").append(context);
         sb.append(", prefix='").append(prefix).append('\'');
         sb.append(", shortName='").append(shortName).append('\'');
         sb.append(", name='").append(name).append('\'');

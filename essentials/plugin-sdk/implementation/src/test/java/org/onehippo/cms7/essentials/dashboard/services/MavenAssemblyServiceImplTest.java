@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
@@ -31,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MavenAssemblyServiceImplTest extends ResourceModifyingTest {
 
-    private MavenAssemblyServiceImpl service = new MavenAssemblyServiceImpl();
+    @Inject private MavenAssemblyServiceImpl service;
 
     @Test
     public void add_dependency_set() throws Exception {

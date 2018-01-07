@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -58,6 +59,7 @@ public class CndInstruction extends BuiltinInstruction {
     private String namespacePrefix;
 
     @Inject private JcrService jcrService;
+    @Inject private SettingsService settingsService;
 
     public CndInstruction() {
         super(MessageGroup.DOCUMENT_REGISTER);
@@ -66,7 +68,7 @@ public class CndInstruction extends BuiltinInstruction {
     @Override
     public InstructionStatus execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(namespacePrefix)) {
-            namespace = context.getProjectNamespacePrefix();
+            namespace = settingsService.getSettings().getProjectNamespace();
         } else {
             namespace = namespacePrefix;
         }

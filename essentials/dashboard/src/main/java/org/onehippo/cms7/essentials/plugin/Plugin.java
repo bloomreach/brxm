@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -48,11 +49,12 @@ public class Plugin {
 
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
+    @Inject private ProjectService projectService;
 
     public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
         this.context = context;
         this.descriptor = descriptor;
-        this.stateMachine = new InstallStateMachine(this, context);
+        this.stateMachine = new InstallStateMachine(this, projectService);
     }
 
     public PluginDescriptor getDescriptor() {
@@ -124,7 +126,7 @@ public class Plugin {
         if (categories != null) {
             final Set<String> licenses = categories.get("license");
             if (licenses != null && licenses.contains("enterprise")) {
-                EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService);
+                EnterpriseUtils.upgradeToEnterpriseProject(projectService, dependencyService, repositoryService);
             }
         }
     }
@@ -133,7 +135,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenRepository.WithModule repository : descriptor.getRepositories()) {
-            if (!repositoryService.addRepository(context, TargetPom.pomForName(repository.getTargetPom()), repository)) {
+            if (!repositoryService.addRepository(TargetPom.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
@@ -152,7 +154,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenDependency.WithModule dependency : descriptor.getDependencies()) {
-            if (!dependencyService.addDependency(context, TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
+            if (!dependencyService.addDependency(TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {

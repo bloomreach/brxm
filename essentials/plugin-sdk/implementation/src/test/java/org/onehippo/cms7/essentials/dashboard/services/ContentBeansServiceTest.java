@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.TestPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
@@ -32,8 +32,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     @Test
     public void testCreateBeans() throws Exception {
-
-        final TestPluginContext context = getTestContext();
+        final PluginContext context = getContext();
         final UserFeedback feedback = new UserFeedback();
         context.addPlaceholderData(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS, "true");
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
@@ -41,19 +40,5 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
         contentBeansService.createBeans(jcrService, context, feedback, null);
         contentBeansService.convertImageMethods("testproject:testasasasas", context, feedback);
-
-    }
-
-    // TODO: still needed? or use getContext instead?
-    private TestPluginContext getTestContext() {
-
-        final TestPluginContext testPluginContext = new TestPluginContext();
-        testPluginContext.setComponentsPackageName("org.example.components");
-        testPluginContext.setBeansPackageName("org.example.beans");
-        testPluginContext.setRestPackageName("org.example.rest");
-        testPluginContext.setProjectNamespacePrefix("testproject");
-        testPluginContext.setProjectPackageName("org.example");
-
-        return testPluginContext;
     }
 }

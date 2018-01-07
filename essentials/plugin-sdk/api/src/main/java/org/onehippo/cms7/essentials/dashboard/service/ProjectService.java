@@ -17,7 +17,10 @@
 package org.onehippo.cms7.essentials.dashboard.service;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
 /**
  * ProjectService provides access to the project, and in particular to the file resources of a project.
@@ -28,7 +31,29 @@ public interface ProjectService {
     String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
     String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
 
-    String getBasePath();
+    Path getBasePathForModule(TargetPom module);
+
+    Path getPomPathForModule(TargetPom module);
+
+    Path getJavaRootPathForModule(TargetPom module);
+
+    Path getResourcesRootPathForModule(TargetPom module);
+
+    Path getWebApplicationRootPathForModule(TargetPom module);
+
+    Path getWebInfPathForModule(TargetPom module);
+
+    Path getBeansRootPath();
+
+    Path getBeansPackagePath();
+
+    Path getRestPackagePath();
+
+    Path getComponentsPackagePath();
+
+    Path getContextXmlPath();
+
+    Path getAssemblyFolderPath();
 
     /**
      * Retrieve a list of the log4j2 files of the project.

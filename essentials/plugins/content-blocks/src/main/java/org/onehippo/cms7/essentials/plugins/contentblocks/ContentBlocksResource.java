@@ -53,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
@@ -84,6 +85,7 @@ public class ContentBlocksResource {
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
+    @Inject private SettingsService settingsService;
 
     @GET
     @Path("/")
@@ -300,7 +302,7 @@ public class ContentBlocksResource {
             Map<String, Object> data = new HashMap<>();
 
             data.put("name", newNodeName);
-            data.put("namespace", context.getProjectNamespacePrefix());
+            data.put("namespace", settingsService.getSettings().getProjectNamespace());
             data.put("caption", field.getName());
             data.put("pickerType", field.getPickerType());
             data.put("compoundList", makeCompoundList(field));
@@ -350,7 +352,7 @@ public class ContentBlocksResource {
                             "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
                 }
 
-                final String namespace = context.getProjectNamespacePrefix();
+                final String namespace = settingsService.getSettings().getProjectNamespace();
                 final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
                 final String newNodePath = namespace + ":" + newNodeName;
                 nodeTypeNode = JcrUtils.copy(nodeTypeNode, newNodeName, nodeTypeNode.getParent());

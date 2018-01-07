@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.services;
 
+import java.io.File;
 import java.util.function.Predicate;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.RepositoryPolicy;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,19 +39,21 @@ public class MavenRepositoryServiceImpl implements MavenRepositoryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenRepositoryServiceImpl.class);
 
+    @Inject private ProjectService projectService;
+
     @Override
-    public boolean addRepository(final PluginContext context, final TargetPom module, final MavenRepository repository) {
+    public boolean addRepository(final TargetPom module, final MavenRepository repository) {
         if (StringUtils.isBlank(repository.getUrl())) {
             LOG.error("Failed to add Maven repository '{}' to module '{}', no repository URL specified.", repository, module.getName());
             return false;
         }
 
-        return updatePomModel(context, module, model -> {
+        return updatePomModel(module, model -> {
             if (hasRepository(model, repository)) {
                 return true;
             }
             model.addRepository(forMaven(repository));
-            return MavenModelUtils.writePom(model, ProjectUtils.getPomFile(context, module));
+            return MavenModelUtils.writePom(model, projectService.getPomPathForModule(module).toFile());
         });
     }
 
@@ -86,8 +90,9 @@ public class MavenRepositoryServiceImpl implements MavenRepositoryService {
                 .anyMatch(r -> repository.getUrl().equals(r.getUrl()));
     }
 
-    private boolean updatePomModel(final PluginContext context, final TargetPom module, final Predicate<Model> updater) {
-        final Model model = ProjectUtils.getPomModel(context, module);
+    private boolean updatePomModel(final TargetPom module, final Predicate<Model> updater) {
+        final File pom = projectService.getPomPathForModule(module).toFile();
+        final Model model = MavenModelUtils.readPom(pom);
         if (model == null) {
             LOG.error("Unable to load model for pom.xml of module '{}'.", module.getName());
             return false;

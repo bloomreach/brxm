@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.io.InputStream;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +30,8 @@ public class ResourcePluginService extends AbstractPluginService {
 
     private static Logger log = LoggerFactory.getLogger(ResourcePluginService.class);
 
-    public ResourcePluginService(final PluginContext context) {
-        super(context);
+    public ResourcePluginService(final ProjectService projectService) {
+        super(projectService);
     }
 
     @Override

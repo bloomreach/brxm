@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,14 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -45,15 +46,13 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
+@ActiveProfiles("base-test")
 public abstract class BaseTest {
     private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
 
-    @Inject
-    protected AutowireCapableBeanFactory injector;
+    @Inject protected AutowireCapableBeanFactory injector;
+    @Inject private PluginContextFactory contextFactory;
 
-    public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
-    public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
-    public static final String PROJECT_NAMESPACE_TEST_URI = "http://www.onehippo.org/tesnamespace/nt/1.0";
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
             .add("myproject:newsdocument")
@@ -66,7 +65,6 @@ public abstract class BaseTest {
             .add("hippoplugins:version")
             .add("hippoplugins:dependency")
             .build();
-    private String oldSystemDir;
     private PluginContext context;
     private Path projectRoot;
 
@@ -75,16 +73,8 @@ public abstract class BaseTest {
         this.projectRoot = projectRoot;
     }
 
-    public void setContext(final PluginContext context) {
-        this.context = context;
-    }
-
     @After
     public void tearDown() throws Exception {
-        // reset system property
-        if (oldSystemDir != null) {
-            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
-        }
         // delete project files:
         if (projectRoot != null) {
             final File file = projectRoot.toFile();
@@ -117,7 +107,7 @@ public abstract class BaseTest {
      *
      * @return PluginContext with file system initialized (so no JCR session)
      */
-    protected PluginContext getPluginContextFile() {
+    PluginContext getPluginContextFile() {
         if (context == null) {
 
             final String basePath = projectRoot.toString();
@@ -141,15 +131,7 @@ public abstract class BaseTest {
                     repositoryDataFolder.mkdir();
                 }
             }
-            context = new TestPluginContext();
-            context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
-            context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
-            context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
-            context.setProjectPackageName("org.onehippo.cms7.essentials.dashboard.test");
-            final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
-            context.setProjectSettings(projectSettings);
-
+            context = contextFactory.getContext();
         }
         return context;
     }
@@ -159,12 +141,9 @@ public abstract class BaseTest {
     }
 
     public PluginContext getContext() {
-
         if (context == null) {
             context = getPluginContextFile();
         }
         return context;
     }
-
-
 }

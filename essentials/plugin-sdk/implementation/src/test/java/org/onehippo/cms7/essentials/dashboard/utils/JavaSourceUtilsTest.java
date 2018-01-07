@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
-import org.onehippo.cms7.essentials.dashboard.utils.code.ComponentInformation;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     private Path path;
     private Path docPath;
     private Path componentFile;
+
+    @Inject private ProjectService projectService;
 
     @Override
     @Before
@@ -96,7 +100,7 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
 
     @Test
     public void testJcrType() throws Exception {
-        final Path startDirectory = getContext().getBeansPackagePath();
+        final Path startDirectory = projectService.getBeansPackagePath();
         Collection<String> myTypes = new ArrayList<>();
         final List<Path> directories = new ArrayList<>();
         GlobalUtils.populateDirectories(startDirectory, directories);
@@ -126,21 +130,6 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     public void testJavaClassCreation() throws Exception {
         final String expected = absolutePath + File.separator + "com" + File.separator + "foo" + File.separator + "bar" + File.separator + CLASS_NAME + ".txt";
         assertEquals(expected, path.toFile().getAbsolutePath());
-    }
-
-    @Test
-    public void testWritingComponent() throws Exception {
-
-        final ComponentInformation info = new ComponentInformation();
-
-        info.setTargetClassName("MyHippoComponent");
-        info.setTargetPackageName("org.test");
-        info.addDefaultComponentImports();
-        info.setExtendingComponentName("EssentialsDocumentComponent");
-        info.addImport("org.onehippo.cms7.essentials.components.EssentialsDocumentComponent");
-        info.addImport("org.onehippo.cms7.essentials.components.info.EssentialsDocumentComponentInfo");
-        componentFile = JavaSourceUtils.writeEssentialsComponent(info, getContext());
-
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.service;
 
 import java.net.URL;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 
 /**
@@ -32,29 +31,26 @@ public interface MavenCargoService {
      * Ensure that a dependency with &lt;classpath&gt;shared&lt;/classpath&gt; is present in the cargo plugin's
      * configuration.
      *
-     * @param context    for accessing the project
      * @param dependency dependency to be added to shared classpath
      * @return           true if the dependency exists upon returning, false otherwise
      */
-    boolean addDependencyToCargoSharedClasspath(final PluginContext context, final MavenDependency dependency);
+    boolean addDependencyToCargoSharedClasspath(final MavenDependency dependency);
 
     /**
      * Ensure that a deployable (war) is present in the cargo plugin configuration, with the specified context path.
      *
-     * @param context       for accessing the project
      * @param dependency    dependency representing the web application (type war)
      * @param webappContext context path under which to deploy the web application
      * @return              true if the deployable exists upon returning, false otherwise
      */
-    boolean addDeployableToCargoRunner(final PluginContext context, final MavenDependency dependency, final String webappContext);
+    boolean addDeployableToCargoRunner(final MavenDependency dependency, final String webappContext);
 
     /**
      * Merge some incoming definitions (specified as a skeleton POM in a classpath resource) with the Maven cargo
      * plugin configuration of the project's root pom.xml.
      *
-     * @param context       for accessing the project
      * @param incomingDefinitions Maven cargo plugin configuration to be merged in
      * @return              true upon success, false otherwise
      */
-    boolean mergeCargoProfile(final PluginContext context, URL incomingDefinitions);
+    boolean mergeCargoProfile(URL incomingDefinitions);
 }

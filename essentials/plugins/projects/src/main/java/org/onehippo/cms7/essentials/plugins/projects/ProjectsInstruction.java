@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,11 +84,11 @@ public class ProjectsInstruction implements Instruction {
         });
 
         // Install "enterprise services" JAR
-        mavenCargoService.addDependencyToCargoSharedClasspath(context, DEPENDENCY_ENTERPRISE_SERVICES);
+        mavenCargoService.addDependencyToCargoSharedClasspath(DEPENDENCY_ENTERPRISE_SERVICES);
         mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_ENTERPRISE_SERVICES);
 
         // Install BPM WAR
-        mavenCargoService.addDeployableToCargoRunner(context, DEPENDENCY_BPM_WAR, WPM_WEBAPP_CONTEXT);
+        mavenCargoService.addDeployableToCargoRunner(DEPENDENCY_BPM_WAR, WPM_WEBAPP_CONTEXT);
         mavenAssemblyService.addDependencySet("webapps-component.xml", "webapps",
                 "bpm.war", false, "provided", DEPENDENCY_BPM_WAR);
 

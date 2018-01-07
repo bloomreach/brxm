@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableSet;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,15 +56,15 @@ public final class BeanWriterUtils {
     /**
      * Builds an in-memory graph by parsing XML namespaces. This graph can be used to write HST beans
      *
-     * @param context         plugin context instance
+     * @param projectService      project service
      * @param sourceFileExtension extension used for source files e.g. {@code "java"}
      * @return a list of MemoryBeans or empty list if nothing is found
      */
 
 
-    public static Map<String, Path> mapExitingBeanNames(final PluginContext context, final String sourceFileExtension) {
+    public static Map<String, Path> mapExitingBeanNames(final ProjectService projectService, final String sourceFileExtension) {
         final Map<String, Path> retVal = new HashMap<>();
-        final List<Path> exitingBeans = findExitingBeans(context, sourceFileExtension);
+        final List<Path> exitingBeans = findExitingBeans(projectService, sourceFileExtension);
         for (Path exitingBean : exitingBeans) {
             retVal.put(exitingBean.toFile().getName(), exitingBean);
         }
@@ -75,12 +75,12 @@ public final class BeanWriterUtils {
     /**
      * Find all existing HST beans (which annotated with {@code @Node})
      *
-     * @param context             plugin context instance
+     * @param projectService      project service
      * @param sourceFileExtension file extension, e.g. {@code "java"}
      * @return a list of beans or an empty list if nothing was found
      */
-    public static List<Path> findExitingBeans(final PluginContext context, final String sourceFileExtension) {
-        final Path startDir = context.getBeansPackagePath();
+    private static List<Path> findExitingBeans(final ProjectService projectService, final String sourceFileExtension) {
+        final Path startDir = projectService.getBeansPackagePath();
         final List<Path> existingBeans = new ArrayList<>();
         final List<Path> directories = new ArrayList<>();
         GlobalUtils.populateDirectories(startDir, directories);

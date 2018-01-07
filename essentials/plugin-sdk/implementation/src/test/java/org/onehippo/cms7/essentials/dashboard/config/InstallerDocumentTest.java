@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.Calendar;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.TestPluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,8 @@ public class InstallerDocumentTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(InstallerDocumentTest.class);
 
+    @Inject private ProjectService projectService;
+
     @Test
     public void testGetPluginId() throws Exception {
 
@@ -44,9 +48,8 @@ public class InstallerDocumentTest extends BaseTest {
         document.setPluginId("test.foo");
         final Calendar today = Calendar.getInstance();
         document.setDateInstalled(today);
-        final TestPluginContext context = (TestPluginContext) getContext();
         final InstallerDocument fetched;
-        try (PluginConfigService manager = new FilePluginService(context)) {
+        try (PluginConfigService manager = new FilePluginService(projectService)) {
             manager.write(document);
             fetched = manager.read(pluginId, InstallerDocument.class);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class CommonsInstructionPackage extends TemplateSupportInstructionPackage
     @Override
     public InstructionStatus execute(final PluginContext context) {
         // add provided dependency to webfiles artifact so we have freemarker autocompletion support
-        dependencyService.addDependency(context, TargetPom.REPOSITORY_DATA_WEB_FILES, ESSENTIALS_COMPONENTS);
+        dependencyService.addDependency(TargetPom.REPOSITORY_DATA_WEB_FILES, ESSENTIALS_COMPONENTS);
 
         return super.execute(context);
     }

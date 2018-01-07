@@ -22,14 +22,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,11 @@ public class WebXmlServiceImpl implements WebXmlService {
     private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImpl.class);
     private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";
 
+    @Inject private ProjectService projectService;
+
     @Override
-    public boolean addHstBeanClassPattern(final PluginContext context, final String pattern) {
-        return update(context, TargetPom.SITE, doc -> {
+    public boolean addHstBeanClassPattern(final String pattern) {
+        return update(TargetPom.SITE, doc -> {
             Element contextParameter = contextParameterFor(HST_BEANS_ANNOTATED_CLASSES, doc);
             if (contextParameter != null) {
                 final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");
@@ -97,9 +100,9 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addFilter(final PluginContext context, final TargetPom module, final String filterName,
+    public boolean addFilter(final TargetPom module, final String filterName,
                              final String filterClass, final Map<String, String> initParams) {
-        return update(context, module, doc -> {
+        return update(module, doc -> {
             Element filter = filterFor(filterName, doc);
             if (filter == null) {
                 createFilter(doc, filterName, filterClass, initParams);
@@ -127,9 +130,8 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addFilterMapping(final PluginContext context, final TargetPom module, final String filterName,
-                                    final List<String> urlPatterns) {
-        return update(context, module, doc -> {
+    public boolean addFilterMapping(final TargetPom module, final String filterName, final List<String> urlPatterns) {
+        return update(module, doc -> {
             final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
             final Element filterMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "filter-mapping", null);
             Dom4JUtils.addIndentedElement(filterMapping, "filter-name", filterName);
@@ -140,9 +142,9 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addDispatchersToFilterMapping(final PluginContext context, final TargetPom module,
-                                                 final String filterName, final List<Dispatcher> dispatchers) {
-        return update(context, module, doc -> {
+    public boolean addDispatchersToFilterMapping(final TargetPom module, final String filterName,
+                                                 final List<Dispatcher> dispatchers) {
+        return update(module, doc -> {
             Element filterMapping = filterMappingFor(filterName, doc);
             if (filterMapping == null) {
                 String message = String.format("Failed to find filter-mapping for filter '%s' in web.xml file of module '%s'.",
@@ -168,9 +170,9 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addServlet(final PluginContext context, final TargetPom module, final String servletName,
-                              final String servletClass, final Integer loadOnStartup) {
-        return update(context, module, doc -> {
+    public boolean addServlet(final TargetPom module, final String servletName, final String servletClass,
+                              final Integer loadOnStartup) {
+        return update(module, doc -> {
             Element servlet = servletFor(servletName, doc);
             if (servlet == null) {
                 createServlet(doc, servletName, servletClass, loadOnStartup);
@@ -197,9 +199,8 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addServletMapping(final PluginContext context, final TargetPom module, final String servletName,
-                                     final List<String> urlPatterns) {
-        return update(context, module, doc -> {
+    public boolean addServletMapping(final TargetPom module, final String servletName, final List<String> urlPatterns) {
+        return update(module, doc -> {
             Element servletMapping = servletMappingFor(servletName, doc);
             if (servletMapping == null) {
                 servletMapping = createServletMapping(doc, servletName);
@@ -238,13 +239,9 @@ public class WebXmlServiceImpl implements WebXmlService {
         return element != null ? element.getParent() : null;
     }
 
-    private boolean update(final PluginContext context, final TargetPom module, final Dom4JUtils.Modifier modifier) {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(context, module);
-        if (webXmlPath == null) {
-            LOG.error("Failed to derive path to web.xml file for module '{}'.", module.getName());
-            return false;
-        }
+    private boolean update(final TargetPom module, final Dom4JUtils.Modifier modifier) {
+        final File webXml = projectService.getWebInfPathForModule(module).resolve("web.xml").toFile();
 
-        return Dom4JUtils.update(new File(webXmlPath), modifier);
+        return Dom4JUtils.update(webXml, modifier);
     }
 }

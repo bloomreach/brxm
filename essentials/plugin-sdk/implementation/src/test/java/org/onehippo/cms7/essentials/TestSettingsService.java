@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,34 @@
 package org.onehippo.cms7.essentials;
 
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
-/**
- * Mocks a plugin context which uses fake project settings rather than trying to read them from the filesystem.
- */
-public class MockPluginContext extends DefaultPluginContext {
-    public static final String TEST_NAMESPACE = "testnamespace";
-    public static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
+@Profile("base-test")
+@Configuration
+public class TestSettingsService {
 
+    public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
+
+    private static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
     private static final ProjectSettingsBean projectSettings;
 
     static {
         projectSettings = new ProjectSettingsBean();
 
-        projectSettings.setProjectNamespace(TEST_NAMESPACE);
+        projectSettings.setProjectNamespace(PROJECT_NAMESPACE_TEST);
         projectSettings.setSelectedProjectPackage(TEST_PROJECT_PACKAGE);
         projectSettings.setSelectedBeansPackage(TEST_PROJECT_PACKAGE + ".beans");
         projectSettings.setSelectedComponentsPackage(TEST_PROJECT_PACKAGE + ".components");
         projectSettings.setSelectedRestPackage(TEST_PROJECT_PACKAGE + ".rest");
     }
 
-    @Override
-    public ProjectSettings getProjectSettings() {
-        return projectSettings;
+    @Bean
+    @Primary
+    public SettingsService get() {
+        return () -> projectSettings;
     }
 }

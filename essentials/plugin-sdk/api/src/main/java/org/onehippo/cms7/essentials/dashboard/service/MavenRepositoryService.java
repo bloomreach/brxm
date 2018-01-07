@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.service;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
@@ -29,10 +28,9 @@ public interface MavenRepositoryService {
     /**
      * Ensure that the specified repository exists in the target module's pom.xml file.
      *
-     * @param context    for accessing the project
      * @param module     target module to adjust
      * @param repository repository entry to add, if not already present
      * @return           true if the repository exists in the specified module upon returning, false otherwise
      */
-    boolean addRepository(final PluginContext context, final TargetPom module, final MavenRepository repository);
+    boolean addRepository(final TargetPom module, final MavenRepository repository);
 }

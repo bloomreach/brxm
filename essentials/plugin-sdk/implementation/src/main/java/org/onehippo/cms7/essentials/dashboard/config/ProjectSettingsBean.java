@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,10 +56,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     @Override
     public String getBeansFolder() {
-        if (Strings.isNullOrEmpty(beansFolder)) {
-            beansFolder = getSiteModule() + "/src/main/java";
-        }
-
         return beansFolder;
     }
 

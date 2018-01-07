@@ -16,18 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.services;
 
+import java.io.File;
 import java.util.function.Predicate;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.MavenModelUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,19 +39,21 @@ public class MavenDependencyServiceImpl implements MavenDependencyService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyServiceImpl.class);
 
+    @Inject private ProjectService projectService;
+
     @Override
-    public boolean hasDependency(final PluginContext context, final TargetPom module, final MavenDependency dependency) {
-        return updatePomModel(context, module, model -> hasDependency(model, dependency));
+    public boolean hasDependency(final TargetPom module, final MavenDependency dependency) {
+        return updatePomModel(module, model -> hasDependency(model, dependency));
     }
 
     @Override
-    public boolean addDependency(final PluginContext context, final TargetPom module, final MavenDependency dependency) {
-        return updatePomModel(context, module, model -> {
+    public boolean addDependency(final TargetPom module, final MavenDependency dependency) {
+        return updatePomModel(module, model -> {
             if (hasDependency(model, dependency)) {
                 return true;
             }
             model.addDependency(forMaven(dependency));
-            return MavenModelUtils.writePom(model, ProjectUtils.getPomFile(context, module));
+            return MavenModelUtils.writePom(model, projectService.getPomPathForModule(module).toFile());
         });
     }
 
@@ -99,8 +103,9 @@ public class MavenDependencyServiceImpl implements MavenDependencyService {
         return new DefaultArtifactVersion(currentVersion).compareTo(new DefaultArtifactVersion(incomingVersion)) >= 0;
     }
 
-    private boolean updatePomModel(final PluginContext context, final TargetPom module, final Predicate<Model> checker) {
-        final Model model = ProjectUtils.getPomModel(context, module);
+    private boolean updatePomModel(final TargetPom module, final Predicate<Model> checker) {
+        final File pom = projectService.getPomPathForModule(module).toFile();
+        final Model model = MavenModelUtils.readPom(pom);
         return model != null && checker.test(model);
     }
 }

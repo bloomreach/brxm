@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +60,11 @@ public final class EnterpriseUtils {
     private EnterpriseUtils() {
     }
 
-    public static boolean upgradeToEnterpriseProject(final PluginContext context,
+    public static boolean upgradeToEnterpriseProject(final ProjectService projectService,
                                                      final MavenDependencyService dependencyService,
                                                      final MavenRepositoryService repositoryService) {
-        final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+        final File pom = projectService.getPomPathForModule(TargetPom.PROJECT).toFile();
+        final Model pomModel = MavenModelUtils.readPom(pom);
         if (pomModel == null) {
             return false;
         }
@@ -75,13 +78,13 @@ public final class EnterpriseUtils {
         if (!ENT_GROUP_ID.equals(parent.getGroupId()) || !ENT_RELEASE_ID.equals(parent.getArtifactId())) {
             parent.setArtifactId(ENT_RELEASE_ID);
             parent.setGroupId(ENT_GROUP_ID);
-            if (!MavenModelUtils.writePom(pomModel, ProjectUtils.getPomFile(context, TargetPom.PROJECT))) {
+            if (!MavenModelUtils.writePom(pomModel, pom)) {
                 return false;
             }
         }
 
-        return repositoryService.addRepository(context, TargetPom.PROJECT, ENTERPRISE_REPOSITORY)
-                && dependencyService.addDependency(context, TargetPom.CMS, EDITION_INDICATOR)
-                && dependencyService.addDependency(context, TargetPom.CMS, APP_DEPENDENCIES_PACKAGE);
+        return repositoryService.addRepository(TargetPom.PROJECT, ENTERPRISE_REPOSITORY)
+                && dependencyService.addDependency(TargetPom.CMS, EDITION_INDICATOR)
+                && dependencyService.addDependency(TargetPom.CMS, APP_DEPENDENCIES_PACKAGE);
     }
 }

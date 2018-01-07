@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -48,8 +49,11 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -81,6 +85,9 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     private static final String DOCBASE = "Docbase";
     private static final String RESOURCE = "hippo:resource";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
+
+    @Inject private ProjectService projectService;
+    @Inject private SettingsService settingsService;
 
     /**
      * How many loops we run (beans extending none existing beans)
@@ -282,7 +289,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
             final SortedSet<String> mySupertypes = missingBean.getContentType().getSuperTypes();
             if (mySupertypes.contains("hippogallery:relaxed")) {
                 final Path javaClass = createJavaClass(missingBean, context, feedback);
-                JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), missingBean.getName(), missingBean.getName());
+                JavaSourceUtils.createHippoBean(javaClass, settingsService.getSettings().getSelectedBeansPackage(), missingBean.getName(), missingBean.getName());
                 JavaSourceUtils.addExtendsClass(javaClass, HIPPO_GALLERY_IMAGE_SET_CLASS);
                 JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_IMAGE_SET_IMPORT);
                 addMethods(missingBean, javaClass, new ArrayList<>(), context, feedback, imageSetClassName);
@@ -309,10 +316,11 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
     private Set<HippoContentBean> getContentBeans(final JcrService jcrService, final PluginContext context) {
         try {
+            final String namespace = settingsService.getSettings().getProjectNamespace();
             final Set<HippoContentBean> beans = new HashSet<>();
             final Set<ContentType> projectContentTypes = getProjectContentTypes(jcrService, context);
             for (ContentType projectContentType : projectContentTypes) {
-                final HippoContentBean bean = new HippoContentBean(context, projectContentType);
+                final HippoContentBean bean = new HippoContentBean(namespace, projectContentType);
                 beans.add(bean);
             }
             return beans;
@@ -330,7 +338,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
      * @throws RepositoryException for unexpected Repository situations
      */
     private Set<ContentType> getProjectContentTypes(final JcrService jcrService, final PluginContext context) throws RepositoryException {
-        final String namespacePrefix = context.getProjectNamespacePrefix();
+        final String namespacePrefix = settingsService.getSettings().getProjectNamespace();
         final Set<ContentType> projectContentTypes = new HashSet<>();
         final Session session = jcrService.createSession();
         try {
@@ -353,7 +361,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
     @Override
     public Map<String, Path> findBeans(final PluginContext context) {
-        final Path startDir = context.getBeansPackagePath();
+        final Path startDir = projectService.getBeansPackagePath();
         final Map<String, Path> existingBeans = new HashMap<>();
         final List<Path> directories = new ArrayList<>();
         GlobalUtils.populateDirectories(startDir, directories);
@@ -377,7 +385,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
     private void createCompoundBaseBean(final HippoContentBean bean, final PluginContext context, final UserFeedback feedback) {
         final Path javaClass = createJavaClass(bean, context, feedback);
-        JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
+        JavaSourceUtils.createHippoBean(javaClass, settingsService.getSettings().getSelectedBeansPackage(), bean.getName(), bean.getName());
         JavaSourceUtils.addExtendsClass(javaClass, "HippoCompound");
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_COMPOUND_IMPORT);
     }
@@ -516,7 +524,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                 default:
                     // check if project type is used:
                     final String prefix = child.getPrefix();
-                    if (prefix.equals(context.getProjectNamespacePrefix())) {
+                    if (prefix.equals(settingsService.getSettings().getProjectNamespace())) {
                         final Map<String, Path> existingBeans = findBeans(context);
                         for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
                             final Path myBeanPath = entry.getValue();
@@ -742,7 +750,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
      */
     private void createBean(final HippoContentBean bean, final Path parentPath, final PluginContext context, final UserFeedback feedback) {
         final Path javaClass = createJavaClass(bean, context, feedback);
-        JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
+        JavaSourceUtils.createHippoBean(javaClass, settingsService.getSettings().getSelectedBeansPackage(), bean.getName(), bean.getName());
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
 
@@ -755,7 +763,8 @@ public class ContentBeansServiceImpl implements ContentBeansService {
             name = name.split(",")[0];
         }
         final String className = GlobalUtils.createClassName(name);
-        final Path path = JavaSourceUtils.createJavaClass(context.getBeansRootPath().toString(), className, context.beansPackageName(), null);
+        final Path path = JavaSourceUtils.createJavaClass(projectService.getBeansRootPath().toString(), className,
+                settingsService.getSettings().getSelectedBeansPackage(), null);
         logClassCreated(path, className, feedback);
         return path;
     }
@@ -799,7 +808,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     }
 
     private String getBaseSupertype(final PluginContext context) {
-        return context.getProjectNamespacePrefix() + ":basedocument";
+        return settingsService.getSettings().getProjectNamespace() + ":basedocument";
     }
 
     private void logClassCreated(final Path beanPath, final String className, final UserFeedback feedback) {

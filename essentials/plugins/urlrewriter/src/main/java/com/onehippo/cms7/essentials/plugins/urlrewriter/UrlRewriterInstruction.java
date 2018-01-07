@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,10 +57,10 @@ public class UrlRewriterInstruction implements Instruction {
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
-        if (webXmlService.addFilter(context, MODULE, FILTER_NAME, FILTER_CLASS, initParams)
-                && webXmlService.addFilterMapping(context, MODULE, FILTER_NAME, URL_PATTERNS)
-                && webXmlService.addDispatchersToFilterMapping(context, MODULE, FILTER_NAME, DISPATCHERS)
-                && webXmlService.addDispatchersToFilterMapping(context, MODULE, "HstFilter", DISPATCHERS)) {
+        if (webXmlService.addFilter(MODULE, FILTER_NAME, FILTER_CLASS, initParams)
+                && webXmlService.addFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS)
+                && webXmlService.addDispatchersToFilterMapping(MODULE, FILTER_NAME, DISPATCHERS)
+                && webXmlService.addDispatchersToFilterMapping(MODULE, "HstFilter", DISPATCHERS)) {
             return InstructionStatus.SUCCESS;
         }
         return InstructionStatus.FAILED;

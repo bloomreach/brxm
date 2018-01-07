@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials;
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -32,18 +30,6 @@ public abstract class BaseRepositoryTest extends BaseTest {
 
     @Inject private JcrService injectedJcrService;
     protected TestJcrService jcrService;
-
-    @Override
-    public PluginContext getContext() {
-        final TestPluginContext testPluginContext = new TestPluginContext();
-
-        testPluginContext.setComponentsPackageName("org.onehippo.essentials.test.components");
-        testPluginContext.setBeansPackageName("org.onehippo.essentials.test.beans");
-        testPluginContext.setRestPackageName("org.onehippo.essentials.test.rest");
-        testPluginContext.setProjectSettings(new ProjectSettingsBean());
-
-        return testPluginContext;
-    }
 
     @Override
     @Before

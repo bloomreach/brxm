@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.TestSettingsService;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -70,7 +71,7 @@ public class FileInstructionTest extends BaseResourceTest {
         File file = new File(copyInstruction.getTarget());
         assertTrue(file.exists());
         StringBuilder textFile = GlobalUtils.readTextFile(file.toPath());
-        assertTrue(textFile.toString().contains(BaseTest.PROJECT_NAMESPACE_TEST));
+        assertTrue(textFile.toString().contains(TestSettingsService.PROJECT_NAMESPACE_TEST));
         //############################################
         // BINARY TEST (no replacements):
         //############################################

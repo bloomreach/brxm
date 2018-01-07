@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.service;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
@@ -29,20 +28,18 @@ public interface MavenDependencyService {
     /**
      * Check if the specified module already has the specified dependency.
      *
-     * @param context    for accessing the project
      * @param module     target module to check
      * @param dependency Maven dependency to check for
      * @return           true if dependency already present (and version not older), false otherwise
      */
-    boolean hasDependency(PluginContext context, TargetPom module, MavenDependency dependency);
+    boolean hasDependency(TargetPom module, MavenDependency dependency);
 
     /**
      * If not already present, add the specified Maven dependency to the dependencies section of the specified module.
      *
-     * @param context    for accessing the project
      * @param module     target module to adjust
      * @param dependency Maven dependency to add
      * @return           true if the specified dependency if present upon returning, false otherwise
      */
-    boolean addDependency(PluginContext context, TargetPom module, MavenDependency dependency);
+    boolean addDependency(TargetPom module, MavenDependency dependency);
 }

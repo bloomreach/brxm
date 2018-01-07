@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
@@ -32,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ContextXmlServiceImplTest extends ResourceModifyingTest {
 
-    private ContextXmlServiceImpl contextXmlService = new ContextXmlServiceImpl();
+    @Inject private ContextXmlServiceImpl contextXmlService;
 
     @Test
     public void add_resource_new() throws Exception {

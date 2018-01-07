@@ -40,6 +40,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.LocalizationUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
@@ -53,14 +54,9 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     private static final Logger LOG = LoggerFactory.getLogger(ContentTypeServiceImpl.class);
     private static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
-    private final JcrService jcrService;
-    private final ContentBeansService beansService;
-
-    @Inject
-    public ContentTypeServiceImpl(final JcrService jcrService, final ContentBeansService beansService) {
-        this.jcrService = jcrService;
-        this.beansService = beansService;
-    }
+    @Inject private JcrService jcrService;
+    @Inject private ContentBeansService beansService;
+    @Inject private SettingsService settingsService;
 
     @Override
     public List<ContentType> fetchContentTypesFromOwnNamespace(final PluginContext context) {
@@ -71,7 +67,7 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     public List<ContentType> fetchContentTypes(final PluginContext context, final boolean ownNamespaceOnly) {
         final List<ContentType> documents = new ArrayList<>();
         final Map<String, Path> beans = beansService.findBeans(context);
-        final String namespacePrefix = context.getProjectNamespacePrefix();
+        final String namespacePrefix = settingsService.getSettings().getProjectNamespace();
         final Session session = jcrService.createSession();
         try {
             final ContentTypes contentTypes = HippoServiceRegistry

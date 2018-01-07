@@ -61,11 +61,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.essentials.TestSettingsService.PROJECT_NAMESPACE_TEST;
 
 @ActiveProfiles("content-beans-test")
 @Profile("content-beans-test")
 @Configuration
 public class ContentTypeServiceImplTest extends BaseRepositoryTest {
+
+    private final String JCR_CONTENT_TYPE = PROJECT_NAMESPACE_TEST + ":basedocument";
+    private final String JCR_BASE_PATH = "/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument";
 
     @Inject private ContentTypeService contentTypeService;
 
@@ -135,10 +139,10 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         setupTestContentType(superTypes, mixins, null);
         final Session session = jcrService.createSession();
 
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, true));
+        assertTrue(contentTypeService.addMixinToContentType(JCR_CONTENT_TYPE, "hippostd:container", session, true));
 
         // check supertypes
-        final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
+        final Node nodeTypeNode = session.getNode(JCR_BASE_PATH + "/hipposysedit:nodetype/hipposysedit:nodetype");
         final Set<String> sts = new HashSet<>();
         for (Value v : nodeTypeNode.getProperty("hipposysedit:supertype").getValues()) {
             sts.add(v.getString());
@@ -147,7 +151,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         assertTrue(sts.contains("hippostd:container"));
 
         // check prototype mixins
-        final Node prototypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:prototypes/hipposysedit:prototype");
+        final Node prototypeNode = session.getNode(JCR_BASE_PATH + "/hipposysedit:prototypes/hipposysedit:prototype");
         final Set<String> nts = new HashSet<>();
         for (NodeType nt : prototypeNode.getMixinNodeTypes()) {
             nts.add(nt.getName());
@@ -179,7 +183,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         setupTestContentType(superTypes, mixins, null);
         final Session session = jcrService.createSession();
 
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, false));
+        assertTrue(contentTypeService.addMixinToContentType(JCR_CONTENT_TYPE, "hippostd:container", session, false));
 
         // check mixins of content nodes
         final Node instanceNoMixins = session.getNode("/content/instanceNoMixins");
@@ -200,11 +204,11 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         setupTestContentType(superTypes, mixins, null);
         final Session session = jcrService.createSession();
 
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "mix:referenceable", session, false));
+        assertTrue(contentTypeService.addMixinToContentType(JCR_CONTENT_TYPE, "mix:referenceable", session, false));
 
-        final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
+        final Node nodeTypeNode = session.getNode(JCR_BASE_PATH + "/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(3, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
-        final Node prototypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:prototypes/hipposysedit:prototype");
+        final Node prototypeNode = session.getNode(JCR_BASE_PATH + "/hipposysedit:prototypes/hipposysedit:prototype");
         assertEquals(1, prototypeNode.getMixinNodeTypes().length);
         jcrService.destroySession(session);
     }
@@ -217,12 +221,12 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final Session session = jcrService.createSession();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ContentTypeServiceImpl.class).build()) {
-            assertFalse(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "foo:bar", session, false));
+            assertFalse(contentTypeService.addMixinToContentType(JCR_CONTENT_TYPE, "foo:bar", session, false));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add mixin 'foo:bar' to content type 'testnamespace:basedocument'.")));
         }
 
-        final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
+        final Node nodeTypeNode = session.getNode(JCR_BASE_PATH + "/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(2, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
         jcrService.destroySession(session);
     }
@@ -230,13 +234,13 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     @Test
     public void determine_default_field_position() throws Exception {
         setupTestContentType(null, null, null);
-        assertEquals("${cluster.id}.field", contentTypeService.determineDefaultFieldPosition(PROJECT_NAMESPACE_TEST + ":basedocument"));
+        assertEquals("${cluster.id}.field", contentTypeService.determineDefaultFieldPosition(JCR_CONTENT_TYPE));
     }
 
     @Test
     public void determine_default_field_position_when_set() throws Exception {
         setupTestContentType(null, null, "test");
-        assertEquals("test.item", contentTypeService.determineDefaultFieldPosition(PROJECT_NAMESPACE_TEST + ":basedocument"));
+        assertEquals("test.item", contentTypeService.determineDefaultFieldPosition(JCR_CONTENT_TYPE));
     }
 
     @Test
@@ -262,7 +266,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         }
 
         final Node prototypeNode = baseDocument.addNode("hipposysedit:prototypes", "hipposysedit:prototypeset")
-                .addNode("hipposysedit:prototype", PROJECT_NAMESPACE_TEST + ":basedocument");
+                .addNode("hipposysedit:prototype", JCR_CONTENT_TYPE);
         prototypeNode.setProperty("hippostd:stateSummary", "foo");
         if (mixins != null) {
             for (String mixin : mixins) {
@@ -270,10 +274,10 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
             }
 
             final Node instanceNoMixins = session.getNode("/content")
-                    .addNode("instanceNoMixins", PROJECT_NAMESPACE_TEST + ":basedocument");
+                    .addNode("instanceNoMixins", JCR_CONTENT_TYPE);
             instanceNoMixins.setProperty("hippostd:stateSummary", "foo");
             final Node instanceWithMixins = session.getNode("/content")
-                    .addNode("instanceWithMixins", PROJECT_NAMESPACE_TEST + ":basedocument");
+                    .addNode("instanceWithMixins", JCR_CONTENT_TYPE);
             instanceWithMixins.setProperty("hippostd:stateSummary", "foo");
             for (String mixin : mixins) {
                 instanceWithMixins.addMixin(mixin);
@@ -315,9 +319,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
                 .addNode("compoundWithoutBean", "hipposysedit:templatetype");
         compoundWithoutBean.addNode("hipposysedit:nodetype", "hippo:handle");
         final Node prototypes = compoundWithoutBean.addNode("hipposysedit:prototypes", "hipposysedit:prototypeset");
-        final Node prototype1 = prototypes.addNode("hipposysedit:prototype", PROJECT_NAMESPACE_TEST + ":basedocument");
+        final Node prototype1 = prototypes.addNode("hipposysedit:prototype", JCR_CONTENT_TYPE);
         prototype1.setProperty("hippostd:stateSummary", "foo");
-        final Node prototype2 = prototypes.addNode("hipposysedit:prototype", PROJECT_NAMESPACE_TEST + ":basedocument");
+        final Node prototype2 = prototypes.addNode("hipposysedit:prototype", JCR_CONTENT_TYPE);
         prototype2.setProperty("hippostd:stateSummary", "foo");
         session.save();
         jcrService.destroySession(session);

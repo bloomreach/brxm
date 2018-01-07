@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,8 @@ public class BloomreachConnectorResource {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
         final PluginContext context = contextFactory.getContext();
         final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
-        final boolean hasDependency = dependencyService.hasDependency(context, TargetPom.CMS, CRISP_API)
-                && dependencyService.hasDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
+        final boolean hasDependency = dependencyService.hasDependency(TargetPom.CMS, CRISP_API)
+                && dependencyService.hasDependency(TargetPom.CMS, CRISP_REPOSITORY);
 
         final ResourceData resourceData = new ResourceData();
         resourceData.setCrispDependencyExists(hasDependency);
@@ -82,8 +82,8 @@ public class BloomreachConnectorResource {
         // check if we have crisp namespace registered:
         final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
-        boolean added = dependencyService.addDependency(context, TargetPom.CMS, CRISP_API)
-                && dependencyService.addDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
+        boolean added = dependencyService.addDependency(TargetPom.CMS, CRISP_API)
+                && dependencyService.addDependency(TargetPom.CMS, CRISP_REPOSITORY);
         if (added) {
             feedback.addSuccess("Successfully added dependencies");
         } else {

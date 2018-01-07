@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -71,14 +72,14 @@ public class RestPluginResource extends BaseResource {
     @Inject private RebuildService rebuildService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
+    @Inject private ProjectService projectService;
 
     @GET
     @Path("/beans")
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final PluginContext context = contextFactory.getContext();
-        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(context, "java");
+        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(projectService, "java");
         for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
             list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
         }

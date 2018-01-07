@@ -52,8 +52,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -79,7 +78,6 @@ public class SelectionResource {
     @Inject private ProjectService projectService;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
-    @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
@@ -123,8 +121,7 @@ public class SelectionResource {
     @Path("spring")
     public List<ProvisionedValueList> loadProvisionedValueLists() {
         List<ProvisionedValueList> pvlList = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
-        final Document document = readSpringConfiguration(context);
+        final Document document = readSpringConfiguration();
 
         String xPath = VALUELIST_XPATH + "/beans:entry";
         List valueLists = document.selectNodes(xPath);
@@ -144,8 +141,7 @@ public class SelectionResource {
     @Path("spring")
     public UserFeedback storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
                                                      @Context HttpServletResponse response) {
-        final PluginContext context = contextFactory.getContext();
-        final Document document = readSpringConfiguration(context);
+        final Document document = readSpringConfiguration();
         if (document == null) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return new UserFeedback().addError("Failure parsing the Spring configuration.");
@@ -171,7 +167,7 @@ public class SelectionResource {
         }
 
         try {
-            final File springFile = getSpringFile(context);
+            final File springFile = getSpringFile();
             springFile.getParentFile().mkdirs();
             springFile.createNewFile();
 
@@ -382,8 +378,8 @@ public class SelectionResource {
         return false;
     }
 
-    private Document readSpringConfiguration(final PluginContext context) {
-        final File springFile = getSpringFile(context);
+    private Document readSpringConfiguration() {
+        final File springFile = getSpringFile();
         InputStream is = null;
         if (springFile !=null && springFile.exists() && springFile.isFile()) {
             try {
@@ -415,26 +411,8 @@ public class SelectionResource {
         return null;
     }
 
-    private File getSpringFile(final PluginContext context) {
-        String springFilePath = new StringBuilder()
-                .append(projectService.getBasePath())
-                .append(File.separator)
-                .append(context.getProjectSettings().getSiteModule())
-                .append(File.separator)
-                .append("src")
-                .append(File.separator)
-                .append("main")
-                .append(File.separator)
-                .append("resources")
-                .append(File.separator)
-                .append("META-INF")
-                .append(File.separator)
-                .append("hst-assembly")
-                .append(File.separator)
-                .append("overrides")
-                .append(File.separator)
-                .append("valueListManager.xml").toString();
-
-        return new File(springFilePath);
+    private File getSpringFile() {
+        return projectService.getResourcesRootPathForModule(TargetPom.SITE)
+                .resolve("META-INF").resolve("hst-assembly").resolve("overrides").resolve("valueListManager.xml").toFile();
     }
 }

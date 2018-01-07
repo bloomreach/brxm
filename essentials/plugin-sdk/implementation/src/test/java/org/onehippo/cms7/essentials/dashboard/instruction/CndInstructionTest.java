@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -43,6 +44,7 @@ public class CndInstructionTest extends BaseRepositoryTest {
     private InstructionExecutor executor;
     @Inject
     private CndInstruction cndInstruction;
+    @Inject private SettingsServiceImpl settingsService;
 
     @Ignore("Ignore temporary to fix windows testcase errors")
     @Test
@@ -52,14 +54,12 @@ public class CndInstructionTest extends BaseRepositoryTest {
         session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
         session.save();
         CndUtils.registerNamespace(jcrService, TEST_PREFIX, TEST_URI);
-        assertTrue("CndUtils.registerNamespaceUri", true);
         CndUtils.createHippoNamespace(jcrService, TEST_PREFIX);
-        assertTrue("CndUtils.createHippoNamespace", true);
         boolean exists = CndUtils.namespaceUriExists(jcrService, TEST_URI);
         assertTrue(exists);
 
         cndInstruction.setDocumentType("newsdocument");
-        getContext().setProjectNamespacePrefix(TEST_PREFIX);
+        settingsService.getModifiableSettings().setProjectNamespace(TEST_PREFIX);
         final InstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(cndInstruction);
         InstructionStatus status = executor.execute(instructionSet, getContext());

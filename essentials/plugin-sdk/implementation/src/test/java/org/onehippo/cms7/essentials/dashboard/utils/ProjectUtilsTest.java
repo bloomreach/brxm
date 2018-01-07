@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,52 +16,25 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.File;
-import java.util.List;
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ProjectUtilsTest extends BaseResourceTest {
 
-    @Test
-    public void testSitePackages() throws Exception {
-        final PluginContext context = getContext();
-
-        final List<String> sitePackages = ProjectUtils.getSitePackages(context);
-        assertTrue(sitePackages.size() > 8);
-        assertTrue(sitePackages.contains("org"));
-        assertTrue(sitePackages.contains("org.dummy"));
-
-        // validate defaults
-        assertEquals("repository-data", ProjectUtils.getRepositoryDataFolder(context).getName());
-        assertEquals("application", ProjectUtils.getRepositoryDataApplicationFolder(context).getName());
-        assertEquals("development", ProjectUtils.getRepositoryDataDevelopmentFolder(context).getName());
-        assertEquals("webfiles", ProjectUtils.getRepositoryDataWebfilesFolder(context).getName());
-    }
+    @Inject private ProjectService projectService;
 
     @Test
     public void testGetContextXml() throws Exception {
-        assertTrue(ProjectUtils.getContextXml().exists());
+        assertTrue(projectService.getContextXmlPath().toFile().exists());
     }
 
     @Test
     public void testGetAssemblyFile() throws Exception {
-        assertTrue(ProjectUtils.getAssemblyFile("common-lib-component.xml").exists());
-    }
-
-    @Test
-    public void testGetAssemblyFiles() throws Exception {
-        System.setProperty("project.basedir", getClass().getResource("/project").getPath());
-        final List<File> assemblyFiles = ProjectUtils.getAssemblyFiles();
-        assertEquals(7, assemblyFiles.size());
-        File webappsComponent = ProjectUtils.getAssemblyFile("webapps-component.xml");
-        assertTrue(webappsComponent.exists());
-        File sharedLibComponent = ProjectUtils.getAssemblyFile("shared-lib-component.xml");
-        assertTrue(sharedLibComponent.exists());
+        assertTrue(projectService.getAssemblyFolderPath().resolve("common-lib-component.xml").toFile().exists());
     }
 }

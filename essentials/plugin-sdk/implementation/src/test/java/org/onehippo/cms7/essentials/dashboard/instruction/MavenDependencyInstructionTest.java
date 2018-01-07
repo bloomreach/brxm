@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.io.File;
 import java.util.function.BiConsumer;
 
-import com.google.common.collect.Multimap;
-
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.services.MavenDependencyServiceImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +37,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
             assertEquals("Add Maven dependency group:artifact to module 'cms'.", m);
             counter++;
         };
-        final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
+        final MavenDependencyInstruction instruction = makeInstruction();
         instruction.setGroupId("group");
         instruction.setArtifactId("artifact");
         instruction.setTargetPom("cms");
@@ -59,7 +55,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
             assertEquals(message, m);
             counter++;
         };
-        final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
+        final MavenDependencyInstruction instruction = makeInstruction();
         instruction.setMessage(message);
 
         counter = 0;
@@ -75,12 +71,9 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
         final String type = "test-war";
         final String scope = "test-compile";
 
-        final PluginContext context = getContext();
-
         final File pom = createModifiableFile("/instructions/maven-dependency/pom.xml", "cms/pom.xml");
 
-        final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
-        instruction.dependencyService = new MavenDependencyServiceImpl();
+        final MavenDependencyInstruction instruction = makeInstruction();
         instruction.setGroupId(groupId);
         instruction.setArtifactId(artifactId);
         instruction.setVersion(version);
@@ -94,7 +87,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
         assertEquals(scope, instruction.getScope());
 
         // no target pom specified
-        assertEquals(InstructionStatus.FAILED, instruction.execute(context));
+        assertEquals(InstructionStatus.FAILED, instruction.execute(null));
         assertEquals(0, nrOfOccurrences(pom, groupId));
         assertEquals(0, nrOfOccurrences(pom, artifactId));
         assertEquals(0, nrOfOccurrences(pom, version));
@@ -105,11 +98,17 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
 
         assertEquals("cms", instruction.getTargetPom());
 
-        assertEquals(InstructionStatus.SUCCESS, instruction.execute(context));
+        assertEquals(InstructionStatus.SUCCESS, instruction.execute(null));
         assertEquals(1, nrOfOccurrences(pom, groupId));
         assertEquals(1, nrOfOccurrences(pom, artifactId));
         assertEquals(1, nrOfOccurrences(pom, version));
         assertEquals(1, nrOfOccurrences(pom, type));
         assertEquals(1, nrOfOccurrences(pom, scope));
+    }
+
+    private MavenDependencyInstruction makeInstruction() {
+        final MavenDependencyInstruction instruction = new MavenDependencyInstruction();
+        autoWire(instruction);
+        return instruction;
     }
 }

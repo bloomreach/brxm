@@ -54,6 +54,7 @@ import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GalleryUtils;
@@ -81,6 +82,7 @@ public class GalleryPluginResource extends BaseResource {
     @Inject private PluginContextFactory contextFactory;
     @Inject private ContentBeansService contentBeansService;
     @Inject private JcrService jcrService;
+    @Inject private SettingsService settingsService;
 
     /**
      * Updates an image model
@@ -230,7 +232,7 @@ public class GalleryPluginResource extends BaseResource {
                 contentBeansService.convertImageMethods(newImageNamespace, context, feedback);
             } else {
                 // just create a new folder for new image types:
-                final String absPath = "/content/gallery/" + context.getProjectNamespacePrefix();
+                final String absPath = "/content/gallery/" + settingsService.getSettings().getProjectNamespace();
                 if (session.nodeExists(absPath)) {
                     final Node galleryRoot = session.getNode(absPath);
                     final Node imageFolderNode = galleryRoot.addNode(imageSetName, "hippogallery:stdImageGallery");
@@ -522,7 +524,7 @@ public class GalleryPluginResource extends BaseResource {
         }
         final String nodeType = prefix + ':' + name;
         try {
-            final String uri = GalleryUtils.getGalleryURI(jcrService, context, prefix);
+            final String uri = GalleryUtils.getGalleryURI(jcrService, settingsService, prefix);
             // Check whether node type already exists
             if (CndUtils.nodeTypeExists(jcrService, nodeType)) {
                 if (CndUtils.isNodeOfSuperType(jcrService, nodeType, HIPPOGALLERY_IMAGE_SET)) {
@@ -550,7 +552,7 @@ public class GalleryPluginResource extends BaseResource {
 
             final Session session = jcrService.createSession();
             try {
-                final Node imageNode = GalleryUtils.createImagesetNamespace(jcrService, context, session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
+                final Node imageNode = GalleryUtils.createImagesetNamespace(jcrService, settingsService, session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
                 session.save();
                 log.debug("Created node: {}", imageNode.getPath());
             } finally {

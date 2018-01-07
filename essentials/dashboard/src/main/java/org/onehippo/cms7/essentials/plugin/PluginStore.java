@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
+import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
@@ -71,6 +71,7 @@ public class PluginStore {
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
     @Inject private RebuildService rebuildService;
+    @Inject private SettingsService settingsService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private AutowireCapableBeanFactory injector;
 
@@ -131,7 +132,7 @@ public class PluginStore {
 
         // Read remote descriptors
 
-        final Set<String> pluginRepositories = getProjectSettings().getPluginRepositories();
+        final Set<String> pluginRepositories = settingsService.getSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
                 final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
@@ -216,11 +217,6 @@ public class PluginStore {
                 }
             }
         }
-    }
-
-    // TODO: this is not a *plugin* utility! Move to better place.
-    public ProjectSettings getProjectSettings() {
-        return contextFactory.getContext().getProjectSettings();
     }
 
     private List<PluginDescriptor> getLocalDescriptors() {

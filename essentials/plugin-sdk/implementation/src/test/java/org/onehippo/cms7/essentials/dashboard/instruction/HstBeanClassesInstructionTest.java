@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.function.BiConsumer;
 
-import com.google.common.collect.Multimap;
+import javax.inject.Inject;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.MockPluginContext;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
@@ -31,8 +32,10 @@ import org.onehippo.cms7.essentials.dashboard.services.WebXmlServiceImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class HstBeanClassesInstructionTest {
-    private PluginContext relayedContext;
+public class HstBeanClassesInstructionTest extends BaseTest {
+
+    @Inject private PluginContextFactory contextFactory;
+
     private String relayedPattern;
     private boolean result;
     private int counter;
@@ -73,13 +76,12 @@ public class HstBeanClassesInstructionTest {
     @Test
     public void relay_to_service() {
         final WebXmlService webXmlService = new WebXmlServiceImpl() {
-            public boolean addHstBeanClassPattern(final PluginContext context, final String pattern) {
-                relayedContext = context;
+            public boolean addHstBeanClassPattern(final String pattern) {
                 relayedPattern = pattern;
                 return result;
             }
         };
-        final PluginContext context = new MockPluginContext();
+        final PluginContext context = contextFactory.getContext();
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
         instruction.setPattern("foo");
         instruction.webXmlService = webXmlService;
@@ -87,7 +89,6 @@ public class HstBeanClassesInstructionTest {
         result = true;
         assertEquals(InstructionStatus.SUCCESS, instruction.execute(context));
         assertEquals("foo", relayedPattern);
-        assertTrue(context == relayedContext);
 
         result = false;
         assertEquals(InstructionStatus.FAILED, instruction.execute(context));

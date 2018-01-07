@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import java.io.File;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
+
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 
 /**
  * Created by tjeger on 6/4/14.
@@ -31,11 +28,11 @@ import com.google.common.base.Strings;
 public abstract class AbstractPluginService implements PluginConfigService {
 
     private static final String SETTINGS_EXTENSION = ".xml";
-    private static Logger log = LoggerFactory.getLogger(AbstractPluginService.class);
-    private final PluginContext context;
 
-    public AbstractPluginService(final PluginContext context) {
-        this.context = context;
+    private final ProjectService projectService;
+
+    AbstractPluginService(final ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @Override
@@ -78,7 +75,7 @@ public abstract class AbstractPluginService implements PluginConfigService {
     }
 
     protected String getFilePath(final Document document, final String pluginName) {
-        return context.getEssentialsResourcePath() + File.separator + getFileName(document, pluginName);
+        final String fileName = getFileName(document, pluginName);
+        return projectService.getResourcesRootPathForModule(TargetPom.ESSENTIALS).resolve(fileName).toString();
     }
-
 }
