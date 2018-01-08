@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,9 +37,9 @@ import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.utils.DashboardUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,7 +79,7 @@ public class ProjectResource {
             response = SystemInfo.class)
     @GET
     @Path("/ping")
-    public SystemInfo ping(@Context ServletContext servletContext) {
+    public SystemInfo ping() {
         final SystemInfo systemInfo = new SystemInfo();
 
         // tell the pinger when to (re-)initialize the front-end.

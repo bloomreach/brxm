@@ -29,13 +29,11 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
@@ -73,7 +71,7 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getAllTypes() {
         return contentTypeService.fetchContentTypesFromOwnNamespace();
     }
 
@@ -82,7 +80,7 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/documents")
-    public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getDocumentTypes() {
         return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(type -> !type.isCompoundType())
@@ -94,7 +92,7 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/compounds")
-    public List<ContentType> getCompounds(@Context ServletContext servletContext) {
+    public List<ContentType> getCompounds() {
         return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(ContentType::isCompoundType)
@@ -109,7 +107,7 @@ public class DocumentResource extends BaseResource {
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")
-    public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
+    public List<KeyValueRestful> getDocumentsByType(@PathParam("docType") String docType) {
         final List<KeyValueRestful> valueLists = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
@@ -143,7 +141,7 @@ public class DocumentResource extends BaseResource {
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/templatequeries")
-    public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
+    public List<KeyValueRestful> getQueryCombinations() {
         final List<KeyValueRestful> templateList = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
