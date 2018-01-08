@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.util.Set;
 
 /**
  * RebuildService is a simple service plugins can use to signal that a rebuild and restart of the project is necessary.
+ *
+ * Can be @Inject'ed into REST Resources and Instructions.
  */
 public interface RebuildService {
     /**

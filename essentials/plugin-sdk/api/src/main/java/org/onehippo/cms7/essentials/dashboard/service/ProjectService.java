@@ -31,28 +31,107 @@ public interface ProjectService {
     String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
     String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
 
+    /**
+     * Get the Path to the base directory of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to module base directory
+     */
     Path getBasePathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the pom.xml file of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to pom.xml file
+     */
     Path getPomPathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the Java root directory (src/main/java) of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to Java root directory
+     */
     Path getJavaRootPathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the resources root directory (src/main/resources) of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to resources root directory
+     */
     Path getResourcesRootPathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the web application root directory (src/main/webapp) of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to web application root directory
+     */
     Path getWebApplicationRootPathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the WEB-INF directory of the specified project module.
+     *
+     * @param module desired project module
+     * @return Path to WEB-INF directory
+     */
     Path getWebInfPathForModule(TargetPom module);
 
+    /**
+     * Get the Path to the Java root directory of the module containing the HST bean classes.
+     *
+     * By default, this returns the Java root directory of the project's 'site' module, but if the
+     * {@code ProjectSettings} specify a beansFolder, the returned Path is adjusted to that directory instead.
+     *
+     * @return Path to the Java root directory of the module containing the HST bean classes
+     */
     Path getBeansRootPath();
 
+    /**
+     * Get the Path to the directory containing the HST bean classes.
+     *
+     * Combined the Path returned by #getBeansRootPath with {@code ProjectSettings}'s 'selectedBeansPackage'.
+     *
+     * @return Path to the directory containing the HST bean classes
+     */
     Path getBeansPackagePath();
 
+    /**
+     * Get the Path to the directory containing the (HST) REST resource classes.
+     *
+     * HST REST resource classes are expected to reside inside the 'site' module.
+     *
+     * @return Path to the directory containing the (HST) REST resource classes
+     */
     Path getRestPackagePath();
 
+    /**
+     * Get the Path to the directory containing the HST component classes.
+     *
+     * HST component classes are expected to reside in the 'site' module.
+     *
+     * @return Path to the directory containing the HST component classes
+     */
     Path getComponentsPackagePath();
 
+    /**
+     * Get the Path to the project's tomcat context.xml configuration file.
+     *
+     * The context.xml file is expected to be found at 'conf/context.xml'.
+     *
+     * @return Path to the project's tomcat context.xml configuration file
+     */
     Path getContextXmlPath();
 
+    /**
+     * Get the Path to the project's directory where the configuration files for the Maven Assembly plugin are located.
+     *
+     * These files are expected to be found in 'src/main/assembly' of the project.
+     *
+     * @return Path to the project's assembly directory
+     */
     Path getAssemblyFolderPath();
 
     /**

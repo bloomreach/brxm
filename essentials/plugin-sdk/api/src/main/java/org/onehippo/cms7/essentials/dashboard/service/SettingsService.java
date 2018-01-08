@@ -18,6 +18,14 @@ package org.onehippo.cms7.essentials.dashboard.service;
 
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
+/**
+ * SettingsService provides Essentials with the current project settings.
+ *
+ * Can be @Inject'ed into REST Resources and Instructions.
+ */
 public interface SettingsService {
+    /**
+     * Retrieve the current {@code ProjectSettings}.
+     */
     ProjectSettings getSettings();
 }
