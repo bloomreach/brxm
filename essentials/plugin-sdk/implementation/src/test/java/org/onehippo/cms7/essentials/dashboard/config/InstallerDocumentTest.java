@@ -23,8 +23,6 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,27 +32,19 @@ import static org.junit.Assert.assertNotNull;
  */
 public class InstallerDocumentTest extends BaseTest {
 
-    private static Logger log = LoggerFactory.getLogger(InstallerDocumentTest.class);
-
     @Inject private ProjectService projectService;
 
     @Test
     public void testGetPluginId() throws Exception {
-
-        final InstallerDocument document = new InstallerDocument();
-        final String pluginId = "foo.bar.zar.MyBean";
-        document.setName(pluginId);
-        log.info("document {}", document);
-        document.setPluginId("test.foo");
+        final String filename = "foo.bar.zar.MyBean";
         final Calendar today = Calendar.getInstance();
+        final PluginFileService service = new PluginFileService(projectService);
+        final InstallerDocument document = new InstallerDocument();
         document.setDateInstalled(today);
-        final InstallerDocument fetched;
-        try (PluginConfigService manager = new FilePluginService(projectService)) {
-            manager.write(document);
-            fetched = manager.read(pluginId, InstallerDocument.class);
-        }
+        service.write(filename, document);
+
+        final InstallerDocument fetched = service.read(filename, InstallerDocument.class);
         assertNotNull(fetched.getDateInstalled());
         assertEquals(fetched.getDateInstalled().getTime(), today.getTime());
-        assertNotNull(fetched.getPluginId());
     }
 }

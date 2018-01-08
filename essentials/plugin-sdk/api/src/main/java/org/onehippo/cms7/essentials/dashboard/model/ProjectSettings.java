@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import org.onehippo.cms7.essentials.dashboard.config.Document;
-
 /**
  * ProjectSettings exposes Essentials' project settings to Essentials plugins. The typical way to programmatically
  * obtain the current project settings is to @Inject the SettingsService into the plugin code and call #get on it.
@@ -25,7 +23,7 @@ import org.onehippo.cms7.essentials.dashboard.config.Document;
  * The project settings can partially be adjusted in the dashboard's #introduction page, or completely by editing
  * the file src/main/resources/project-settings.xml in your project's Essentials module.
  */
-public interface ProjectSettings extends Document {
+public interface ProjectSettings {
 
     /**
      * The name of the project root-level directory representing the 'site' module, defaults to 'site'.

@@ -14,41 +14,42 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.config;
+package org.onehippo.cms7.essentials.plugin;
 
 import java.io.InputStream;
 
+import com.google.common.base.Strings;
+
+import org.onehippo.cms7.essentials.dashboard.config.PluginFileService;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Service to read settings from WAR resources (write operations are implemented as no-op.
+ * Service to read settings from Essentials WAR resources.
  */
-public class ResourcePluginService extends AbstractPluginService {
+public class PluginFileResourceService extends PluginFileService {
 
-    private static Logger log = LoggerFactory.getLogger(ResourcePluginService.class);
+    private static Logger log = LoggerFactory.getLogger(PluginFileResourceService.class);
 
-    public ResourcePluginService(final ProjectService projectService) {
+    PluginFileResourceService(final ProjectService projectService) {
         super(projectService);
     }
 
     @Override
-    public boolean write(Document document) {
-        log.warn("Writing to WAR resource not supported");
-        return false;
+    public boolean write(final String filename, final Object data) {
+        throw new IllegalStateException("Writing a plugin file into a JAR is not supported.");
     }
 
     @Override
-    public boolean write(Document document, String pluginId) {
-        return write(document);
-    }
+    public <T> T read(final String filename, final Class<T> clazz) {
+        final String sanitized = sanitizeFileName(filename);
+        if (sanitized == null) {
+            return null;
+        }
 
-    @Override
-    public <T extends Document> T read(final String pluginId, final Class<T> clazz) {
-        final String cleanedId = (pluginId != null) ? GlobalUtils.validFileName(pluginId) : null;
-        final String path = "/" + getFileName(GlobalUtils.newInstance(clazz), cleanedId);
+        final String path = "/" + sanitized;
         final InputStream stream = getClass().getResourceAsStream(path);
         if (stream == null) {
             log.debug("Resource {} not found.", path);
@@ -56,10 +57,5 @@ public class ResourcePluginService extends AbstractPluginService {
         }
         log.debug("Reading settings of: {}", path);
         return GlobalUtils.unmarshalStream(stream, clazz);
-    }
-
-    @Override
-    public <T extends Document> T read(final Class<T> clazz) {
-        return read(null, clazz);
     }
 }

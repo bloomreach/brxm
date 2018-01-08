@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,18 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-
 import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 /**
- * @version "$Id$"
+ * InstallerDocument represents the
  */
-
 @XmlRootElement()
-public class InstallerDocument extends BaseDocument {
-
-
-    private String pluginId;
-
-    // date when the plugin got installed in the dashboard
-    private Calendar dateInstalled;
-
-    // date when the plugin got added to the project
-    private Calendar dateAdded;
-
-    // plugin installation state
-    private String installationState;
-
-    public String getPluginId() {
-        return pluginId;
-    }
-
-    public void setPluginId(final String pluginId) {
-        this.pluginId = pluginId;
-    }
+public class InstallerDocument {
+    private Calendar dateInstalled;   // date when the plugin got installed in the dashboard
+    private Calendar dateAdded;       // date when the plugin got added to the project
+    private String installationState; // plugin installation state
 
     public Calendar getDateInstalled() {
         return dateInstalled;
@@ -65,8 +45,6 @@ public class InstallerDocument extends BaseDocument {
         this.dateAdded = dateAdded;
     }
 
-    public boolean hasDateAdded() { return dateAdded != null; }
-
     public String getInstallationState() {
         return installationState;
     }
@@ -75,14 +53,9 @@ public class InstallerDocument extends BaseDocument {
         this.installationState = installationState;
     }
 
-    public boolean hasInstallationState() {
-        return installationState != null;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("InstallerDocument{");
-        sb.append("pluginId='").append(pluginId).append('\'');
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();

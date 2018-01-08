@@ -27,9 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import com.google.common.base.Strings;
 
 @XmlRootElement(name = "project")
-public class ProjectSettingsBean extends BaseDocument implements ProjectSettings {
-
-    private static final String DEFAULT_NAME = "project-settings";
+public class ProjectSettingsBean implements ProjectSettings {
 
     private String projectNamespace;
 
@@ -54,10 +52,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     private boolean setupDone;
     private Set<String> pluginRepositories = new HashSet<>();
-
-    public ProjectSettingsBean() {
-        super(DEFAULT_NAME);
-    }
 
     @Override
     public String getBeansFolder() {

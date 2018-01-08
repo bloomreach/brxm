@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -278,18 +277,18 @@ public final class GlobalUtils {
     }
 
     /**
-     * Marshal a document into a writer in order to serialize settings.
+     * Marshal JAXB-serializable data into a writer.
      *
      * @param writer
-     * @param document
+     * @param data
      * @return true upon success, false otherwise.
      */
-    public static boolean marshalWriter(final Writer writer, final Document document) {
+    public static boolean marshalWriter(final Writer writer, final Object data) {
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(document.getClass());
+            final JAXBContext jaxbContext = JAXBContext.newInstance(data.getClass());
             final Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(document, writer);
+            marshaller.marshal(data, writer);
             return true;
         } catch (JAXBException e) {
             log.error("Error writing settings", e);
@@ -306,14 +305,16 @@ public final class GlobalUtils {
      * @return       document representing the parsed input stream
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Document> T unmarshalStream(final InputStream stream, final Class<T> clazz) {
-        final String setting = readStreamAsText(stream);
-        try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (T) unmarshaller.unmarshal(new StringReader(setting));
-        } catch (JAXBException e) {
-            log.error("Error reading settings", e);
+    public static <T> T unmarshalStream(final InputStream stream, final Class<T> clazz) {
+        final String data = readStreamAsText(stream);
+        if (data != null) {
+            try {
+                final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+                final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+                return (T) unmarshaller.unmarshal(new StringReader(data));
+            } catch (JAXBException e) {
+                log.error("Error reading settings", e);
+            }
         }
         return null;
     }
