@@ -18,14 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.BiConsumer;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -78,9 +76,7 @@ public class TranslationsInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Import repository translations from '" + source + "'.");
-        return result;
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(getDefaultGroup(), "Import repository translations from '" + source + "'.");
     }
 }

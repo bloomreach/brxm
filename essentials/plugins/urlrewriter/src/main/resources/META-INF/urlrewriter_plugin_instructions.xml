@@ -18,7 +18,7 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd"
               xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
-    <hst-bean-classes pattern="classpath*:org/onehippo/forge/**/*.class" />
+    <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class" />
     <execute class="com.onehippo.cms7.essentials.plugins.urlrewriter.UrlRewriterInstruction" />
     <file action="copy" source="instructions/xml/spring/urlrewriter-context.xml" target="{{siteResources}}/META-INF/hst-assembly/overrides/urlrewriter-context.xml"/>
   </instructionSet>

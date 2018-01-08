@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "taggingPlugin",
   "name": "Tagging",
   "icon": "/essentials/feature/images/tagging-plugin-icon.png",
@@ -10,13 +9,13 @@
     "/essentials/feature/images/screenshots/tagging02.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/tagging/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
+  "hasConfiguration": true,
+  "packageFile": "/META-INF/tagging_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -34,24 +33,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "taggingPlugin",
-          "file": "taggingPlugin.js"
-        }
-      ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-content-tagging",
-      "scope": "compile",
-      "targetPom": "cms"
-    }
-  ]
+  }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
@@ -30,8 +31,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -80,14 +79,12 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         if (action == Action.COPY) {
-            result.put(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
         } else {
-            result.put(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
         }
-        return result;
     }
 
     private InstructionStatus copy(final PluginContext context) {

@@ -16,14 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.common.collect.Multimap;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
@@ -34,7 +33,7 @@ import org.springframework.stereotype.Component;
  * Instruction
  */
 @Component
-@XmlRootElement(name = "hst-bean-classes", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
+@XmlRootElement(name = "hstBeanClasses", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class HstBeanClassesInstruction extends BuiltinInstruction {
 
     @Inject WebXmlService webXmlService;
@@ -60,8 +59,8 @@ public class HstBeanClassesInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        return Instruction.makeChangeMessages(getDefaultGroup(),
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(getDefaultGroup(),
                 "Add mapping '" + pattern + "' for annotated HST beans to Site web.xml.");
     }
 }

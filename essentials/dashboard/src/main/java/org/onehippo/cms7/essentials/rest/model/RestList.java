@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -41,8 +41,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({
-            @JsonSubTypes.Type(PluginDescriptorRestful.class),
-            @JsonSubTypes.Type(VendorRestful.class),
+            @JsonSubTypes.Type(PluginDescriptor.class),
             @JsonSubTypes.Type(MessageRestful.class),
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(PostPayloadRestful.class),
@@ -53,6 +52,4 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     public List<T> getItems() {
         return super.getItems();
     }
-
-
 }

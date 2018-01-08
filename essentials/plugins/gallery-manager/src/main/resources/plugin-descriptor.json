@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "galleryPlugin",
   "name": "Gallery Manager",
   "icon": "/essentials/tool/images/gallery-manager-icon.png",
@@ -9,7 +8,6 @@
   ],
   "type": "tool",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -26,15 +24,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "galleryPlugin",
-          "file": "galleryPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

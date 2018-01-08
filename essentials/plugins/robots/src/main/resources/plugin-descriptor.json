@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "robotsPlugin",
   "name": "Robots.txt",
   "icon": "/essentials/feature/images/robots-plugin-icon.png",
@@ -14,12 +13,9 @@
   "packageFile": "/META-INF/robots_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
-  "libraries": [
-  ],
   "categories": {
     "application": [
       "search",
@@ -35,14 +31,12 @@
   },
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-robotstxt-addon-repository",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-robotstxt-hst-client",
       "scope": "compile",

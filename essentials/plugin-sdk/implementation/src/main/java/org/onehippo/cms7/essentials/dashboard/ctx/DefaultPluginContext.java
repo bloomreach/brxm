@@ -36,7 +36,6 @@ import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -148,12 +147,6 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public String getEssentialsResourcePath() {
         return ProjectUtils.getEssentialsFolderName(this).getAbsolutePath() + MAIN_RESOURCE_PART;
-    }
-
-
-    @Override
-    public boolean isEnterpriseProject() {
-        return DependencyUtils.isEnterpriseProject(this);
     }
 
     @Override

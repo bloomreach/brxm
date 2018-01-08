@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>unmaintained</version>
+  </parent>
+
+  <name>My Hippo Project</name>
+  <description>My Hippo Project</description>
+  <groupId>org.example</groupId>
+  <artifactId>myhippoproject</artifactId>
+  <version>1.01.00-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+    </repository>
+  </repositories>
+
+</project>

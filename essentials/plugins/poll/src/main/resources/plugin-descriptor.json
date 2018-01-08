@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "pollPlugin",
   "name": "Polls",
   "icon": "/essentials/feature/images/polls-plugin-icon.png",
@@ -15,7 +14,6 @@
   "packageFile": "/META-INF/poll_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -30,25 +28,20 @@
       "community"
     ]
   },
-  "libraries": [
-  ],
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-addon-cms",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-addon-repository",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-hst-client",
       "scope": "compile",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,8 +161,8 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
-            $rootScope.applicationUrl = 'http://' + window.SERVER_URL + '/essentials';
-            var root = 'http://' + window.SERVER_URL + '/essentials/rest';
+            $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
+            var root = window.SERVER_URL + '/essentials/rest';
             var pluginsStem = root + "/plugins";
             var projectStem = root + "/project";
 

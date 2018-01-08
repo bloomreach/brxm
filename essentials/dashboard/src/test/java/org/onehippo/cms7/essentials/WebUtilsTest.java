@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -73,11 +73,11 @@ public class WebUtilsTest {
 
     @Test
     public void jsonTest() throws Exception {
-        PluginDescriptorRestful descriptorRestful = WebUtils.fromJson(PLUGIN, PluginDescriptorRestful.class);
+        PluginDescriptor descriptorRestful = WebUtils.fromJson(PLUGIN, PluginDescriptor.class);
         assertNotNull("Expected object but found null", descriptorRestful);
         assertEquals("documentWizardPlugin", descriptorRestful.getId());
         final String result = WebUtils.toJson(descriptorRestful);
-        descriptorRestful = WebUtils.fromJson(result, PluginDescriptorRestful.class);
+        descriptorRestful = WebUtils.fromJson(result, PluginDescriptor.class);
         assertNotNull("Expected object but found null", descriptorRestful);
         assertEquals("documentWizardPlugin", descriptorRestful.getId());
     }
@@ -88,7 +88,7 @@ public class WebUtilsTest {
         final String jsonString = GlobalUtils.readStreamAsText(stream);
 
         try {
-            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptorRestful> restfulList = WebUtils.fromJson(jsonString, RestfulList.class);
+            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptor> restfulList = WebUtils.fromJson(jsonString, RestfulList.class);
             assertNotNull(restfulList);
             assertEquals(restfulList.getItems().size(), 4);
         } catch (Exception e) {

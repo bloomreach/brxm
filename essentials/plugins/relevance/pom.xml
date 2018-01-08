@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Relevance Plugin</name>
@@ -32,11 +32,9 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
-    </dependency>
+    <!--Please don't add a direct dependency on plugin-sdk-implementation-->
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>

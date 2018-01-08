@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "faqPlugin",
   "name": "FAQ",
   "icon": "/essentials/feature/images/faq-plugin-icon.png",
@@ -15,7 +14,6 @@
   "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -29,11 +27,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-      ]
-    }
-  ]
+  }
 }

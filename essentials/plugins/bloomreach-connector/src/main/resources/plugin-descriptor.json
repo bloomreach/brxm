@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "bloomreachConnector",
   "name": "Personalization Connector",
   "icon": "/essentials/images/bloomreachConnector.png",
@@ -10,7 +9,6 @@
   ],
   "type": "tool",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -28,50 +26,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "bloomreachConnector",
-          "file": "bloomreachConnector.js"
-        }
-      ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-addon-crisp-api",
-      "scope": "compile",
-      "version": "${hippo.addon-crisp.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-addon-crisp-repository",
-      "scope": "compile",
-      "version": "${hippo.addon-crisp.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "com.onehippo.cms7",
-      "artifactId": "hippo-addon-personalization-components-repository",
-      "scope": "compile",
-      "version": "${hippo.addon-personalization.version}",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "com.onehippo.cms7",
-      "artifactId": "hippo-addon-personalization-dependencies",
-      "scope": "compile",
-      "type": "pom",
-      "version": "${hippo.addon-personalization.version}",
-      "targetPom": "site"
-    }
-  ]
+  }
 }

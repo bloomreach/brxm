@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "projectsPlugin",
   "name": "Projects",
   "icon": "/essentials/feature/images/projects-plugin-icon.png",
@@ -12,7 +11,6 @@
   "packageFile": "/META-INF/projects_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -28,9 +26,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-  ],
-  "dependencies": [
-  ]
+  }
 }

@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "taxonomyPlugin",
   "name": "Taxonomy",
   "icon": "/essentials/feature/images/taxonomy-plugin-icon.png",
@@ -11,13 +10,13 @@
     "/essentials/feature/images/screenshots/taxonomy03.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
+  "hasConfiguration": true,
+  "packageFile": "/META-INF/taxonomy_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -34,59 +33,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "taxonomyPlugin",
-          "file": "taxonomyPlugin.js"
-        }
-      ]
-    }
-  ],
-  "dependencies": [
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-api",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-addon-frontend",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-addon-repository",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-api",
-      "scope": "compile",
-      "targetPom": "site"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-hst-api",
-      "scope": "compile",
-      "targetPom": "site"
-    },
-    {
-      "@type": "dependency",
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-taxonomy-hstclient",
-      "scope": "compile",
-      "targetPom": "site"
-    }
-  ]
+  }
 }

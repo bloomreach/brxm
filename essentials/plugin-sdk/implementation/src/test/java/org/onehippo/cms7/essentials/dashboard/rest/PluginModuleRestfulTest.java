@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import java.util.Map;
+import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,21 +37,26 @@ public class PluginModuleRestfulTest extends BaseTest {
 
     @Test
     public void testGetApplication() throws Exception {
+        PluginDescriptor descriptor = new PluginDescriptor();
         PluginModuleRestful restful = new PluginModuleRestful();
-        final PluginModuleRestful.PrefixedLibrary prefixedLibrary = new PluginModuleRestful.PrefixedLibrary("components");
-        prefixedLibrary.addLibrary(new PluginModuleRestful.Library("html5shiv", "excanvas.js", "IE <= 8"));
-        prefixedLibrary.addLibrary(new PluginModuleRestful.Library("ExplorerCanvas", "html5shiv-printshiv.js", "IE <= 8"));
-        restful.addLibrary("libraries", prefixedLibrary);
-        //
-        final PluginModuleRestful.PrefixedLibrary hippoLibrary = new PluginModuleRestful.PrefixedLibrary();
-        hippoLibrary.addLibrary(new PluginModuleRestful.Library("components/hippo-plugins", "dist/js/main.js"));
-        restful.addLibrary("hippo-plugins", hippoLibrary);
+
+        restful.addFiles(descriptor); // not a tool, has-config flag not set
+
+        descriptor.setId("isTool");
+        descriptor.setType(PluginDescriptor.TYPE_TOOL);
+        restful.addFiles(descriptor);
+
+        descriptor.setId("hasConfiguration");
+        descriptor.setType(PluginDescriptor.TYPE_FEATURE);
+        descriptor.setHasConfiguration(true);
+        restful.addFiles(descriptor);
+
         final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(restful);
-        log.info("json {}", json);
         restful = mapper.readValue(json, PluginModuleRestful.class);
-        log.info("json {}", restful);
-        final Map<String, PluginModuleRestful.PrefixedLibrary> includes = restful.getIncludes();
-        assertEquals("Expected 2 libraries", 2, includes.size());
+        final List<String> files = restful.getFiles();
+        assertEquals(2, files.size());
+        assertEquals("tool/isTool/isTool.js", files.get(0));
+        assertEquals("feature/hasConfiguration/hasConfiguration.js", files.get(1));
     }
 }

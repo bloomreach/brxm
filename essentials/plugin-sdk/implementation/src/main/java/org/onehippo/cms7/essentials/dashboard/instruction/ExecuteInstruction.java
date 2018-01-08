@@ -16,12 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -31,6 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +44,7 @@ public class ExecuteInstruction extends BuiltinInstruction {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteInstruction.class);
 
+    @Inject private AutowireCapableBeanFactory injector;
     private String clazz;
 
     public ExecuteInstruction() {
@@ -64,22 +67,29 @@ public class ExecuteInstruction extends BuiltinInstruction {
             return InstructionStatus.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
+        injector.autowireBean(instruction);
         log.info("Executing instruction '{}'.", clazz);
         return instruction.execute(context);
     }
 
     @Override
-    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         final Instruction instruction = GlobalUtils.newInstance(clazz);
-        if (instruction != null) {
-            final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-            if (changeMessages != null) {
-                return changeMessages;
-            }
-        }
+        injector.autowireBean(instruction);
 
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Execute instruction class '" + clazz + "'.");
-        return result;
+        final BooleanWrapper signal = new BooleanWrapper();
+        if (instruction != null) {
+            instruction.populateChangeMessages((g, m) -> {
+                changeMessageQueue.accept(g, m);
+                signal.flag = true;
+            });
+        }
+        if (!signal.flag) {
+            changeMessageQueue.accept(getDefaultGroup(), "Execute instruction class '" + clazz + "'.");
+        }
+    }
+
+    private static class BooleanWrapper {
+        boolean flag;
     }
 }

@@ -19,13 +19,12 @@ package org.onehippo.cms7.essentials.dashboard.blog;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -98,7 +97,7 @@ public class BlogDaemonModuleInstruction implements Instruction {
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
-        return Instruction.makeChangeMessages(MessageGroup.EXECUTE, "Configure Blog Daemon module");
+    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(MessageGroup.EXECUTE, "Configure Blog Daemon module");
     }
 }
