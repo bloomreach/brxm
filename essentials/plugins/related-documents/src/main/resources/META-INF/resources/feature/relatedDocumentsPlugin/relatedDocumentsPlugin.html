@@ -47,7 +47,8 @@
                                                       end-point="{{endpoint}}"/>
                         </td>
                         <td>
-                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="doc.checked" name="numberOfSuggestions" ng-disabled="!doc.checked"/>
+                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="true" ng-pattern="/^[\d]{1,2}$/"
+                                   name="numberOfSuggestions" ng-disabled="!doc.checked" placeholder="10"/>
                         </td>
                         <td>
                             <essentials-cms-document-type-deep-link
