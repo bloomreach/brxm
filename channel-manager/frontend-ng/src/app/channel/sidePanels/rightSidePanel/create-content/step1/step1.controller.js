@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class RightSidePanelCtrl {
 
     this.CreateContentService.getTemplateQuery(this.options.templateQuery)
       .then(templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes))
-      .catch(error => this._onErrorLoadingTemplateQuery(error));
+      .catch(error => this._onError(error, 'Unknown error loading template query'));
   }
 
   submit() {
@@ -84,7 +84,7 @@ class RightSidePanelCtrl {
           locale: this.locale,
         },
       }))
-      .catch(error => this._onErrorCreatingDraft(error));
+      .catch(error => this._onError(error, 'Unknown error creating new draft document'));
   }
 
   setWidthState(state) {
@@ -108,21 +108,12 @@ class RightSidePanelCtrl {
     }
   }
 
-  _onErrorLoadingTemplateQuery(error) {
+  _onError(error, genericMessage) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
       this.FeedbackService.showError(errorKey, error.data.params);
     } else {
-      this.$log.error('Unknown error loading template query', error);
-    }
-  }
-
-  _onErrorCreatingDraft(error) {
-    if (error.data && error.data.reason) {
-      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-      this.FeedbackService.showError(errorKey);
-    } else {
-      this.$log.error('Unknown error creating new draft document', error);
+      this.$log.error(genericMessage, error);
     }
   }
 }
