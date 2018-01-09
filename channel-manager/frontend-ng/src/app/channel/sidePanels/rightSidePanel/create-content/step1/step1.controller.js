@@ -111,7 +111,9 @@ class RightSidePanelCtrl {
   _onError(error, genericMessage) {
     if (error.data && error.data.reason) {
       const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-      this.FeedbackService.showError(errorKey, error.data.params);
+      const args = [errorKey];
+      if (error.data.params) args.push(error.data.params);
+      this.FeedbackService.showError(...args);
     } else {
       this.$log.error(genericMessage, error);
     }
