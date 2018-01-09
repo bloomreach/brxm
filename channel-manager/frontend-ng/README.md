@@ -1,5 +1,6 @@
 # Prerequisites
-* [Chrome](http://google.chrome.com)
+* [Chrome](https://google.chrome.com)
+* [Node 8](https://nodejs.org) and [NPM 5](https://www.npmjs.com)
 * [gulp-cli](https://github.com/gulpjs/gulp-cli) (optional)
 
 The Hippo Build uses [Gulp.js](https://gulpjs.com) for frontend task automation.

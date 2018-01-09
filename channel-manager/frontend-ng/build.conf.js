@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ const customConfig = {
       'angular-messages',
       'angular-translate',
       'angular-translate-loader-static-files',
-      'angular-ui-router',
+      '@uirouter/angularjs',
       'angular-ui-tree',
       'ng-device-detector',
       'ng-focus-if'],
