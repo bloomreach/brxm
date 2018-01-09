@@ -2,10 +2,12 @@
 
 <#-- @ftlvariable name="item" type="{{beansPackage}}.EventsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
+<#assign year = "${.now?string['YYYY']}"/>
+<#assign month = "${.now?string['MM']}"/>
 <#if pageable?? && pageable.items?has_content>
   <div>
     <#list pageable.items as item>
-      <@hst.link var="link" hippobean=item />
+        <@hst.link var="link" hippobean=item />
       <div class="media">
         <div class="media-left" style="float: left">
           <a href="${link}">
@@ -27,19 +29,27 @@
                 <@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/>
               </#if>
             </span>
+            <div class="has-edit-button">
+              <@hst.manageContent document=item/>
+            </div>
           </h4>
           <p>${item.introduction?html}</p>
         </div>
       </div>
     </#list>
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+    </div>
     <#if cparam.showPagination>
-      <#include "../../include/pagination.ftl">
+        <#include "../../include/pagination.ftl">
     </#if>
   </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+    </div>
   </div>
 </#if>
-
