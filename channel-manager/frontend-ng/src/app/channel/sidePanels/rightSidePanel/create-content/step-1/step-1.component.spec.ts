@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 
 import ChannelService from '../../../../channel.service';
+import CmsService from '../../../../../services/cms.service';
 import FeedbackService from '../../../../../services/feedback.service';
 import {CreateContentService} from '../create-content.service';
 import {DocumentTypeInfo} from '../create-content.types';
-import {ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock} from '../create-content.mocks.spec';
+import {ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock, CmsServiceMock} from '../create-content.mocks.spec';
 import {CreateContentComponent} from './step-1.component';
 import {DocumentLocationFieldComponent} from '../document-location/document-location-field.component';
 import {HintsComponent} from '../../../../../shared/components/hints/hints.component';
 import {NameUrlFieldsComponent} from '../name-url-fields/name-url-fields.component';
 import {SharedModule} from '../../../../../shared/shared.module';
 
-xdescribe('Create content step 1 component', () => {
+describe('Create content step 1 component', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   let createContentService: CreateContentService;
@@ -50,9 +51,10 @@ xdescribe('Create content step 1 component', () => {
         FormsModule
       ],
       providers: [
-        {provide: ChannelService, useClass: ChannelServiceMock},
-        {provide: CreateContentService, useClass: CreateContentServiceMock},
-        {provide: FeedbackService, useClass: FeedbackServiceMock}
+        { provide: ChannelService, useClass: ChannelServiceMock },
+        { provide: CmsService, useClass: CmsServiceMock },
+        { provide: CreateContentService, useClass: CreateContentServiceMock },
+        { provide: FeedbackService, useClass: FeedbackServiceMock }
       ]
     });
 
