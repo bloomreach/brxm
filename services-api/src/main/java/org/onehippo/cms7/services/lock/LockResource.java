@@ -15,7 +15,12 @@
  */
 package org.onehippo.cms7.services.lock;
 
-
+/**
+ * <p>
+ *     The returned auto closeable object in case {@link LockManager#lock(String)} succeeds.
+ *     A LockResource object can be shared across threads and is thread-safe
+ * </p>
+ */
 public interface LockResource extends AutoCloseable {
 
     /**

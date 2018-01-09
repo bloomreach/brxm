@@ -39,12 +39,13 @@ import org.onehippo.cms7.services.SingletonService;
  *     <code>
  *         <pre>
  *             public void run() {
- *                boolean locked = false;
- *                try {
- *                   try (LockResource lock = lockManager.lock(key)){
+ *                try (LockResource ignore = lockManager.lock(key)){
+ *                   // session.refresh(true|false) if JCR nodes are involved
  *                   // Do work
+ *                } catch (AlreadyLockedException e) {
+ *                   log.info("'{}' is already locked", key, e);
  *                } catch (LockException e) {
- *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
+ *                   log.error("Exception while trying to obtain lock, e);
  *                }
  *              }
  *         </pre>
@@ -57,10 +58,13 @@ import org.onehippo.cms7.services.SingletonService;
  *                try {
  *                   lockManager.lock(key);
  *                   locked = true;
+ *                   // session.refresh(true|false) if JCR nodes are involved
  *                   // Do work
+ *                } catch (AlreadyLockedException e) {
+ *                   log.info("'{}' is already locked", key, e);
  *                } catch (LockException e) {
- *                   log.info("Failed to obtain lock, most likely obtained by other cluster node already", e);
- *                } finally {
+ *                   log.error("Exception while trying to obtain lock, e);
+ *                }finally {
  *                   if (locked) {
  *                     lockManager.unlock(key);
  *                   }
@@ -70,12 +74,28 @@ import org.onehippo.cms7.services.SingletonService;
  *     </code>
  * </p>
  * <p>
- *     Note that when a {@code key} is already locked, the invocation of {@link #lock(String) #lock(key)} directly results
- *     in an {@link AlreadyLockedException} : This is thus <strong>different</strong> than
- *     {@link java.util.concurrent.locks.ReentrantLock} behavior. If you need similar behavior to {@link ReentrantLock#lock()}
- *     but then <strong>cluster wide</strong>, you can use {@link LockManagerUtils#waitForLock(LockManager, String, long)}
- *     and if you need the cluster wide equivalent of {@link java.util.concurrent.locks.ReentrantLock#tryLock(long, TimeUnit)}
- *     you can use {@link LockManagerUtils#waitForLock(LockManager, String, long, long)}.
+ *     Note that when {@code key} is already locked by another {@link Thread} or other cluster node,
+ *     the invocation of {@link #lock(String) #lock(key)} directly results in an {@link AlreadyLockedException} :
+ *     This is thus <strong>different</strong> than {@link ReentrantLock#lock()} behavior (which blocks until the lock is acquired).
+ *     If you need similar behavior to {@link ReentrantLock#lock()} but then <strong>cluster wide</strong>, you can use
+ *     {@link LockManagerUtils#waitForLock(LockManager, String, long)} and if you need the cluster wide equivalent
+ *     of {@link java.util.concurrent.locks.ReentrantLock#tryLock(long, TimeUnit)} you can use
+ *     {@link LockManagerUtils#waitForLock(LockManager, String, long, long)}.
+ * </p>
+ * <p>
+ *     <strong>Usage in combination with JCR:</strong>
+ *     <br/>
+ *     When you use this {@link LockManager} to obtain a cluster wide lock after which the code is doing JCR node manipulation,
+ *     eg updating the last modification timestamp on a JCR node, then make sure to always invoke
+ *     <code>
+ *         <pre>
+ *             session.refresh(true|false);
+ *         </pre>
+ *     </code>
+ *     after obtaining the {@link LockResource}. The reason for this is that in the cluster wide 'synchronized' part of
+ *     the code, you want to make sure that all JCR nodes the code is going to touch are in sync with the latest cluster
+ *     state and that the code is not chatting with local stale JCR nodes. Thus make sure to always invoke
+ *     {@code session.refresh(true|false);} when dealing with JCR nodes in a cluster wide synchronized code block.
  * </p>
  *
  */
