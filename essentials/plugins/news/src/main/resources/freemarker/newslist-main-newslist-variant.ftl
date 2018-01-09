@@ -26,7 +26,7 @@
             </#if>
           </span>
           <div class="has-edit-button">
-            <@hst.manageContent document=item rootPath="news" defaultPath="${year}/${month}"/>
+            <@hst.manageContent document=item/>
           </div>
         </h4>
         <p>${item.introduction?html}</p>
