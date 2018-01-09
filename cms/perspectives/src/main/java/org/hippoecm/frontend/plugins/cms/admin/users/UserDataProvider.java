@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -24,11 +24,15 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
+import org.hippoecm.frontend.plugins.cms.admin.comparators.PropertyComparator;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
 
 public class UserDataProvider extends SearchableDataProvider<User> {
 
@@ -37,30 +41,27 @@ public class UserDataProvider extends SearchableDataProvider<User> {
                 " FROM " + HippoNodeType.NT_USER
                +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
 
-    private static final String QUERY_USER_LIST_TEMPLATE = "SELECT * " +
-                "  FROM " + HippoNodeType.NT_USER
-                +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
-                            "(" +
-                                " fn:name() = '{}' OR " +
-                                " contains(hipposys:firstname, '{}') OR "+
-                                " contains(hipposys:lastname, '{}') OR "+
-                                " contains(hipposys:email, '{}')"+
-                            ")";
-
     private static final String HIPPO_USERS_NODE_PATH = "/hippo:configuration/hippo:users";
 
+    private static final Collator collator = Collator.getInstance(UserSession.get().getLocale());
+    private static final Comparator<String> propertyComparator = new PropertyComparator(collator);
+    private static final Comparator<User> firstNameComparator = comparing(User::getFirstName, nullsLast(propertyComparator));
+    private static final Comparator<User> lastNameComparator = comparing(User::getLastName, nullsLast(propertyComparator));
+    private static final Comparator<User> usernameComparator = comparing(User::getUsername, propertyComparator);
+
     public UserDataProvider() {
-        super(QUERY_USER_LIST, QUERY_USER_LIST_TEMPLATE, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+        super(QUERY_USER_LIST, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
+        setIncludePrimaryTypes(new String[]{HippoNodeType.NT_USER});
     }
 
     /**
      * Support overriding the query statements in instantiation by subclasses.
      */
-    protected UserDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate) {
-        super(searchAllSqlStatement, searchTermSqlStatementTemplate, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
+    protected UserDataProvider(final String searchAllSqlStatement) {
+        super(searchAllSqlStatement, HIPPO_USERS_NODE_PATH, HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", SortOrder.ASCENDING);
-
+        setIncludePrimaryTypes(new String[]{HippoNodeType.NT_USER});
     }
 
     @Override
@@ -75,21 +76,17 @@ public class UserDataProvider extends SearchableDataProvider<User> {
 
     @Override
     public Iterator<User> iterator(long first, long count) {
-        List<User> userList = new ArrayList<>(getList());
+        final List<User> userList = new ArrayList<>(getList());
 
-        final Comparator<String> nullSafeComparator = new NullComparator(false);
-
-        Collections.sort(userList, new Comparator<User>() {
-            public int compare(User user1, User user2) {
-                int direction = getSort().isAscending() ? 1 : -1;
-
-                if ("frontend:firstname".equals(getSort().getProperty())) {
-                    return direction * (nullSafeComparator.compare(user1.getFirstName(), user2.getFirstName()));
-                } else if ("frontend:lastname".equals(getSort().getProperty())) {
-                    return direction * (nullSafeComparator.compare(user1.getLastName(), user2.getLastName()));
-                } else {
-                    return direction * (nullSafeComparator.compare(user1.getUsername(), user2.getUsername()));
-                }
+        userList.sort((user1, user2) -> {
+            final int direction = getSort().isAscending() ? 1 : -1;
+            switch (getSort().getProperty()) {
+                case "frontend:firstname":
+                    return direction * firstNameComparator.compare(user1, user2);
+                case "frontend:lastname":
+                    return direction * lastNameComparator.compare(user1, user2);
+                default:
+                    return direction * usernameComparator.compare(user1, user2);
             }
         });
 

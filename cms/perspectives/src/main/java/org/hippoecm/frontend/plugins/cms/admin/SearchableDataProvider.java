@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,14 +35,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
+import org.hippoecm.frontend.plugins.cms.admin.search.AdminTextSearchBuilder;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a searchable list of beans. Subclasses provide the query to search for all beans. The query to limit the
- * list is used as a free text query. All Lucene-specific characters are stripped from the query, except the wildcards *
- * and ?, the - operator to negate the term after it, and the 'or' keyword to OR terms instead of ANDing them.
+ * Provides a searchable list of beans. Subclasses provide the query to search for all beans.
  * <p/>
  * Whenever something changes below the JCR path and in the JCR types provided to the constructor, this observable will
  * notify registered {@link org.hippoecm.frontend.model.event.IObserver}s.
@@ -55,38 +54,11 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SearchableDataProvider.class);
 
-    private static final String[][] JCR_CONTAINS_QUERY_REPLACEMENTS = {
-            // replace single quotes by double ones to avoid the search query breaking out of the SQL query itself
-            {"'", "''"},
-            // escape Lucene special characters: + && || ! ( ) { } [ ] ^ " ~ : \
-            // we keep the - for negating, and * and ? for wildcards
-            {"\\", "\\\\"},
-            {"+", "\\+"},
-            {"&&", "\\&&"},
-            {"||", "\\||"},
-            {"!", "\\!"},
-            {"(", "\\("},
-            {")", "\\)"},
-            {"{", "\\{"},
-            {"}", "\\}"},
-            {"[", "\\["},
-            {"]", "\\]"},
-            {"^", "\\^"},
-            {"\"", "\\\""},
-            {":", "\\:"},
-            // escaping ~ does not work, so we remove it entirely
-            {"~", " "},
-            // for usability, replace 'or' by 'OR' so users do not have to explicitly type capitals
-            {" or ", " OR "}
-    };
-
     private final String searchAllSqlStatement;
-
-    private final String searchTermSqlStatementTemplate;
-
     private final String observePath;
     private final String[] observeNodeTypes;
     private String searchTerm;
+    private String[] includePrimaryTypes = new String[] {};
     private List<T> list = new ArrayList<T>();
     private volatile boolean dirty = true;
     private IObservationContext<JcrNodeModel> context;
@@ -95,14 +67,13 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Creates a searchable provider.
      *
-     * @param searchAllSqlStatement             the JCR SQL searchTerm to search for all beans
-     * @param searchTermSqlStatementTemplate    the JCR SQL template to search with a specific search term
-     * @param observePath      the JCR path to observe for changes
-     * @param observeNodeTypes the node types to observe for changes
+     * @param searchAllSqlStatement          the JCR SQL searchTerm to search for all beans
+     * @param observePath                    the JCR path to observe for changes
+     * @param observeNodeTypes               the node types to observe for changes
      */
-    public SearchableDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate, String observePath, String... observeNodeTypes) {
+    public SearchableDataProvider(final String searchAllSqlStatement, final String observePath,
+                                  final String... observeNodeTypes) {
         this.searchAllSqlStatement = searchAllSqlStatement;
-        this.searchTermSqlStatementTemplate = searchTermSqlStatementTemplate;
         this.observePath = observePath;
         this.observeNodeTypes = observeNodeTypes;
     }
@@ -148,20 +119,25 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         }
         list.clear();
 
-        final StringBuilder sqlQuery;
-        if (StringUtils.isNotEmpty(searchTerm)) {
-            sqlQuery = new StringBuilder(searchTermSqlStatementTemplate.replace("{}", searchTerm));
-        } else {
-            sqlQuery = new StringBuilder(searchAllSqlStatement);
-        }
-        log.debug("Executing query: {}", sqlQuery);
         try {
-            UserSession session = UserSession.get();
-            @SuppressWarnings("deprecation") Query listQuery =
-                    session.getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
-            NodeIterator iter = listQuery.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
+            final NodeIterator nodeIterator;
+
+            if (StringUtils.isNotEmpty(searchTerm)) {
+                final AdminTextSearchBuilder searchBuilder = new AdminTextSearchBuilder();
+                searchBuilder.setText(searchTerm);
+                searchBuilder.setWildcardSearch(true);
+                searchBuilder.setIncludePrimaryTypes(includePrimaryTypes);
+                searchBuilder.setScope(new String[]{observePath});
+                nodeIterator = searchBuilder.getResultModel().getObject().getQueryResult().getNodes();
+            } else {
+                final UserSession session = UserSession.get();
+                @SuppressWarnings("deprecation")
+                final Query listQuery = session.getQueryManager().createQuery(searchAllSqlStatement, Query.SQL);
+                nodeIterator = listQuery.execute().getNodes();
+            }
+
+            while (nodeIterator.hasNext()) {
+                final Node node = nodeIterator.nextNode();
                 if (node != null) {
                     try {
                         list.add(createBean(node));
@@ -173,29 +149,32 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             Collections.sort(list);
             dirty = false;
         } catch (RepositoryException e) {
-            log.error("Error while executing query: " + sqlQuery, e);
+            log.error("Error while executing query.", e);
         }
     }
 
     /**
-     * Set the search searchTerm. Only beans that match the searchTerm will be included. A '*' in the searchTerm acts as a wildcard.
-     * When the searchTerm is null or empty, all beans will be included.
+     * Set the search searchTerm.
      * <p/>
-     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of reflection.
+     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of
+     * reflection.
      *
-     * @param searchTerm the searchTerm to search for users with
+     * @param searchTerm the searchTerm to search for
      */
     @SuppressWarnings("unused")
     public void setSearchTerm(final String searchTerm) {
-        this.searchTerm = escapeJcrContainsQuery(searchTerm);
-        dirty = true;
+        if (!StringUtils.equalsIgnoreCase(searchTerm, this.searchTerm)) {
+            this.searchTerm = searchTerm;
+            dirty = true;
+        }
     }
 
     /**
-     * Returns the searchTerm used by this provider to limit the provided beans. The searchTerm can be null or empty, in which
-     * case there are no limitations and all beans will be included.
+     * Returns the searchTerm used by this provider to limit the provided beans. The searchTerm can be null or empty, in
+     * which case there are no limitations and all beans will be included.
      * <p/>
-     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of reflection.
+     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of
+     * reflection.
      *
      * @return the search searchTerm to use
      */
@@ -204,94 +183,9 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         return this.searchTerm;
     }
 
-    /**
-     * Escapes special/illegal characters and constructs in a query for the JCR 'CONTAINS' query: <ul> <li>The string is
-     * trimmed</li> <li>Illegal XPath characters are escaped</li> <li>Single quotes are replaced by double quotes</li>
-     * <li>Parentheses are escaped with \ to avoid Lucene parsing errors</li> <li>' or ' is replaced by ' OR ' so they
-     * are recognized as custom OR constructs</li> <li>'and' and 'or' at the start and end of the query is removed to
-     * avoid Lucene parsing errors</li> <li>a single '*' is replaced by an empty string</li> </ul>
-     *
-     * @param input the free text query to escape
-     * @return the escaped query, which can safely be used in a JCR 'CONTAINS' query
-     */
-    static String escapeJcrContainsQuery(String input) {
-        String result = StringUtils.trimToEmpty(input);
-        if (StringUtils.isNotEmpty(result)) {
-            for (String[] replacement : JCR_CONTAINS_QUERY_REPLACEMENTS) {
-                result = StringUtils.replace(result, replacement[0], replacement[1]);
-            }
-
-            // remove all standalone occurences of '*', '**', etc.
-            result = result.replaceAll("\\*\\*+", "*");
-            result = StringUtils.replace(result, " * ", " ");
-            result = replaceStart(result, "* ", " ");
-            result = replaceEnd(result, " *", " ");
-            result = result.trim();
-
-            // remove 'and' and 'or' from start and end of the query to avoid Lucene parsing errors
-            result = removeStartIgnoreCase(result, "and ");
-            result = removeStartIgnoreCase(result, "or ");
-            result = removeEndIgnoreCase(result, " and");
-            result = removeEndIgnoreCase(result, " or");
-
-            // replace multiple -'s by a single -
-            result = result.replaceAll("--+", "-");
-
-            // remove - without anything after it
-            result = StringUtils.replace(result, "- ", " ");
-            result = removeEndIgnoreCase(result, "-");
-
-            // replace a single '*' with an empty string
-            result = result.trim();
-            result = clearExactIgnoreCase(result, "*", "and", "or");
-        }
-        return result;
+    public void setIncludePrimaryTypes(final String[] includePrimaryTypes) {
+        this.includePrimaryTypes = includePrimaryTypes;
     }
-
-    static String replaceStart(String s, String replace, String with) {
-        if (s.startsWith(replace)) {
-            return with + s.substring(replace.length());
-        }
-        return s;
-    }
-
-    static String replaceEnd(String s, String replace, String with) {
-        if (s.endsWith(replace)) {
-            return s.substring(0, s.length() - replace.length()) + with;
-        }
-        return s;
-    }
-
-    static String removeStartIgnoreCase(String s, String remove) {
-        if (StringUtils.isNotEmpty(s)
-                && StringUtils.isNotEmpty(remove)
-                && s.length() >= remove.length()
-                && s.substring(0, remove.length()).equalsIgnoreCase(remove)) {
-            return s.substring(remove.length());
-        }
-        return s;
-    }
-
-    static String removeEndIgnoreCase(String s, String remove) {
-        if (StringUtils.isNotEmpty(s)
-                && StringUtils.isNotEmpty(remove)
-                && s.length() >= remove.length()
-                && s.substring(s.length() - remove.length()).equalsIgnoreCase(remove)) {
-            return s.substring(0, s.length() - remove.length());
-        }
-        return s;
-    }
-
-    static String clearExactIgnoreCase(String s, String... clears) {
-        for (String clear : clears) {
-            if (s.equalsIgnoreCase(clear)) {
-                return StringUtils.EMPTY;
-            }
-        }
-        return s;
-    }
-
-    // implement IObservable
 
     @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
@@ -327,8 +221,6 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         }
         super.detach();
     }
-
-    // override Object
 
     @Override
     public boolean equals(Object object) {
