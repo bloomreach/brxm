@@ -15,29 +15,26 @@
  */
 package org.onehippo.forge.robotstxt.components;
 
-import java.util.List;
-import java.util.ArrayList;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-
+import com.google.common.base.Strings;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.configuration.hosting.Mount;
-
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
-
 import org.onehippo.forge.robotstxt.annotated.Robotstxt;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RobotstxtComponent extends BaseHstComponent {
 
@@ -55,11 +52,9 @@ public class RobotstxtComponent extends BaseHstComponent {
         }
 
         // Process the CMS-based robots.txt configuration
-        HippoBean bean = request.getRequestContext().getContentBean();
+        final Robotstxt bean = request.getRequestContext().getContentBean(Robotstxt.class);
         if (bean == null) {
             throw new HstComponentException("No bean found, check the HST configuration for the RobotstxtComponent");
-        } else if (!(bean instanceof Robotstxt)) {
-            throw new HstComponentException("Expected HippoBean of type Robotstxt but got " + bean.getClass().getName());
         }
         request.setAttribute("document", bean);
 
@@ -72,6 +67,7 @@ public class RobotstxtComponent extends BaseHstComponent {
     /**
      * Handle faceted navigation URLs. Typically, they should be disallowed, but a flag on the
      * robots.txt document can override this behavior and allow faceted navigation URLs.
+     *
      * @param request Handle for current request
      * @param bean    The robots.txt document (CMS content)
      */
@@ -81,9 +77,10 @@ public class RobotstxtComponent extends BaseHstComponent {
 
     /**
      * Disallow faceted navigation URLs.
-     * @param request Handle for current request
-     * @param currentMount   Mount point of current site
-     * @return        List of HstLinks, representing Facet Navigation URLs.
+     *
+     * @param request      Handle for current request
+     * @param currentMount Mount point of current site
+     * @return List of HstLinks, representing Facet Navigation URLs.
      */
     protected List<HstLink> getDisallowedFacetNavigationLinks(final HstRequest request, final Mount currentMount) {
 
@@ -97,8 +94,7 @@ public class RobotstxtComponent extends BaseHstComponent {
             // The query gets all facetnavigation content nodes and matches later to be under the current mount's
             // content path (or under any submount paths)
             final QueryManager queryManager = request.getRequestContext().getSession().getWorkspace().getQueryManager();
-            @SuppressWarnings("deprecation")
-            final Query query = queryManager.createQuery(getFacNavQueryXPath(), Query.XPATH);
+            @SuppressWarnings("deprecation") final Query query = queryManager.createQuery(getFacNavQueryXPath(), Query.XPATH);
             query.setLimit(getFacNavQueryLimit());
 
             final NodeIterator nodeIterator = query.execute().getNodes();
@@ -116,17 +112,17 @@ public class RobotstxtComponent extends BaseHstComponent {
 
                 if (allMounts.stream().noneMatch(mount -> mount.equals(facNavLinkMount))) {
                     log.debug("Not disallowing links for facet navigation node {} because its link mount {} is not part " +
-                           "of the current mount (or one of its submounts) for paths {}", facNavNode.getPath(),
+                                    "of the current mount (or one of its submounts) for paths {}", facNavNode.getPath(),
                             facNavLink.getMount().getContentPath(), allMounts.stream().map(mount -> mount.getContentPath()).toArray());
                     continue;
                 }
 
                 // disallow all first level links below facet navigation
                 final NodeIterator facetChildNodesIterator = facNavNode.getNodes();
-                while (facetChildNodesIterator.hasNext()){
+                while (facetChildNodesIterator.hasNext()) {
                     final Node facetChildNode = facetChildNodesIterator.nextNode();
 
-                    if (!facetChildNode.isNodeType(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION)){
+                    if (!facetChildNode.isNodeType(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION)) {
                         log.debug("Not disallowing link for facet child node {}: it is not of type {} but of type {}",
                                 facetChildNode.getPath(), FacNavNodeType.NT_FACETSAVAILABLENAVIGATION, facetChildNode.getPrimaryNodeType().getName());
                         continue;
@@ -163,11 +159,10 @@ public class RobotstxtComponent extends BaseHstComponent {
     protected long getFacNavQueryLimit() {
         long limit = 200;
         final String limitStr = this.getComponentParameter("facnavQueryLimit");
-        if (limitStr != null) {
+        if (!Strings.isNullOrEmpty(limitStr)) {
             try {
                 limit = Long.valueOf(limitStr);
-            }
-            catch (NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {
                 log.warn("Value {} for parameter facnavQueryLimit is not a long, falling back to limit {}", limitStr, limit);
             }
         }
@@ -198,7 +193,7 @@ public class RobotstxtComponent extends BaseHstComponent {
      *
      * @param request Handle for current request
      * @param mount   Mount point of current site
-     * @return        true if mount is of type "preview"
+     * @return true if mount is of type "preview"
      */
     protected boolean disallowPreviewMount(final HstRequest request, final Mount mount) {
         return mount.isOfType(Mount.PREVIEW_NAME);
