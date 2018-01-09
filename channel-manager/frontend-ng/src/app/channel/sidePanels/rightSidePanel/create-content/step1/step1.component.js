@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import template from './nameUrlFields.html';
-import controller from './nameUrlFields.controller';
-import './nameUrlFields.scss';
+import './step1.scss';
+import template from './step1.html';
+import controller from './step1.controller';
 
-const nameUrlFieldsComponent = {
+const createContentStep1Component = {
   controller,
   template,
   bindings: {
-    locale: '<',
-    nameField: '=',
-    urlField: '=',
+    options: '=',
+    onClose: '&',
+    onContinue: '&',
+    onFullWidth: '&',
+    onBeforeStateChange: '&',
   },
 };
 
-export default nameUrlFieldsComponent;
+export default createContentStep1Component;

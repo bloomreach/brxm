@@ -36,9 +36,7 @@ class NameUrlFieldsController {
 
     Observable.fromEvent(this.nameInputField, 'keyup')
       .filter(() => !this.isManualUrlMode)
-      .do(() => {
-        this.urlUpdate = true;
-      })
+      .do(() => { this.urlUpdate = true; })
       .debounceTime(1000)
       .subscribe(() => {
         this.setDocumentUrlByName();
