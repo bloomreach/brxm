@@ -15,30 +15,24 @@
  */
 
 class ContentEditorCtrl {
-  constructor($mdDialog, $transitions, $uiRouterGlobals) {
+  constructor($mdDialog, $uiRouterGlobals) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
-    this.$transitions = $transitions;
     this.$uiRouterGlobals = $uiRouterGlobals;
   }
 
   $onInit() {
     this.documentId = this.$uiRouterGlobals.params.documentId;
-    this.deregisterOnExit = this.$transitions.onExit({ from: '**.edit-content' }, () => this.confirmExit());
   }
 
-  confirmExit() {
+  uiCanExit() {
     const confirmationDialog = this.$mdDialog.confirm()
       .title(`Leave ${this.documentId} ?`)
       .textContent('Really?')
       .ok('Yes')
       .cancel('No');
     return this.$mdDialog.show(confirmationDialog);
-  }
-
-  $onDestroy() {
-    this.deregisterOnExit();
   }
 }
 
