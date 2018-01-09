@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.restapi.content.requests;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
@@ -61,7 +60,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         final String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
+        final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
         assertEquals("about-us", deserializedAboutUs.get("name"));
         // TODO assertEquals("published", deserializedAboutUs.get("hippostd:state"));
         // TODO assertEquals("2010-01-21T12:34:11.055+02:00", deserializedAboutUs.get("hippostdpubwf:creationDate"));
@@ -100,7 +99,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> deserializedAboutUs = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
             assertTrue(deserializedAboutUs.get("name").equals("the-medusa-news"));
 
         } finally {
@@ -135,7 +134,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
             for (Map<String, Object> item : itemsList) {
@@ -159,7 +158,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -198,7 +197,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -228,6 +227,43 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     }
 
     @Test
+    public void test_max_and_offset() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE);
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            final List<Node> allResults = new ArrayList<>();
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                allResults.add(handleNode);
+            }
+
+            for (int i = 0; i < allResults.size(); i++) {
+                final StringBuilder queryString = new StringBuilder("_orderBy=").append(PROPERTY_TITLE).append("&_max=1&_offset=").append(i);
+                final RequestResponseMock max1AndOffset = mockGetRequestResponse(
+                        "http", "onehippo.io", "/myhippoproject/documents/", queryString.toString());
+                final MockHttpServletResponse max1Response = render(max1AndOffset);
+                final String max1RestResponse = max1Response.getContentAsString();
+                final Map<String, Object> max1Result = mapper.readerFor(Map.class).readValue(max1RestResponse);
+                final List<Map<String, Object>> itemMax1List = getItemsFromSearchResult(max1Result);
+                assertEquals("1 item expected because max 1",1, itemMax1List.size());
+                final Node handleNode = liveUser.getNodeByIdentifier((String) itemMax1List.get(0).get("id"));
+                assertTrue("Expected results in the same order as without the max/offset.", handleNode.isSame(allResults.get(i)));
+            }
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
     public void test_search_result_is_ordered_by_one_sort_parameter_ascending_sortorder() throws Exception {
         Session liveUser = createLiveUserSession();
         try {
@@ -237,7 +273,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -276,7 +312,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
-            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> searchResult = mapper.readerFor(Map.class).readValue(restResponse);
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
@@ -346,17 +382,36 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             assertNotNull(documentItems.get("unittestproject:title"));
             assertNotNull(documentItems.get("unittestproject:summary"));
         }
+    }
 
-        requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
+    @Test
+    public void test_documents_resource_by_default_without_attributes() throws Exception {
+        RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
 
-        listItems = renderAndGetListItems(requestResponse);
+        List<Map<String, Object>> listItems = renderAndGetListItems(requestResponse);
         assertTrue(listItems.size() > 0);
 
         for (Map<String, Object> item : listItems) {
-            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
-            assertTrue(documentItems.keySet().size() > 2);
+            final Object documentItems = item.get("items");
+            assertNull(documentItems);
         }
     }
+
+    @Test
+    public void test_detail_resource_by_default_with_all_attributes() throws Exception {
+        // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
+
+        final MockHttpServletResponse response = render(requestResponse);
+
+        final String restResponse = response.getContentAsString();
+
+        final Map<String, Object> deserializedAboutUs = mapper.readerFor(Map.class).readValue(restResponse);
+
+        assertEquals(4, ((Map) deserializedAboutUs.get("items")).size());
+    }
+
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> renderAndGetDocumentItems(final RequestResponseMock requestResponse) throws Exception {
@@ -365,7 +420,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        Map<String, Object> deserializedResponse = mapper.readerFor(Map.class).readValue(restResponse);
         return (Map<String, Object>) deserializedResponse.get("items");
     }
 
@@ -376,7 +431,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        Map<String, Object> deserializedResponse = mapper.readerFor(Map.class).readValue(restResponse);
         return (List) deserializedResponse.get("items");
     }
 
