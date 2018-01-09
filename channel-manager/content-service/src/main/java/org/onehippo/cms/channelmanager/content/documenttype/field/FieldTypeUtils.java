@@ -16,12 +16,15 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,6 +41,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
@@ -48,6 +52,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -68,13 +73,16 @@ public class FieldTypeUtils {
     private static final Set<String> IGNORED_VALIDATORS;
 
     // Translate JCR level validator to FieldType.Validator
-    private static final Map<String, FieldType.Validator> VALIDATOR_MAP;
+    private static final Map<String, Validator> VALIDATOR_MAP;
 
     // Unsupported validators of which we know they have field-scope only
     private static final Set<String> FIELD_VALIDATOR_WHITELIST;
 
     // A map for associating supported JCR-level field types with relevant information
-    public static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
+    private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
+
+    private static final List<String> REPORTABLE_MISSING_FIELD_TYPES;
+    private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES;
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -82,8 +90,8 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
 
         VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldType.Validator.REQUIRED);
-        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, FieldType.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.REQUIRED, Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, Validator.REQUIRED);
         // Apparently, making a String field required puts above two(!) values onto the validator property.
 
         FIELD_VALIDATOR_WHITELIST = new HashSet<>();
@@ -105,6 +113,11 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
+
+        REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList("Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown",
+                "Reference", "StaticDropdown");
+        REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList("hippo:", "hippogallerypicker:", "hippostd:", "hipposys:",
+                "hippotaxonomy:", "poll:", "selection:");
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
@@ -135,7 +148,7 @@ public class FieldTypeUtils {
             } else if (VALIDATOR_MAP.containsKey(validator)) {
                 fieldType.addValidator(VALIDATOR_MAP.get(validator));
             } else if (FIELD_VALIDATOR_WHITELIST.contains(validator)) {
-                fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
+                fieldType.addValidator(Validator.UNSUPPORTED);
             } else {
                 docType.setReadOnlyDueToUnknownValidator(true);
             }
@@ -205,6 +218,25 @@ public class FieldTypeUtils {
                 .flatMap(NamespaceUtils::getPluginClassForField);
     }
 
+    public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
+        return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
+                .map(fieldSorter -> fieldSorter.sortFields(context).stream()
+                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).isEmpty())
+                        .map(FieldTypeUtils::mapFieldTypeName)
+                        .collect(Collectors.toCollection(TreeSet::new))
+                )
+                .orElse(null);
+    }
+
+    private static String mapFieldTypeName(final FieldTypeContext fieldTypeContext) {
+        final String name = fieldTypeContext.getContentTypeItem().getItemType();
+        if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
+                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
+            return name;
+        } else {
+            return "Custom";
+        }
+    }
 
     /**
      * Try to read a list of fields from a node into a map of values.
@@ -250,7 +282,7 @@ public class FieldTypeUtils {
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
         if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
         }
 
         for (final FieldValue value : values) {
@@ -267,7 +299,7 @@ public class FieldTypeUtils {
         if (fieldPath.isEmpty()) {
             return false;
         }
-        for (FieldType field : fields) {
+        for (final FieldType field : fields) {
             if (field.writeField(node, fieldPath, fieldValues)) {
                 return true;
             }
@@ -282,11 +314,11 @@ public class FieldTypeUtils {
         final String childName = fieldPath.getFirstSegment();
         try {
             if (!node.hasNode(childName)) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+                throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
             }
             final Node child = node.getNode(childName);
             return field.writeFieldValue(child, fieldPath.getRemainingSegments(), values);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
             throw new InternalServerErrorException();
         }

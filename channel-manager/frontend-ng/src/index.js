@@ -14,30 +14,6 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import {
-  MATERIAL_SANITY_CHECKS,
-  NoConflictStyleCompatibilityMode,
-  MdListModule,
-  MdButtonModule,
-  MdInputModule,
-  MdSelectModule,
-  MdIconModule
-} from '@angular/material';
-import './material.scss';
-
-@NgModule({
-  exports: [
-    NoConflictStyleCompatibilityMode,
-    MdListModule,
-    MdButtonModule,
-    MdInputModule,
-    MdButtonModule,
-    MdSelectModule,
-    MdIconModule
-  ],
-  providers: [
-    {provide: MATERIAL_SANITY_CHECKS, useValue: false},
-  ]
-})
-export class MaterialModule { }
+import './vendor.scss';
+import './index.scss';
+import './app/hippo-cm';

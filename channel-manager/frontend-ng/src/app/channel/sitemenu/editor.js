@@ -17,8 +17,8 @@
 import menuEditorDirective from './editor.directive';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
 import MenuEditorCtrl from './editor.controller';
-import uiTreeModule from './tree/tree.ng1.module';
-import pickerModule from './picker/picker.ng1.module';
+import uiTreeModule from './tree/tree';
+import pickerModule from './picker/picker';
 
 const channelSitemenuModule = angular
   .module('hippo-cm.channel.sitemenu', [

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import 'core-js/es6';
-import 'core-js/es7/reflect';
-import 'zone.js/dist/zone';
-import 'hammerjs';
+import SidePanelService from './sidePanel.service';
+import leftSidePanelModule from './leftSidePanel/leftSidePanel.module';
+import rightSidePanelModule from './rightSidePanel/rightSidePanel.module';
 
-import 'angular';
-import 'angular-animate';
-import 'angular-aria';
-import 'angular-material';
-import 'angular-messages';
-import 'angular-translate';
-import 'angular-local-storage';
-import 'angular-translate-loader-static-files';
-import 'angular-ui-router';
-import 'ng-device-detector';
+const channelSidePanelModule = angular
+  .module('hippo-cm.channel.sidePanel', [
+    leftSidePanelModule,
+    rightSidePanelModule,
+  ])
+  .service('SidePanelService', SidePanelService);
 
-import './vendor.scss';
+export default channelSidePanelModule;

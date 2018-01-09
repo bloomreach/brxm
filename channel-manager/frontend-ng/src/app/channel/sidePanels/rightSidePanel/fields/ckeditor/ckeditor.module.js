@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.module';
+import ckeditorComponent from './ckeditor.component';
+import ckeditorService from './ckeditor.service';
 
-import { NgModule } from '@angular/core';
-import { SharedModule } from './shared/shared.module';
-import { UpgradeModule  } from '@angular/upgrade/static';
+const ckeditorModule = angular
+  .module('hippo-cm.channel.fieldsModule.ckeditor', [
+    SharedSpaceToolbarModule,
+  ])
+  .component('ckeditor', ckeditorComponent)
+  .service('CKEditorService', ckeditorService);
 
-import ng1Module from './hippo-cm.ng1.module.js';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    UpgradeModule,
-  ]
-})
-export class AppModule {
-  constructor(private upgrade: UpgradeModule) {}
-
-  ngDoBootstrap() {
-    this.upgrade.bootstrap(document.body, [ng1Module], { strictDi: true });
-  }
-}
-
+export default ckeditorModule.name;

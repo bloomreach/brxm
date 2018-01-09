@@ -1,93 +1,15 @@
 {
   "name": "hippo-cm",
   "dependencies": {
-    "@angular/animations": {
-      "version": "4.3.6",
-      "from": "@angular/animations@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/animations/-/animations-4.3.6.tgz"
-    },
-    "@angular/cdk": {
-      "version": "2.0.0-beta.8",
-      "from": "@angular/cdk@2.0.0-beta.8",
-      "resolved": "https://registry.npmjs.org/@angular/cdk/-/cdk-2.0.0-beta.8.tgz"
-    },
-    "@angular/common": {
-      "version": "4.3.6",
-      "from": "@angular/common@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/common/-/common-4.3.6.tgz"
-    },
-    "@angular/compiler": {
-      "version": "4.3.6",
-      "from": "@angular/compiler@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/compiler/-/compiler-4.3.6.tgz"
-    },
-    "@angular/core": {
-      "version": "4.3.6",
-      "from": "@angular/core@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/core/-/core-4.3.6.tgz"
-    },
-    "@angular/forms": {
-      "version": "4.3.6",
-      "from": "@angular/forms@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/forms/-/forms-4.3.6.tgz"
-    },
-    "@angular/http": {
-      "version": "4.3.6",
-      "from": "@angular/http@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/http/-/http-4.3.6.tgz"
-    },
-    "@angular/material": {
-      "version": "2.0.0-beta.8",
-      "from": "@angular/material@2.0.0-beta.8",
-      "resolved": "https://registry.npmjs.org/@angular/material/-/material-2.0.0-beta.8.tgz"
-    },
-    "@angular/platform-browser": {
-      "version": "4.3.6",
-      "from": "@angular/platform-browser@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-4.3.6.tgz"
-    },
-    "@angular/platform-browser-dynamic": {
-      "version": "4.3.6",
-      "from": "@angular/platform-browser-dynamic@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.3.6.tgz"
-    },
-    "@angular/router": {
-      "version": "4.3.6",
-      "from": "@angular/router@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/router/-/router-4.3.6.tgz"
-    },
-    "@angular/upgrade": {
-      "version": "4.3.6",
-      "from": "@angular/upgrade@4.3.6",
-      "resolved": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-4.3.6.tgz"
-    },
     "@bloomreach/dragula": {
       "version": "3.7.2-br.3",
       "from": "@bloomreach/dragula@3.7.2-br.3",
       "resolved": "https://registry.npmjs.org/@bloomreach/dragula/-/dragula-3.7.2-br.3.tgz"
     },
     "@bloomreach/frontend-build": {
-      "version": "6.0.2",
-      "from": "@bloomreach/frontend-build@6.0.2",
-      "resolved": "https://registry.npmjs.org/@bloomreach/frontend-build/-/frontend-build-6.0.2.tgz",
-      "dev": true
-    },
-    "@types/jasmine": {
-      "version": "2.5.54",
-      "from": "@types/jasmine@2.5.54",
-      "resolved": "https://registry.npmjs.org/@types/jasmine/-/jasmine-2.5.54.tgz",
-      "dev": true
-    },
-    "@types/node": {
-      "version": "8.0.28",
-      "from": "@types/node@8.0.28",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-8.0.28.tgz",
-      "dev": true
-    },
-    "@types/webpack-env": {
-      "version": "1.13.1",
-      "from": "@types/webpack-env@1.13.1",
-      "resolved": "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.13.1.tgz",
+      "version": "6.0.5",
+      "from": "@bloomreach/frontend-build@6.0.5",
+      "resolved": "https://registry.npmjs.org/@bloomreach/frontend-build/-/frontend-build-6.0.5.tgz",
       "dev": true
     },
     "abbrev": {
@@ -109,9 +31,9 @@
       "dev": true
     },
     "acorn": {
-      "version": "5.1.2",
-      "from": "acorn@>=5.1.1 <6.0.0",
-      "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.1.2.tgz",
+      "version": "5.3.0",
+      "from": "acorn@>=5.2.1 <6.0.0",
+      "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.3.0.tgz",
       "dev": true
     },
     "acorn-dynamic-import": {
@@ -183,15 +105,15 @@
       "dev": true
     },
     "ajv": {
-      "version": "5.2.3",
+      "version": "5.5.2",
       "from": "ajv@>=5.2.0 <6.0.0",
-      "resolved": "https://registry.npmjs.org/ajv/-/ajv-5.2.3.tgz",
+      "resolved": "https://registry.npmjs.org/ajv/-/ajv-5.5.2.tgz",
       "dev": true
     },
     "ajv-keywords": {
-      "version": "2.1.0",
+      "version": "2.1.1",
       "from": "ajv-keywords@>=2.1.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/ajv-keywords/-/ajv-keywords-2.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/ajv-keywords/-/ajv-keywords-2.1.1.tgz",
       "dev": true
     },
     "align-text": {
@@ -286,6 +208,12 @@
       "resolved": "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-3.0.0.tgz",
       "dev": true
     },
+    "ansi-gray": {
+      "version": "0.1.1",
+      "from": "ansi-gray@>=0.1.1 <0.2.0",
+      "resolved": "https://registry.npmjs.org/ansi-gray/-/ansi-gray-0.1.1.tgz",
+      "dev": true
+    },
     "ansi-html": {
       "version": "0.0.7",
       "from": "ansi-html@0.0.7",
@@ -304,16 +232,16 @@
       "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-3.2.0.tgz",
       "dev": true
     },
+    "ansi-wrap": {
+      "version": "0.1.0",
+      "from": "ansi-wrap@0.1.0",
+      "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
+      "dev": true
+    },
     "anymatch": {
       "version": "1.3.2",
       "from": "anymatch@>=1.3.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/anymatch/-/anymatch-1.3.2.tgz",
-      "dev": true
-    },
-    "app-root-path": {
-      "version": "2.0.1",
-      "from": "app-root-path@>=2.0.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/app-root-path/-/app-root-path-2.0.1.tgz",
       "dev": true
     },
     "aproba": {
@@ -364,6 +292,12 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/arr-map/-/arr-map-2.0.2.tgz",
       "dev": true
     },
+    "arr-union": {
+      "version": "3.1.0",
+      "from": "arr-union@>=3.1.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/arr-union/-/arr-union-3.1.0.tgz",
+      "dev": true
+    },
     "array-differ": {
       "version": "1.0.0",
       "from": "array-differ@>=1.0.0 <2.0.0",
@@ -389,37 +323,37 @@
       "dev": true
     },
     "array-initial": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "from": "array-initial@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/array-initial/-/array-initial-1.0.1.tgz",
+      "resolved": "https://registry.npmjs.org/array-initial/-/array-initial-1.1.0.tgz",
       "dev": true,
       "dependencies": {
         "is-number": {
-          "version": "3.0.0",
-          "from": "is-number@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "version": "4.0.0",
+          "from": "is-number@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/is-number/-/is-number-4.0.0.tgz",
           "dev": true
         }
       }
     },
     "array-last": {
-      "version": "1.2.0",
+      "version": "1.3.0",
       "from": "array-last@>=1.1.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/array-last/-/array-last-1.2.0.tgz",
+      "resolved": "https://registry.npmjs.org/array-last/-/array-last-1.3.0.tgz",
       "dev": true,
       "dependencies": {
         "is-number": {
-          "version": "3.0.0",
-          "from": "is-number@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "version": "4.0.0",
+          "from": "is-number@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/is-number/-/is-number-4.0.0.tgz",
           "dev": true
         }
       }
     },
     "array-slice": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "from": "array-slice@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-slice/-/array-slice-1.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/array-slice/-/array-slice-1.1.0.tgz",
       "dev": true
     },
     "array-union": {
@@ -459,9 +393,9 @@
       "dev": true
     },
     "asn1.js": {
-      "version": "4.9.1",
+      "version": "4.9.2",
       "from": "asn1.js@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/asn1.js/-/asn1.js-4.9.1.tgz",
+      "resolved": "https://registry.npmjs.org/asn1.js/-/asn1.js-4.9.2.tgz",
       "dev": true
     },
     "assert": {
@@ -476,10 +410,16 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/assert-plus/-/assert-plus-1.0.0.tgz",
       "dev": true
     },
+    "assign-symbols": {
+      "version": "1.0.0",
+      "from": "assign-symbols@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/assign-symbols/-/assign-symbols-1.0.0.tgz",
+      "dev": true
+    },
     "async": {
-      "version": "2.5.0",
+      "version": "2.6.0",
       "from": "async@>=2.4.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/async/-/async-2.5.0.tgz",
+      "resolved": "https://registry.npmjs.org/async/-/async-2.6.0.tgz",
       "dev": true
     },
     "async-done": {
@@ -518,9 +458,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/atoa/-/atoa-1.0.0.tgz"
     },
     "atob": {
-      "version": "1.1.3",
-      "from": "atob@>=1.1.0 <1.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/atob/-/atob-1.1.3.tgz",
+      "version": "2.0.3",
+      "from": "atob@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/atob/-/atob-2.0.3.tgz",
       "dev": true
     },
     "autoprefixer": {
@@ -953,6 +893,20 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/balanced-match/-/balanced-match-1.0.0.tgz",
       "dev": true
     },
+    "base": {
+      "version": "0.11.2",
+      "from": "base@>=0.11.1 <0.12.0",
+      "resolved": "https://registry.npmjs.org/base/-/base-0.11.2.tgz",
+      "dev": true,
+      "dependencies": {
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.1 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
     "base64-arraybuffer": {
       "version": "0.1.5",
       "from": "base64-arraybuffer@0.1.5",
@@ -1003,9 +957,9 @@
       "dev": true
     },
     "binary-extensions": {
-      "version": "1.10.0",
+      "version": "1.11.0",
       "from": "binary-extensions@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-1.10.0.tgz",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-1.11.0.tgz",
       "dev": true
     },
     "bindings": {
@@ -1095,9 +1049,9 @@
       "dev": true
     },
     "browserify-aes": {
-      "version": "1.0.8",
+      "version": "1.1.1",
       "from": "browserify-aes@>=1.0.4 <2.0.0",
-      "resolved": "https://registry.npmjs.org/browserify-aes/-/browserify-aes-1.0.8.tgz",
+      "resolved": "https://registry.npmjs.org/browserify-aes/-/browserify-aes-1.1.1.tgz",
       "dev": true
     },
     "browserify-cipher": {
@@ -1125,15 +1079,15 @@
       "dev": true
     },
     "browserify-zlib": {
-      "version": "0.1.4",
-      "from": "browserify-zlib@>=0.1.4 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browserify-zlib/-/browserify-zlib-0.1.4.tgz",
+      "version": "0.2.0",
+      "from": "browserify-zlib@>=0.2.0 <0.3.0",
+      "resolved": "https://registry.npmjs.org/browserify-zlib/-/browserify-zlib-0.2.0.tgz",
       "dev": true
     },
     "browserslist": {
-      "version": "2.5.1",
+      "version": "2.11.0",
       "from": "browserslist@>=2.4.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-2.5.1.tgz",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-2.11.0.tgz",
       "dev": true
     },
     "buffer": {
@@ -1192,6 +1146,20 @@
         }
       }
     },
+    "cache-base": {
+      "version": "1.0.1",
+      "from": "cache-base@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/cache-base/-/cache-base-1.0.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.1 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
     "caller-path": {
       "version": "0.1.0",
       "from": "caller-path@>=0.1.0 <0.2.0",
@@ -1243,15 +1211,15 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000746",
+      "version": "1.0.30000787",
       "from": "caniuse-db@>=1.0.30000634 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000746.tgz",
+      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000787.tgz",
       "dev": true
     },
     "caniuse-lite": {
-      "version": "1.0.30000746",
+      "version": "1.0.30000787",
       "from": "caniuse-lite@>=1.0.30000726 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000746.tgz",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000787.tgz",
       "dev": true
     },
     "caseless": {
@@ -1264,12 +1232,34 @@
       "version": "0.1.3",
       "from": "center-align@>=0.1.1 <0.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/center-align/-/center-align-0.1.3.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "lazy-cache": {
+          "version": "1.0.4",
+          "from": "lazy-cache@>=1.0.3 <2.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lazy-cache/-/lazy-cache-1.0.4.tgz",
+          "dev": true
+        }
+      }
     },
     "chalk": {
-      "version": "2.1.0",
-      "from": "chalk@>=2.1.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/chalk/-/chalk-2.1.0.tgz",
+      "version": "2.3.0",
+      "from": "chalk@>=2.3.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/chalk/-/chalk-2.3.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "supports-color": {
+          "version": "4.5.0",
+          "from": "supports-color@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-4.5.0.tgz",
+          "dev": true
+        }
+      }
+    },
+    "chardet": {
+      "version": "0.4.2",
+      "from": "chardet@>=0.4.0 <0.5.0",
+      "resolved": "https://registry.npmjs.org/chardet/-/chardet-0.4.2.tgz",
       "dev": true
     },
     "chokidar": {
@@ -1322,6 +1312,66 @@
         }
       }
     },
+    "class-utils": {
+      "version": "0.3.5",
+      "from": "class-utils@>=0.3.5 <0.4.0",
+      "resolved": "https://registry.npmjs.org/class-utils/-/class-utils-0.3.5.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "clean-css": {
       "version": "4.1.9",
       "from": "clean-css@>=4.1.0 <4.2.0",
@@ -1357,7 +1407,7 @@
     "cliui": {
       "version": "3.2.0",
       "from": "cliui@>=3.0.3 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/cliui/-/cliui-3.2.0.tgz",
+      "resolved": "https://registry.npmjs.org/cliui/-/cliui-3.2.0.tgz",
       "dev": true,
       "dependencies": {
         "is-fullwidth-code-point": {
@@ -1418,20 +1468,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/code-point-at/-/code-point-at-1.1.0.tgz",
       "dev": true
     },
-    "codelyzer": {
-      "version": "3.2.0",
-      "from": "codelyzer@3.2.0",
-      "resolved": "https://registry.npmjs.org/codelyzer/-/codelyzer-3.2.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "source-map": {
-          "version": "0.5.7",
-          "from": "source-map@>=0.5.6 <0.6.0",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz",
-          "dev": true
-        }
-      }
-    },
     "collection-map": {
       "version": "1.0.0",
       "from": "collection-map@>=1.0.0 <2.0.0",
@@ -1446,6 +1482,12 @@
         }
       }
     },
+    "collection-visit": {
+      "version": "1.0.0",
+      "from": "collection-visit@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/collection-visit/-/collection-visit-1.0.0.tgz",
+      "dev": true
+    },
     "color": {
       "version": "0.11.4",
       "from": "color@>=0.11.0 <0.12.0",
@@ -1453,17 +1495,17 @@
       "dev": true,
       "dependencies": {
         "clone": {
-          "version": "1.0.2",
+          "version": "1.0.3",
           "from": "clone@>=1.0.2 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/clone/-/clone-1.0.2.tgz",
+          "resolved": "https://registry.npmjs.org/clone/-/clone-1.0.3.tgz",
           "dev": true
         }
       }
     },
     "color-convert": {
-      "version": "1.9.0",
+      "version": "1.9.1",
       "from": "color-convert@>=1.9.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/color-convert/-/color-convert-1.9.0.tgz",
+      "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-1.9.1.tgz",
       "dev": true
     },
     "color-name": {
@@ -1476,6 +1518,12 @@
       "version": "0.3.0",
       "from": "color-string@>=0.3.0 <0.4.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/color-string/-/color-string-0.3.0.tgz",
+      "dev": true
+    },
+    "color-support": {
+      "version": "1.1.3",
+      "from": "color-support@>=1.1.3 <2.0.0",
+      "resolved": "https://registry.npmjs.org/color-support/-/color-support-1.1.3.tgz",
       "dev": true
     },
     "colormin": {
@@ -1503,9 +1551,9 @@
       "dev": true
     },
     "commander": {
-      "version": "2.11.0",
-      "from": "commander@>=2.11.0 <2.12.0",
-      "resolved": "https://registry.npmjs.org/commander/-/commander-2.11.0.tgz",
+      "version": "2.12.2",
+      "from": "commander@>=2.12.0 <2.13.0",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-2.12.2.tgz",
       "dev": true
     },
     "commondir": {
@@ -1521,9 +1569,9 @@
       "dev": true
     },
     "component-emitter": {
-      "version": "1.1.2",
-      "from": "component-emitter@1.1.2",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.1.2.tgz",
+      "version": "1.2.1",
+      "from": "component-emitter@>=1.2.1 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.2.1.tgz",
       "dev": true
     },
     "component-inherit": {
@@ -1533,9 +1581,9 @@
       "dev": true
     },
     "compressible": {
-      "version": "2.0.11",
+      "version": "2.0.12",
       "from": "compressible@>=2.0.11 <2.1.0",
-      "resolved": "https://registry.npmjs.org/compressible/-/compressible-2.0.11.tgz",
+      "resolved": "https://registry.npmjs.org/compressible/-/compressible-2.0.12.tgz",
       "dev": true
     },
     "compression": {
@@ -1571,9 +1619,9 @@
       "dev": true
     },
     "connect-history-api-fallback": {
-      "version": "1.3.0",
+      "version": "1.5.0",
       "from": "connect-history-api-fallback@>=1.3.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/connect-history-api-fallback/-/connect-history-api-fallback-1.3.0.tgz",
+      "resolved": "https://registry.npmjs.org/connect-history-api-fallback/-/connect-history-api-fallback-1.5.0.tgz",
       "dev": true
     },
     "console-browserify": {
@@ -1618,9 +1666,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/contra/-/contra-1.9.4.tgz"
     },
     "convert-source-map": {
-      "version": "1.5.0",
+      "version": "1.5.1",
       "from": "convert-source-map@>=1.5.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/convert-source-map/-/convert-source-map-1.5.0.tgz",
+      "resolved": "https://registry.npmjs.org/convert-source-map/-/convert-source-map-1.5.1.tgz",
       "dev": true
     },
     "cookie": {
@@ -1639,6 +1687,12 @@
       "version": "1.0.5",
       "from": "copy-concurrently@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/copy-concurrently/-/copy-concurrently-1.0.5.tgz",
+      "dev": true
+    },
+    "copy-descriptor": {
+      "version": "0.1.1",
+      "from": "copy-descriptor@>=0.1.0 <0.2.0",
+      "resolved": "https://registry.npmjs.org/copy-descriptor/-/copy-descriptor-0.1.1.tgz",
       "dev": true
     },
     "copy-props": {
@@ -1674,9 +1728,10 @@
       }
     },
     "core-js": {
-      "version": "2.5.1",
-      "from": "core-js@2.5.1",
-      "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.5.1.tgz"
+      "version": "2.5.3",
+      "from": "core-js@>=2.4.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.5.3.tgz",
+      "dev": true
     },
     "core-util-is": {
       "version": "1.0.2",
@@ -1740,9 +1795,9 @@
       }
     },
     "crypto-browserify": {
-      "version": "3.11.1",
+      "version": "3.12.0",
       "from": "crypto-browserify@>=3.11.0 <4.0.0",
-      "resolved": "https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.11.1.tgz",
+      "resolved": "https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.12.0.tgz",
       "dev": true
     },
     "css": {
@@ -1751,10 +1806,28 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/css/-/css-2.2.1.tgz",
       "dev": true,
       "dependencies": {
+        "atob": {
+          "version": "1.1.3",
+          "from": "atob@>=1.1.0 <1.2.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/atob/-/atob-1.1.3.tgz",
+          "dev": true
+        },
         "source-map": {
           "version": "0.1.43",
           "from": "source-map@>=0.1.38 <0.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map/-/source-map-0.1.43.tgz",
+          "dev": true
+        },
+        "source-map-resolve": {
+          "version": "0.3.1",
+          "from": "source-map-resolve@>=0.3.0 <0.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map-resolve/-/source-map-resolve-0.3.1.tgz",
+          "dev": true
+        },
+        "source-map-url": {
+          "version": "0.3.0",
+          "from": "source-map-url@>=0.3.0 <0.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map-url/-/source-map-url-0.3.0.tgz",
           "dev": true
         }
       }
@@ -1847,12 +1920,6 @@
       "version": "2.1.0",
       "from": "css-what@>=2.1.0 <2.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/css-what/-/css-what-2.1.0.tgz",
-      "dev": true
-    },
-    "cssauron": {
-      "version": "1.4.0",
-      "from": "cssauron@>=1.4.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/cssauron/-/cssauron-1.4.0.tgz",
       "dev": true
     },
     "cssesc": {
@@ -1992,6 +2059,12 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/decamelize/-/decamelize-1.2.0.tgz",
       "dev": true
     },
+    "decode-uri-component": {
+      "version": "0.2.0",
+      "from": "decode-uri-component@>=0.2.0 <0.3.0",
+      "resolved": "https://registry.npmjs.org/decode-uri-component/-/decode-uri-component-0.2.0.tgz",
+      "dev": true
+    },
     "deep-equal": {
       "version": "1.0.1",
       "from": "deep-equal@>=1.0.1 <2.0.0",
@@ -2022,6 +2095,12 @@
       "resolved": "https://registry.npmjs.org/deferred-leveldown/-/deferred-leveldown-1.2.2.tgz",
       "dev": true
     },
+    "define-property": {
+      "version": "1.0.0",
+      "from": "define-property@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/define-property/-/define-property-1.0.0.tgz",
+      "dev": true
+    },
     "defined": {
       "version": "1.0.0",
       "from": "defined@>=1.0.0 <2.0.0",
@@ -2032,15 +2111,7 @@
       "version": "3.0.0",
       "from": "del@3.0.0",
       "resolved": "https://registry.npmjs.org/del/-/del-3.0.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "pify": {
-          "version": "3.0.0",
-          "from": "pify@>=3.0.0 <4.0.0",
-          "resolved": "https://registry.npmjs.org/pify/-/pify-3.0.0.tgz",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "delayed-stream": {
       "version": "1.0.0",
@@ -2073,9 +2144,9 @@
       "dev": true
     },
     "detect-file": {
-      "version": "0.1.0",
-      "from": "detect-file@>=0.1.0 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/detect-file/-/detect-file-0.1.0.tgz",
+      "version": "1.0.0",
+      "from": "detect-file@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/detect-file/-/detect-file-1.0.0.tgz",
       "dev": true
     },
     "detect-indent": {
@@ -2127,9 +2198,9 @@
       "dev": true
     },
     "doctrine": {
-      "version": "2.0.0",
+      "version": "2.0.2",
       "from": "doctrine@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/doctrine/-/doctrine-2.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/doctrine/-/doctrine-2.0.2.tgz",
       "dev": true
     },
     "dom-converter": {
@@ -2253,10 +2324,16 @@
       "resolved": "https://registry.npmjs.org/ejs/-/ejs-2.5.7.tgz",
       "dev": true
     },
+    "electron-releases": {
+      "version": "2.1.0",
+      "from": "electron-releases@>=2.1.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/electron-releases/-/electron-releases-2.1.0.tgz",
+      "dev": true
+    },
     "electron-to-chromium": {
-      "version": "1.3.26",
-      "from": "electron-to-chromium@>=1.3.24 <2.0.0",
-      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.26.tgz",
+      "version": "1.3.30",
+      "from": "electron-to-chromium@>=1.3.30 <2.0.0",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.30.tgz",
       "dev": true
     },
     "elliptic": {
@@ -2309,12 +2386,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-client/-/engine.io-client-1.8.3.tgz",
       "dev": true,
       "dependencies": {
-        "component-emitter": {
-          "version": "1.2.1",
-          "from": "component-emitter@1.2.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.2.1.tgz",
-          "dev": true
-        },
         "debug": {
           "version": "2.3.3",
           "from": "debug@2.3.3",
@@ -2354,18 +2425,10 @@
       "dev": true
     },
     "errno": {
-      "version": "0.1.4",
+      "version": "0.1.6",
       "from": "errno@>=0.1.1 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/errno/-/errno-0.1.4.tgz",
-      "dev": true,
-      "dependencies": {
-        "prr": {
-          "version": "0.0.0",
-          "from": "prr@>=0.0.0 <0.1.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/prr/-/prr-0.0.0.tgz",
-          "dev": true
-        }
-      }
+      "resolved": "https://registry.npmjs.org/errno/-/errno-0.1.6.tgz",
+      "dev": true
     },
     "error-ex": {
       "version": "1.3.1",
@@ -2374,15 +2437,15 @@
       "dev": true
     },
     "es5-ext": {
-      "version": "0.10.31",
-      "from": "es5-ext@>=0.10.14 <0.11.0",
-      "resolved": "https://registry.npmjs.org/es5-ext/-/es5-ext-0.10.31.tgz",
+      "version": "0.10.37",
+      "from": "es5-ext@>=0.10.35 <0.11.0",
+      "resolved": "https://registry.npmjs.org/es5-ext/-/es5-ext-0.10.37.tgz",
       "dev": true
     },
     "es6-iterator": {
-      "version": "2.0.1",
+      "version": "2.0.3",
       "from": "es6-iterator@>=2.0.1 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/es6-iterator/-/es6-iterator-2.0.1.tgz",
+      "resolved": "https://registry.npmjs.org/es6-iterator/-/es6-iterator-2.0.3.tgz",
       "dev": true
     },
     "es6-map": {
@@ -2492,9 +2555,9 @@
       "dev": true
     },
     "eslint-import-resolver-node": {
-      "version": "0.3.1",
+      "version": "0.3.2",
       "from": "eslint-import-resolver-node@>=0.3.1 <0.4.0",
-      "resolved": "https://registry.npmjs.org/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.1.tgz",
+      "resolved": "https://registry.npmjs.org/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.2.tgz",
       "dev": true
     },
     "eslint-loader": {
@@ -2573,6 +2636,12 @@
           "resolved": "https://registry.npmjs.org/path-type/-/path-type-2.0.0.tgz",
           "dev": true
         },
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+          "dev": true
+        },
         "read-pkg": {
           "version": "2.0.0",
           "from": "read-pkg@>=2.0.0 <3.0.0",
@@ -2606,9 +2675,9 @@
       "dev": true
     },
     "espree": {
-      "version": "3.5.1",
+      "version": "3.5.2",
       "from": "espree@>=3.5.0 <4.0.0",
-      "resolved": "https://registry.npmjs.org/espree/-/espree-3.5.1.tgz",
+      "resolved": "https://registry.npmjs.org/espree/-/espree-3.5.2.tgz",
       "dev": true
     },
     "esprima": {
@@ -2746,9 +2815,9 @@
       "dev": true
     },
     "expand-tilde": {
-      "version": "1.2.2",
-      "from": "expand-tilde@>=1.2.2 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/expand-tilde/-/expand-tilde-1.2.2.tgz",
+      "version": "2.0.2",
+      "from": "expand-tilde@>=2.0.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/expand-tilde/-/expand-tilde-2.0.2.tgz",
       "dev": true
     },
     "express": {
@@ -2774,6 +2843,12 @@
           "from": "setprototypeof@1.1.0",
           "resolved": "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.1.0.tgz",
           "dev": true
+        },
+        "statuses": {
+          "version": "1.3.1",
+          "from": "statuses@>=1.3.1 <1.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/statuses/-/statuses-1.3.1.tgz",
+          "dev": true
         }
       }
     },
@@ -2790,9 +2865,9 @@
       "dev": true
     },
     "external-editor": {
-      "version": "2.0.5",
+      "version": "2.1.0",
       "from": "external-editor@>=2.0.4 <3.0.0",
-      "resolved": "https://registry.npmjs.org/external-editor/-/external-editor-2.0.5.tgz",
+      "resolved": "https://registry.npmjs.org/external-editor/-/external-editor-2.1.0.tgz",
       "dev": true
     },
     "extglob": {
@@ -2822,30 +2897,10 @@
       "dev": true
     },
     "fancy-log": {
-      "version": "1.3.0",
+      "version": "1.3.2",
       "from": "fancy-log@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/fancy-log/-/fancy-log-1.3.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "ansi-styles": {
-          "version": "2.2.1",
-          "from": "ansi-styles@>=2.2.1 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ansi-styles/-/ansi-styles-2.2.1.tgz",
-          "dev": true
-        },
-        "chalk": {
-          "version": "1.1.3",
-          "from": "chalk@>=1.1.1 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/chalk/-/chalk-1.1.3.tgz",
-          "dev": true
-        },
-        "supports-color": {
-          "version": "2.0.0",
-          "from": "supports-color@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/supports-color/-/supports-color-2.0.0.tgz",
-          "dev": true
-        }
-      }
+      "resolved": "https://registry.npmjs.org/fancy-log/-/fancy-log-1.3.2.tgz",
+      "dev": true
     },
     "fast-deep-equal": {
       "version": "1.0.0",
@@ -2857,6 +2912,12 @@
       "version": "1.0.2",
       "from": "fast-future@>=1.0.2 <1.1.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/fast-future/-/fast-future-1.0.2.tgz",
+      "dev": true
+    },
+    "fast-json-stable-stringify": {
+      "version": "2.0.0",
+      "from": "fast-json-stable-stringify@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz",
       "dev": true
     },
     "fast-levenshtein": {
@@ -2910,9 +2971,9 @@
       "dev": true
     },
     "filesize": {
-      "version": "3.5.10",
+      "version": "3.5.11",
       "from": "filesize@>=3.5.9 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/filesize/-/filesize-3.5.10.tgz",
+      "resolved": "https://registry.npmjs.org/filesize/-/filesize-3.5.11.tgz",
       "dev": true
     },
     "fill-range": {
@@ -2925,7 +2986,15 @@
       "version": "1.0.6",
       "from": "finalhandler@1.0.6",
       "resolved": "https://registry.npmjs.org/finalhandler/-/finalhandler-1.0.6.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "statuses": {
+          "version": "1.3.1",
+          "from": "statuses@>=1.3.1 <1.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/statuses/-/statuses-1.3.1.tgz",
+          "dev": true
+        }
+      }
     },
     "find-cache-dir": {
       "version": "1.0.0",
@@ -2940,24 +3009,148 @@
       "dev": true
     },
     "findup-sync": {
-      "version": "0.4.3",
-      "from": "findup-sync@>=0.4.2 <0.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/findup-sync/-/findup-sync-0.4.3.tgz",
-      "dev": true
+      "version": "2.0.0",
+      "from": "findup-sync@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/findup-sync/-/findup-sync-2.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "arr-diff": {
+          "version": "4.0.0",
+          "from": "arr-diff@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/arr-diff/-/arr-diff-4.0.0.tgz",
+          "dev": true
+        },
+        "array-unique": {
+          "version": "0.3.2",
+          "from": "array-unique@>=0.3.2 <0.4.0",
+          "resolved": "https://registry.npmjs.org/array-unique/-/array-unique-0.3.2.tgz",
+          "dev": true
+        },
+        "braces": {
+          "version": "2.3.0",
+          "from": "braces@>=2.3.0 <3.0.0",
+          "resolved": "https://registry.npmjs.org/braces/-/braces-2.3.0.tgz",
+          "dev": true
+        },
+        "expand-brackets": {
+          "version": "2.1.4",
+          "from": "expand-brackets@>=2.1.4 <3.0.0",
+          "resolved": "https://registry.npmjs.org/expand-brackets/-/expand-brackets-2.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "define-property": {
+              "version": "0.2.5",
+              "from": "define-property@>=0.2.5 <0.3.0",
+              "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+              "dev": true
+            }
+          }
+        },
+        "extglob": {
+          "version": "2.0.3",
+          "from": "extglob@>=2.0.2 <3.0.0",
+          "resolved": "https://registry.npmjs.org/extglob/-/extglob-2.0.3.tgz",
+          "dev": true
+        },
+        "fill-range": {
+          "version": "4.0.0",
+          "from": "fill-range@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-4.0.0.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "5.1.0",
+              "from": "kind-of@>=5.0.0 <6.0.0",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-extglob": {
+          "version": "2.1.1",
+          "from": "is-extglob@>=2.1.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-extglob/-/is-extglob-2.1.1.tgz",
+          "dev": true
+        },
+        "is-glob": {
+          "version": "3.1.0",
+          "from": "is-glob@>=3.1.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-glob/-/is-glob-3.1.0.tgz",
+          "dev": true
+        },
+        "is-number": {
+          "version": "3.0.0",
+          "from": "is-number@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.1 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "6.0.2",
+          "from": "kind-of@>=6.0.0 <7.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz",
+          "dev": true
+        },
+        "micromatch": {
+          "version": "3.1.4",
+          "from": "micromatch@>=3.0.4 <4.0.0",
+          "resolved": "https://registry.npmjs.org/micromatch/-/micromatch-3.1.4.tgz",
+          "dev": true
+        }
+      }
     },
     "fined": {
       "version": "1.1.0",
       "from": "fined@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/fined/-/fined-1.1.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "expand-tilde": {
-          "version": "2.0.2",
-          "from": "expand-tilde@>=2.0.2 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/expand-tilde/-/expand-tilde-2.0.2.tgz",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "first-chunk-stream": {
       "version": "1.0.0",
@@ -2966,9 +3159,9 @@
       "dev": true
     },
     "flagged-respawn": {
-      "version": "0.3.2",
-      "from": "flagged-respawn@>=0.3.2 <0.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/flagged-respawn/-/flagged-respawn-0.3.2.tgz",
+      "version": "1.0.0",
+      "from": "flagged-respawn@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/flagged-respawn/-/flagged-respawn-1.0.0.tgz",
       "dev": true
     },
     "flat-cache": {
@@ -2987,6 +3180,12 @@
           "version": "5.0.0",
           "from": "globby@>=5.0.0 <6.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/globby/-/globby-5.0.0.tgz",
+          "dev": true
+        },
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
           "dev": true
         }
       }
@@ -3033,6 +3232,12 @@
       "resolved": "https://registry.npmjs.org/forwarded/-/forwarded-0.1.2.tgz",
       "dev": true
     },
+    "fragment-cache": {
+      "version": "0.2.1",
+      "from": "fragment-cache@>=0.2.1 <0.3.0",
+      "resolved": "https://registry.npmjs.org/fragment-cache/-/fragment-cache-0.2.1.tgz",
+      "dev": true
+    },
     "fresh": {
       "version": "0.5.2",
       "from": "fresh@0.5.2",
@@ -3055,12 +3260,6 @@
       "version": "1.0.1",
       "from": "fs-access@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs-access/-/fs-access-1.0.1.tgz",
-      "dev": true
-    },
-    "fs-exists-sync": {
-      "version": "0.1.0",
-      "from": "fs-exists-sync@>=0.1.0 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs-exists-sync/-/fs-exists-sync-0.1.0.tgz",
       "dev": true
     },
     "fs-extra": {
@@ -3161,6 +3360,12 @@
       "resolved": "https://registry.npmjs.org/get-stream/-/get-stream-3.0.0.tgz",
       "dev": true
     },
+    "get-value": {
+      "version": "2.0.6",
+      "from": "get-value@>=2.0.6 <3.0.0",
+      "resolved": "https://registry.npmjs.org/get-value/-/get-value-2.0.6.tgz",
+      "dev": true
+    },
     "getpass": {
       "version": "0.1.7",
       "from": "getpass@>=0.1.1 <0.2.0",
@@ -3254,15 +3459,15 @@
       "dev": true
     },
     "global-modules": {
-      "version": "0.2.3",
-      "from": "global-modules@>=0.2.3 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/global-modules/-/global-modules-0.2.3.tgz",
+      "version": "1.0.0",
+      "from": "global-modules@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/global-modules/-/global-modules-1.0.0.tgz",
       "dev": true
     },
     "global-prefix": {
-      "version": "0.1.5",
-      "from": "global-prefix@>=0.1.4 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/global-prefix/-/global-prefix-0.1.5.tgz",
+      "version": "1.0.2",
+      "from": "global-prefix@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/global-prefix/-/global-prefix-1.0.2.tgz",
       "dev": true
     },
     "globals": {
@@ -3275,7 +3480,15 @@
       "version": "6.1.0",
       "from": "globby@>=6.1.0 <7.0.0",
       "resolved": "https://registry.npmjs.org/globby/-/globby-6.1.0.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+          "dev": true
+        }
+      }
     },
     "globule": {
       "version": "1.2.0",
@@ -3290,9 +3503,9 @@
       "dev": true
     },
     "gonzales-pe": {
-      "version": "4.2.2",
+      "version": "4.2.3",
       "from": "gonzales-pe@>=4.1.1 <5.0.0",
-      "resolved": "https://registry.npmjs.org/gonzales-pe/-/gonzales-pe-4.2.2.tgz",
+      "resolved": "https://registry.npmjs.org/gonzales-pe/-/gonzales-pe-4.2.3.tgz",
       "dev": true,
       "dependencies": {
         "minimist": {
@@ -3372,9 +3585,9 @@
           "dev": true
         },
         "clone": {
-          "version": "1.0.2",
+          "version": "1.0.3",
           "from": "clone@>=1.0.0 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/clone/-/clone-1.0.2.tgz",
+          "resolved": "https://registry.npmjs.org/clone/-/clone-1.0.3.tgz",
           "dev": true
         },
         "object-assign": {
@@ -3409,11 +3622,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gzip-size/-/gzip-size-3.0.0.tgz",
       "dev": true
     },
-    "hammerjs": {
-      "version": "2.0.8",
-      "from": "hammerjs@2.0.8",
-      "resolved": "https://registry.npmjs.org/hammerjs/-/hammerjs-2.0.8.tgz"
-    },
     "handle-thing": {
       "version": "1.2.5",
       "from": "handle-thing@>=1.2.5 <2.0.0",
@@ -3421,9 +3629,9 @@
       "dev": true
     },
     "handlebars": {
-      "version": "4.0.10",
+      "version": "4.0.11",
       "from": "handlebars@>=4.0.1 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/handlebars/-/handlebars-4.0.10.tgz",
+      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.0.11.tgz",
       "dev": true,
       "dependencies": {
         "async": {
@@ -3579,6 +3787,48 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-unicode/-/has-unicode-2.0.1.tgz",
       "dev": true
     },
+    "has-value": {
+      "version": "1.0.0",
+      "from": "has-value@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/has-value/-/has-value-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
+    "has-values": {
+      "version": "1.0.0",
+      "from": "has-values@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/has-values/-/has-values-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "is-number": {
+          "version": "3.0.0",
+          "from": "is-number@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "kind-of": {
+          "version": "4.0.0",
+          "from": "kind-of@>=4.0.0 <5.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/kind-of/-/kind-of-4.0.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "hash-base": {
       "version": "2.0.2",
       "from": "hash-base@>=2.0.0 <3.0.0",
@@ -3637,7 +3887,7 @@
     },
     "homedir-polyfill": {
       "version": "1.0.1",
-      "from": "homedir-polyfill@>=1.0.0 <2.0.0",
+      "from": "homedir-polyfill@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/homedir-polyfill/-/homedir-polyfill-1.0.1.tgz",
       "dev": true
     },
@@ -3666,9 +3916,9 @@
       "dev": true
     },
     "html-minifier": {
-      "version": "3.5.5",
+      "version": "3.5.8",
       "from": "html-minifier@>=3.2.3 <4.0.0",
-      "resolved": "https://registry.npmjs.org/html-minifier/-/html-minifier-3.5.5.tgz",
+      "resolved": "https://registry.npmjs.org/html-minifier/-/html-minifier-3.5.8.tgz",
       "dev": true
     },
     "html-webpack-plugin": {
@@ -3768,9 +4018,9 @@
       "dev": true
     },
     "https-browserify": {
-      "version": "0.0.1",
-      "from": "https-browserify@0.0.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/https-browserify/-/https-browserify-0.0.1.tgz",
+      "version": "1.0.0",
+      "from": "https-browserify@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/https-browserify/-/https-browserify-1.0.0.tgz",
       "dev": true
     },
     "iconv-lite": {
@@ -3804,9 +4054,9 @@
       "dev": true
     },
     "ignore": {
-      "version": "3.3.5",
+      "version": "3.3.7",
       "from": "ignore@>=3.3.3 <4.0.0",
-      "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.5.tgz",
+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.7.tgz",
       "dev": true
     },
     "imurmurhash": {
@@ -3852,9 +4102,9 @@
       "dev": true
     },
     "ini": {
-      "version": "1.3.4",
+      "version": "1.3.5",
       "from": "ini@>=1.3.4 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ini/-/ini-1.3.4.tgz",
+      "resolved": "https://registry.npmjs.org/ini/-/ini-1.3.5.tgz",
       "dev": true
     },
     "inquirer": {
@@ -3884,9 +4134,9 @@
       "dev": true
     },
     "interpret": {
-      "version": "1.0.4",
+      "version": "1.1.0",
       "from": "interpret@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/interpret/-/interpret-1.0.4.tgz",
+      "resolved": "https://registry.npmjs.org/interpret/-/interpret-1.1.0.tgz",
       "dev": true
     },
     "invariant": {
@@ -3914,9 +4164,9 @@
       "dev": true
     },
     "is-absolute": {
-      "version": "0.2.6",
-      "from": "is-absolute@>=0.2.3 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-absolute/-/is-absolute-0.2.6.tgz",
+      "version": "1.0.0",
+      "from": "is-absolute@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-absolute/-/is-absolute-1.0.0.tgz",
       "dev": true
     },
     "is-absolute-url": {
@@ -3924,6 +4174,20 @@
       "from": "is-absolute-url@>=2.0.0 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-absolute-url/-/is-absolute-url-2.1.0.tgz",
       "dev": true
+    },
+    "is-accessor-descriptor": {
+      "version": "1.0.0",
+      "from": "is-accessor-descriptor@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "kind-of": {
+          "version": "6.0.2",
+          "from": "kind-of@>=6.0.0 <7.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz",
+          "dev": true
+        }
+      }
     },
     "is-arrayish": {
       "version": "0.2.1",
@@ -3938,9 +4202,9 @@
       "dev": true
     },
     "is-buffer": {
-      "version": "1.1.5",
+      "version": "1.1.6",
       "from": "is-buffer@>=1.1.5 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-buffer/-/is-buffer-1.1.5.tgz",
+      "resolved": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.6.tgz",
       "dev": true
     },
     "is-builtin-module": {
@@ -3948,6 +4212,34 @@
       "from": "is-builtin-module@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-builtin-module/-/is-builtin-module-1.0.0.tgz",
       "dev": true
+    },
+    "is-data-descriptor": {
+      "version": "1.0.0",
+      "from": "is-data-descriptor@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "kind-of": {
+          "version": "6.0.2",
+          "from": "kind-of@>=6.0.0 <7.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz",
+          "dev": true
+        }
+      }
+    },
+    "is-descriptor": {
+      "version": "1.0.2",
+      "from": "is-descriptor@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-1.0.2.tgz",
+      "dev": true,
+      "dependencies": {
+        "kind-of": {
+          "version": "6.0.2",
+          "from": "kind-of@>=6.0.2 <7.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz",
+          "dev": true
+        }
+      }
     },
     "is-directory": {
       "version": "0.3.1",
@@ -3988,7 +4280,7 @@
     "is-fullwidth-code-point": {
       "version": "2.0.0",
       "from": "is-fullwidth-code-point@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz",
       "dev": true
     },
     "is-glob": {
@@ -3998,9 +4290,9 @@
       "dev": true
     },
     "is-my-json-valid": {
-      "version": "2.16.1",
+      "version": "2.17.1",
       "from": "is-my-json-valid@>=2.10.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/is-my-json-valid/-/is-my-json-valid-2.16.1.tgz",
+      "resolved": "https://registry.npmjs.org/is-my-json-valid/-/is-my-json-valid-2.17.1.tgz",
       "dev": true
     },
     "is-number": {
@@ -4008,6 +4300,20 @@
       "from": "is-number@>=2.1.0 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-2.1.0.tgz",
       "dev": true
+    },
+    "is-odd": {
+      "version": "1.0.0",
+      "from": "is-odd@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-odd/-/is-odd-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "is-number": {
+          "version": "3.0.0",
+          "from": "is-number@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "dev": true
+        }
+      }
     },
     "is-path-cwd": {
       "version": "1.0.0",
@@ -4022,9 +4328,9 @@
       "dev": true
     },
     "is-path-inside": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "from": "is-path-inside@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-path-inside/-/is-path-inside-1.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/is-path-inside/-/is-path-inside-1.0.1.tgz",
       "dev": true
     },
     "is-plain-obj": {
@@ -4072,15 +4378,15 @@
       "dev": true
     },
     "is-relative": {
-      "version": "0.2.1",
-      "from": "is-relative@>=0.2.1 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-relative/-/is-relative-0.2.1.tgz",
+      "version": "1.0.0",
+      "from": "is-relative@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-relative/-/is-relative-1.0.0.tgz",
       "dev": true
     },
     "is-resolvable": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "from": "is-resolvable@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-resolvable/-/is-resolvable-1.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/is-resolvable/-/is-resolvable-1.0.1.tgz",
       "dev": true
     },
     "is-stream": {
@@ -4102,9 +4408,9 @@
       "dev": true
     },
     "is-unc-path": {
-      "version": "0.1.2",
-      "from": "is-unc-path@>=0.1.1 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-unc-path/-/is-unc-path-0.1.2.tgz",
+      "version": "1.0.0",
+      "from": "is-unc-path@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-unc-path/-/is-unc-path-1.0.0.tgz",
       "dev": true
     },
     "is-utf8": {
@@ -4120,9 +4426,9 @@
       "dev": true
     },
     "is-windows": {
-      "version": "0.2.0",
-      "from": "is-windows@>=0.2.0 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-windows/-/is-windows-0.2.0.tgz",
+      "version": "1.0.1",
+      "from": "is-windows@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/is-windows/-/is-windows-1.0.1.tgz",
       "dev": true
     },
     "isarray": {
@@ -4200,9 +4506,9 @@
       "dev": true
     },
     "istanbul-lib-instrument": {
-      "version": "1.8.0",
+      "version": "1.9.1",
       "from": "istanbul-lib-instrument@>=1.7.2 <2.0.0",
-      "resolved": "https://registry.npmjs.org/istanbul-lib-instrument/-/istanbul-lib-instrument-1.8.0.tgz",
+      "resolved": "https://registry.npmjs.org/istanbul-lib-instrument/-/istanbul-lib-instrument-1.9.1.tgz",
       "dev": true
     },
     "jasmine-core": {
@@ -4217,9 +4523,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/jquery/-/jquery-3.2.1.tgz"
     },
     "js-base64": {
-      "version": "2.3.2",
+      "version": "2.4.0",
       "from": "js-base64@>=2.1.9 <3.0.0",
-      "resolved": "https://registry.npmjs.org/js-base64/-/js-base64-2.3.2.tgz",
+      "resolved": "https://registry.npmjs.org/js-base64/-/js-base64-2.4.0.tgz",
       "dev": true
     },
     "js-tokens": {
@@ -4240,12 +4546,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/jsbn/-/jsbn-0.1.1.tgz",
       "dev": true,
       "optional": true
-    },
-    "jschardet": {
-      "version": "1.5.1",
-      "from": "jschardet@>=1.4.2 <2.0.0",
-      "resolved": "https://registry.npmjs.org/jschardet/-/jschardet-1.5.1.tgz",
-      "dev": true
     },
     "jsesc": {
       "version": "1.3.0",
@@ -4462,7 +4762,7 @@
     "kind-of": {
       "version": "3.2.2",
       "from": "kind-of@>=3.0.2 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/kind-of/-/kind-of-3.2.2.tgz",
+      "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
       "dev": true
     },
     "klaw": {
@@ -4484,9 +4784,9 @@
       "dev": true
     },
     "lazy-cache": {
-      "version": "1.0.4",
-      "from": "lazy-cache@>=1.0.3 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lazy-cache/-/lazy-cache-1.0.4.tgz",
+      "version": "2.0.2",
+      "from": "lazy-cache@>=2.0.2 <3.0.0",
+      "resolved": "https://registry.npmjs.org/lazy-cache/-/lazy-cache-2.0.2.tgz",
       "dev": true
     },
     "lazystream": {
@@ -4570,16 +4870,24 @@
       "dev": true
     },
     "liftoff": {
-      "version": "2.3.0",
+      "version": "2.5.0",
       "from": "liftoff@>=2.3.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/liftoff/-/liftoff-2.3.0.tgz",
+      "resolved": "https://registry.npmjs.org/liftoff/-/liftoff-2.5.0.tgz",
       "dev": true
     },
     "load-json-file": {
       "version": "1.1.0",
       "from": "load-json-file@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/load-json-file/-/load-json-file-1.1.0.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+          "dev": true
+        }
+      }
     },
     "loader-fs-cache": {
       "version": "1.0.1",
@@ -4811,12 +5119,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-3.1.2.tgz",
       "dev": true
     },
-    "lodash.mapvalues": {
-      "version": "4.6.0",
-      "from": "lodash.mapvalues@>=4.4.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz",
-      "dev": true
-    },
     "lodash.memoize": {
       "version": "4.1.2",
       "from": "lodash.memoize@>=4.1.2 <5.0.0",
@@ -4904,9 +5206,9 @@
       }
     },
     "loglevel": {
-      "version": "1.5.1",
+      "version": "1.6.0",
       "from": "loglevel@>=1.4.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/loglevel/-/loglevel-1.5.1.tgz",
+      "resolved": "https://registry.npmjs.org/loglevel/-/loglevel-1.6.0.tgz",
       "dev": true
     },
     "longest": {
@@ -4946,9 +5248,9 @@
       "dev": true
     },
     "make-dir": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "from": "make-dir@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/make-dir/-/make-dir-1.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/make-dir/-/make-dir-1.1.0.tgz",
       "dev": true
     },
     "make-iterator": {
@@ -4959,7 +5261,7 @@
     },
     "map-cache": {
       "version": "0.2.2",
-      "from": "map-cache@>=0.2.0 <0.3.0",
+      "from": "map-cache@>=0.2.2 <0.3.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/map-cache/-/map-cache-0.2.2.tgz",
       "dev": true
     },
@@ -4967,6 +5269,12 @@
       "version": "1.0.1",
       "from": "map-obj@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/map-obj/-/map-obj-1.0.1.tgz",
+      "dev": true
+    },
+    "map-visit": {
+      "version": "1.0.0",
+      "from": "map-visit@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/map-visit/-/map-visit-1.0.0.tgz",
       "dev": true
     },
     "matchdep": {
@@ -5076,9 +5384,9 @@
       "dev": true
     },
     "mime": {
-      "version": "1.4.1",
+      "version": "1.6.0",
       "from": "mime@>=1.3.4 <2.0.0",
-      "resolved": "https://registry.npmjs.org/mime/-/mime-1.4.1.tgz",
+      "resolved": "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz",
       "dev": true
     },
     "mime-db": {
@@ -5129,6 +5437,20 @@
       "resolved": "https://registry.npmjs.org/mississippi/-/mississippi-1.3.0.tgz",
       "dev": true
     },
+    "mixin-deep": {
+      "version": "1.3.0",
+      "from": "mixin-deep@>=1.2.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/mixin-deep/-/mixin-deep-1.3.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "is-extendable": {
+          "version": "1.0.1",
+          "from": "is-extendable@>=1.0.1 <2.0.0",
+          "resolved": "https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
     "mixin-object": {
       "version": "2.0.1",
       "from": "mixin-object@>=2.0.1 <3.0.0",
@@ -5170,9 +5492,9 @@
       "dev": true
     },
     "multicast-dns": {
-      "version": "6.1.1",
+      "version": "6.2.1",
       "from": "multicast-dns@>=6.0.1 <7.0.0",
-      "resolved": "https://registry.npmjs.org/multicast-dns/-/multicast-dns-6.1.1.tgz",
+      "resolved": "https://registry.npmjs.org/multicast-dns/-/multicast-dns-6.2.1.tgz",
       "dev": true
     },
     "multicast-dns-service-types": {
@@ -5209,6 +5531,32 @@
       "from": "nan@>=2.6.1 <2.7.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/nan/-/nan-2.6.2.tgz",
       "dev": true
+    },
+    "nanomatch": {
+      "version": "1.2.6",
+      "from": "nanomatch@>=1.2.5 <2.0.0",
+      "resolved": "https://registry.npmjs.org/nanomatch/-/nanomatch-1.2.6.tgz",
+      "dev": true,
+      "dependencies": {
+        "arr-diff": {
+          "version": "4.0.0",
+          "from": "arr-diff@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/arr-diff/-/arr-diff-4.0.0.tgz",
+          "dev": true
+        },
+        "array-unique": {
+          "version": "0.3.2",
+          "from": "array-unique@>=0.3.2 <0.4.0",
+          "resolved": "https://registry.npmjs.org/array-unique/-/array-unique-0.3.2.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.2 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+          "dev": true
+        }
+      }
     },
     "natural-compare": {
       "version": "1.4.0",
@@ -5317,9 +5665,9 @@
       "dev": true
     },
     "node-abi": {
-      "version": "2.1.1",
+      "version": "2.1.2",
       "from": "node-abi@>=2.1.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/node-abi/-/node-abi-2.1.1.tgz",
+      "resolved": "https://registry.npmjs.org/node-abi/-/node-abi-2.1.2.tgz",
       "dev": true
     },
     "node-dir": {
@@ -5349,18 +5697,10 @@
       }
     },
     "node-libs-browser": {
-      "version": "2.0.0",
+      "version": "2.1.0",
       "from": "node-libs-browser@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/node-libs-browser/-/node-libs-browser-2.0.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "string_decoder": {
-          "version": "0.10.31",
-          "from": "string_decoder@>=0.10.25 <0.11.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/string_decoder/-/string_decoder-0.10.31.tgz",
-          "dev": true
-        }
-      }
+      "resolved": "https://registry.npmjs.org/node-libs-browser/-/node-libs-browser-2.1.0.tgz",
+      "dev": true
     },
     "node-object-hash": {
       "version": "1.3.0",
@@ -5502,6 +5842,46 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-component/-/object-component-0.0.3.tgz",
       "dev": true
     },
+    "object-copy": {
+      "version": "0.1.0",
+      "from": "object-copy@>=0.1.0 <0.2.0",
+      "resolved": "https://registry.npmjs.org/object-copy/-/object-copy-0.1.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "5.1.0",
+              "from": "kind-of@>=5.0.0 <6.0.0",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+              "dev": true
+            }
+          }
+        }
+      }
+    },
     "object-hash": {
       "version": "1.2.0",
       "from": "object-hash@>=1.1.4 <2.0.0",
@@ -5513,6 +5893,20 @@
       "from": "object-path@>=0.9.2 <0.10.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-path/-/object-path-0.9.2.tgz",
       "dev": true
+    },
+    "object-visit": {
+      "version": "1.0.1",
+      "from": "object-visit@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/object-visit/-/object-visit-1.0.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
     },
     "object.defaults": {
       "version": "1.1.0",
@@ -5534,6 +5928,20 @@
         }
       }
     },
+    "object.map": {
+      "version": "1.0.1",
+      "from": "object.map@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/object.map/-/object.map-1.0.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "for-own": {
+          "version": "1.0.0",
+          "from": "for-own@>=1.0.0 <2.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/for-own/-/for-own-1.0.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "object.omit": {
       "version": "2.0.1",
       "from": "object.omit@>=2.0.0 <3.0.0",
@@ -5542,7 +5950,7 @@
     },
     "object.pick": {
       "version": "1.3.0",
-      "from": "object.pick@>=1.2.0 <2.0.0",
+      "from": "object.pick@>=1.3.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/object.pick/-/object.pick-1.3.0.tgz",
       "dev": true,
       "dependencies": {
@@ -5680,9 +6088,9 @@
       }
     },
     "os-browserify": {
-      "version": "0.2.1",
-      "from": "os-browserify@>=0.2.0 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/os-browserify/-/os-browserify-0.2.1.tgz",
+      "version": "0.3.0",
+      "from": "os-browserify@>=0.3.0 <0.4.0",
+      "resolved": "https://registry.npmjs.org/os-browserify/-/os-browserify-0.3.0.tgz",
       "dev": true
     },
     "os-homedir": {
@@ -5716,9 +6124,9 @@
       "dev": true
     },
     "p-limit": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "from": "p-limit@>=1.1.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/p-limit/-/p-limit-1.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/p-limit/-/p-limit-1.2.0.tgz",
       "dev": true
     },
     "p-locate": {
@@ -5733,10 +6141,16 @@
       "resolved": "https://registry.npmjs.org/p-map/-/p-map-1.2.0.tgz",
       "dev": true
     },
+    "p-try": {
+      "version": "1.0.0",
+      "from": "p-try@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/p-try/-/p-try-1.0.0.tgz",
+      "dev": true
+    },
     "pako": {
-      "version": "0.2.9",
-      "from": "pako@>=0.2.0 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pako/-/pako-0.2.9.tgz",
+      "version": "1.0.6",
+      "from": "pako@>=1.0.5 <1.1.0",
+      "resolved": "https://registry.npmjs.org/pako/-/pako-1.0.6.tgz",
       "dev": true
     },
     "parallel-transform": {
@@ -5758,9 +6172,9 @@
       "dev": true
     },
     "parse-filepath": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "from": "parse-filepath@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/parse-filepath/-/parse-filepath-1.0.1.tgz",
+      "resolved": "https://registry.npmjs.org/parse-filepath/-/parse-filepath-1.0.2.tgz",
       "dev": true
     },
     "parse-glob": {
@@ -5803,6 +6217,12 @@
       "version": "1.3.2",
       "from": "parseurl@>=1.3.2 <1.4.0",
       "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.2.tgz",
+      "dev": true
+    },
+    "pascalcase": {
+      "version": "0.1.1",
+      "from": "pascalcase@>=0.1.1 <0.2.0",
+      "resolved": "https://registry.npmjs.org/pascalcase/-/pascalcase-0.1.1.tgz",
       "dev": true
     },
     "path-browserify": {
@@ -5869,7 +6289,15 @@
       "version": "1.1.0",
       "from": "path-type@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-type/-/path-type-1.1.0.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+          "dev": true
+        }
+      }
     },
     "pbkdf2": {
       "version": "3.0.14",
@@ -5884,9 +6312,9 @@
       "dev": true
     },
     "pify": {
-      "version": "2.3.0",
-      "from": "pify@>=2.3.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+      "version": "3.0.0",
+      "from": "pify@>=3.0.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/pify/-/pify-3.0.0.tgz",
       "dev": true
     },
     "pinkie": {
@@ -5927,10 +6355,16 @@
         }
       }
     },
+    "posix-character-classes": {
+      "version": "0.1.1",
+      "from": "posix-character-classes@>=0.1.0 <0.2.0",
+      "resolved": "https://registry.npmjs.org/posix-character-classes/-/posix-character-classes-0.1.1.tgz",
+      "dev": true
+    },
     "postcss": {
-      "version": "6.0.13",
+      "version": "6.0.15",
       "from": "postcss@>=6.0.11 <7.0.0",
-      "resolved": "https://registry.npmjs.org/postcss/-/postcss-6.0.13.tgz",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-6.0.15.tgz",
       "dev": true
     },
     "postcss-calc": {
@@ -7314,9 +7748,9 @@
       }
     },
     "prebuild-install": {
-      "version": "2.3.0",
+      "version": "2.4.1",
       "from": "prebuild-install@>=2.1.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/prebuild-install/-/prebuild-install-2.3.0.tgz",
+      "resolved": "https://registry.npmjs.org/prebuild-install/-/prebuild-install-2.4.1.tgz",
       "dev": true
     },
     "prelude-ls": {
@@ -7350,14 +7784,14 @@
       "dev": true
     },
     "private": {
-      "version": "0.1.7",
+      "version": "0.1.8",
       "from": "private@>=0.1.7 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/private/-/private-0.1.7.tgz",
+      "resolved": "https://registry.npmjs.org/private/-/private-0.1.8.tgz",
       "dev": true
     },
     "process": {
       "version": "0.11.10",
-      "from": "process@>=0.11.0 <0.12.0",
+      "from": "process@>=0.11.10 <0.12.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/process/-/process-0.11.10.tgz",
       "dev": true
     },
@@ -7404,9 +7838,9 @@
       "dev": true
     },
     "pump": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "from": "pump@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pump/-/pump-1.0.2.tgz",
+      "resolved": "https://registry.npmjs.org/pump/-/pump-1.0.3.tgz",
       "dev": true
     },
     "pumpify": {
@@ -7422,9 +7856,9 @@
       "dev": true
     },
     "q": {
-      "version": "1.5.0",
+      "version": "1.5.1",
       "from": "q@>=1.1.2 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/q/-/q-1.5.0.tgz",
+      "resolved": "https://registry.npmjs.org/q/-/q-1.5.1.tgz",
       "dev": true
     },
     "qjobs": {
@@ -7497,6 +7931,12 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/randombytes/-/randombytes-2.0.5.tgz",
       "dev": true
     },
+    "randomfill": {
+      "version": "1.0.3",
+      "from": "randomfill@>=1.0.3 <2.0.0",
+      "resolved": "https://registry.npmjs.org/randomfill/-/randomfill-1.0.3.tgz",
+      "dev": true
+    },
     "range-parser": {
       "version": "1.2.0",
       "from": "range-parser@>=1.2.0 <2.0.0",
@@ -7516,9 +7956,9 @@
       "dev": true
     },
     "rc": {
-      "version": "1.2.1",
+      "version": "1.2.2",
       "from": "rc@>=1.1.6 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/rc/-/rc-1.2.1.tgz",
+      "resolved": "https://registry.npmjs.org/rc/-/rc-1.2.2.tgz",
       "dev": true
     },
     "re-tree": {
@@ -7631,9 +8071,9 @@
       "dev": true
     },
     "regenerator-runtime": {
-      "version": "0.11.0",
+      "version": "0.11.1",
       "from": "regenerator-runtime@>=0.11.0 <0.12.0",
-      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.0.tgz",
+      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz",
       "dev": true
     },
     "regenerator-transform": {
@@ -7646,6 +8086,12 @@
       "version": "0.4.4",
       "from": "regex-cache@>=0.4.2 <0.5.0",
       "resolved": "https://registry.npmjs.org/regex-cache/-/regex-cache-0.4.4.tgz",
+      "dev": true
+    },
+    "regex-not": {
+      "version": "1.0.0",
+      "from": "regex-not@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/regex-not/-/regex-not-1.0.0.tgz",
       "dev": true
     },
     "regex-parser": {
@@ -7767,15 +8213,15 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.4.0",
-      "from": "resolve@>=1.2.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.4.0.tgz",
+      "version": "1.5.0",
+      "from": "resolve@>=1.5.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.5.0.tgz",
       "dev": true
     },
     "resolve-dir": {
-      "version": "0.1.1",
-      "from": "resolve-dir@>=0.1.0 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/resolve-dir/-/resolve-dir-0.1.1.tgz",
+      "version": "1.0.1",
+      "from": "resolve-dir@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/resolve-dir/-/resolve-dir-1.0.1.tgz",
       "dev": true
     },
     "resolve-from": {
@@ -7883,11 +8329,6 @@
       "from": "rx-lite-aggregates@>=4.0.8 <5.0.0",
       "resolved": "https://registry.npmjs.org/rx-lite-aggregates/-/rx-lite-aggregates-4.0.8.tgz",
       "dev": true
-    },
-    "rxjs": {
-      "version": "5.4.3",
-      "from": "rxjs@5.4.3",
-      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.4.3.tgz"
     },
     "safe-buffer": {
       "version": "5.1.1",
@@ -8128,12 +8569,6 @@
           "from": "loader-utils@>=1.0.1 <2.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/loader-utils/-/loader-utils-1.1.0.tgz",
           "dev": true
-        },
-        "pify": {
-          "version": "3.0.0",
-          "from": "pify@>=3.0.0 <4.0.0",
-          "resolved": "https://registry.npmjs.org/pify/-/pify-3.0.0.tgz",
-          "dev": true
         }
       }
     },
@@ -8225,12 +8660,6 @@
       "resolved": "https://registry.npmjs.org/semver/-/semver-5.4.1.tgz",
       "dev": true
     },
-    "semver-dsl": {
-      "version": "1.0.1",
-      "from": "semver-dsl@>=1.0.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/semver-dsl/-/semver-dsl-1.0.1.tgz",
-      "dev": true
-    },
     "semver-greatest-satisfied-range": {
       "version": "1.1.0",
       "from": "semver-greatest-satisfied-range@>=1.0.0 <2.0.0",
@@ -8241,7 +8670,21 @@
       "version": "0.16.1",
       "from": "send@0.16.1",
       "resolved": "https://registry.npmjs.org/send/-/send-0.16.1.tgz",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "mime": {
+          "version": "1.4.1",
+          "from": "mime@1.4.1",
+          "resolved": "https://registry.npmjs.org/mime/-/mime-1.4.1.tgz",
+          "dev": true
+        },
+        "statuses": {
+          "version": "1.3.1",
+          "from": "statuses@>=1.3.1 <1.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/statuses/-/statuses-1.3.1.tgz",
+          "dev": true
+        }
+      }
     },
     "serve-index": {
       "version": "1.9.1",
@@ -8269,10 +8712,22 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/set-blocking/-/set-blocking-2.0.0.tgz",
       "dev": true
     },
+    "set-getter": {
+      "version": "0.1.0",
+      "from": "set-getter@>=0.1.0 <0.2.0",
+      "resolved": "https://registry.npmjs.org/set-getter/-/set-getter-0.1.0.tgz",
+      "dev": true
+    },
     "set-immediate-shim": {
       "version": "1.0.1",
       "from": "set-immediate-shim@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/set-immediate-shim/-/set-immediate-shim-1.0.1.tgz",
+      "dev": true
+    },
+    "set-value": {
+      "version": "2.0.0",
+      "from": "set-value@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/set-value/-/set-value-2.0.0.tgz",
       "dev": true
     },
     "setimmediate": {
@@ -8367,10 +8822,90 @@
       "resolved": "https://registry.npmjs.org/slice-ansi/-/slice-ansi-1.0.0.tgz",
       "dev": true
     },
+    "snapdragon": {
+      "version": "0.8.1",
+      "from": "snapdragon@>=0.8.1 <0.9.0",
+      "resolved": "https://registry.npmjs.org/snapdragon/-/snapdragon-0.8.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+          "dev": true
+        },
+        "source-map": {
+          "version": "0.5.7",
+          "from": "source-map@>=0.5.6 <0.6.0",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz",
+          "dev": true
+        }
+      }
+    },
+    "snapdragon-node": {
+      "version": "2.1.1",
+      "from": "snapdragon-node@>=2.0.1 <3.0.0",
+      "resolved": "https://registry.npmjs.org/snapdragon-node/-/snapdragon-node-2.1.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
+    "snapdragon-util": {
+      "version": "3.0.1",
+      "from": "snapdragon-util@>=3.0.1 <4.0.0",
+      "resolved": "https://registry.npmjs.org/snapdragon-util/-/snapdragon-util-3.0.1.tgz",
+      "dev": true
+    },
     "sntp": {
-      "version": "2.0.2",
+      "version": "2.1.0",
       "from": "sntp@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/sntp/-/sntp-2.0.2.tgz",
+      "resolved": "https://registry.npmjs.org/sntp/-/sntp-2.1.0.tgz",
       "dev": true,
       "dependencies": {
         "hoek": {
@@ -8433,12 +8968,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-client/-/socket.io-client-1.7.3.tgz",
       "dev": true,
       "dependencies": {
-        "component-emitter": {
-          "version": "1.2.1",
-          "from": "component-emitter@1.2.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.2.1.tgz",
-          "dev": true
-        },
         "debug": {
           "version": "2.3.3",
           "from": "debug@2.3.3",
@@ -8459,6 +8988,12 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-parser/-/socket.io-parser-2.3.1.tgz",
       "dev": true,
       "dependencies": {
+        "component-emitter": {
+          "version": "1.1.2",
+          "from": "component-emitter@1.1.2",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.1.2.tgz",
+          "dev": true
+        },
         "debug": {
           "version": "2.2.0",
           "from": "debug@2.2.0",
@@ -8526,9 +9061,9 @@
       "dev": true
     },
     "source-map-resolve": {
-      "version": "0.3.1",
-      "from": "source-map-resolve@>=0.3.0 <0.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map-resolve/-/source-map-resolve-0.3.1.tgz",
+      "version": "0.5.1",
+      "from": "source-map-resolve@>=0.5.0 <0.6.0",
+      "resolved": "https://registry.npmjs.org/source-map-resolve/-/source-map-resolve-0.5.1.tgz",
       "dev": true
     },
     "source-map-support": {
@@ -8546,9 +9081,9 @@
       }
     },
     "source-map-url": {
-      "version": "0.3.0",
-      "from": "source-map-url@>=0.3.0 <0.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map-url/-/source-map-url-0.3.0.tgz",
+      "version": "0.4.0",
+      "from": "source-map-url@>=0.4.0 <0.5.0",
+      "resolved": "https://registry.npmjs.org/source-map-url/-/source-map-url-0.4.0.tgz",
       "dev": true
     },
     "sparkles": {
@@ -8587,6 +9122,26 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/spdy-transport/-/spdy-transport-2.0.20.tgz",
       "dev": true
     },
+    "split-string": {
+      "version": "3.1.0",
+      "from": "split-string@>=3.0.2 <4.0.0",
+      "resolved": "https://registry.npmjs.org/split-string/-/split-string-3.1.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "extend-shallow": {
+          "version": "3.0.2",
+          "from": "extend-shallow@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/extend-shallow/-/extend-shallow-3.0.2.tgz",
+          "dev": true
+        },
+        "is-extendable": {
+          "version": "1.0.1",
+          "from": "is-extendable@>=1.0.1 <2.0.0",
+          "resolved": "https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz",
+          "dev": true
+        }
+      }
+    },
     "sprintf-js": {
       "version": "1.0.3",
       "from": "sprintf-js@>=1.0.2 <1.1.0",
@@ -8617,10 +9172,64 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/stack-trace/-/stack-trace-0.0.9.tgz",
       "dev": true
     },
+    "static-extend": {
+      "version": "0.1.2",
+      "from": "static-extend@>=0.1.1 <0.2.0",
+      "resolved": "https://registry.npmjs.org/static-extend/-/static-extend-0.1.2.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "statuses": {
-      "version": "1.3.1",
+      "version": "1.4.0",
       "from": "statuses@>=1.3.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/statuses/-/statuses-1.3.1.tgz",
+      "resolved": "https://registry.npmjs.org/statuses/-/statuses-1.4.0.tgz",
       "dev": true
     },
     "stdout-stream": {
@@ -8649,7 +9258,7 @@
     },
     "stream-http": {
       "version": "2.7.2",
-      "from": "stream-http@>=2.3.1 <3.0.0",
+      "from": "stream-http@>=2.7.2 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/stream-http/-/stream-http-2.7.2.tgz",
       "dev": true
     },
@@ -8760,9 +9369,9 @@
       }
     },
     "supports-color": {
-      "version": "4.4.0",
-      "from": "supports-color@>=4.4.0 <5.0.0",
-      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-4.4.0.tgz",
+      "version": "5.1.0",
+      "from": "supports-color@>=5.1.0 <6.0.0",
+      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-5.1.0.tgz",
       "dev": true
     },
     "sver-compat": {
@@ -8776,11 +9385,6 @@
       "from": "svgo@>=0.7.0 <0.8.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/svgo/-/svgo-0.7.2.tgz",
       "dev": true
-    },
-    "symbol-observable": {
-      "version": "1.0.4",
-      "from": "symbol-observable@>=1.0.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/symbol-observable/-/symbol-observable-1.0.4.tgz"
     },
     "table": {
       "version": "4.0.2",
@@ -8807,9 +9411,9 @@
       "dev": true
     },
     "tar-stream": {
-      "version": "1.5.4",
+      "version": "1.5.5",
       "from": "tar-stream@>=1.1.2 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/tar-stream/-/tar-stream-1.5.4.tgz",
+      "resolved": "https://registry.npmjs.org/tar-stream/-/tar-stream-1.5.5.tgz",
       "dev": true
     },
     "test-exclude": {
@@ -8867,7 +9471,7 @@
     },
     "timers-browserify": {
       "version": "2.0.4",
-      "from": "timers-browserify@>=2.0.2 <3.0.0",
+      "from": "timers-browserify@>=2.0.4 <3.0.0",
       "resolved": "https://registry.npmjs.org/timers-browserify/-/timers-browserify-2.0.4.tgz",
       "dev": true
     },
@@ -8901,6 +9505,80 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/to-fast-properties/-/to-fast-properties-1.0.3.tgz",
       "dev": true
     },
+    "to-object-path": {
+      "version": "0.3.0",
+      "from": "to-object-path@>=0.3.0 <0.4.0",
+      "resolved": "https://registry.npmjs.org/to-object-path/-/to-object-path-0.3.0.tgz",
+      "dev": true
+    },
+    "to-regex": {
+      "version": "3.0.1",
+      "from": "to-regex@>=3.0.1 <4.0.0",
+      "resolved": "https://registry.npmjs.org/to-regex/-/to-regex-3.0.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
+          "dev": true
+        }
+      }
+    },
+    "to-regex-range": {
+      "version": "2.1.1",
+      "from": "to-regex-range@>=2.1.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/to-regex-range/-/to-regex-range-2.1.1.tgz",
+      "dev": true,
+      "dependencies": {
+        "is-number": {
+          "version": "3.0.0",
+          "from": "is-number@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-number/-/is-number-3.0.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "to-string-loader": {
       "version": "1.1.5",
       "from": "to-string-loader@1.1.5",
@@ -8931,12 +9609,6 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/trim-right/-/trim-right-1.0.1.tgz",
       "dev": true
     },
-    "tryit": {
-      "version": "1.0.3",
-      "from": "tryit@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/tryit/-/tryit-1.0.3.tgz",
-      "dev": true
-    },
     "tryor": {
       "version": "0.1.2",
       "from": "tryor@>=0.1.2 <0.2.0",
@@ -8958,9 +9630,10 @@
       }
     },
     "tslib": {
-      "version": "1.8.0",
+      "version": "1.8.1",
       "from": "tslib@>=1.7.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.8.0.tgz"
+      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.8.1.tgz",
+      "dev": true
     },
     "tslint": {
       "version": "5.7.0",
@@ -8983,9 +9656,9 @@
       }
     },
     "tsutils": {
-      "version": "2.12.1",
+      "version": "2.15.0",
       "from": "tsutils@>=2.8.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/tsutils/-/tsutils-2.12.1.tgz",
+      "resolved": "https://registry.npmjs.org/tsutils/-/tsutils-2.15.0.tgz",
       "dev": true
     },
     "tty-browserify": {
@@ -9032,18 +9705,10 @@
       "dev": true
     },
     "uglify-js": {
-      "version": "3.1.3",
-      "from": "uglify-js@>=3.1.0 <3.2.0",
-      "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-3.1.3.tgz",
-      "dev": true,
-      "dependencies": {
-        "source-map": {
-          "version": "0.5.7",
-          "from": "source-map@>=0.5.1 <0.6.0",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz",
-          "dev": true
-        }
-      }
+      "version": "3.3.4",
+      "from": "uglify-js@>=3.3.0 <3.4.0",
+      "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-3.3.4.tgz",
+      "dev": true
     },
     "uglify-to-browserify": {
       "version": "1.0.2",
@@ -9065,10 +9730,18 @@
           "dev": true
         },
         "uglify-es": {
-          "version": "3.1.3",
+          "version": "3.3.4",
           "from": "uglify-es@>=3.0.24 <4.0.0",
-          "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.1.3.tgz",
-          "dev": true
+          "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.3.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "source-map": {
+              "version": "0.6.1",
+              "from": "source-map@~0.6.1",
+              "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+              "dev": true
+            }
+          }
         }
       }
     },
@@ -9085,7 +9758,7 @@
     },
     "unc-path-regex": {
       "version": "0.1.2",
-      "from": "unc-path-regex@>=0.1.0 <0.2.0",
+      "from": "unc-path-regex@>=0.1.2 <0.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/unc-path-regex/-/unc-path-regex-0.1.2.tgz",
       "dev": true
     },
@@ -9106,6 +9779,20 @@
       "from": "undertaker-registry@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/undertaker-registry/-/undertaker-registry-1.0.1.tgz",
       "dev": true
+    },
+    "union-value": {
+      "version": "1.0.0",
+      "from": "union-value@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/union-value/-/union-value-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "set-value": {
+          "version": "0.4.3",
+          "from": "set-value@>=0.4.3 <0.5.0",
+          "resolved": "https://registry.npmjs.org/set-value/-/set-value-0.4.3.tgz",
+          "dev": true
+        }
+      }
     },
     "uniq": {
       "version": "1.0.1",
@@ -9154,6 +9841,40 @@
       "from": "unpipe@1.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/unpipe/-/unpipe-1.0.0.tgz",
       "dev": true
+    },
+    "unset-value": {
+      "version": "1.0.0",
+      "from": "unset-value@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/unset-value/-/unset-value-1.0.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "has-value": {
+          "version": "0.3.1",
+          "from": "has-value@>=0.3.1 <0.4.0",
+          "resolved": "https://registry.npmjs.org/has-value/-/has-value-0.3.1.tgz",
+          "dev": true,
+          "dependencies": {
+            "isobject": {
+              "version": "2.1.0",
+              "from": "isobject@^2.0.0",
+              "resolved": "https://registry.npmjs.org/isobject/-/isobject-2.1.0.tgz",
+              "dev": true
+            }
+          }
+        },
+        "has-values": {
+          "version": "0.1.4",
+          "from": "has-values@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/has-values/-/has-values-0.1.4.tgz",
+          "dev": true
+        },
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        }
+      }
     },
     "unzip-response": {
       "version": "1.0.2",
@@ -9208,15 +9929,75 @@
       }
     },
     "url-parse": {
-      "version": "1.1.9",
+      "version": "1.2.0",
       "from": "url-parse@>=1.1.8 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/url-parse/-/url-parse-1.1.9.tgz",
+      "resolved": "https://registry.npmjs.org/url-parse/-/url-parse-1.2.0.tgz",
       "dev": true,
       "dependencies": {
         "querystringify": {
           "version": "1.0.0",
           "from": "querystringify@>=1.0.0 <1.1.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/querystringify/-/querystringify-1.0.0.tgz",
+          "dev": true
+        }
+      }
+    },
+    "use": {
+      "version": "2.0.2",
+      "from": "use@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/use/-/use-2.0.2.tgz",
+      "dev": true,
+      "dependencies": {
+        "define-property": {
+          "version": "0.2.5",
+          "from": "define-property@>=0.2.5 <0.3.0",
+          "resolved": "https://registry.npmjs.org/define-property/-/define-property-0.2.5.tgz",
+          "dev": true
+        },
+        "is-accessor-descriptor": {
+          "version": "0.1.6",
+          "from": "is-accessor-descriptor@>=0.1.6 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-data-descriptor": {
+          "version": "0.1.4",
+          "from": "is-data-descriptor@>=0.1.4 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz",
+          "dev": true,
+          "dependencies": {
+            "kind-of": {
+              "version": "3.2.2",
+              "from": "kind-of@^3.0.2",
+              "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
+              "dev": true
+            }
+          }
+        },
+        "is-descriptor": {
+          "version": "0.1.6",
+          "from": "is-descriptor@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/is-descriptor/-/is-descriptor-0.1.6.tgz",
+          "dev": true
+        },
+        "isobject": {
+          "version": "3.0.1",
+          "from": "isobject@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/isobject/-/isobject-3.0.1.tgz",
+          "dev": true
+        },
+        "kind-of": {
+          "version": "5.1.0",
+          "from": "kind-of@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz",
           "dev": true
         }
       }
@@ -9322,9 +10103,9 @@
       "dev": true,
       "dependencies": {
         "clone": {
-          "version": "1.0.2",
+          "version": "1.0.3",
           "from": "clone@>=1.0.0 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/clone/-/clone-1.0.2.tgz",
+          "resolved": "https://registry.npmjs.org/clone/-/clone-1.0.3.tgz",
           "dev": true
         }
       }
@@ -9407,6 +10188,12 @@
           "resolved": "https://registry.npmjs.org/path-type/-/path-type-2.0.0.tgz",
           "dev": true
         },
+        "pify": {
+          "version": "2.3.0",
+          "from": "pify@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/pify/-/pify-2.3.0.tgz",
+          "dev": true
+        },
         "read-pkg": {
           "version": "2.0.0",
           "from": "read-pkg@>=2.0.0 <3.0.0",
@@ -9429,6 +10216,12 @@
           "version": "3.0.0",
           "from": "strip-bom@>=3.0.0 <4.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/strip-bom/-/strip-bom-3.0.0.tgz",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "4.5.0",
+          "from": "supports-color@>=4.2.1 <5.0.0",
+          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-4.5.0.tgz",
           "dev": true
         },
         "uglify-js": {
@@ -9544,9 +10337,9 @@
           "dev": true
         },
         "ultron": {
-          "version": "1.1.0",
+          "version": "1.1.1",
           "from": "ultron@>=1.1.0 <1.2.0",
-          "resolved": "https://registry.npmjs.org/ultron/-/ultron-1.1.0.tgz",
+          "resolved": "https://registry.npmjs.org/ultron/-/ultron-1.1.1.tgz",
           "dev": true
         },
         "ws": {
@@ -9578,9 +10371,9 @@
       }
     },
     "webpack-dev-middleware": {
-      "version": "1.12.0",
+      "version": "1.12.2",
       "from": "webpack-dev-middleware@>=1.0.11 <2.0.0",
-      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-1.12.0.tgz",
+      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-1.12.2.tgz",
       "dev": true,
       "dependencies": {
         "time-stamp": {
@@ -9642,18 +10435,10 @@
       }
     },
     "webpack-sources": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "from": "webpack-sources@>=1.0.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.0.1.tgz",
-      "dev": true,
-      "dependencies": {
-        "source-map": {
-          "version": "0.5.7",
-          "from": "source-map@>=0.5.3 <0.6.0",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz",
-          "dev": true
-        }
-      }
+      "resolved": "https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.1.0.tgz",
+      "dev": true
     },
     "websocket-driver": {
       "version": "0.7.0",
@@ -9662,9 +10447,9 @@
       "dev": true
     },
     "websocket-extensions": {
-      "version": "0.1.2",
+      "version": "0.1.3",
       "from": "websocket-extensions@>=0.1.1",
-      "resolved": "https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.2.tgz",
+      "resolved": "https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.3.tgz",
       "dev": true
     },
     "whet.extend": {
@@ -9718,9 +10503,9 @@
       "dev": true
     },
     "worker-farm": {
-      "version": "1.5.0",
+      "version": "1.5.2",
       "from": "worker-farm@>=1.4.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/worker-farm/-/worker-farm-1.5.0.tgz",
+      "resolved": "https://registry.npmjs.org/worker-farm/-/worker-farm-1.5.2.tgz",
       "dev": true
     },
     "wrap-ansi": {
@@ -9842,11 +10627,6 @@
       "from": "yeast@0.1.2",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/yeast/-/yeast-0.1.2.tgz",
       "dev": true
-    },
-    "zone.js": {
-      "version": "0.8.17",
-      "from": "zone.js@0.8.17",
-      "resolved": "https://registry.npmjs.org/zone.js/-/zone.js-0.8.17.tgz"
     }
   }
 }
