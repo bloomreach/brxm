@@ -75,16 +75,6 @@ export class ContentServiceMock {
   }
 }
 
-export class DialogServiceMock {
-  confirm(): any {
-    return new ConfirmDialogMock();
-  }
-
-  show(dialog: object): Promise<void> {
-    return Promise.resolve();
-  }
-}
-
 export class ConfirmDialogMock {
   title() {
     return this;
@@ -103,19 +93,29 @@ export class ConfirmDialogMock {
   }
 }
 
-export class FieldServiceMock {
-  setDocumentId(id: string): void {}
+export class DialogServiceMock {
+  confirm(): any {
+    return new ConfirmDialogMock();
+  }
+
+  show(dialog: object): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
-export class MdDialogMock {
-  open() {
-    return new MdDialogRefMock();
-  }
+export class FieldServiceMock {
+  setDocumentId(id: string): void {}
 }
 
 export class MdDialogRefMock {
   afterClosed () {
     return Observable.of({ name: 'docName', url: 'doc-url' });
+  }
+}
+
+export class MdDialogMock {
+  open() {
+    return new MdDialogRefMock();
   }
 }
 

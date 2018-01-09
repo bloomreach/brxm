@@ -20,11 +20,9 @@ describe('NameUrlFields', () => {
   let $componentController;
   let $q;
   let $rootScope;
-  let $timeout;
   let CreateContentService;
 
   let component;
-  let scope;
   let element;
   const spies = {};
 
@@ -35,11 +33,10 @@ describe('NameUrlFields', () => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $timeout = _$timeout_;
       CreateContentService = _CreateContentService_;
     });
 
-    scope = $rootScope.$new();
+    $rootScope.$new();
     // element = angular.element('<hippo-name-url-fields name-field="nameField" url-field="urlField" locale="locale"></hippo-name-url-fields>');
     element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement"></form>');
     component = $componentController('nameUrlFields', {
@@ -58,7 +55,7 @@ describe('NameUrlFields', () => {
     component.nameField = '';
   });
 
-  function setNameInputValue (value) {
+  function setNameInputValue(value) {
     component.nameInputField.val(value);
     component.nameField = value;
     component.nameInputField.trigger('keyup');
@@ -85,7 +82,7 @@ describe('NameUrlFields', () => {
           currentValue: component.locale,
           previousValue: 'en',
           isFirstChange: () => false,
-        }
+        },
       };
       component.$onChanges(changes);
       expect(component.setDocumentUrlByName).toHaveBeenCalled();

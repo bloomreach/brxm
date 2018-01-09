@@ -275,7 +275,7 @@ describe('Create content step 2 component', () => {
 
       expect(deleteDraftSpy).toHaveBeenCalledWith(testDocument.id);
       expect(feedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
-    }))
+    }));
   });
 
   describe('saveDocument', () => {
