@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,15 +35,10 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "collection")
 public class RestfulList<T extends Restful> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     private List<T> items = Lists.newArrayList();
 
     public void add(T resource) {
         items.add(resource);
-    }
-
-    public void addAll(Collection<T> items) {
-        this.items.addAll(items);
     }
 
     public Iterator<T> iterator() {
@@ -56,13 +50,6 @@ public class RestfulList<T extends Restful> implements Serializable {
     @JsonSubTypes({
             @JsonSubTypes.Type(value = KeyValueRestful.class, name = "keyvalue"),
             @JsonSubTypes.Type(value = PluginDescriptor.class, name = "plugin"),
-            @JsonSubTypes.Type(value = ProjectRestful.class, name = "project"),
-            @JsonSubTypes.Type(value = PropertyRestful.class, name = "property"),
-            @JsonSubTypes.Type(value = NodeRestful.class, name = "node"),
-            @JsonSubTypes.Type(value = PostPayloadRestful.class, name = "payload"),
-            @JsonSubTypes.Type(value = PluginModuleRestful.class, name = "module"),
-            @JsonSubTypes.Type(value = ErrorMessageRestful.class, name = "error"),
-            @JsonSubTypes.Type(value = QueryRestful.class, name = "query"),
             @JsonSubTypes.Type(value = MessageRestful.class, name = "message")})
     public List<T> getItems() {
         return items;

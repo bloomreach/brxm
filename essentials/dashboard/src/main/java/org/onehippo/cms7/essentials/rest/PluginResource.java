@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -41,13 +42,14 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
+import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -171,25 +173,28 @@ public class PluginResource extends BaseResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
-    public MessageRestful installPlugin(@PathParam(PLUGIN_ID) String pluginId) throws Exception {
+    public UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId, @Context HttpServletResponse response) {
+        final UserFeedback feedback = new UserFeedback();
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            return new ErrorMessageRestful("Installation failed: Plugin with ID '" + pluginId + "' was not found.");
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return feedback.addError("Failed to install plugin with ID '" + pluginId + "', plugin not found");
         }
 
         try {
             plugin.install();
         } catch (PluginException e) {
             log.error(e.getMessage(), e);
-            return new ErrorMessageRestful(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return feedback.addError(e.getMessage());
         }
 
-        String msg = autoSetupIfPossible(plugin);
-        if (msg != null) {
-            return new ErrorMessageRestful(msg);
+        autoSetupIfPossible(plugin, feedback);
+        if (feedback.getFeedbackMessages().isEmpty()) {
+            feedback.addSuccess("Plugin <strong>" + plugin + "</strong> successfully installed.");
         }
 
-        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully installed.");
+        return feedback;
     }
 
 
@@ -201,20 +206,23 @@ public class PluginResource extends BaseResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/setup")
-    public MessageRestful setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
-                                                 final PostPayloadRestful payloadRestful) {
+    public UserFeedback setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
+                                               final PostPayloadRestful payloadRestful,
+                                               @Context HttpServletResponse response) {
+        final UserFeedback feedback = new UserFeedback();
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            return new ErrorMessageRestful("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return feedback.addError("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
         }
 
         final Map<String, Object> properties = makeSetupPropertiesFromValues(payloadRestful.getValues());
-        final String msg = setupPlugin(plugin, properties);
-        if (msg != null) {
-            return new ErrorMessageRestful(msg);
+        setupPlugin(plugin, properties, feedback);
+        if (feedback.getFeedbackMessages().isEmpty()) {
+            feedback.addSuccess("Plugin <strong>" + plugin + "</strong> successfully set up.");
         }
 
-        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully set up.");
+        return feedback;
     }
 
 
@@ -224,8 +232,10 @@ public class PluginResource extends BaseResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/setupcomplete")
-    public void signalPluginSetupComplete(@PathParam(PLUGIN_ID) final String pluginId) {
-        updateInstallStateAfterSetup(pluginStore.getPluginById(pluginId));
+    public UserFeedback signalPluginSetupComplete(@PathParam(PLUGIN_ID) final String pluginId) {
+        final UserFeedback feedback = new UserFeedback();
+        updateInstallStateAfterSetup(pluginStore.getPluginById(pluginId), feedback);
+        return feedback;
     }
 
 
@@ -235,8 +245,8 @@ public class PluginResource extends BaseResource {
     )
     @POST
     @Path("/autosetup")
-    public MessageRestful autoSetupPlugins(@Context ServletContext servletContext) {
-        final StringBuilder builder = new StringBuilder();
+    public UserFeedback autoSetupPlugins(@Context ServletContext servletContext) {
+        final UserFeedback feedback = new UserFeedback();
         // We lock the ping to avoid concurrent auto-setup. Concurrent auto-setup may happen
         // if the user(s) has/have two browsers pointed at the restarting Essentials WAR. Not
         // locking would lead to duplicate setup/bootstrapping.
@@ -248,16 +258,13 @@ public class PluginResource extends BaseResource {
         try {
             for (Plugin plugin : pluginStore.getAllPlugins()) {
                 plugin.promote();
-                final String msg = autoSetupIfPossible(plugin);
-                if (msg != null) {
-                    builder.append(msg).append(" - ");
-                }
+                autoSetupIfPossible(plugin, feedback);
             }
             DashboardUtils.setInitialized(true);
         } finally {
             setupLock.unlock();
         }
-        return (builder.length() > 0) ? new ErrorMessageRestful(builder.toString()) : null;
+        return feedback;
     }
 
 
@@ -288,23 +295,23 @@ public class PluginResource extends BaseResource {
     }
 
 
-    private String autoSetupIfPossible(final Plugin plugin) {
+    private void autoSetupIfPossible(final Plugin plugin, final UserFeedback feedback) {
         if (plugin.getInstallState() != InstallState.ONBOARD || !plugin.hasGeneralizedSetUp()) {
-            return null; // auto-setup not possible
+            return; // auto-setup not possible
         }
 
         final ProjectSettings settings = settingsService.getSettings();
         if (settings.isConfirmParams() && plugin.getDescriptor().hasSetupParameters()) {
-            return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
+            return; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 
         final Map<String, Object> properties = new HashMap<>();
         preProcessSetupProperties(properties);
 
-        return setupPlugin(plugin, properties);
+        setupPlugin(plugin, properties, feedback);
     }
 
-    private String setupPlugin(final Plugin plugin, final Map<String, Object> properties) {
+    private void setupPlugin(final Plugin plugin, final Map<String, Object> properties, final UserFeedback feedback) {
         final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
@@ -324,7 +331,7 @@ public class PluginResource extends BaseResource {
             instructionPackage.execute(context);
         }
 
-        return updateInstallStateAfterSetup(plugin);
+        updateInstallStateAfterSetup(plugin, feedback);
     }
 
     private void preProcessSetupProperties(final Map<String, Object> properties) {
@@ -364,16 +371,13 @@ public class PluginResource extends BaseResource {
         return properties;
     }
 
-    private String updateInstallStateAfterSetup(final Plugin plugin) {
-        String msg = null; // no error message, signals success.
-
+    private void updateInstallStateAfterSetup(final Plugin plugin, final UserFeedback feedback) {
         try {
             plugin.setup();
         } catch (PluginException e) {
-            log.error("Error setting up plugin '" + plugin + "'.", e);
-            msg = "There was an error in processing " + plugin + " Please see the error logs for more details";
+            final String msg = String.format("Failed to set up plugin '%s'.", plugin.getId());
+            log.error(msg, e);
+            feedback.addError(msg + " See back-end logs for more details.");
         }
-
-        return msg;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,8 +31,6 @@ import static org.junit.Assert.assertEquals;
  * @version "$Id$"
  */
 public class RestfulListTest {
-
-    private static Logger log = LoggerFactory.getLogger(RestfulListTest.class);
 
     @SuppressWarnings("unchecked")
     @Test
@@ -48,25 +44,27 @@ public class RestfulListTest {
         myList.add(plugin);
         // add key value
         myList.add(new KeyValueRestful("test", "value"));
-        myList.add(new ErrorMessageRestful("value"));
-        myList.add(new PostPayloadRestful("test", "value"));
-        myList.add(new ProjectRestful("somenamespace"));
-        myList.add(new PropertyRestful("test", "value"));
-        myList.add(new NodeRestful("test", "value"));
-        myList.add(new QueryRestful("mypath"));
-        myList.add(new PluginModuleRestful());
 
         ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(myList);
-        log.info("json {}", json);
         myList = mapper.readValue(json, RestfulList.class);
         final List<Restful> items = myList.getItems();
         final int listSize = myList.getItems().size();
         final List<Class<?>> classList = new ArrayList<>();
         for (Restful item : items) {
-            log.info("item {}", item);
             classList.add(item.getClass());
         }
         assertEquals("Expected all list items to be of  different class", listSize, classList.size());
+    }
+
+    @Test
+    public void test_more() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final RestfulList<KeyValueRestful> keyValue = new RestfulList<>();
+        keyValue.add(new KeyValueRestful("test", "test"));
+        keyValue.add(new KeyValueRestful("test1", "test1"));
+        String result = mapper.writeValueAsString(keyValue);
+        @SuppressWarnings("unchecked") final RestfulList<KeyValueRestful> myList = mapper.readValue(result, RestfulList.class);
+        assertEquals(2, myList.getItems().size());
     }
 }

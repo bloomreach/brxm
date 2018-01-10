@@ -28,13 +28,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Splitter;
@@ -55,10 +53,9 @@ import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
+import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -72,17 +69,17 @@ public class RestPluginResource extends BaseResource {
     @Inject private RebuildService rebuildService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
-    @Inject private ProjectService projectService;
     @Inject private SettingsService settingsService;
+    @Inject private ContentBeansService contentBeansService;
 
     @GET
     @Path("/beans")
-    public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
-
+    public RestfulList<KeyValueRestful> getHippoBeans() {
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(projectService, "java");
-        for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
-            list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
+        final Map<String, java.nio.file.Path> beans = contentBeansService.findBeans();
+        for (java.nio.file.Path beanPath : beans.values()) {
+            final String fileName = beanPath.toFile().getName();
+            list.add(new KeyValueRestful(fileName, beanPath.toString()));
         }
         return list;
     }
@@ -90,8 +87,7 @@ public class RestPluginResource extends BaseResource {
 
     @GET
     @Path("/mounts")
-    public List<MountRestful> getHippoSites(@Context ServletContext servletContext) throws RepositoryException {
-
+    public List<MountRestful> getHippoSites() throws RepositoryException {
         final Set<Node> hstMounts = HstUtils.getHstMounts(jcrService);
         final List<MountRestful> list = new ArrayList<>();
         for (Node m : hstMounts) {
@@ -103,7 +99,7 @@ public class RestPluginResource extends BaseResource {
 
     @POST
     @Path("/")
-    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful) {
         final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();
@@ -177,7 +173,7 @@ public class RestPluginResource extends BaseResource {
         return feedback.addSuccess("REST configuration setup was successful.");
     }
 
-    public FileInstruction createFileInstruction() {
+    private FileInstruction createFileInstruction() {
         final FileInstruction instruction = new FileInstruction();
         getInjector().autowireBean(instruction);
         instruction.setAction("copy");
