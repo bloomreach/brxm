@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,8 +61,9 @@ public class WhitelistHtmlFilter implements HtmlFilter {
             // an omitted HTML envelope
             return null;
         }
-
-        filterAttributes(node);
+        if (nodeName != null) {
+            filterAttributes(node);
+        }
 
         for (final TagNode childNode : node.getChildTags()) {
             if (apply(childNode) == null) {
@@ -81,12 +82,19 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                 .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
                     final String value = attribute.getValue();
                     final String normalizedValue = CharacterReferenceNormalizer.normalize(value.toLowerCase().trim());
-                    if (omitJavascriptProtocol && normalizedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
+                    if (omitJavascriptProtocol &&
+                            (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL) ||
+                                    checkDataAttrValue(node.getName(), attribute.getKey(), normalizedValue))) {
                         return "";
                     }
-
                     return value;
                 }));
         node.setAttributes(attributes);
+    }
+
+    private boolean checkDataAttrValue(final String tagName, final String attrName, final String attrValue) {
+        return attrValue.startsWith("data:")
+                ? ("a".equals(tagName) && "href".equals(attrName)) || ("object".equals(tagName) && "data".equals(attrName))
+                : false;
     }
 }
