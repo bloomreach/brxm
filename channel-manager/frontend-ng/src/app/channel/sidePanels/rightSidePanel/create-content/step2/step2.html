@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -61,12 +61,11 @@
             layout="column"
             class="right-side-panel-content">
 
-  <div ng-if="$ctrl.feedback" class="feedback qa-feedback">
+  <div ng-if="$ctrl.feedback" 
+       class="feedback qa-feedback" 
+       md-colors="{background: 'hippo-red-50'}">
     <h4 class="qa-feedback-title">{{ $ctrl.feedback.title }}</h4>
-
-    <p class="qa-feedback-message">
-      {{ $ctrl.feedback.message }}
-    </p>
+    <p class="qa-feedback-message">{{ $ctrl.feedback.message }}</p>
   </div>
 
   <form novalidate
