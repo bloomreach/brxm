@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-function config($stateProvider) {
-  'ngInject';
+import config from './createContent.config';
+import createContentService from './createContent.service';
+import step1Component from './step1/step1.component';
 
-  $stateProvider.state({
-    name: 'hippo-cm.channel.edit-content',
-    url: '/edit-content/{documentId}',
-    views: {
-      header: 'contentToolbar',
-      main: 'contentEditor',
-    },
-  });
-}
+const createContentModule = angular
+  .module('hippo-cm.channel.rightSidePanel.createContentModule', [])
+  .config(config)
+  .service('CreateContentService', createContentService)
+  .component('createContentStep1', step1Component);
 
-export default config;
+export default createContentModule.name;
+

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import controller from './contentToolbar.controller';
-import template from './contentToolbar.html';
+function config($stateProvider) {
+  'ngInject';
 
-const contentToolbarComponent = {
-  controller,
-  template,
-};
+  $stateProvider.state({
+    name: 'hippo-cm.channel.edit-content',
+    url: '/edit-content/{documentId}',
+    views: {
+      tools: 'editContentTools',
+      main: 'editContentMain',
+    },
+  });
+}
 
-export default contentToolbarComponent;
+export default config;

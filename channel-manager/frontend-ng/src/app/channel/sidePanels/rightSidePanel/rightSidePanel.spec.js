@@ -392,7 +392,7 @@ describe('RightSidePanel', () => {
     const deferredDocType = $q.defer();
     ContentService.getDocumentType.and.returnValue(deferredDocType.promise);
 
-    $ctrl._loadDocument('test');
+    $ctrl._load('test');
     expect($ctrl.loading).toBeTruthy();
 
     $rootScope.$digest();

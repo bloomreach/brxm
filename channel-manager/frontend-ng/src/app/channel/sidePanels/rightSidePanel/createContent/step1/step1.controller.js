@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-class ContentEditorCtrl {
-  constructor($mdDialog, $uiRouterGlobals) {
+class Step1Ctrl {
+  constructor(CreateContentService) {
     'ngInject';
 
-    this.$mdDialog = $mdDialog;
-    this.$uiRouterGlobals = $uiRouterGlobals;
+    this.CreateContentService = CreateContentService;
   }
 
-  $onInit() {
-    this.documentId = this.$uiRouterGlobals.params.documentId;
+  close() {
+    this.CreateContentService.stop();
   }
-
-/*
-  uiCanExit() {
-    const confirmationDialog = this.$mdDialog.confirm()
-      .title(`Leave ${this.documentId} ?`)
-      .textContent('Really?')
-      .ok('Yes')
-      .cancel('No');
-    return this.$mdDialog.show(confirmationDialog);
-  }
-*/
 }
 
-export default ContentEditorCtrl;
+export default Step1Ctrl;

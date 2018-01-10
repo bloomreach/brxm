@@ -30,6 +30,8 @@ class OverlayService {
     $translate,
     CmsService,
     DomService,
+    CreateContentService,
+    EditContentService,
     ExperimentStateService,
     HippoIframeService,
     MaskService,
@@ -43,6 +45,8 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.CreateContentService = CreateContentService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
@@ -313,9 +317,11 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.$state.go('hippo-cm.channel.edit-content', {
-          documentId: structureElement.getUuid(),
-        });
+        this.EditContentService.startEditing(structureElement.getUuid());
+
+        // for testing, make 'edit content' buttons trigger 'create content' instead
+        // this.CreateContentService.start();
+
         this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
