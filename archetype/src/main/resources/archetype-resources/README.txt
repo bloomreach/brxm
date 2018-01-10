@@ -37,7 +37,8 @@ shared libraries.
 The 'dist-with-development-data' profile will produce a distribution-with-development-data tarball, also containing the
 repository-data-development jar in the shared/lib directory. This kind of distribution is meant to be used for
 deployments to development environments, for instance local deployments or deployments to a continuous integration (CI)
-system.
+system. (Initially, this module contains only "author" and "editor" example users for use in testing. Other data must be
+placed in this module explicitly by developers, for demo or testing purposes, etc.)
 
 See also src/main/assembly/*.xml if you need to customize the distributions.
 
