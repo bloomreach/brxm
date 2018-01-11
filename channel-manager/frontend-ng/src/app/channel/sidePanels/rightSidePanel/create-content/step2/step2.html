@@ -47,11 +47,10 @@
     </h6>
 
     <span flex></span>
-
-    <md-icon class="btn-edit-document-title qa-edit-url"
-             ng-click="$ctrl.openEditNameUrlDialog()">
-      mode_edit
-    </md-icon>
+    
+    <md-button class="md-icon-button" ng-click="$ctrl.openEditNameUrlDialog()">
+      <md-icon class="btn-edit-document-title qa-edit-url">mode_edit</md-icon>
+    </md-button>
   </div>
 </md-toolbar>
 
@@ -68,9 +67,9 @@
     <p class="qa-feedback-message">{{ $ctrl.feedback.message }}</p>
   </div>
 
-  <form novalidate
+  <form novalidate 
         name="$ctrl.form"
-        class="form-dense-layout edit-content-form">
+        class="create-content-step2-form">
     <document-fields class="top-level"
                      ng-if="$ctrl.docType"
                      field-types="$ctrl.docType.fields"

@@ -40,6 +40,10 @@ create-content-step-2 {
       margin: 0;
     }
 
+    .md-toolbar-tools > .md-icon-button {
+      margin-right: 0;
+    }
+
     md-icon {
       &:hover {
         cursor: pointer;
