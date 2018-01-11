@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,37 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-/**
- * @version "$Id$"
- */
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of a JAXRS Application which instantiates and Spring-wires resource classes as singletons.
+ */
 @ApplicationPath("/dynamic")
 public class DynamicRestPointsApplication extends Application {
-
-    private final Set<Class<?>> classes = new HashSet<>();
-
+    private static final Logger LOG = LoggerFactory.getLogger(DynamicRestPointsApplication.class);
+    private final Set<String> fqcns = new HashSet<>();
+    private final Set<Object> singletons = new HashSet<>();
 
     @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
+    public Set<Object> getSingletons() {
+        return singletons;
     }
 
-    public void addClass(final Class<?> clazz) {
-        classes.add(clazz);
-    }
+    public void addSingleton(final String fqcn) {
+        if (fqcns.contains(fqcn)) {
+            return;
+        }
 
+        final Object singleton = GlobalUtils.newInstance(fqcn);
+        if (singleton != null) {
+            LOG.info("Add dynamic (plugin) REST endpoint '{}'.", fqcn);
+
+            ApplicationModule.getInjector().autowireBean(singleton);
+            fqcns.add(fqcn);
+            singletons.add(singleton);
+        }
+    }
 }

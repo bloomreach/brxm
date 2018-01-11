@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,11 +45,10 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        repository.registerNodeTypes("/test-hippofacnav.cnd");
-        repository.registerNodeTypes("/test-selection-types.cnd");
+        jcrService.registerNodeTypes("/test-hippofacnav.cnd");
+        jcrService.registerNodeTypes("/test-selection-types.cnd");
         jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT)
                 + File.separator + "essentials" + File.separator +"blog");
-        createHstRootConfig();
     }
 
     @Test
@@ -72,5 +71,7 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
         if (jspDirectory != null && jspDirectory.exists()) {
             FileUtils.deleteDirectory(jspDirectory);
         }
+
+        jcrService.reset();
     }
 }

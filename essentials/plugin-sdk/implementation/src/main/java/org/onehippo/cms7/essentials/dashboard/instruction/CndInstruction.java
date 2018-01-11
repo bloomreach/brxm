@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeExistsException;
@@ -33,9 +34,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,8 @@ public class CndInstruction extends BuiltinInstruction {
     private String documentType;
     private String namespacePrefix;
 
+    @Inject private JcrService jcrService;
+
     public CndInstruction() {
         super(MessageGroup.DOCUMENT_REGISTER);
     }
@@ -70,8 +73,7 @@ public class CndInstruction extends BuiltinInstruction {
         final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
 
-        final String prefix = context.getProjectNamespacePrefix();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
             // TODO extend so we can define supertypes
             String[] superTypes;
@@ -81,24 +83,19 @@ public class CndInstruction extends BuiltinInstruction {
             } else {
                 superTypes = ArrayUtils.EMPTY_STRING_ARRAY;
             }
-            CndUtils.registerDocumentType(context, prefix, documentType, true, false, superTypes);
+            CndUtils.registerDocumentType(jcrService, namespace, documentType, true, false, superTypes);
             session.save();
-            log.info("Successfully registered document type '{}:{}'.", prefix, documentType);
-            return InstructionStatus.SUCCESS;
+            log.info("Successfully registered document type '{}:{}'.", namespace, documentType);
         } catch (NodeTypeExistsException e) {
-            // just add already exiting ones:
-            GlobalUtils.refreshSession(session, false);
-
+            log.info("Node type '{}:{}' already exists.", namespace, documentType);
+            return InstructionStatus.SKIPPED;
         } catch (RepositoryException e) {
-            log.error(String.format("Error registering document type: %s", namespace), e);
-            GlobalUtils.refreshSession(session, false);
+            log.error("Error registering document type '{}:{}': ", namespace, documentType, e);
+            return InstructionStatus.FAILED;
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-
-
-        log.info("Failed to registered document type: '{}:{}'.", prefix, documentType);
-        return InstructionStatus.FAILED;
+        return InstructionStatus.SUCCESS;
     }
 
     @Override

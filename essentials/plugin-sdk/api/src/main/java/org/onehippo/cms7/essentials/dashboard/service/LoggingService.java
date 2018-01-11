@@ -21,7 +21,7 @@ import java.io.File;
 /**
  * LoggingService provides methods to manipulate logging configuration files.
  *
- * It can be @Inject-ed into an Essentials plugin's REST resource ({@code BaseResource}) or custom {@code Instruction}.
+ * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
 public interface LoggingService {
     /**

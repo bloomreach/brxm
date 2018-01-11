@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
  */
 public class GalleryUtilsTest extends BaseRepositoryTest{
 
-    public static final String SOME_NAMESPACE_PREFIX = "someprefix";
+    private static final String SOME_NAMESPACE_PREFIX = "someprefix";
 
     @Test
     public void testGetNamespacePathForImageset() throws Exception {
@@ -39,12 +39,12 @@ public class GalleryUtilsTest extends BaseRepositoryTest{
 
     @Test
     public void testGetGalleryUriWhenPrefixIsBlank() throws Exception {
-        assertNull(GalleryUtils.getGalleryURI(getContext(), ""));
+        assertNull(GalleryUtils.getGalleryURI(jcrService, getContext(), ""));
     }
 
     @Test
     public void testGetGalleryUriWhenPrefixIsNotBlank() throws Exception {
-        assertEquals("http://www.onehippo.org/gallery/test/nt/1.0", GalleryUtils.getGalleryURI(getContext(), "test"));
+        assertEquals("http://www.onehippo.org/gallery/test/nt/1.0", GalleryUtils.getGalleryURI(jcrService, getContext(), "test"));
     }
 
     @Test

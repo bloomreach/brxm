@@ -29,7 +29,7 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -43,10 +43,9 @@ import com.google.common.base.Strings;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
@@ -61,22 +60,22 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taggingplugin")
-public class TaggingResource extends BaseResource {
+public class TaggingResource {
 
     private static final Logger log = LoggerFactory.getLogger(TaggingResource.class);
-
-    public static final String MIXIN_NAME = "hippostd:taggable";
-
+    private static final String MIXIN_NAME = "hippostd:taggable";
     private static final String TAGS_FIELD = "tags";
     private static final String TAGSUGGEST_FIELD = "tagsuggest";
 
+    @Inject private JcrService jcrService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/")
-    public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public UserFeedback addDocuments(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+        final Collection<String> addedDocuments = new HashSet<>();
         final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try {
 
             final Map<String, String> values = payloadRestful.getValues();
@@ -92,66 +91,62 @@ public class TaggingResource extends BaseResource {
             final String templateSuggest = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/tagging-template-field_tag_suggest.xml"));
             final String templateTranslations = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/taggingtypes-translations.json"));
 
-            if (!Strings.isNullOrEmpty(documents)) {
-
-                final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
-
-                final Collection<String> addedDocuments = new HashSet<>();
-                for (final String document : docs) {
-                    final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
-                    final String suggestFieldPath = MessageFormat.format("{0}/" + TAGSUGGEST_FIELD, fieldImportPath);
-                    if (session.nodeExists(suggestFieldPath)) {
-                        log.info("Suggest field path: [{}] already exists.", suggestFieldPath);
-                        continue;
-                    }
-
-                    DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
-                    // add place holders:
-                    final Map<String, String> templateData = new HashMap<>(values);
-                    final Node editorTemplate = session.getNode(fieldImportPath);
-                    templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
-                    templateData.put("prefix", prefix);
-                    templateData.put("document", document);
-                    // import field:
-                    final String tagsPath = fieldImportPath + '/' + TAGS_FIELD;
-                    if (!session.nodeExists(tagsPath)) {
-                        final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
-                        session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-                    }
-
-                    // import suggest field:
-                    final String suggestPath = fieldImportPath + '/' + TAGSUGGEST_FIELD;
-                    if (!session.nodeExists(suggestPath)) {
-                        final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
-                        session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-                    }
-
-                    // import field translations
-                    if (session.nodeExists("/hippo:configuration/hippo:translations")) {
-                        final String json = TemplateUtils.replaceStringPlaceholders(templateTranslations, templateData);
-                        TranslationsUtils.importTranslations(json, session);
-                    }
-
-                    addedDocuments.add(document);
-                    session.save();
-                }
-                if (addedDocuments.size() > 0) {
-                    return new MessageRestful("Successfully added tagging to following document: " + Joiner.on(",").join(addedDocuments));
-                } else {
-                    return new MessageRestful("No tagging was added to selected documents.");
-                }
-
-
-            } else {
-                new ErrorMessageRestful("No documents were selected");
+            if (Strings.isNullOrEmpty(documents)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return new UserFeedback().addError("No documents were selected");
             }
 
+            final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
 
+            for (final String document : docs) {
+                final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
+                final String suggestFieldPath = MessageFormat.format("{0}/" + TAGSUGGEST_FIELD, fieldImportPath);
+                if (session.nodeExists(suggestFieldPath)) {
+                    log.info("Suggest field path: [{}] already exists.", suggestFieldPath);
+                    continue;
+                }
+
+                DocumentTemplateUtils.addMixinToTemplate(jcrService, context, document, MIXIN_NAME, true);
+                // add place holders:
+                final Map<String, Object> templateData = new HashMap<>(values);
+                final Node editorTemplate = session.getNode(fieldImportPath);
+                templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+                templateData.put("prefix", prefix);
+                templateData.put("document", document);
+                // import field:
+                final String tagsPath = fieldImportPath + '/' + TAGS_FIELD;
+                if (!session.nodeExists(tagsPath)) {
+                    final String fieldData = TemplateUtils.replaceTemplateData(templateTags, templateData);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                }
+
+                // import suggest field:
+                final String suggestPath = fieldImportPath + '/' + TAGSUGGEST_FIELD;
+                if (!session.nodeExists(suggestPath)) {
+                    final String suggestData = TemplateUtils.replaceTemplateData(templateSuggest, templateData);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                }
+
+                // import field translations
+                if (session.nodeExists("/hippo:configuration/hippo:translations")) {
+                    final String json = TemplateUtils.replaceTemplateData(templateTranslations, templateData);
+                    TranslationsUtils.importTranslations(json, session);
+                }
+
+                addedDocuments.add(document);
+                session.save();
+            }
         } catch (RepositoryException | IOException e) {
             log.error("Error adding tagging documents field", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Error adding tagging fields: " + e.getMessage());
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return new ErrorMessageRestful("Error adding tagging fields");
+
+        final String message = addedDocuments.isEmpty()
+                ? "No tagging was added to selected documents."
+                : "Successfully added tagging to following document: " + Joiner.on(",").join(addedDocuments);
+        return new UserFeedback().addSuccess(message);
     }
 }

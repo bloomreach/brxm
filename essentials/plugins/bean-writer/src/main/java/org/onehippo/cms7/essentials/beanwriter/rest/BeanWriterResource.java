@@ -29,21 +29,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.eventbus.EventBus;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
-
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 
 /**
@@ -52,74 +46,40 @@ import com.google.common.eventbus.EventBus;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("beanwriter/")
-public class BeanWriterResource extends BaseResource {
-
+public class BeanWriterResource {
 
     @Inject private EventBus eventBus;
+    @Inject private JcrService jcrService;
+    @Inject private ContentBeansService contentBeansService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
-    public RestfulList<MessageRestful> runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
         final PluginContext context = contextFactory.getContext();
-        //############################################
-        // USE SERVICES
-        //############################################
-        final RestfulList<MessageRestful> messages = new MyRestList();
+        final UserFeedback feedback = new UserFeedback();
         final Map<String, String> values = payload.getValues();
         final String imageSet = values.get("imageSet");
-        final String updateImageMethods = values.get("updateImageMethods");
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
-        // check if we are using custom image set:
-        java.nio.file.Path path = null;
-        final boolean hippoStandardType = imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_BEAN) || imageSet.equals(ContentBeansService.HIPPO_GALLERY_IMAGE_SET_CLASS);
-        if (!Strings.isNullOrEmpty(imageSet) || !hippoStandardType) {
-            final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
-            path = existingImageTypes.get(imageSet);
-            if (path != null) {
-                context.addPluginContextData(ContentBeansService.CONTEXT_BEAN_IMAGE_SET, path);
 
-            }
+        contentBeansService.createBeans(jcrService, context, feedback, imageSet);
+        if ("true".equals(values.get("updateImageMethods"))) {
+            contentBeansService.convertImageMethodsForClassname(imageSet, context, feedback);
         }
-        // create beans
-        contentBeansService.createBeans();
-        // check if we need to upgrade beans
-        if (!Strings.isNullOrEmpty(imageSet) && !Strings.isNullOrEmpty(updateImageMethods) && updateImageMethods.equals("true")) {
-            if(path !=null){
-                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-                if (annotation == null || Strings.isNullOrEmpty(annotation.getInternalName())) {
-                    messages.add(new ErrorMessageRestful("Could not find selected Image Set: " + imageSet));
-                } else {
-                    contentBeansService.convertImageMethods(annotation.getInternalName());
-                }
-            }
-            else if(hippoStandardType){
-                contentBeansService.convertImageMethods(imageSet);
-            }
-        }
+        contentBeansService.cleanupMethods(jcrService, context, feedback);
 
-        // cleanup
-        contentBeansService.cleanupMethods();
-        // user feedback
-        BeanWriterUtils.populateBeanwriterMessages(context, messages);
-        if (messages.getItems().size() == 0) {
-            messages.add(new MessageRestful("All beans were up to date"));
+        if (feedback.getFeedbackMessages().isEmpty()) {
+            feedback.addSuccess("All beans were up to date");
         } else {
             final String message = "Hippo Beans are changed, project rebuild needed";
             eventBus.post(new RebuildEvent("beanwriter", message));
-            messages.add(new MessageRestful(message));
+            feedback.addSuccess(message);
         }
-        return messages;
+        return feedback;
     }
-
 
     @GET
     @Path("/imagesets")
-    public Set<String> getImageSets(@Context ServletContext servletContext) throws Exception {
+    public Set<String> getImageSets() throws Exception {
         final PluginContext context = contextFactory.getContext();
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
-        final Map<String, java.nio.file.Path> existingImageTypes = contentBeansService.getExistingImageTypes();
-        return existingImageTypes.keySet();
+        return contentBeansService.getExistingImageTypes(context).keySet();
     }
-
-
 }

@@ -16,10 +16,19 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
@@ -39,8 +48,12 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
+
 import org.apache.commons.io.IOUtils;
-import org.dom4j.*;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentFactory;
+import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -48,9 +61,9 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -61,44 +74,51 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("selectionplugin")
-public class SelectionResource extends BaseResource {
+public class SelectionResource {
 
-    private static Logger log = LoggerFactory.getLogger(SelectionResource.class);
-    public static final String MULTISELECT_PLUGIN_CLASS = "org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin";
-    public static final String VALUELIST_MANAGER_ID = "org.onehippo.forge.selection.hst.manager.ValueListManager";
+    private static final Logger log = LoggerFactory.getLogger(SelectionResource.class);
+    private static final String MULTISELECT_PLUGIN_CLASS = "org.onehippo.forge.selection.frontend.plugin.DynamicMultiSelectPlugin";
+    private static final String VALUELIST_MANAGER_ID = "org.onehippo.forge.selection.hst.manager.ValueListManager";
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
     @Inject private EventBus eventBus;
+    @Inject private JcrService jcrService;
     @Inject private PluginContextFactory contextFactory;
 
     @POST
     @Path("/addfield")
-    public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
-        final Session session = contextFactory.getContext().createSession();
+    public UserFeedback addField(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+        final UserFeedback feedback = new UserFeedback();
+        final Session session = jcrService.createSession();
 
         try {
-            return addField(session, payloadRestful.getValues(), response);
+            final int status = addField(session, payloadRestful.getValues(), feedback);
+            if (status >= HttpServletResponse.SC_MULTIPLE_CHOICES) {
+                response.setStatus(status);
+            }
         } catch (RepositoryException | IOException e) {
             log.warn("Exception trying to add a selection field to a document type", e);
-            return createErrorMessage("Failed to add new selection field to document type. Check logs.", response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            feedback.addError("Failed to add new selection field to document type. Check logs.");
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
+        return feedback;
     }
 
     @GET
     @Path("/fieldsfor/{docType}/")
     public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
         final List<SelectionFieldRestful> fields = new ArrayList<>();
-        final Session session = contextFactory.getContext().createSession();
+        final Session session = jcrService.createSession();
 
         try {
             addSelectionFields(fields, docType, session);
         } catch (RepositoryException e) {
             log.warn("Exception trying to retrieve selection fields for document type '{}'", docType, e);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
 
         return fields;
@@ -127,17 +147,19 @@ public class SelectionResource extends BaseResource {
 
     @POST
     @Path("spring")
-    public MessageRestful storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
+    public UserFeedback storeProvisionedValueLists(final List<ProvisionedValueList> provisionedValueLists,
                                                      @Context HttpServletResponse response) {
         final PluginContext context = contextFactory.getContext();
         final Document document = readSpringConfiguration(context);
         if (document == null) {
-            return createErrorMessage("Failure parsing the Spring configuration.", response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failure parsing the Spring configuration.");
         }
 
         Element map = (Element)document.selectSingleNode(VALUELIST_XPATH);
         if (map == null) {
-            return createErrorMessage("Failure locating the relevant piece of Spring configuration.", response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failure locating the relevant piece of Spring configuration.");
         }
 
         // remove the old value lists
@@ -165,13 +187,14 @@ public class SelectionResource extends BaseResource {
             writer.flush();
         } catch (IOException ex) {
             log.error("Problem writing the Spring configuration", ex);
-            return createErrorMessage("Failure storing the Spring configuration.", response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failure storing the Spring configuration.");
         }
 
         final String message = "Spring configuration updated, project rebuild needed";
         eventBus.post(new RebuildEvent("selectionPlugin", message));
 
-        return new MessageRestful("Successfully updated the Spring configuration");
+        return new UserFeedback().addSuccess("Successfully updated the Spring configuration");
     }
 
     /**
@@ -295,8 +318,14 @@ public class SelectionResource extends BaseResource {
      * @param values  parameters of new selection field (See selectionPlugin.js for keys).
      * @return        message to be sent back to front-end.
      */
-    private MessageRestful addField(final Session session, final Map<String, String> values, final HttpServletResponse response)
+    private int addField(final Session session, final Map<String, String> values, final UserFeedback feedback)
             throws RepositoryException, IOException {
+        final Map<String, Object> placeholderData = new HashMap<>();
+
+        for (String key : values.keySet()) {
+            placeholderData.put(key, values.get(key));
+        }
+
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
         final String documentType = values.get("namespace") + ':' + values.get("documentType");
@@ -304,43 +333,46 @@ public class SelectionResource extends BaseResource {
         final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
         final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
         if (nodeTypeHandle.getNodes().getSize() > 1) {
-            return createErrorMessage("Document type '" + documentType + "' is currently being edited in the CMS, "
-                                    + "please commit any pending changes before adding a selection field.", response);
+            feedback.addError("Document type '" + documentType + "' is currently being edited in the CMS, "
+                    + "please commit any pending changes before adding a selection field.");
+            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
         final Node nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
 
         // Check if the field name is valid. If so, normalize it.
         final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
-        values.put("normalizedFieldName", normalized);
+        placeholderData.put("normalizedFieldName", normalized);
 
         // Check if the fieldName is already in use
         if (nodeType.hasNode(normalized)
             || editorTemplate.hasNode(normalized)
             || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
-            return createErrorMessage("Field name is already in use for this document type.", response);
+            feedback.addError("Field name '" + normalized + "' is already in use for this document type.");
+            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
 
         // Put the new field to the default location
-        values.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
+        placeholderData.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
 
         String presentationType = "DynamicDropdown";
         if ("single".equals(values.get("selectionType"))) {
             if ("radioboxes".equals(values.get("presentation"))) {
                 presentationType = "selection:RadioGroup";
             }
-            values.put("presentationType", presentationType);
+            placeholderData.put("presentationType", presentationType);
 
-            importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
-            importXml("/xml/single-field-node-type.xml", values, nodeType);
+            importXml("/xml/single-field-editor-template.xml", placeholderData, editorTemplate);
+            importXml("/xml/single-field-node-type.xml", placeholderData, nodeType);
         } else if ("multiple".equals(values.get("selectionType"))) {
-            importXml("/xml/multi-field-editor-template.xml", values, editorTemplate);
-            importXml("/xml/multi-field-node-type.xml", values, nodeType);
+            importXml("/xml/multi-field-editor-template.xml", placeholderData, editorTemplate);
+            importXml("/xml/multi-field-node-type.xml", placeholderData, nodeType);
         }
         session.save();
 
         final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
                 values.get("fieldName"), documentType);
-        return new MessageRestful(successMessage);
+        feedback.addSuccess(successMessage);
+        return HttpServletResponse.SC_CREATED;
     }
 
     /**
@@ -374,11 +406,11 @@ public class SelectionResource extends BaseResource {
      * @throws IOException
      * @throws RepositoryException
      */
-    private void importXml(final String resourcePath, final Map<String, String> placeholderMap, final Node destination)
+    private void importXml(final String resourcePath, final Map<String, Object> placeholderMap, final Node destination)
         throws IOException, RepositoryException
     {
         final InputStream stream = getClass().getResourceAsStream(resourcePath);
-        final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
+        final String processedXml = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), placeholderMap);
 
         destination.getSession().importXML(destination.getPath(),
                 IOUtils.toInputStream(processedXml, StandardCharsets.UTF_8),

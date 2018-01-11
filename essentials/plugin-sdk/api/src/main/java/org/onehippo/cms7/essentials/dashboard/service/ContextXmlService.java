@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * ContextXmlService provides functionality for manipulating Tomcat's context.xml file.
  *
- * It can be @Inject-ed into an Essentials plugin's REST resource ({@code BaseResource}) or custom {@code Instruction}.
+ * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
 public interface ContextXmlService {
     /**

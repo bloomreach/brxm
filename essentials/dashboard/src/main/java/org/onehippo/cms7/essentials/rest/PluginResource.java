@@ -50,6 +50,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
@@ -79,9 +80,8 @@ public class PluginResource extends BaseResource {
     @Inject
     private PluginStore pluginStore;
 
-    @Inject
-    private PluginContextFactory contextFactory;
-
+    @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -308,7 +308,7 @@ public class PluginResource extends BaseResource {
         final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
-        HstUtils.erasePreview(context);
+        HstUtils.erasePreview(jcrService, context);
 
         // execute skeleton
         final InstructionPackage commonPackage = new CommonsInstructionPackage();

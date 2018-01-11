@@ -30,8 +30,6 @@
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
   <!-- REST RESOURCES-->
-  <bean id="jcrResource" class="org.onehippo.cms7.essentials.rest.JcrResource"/>
-  <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="documentResource" class="org.onehippo.cms7.essentials.rest.DocumentResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
   <bean id="projectResource" class="org.onehippo.cms7.essentials.rest.ProjectResource"/>
@@ -44,9 +42,7 @@
 
   <jaxrs:server id="restServer" address="/">
     <jaxrs:serviceBeans>
-      <ref bean="jcrResource"/>
       <ref bean="jcrBrowserResource"/>
-      <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
       <ref bean="projectResource"/>
       <ref bean="documentResource"/>

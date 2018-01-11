@@ -20,23 +20,20 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.cxf.jaxrs.ext.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public final class WebUtils {
     private static final Logger log = LoggerFactory.getLogger(WebUtils.class);
-    public static final ObjectMapper JSON = new ObjectMapper();
-    public static final byte[] EMPTY_BYTES = new byte[0];
+    private static final ObjectMapper JSON = new ObjectMapper();
 
     static {
         JSON.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    private WebUtils() {
-    }
-
+    private WebUtils() { }
 
     public static <T> String toJson(final T object) {
         if (object == null) {
@@ -51,31 +48,6 @@ public final class WebUtils {
         return "";
     }
 
-    public static <T> byte[] toBytesJson(final T object) {
-        if (object == null) {
-            return EMPTY_BYTES;
-        }
-
-        try {
-            return JSON.writeValueAsBytes(object);
-        } catch (Exception e) {
-            log.error("JSON error", e);
-        }
-        return EMPTY_BYTES;
-    }
-
-
-    @Nullable
-    public static <T> T fromJson(final byte[] value, Class<T> clazz) {
-
-        try {
-            return JSON.readValue(value, clazz);
-        } catch (Exception e) {
-            log.error("JSON error", e);
-        }
-        return null;
-    }
-
     @Nullable
     public static <T> T fromJson(final String value, Class<T> clazz) {
 
@@ -86,5 +58,4 @@ public final class WebUtils {
         }
         return null;
     }
-
 }

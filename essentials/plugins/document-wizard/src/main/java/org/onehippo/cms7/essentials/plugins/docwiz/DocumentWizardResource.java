@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,17 +30,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import com.google.common.base.Strings;
+
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -48,34 +44,38 @@ import com.google.common.base.Strings;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("documentwizard")
-public class DocumentWizardResource extends BaseResource {
+public class DocumentWizardResource {
 
-    private static Logger log = LoggerFactory.getLogger(DocumentWizardResource.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentWizardResource.class);
+    private static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
 
-    public static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
-
-    @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @POST
     @Path("/")
-    public MessageRestful addWizard(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
+    public UserFeedback addWizard(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+        final Map<String, String> values = payloadRestful.getValues();
+        final String shortcutName = values.get("shortcutName");
+        final String classificationType = values.get("classificationType");
+        final String documentType = values.get("documentType");
+        final String baseFolder = values.get("baseFolder");
+        final String valueListPath = values.get("valueListPath");
+        final String query = values.get("documentQuery");
+        if (Strings.isNullOrEmpty(shortcutName)) {
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return new UserFeedback().addError("You must specify a shortcut name.");
+        }
+
+        final Session session = jcrService.createSession();
+        if (session == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failed to access JCR repository.");
+        }
         try {
             final Node root = session.getNode(ROOT_CONFIG_PATH);
-            final Map<String, String> values = payloadRestful.getValues();
-            final String shortcutName = values.get("shortcutName");
-            final String classificationType = values.get("classificationType");
-            final String documentType = values.get("documentType");
-            final String baseFolder = values.get("baseFolder");
-            final String valueListPath = values.get("valueListPath");
-            final String query = values.get("documentQuery");
-
-            if (Strings.isNullOrEmpty(shortcutName)) {
-                return new ErrorMessageRestful("Shortcut name was empty/invalid");
-            }
             if (root.hasNode(shortcutName)) {
-                return new ErrorMessageRestful("Shortcut name was already configured: " + shortcutName);
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return new UserFeedback().addError("Shortcut name '" + shortcutName + "' already exists.");
             }
             final Node node = root.addNode(shortcutName, "frontend:plugin");
             node.setProperty("browser.id", "service.browse");
@@ -98,16 +98,14 @@ public class DocumentWizardResource extends BaseResource {
             } else {
                 translationNode.setProperty("date-label", values.get("dateLabel"));
             }
-
             session.save();
-            return new MessageRestful("Successfully created Document Wizard shortcut: " + shortcutName);
         } catch (RepositoryException e) {
             log.error("Error configuring document wizard shortcuts", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failed to configure document wizard shortcut: " + e.getMessage());
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return new MessageRestful("setup");
-
+        return new UserFeedback().addSuccess("Successfully created Document Wizard shortcut: " + shortcutName);
     }
-
 }

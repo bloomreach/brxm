@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -36,14 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus.FAILED;
-import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus.SUCCESS;
-
 @Component
 @XmlRootElement(name = "translations", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class TranslationsInstruction extends BuiltinInstruction {
 
     private static final Logger log = LoggerFactory.getLogger(TranslationsInstruction.class);
+
+    @Inject private JcrService jcrService;
 
     private String source;
 
@@ -62,17 +63,17 @@ public class TranslationsInstruction extends BuiltinInstruction {
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         try (final InputStream in = getClass().getClassLoader().getResourceAsStream(source)) {
             final String json = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(in), context.getPlaceholderData());
             TranslationsUtils.importTranslations(json, session);
-            return SUCCESS;
         } catch (IOException | RepositoryException e) {
             log.error("Failed to import translations", e);
-            return FAILED;
+            return InstructionStatus.FAILED;
         } finally {
-            session.logout();
+            jcrService.destroySession(session);
         }
+        return InstructionStatus.SUCCESS;
     }
 
     @Override

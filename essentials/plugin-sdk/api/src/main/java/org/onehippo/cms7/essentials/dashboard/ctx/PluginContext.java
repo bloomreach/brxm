@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,10 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Map;
-
-import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Plugin context is passed to all HippoEssentials plugins.
@@ -40,38 +35,6 @@ public interface PluginContext extends Serializable {
     ProjectSettings getProjectSettings();
 
     void setProjectSettings(ProjectSettings projectSettings);
-
-    /**
-     * Plugin can store and retrieve data during it's lifecycle
-     *
-     * @return data stored (if any)
-     */
-    Multimap<String, Object> getPluginContextData();
-
-    /**
-     * Get context data for given key
-     *
-     * @param key data key
-     * @return collections of objects stored for given key (if any)
-     */
-    Collection<Object> getPluginContextData(String key);
-
-    /**
-     * Adds some data to context storage
-     *
-     * @param key   string key
-     * @param value any object value
-     */
-    void addPluginContextData(String key, Object value);
-
-    /**
-     * Returns JCR session for logged in user.
-     * <p>NOTE: session is managed by plugin itself, so logout etc. must be done by plugin</p>
-     * <p>Sessions will be logout after plugin is unloaded by plugin framework</p>
-     *
-     * @return instance of JCR session, with admin rights
-     */
-    Session createSession();
 
     /**
      * Returns root of the site directory

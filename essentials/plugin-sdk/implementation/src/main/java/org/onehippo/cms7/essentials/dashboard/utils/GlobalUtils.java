@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -42,8 +40,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,35 +216,6 @@ public final class GlobalUtils {
         }
         final String[] parts = NAMESPACE_PATTERN.split(fullName);
         return parts[1];
-    }
-
-    @SuppressWarnings("HippoHstCallNodeRefreshInspection")
-    public static void refreshSession(final Session session, final boolean keepChanges) {
-        try {
-            if (session != null) {
-                session.refresh(keepChanges);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error refreshing session", e);
-        }
-    }
-
-    public static Session createSession() {
-        try {
-            final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("vm://");
-            // TODO: use login name/password ??
-            return repository.login("admin", "admin".toCharArray());
-        } catch (RepositoryException e) {
-            log.error("Error creating repository connection", e);
-        }
-        return null;
-    }
-
-    public static void cleanupSession(final Session session) {
-        if (session != null) {
-            session.logout();
-        }
-
     }
 
     public static <T> T newInstance(final Class<T> clazz) {

@@ -41,14 +41,13 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
+import org.onehippo.cms7.essentials.dashboard.model.ContentType;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,15 +67,17 @@ public class DocumentResource extends BaseResource {
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
             response = RestfulList.class)
     @GET
     @Path("/")
-    public List<DocumentRestful> getAllTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, null);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
     }
 
     @ApiOperation(
@@ -84,9 +85,9 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/documents")
-    public List<DocumentRestful> getDocumentTypes(@Context ServletContext servletContext) {
+    public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, type -> !type.isCompoundType());
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, type -> !type.isCompoundType());
     }
 
     @ApiOperation(
@@ -94,9 +95,9 @@ public class DocumentResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/compounds")
-    public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
+    public List<ContentType> getCompounds(@Context ServletContext servletContext) {
         final PluginContext context = contextFactory.getContext();
-        return ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, ContentType::isCompoundType);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(context, ContentType::isCompoundType);
     }
 
 
@@ -109,28 +110,27 @@ public class DocumentResource extends BaseResource {
     @Path("/{docType}")
     public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
         final List<KeyValueRestful> valueLists = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
-
-        try {
-            final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ')', "xpath");
-            final NodeIterator nodes = xpath.execute().getNodes();
-            while (nodes.hasNext()) {
-                Node node = nodes.nextNode();
-                final Node parent = node.getParent();
-                if (parent.isNodeType(NT_HANDLE)) {
-                    node = parent;
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                final QueryManager queryManager = session.getWorkspace().getQueryManager();
+                final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ')', "xpath");
+                final NodeIterator nodes = xpath.execute().getNodes();
+                while (nodes.hasNext()) {
+                    Node node = nodes.nextNode();
+                    final Node parent = node.getParent();
+                    if (parent.isNodeType(NT_HANDLE)) {
+                        node = parent;
+                    }
+                    final String path = node.getPath();
+                    valueLists.add(new KeyValueRestful(((HippoNode) node).getDisplayName(), path));
                 }
-                final String path = node.getPath();
-                valueLists.add(new KeyValueRestful(((HippoNode) node).getDisplayName(), path));
+            } catch (RepositoryException e) {
+                log.debug("Error fetching value lists", e);
+            } finally {
+                jcrService.destroySession(session);
             }
-        } catch (RepositoryException e) {
-            log.debug("Error fetching value lists", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
         Collections.sort(valueLists);
         return valueLists;
     }
@@ -144,26 +144,24 @@ public class DocumentResource extends BaseResource {
     @Path("/templatequeries")
     public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
         final List<KeyValueRestful> templateList = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
-        try {
-            final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery(QUERY_STATEMENT_QUERIES, "xpath");
-            final QueryResult result = query.execute();
-            final NodeIterator nodes = result.getNodes();
-            while(nodes.hasNext()){
-                final Node node = nodes.nextNode();
-                final String name = node.getName();
-                templateList.add(new KeyValueRestful(name, name));
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                final QueryManager queryManager = session.getWorkspace().getQueryManager();
+                final Query query = queryManager.createQuery(QUERY_STATEMENT_QUERIES, "xpath");
+                final QueryResult result = query.execute();
+                final NodeIterator nodes = result.getNodes();
+                while (nodes.hasNext()) {
+                    final Node node = nodes.nextNode();
+                    final String name = node.getName();
+                    templateList.add(new KeyValueRestful(name, name));
+                }
+            } catch (RepositoryException e) {
+                log.debug("Error fetching value lists", e);
+            } finally {
+                jcrService.destroySession(session);
             }
-
-
-        } catch (RepositoryException e) {
-            log.debug("Error fetching value lists", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
         return templateList;
     }
 }
