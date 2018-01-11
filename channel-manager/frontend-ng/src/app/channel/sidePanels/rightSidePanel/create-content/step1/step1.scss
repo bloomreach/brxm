@@ -47,4 +47,11 @@
   .input-document-type.ng-untouched.ng-invalid-required md-select-value span:first-child::after {
     color: $text-dim;
   }
+
+  .step1-bottom-toolbar {
+    background-color: transparent;
+    &:last-child {
+      border-top: 0;
+    }
+  }
 }
