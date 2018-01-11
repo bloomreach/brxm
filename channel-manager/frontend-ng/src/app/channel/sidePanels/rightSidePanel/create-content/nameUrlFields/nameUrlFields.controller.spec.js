@@ -37,7 +37,6 @@ describe('NameUrlFields', () => {
     });
 
     $rootScope.$new();
-    // element = angular.element('<hippo-name-url-fields name-field="nameField" url-field="urlField" locale="locale"></hippo-name-url-fields>');
     element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement"></form>');
     component = $componentController('nameUrlFields', {
       $element: element,

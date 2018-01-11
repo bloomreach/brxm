@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
   limitations under the License.
   -->
 
-<form name="$ctrl.form" novalidate>
+<ng-form name="$ctrl.form" novalidate>
   <!-- Document name field -->
   <md-input-container class="create-content-field qa-name-field">
     <input ng-model="$ctrl.nameField" name="nameField" placeholder="Document name" type="text" required autocomplete="off" id="nameInputElement">
-    <div ng-messages="$ctrl.form.nameField.$error && $ctrl.form.nameField.$touched">
+    <div ng-messages="$ctrl.form.nameField.$error">
       <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>
@@ -45,10 +45,10 @@
         <md-icon>autorenew</md-icon>
       </md-button>
 
-      <div ng-messages="$ctrl.form.url.$error && $ctrl.form.url.$touched">
+      <div ng-messages="$ctrl.form.url.$error">
         <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
 
   </div>
-</form>
+</ng-form>
