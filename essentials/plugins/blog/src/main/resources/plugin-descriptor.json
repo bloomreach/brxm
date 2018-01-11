@@ -12,7 +12,9 @@
   ],
   "packageFile": "/META-INF/blog_instructions.xml",
   "hasConfiguration": true,
-  "restClasses": [],
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.blog.BlogResource"
+  ],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",
@@ -32,12 +34,5 @@
     "license": [
       "community"
     ]
-  },
-  "dependencies": [
-    {
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-essentials-components-cms",
-      "targetPom": "cms"
-    }
-  ]
+  }
 }
