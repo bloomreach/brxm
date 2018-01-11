@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -76,8 +77,7 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/")
     public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
-        final PluginContext context = contextFactory.getContext();
-        return contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext());
     }
 
     @ApiOperation(
@@ -86,8 +86,10 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/documents")
     public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
-        final PluginContext context = contextFactory.getContext();
-        return contentTypeService.fetchContentTypesFromOwnNamespace(context, type -> !type.isCompoundType());
+        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+                .stream()
+                .filter(type -> !type.isCompoundType())
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(
@@ -96,8 +98,10 @@ public class DocumentResource extends BaseResource {
     @GET
     @Path("/compounds")
     public List<ContentType> getCompounds(@Context ServletContext servletContext) {
-        final PluginContext context = contextFactory.getContext();
-        return contentTypeService.fetchContentTypesFromOwnNamespace(context, ContentType::isCompoundType);
+        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+                .stream()
+                .filter(ContentType::isCompoundType)
+                .collect(Collectors.toList());
     }
 
 

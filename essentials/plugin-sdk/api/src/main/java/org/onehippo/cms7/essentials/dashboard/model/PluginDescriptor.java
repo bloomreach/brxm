@@ -241,8 +241,8 @@ public class PluginDescriptor implements Restful {
         return setupParameters;
     }
 
-    public void setSetupParameters(final boolean noSetupParameters) {
-        this.setupParameters = noSetupParameters;
+    public void setSetupParameters(final boolean setupParameters) {
+        this.setupParameters = setupParameters;
     }
 
     public static class Vendor implements Restful {
