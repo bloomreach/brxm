@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 
 /**
  * ContentTypeService provides access to the project's content types.
@@ -56,4 +57,27 @@ public interface ContentTypeService {
      * @return        absolute path to content type definition base node, e.g. /hippo:namespaces/myhippoproject/newsdocument
      */
     String jcrBasePathForContentType(String jcrType);
+
+    /**
+     * Add a 'mixin' type to the specified content type.
+     *
+     * Adding a mixin to a content type has the effect that future instances of that content type will have the
+     * specified mixin. Optionally, you can request that all existing instances of that document type are updated.
+     *
+     * @param jcrContentType prefixed JCR name of a content type (document or compound)
+     * @param mixinName      prefixed JCR name of the mixin
+     * @param updateExisting when true, also add the mixin to all existing instances (nodes) of the content type
+     * @return               true if the content type has the mixin upon returning, false otherwise.
+     */
+    boolean addMixinToContentType(String jcrContentType, String mixinName, boolean updateExisting);
+
+    /**
+     * Determine the value for the 'wicket.id' property of a new field in the CMS' editor template.
+     *
+     * The value depends on the content type and represents the positioning of the field in the document editor.
+     *
+     * @param jcrContentType prefixed JCR name of a content type (document or compound)
+     * @return               value to use for 'wicket.id' property of new field
+     */
+    String determineDefaultFieldPosition(String jcrContentType);
 }

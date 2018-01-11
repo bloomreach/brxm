@@ -55,8 +55,8 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -78,6 +78,7 @@ public class TaxonomyResource {
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
     @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
     @Inject private PluginContextFactory contextFactory;
 
     /**
@@ -205,7 +206,8 @@ public class TaxonomyResource {
                 final String documentName = documentNames[i];
                 final String taxonomyName = taxonomyNames[i];
                 final String prefix = context.getProjectNamespacePrefix();
-                DocumentTemplateUtils.addMixinToTemplate(jcrService, context, documentName, HIPPOTAXONOMY_MIXIN, true);
+                final String jcrContentType = prefix + ":" + documentName;
+                contentTypeService.addMixinToContentType(jcrContentType, HIPPOTAXONOMY_MIXIN, true);
                 final String editorTemplatePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
                 if (!session.nodeExists(editorTemplatePath)) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -218,7 +220,7 @@ public class TaxonomyResource {
                     final Node fieldNode = editorTemplateNode.addNode("classifiable", "frontend:plugin");
                     fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
                     fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(editorTemplateNode));
+                    fieldNode.setProperty("wicket.id", contentTypeService.determineDefaultFieldPosition(jcrContentType));
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     markAsTaxonomyField(fieldNode, taxonomyName);

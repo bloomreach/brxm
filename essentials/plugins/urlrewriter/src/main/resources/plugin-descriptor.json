@@ -8,7 +8,6 @@
     "/essentials/feature/images/screenshots/urlrewriter01.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/url-rewriter/about-url-rewriter.html",
-  "restClasses": [],
   "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

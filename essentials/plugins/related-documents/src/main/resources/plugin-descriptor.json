@@ -10,6 +10,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
   "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/related_documents_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"

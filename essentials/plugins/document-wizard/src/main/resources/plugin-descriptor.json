@@ -10,6 +10,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
   "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"

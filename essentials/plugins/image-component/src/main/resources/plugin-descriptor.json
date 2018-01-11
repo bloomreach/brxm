@@ -9,7 +9,6 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/image-component.html",
   "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
     "name": "BloomReach",
