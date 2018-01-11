@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { downgradeComponent } from '@angular/upgrade/static';
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
@@ -23,8 +22,6 @@ import fieldsModule from './fields/fields.ng1.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
 import createContentModule from './create-content/createContent.module';
 
-import { NameUrlFieldsComponent } from './create-content/name-url-fields/name-url-fields.component.ts';
-
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
     fieldsModule,
@@ -33,8 +30,7 @@ const rightSidePanelModule = angular
   ])
   .component('rightSidePanel', rightSidePanelComponent)
   .component('hippoEditContent', editContentComponent)
-  .component('fieldsEditor', fieldsEditorComponent)
-  .directive('hippoNameUrlFields', downgradeComponent({ component: NameUrlFieldsComponent }));
+  .component('fieldsEditor', fieldsEditorComponent);
 
 export default rightSidePanelModule.name;
 

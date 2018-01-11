@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import { FormsModule } from '@angular/forms';
 
 import { HintsComponent } from '../../../../shared/components/hints/hints.component';
 import { SharedModule } from '../../../../shared/shared.module';
-import { NameUrlFieldsComponent } from './name-url-fields/name-url-fields.component';
 import { FieldsEditorDirective } from '../fieldsEditor/fields-editor.component';
 import { SharedspaceToolbarDirective } from '../fields/ckeditor/sharedspace-toolbar/sharedspace-toolbar.component';
 import { CreateContentServiceProvider } from './create-content.service.provider';
@@ -33,7 +32,6 @@ import { CreateContentServiceProvider } from './create-content.service.provider'
     SharedspaceToolbarDirective,
     FieldsEditorDirective,
     HintsComponent,
-    NameUrlFieldsComponent,
   ],
   entryComponents: [
     HintsComponent,
