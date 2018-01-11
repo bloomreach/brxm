@@ -36,20 +36,18 @@ public interface ContentTypeService {
      * Specialized version of fetchContentTypes.
      *
      * @param context access to the project
-     * @param filter  custom filtering of content types, may be null
      * @return        Filtered and sorted list of ContentTypes
      */
-    List<ContentType> fetchContentTypesFromOwnNamespace(PluginContext context, Predicate<ContentType> filter);
+    List<ContentType> fetchContentTypesFromOwnNamespace(PluginContext context);
 
     /**
      * Fetch content types from the repository's ContentTypeService.
      *
      * @param context access to the project
-     * @param filter  custom filtering of content types, may be null
      * @param ownNamespaceOnly additional filtering flag to only allow content types of the project's namespace
      * @return        Filtered and sorted list of ContentTypes
      */
-    List<ContentType> fetchContentTypes(PluginContext context, Predicate<ContentType> filter, boolean ownNamespaceOnly);
+    List<ContentType> fetchContentTypes(PluginContext context, boolean ownNamespaceOnly);
 
     /**
      * Translate a JCR type name into the JCR base path for the corresponding content type's definition

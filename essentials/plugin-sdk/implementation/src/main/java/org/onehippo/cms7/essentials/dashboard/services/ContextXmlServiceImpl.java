@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.services;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
@@ -29,7 +27,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-@Singleton
 public class ContextXmlServiceImpl implements ContextXmlService {
 
     @Override

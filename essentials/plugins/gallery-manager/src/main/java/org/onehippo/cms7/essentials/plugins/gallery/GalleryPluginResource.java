@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.common.base.Strings;
 
@@ -61,6 +62,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 
@@ -171,7 +173,7 @@ public class GalleryPluginResource extends BaseResource {
         final PluginContext context = contextFactory.getContext();
         final UserFeedback feedback = new UserFeedback();
         final int status = createImageSet(context, imageSetPrefix, imageSetName, feedback);
-        if (status >= HttpServletResponse.SC_MULTIPLE_CHOICES) {
+        if (Response.Status.Family.familyOf(status) != SUCCESSFUL) {
             response.setStatus(status);
             return feedback;
         }

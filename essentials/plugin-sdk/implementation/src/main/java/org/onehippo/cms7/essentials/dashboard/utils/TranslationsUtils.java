@@ -39,10 +39,9 @@ public class TranslationsUtils {
     private TranslationsUtils() {}
 
     public static void importTranslations(String json, Session session) throws RepositoryException, IOException {
-        try (final InputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
-            for (BundleInfo bundleInfo : BundleFileInfo.readInfo(in).getBundleInfos()) {
-                getOrCreateResourceBundle(bundleInfo, session);
-            }
+        final InputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+        for (BundleInfo bundleInfo : BundleFileInfo.readInfo(in).getBundleInfos()) {
+            getOrCreateResourceBundle(bundleInfo, session);
         }
     }
 

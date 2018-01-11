@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -66,6 +67,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -91,7 +94,7 @@ public class SelectionResource {
 
         try {
             final int status = addField(session, payloadRestful.getValues(), feedback);
-            if (status >= HttpServletResponse.SC_MULTIPLE_CHOICES) {
+            if (Response.Status.Family.familyOf(status) != SUCCESSFUL) {
                 response.setStatus(status);
             }
         } catch (RepositoryException | IOException e) {

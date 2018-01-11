@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -351,6 +351,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         return Collections.emptySet();
     }
 
+    @Override
     public Map<String, Path> findBeans(final PluginContext context) {
         final Path startDir = context.getBeansPackagePath();
         final Map<String, Path> existingBeans = new HashMap<>();

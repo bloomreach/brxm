@@ -29,7 +29,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -93,10 +92,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
 
     @Test
     public void fetch_own_document_types() throws Exception {
-        final PluginContext context = getContext();
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
+        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(getContext());
 
         assertEquals(4, cts.size());
 
@@ -115,18 +113,19 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void fetch_filtered_document_types() throws Exception {
-        final PluginContext context = getContext();
-        final Predicate<ContentType> filter = ContentType::isCompoundType;
+    public void fetch_all_document_types() throws Exception {
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypes(context, filter, false);
+        final List<ContentType> cts = contentTypeService.fetchContentTypes(getContext(), false);
 
-        assertEquals(3, cts.size());
+        assertEquals(6, cts.size());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithBean', name='compoundWithBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(0).toString());
         assertEquals("ContentType{fullName='testnamespace:compoundWithoutBean', name='compoundWithoutBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(1).toString());
-        assertEquals("ContentType{fullName='other:otherCompound', name='otherCompound', prefix='other', mixin=false, compoundType=true, superTypes=[]}", cts.get(2).toString());
+        assertEquals("ContentType{fullName='testnamespace:documentWithBean', name='documentWithBean', prefix='testnamespace', mixin=false, compoundType=false, superTypes=[hippo:document]}", cts.get(2).toString());
+        assertEquals("ContentType{fullName='testnamespace:documentWithoutBean', name='documentWithoutBean', prefix='testnamespace', mixin=false, compoundType=false, superTypes=[hippo:document]}", cts.get(3).toString());
+        assertEquals("ContentType{fullName='other:otherCompound', name='otherCompound', prefix='other', mixin=false, compoundType=true, superTypes=[]}", cts.get(4).toString());
+        assertEquals("ContentType{fullName='other:otherDocument', name='otherDocument', prefix='other', mixin=false, compoundType=false, superTypes=[]}", cts.get(5).toString());
     }
 
     @Test

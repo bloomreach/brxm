@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class TemplateUtilsTest extends BaseTest {
 
-    public static final String BEAN_REF = "com.test.MyBean";
+    private static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
-
 
     @Override
     @Before
@@ -49,9 +48,7 @@ public class TemplateUtilsTest extends BaseTest {
 
     @Test
     public void testWhitespaceNewlines() throws Exception {
-
-
-        String result = TemplateUtils.injectTemplate("test_java_parsing.txt", getContext().getPlaceholderData(), getClass());
+        String result = TemplateUtils.injectTemplate("/test_java_parsing.txt", getContext().getPlaceholderData());
         final Object beansPackage = getContext().getPlaceholderData().get("beansPackage");
         assertTrue(result.contains((CharSequence) beansPackage));
         log.info("{}", result);
@@ -59,13 +56,11 @@ public class TemplateUtilsTest extends BaseTest {
 
     @Test
     public void testJavaParsing() throws Exception {
-
-        String result = TemplateUtils.injectTemplate("test_java_parsing.txt", getContext().getPlaceholderData(), getClass());
+        String result = TemplateUtils.injectTemplate("/test_java_parsing.txt", getContext().getPlaceholderData());
         final Object beansPackage = getContext().getPlaceholderData().get("beansPackage");
         assertTrue(result.contains((CharSequence) beansPackage));
         log.info("{}", result);
     }
-
 
     @Test
     public void testParsing() throws Exception {
@@ -89,18 +84,15 @@ public class TemplateUtilsTest extends BaseTest {
         data.put("beanReference", "com.foo.bar");
         final String result = TemplateUtils.replaceTemplateData("test_template_httl.ftl", data);
         log.info("result {}", result);
-
     }
 
     @Test
     public void testInjectTemplateContent() throws Exception {
-
         final Map<String, Object> data = new HashMap<>();
         data.put("namespace", "myNamespace");
         String result = TemplateUtils.replaceTemplateData("test {{namespace}}", data);
         log.info("result {}", result);
         assertTrue(result.contains("myNamespace"));
-
     }
 
     @Test
@@ -111,7 +103,7 @@ public class TemplateUtilsTest extends BaseTest {
         final Collection<TemplateObject> listObject = new ArrayList<>();
         listObject.add(new TemplateObject("repeatable item"));
         data.put("repeatable", listObject);
-        String result = TemplateUtils.injectTemplate("test_template.ftl", data, getClass());
+        String result = TemplateUtils.injectTemplate("/test_template.ftl", data);
         log.info("result {}", result);
         assertTrue("Expected " + BEAN_REF, result.contains(BEAN_REF));
         assertTrue(result.contains("repeatable item"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.net.URL;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.inject.Singleton;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
@@ -38,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-@Singleton
 public class MavenCargoServiceImpl implements MavenCargoService {
     private static final Logger LOG = LoggerFactory.getLogger(MavenCargoServiceImpl.class);
 
