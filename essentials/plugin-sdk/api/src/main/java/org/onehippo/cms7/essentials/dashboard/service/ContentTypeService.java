@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.function.Predicate;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ContentType;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 
 /**
  * ContentTypeService provides access to the project's content types.
@@ -57,6 +56,16 @@ public interface ContentTypeService {
      * @return        absolute path to content type definition base node, e.g. /hippo:namespaces/myhippoproject/newsdocument
      */
     String jcrBasePathForContentType(String jcrType);
+
+    /**
+     * Extract the prefix from a JCR content type
+     */
+    String extractPrefix(String jcrContentType);
+
+    /**
+     * Extract the short name (the part after the prefix, if any) from a JCR content type
+     */
+    String extractShortName(String jcrContentType);
 
     /**
      * Add a 'mixin' type to the specified content type.

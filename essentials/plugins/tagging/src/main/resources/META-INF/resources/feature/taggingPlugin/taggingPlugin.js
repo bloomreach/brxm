@@ -17,33 +17,32 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('taggingPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http, $location) {
-            var endpointDocuments = $rootScope.REST.documents;
-            var endpointTagging = $scope.endpoint = $rootScope.REST.dynamic + 'taggingplugin/';
+        .controller('taggingPluginCtrl', function ($scope, $rootScope, $http) {
             $scope.widgetCols = 20;
             $scope.widgetRows = 2;
             $scope.numberOfSuggestions = 10;
             $scope.fieldsAdded = false;
 
             $scope.addDocuments = function () {
-                var documents = $filter('filter')($scope.documentTypes, {checked: true});
-                var selectedDocumentNames = [];
-                angular.forEach(documents, function (value) {
-                    selectedDocumentNames.push(value.name);
+                var configuration = {
+                    jcrContentTypes: [],
+                    parameters: {
+                        numberOfSuggestions: $scope.numberOfSuggestions,
+                        widgetRows: $scope.widgetRows,
+                        widgetCols: $scope.widgetCols
+                    }
+                };
+                angular.forEach($scope.documentTypes, function (docType) {
+                    if (docType.checked) {
+                        configuration.jcrContentTypes.push(docType.fullName);
+                    }
                 });
-                var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
-                Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
-                Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
-                Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
-                $http.post(endpointTagging, payload).success(function (data) {
+                $http.post($rootScope.REST.dynamic + 'taggingplugin/', configuration).success(function () {
                     $scope.fieldsAdded = true;
                 });
             };
 
-            //############################################
-            // INITIALIZE APP:
-            //############################################
-            $http.get(endpointDocuments).success(function (docTypes) {
+            $http.get($rootScope.REST.documents).success(function (docTypes) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
                 angular.forEach(docTypes, function(docType) {
@@ -52,21 +51,5 @@
                     }
                 });
             });
-
-            //############################################
-            // HELPERS
-            //############################################
-            function extractLocales(l) {
-                var loc = $filter('filter')(l, {checked: true});
-                var locales = [];
-                if (loc.length == 0) {
-                    locales.push('en');
-                } else {
-                    angular.forEach(l, function (value) {
-                        locales.push(value.name);
-                    });
-                }
-                return locales.join(',');
-            }
         })
 })();

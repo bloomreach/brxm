@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,56 @@ public class JcrServiceImplTest extends BaseRepositoryTest {
         // Make sure the XML was imported
         assertFalse(configNode.hasNode("testdocument"));
 
+        jcrService.destroySession(session);
+    }
+
+    @Test
+    public void import_translations_no_resource() throws Exception {
+        final Map<String, Object> data = new HashMap<>();
+        data.put("prefix", "testnamespace");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrServiceImpl.class).build()) {
+            assertFalse(jcrServiceUnderTest.importTranslationsResource(null, "/services/jcr/missing.json", data));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Can't read resource '/services/jcr/missing.json'.")));
+        }
+    }
+
+    @Test
+    public void import_translation_bad_repository() throws Exception {
+        Session session = jcrService.createSession();
+        session.getNode("/hippo:configuration/hippo:translations").remove();
+        session.save();
+
+        final Map<String, Object> data = new HashMap<>();
+        data.put("prefix", "testnamespace");
+        data.put("document", "foo");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrServiceImpl.class).build()) {
+            assertFalse(jcrServiceUnderTest.importTranslationsResource(session, "/services/jcr/translations.json", data));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to import translations '/services/jcr/translations.json'.")));
+        }
+
+        jcrService.destroySession(session);
+    }
+
+    @Test
+    public void import_translations() throws Exception {
+        Session session = jcrService.createSession();
+
+        final Map<String, Object> data = new HashMap<>();
+        data.put("prefix", "testnamespace");
+        data.put("document", "foo");
+
+        assertTrue(jcrServiceUnderTest.importTranslationsResource(session, "/services/jcr/translations.json", data));
+
+        assertTrue(session.nodeExists("/hippo:configuration/hippo:translations/hippo:types/testnamespace:foo/en"));
+        Node en = session.getNode("/hippo:configuration/hippo:translations/hippo:types/testnamespace:foo/en");
+        assertEquals("Keywords", en.getProperty("testnamespace:tags").getString());
+
+        // ensure service doesn't save
+        jcrService.refreshSession(session, false);
+
+        assertFalse(session.nodeExists("/hippo:configuration/hippo:translations/hippo:types"));
         jcrService.destroySession(session);
     }
 }
