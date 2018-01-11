@@ -39,4 +39,8 @@
     justify-content: flex-end;
     padding: 10px 16px;
   }
+
+  .hide-select-arrow .md-select-icon {
+    visibility: hidden;
+  }
 }

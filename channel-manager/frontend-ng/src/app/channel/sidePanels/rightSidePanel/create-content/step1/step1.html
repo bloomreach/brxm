@@ -50,7 +50,7 @@
     <md-select ng-model="$ctrl.documentType" name="documentType" required
                placeholder="Document type" ng-disabled="$ctrl.documentTypes.length === 1"
                class="input-document-type create-content-field qa-document-type-select"
-               ng-class="{ 'hide-select-arrow': documentTypes.length === 1 }">
+               ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
       <md-option ng-repeat="documentType in $ctrl.documentTypes"
                  value="{{ documentType.id }}">{{ documentType.displayName }}
       </md-option>
