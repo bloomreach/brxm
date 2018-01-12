@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import './vendor.scss';
-import './index.scss';
-import './app/hippo-cm';
+import { Visualizer } from '@uirouter/visualizer';
 
-// Uncomment to visualize ui-router state (see https://github.com/ui-router/visualizer)
-// import './visualize-state';
+function visualizeState($uiRouter) {
+  'ngInject';
+
+  $uiRouter.plugin(Visualizer);
+}
+
+angular.module('hippo-cm').run(visualizeState);
