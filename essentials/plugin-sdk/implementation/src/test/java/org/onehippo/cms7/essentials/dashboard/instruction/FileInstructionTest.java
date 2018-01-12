@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -27,22 +25,12 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.TestSettingsService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
-import org.onehippo.cms7.essentials.dashboard.services.ContentBeansServiceImpl;
-import org.onehippo.cms7.essentials.dashboard.services.ProjectServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +43,7 @@ public class FileInstructionTest extends BaseResourceTest {
     private static final String SOURCE = "file_instruction_test.txt";
     private static final String TARGET = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/file_instruction_copy.txt";
 
-    @Inject private InstructionExecutor executor;
+    @Inject private PluginInstructionExecutor executor;
 
     private FileInstruction copyInstruction;
     private FileInstruction deleteInstruction;
@@ -77,7 +65,7 @@ public class FileInstructionTest extends BaseResourceTest {
         final PluginContext context = getContext();
         final String target = TemplateUtils.replaceTemplateData(TARGET, context.getPlaceholderData());
 
-        final InstructionSet set = new PluginInstructionSet();
+        final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(FileInstruction.class).build()) {
             assertEquals(InstructionStatus.FAILED, executor.execute(set, context));
@@ -109,7 +97,7 @@ public class FileInstructionTest extends BaseResourceTest {
         //############################################
         deleteInstruction.setActionEnum(FileInstruction.Action.DELETE);
         deleteInstruction.setTarget(TARGET);
-        final InstructionSet deleteSet = new PluginInstructionSet();
+        final PluginInstructionSet deleteSet = new PluginInstructionSet();
         deleteSet.addInstruction(deleteInstruction);
         assertEquals(InstructionStatus.SUCCESS, executor.execute(deleteSet, context));
     }

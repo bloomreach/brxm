@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
+import org.onehippo.cms7.essentials.dashboard.instruction.parser.DefaultInstructionParser;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,18 +39,18 @@ public class MessageInstructionExecutorTest extends BaseTest {
 
 
     @Inject
-    private InstructionParser parser;
+    private DefaultInstructionParser parser;
 
     @Test
     public void testParseInstructionSet() throws Exception {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
         final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-        final Instructions instructions = parser.parseInstructions(content);
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        final PluginInstructions instructions = parser.parseInstructions(content);
+        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
         final Multimap<MessageGroup, Restful> messages = ArrayListMultimap.create();
-        for (InstructionSet instructionSet : instructionSets) {
+        for (PluginInstructionSet instructionSet : instructionSets) {
             final Multimap<MessageGroup, Restful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }

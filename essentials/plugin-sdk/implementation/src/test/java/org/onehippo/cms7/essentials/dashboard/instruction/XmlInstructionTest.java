@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 
 import static org.junit.Assert.assertTrue;
@@ -35,12 +34,9 @@ public class XmlInstructionTest extends BaseRepositoryTest {
      * See instruction_xml_file.xml file
      */
     private static final String NODE_NAME = "testNode";
-    @Inject
-    private InstructionExecutor executor;
-    @Inject
-    private XmlInstruction addNodeInstruction;
-    @Inject
-    private XmlInstruction removeNodeInstruction;
+    @Inject private PluginInstructionExecutor executor;
+    @Inject private XmlInstruction addNodeInstruction;
+    @Inject private XmlInstruction removeNodeInstruction;
 
     @Test
     public void testInstructions() throws Exception {
@@ -51,7 +47,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         addNodeInstruction.setActionEnum(XmlInstruction.Action.COPY);
         addNodeInstruction.setTarget("/");
         addNodeInstruction.setSource("instruction_xml_file.xml");
-        final InstructionSet set = new PluginInstructionSet();
+        final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(addNodeInstruction);
         InstructionStatus status = executor.execute(set, getContext());
         assertTrue("Expected SUCCESS but got: " + status, status == InstructionStatus.SUCCESS);
@@ -76,7 +72,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
 
         removeNodeInstruction.setActionEnum(XmlInstruction.Action.DELETE);
         removeNodeInstruction.setTarget('/' + NODE_NAME);
-        final InstructionSet removeSet = new PluginInstructionSet();
+        final PluginInstructionSet removeSet = new PluginInstructionSet();
         removeSet.addInstruction(removeNodeInstruction);
         final InstructionStatus deleteStatus = executor.execute(removeSet, getContext());
         assertTrue("Expected SUCCESS but got: " + deleteStatus, deleteStatus == InstructionStatus.SUCCESS);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -38,7 +38,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
  */
 public class MessageInstructionExecutor {
 
-    public Multimap<MessageGroup, Restful> execute(final InstructionSet instructionSet, PluginContext context) {
+    public Multimap<MessageGroup, Restful> execute(final PluginInstructionSet instructionSet, PluginContext context) {
         final Multimap<MessageGroup, Restful> changeMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final BiConsumer<MessageGroup, String> changeMessageCollector

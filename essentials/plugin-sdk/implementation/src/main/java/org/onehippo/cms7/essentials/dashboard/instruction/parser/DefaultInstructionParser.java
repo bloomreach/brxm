@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,32 +24,29 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
+
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
 
 
 /**
  * @version "$Id$"
  */
 @Component
-public class DefaultInstructionParser implements InstructionParser {
+public class DefaultInstructionParser {
 
-    private static Logger log = LoggerFactory.getLogger(InstructionParser.class);
+    private static Logger log = LoggerFactory.getLogger(DefaultInstructionParser.class);
 
     @Inject
     private AutowireCapableBeanFactory injector;
 
-    @Override
-    public Instructions parseInstructions(final String content) {
+    public PluginInstructions parseInstructions(final String content) {
         if (Strings.isNullOrEmpty(content)) {
             log.warn("Instructions content was null");
             return null;
@@ -57,10 +54,10 @@ public class DefaultInstructionParser implements InstructionParser {
         try {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
             final Unmarshaller unmarshaller = context.createUnmarshaller();
-            final Instructions instructions = (Instructions) unmarshaller.unmarshal(new StringReader(content));
+            final PluginInstructions instructions = (PluginInstructions) unmarshaller.unmarshal(new StringReader(content));
 
-            final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-            for (InstructionSet instructionSet : instructionSets) {
+            final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
+            for (PluginInstructionSet instructionSet : instructionSets) {
                 final Set<Instruction> myInstr = instructionSet.getInstructions();
                 for (Instruction instruction : myInstr) {
                     injector.autowireBean(instruction);

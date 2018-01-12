@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -29,16 +28,14 @@ import static org.junit.Assert.assertEquals;
 
 public class NodeFolderInstructionTest extends BaseRepositoryTest {
 
-    @Inject
-    private NodeFolderInstruction instruction;
-    @Inject
-    private InstructionExecutor executor;
+    @Inject private NodeFolderInstruction instruction;
+    @Inject private PluginInstructionExecutor executor;
 
     @Test
     public void testInstruction() throws Exception {
         instruction.setPath("/foo/bar/foobar");
         instruction.setTemplate("my_folder_template.xml");
-        final InstructionSet instructionSet = new PluginInstructionSet();
+        final PluginInstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(instruction);
         InstructionStatus execute = executor.execute(instructionSet, getContext());
         assertEquals(InstructionStatus.SUCCESS, execute);

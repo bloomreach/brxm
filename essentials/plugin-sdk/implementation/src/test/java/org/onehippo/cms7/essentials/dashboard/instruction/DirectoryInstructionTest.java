@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialsFileUtils;
 import org.slf4j.Logger;
@@ -43,8 +42,7 @@ public class DirectoryInstructionTest extends BaseResourceTest {
     public static final String DIR = File.separator + THIRD + File.separator + SECOND + File.separator + FIRST;
 
     private static final Logger log = LoggerFactory.getLogger(DirectoryInstructionTest.class);
-    @Inject
-    private InstructionExecutor executor;
+    @Inject private PluginInstructionExecutor executor;
     @Inject
     @Qualifier("directoryInstruction")
     private DirectoryInstruction createInstruction;
@@ -61,7 +59,7 @@ public class DirectoryInstructionTest extends BaseResourceTest {
     @Test
     public void testProcess() throws Exception {
 
-        final InstructionSet set = new PluginInstructionSet();
+        final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(createInstruction);
         InstructionStatus status = executor.execute(set, getContext());
         // invalid instruction:
@@ -78,7 +76,7 @@ public class DirectoryInstructionTest extends BaseResourceTest {
 
         targetDir = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + getClass().getSimpleName());
         log.info("testing copy to: {}", targetDir);
-        final InstructionSet set = new PluginInstructionSet();
+        final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         final PluginContext context = getContext();
         InstructionStatus status = executor.execute(set, context);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,19 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
 
 @XmlRootElement(name = "instructionSet", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class PluginInstructionSet implements InstructionSet {
+public class PluginInstructionSet {
 
-    public static final Set<String> DEFAULT_GROUPS =  ImmutableSet.of(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
+    private static final Set<String> DEFAULT_GROUPS =  ImmutableSet.of(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
     private Set<Instruction> instructions = new LinkedHashSet<>();
 
     private String group;
@@ -55,17 +54,14 @@ public class PluginInstructionSet implements InstructionSet {
             @XmlElementRef(type = HstBeanClassesInstruction.class),
             @XmlElementRef(type = MavenDependencyInstruction.class)
     })
-    @Override
     public Set<Instruction> getInstructions() {
         return instructions;
     }
 
-    @Override
     public void setInstructions(final Set<Instruction> instructions) {
         this.instructions = instructions;
     }
 
-    @Override
     public void addInstruction(final Instruction instruction) {
         if (instructions == null) {
             instructions = new LinkedHashSet<>();
@@ -85,12 +81,10 @@ public class PluginInstructionSet implements InstructionSet {
         return group;
     }
 
-    @Override
     public void setGroup(final String group) {
         this.group = group;
     }
 
-    @Override
     public Set<String> getGroups() {
         if(Strings.isNullOrEmpty(group)){
             return DEFAULT_GROUPS;

@@ -27,7 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
@@ -88,8 +88,8 @@ public class Plugin {
             || StringUtils.hasText(getDescriptor().getPackageClass());
     }
 
-    public InstructionPackage makeInstructionPackageInstance() {
-        InstructionPackage instructionPackage = null;
+    public DefaultInstructionPackage makeInstructionPackageInstance() {
+        DefaultInstructionPackage instructionPackage = null;
 
         // Prefers packageClass over packageFile.
         final String packageClass = descriptor.getPackageClass();

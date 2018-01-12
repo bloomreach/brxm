@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.util.Set;
 
-import javax.inject.Singleton;
-
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -35,11 +32,9 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
-@Singleton
-public class PluginInstructionExecutor implements InstructionExecutor {
+public class PluginInstructionExecutor {
 
-    @Override
-    public InstructionStatus execute(final InstructionSet set, PluginContext context) {
+    public InstructionStatus execute(final PluginInstructionSet set, PluginContext context) {
         InstructionStatus status = InstructionStatus.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {
@@ -49,8 +44,7 @@ public class PluginInstructionExecutor implements InstructionExecutor {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public Multimap<MessageGroup,Restful> getInstructionsMessages(final InstructionSet instruction, final PluginContext context) {
+    public Multimap<MessageGroup,Restful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
         return executor.execute(instruction, context);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,6 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -54,8 +51,7 @@ public class DefaultInstructionParserTest extends BaseTest {
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionParserTest.class);
 
 
-    @Inject
-    private InstructionParser instructionParser;
+    @Inject private DefaultInstructionParser instructionParser;
 
 
     @Test
@@ -67,13 +63,13 @@ public class DefaultInstructionParserTest extends BaseTest {
         //############################################
         final InputStream resourceAsStream = getClass().getResourceAsStream("/parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-        final Instructions myInstructions = instructionParser.parseInstructions(content);
-        final Set<InstructionSet> iset = myInstructions.getInstructionSets();
+        final PluginInstructions myInstructions = instructionParser.parseInstructions(content);
+        final Set<PluginInstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(3, iset.size());
 
-        final Iterator<InstructionSet> myIterator = iset.iterator();
-        final InstructionSet set1 = myIterator.next();
-        final InstructionSet set2 = myIterator.next();
+        final Iterator<PluginInstructionSet> myIterator = iset.iterator();
+        final PluginInstructionSet set1 = myIterator.next();
+        final PluginInstructionSet set2 = myIterator.next();
 
         assertEquals("myGroup", set1.getGroups().iterator().next());
         assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroups().iterator().next());
@@ -88,8 +84,8 @@ public class DefaultInstructionParserTest extends BaseTest {
         // OBJECTS
         //############################################
 
-        final Instructions value = new PluginInstructions();
-        final Set<InstructionSet> instructionSets = new HashSet<>();
+        final PluginInstructions value = new PluginInstructions();
+        final Set<PluginInstructionSet> instructionSets = new HashSet<>();
         final PluginInstructionSet instructionSet = new PluginInstructionSet();
         addInstructions(instructionSet);
 
@@ -102,9 +98,9 @@ public class DefaultInstructionParserTest extends BaseTest {
         m.marshal(value, writer);
         final String s = writer.toString();
         log.info("s {}", s);
-        final Instructions instructions = instructionParser.parseInstructions(s);
+        final PluginInstructions instructions = instructionParser.parseInstructions(s);
         assertTrue(instructions != null);
-        final InstructionSet set = instructions.getInstructionSets().iterator().next();
+        final PluginInstructionSet set = instructions.getInstructionSets().iterator().next();
         final Set<Instruction> mySet = set.getInstructions();
         // test ordering
         final Iterator<Instruction> iterator = mySet.iterator();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.parser.DefaultInstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -46,22 +45,18 @@ import org.slf4j.LoggerFactory;
  *
  * @version "$Id$"
  */
-public class DefaultInstructionPackage implements InstructionPackage {
+public class DefaultInstructionPackage {
 
 
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
-    @Inject
-    private InstructionParser instructionParser;
-
-    @Inject
-    private EventBus eventBus;
+    @Inject private DefaultInstructionParser instructionParser;
+    @Inject private EventBus eventBus;
 
     private Map<String, Object> properties;
-    private Instructions instructions;
+    private PluginInstructions instructions;
     private String path;
 
-    @Override
     public Map<String, Object> getProperties() {
 
         if (properties == null) {
@@ -70,30 +65,27 @@ public class DefaultInstructionPackage implements InstructionPackage {
         return properties;
     }
 
-    @Override
     public void setProperties(final Map<String, Object> properties) {
         this.properties = properties;
     }
 
 
 
-    @Override
     public Set<String> groupNames() {
         return EssentialConst.DEFAULT_GROUPS;
     }
 
-    @Override
     public Multimap<MessageGroup, ? extends Restful> getInstructionsMessages(final PluginContext context) {
-        final Instructions myInstructions = getInstructions();
+        final PluginInstructions myInstructions = getInstructions();
         if (myInstructions == null) {
             return ArrayListMultimap.create();
 
         }
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        final InstructionExecutor executor = new PluginInstructionExecutor();
+        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
+        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
         final Multimap<MessageGroup, Restful> instructionsMessages = ArrayListMultimap.create();
-        for (InstructionSet instructionSet : instructionSets) {
+        for (PluginInstructionSet instructionSet : instructionSets) {
             final Set<String> groups = instructionSet.getGroups();
             for (String group : groups) {
                 // execute only or group(s)
@@ -110,7 +102,6 @@ public class DefaultInstructionPackage implements InstructionPackage {
     }
 
 
-    @Override
     public String getInstructionPath() {
         if (Strings.isNullOrEmpty(path)) {
             return EssentialConst.DEFAULT_INSTRUCTIONS_PATH;
@@ -119,13 +110,11 @@ public class DefaultInstructionPackage implements InstructionPackage {
     }
 
 
-    @Override
     public void setInstructionPath(final String path) {
         this.path = path;
     }
 
-    @Override
-    public Instructions getInstructions() {
+    public PluginInstructions getInstructions() {
         if (instructions == null) {
 
             final InputStream resourceAsStream = getClass().getResourceAsStream(getInstructionPath());
@@ -153,7 +142,6 @@ public class DefaultInstructionPackage implements InstructionPackage {
 
     }
 
-    @Override
     public InstructionStatus execute(final PluginContext context) {
         // NOTE: we'll add any additional context properties into context:
         context.addPlaceholderData(properties);
@@ -166,11 +154,11 @@ public class DefaultInstructionPackage implements InstructionPackage {
             log.error("Failed to parse instructions at '{}'.", getInstructionPath());
             return InstructionStatus.FAILED;
         }
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         InstructionStatus status = InstructionStatus.SUCCESS;
-        final InstructionExecutor executor = new PluginInstructionExecutor();
+        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
-        for (InstructionSet instructionSet : instructionSets) {
+        for (PluginInstructionSet instructionSet : instructionSets) {
             final Set<String> groups = instructionSet.getGroups();
             for (String group : groups) {
                 // execute only or group(s)
@@ -191,12 +179,10 @@ public class DefaultInstructionPackage implements InstructionPackage {
     }
 
 
-    @Override
-    public InstructionParser getInstructionParser() {
+    public DefaultInstructionParser getInstructionParser() {
         return instructionParser;
     }
 
-    @Override
     public EventBus getEventBus() {
         return eventBus;
     }

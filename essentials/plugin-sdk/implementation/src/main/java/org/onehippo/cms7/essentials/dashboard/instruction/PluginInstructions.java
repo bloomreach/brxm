@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,18 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 @XmlRootElement(name = "instructions", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
-public class PluginInstructions implements Instructions {
+public class PluginInstructions {
 
 
-    private Set<InstructionSet> instructionSets = new LinkedHashSet<>();
+    private Set<PluginInstructionSet> instructionSets = new LinkedHashSet<>();
 
-    @Override
     public int totalInstructions() {
         int total = 0;
         if (instructionSets != null) {
-            for (InstructionSet instructionSet : instructionSets) {
+            for (PluginInstructionSet instructionSet : instructionSets) {
                 final Set<Instruction> instructions = instructionSet.getInstructions();
                 if (instructions != null) {
                     total += instructions.size();
@@ -48,7 +45,6 @@ public class PluginInstructions implements Instructions {
         return total;
     }
 
-    @Override
     public int totalInstructionSets() {
         if (instructionSets != null) {
             return instructionSets.size();
@@ -57,13 +53,11 @@ public class PluginInstructions implements Instructions {
     }
 
     @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class, name = "instructionSet")})
-    @Override
-    public Set<InstructionSet> getInstructionSets() {
+    public Set<PluginInstructionSet> getInstructionSets() {
         return instructionSets;
     }
 
-    @Override
-    public void setInstructionSets(final Set<InstructionSet> instructionSets) {
+    public void setInstructionSets(final Set<PluginInstructionSet> instructionSets) {
         this.instructionSets = instructionSets;
     }
 
@@ -88,7 +82,7 @@ public class PluginInstructions implements Instructions {
 
         } else {
             // check if we have default instruction set:
-            for (InstructionSet instructionSet : instructionSets) {
+            for (PluginInstructionSet instructionSet : instructionSets) {
                 final Set<String> groups = instructionSet.getGroups();
                 if (groups.size() == 1 && groups.iterator().next().equals(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
                     instructionSet.addInstruction(instruction);

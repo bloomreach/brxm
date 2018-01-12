@@ -44,12 +44,11 @@ import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -61,6 +60,7 @@ import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
+import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +143,7 @@ public class PluginResource extends BaseResource {
             return list;
         }
 
-        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
+        final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage == null) {
             list.add(new ErrorMessageRestful("Failed to create instructions package"));
             return list;
@@ -318,13 +318,13 @@ public class PluginResource extends BaseResource {
         HstUtils.erasePreview(jcrService, settingsService);
 
         // execute skeleton
-        final InstructionPackage commonPackage = new CommonsInstructionPackage();
+        final DefaultInstructionPackage commonPackage = new CommonsInstructionPackage();
         commonPackage.setProperties(properties);
         getInjector().autowireBean(commonPackage);
         commonPackage.execute(context);
 
         // execute InstructionPackage itself
-        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
+        final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage != null) {
             ApplicationModule.getInjector().autowireBean(instructionPackage);
             instructionPackage.setProperties(properties);

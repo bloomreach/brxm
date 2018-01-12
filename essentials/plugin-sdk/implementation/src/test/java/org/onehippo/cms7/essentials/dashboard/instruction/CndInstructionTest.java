@@ -23,8 +23,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
@@ -40,7 +39,7 @@ public class CndInstructionTest extends BaseRepositoryTest {
     private static final String TEST_URI = "http://www.test.com";
     private static final String TEST_PREFIX = "test";
 
-    @Inject private InstructionExecutor executor;
+    @Inject private PluginInstructionExecutor executor;
     @Inject private CndInstruction cndInstruction;
     @Inject private SettingsServiceImpl settingsService;
 
@@ -58,7 +57,7 @@ public class CndInstructionTest extends BaseRepositoryTest {
 
         cndInstruction.setDocumentType("newsdocument");
         settingsService.getModifiableSettings().setProjectNamespace(TEST_PREFIX);
-        final InstructionSet instructionSet = new PluginInstructionSet();
+        final PluginInstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(cndInstruction);
         InstructionStatus status = executor.execute(instructionSet, getContext());
         assertTrue("Expected success but got: " + status, status == InstructionStatus.SUCCESS);

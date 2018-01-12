@@ -19,8 +19,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 
 import static org.junit.Assert.assertEquals;
@@ -28,16 +27,13 @@ import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionSta
 
 public class TranslationsInstructionTest extends BaseRepositoryTest {
 
-    @Inject
-    private InstructionExecutor executor;
-
-    @Inject
-    private TranslationsInstruction translationsInstruction;
+    @Inject private PluginInstructionExecutor executor;
+    @Inject private TranslationsInstruction translationsInstruction;
 
     @Test
     public void testInstruction() throws Exception {
         translationsInstruction.setSource("/instruction_translations_file.json");
-        final InstructionSet set = new PluginInstructionSet();
+        final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(translationsInstruction);
         final InstructionStatus status = executor.execute(set, getContext());
         assertEquals(SUCCESS, status);

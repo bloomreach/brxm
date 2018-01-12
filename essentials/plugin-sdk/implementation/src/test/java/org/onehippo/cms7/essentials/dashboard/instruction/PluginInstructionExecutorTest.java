@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ import javax.jcr.Session;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.instruction.parser.DefaultInstructionParser;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -47,10 +45,8 @@ import static org.junit.Assert.assertTrue;
 public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
-    @Inject
-    private PluginInstructionExecutor pluginInstructionExecutor;
-    @Inject
-    private InstructionParser instructionParser;
+    @Inject private PluginInstructionExecutor pluginInstructionExecutor;
+    @Inject private DefaultInstructionParser instructionParser;
 
     @Test
     public void testExecute() throws Exception {
@@ -59,10 +55,10 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
 
-        final Instructions instructions = instructionParser.parseInstructions(content);
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        final PluginInstructions instructions = instructionParser.parseInstructions(content);
+        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
-        for (InstructionSet instructionSet : instructionSets) {
+        for (PluginInstructionSet instructionSet : instructionSets) {
             pluginInstructionExecutor.execute(instructionSet, getContext());
         }
     }
@@ -74,16 +70,16 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
 
-        final Instructions instructions = instructionParser.parseInstructions(content);
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        for (InstructionSet instructionSet : instructionSets) {
+        final PluginInstructions instructions = instructionParser.parseInstructions(content);
+        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
+        for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains("myGroup")) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }
 
         // default group:
-        for (InstructionSet instructionSet : instructionSets) {
+        for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
