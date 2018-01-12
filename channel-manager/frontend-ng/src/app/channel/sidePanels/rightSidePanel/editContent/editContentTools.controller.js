@@ -35,50 +35,31 @@ class EditContentToolsCtrl {
 
   openContentEditor(mode) {
     this.mode = mode;
-
     this.EditContentService.stopEditing();
-
-    // if (!isPromptUnsavedChanges) {
-    //   this._closePanelAndOpenContent(mode);
-    //   return;
-    // }
-    // const messageKey = mode === 'view'
-    //   ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
-    //   : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';
-    //
-    // this._dealWithPendingChanges(messageKey, () => {
-    //   if (mode === 'view') {
-    //     this._deleteDraft().finally(() => this._closePanelAndOpenContent(mode));
-    //   } else {
-    //     this._closePanelAndOpenContent(mode);
-    //   }
-    // });
   }
 
   uiCanExit() {
+    const documentId = this.ContentEditor.getDocument().id;
     if (this.mode === 'view') {
       return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-        .then(() => this._openContent());
+        .then(() => this.ContentEditor.deleteDraft())
+        .then(() => this._viewContent(documentId));
     } else if (this.mode === 'edit') {
-      this._openContent();
+      this._editContent(documentId);
     }
-    return this.$q.resolve();
+    return true;
   }
 
-  _openContent() {
-    const documentId = this.ContentEditor.getDocument().id;
+  _viewContent(documentId) {
+    this.CmsService.publish('open-content', documentId, 'view');
+    this.ContentEditor.close();
+    this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+  }
 
-    this.CmsService.publish('open-content', documentId, this.mode);
-
-    // The CMS automatically unlocks content that is being viewed, so close the visual editor to reflect that.
-    // It will will unlock the document if needed, so don't delete the draft here.
-    this.ContentEditor.closeAndKeepDraft();
-
-    if (this.mode === 'view') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
-    } else if (this.mode === 'edit') {
-      this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
-    }
+  _editContent(documentId) {
+    this.CmsService.publish('open-content', documentId, 'edit');
+    this.ContentEditor.close();
+    this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
   }
 }
 

@@ -259,22 +259,14 @@ class ContentEditorService {
     });
   }
 
-  closeAndDeleteDraft() {
-    this._deleteDraft();
-    this._clear();
-  }
-
-  closeAndKeepDraft() {
-    this._clear();
-  }
-
-  _deleteDraft() {
+  deleteDraft() {
     if (this.isEditing()) {
-      this.ContentService.deleteDraft(this.document.id);
+      return this.ContentService.deleteDraft(this.document.id);
     }
+    return this.$q.resolve();
   }
 
-  _clear() {
+  close() {
     delete this.document;
     delete this.documentType;
     delete this.documentDirty;
