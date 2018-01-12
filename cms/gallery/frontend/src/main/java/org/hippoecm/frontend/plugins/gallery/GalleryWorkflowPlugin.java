@@ -145,7 +145,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
                     final String svgContent = IOUtils.toString(is, StandardCharsets.UTF_8);
                     if (svgContent.contains("<script")) {
-                        throw new SvgScriptGalleryException("Support of SVG images with embedded script is disabled.");
+                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
                     is.reset();
                 }

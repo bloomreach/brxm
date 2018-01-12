@@ -208,7 +208,7 @@ public abstract class GalleryUploadPanel extends Panel {
                     final String svgContent = IOUtils.toString(istream, StandardCharsets.UTF_8);
                     if (svgContent.contains("<script")) {
                         istream.close();
-                        throw new SvgScriptGalleryException("Support of SVG images with embedded script is disabled.");
+                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
                     istream.reset();
                 }
