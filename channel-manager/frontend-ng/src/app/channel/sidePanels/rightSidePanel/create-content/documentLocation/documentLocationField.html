@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -18,8 +18,12 @@
   <!-- Document location field -->
   <div class="field">
     <md-input-container class="create-content-field qa-document-location create-content-field-clickable">
-      <input ng-model="$ctrl.documentLocationLabel" name="documentLocation"
-             placeholder="Document location" required disabled ng-click="$ctrl.openPicker()">
+      <input ng-model="$ctrl.documentLocationLabel"
+             name="documentLocation"
+             placeholder="Document location"
+             required
+             readonly
+             ng-click="$ctrl.openPicker()">
 
       <div ng-messages="form.controls.documentLocation && form.controls.documentLocation.touched">
         <div ng-message="required">This field is required</div>

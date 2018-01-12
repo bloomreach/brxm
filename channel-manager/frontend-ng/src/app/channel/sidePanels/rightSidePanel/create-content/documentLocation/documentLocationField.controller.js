@@ -83,13 +83,13 @@ class DocumentLocationFieldController {
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    this.cmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === DocumentLocationFieldComponent.PICKER_CALLBACK_ID) {
+    this.CmsService.subscribe('path-picked', (callbackId, path) => {
+      if (callbackId === PICKER_CALLBACK_ID) {
         if (!path.startsWith('/')) {
           path = `/${path}`;
         }
         if (!path.startsWith(this.rootPath)) {
-          this.feedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+          this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
         } else {
           this.setDocumentLocation(path);
         }
@@ -109,7 +109,7 @@ class DocumentLocationFieldController {
   openPicker() {
     this.CmsService.publish(
       'show-path-picker',
-      DocumentLocationFieldComponent.PICKER_CALLBACK_ID,
+      PICKER_CALLBACK_ID,
       this.documentLocation,
       this.pickerConfig);
   }
@@ -149,8 +149,8 @@ class DocumentLocationFieldController {
    */
   calculateDocumentLocationLabel(folders) {
     const defaultPathDepth = folders.length - this.rootPathDepth;
-    const start = defaultPathDepth >= this.MAX_DEPTH ?
-      folders.length - this.MAX_DEPTH : this.rootPathDepth - 1;
+    const start = defaultPathDepth >= MAX_DEPTH ?
+      folders.length - MAX_DEPTH : this.rootPathDepth - 1;
 
     return folders
       .filter((folder, index) => index >= start)

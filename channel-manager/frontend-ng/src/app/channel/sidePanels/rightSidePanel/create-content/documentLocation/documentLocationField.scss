@@ -16,4 +16,8 @@ document-location-field {
   md-input-container {
     width: 100%;
   }
+
+  .create-content-field-clickable input {
+    cursor: pointer;
+  }
 }
