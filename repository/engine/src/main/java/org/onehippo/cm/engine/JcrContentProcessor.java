@@ -78,10 +78,10 @@ public class JcrContentProcessor {
         }
 
         try {
-            modelNode.getDefinition().setRootPath(constructNodePath(parentNode.getPath(), modelNode.getName()));
+            modelNode.getDefinition().setRootPath(JcrPaths.getPath(parentNode.getPath()).resolve(modelNode.getJcrName()));
 
             final Session session = parentNode.getSession();
-            validateAppendAction(modelNode.getDefinition().getRootPath(), actionType, session, false);
+            validateAppendAction(modelNode.getDefinition().getRootPath().toString(), actionType, session, false);
 
             final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
             applyNode(modelNode, parentNode, actionType, unprocessedReferences);

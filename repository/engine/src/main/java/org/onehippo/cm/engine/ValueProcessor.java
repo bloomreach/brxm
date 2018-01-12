@@ -362,7 +362,7 @@ public abstract class ValueProcessor {
         return new ValueImpl(uuid, ValueType.fromJcrType(jcrType), false, false);
     }
 
-    public static List<Value> determineVerifiedValues(final ModelProperty property, final Session session)
+    public static List<Value> determineVerifiedValues(final ModelProperty<?> property, final Session session)
             throws RepositoryException {
 
         final List<Value> verifiedValues = new ArrayList<>();

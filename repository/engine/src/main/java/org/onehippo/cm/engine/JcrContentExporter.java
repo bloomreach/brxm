@@ -38,6 +38,7 @@ import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,7 @@ public class JcrContentExporter {
         }
         definitionNode.setOrderBefore(orderBefore);
         contentDefinition.setNode(definitionNode);
-        contentDefinition.setRootPath(node.getPath());
+        contentDefinition.setRootPath(JcrPaths.getPath(node.getPath()));
 
         exportProperties(node, definitionNode);
         definitionNode.sortProperties();

@@ -454,7 +454,7 @@ public class DefinitionMergeService {
         for (final Node child : new NodeIterable(jcrNode.getNodes())) {
             final JcrPathSegment segment = JcrPaths.getSegment(child);
             if (configurationNode != null) {
-                if (configurationNode.getChildNodeCategory(segment.forceIndex().toString()) == SYSTEM) {
+                if (configurationNode.getChildNodeCategory(segment) == SYSTEM) {
                     log.info("Not including node '{}' while reordering '{}'; the node is category 'system'",
                             segment.toString(), jcrNode.getPath());
                     continue;
