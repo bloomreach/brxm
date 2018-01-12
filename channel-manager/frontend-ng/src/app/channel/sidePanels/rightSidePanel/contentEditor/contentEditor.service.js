@@ -228,6 +228,10 @@ class ContentEditorService {
       });
   }
 
+  kill() {
+    this.killed = true;
+  }
+
   /**
    * Possible return values:
    * - resolved promise with value 'true' when changes have been saved
@@ -246,8 +250,8 @@ class ContentEditorService {
   }
 
   _confirmSaveOrDiscardChanges(messageKey) {
-    if (!this.documentDirty) {
-      // no pending changes, no dialog, continue normally
+    if (!this.documentDirty // no pending changes, no dialog, continue normally
+        || this.killed) { // editor was killed, don't show dialog
       return this.$q.resolve('DISCARD');
     }
 
@@ -268,7 +272,7 @@ class ContentEditorService {
   }
 
   deleteDraft() {
-    if (this.isEditing()) {
+    if (this.isEditing() && !this.killed) {
       return this.ContentService.deleteDraft(this.document.id);
     }
     return this.$q.resolve();
@@ -280,6 +284,7 @@ class ContentEditorService {
     delete this.documentType;
     delete this.documentDirty;
     delete this.error;
+    delete this.killed;
   }
 }
 

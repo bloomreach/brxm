@@ -15,7 +15,7 @@
  */
 
 class EditContentService {
-  constructor($state, $transitions, $translate, ContentEditor, RightSidePanelService) {
+  constructor($state, $transitions, $translate, CmsService, ContentEditor, RightSidePanelService) {
     'ngInject';
 
     this.$state = $state;
@@ -27,6 +27,13 @@ class EditContentService {
       { entering: '**.edit-content' },
       transition => this._loadDocument(transition.params().documentId),
     );
+
+    CmsService.subscribe('kill-editor', (documentId) => {
+      if (this.ContentEditor.getDocumentId() === documentId) {
+        this.ContentEditor.kill();
+        this.stopEditing();
+      }
+    });
   }
 
   startEditing(documentId) {
