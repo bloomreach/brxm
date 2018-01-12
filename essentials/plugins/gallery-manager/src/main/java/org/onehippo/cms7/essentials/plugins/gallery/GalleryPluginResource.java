@@ -46,7 +46,6 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
@@ -65,7 +64,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/galleryplugin")
-public class GalleryPluginResource extends BaseResource {
+public class GalleryPluginResource {
 
     private static final Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
     private static final Pattern NS_PATTERN = Pattern.compile(":");

@@ -44,7 +44,6 @@ import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
@@ -63,7 +62,7 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/restservices")
-public class RestPluginResource extends BaseResource {
+public class RestPluginResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestPluginResource.class);
 

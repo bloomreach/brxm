@@ -40,7 +40,6 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
@@ -58,7 +57,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/documents/")
-public class DocumentResource extends BaseResource {
+public class DocumentResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";

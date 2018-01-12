@@ -38,32 +38,32 @@ import javax.ws.rs.core.MediaType;
 import com.google.common.collect.Multimap;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.onehippo.cms7.essentials.plugin.InstallState;
+import org.onehippo.cms7.essentials.plugin.Plugin;
+import org.onehippo.cms7.essentials.plugin.PluginException;
+import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
-import org.onehippo.cms7.essentials.plugin.InstallState;
-import org.onehippo.cms7.essentials.plugin.Plugin;
-import org.onehippo.cms7.essentials.plugin.PluginException;
-import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,7 +74,7 @@ import io.swagger.annotations.ApiParam;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/plugins")
-public class PluginResource extends BaseResource {
+public class PluginResource {
 
     public static final String PLUGIN_ID = "pluginId";
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
@@ -84,6 +84,7 @@ public class PluginResource extends BaseResource {
     @Inject private SettingsService settingsService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
+    @Inject private AutowireCapableBeanFactory injector;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -320,7 +321,7 @@ public class PluginResource extends BaseResource {
         // execute skeleton
         final DefaultInstructionPackage commonPackage = new CommonsInstructionPackage();
         commonPackage.setProperties(properties);
-        getInjector().autowireBean(commonPackage);
+        injector.autowireBean(commonPackage);
         commonPackage.execute(context);
 
         // execute InstructionPackage itself

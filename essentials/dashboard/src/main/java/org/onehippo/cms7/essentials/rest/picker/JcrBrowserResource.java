@@ -32,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcrbrowser")
-public class JcrBrowserResource extends BaseResource {
+public class JcrBrowserResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrBrowserResource.class);
     private static final int DEFAULT_DEPTH = 3;
