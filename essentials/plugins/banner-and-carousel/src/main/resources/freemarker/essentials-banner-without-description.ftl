@@ -5,7 +5,7 @@
 <div>
   <a href="<@hst.link hippobean=document.link />">
     <figure style="position: relative">
-      <@hst.manageContent templateQuery="new-banner-document" componentParameter="document" document=document defaultPath="banners"/>
+      <@hst.manageContent templateQuery="new-banner-document" componentParameter="document" document=document rootPath="banners"/>
       <img src="<@hst.link hippobean=document.image />" alt="${document.title?html}"/>
     </figure>
   </a>
@@ -14,7 +14,7 @@
 <#elseif editMode>
 <div>
   <figure style="position: relative">
-    <@hst.manageContent templateQuery="new-banner-document" componentParameter="document" defaultPath="banners"/>
+    <@hst.manageContent templateQuery="new-banner-document" componentParameter="document" rootPath="banners"/>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
   </figure>
 </div>

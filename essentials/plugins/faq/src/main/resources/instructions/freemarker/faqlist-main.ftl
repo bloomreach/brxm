@@ -17,7 +17,7 @@
         </div>
       </#list>
       <div class="has-new-content-button">
-        <@hst.manageContent templateQuery="new-faq-item" defaultPath="faq"/> <!-- add faq item -->
+        <@hst.manageContent templateQuery="new-faq-item" rootPath="faq"/> <!-- add faq item -->
       </div>
     </div>
   <#else>
@@ -27,6 +27,6 @@
   <div class="has-edit-button">
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
     <!-- add faq list document -->
-    <@hst.manageContent templateQuery="new-faq-list" componentParameter="document" defaultPath="faq"/>
+    <@hst.manageContent templateQuery="new-faq-list" componentParameter="document" rootPath="faq"/>
   </div>
 </#if>
