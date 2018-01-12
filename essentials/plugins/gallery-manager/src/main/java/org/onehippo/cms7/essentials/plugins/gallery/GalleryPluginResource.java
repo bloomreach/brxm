@@ -45,11 +45,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
-import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -302,17 +297,16 @@ public class GalleryPluginResource extends BaseResource {
 
 
     private void scheduleImageScript(final PluginContext context) {
-        // schedule updater script so new variants are created:
-        final XmlInstruction instruction = new XmlInstruction();
-        instruction.setActionEnum(XmlInstruction.Action.COPY);
-        instruction.setSource("image_set_updater.xml");
-        instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
-        final InstructionExecutor executor = new PluginInstructionExecutor();
-        final InstructionSet instructionSet = new PluginInstructionSet();
-        instructionSet.addInstruction(instruction);
-        getInjector().autowireBean(instruction);
-        getInjector().autowireBean(executor);
-        executor.execute(instructionSet, context);
+        final Session session = jcrService.createSession();
+        try {
+            final Node updaterQueue = session.getNode("/hippo:configuration/hippo:update/hippo:queue");
+            jcrService.importResource(updaterQueue, "/image_set_updater.xml", context.getPlaceholderData());
+            session.save();
+        } catch (RepositoryException e) {
+            log.error("Failed to run image set updater.", e);
+        } finally {
+            jcrService.destroySession(session);
+        }
     }
 
 

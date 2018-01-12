@@ -28,11 +28,14 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Splitter;
@@ -40,19 +43,13 @@ import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
-import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
@@ -60,17 +57,22 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RestPluginResource.class);
+
     @Inject private RebuildService rebuildService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
     @Inject private ContentBeansService contentBeansService;
+    @Inject private ProjectService projectService;
 
     @GET
     @Path("/beans")
@@ -99,7 +101,7 @@ public class RestPluginResource extends BaseResource {
 
     @POST
     @Path("/")
-    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful) {
+    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
         final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();
@@ -114,39 +116,31 @@ public class RestPluginResource extends BaseResource {
 
         if (isManualApiEnabled) {
             if (Strings.isNullOrEmpty(manualRestName)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                 return feedback.addError("Manual REST resource URL must be specified.");
             }
 
-            final InstructionExecutor executor = new PluginInstructionExecutor();
             final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
             final Set<ValidBean> validBeans = annotateBeans(selectedBeans);
 
             for (ValidBean validBean : validBeans) {
-                final Map<String, Object> properties = new HashMap<>();
-                properties.put("beanPackage", validBean.getBeanPackage());
-                properties.put("beanName", validBean.getBeanName());
-                properties.put("beans", validBean.getFullQualifiedName());
-                properties.put("fullQualifiedName", validBean.getFullQualifiedName());
-                properties.put("fullQualifiedResourceName", validBean.getFullQualifiedResourceName());
-                context.addPlaceholderData(properties);
-
-                final InstructionSet mySet = new PluginInstructionSet();
-                mySet.addInstruction(createFileInstruction());
-                executor.execute(mySet, context);
+                context.addPlaceholderData("beanName", validBean.getBeanName());
+                context.addPlaceholderData("fullQualifiedName", validBean.getFullQualifiedName());
+                projectService.copyResource("/BeanNameResource.txt",
+                        "{{restFolder}}/{{beanName}}Resource.java", context, false, false);
             }
 
-            final InstructionPackage instructionPackage = new DefaultInstructionPackage() {
-                @Override
-                public String getInstructionPath() {
-                    return "/META-INF/manual_rest_instructions.xml";
-                }
-            };
-            getInjector().autowireBean(instructionPackage);
-            values.put(RestPluginConst.REST_NAME, manualRestName);
-            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.MANUAL_PIPELINE_NAME);
-            instructionPackage.setProperties(new HashMap<>(values));
-            instructionPackage.getProperties().put("beans", validBeans);
-            instructionPackage.execute(context);
+            context.addPlaceholderData("beans", validBeans);
+            if (!projectService.copyResource("/spring-plain-rest-api.xml",
+                    "{{siteOverrideFolder}}/spring-plain-rest-api.xml", context, true, false)) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return feedback.addError("Failed to set up Spring configuration for 'manual' REST endpoint. See back-end logs for mode details.");
+            }
+
+            if (!setupPlainRestMount(manualRestName, RestPluginConst.MANUAL_PIPELINE_NAME, feedback)) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return feedback;
+            }
 
             rebuildService.requestRebuild("restServices");
             feedback.addSuccess("Spring configuration changed, project rebuild needed.");
@@ -154,34 +148,37 @@ public class RestPluginResource extends BaseResource {
 
         if (isGenericApiEnabled) {
             if (Strings.isNullOrEmpty(genericRestName)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                 return feedback.addError("Generic REST resource URL must be specified.");
             }
 
-            final InstructionPackage instructionPackage = new DefaultInstructionPackage() {
-                @Override
-                public String getInstructionPath() {
-                    return "/META-INF/generic_rest_instructions.xml";
-                }
-            };
-            getInjector().autowireBean(instructionPackage);
-            values.put(RestPluginConst.REST_NAME, genericRestName);
-            values.put(RestPluginConst.PIPELINE_NAME, RestPluginConst.GENERIC_PIPELINE_NAME);
-            instructionPackage.setProperties(new HashMap<>(values));
-            instructionPackage.execute(context);
+            if (!setupPlainRestMount(genericRestName, RestPluginConst.GENERIC_PIPELINE_NAME, feedback)) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return feedback;
+            }
         }
 
         return feedback.addSuccess("REST configuration setup was successful.");
     }
 
-    private FileInstruction createFileInstruction() {
-        final FileInstruction instruction = new FileInstruction();
-        getInjector().autowireBean(instruction);
-        instruction.setAction("copy");
-        instruction.setOverwrite(false);
-        instruction.setBinary(false);
-        instruction.setSource("BeanNameResource.txt");
-        instruction.setTarget("{{restFolder}}/{{beanName}}Resource.java");
-        return instruction;
+    private boolean setupPlainRestMount(final String mountName, final String pipelineName, final UserFeedback feedback) {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(RestPluginConst.REST_NAME, mountName);
+        properties.put(RestPluginConst.PIPELINE_NAME, pipelineName);
+
+        final Session session = jcrService.createSession();
+        try {
+            final Node targetNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            jcrService.importResource(targetNode, "/plain_mount.xml", properties);
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error("Failed to import REST mount point '{}'.", mountName, e);
+            feedback.addError("Failed to set up REST endpoint '" + mountName + "'. See back-end logs for mode details.");
+            return false;
+        } finally {
+            jcrService.destroySession(session);
+        }
+        return true;
     }
 
     private Set<ValidBean> annotateBeans(final String input) {

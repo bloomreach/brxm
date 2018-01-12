@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 
 /**
@@ -138,4 +139,31 @@ public interface ProjectService {
      * Retrieve a list of the log4j2 files of the project.
      */
     List<File> getLog4j2Files();
+
+    /**
+     * Copy a resource to a file inside the project.
+     *
+     * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path
+     * for the destination file. It therefore typically starts with a placeholder such as {{siteResources}}.
+     *
+     * @param resourcePath   absolute classloader path to the resource to copy
+     * @param targetLocation of the copied file
+     * @param context        provides placeholder data
+     * @param canOverwrite   flag indicating that if the file already exists, it may or may not be overwritten
+     * @param isBinary       flag indicating that the resource has binary content and is therefore not subject to interpolation
+     * @return true if the file was copied successfully, false otherwise
+     */
+    boolean copyResource(String resourcePath, String targetLocation, PluginContext context, boolean canOverwrite, boolean isBinary);
+
+    /**
+     * Delete a file from the project sources.
+     *
+     * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path
+     * for the destination file. It therefore typically starts with a placeholder such as {{siteResources}}.
+     *
+     * @param targetLocation of the to-be-deleted file
+     * @param context        provides placeholder data
+     * @return true if the file doesn't exist after the invocation, false otherwise
+     */
+    boolean deleteFile(String targetLocation, PluginContext context);
 }

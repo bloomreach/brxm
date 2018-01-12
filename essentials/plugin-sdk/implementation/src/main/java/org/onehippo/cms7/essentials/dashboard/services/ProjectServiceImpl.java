@@ -17,7 +17,13 @@
 package org.onehippo.cms7.essentials.dashboard.services;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -26,11 +32,18 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,6 +55,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final static String MODULE_NAME_REPOSITORY_DATA = "repository-data";
     private final static String MODULE_NAME_SITE = "site";
     private final static String MODULE_NAME_WEB_FILES = "webfiles";
+    private final static Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
     @Inject private SettingsService settingsService;
 
@@ -184,5 +198,50 @@ public class ProjectServiceImpl implements ProjectService {
         final File[] log4j2Files = getConfDirPath().toFile().listFiles(log4j2Filter);
 
         return log4j2Files != null ? Arrays.asList(log4j2Files) : Collections.emptyList();
+    }
+
+    @Override
+    public boolean copyResource(final String resourcePath, final String targetLocation, final PluginContext context,
+                                final boolean canOverwrite, final boolean isBinary) {
+        final String destinationPath = TemplateUtils.replaceTemplateData(targetLocation, context.getPlaceholderData());
+        final File destination = new File(destinationPath);
+        if (!canOverwrite && destination.exists()) {
+            log.info("File already exists {}", destinationPath);
+            return false;
+        }
+
+        try {
+            InputStream stream = getClass().getResourceAsStream(resourcePath);
+            if (stream == null) {
+                log.error("Failed to access resource '{}'.", resourcePath);
+                return false;
+            }
+            // replace file placeholders if needed:
+            if (isBinary) {
+                FileUtils.copyInputStreamToFile(stream, destination);
+            } else {
+                final String content = GlobalUtils.readStreamAsText(stream);
+                final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
+                FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
+            }
+            log.info("Copied file from '{}' to '{}'.", resourcePath, destinationPath);
+        } catch (IOException e) {
+            log.error("Failed to copy file from '{}' to '{}'.", resourcePath, destinationPath, e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteFile(final String targetLocation, final PluginContext context) {
+        final String destinationFile = TemplateUtils.replaceTemplateData(targetLocation, context.getPlaceholderData());
+        final Path path = new File(destinationFile).toPath();
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.error("Failed to deleting file '{}'.", destinationFile, e);
+            return false;
+        }
+        return true;
     }
 }
