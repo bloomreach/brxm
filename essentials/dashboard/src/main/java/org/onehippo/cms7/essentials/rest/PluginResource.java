@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.model.ProjectSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;

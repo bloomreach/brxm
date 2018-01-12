@@ -28,7 +28,7 @@ import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
-import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;

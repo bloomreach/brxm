@@ -30,9 +30,6 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction.Status.FAILED;
-import static org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction.Status.SUCCESS;
-
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends BuiltinInstruction {
 
@@ -60,20 +57,20 @@ public class FileInstruction extends BuiltinInstruction {
             case COPY:
                 if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
                     log.error("Invalid file instruction '{}'.", toString());
-                    return FAILED;
+                    return Status.FAILED;
                 }
                 return projectService.copyResource("/" + source, target, context, overwrite, binary)
-                        ? SUCCESS : FAILED;
+                        ? Status.SUCCESS : Status.FAILED;
             case DELETE:
                 if (StringUtils.isBlank(target)) {
                     log.error("Invalid file instruction '{}'.", toString());
-                    return FAILED;
+                    return Status.FAILED;
                 }
-                return projectService.deleteFile(target, context) ? SUCCESS : FAILED;
+                return projectService.deleteFile(target, context) ? Status.SUCCESS : Status.FAILED;
         }
 
         log.error("Unsupported file instruction action '{}'.", action);
-        return FAILED;
+        return Status.FAILED;
     }
 
     @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin.sdk.instructions;
+package org.onehippo.cms7.essentials.plugin.sdk.install;
 
 import java.util.function.BiConsumer;
 

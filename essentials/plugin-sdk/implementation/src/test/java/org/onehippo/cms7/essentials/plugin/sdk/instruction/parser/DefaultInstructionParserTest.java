@@ -34,7 +34,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.XmlInstruction;
-import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;

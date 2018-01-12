@@ -26,7 +26,7 @@ import java.util.function.BiConsumer;
 import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
 import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 

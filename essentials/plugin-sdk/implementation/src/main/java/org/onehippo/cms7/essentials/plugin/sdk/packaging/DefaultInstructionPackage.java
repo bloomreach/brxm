@@ -33,7 +33,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstructionParser;
-import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
