@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015 - 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,17 @@ package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -50,6 +53,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
@@ -75,6 +79,9 @@ import org.slf4j.LoggerFactory;
 public abstract class GalleryUploadPanel extends Panel {
     private static final Logger log = LoggerFactory.getLogger(GalleryUploadPanel.class);
 
+    private static final String SVG_MIME_TYPE = "image/svg+xml";
+    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
+
     private static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
     private final IPluginContext context;
 
@@ -87,11 +94,13 @@ public abstract class GalleryUploadPanel extends Panel {
     private String galleryType;
     private GalleryProcessor galleryProcessor;
 
+    private final IPluginConfig pluginConfig;
+
     public GalleryUploadPanel(final String id, final IModel<Node> model,
                               final IPluginContext context, final IPluginConfig config,
                               GalleryProcessor galleryProcessor) {
         super(id, model);
-
+        this.pluginConfig = config;
         this.context = context;
         this.galleryProcessor = galleryProcessor;
 
@@ -193,6 +202,17 @@ public abstract class GalleryUploadPanel extends Panel {
             HippoNode node = null;
             String localName = null;
             try {
+
+                final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
+                if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
+                    final String svgContent = IOUtils.toString(istream, StandardCharsets.UTF_8);
+                    if (svgContent.contains("<script")) {
+                        istream.close();
+                        throw new SvgScriptGalleryException("Support of SVG images with embedded script is disabled.");
+                    }
+                    istream.reset();
+                }
+
                 //Get the selected folder from the folderReference Service
                 Node folderNode = (Node) getDefaultModelObject();
 
@@ -206,7 +226,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
                 }
-            } catch (WorkflowException | RepositoryException ex) {
+            } catch (WorkflowException | SvgScriptGalleryException | RepositoryException ex) {
                 log.error(ex.getMessage());
                 error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
             }
