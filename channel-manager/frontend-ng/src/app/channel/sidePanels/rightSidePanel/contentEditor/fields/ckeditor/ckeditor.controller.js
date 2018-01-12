@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,18 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService, SharedSpaceToolbarService, FieldService) {
+  constructor(
+    $scope,
+    $element,
+    $window,
+    CKEditorService,
+    CmsService,
+    ConfigService,
+    ContentEditor,
+    DomService,
+    SharedSpaceToolbarService,
+    FieldService,
+  ) {
     'ngInject';
 
     this.$scope = $scope;
@@ -24,6 +35,7 @@ class CKEditorController {
     this.CKEditorService = CKEditorService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.ContentEditor = ContentEditor;
     this.DomService = DomService;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
@@ -106,6 +118,7 @@ class CKEditorController {
       this.ngModel.$setViewValue(this.editor.getData());
     });
     this._validate();
+    this.ContentEditor.markDocumentDirty();
   }
 
   _validate() {

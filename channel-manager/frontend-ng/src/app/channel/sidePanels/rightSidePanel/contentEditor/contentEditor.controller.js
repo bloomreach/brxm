@@ -15,27 +15,35 @@
  */
 
 class ContentEditorCtrl {
-  constructor($mdDialog, $uiRouterGlobals) {
+  constructor(ContentEditor) {
     'ngInject';
 
-    this.$mdDialog = $mdDialog;
-    this.$uiRouterGlobals = $uiRouterGlobals;
+    this.ContentEditor = ContentEditor;
   }
 
-  $onInit() {
-    this.documentId = this.$uiRouterGlobals.params.documentId;
+  isEditing() {
+    return this.ContentEditor.isEditing();
   }
 
-/*
+  allFieldsShown() {
+    return this.isEditing() && this.ContentEditor.getDocumentType().allFieldsIncluded;
+  }
+
+  getFieldTypes() {
+    return this.ContentEditor.getDocumentType().fields;
+  }
+
+  getFieldValues() {
+    return this.ContentEditor.getDocument().fields;
+  }
+
+  getError() {
+    return this.ContentEditor.getError();
+  }
+
   uiCanExit() {
-    const confirmationDialog = this.$mdDialog.confirm()
-      .title(`Leave ${this.documentId} ?`)
-      .textContent('Really?')
-      .ok('Yes')
-      .cancel('No');
-    return this.$mdDialog.show(confirmationDialog);
+    return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE');
   }
-*/
 }
 
 export default ContentEditorCtrl;

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
                  ng-if="!$ctrl.isFullWidth">
   </resize-handle>
 
-  <md-toolbar class="edit-title-toolbar">
+  <md-toolbar class="right-side-panel-top-toolbar">
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate" title="{{ $ctrl.getTitle() }}">
         {{ $ctrl.getTitle() }}
@@ -73,7 +73,7 @@
     </md-progress-linear>
   </md-toolbar>
 
-  <ui-view name="main"></ui-view>
+  <ui-view name="main" flex layout="column"></ui-view>
 
 <!--
         <sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>

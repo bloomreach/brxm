@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import './contentEditor.scss';
 import controller from './contentEditor.controller';
 import template from './contentEditor.html';
 
 const contentEditorComponent = {
   controller,
   template,
+  bindings: {
+    switchEditor: '&',
+  },
 };
 
 export default contentEditorComponent;

@@ -13,6 +13,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
+<form flex layout="column"
+      name="$ctrl.form"
+      class="form-dense-layout">
+  <content-editor flex="grow" layout="column"
+    switch-editor="$ctrl.switchEditor()">
+  </content-editor>
+</form>
+
 <md-toolbar>
   <div class="md-toolbar-tools">
     <span flex></span>
@@ -24,7 +33,7 @@
 
     <md-button class="qa-save"
                ng-click="$ctrl.save()"
-               ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
+               ng-disabled="!$ctrl.isSaveAllowed()">
       {{ ::'SAVE' | translate }}
     </md-button>
   </div>

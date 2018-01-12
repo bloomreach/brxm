@@ -19,36 +19,36 @@ import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.htm
 
 const ERROR_MAP = {
   NO_CONTENT: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
     linkToContentEditor: true,
   },
   NOT_A_DOCUMENT: {
-    title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
+    titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
   NOT_FOUND: {
-    title: 'FEEDBACK_NOT_FOUND_TITLE',
+    titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
   },
   OTHER_HOLDER: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
     hasUser: true,
   },
   REQUEST_PENDING: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
   },
   UNAVAILABLE: { // default catch-all
-    title: 'FEEDBACK_DEFAULT_TITLE',
+    titleKey: 'FEEDBACK_DEFAULT_TITLE',
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
   UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
@@ -68,7 +68,12 @@ class ContentEditorService {
   }
 
   open(documentId) {
+    this.documentId = document;
     return this._loadDocument(documentId);
+  }
+
+  getDocumentId() {
+    return this.documentId;
   }
 
   getDocument() {
@@ -92,7 +97,7 @@ class ContentEditorService {
   }
 
   isEditing() {
-    return angular.isDefined(this.document);
+    return angular.isDefined(this.document) && angular.isDefined(this.documentType);
   }
 
   _loadDocument(id) {
@@ -131,7 +136,7 @@ class ContentEditorService {
 
   _setErrorDraftInvalid() {
     this.error = {
-      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
+      titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
       messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
       linkToContentEditor: true,
     };
@@ -179,13 +184,6 @@ class ContentEditorService {
 
   save() {
     return this._saveDraft()
-      .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType))
-    // TODO: do this in the contentEditor controller
-    // this._resetForm();
-
-    // TODO: do this in the editContent service
-    // this.HippoIframeService.reload();
-    // this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       .catch((response) => {
         let params = {};
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
@@ -200,7 +198,6 @@ class ContentEditorService {
 
         this.FeedbackService.showError(errorKey, params);
 
-        // TODO: is it necessary to return a rejected promise here?
         return this.$q.reject(); // tell the caller that saving has failed.
       });
   }
@@ -271,6 +268,7 @@ class ContentEditorService {
   }
 
   close() {
+    delete this.documentId;
     delete this.document;
     delete this.documentType;
     delete this.documentDirty;

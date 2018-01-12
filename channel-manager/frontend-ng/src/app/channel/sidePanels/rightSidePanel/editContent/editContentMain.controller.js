@@ -27,16 +27,35 @@ class EditContentMainCtrl {
     this.closeLabel = $translate.instant('CLOSE');
   }
 
-  closeButtonLabel() {
-    return this.ContentEditor.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  isEditing() {
+    return this.ContentEditor.isEditing();
+  }
+
+  isDocumentDirty() {
+    return this.ContentEditor.isDocumentDirty();
+  }
+
+  switchEditor() {
+    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
+    this.ContentEditor.close();
+    this.EditContentService.stopEditing();
+  }
+
+  isSaveAllowed() {
+    return this.isEditing() && this.isDocumentDirty() && this.form.$valid;
   }
 
   save() {
     this.ContentEditor.save()
       .then(() => {
+        this.form.$setPristine();
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       });
+  }
+
+  closeButtonLabel() {
+    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }
 
   close() {

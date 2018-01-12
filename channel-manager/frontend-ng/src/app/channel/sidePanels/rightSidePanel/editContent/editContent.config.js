@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import editContentMainTemplate from './editContentMain.html';
+import editContentToolsTemplate from './editContentTools.html';
+
 function config($stateProvider) {
   'ngInject';
 
@@ -21,8 +24,16 @@ function config($stateProvider) {
     name: 'hippo-cm.channel.edit-content',
     url: '/edit-content/{documentId}',
     views: {
-      tools: 'editContentTools',
-      main: 'editContentMain',
+      main: {
+        controller: 'editContentMainCtrl',
+        controllerAs: '$ctrl',
+        template: editContentMainTemplate,
+      },
+      tools: {
+        controller: 'editContentToolsCtrl',
+        controllerAs: '$ctrl',
+        template: editContentToolsTemplate,
+      },
     },
   });
 }

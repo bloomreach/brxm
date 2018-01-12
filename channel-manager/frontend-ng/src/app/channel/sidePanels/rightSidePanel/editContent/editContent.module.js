@@ -16,15 +16,14 @@
 
 import config from './editContent.config';
 import editContentService from './editContent.service';
-import editContentToolsComponent from './editContentTools.component';
-import editContentMainComponent from './editContentMain.component';
+import editContentMainCtrl from './editContentMain.controller';
+import editContentToolsCtrl from './editContentTools.controller';
 
 const editContentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editContentModule', [])
   .config(config)
   .service('EditContentService', editContentService)
-  .component('editContentTools', editContentToolsComponent)
-  .component('editContentMain', editContentMainComponent);
+  .controller('editContentMainCtrl', editContentMainCtrl)
+  .controller('editContentToolsCtrl', editContentToolsCtrl);
 
 export default editContentModule.name;
-

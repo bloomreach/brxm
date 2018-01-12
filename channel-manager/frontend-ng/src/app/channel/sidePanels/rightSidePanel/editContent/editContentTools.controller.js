@@ -39,25 +39,24 @@ class EditContentToolsCtrl {
   }
 
   uiCanExit() {
-    const documentId = this.ContentEditor.getDocument().id;
     if (this.mode === 'view') {
       return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
         .then(() => this.ContentEditor.deleteDraft())
-        .then(() => this._viewContent(documentId));
+        .then(() => this._viewContent());
     } else if (this.mode === 'edit') {
-      this._editContent(documentId);
+      this._editContent();
     }
     return true;
   }
 
-  _viewContent(documentId) {
-    this.CmsService.publish('open-content', documentId, 'view');
+  _viewContent() {
+    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
     this.ContentEditor.close();
     this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
   }
 
-  _editContent(documentId) {
-    this.CmsService.publish('open-content', documentId, 'edit');
+  _editContent() {
+    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
   }
