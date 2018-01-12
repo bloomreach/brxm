@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+const PICKER_CALLBACK_ID = 'document-location-callback-id';
+const MAX_DEPTH = 3;
+
 class DocumentLocationFieldController {
   constructor(
     $log,
     ChannelService,
+    CmsService,
     CreateContentService,
     FeedbackService,
   ) {
@@ -25,10 +29,10 @@ class DocumentLocationFieldController {
 
     this.$log = $log;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
 
-    this.MAX_DEPTH = 3;
     this.rootPathDepth = 0;
     this.documentLocationLabel = '';
     this.documentLocation = '';
@@ -73,6 +77,25 @@ class DocumentLocationFieldController {
       documentLocationPath += `/${this.defaultPath}`;
     }
 
+    this.pickerConfig = {
+      configuration: 'cms-pickers/folders',
+      rootPath: this.rootPath,
+      selectableNodeTypes: ['hippostd:folder'],
+    };
+
+    this.cmsService.subscribe('path-picked', (callbackId, path) => {
+      if (callbackId === DocumentLocationFieldComponent.PICKER_CALLBACK_ID) {
+        if (!path.startsWith('/')) {
+          path = `/${path}`;
+        }
+        if (!path.startsWith(this.rootPath)) {
+          this.feedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+        } else {
+          this.setDocumentLocation(path);
+        }
+      }
+    });
+
     this.setDocumentLocation(documentLocationPath);
   }
 
@@ -81,6 +104,14 @@ class DocumentLocationFieldController {
       folders => this.onLoadFolders(folders),
       error => this.onError(error, 'Unknown error loading folders'),
     );
+  }
+
+  openPicker() {
+    this.CmsService.publish(
+      'show-path-picker',
+      DocumentLocationFieldComponent.PICKER_CALLBACK_ID,
+      this.documentLocation,
+      this.pickerConfig);
   }
 
   /**
