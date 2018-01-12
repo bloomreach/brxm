@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -157,8 +157,10 @@ class UpdaterExecutionReport {
         return skippedFile;
     }
 
-    void skipped(String path) {
-        skippedStream.println(path);
+    void skipped(String path, boolean report) {
+        if (report) {
+            skippedStream.println(path);
+        }
         skippedCount++;
     }
 
