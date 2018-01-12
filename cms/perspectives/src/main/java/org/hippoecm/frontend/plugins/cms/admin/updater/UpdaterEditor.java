@@ -291,6 +291,27 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(queryField);
 
+        final RadioLabelledInputFieldTableRow customField = new RadioLabelledInputFieldTableRow("custom", radios,
+                new Model<>("Updater"), new Model<>("")) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public boolean isEnabled() {
+                return isCustomFieldEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isCustomFieldVisible();
+            }
+
+            @Override
+            protected boolean isRadioVisible() {
+                return UpdaterEditor.this.isRadioVisible();
+            }
+        };
+        customField.input.setVisible(false);
+        radios.add(customField);
+
         final LabelledTextAreaTableRow parametersField = new LabelledTextAreaTableRow("parameters", new Model<>("Parameters"), new PropertyModel<>(this, "parameters")) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -392,8 +413,10 @@ public class UpdaterEditor extends Panel {
         if (visitorQuery != null) {
             method = "query";
         }
-        if (visitorPath != null) {
+        else if (visitorPath != null) {
             method = "path";
+        } else {
+            method = "custom";
         }
         dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
@@ -476,7 +499,11 @@ public class UpdaterEditor extends Panel {
             if (!validateParameters()) {
                 return false;
             }
-            if (isPathMethod()) {
+            if (isCustomMethod()) {
+                node.setProperty(HippoNodeType.HIPPOSYS_PATH, (String) null);
+                node.setProperty(HippoNodeType.HIPPOSYS_QUERY, (String) null);
+            }
+            else if (isPathMethod()) {
                 if (!validateVisitorPath()) {
                     return false;
                 }
@@ -599,6 +626,10 @@ public class UpdaterEditor extends Panel {
             return false;
         }
         return true;
+    }
+
+    private boolean isCustomMethod() {
+        return method == null || method.equals("custom");
     }
 
     private boolean isPathMethod() {
@@ -765,6 +796,14 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isQueryFieldEnabled() {
+        return true;
+    }
+
+    protected boolean isCustomFieldEnabled() {
+        return true;
+    }
+
+    protected boolean isCustomFieldVisible() {
         return true;
     }
 
