@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 /**
  * Instructions built into Essentials (such that they can be used through a corresponding element in a plugin's
@@ -31,10 +30,10 @@ import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
  * #populateChangeMessages).
  */
 public abstract class BuiltinInstruction implements Instruction {
-    private final MessageGroup defaultGroup;
+    private final Type defaultGroup;
     private String message;
 
-    BuiltinInstruction(final MessageGroup defaultGroup) {
+    BuiltinInstruction(final Type defaultGroup) {
         this.defaultGroup = defaultGroup;
     }
 
@@ -48,12 +47,12 @@ public abstract class BuiltinInstruction implements Instruction {
     }
 
     @XmlTransient
-    MessageGroup getDefaultGroup() {
+    Type getDefaultGroup() {
         return defaultGroup;
     }
 
     @Override
-    public final void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    public final void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         String message = getMessage();
         if (message != null) {
             changeMessageQueue.accept(defaultGroup, message);
@@ -65,5 +64,5 @@ public abstract class BuiltinInstruction implements Instruction {
     /**
      * Implement this method to provide sensible default messages per subclass.
      */
-    abstract void populateDefaultChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue);
+    abstract void populateDefaultChangeMessages(BiConsumer<Type, String> changeMessageQueue);
 }

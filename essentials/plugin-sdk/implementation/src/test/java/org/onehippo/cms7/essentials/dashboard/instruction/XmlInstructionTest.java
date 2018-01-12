@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 
 import static org.junit.Assert.assertTrue;
 
@@ -49,14 +49,14 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         addNodeInstruction.setSource("instruction_xml_file.xml");
         final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(addNodeInstruction);
-        InstructionStatus status = executor.execute(set, getContext());
-        assertTrue("Expected SUCCESS but got: " + status, status == InstructionStatus.SUCCESS);
+        Instruction.Status status = executor.execute(set, getContext());
+        assertTrue("Expected SUCCESS but got: " + status, status == Instruction.Status.SUCCESS);
         //############################################
         // OVERRIDE FALSE TEST
         //############################################
         addNodeInstruction.setOverwrite(false);
         status = executor.execute(set, getContext());
-        assertTrue("Expected SKIPPED but got: " + status, status == InstructionStatus.SKIPPED);
+        assertTrue("Expected SKIPPED but got: " + status, status == Instruction.Status.SKIPPED);
         //############################################
         // OVERRIDE TRUE TEST: NOT SUPPORTED YET
         //############################################
@@ -74,8 +74,8 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         removeNodeInstruction.setTarget('/' + NODE_NAME);
         final PluginInstructionSet removeSet = new PluginInstructionSet();
         removeSet.addInstruction(removeNodeInstruction);
-        final InstructionStatus deleteStatus = executor.execute(removeSet, getContext());
-        assertTrue("Expected SUCCESS but got: " + deleteStatus, deleteStatus == InstructionStatus.SUCCESS);
+        final Instruction.Status deleteStatus = executor.execute(removeSet, getContext());
+        assertTrue("Expected SUCCESS but got: " + deleteStatus, deleteStatus == Instruction.Status.SUCCESS);
 
 
     }

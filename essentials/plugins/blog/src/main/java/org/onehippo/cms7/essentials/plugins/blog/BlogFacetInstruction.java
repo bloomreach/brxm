@@ -25,8 +25,6 @@ import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.slf4j.Logger;
@@ -51,12 +49,12 @@ public class BlogFacetInstruction implements Instruction {
     @Inject private SettingsService settingsService;
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         final String namespace = settingsService.getSettings().getProjectNamespace();
         final String targetNode = "/content/documents/" + namespace;
         final Session session = jcrService.createSession();
         if (session == null) {
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
 
         try {
@@ -79,16 +77,16 @@ public class BlogFacetInstruction implements Instruction {
             session.save();
         } catch (RepositoryException e) {
             log.error("Error creating blog facet", e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         } finally {
             jcrService.destroySession(session);
         }
 
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Create blog facet at: /content/documents/{{namespace}}/blogFacets");
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE, "Create blog facet at: /content/documents/{{namespace}}/blogFacets");
     }
 }

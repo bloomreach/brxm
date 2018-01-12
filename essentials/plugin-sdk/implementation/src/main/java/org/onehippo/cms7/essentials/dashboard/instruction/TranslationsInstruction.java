@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
@@ -44,7 +42,7 @@ public class TranslationsInstruction extends BuiltinInstruction {
     private String source;
 
     public TranslationsInstruction() {
-        super(MessageGroup.XML_NODE_CREATE);
+        super(Type.XML_NODE_CREATE);
     }
 
     @XmlAttribute
@@ -57,7 +55,7 @@ public class TranslationsInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         final Session session = jcrService.createSession();
         boolean success = false;
         try {
@@ -68,11 +66,11 @@ public class TranslationsInstruction extends BuiltinInstruction {
         } finally {
             jcrService.destroySession(session);
         }
-        return success ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+        return success ? Status.SUCCESS : Status.FAILED;
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(getDefaultGroup(), "Import repository translations from '" + source + "'.");
     }
 }

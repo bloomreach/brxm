@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModel;
 
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 @ApiModel
 @XmlRootElement(name = "message")
@@ -40,7 +40,7 @@ public class MessageRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private MessageGroup group;
+    private Instruction.Type group;
 
     public MessageRestful() {
     }
@@ -69,11 +69,11 @@ public class MessageRestful implements Restful {
         this.globalMessage = globalMessage;
     }
 
-    public MessageGroup getGroup() {
+    public Instruction.Type getGroup() {
         return group;
     }
 
-    public void setGroup(final MessageGroup group) {
+    public void setGroup(final Instruction.Type group) {
         this.group = group;
     }
 

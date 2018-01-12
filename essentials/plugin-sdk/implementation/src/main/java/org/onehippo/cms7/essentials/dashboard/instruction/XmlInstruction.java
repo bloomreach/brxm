@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -64,16 +62,16 @@ public class XmlInstruction extends BuiltinInstruction {
     private Action action;
 
     public XmlInstruction() {
-        super(MessageGroup.XML_NODE_CREATE);
+        super(Type.XML_NODE_CREATE);
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
             log.info("Invalid instruction descriptor: {}", toString());
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         if (action == Action.COPY) {
             return copy(context);
@@ -83,33 +81,33 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         if (action == Action.COPY) {
-            changeMessageQueue.accept(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
+            changeMessageQueue.accept(Type.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
         } else {
-            changeMessageQueue.accept(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
+            changeMessageQueue.accept(Type.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
         }
     }
 
-    private InstructionStatus copy(final PluginContext context) {
+    private Status copy(final PluginContext context) {
         final Session session = jcrService.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist {}", target);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
             final Node destination = session.getNode(target);
 
             if (stream == null) {
                 log.error("Source file not found {}", source);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
 
             // first check if node exists:
             if (!isOverwrite() && nodeExists(context, session, source, destination.getPath())) {
                 log.info("Skipping XML import, target node '{}' already exists.", target);
-                return InstructionStatus.SKIPPED;
+                return Status.SKIPPED;
             }
 
             // Import XML with replaced NAMESPACE placeholder
@@ -119,12 +117,12 @@ public class XmlInstruction extends BuiltinInstruction {
             log.info("Imported XML from '{}' to '{}'.", source, target);
         } catch (RepositoryException | IOException e) {
             log.error("Error on copy node", e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         } finally {
             IOUtils.closeQuietly(stream);
             jcrService.destroySession(session);
         }
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     private boolean nodeExists(final PluginContext context, final Session session, final String source, final String parentPath) throws RepositoryException {
@@ -148,23 +146,23 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
 
-    private InstructionStatus delete() {
+    private Status delete() {
         final Session session = jcrService.createSession();
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist: {}", target);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
             session.getNode(target).remove();
             session.save();
             log.info("Deleted node '{}'.", target);
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         } finally {
             jcrService.destroySession(session);
         }
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     private void processPlaceholders(final Map<String, Object> data) {

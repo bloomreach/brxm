@@ -33,7 +33,7 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.DefaultInstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -75,7 +75,7 @@ public class DefaultInstructionPackage {
         return EssentialConst.DEFAULT_GROUPS;
     }
 
-    public Multimap<MessageGroup, ? extends Restful> getInstructionsMessages(final PluginContext context) {
+    public Multimap<Instruction.Type, ? extends Restful> getInstructionsMessages(final PluginContext context) {
         final PluginInstructions myInstructions = getInstructions();
         if (myInstructions == null) {
             return ArrayListMultimap.create();
@@ -84,13 +84,13 @@ public class DefaultInstructionPackage {
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         final PluginInstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
-        final Multimap<MessageGroup, Restful> instructionsMessages = ArrayListMultimap.create();
+        final Multimap<Instruction.Type, Restful> instructionsMessages = ArrayListMultimap.create();
         for (PluginInstructionSet instructionSet : instructionSets) {
             final Set<String> groups = instructionSet.getGroups();
             for (String group : groups) {
                 // execute only or group(s)
                 if (myGroupNames.contains(group)) {
-                    final Multimap<MessageGroup, Restful> instr = executor.getInstructionsMessages(instructionSet, context);
+                    final Multimap<Instruction.Type, Restful> instr = executor.getInstructionsMessages(instructionSet, context);
                     instructionsMessages.putAll(instr);
 
                 } else {
@@ -142,7 +142,7 @@ public class DefaultInstructionPackage {
 
     }
 
-    public InstructionStatus execute(final PluginContext context) {
+    public Instruction.Status execute(final PluginContext context) {
         // NOTE: we'll add any additional context properties into context:
         context.addPlaceholderData(properties);
 
@@ -152,10 +152,10 @@ public class DefaultInstructionPackage {
         }
         if (instructions == null) {
             log.error("Failed to parse instructions at '{}'.", getInstructionPath());
-            return InstructionStatus.FAILED;
+            return Instruction.Status.FAILED;
         }
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
-        InstructionStatus status = InstructionStatus.SUCCESS;
+        Instruction.Status status = Instruction.Status.SUCCESS;
         final PluginInstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
         for (PluginInstructionSet instructionSet : instructionSets) {
@@ -164,7 +164,7 @@ public class DefaultInstructionPackage {
                 // execute only or group(s)
                 if (myGroupNames.contains(group)) {
                     // currently we return fail if any of instructions is failed
-                    if (status == InstructionStatus.FAILED) {
+                    if (status == Instruction.Status.FAILED) {
                         executor.execute(instructionSet, context);
                         continue;
                     }

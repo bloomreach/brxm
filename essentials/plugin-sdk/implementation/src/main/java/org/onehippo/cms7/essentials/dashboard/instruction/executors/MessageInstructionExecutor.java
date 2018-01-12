@@ -24,8 +24,8 @@ import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 
@@ -38,10 +38,10 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
  */
 public class MessageInstructionExecutor {
 
-    public Multimap<MessageGroup, Restful> execute(final PluginInstructionSet instructionSet, PluginContext context) {
-        final Multimap<MessageGroup, Restful> changeMessages = ArrayListMultimap.create();
+    public Multimap<Instruction.Type, Restful> execute(final PluginInstructionSet instructionSet, PluginContext context) {
+        final Multimap<Instruction.Type, Restful> changeMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
-        final BiConsumer<MessageGroup, String> changeMessageCollector
+        final BiConsumer<Instruction.Type, String> changeMessageCollector
                 = (g, m) -> changeMessages.put(g, new MessageRestful(TemplateUtils.replaceTemplateData(m, placeholderData)));
 
         instructionSet.getInstructions().forEach(i -> i.populateChangeMessages(changeMessageCollector));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -60,14 +58,14 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     @Inject JcrService jcrService;
 
     public NodeFolderInstruction() {
-        super(MessageGroup.XML_NODE_FOLDER_CREATE);
+        super(Type.XML_NODE_FOLDER_CREATE);
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(template)) {
             log.error("Invalid instruction:", this);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         final Map<String, Object> data = context.getPlaceholderData();
         final String myPath = TemplateUtils.replaceTemplateData(path, data);
@@ -78,21 +76,21 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(getDefaultGroup(), "Create repository folder '" + path + "'.");
     }
 
-    private InstructionStatus createFolders(final PluginContext context) {
+    private Status createFolders(final PluginContext context) {
         final Session session = jcrService.createSession();
         InputStream stream = null;
         try {
             if (session.itemExists(path)) {
-                return InstructionStatus.SKIPPED;
+                return Status.SKIPPED;
             }
             stream = getClass().getClassLoader().getResourceAsStream(template);
             if (stream == null) {
                 log.error("Template was not found: {}", template);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
             String content = GlobalUtils.readStreamAsText(stream);
             final Map<String, Object> data = context.getPlaceholderData();
@@ -112,14 +110,14 @@ public class NodeFolderInstruction extends BuiltinInstruction {
             }
             session.save();
             log.info("Created '{}' from '{}'.", path, template);
-            return InstructionStatus.SUCCESS;
+            return Status.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error creating folders" + this, e);
         } finally {
             IOUtils.closeQuietly(stream);
             jcrService.destroySession(session);
         }
-        return InstructionStatus.FAILED;
+        return Status.FAILED;
     }
 
     @XmlAttribute

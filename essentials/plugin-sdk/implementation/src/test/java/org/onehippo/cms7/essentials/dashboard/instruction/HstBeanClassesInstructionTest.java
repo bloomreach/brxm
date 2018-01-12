@@ -21,8 +21,7 @@ import java.util.function.BiConsumer;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 import org.onehippo.cms7.essentials.dashboard.services.WebXmlServiceImpl;
 
@@ -38,8 +37,8 @@ public class HstBeanClassesInstructionTest extends BaseTest {
     @Test
     public void default_change_message() {
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
-        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
-            assertTrue(g == MessageGroup.EXECUTE);
+        final BiConsumer<Instruction.Type, String> collector = (g, m) -> {
+            assertTrue(g == Instruction.Type.EXECUTE);
             assertEquals("Add mapping 'foo' for annotated HST beans to Site web.xml.", m);
             counter++;
         };
@@ -55,8 +54,8 @@ public class HstBeanClassesInstructionTest extends BaseTest {
     public void xml_based_change_message() {
         final String message = "anything";
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
-        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
-            assertTrue(g == MessageGroup.EXECUTE);
+        final BiConsumer<Instruction.Type, String> collector = (g, m) -> {
+            assertTrue(g == Instruction.Type.EXECUTE);
             assertEquals(message, m);
             counter++;
         };
@@ -82,10 +81,10 @@ public class HstBeanClassesInstructionTest extends BaseTest {
         instruction.webXmlService = webXmlService;
 
         result = true;
-        assertEquals(InstructionStatus.SUCCESS, instruction.execute(context));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
         assertEquals("foo", relayedPattern);
 
         result = false;
-        assertEquals(InstructionStatus.FAILED, instruction.execute(context));
+        assertEquals(Instruction.Status.FAILED, instruction.execute(context));
     }
 }

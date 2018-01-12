@@ -24,7 +24,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 
@@ -59,11 +59,11 @@ public class CndInstructionTest extends BaseRepositoryTest {
         settingsService.getModifiableSettings().setProjectNamespace(TEST_PREFIX);
         final PluginInstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(cndInstruction);
-        InstructionStatus status = executor.execute(instructionSet, getContext());
-        assertTrue("Expected success but got: " + status, status == InstructionStatus.SUCCESS);
+        Instruction.Status status = executor.execute(instructionSet, getContext());
+        assertTrue("Expected success but got: " + status, status == Instruction.Status.SUCCESS);
         // this should throw exists exception
         status = executor.execute(instructionSet, getContext());
-        assertTrue("Expected failed but got: " + status, status == InstructionStatus.FAILED);
+        assertTrue("Expected failed but got: " + status, status == Instruction.Status.FAILED);
         // test prefix:
         final String testingPrefix = "testingprefix";
         cndInstruction.setNamespacePrefix(testingPrefix);

@@ -26,7 +26,7 @@ import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.TestSettingsService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -68,7 +68,7 @@ public class FileInstructionTest extends BaseResourceTest {
         final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(FileInstruction.class).build()) {
-            assertEquals(InstructionStatus.FAILED, executor.execute(set, context));
+            assertEquals(Instruction.Status.FAILED, executor.execute(set, context));
             interceptor.messages().anyMatch(m -> m.contains("Invalid file instruction"));
         }
 
@@ -76,7 +76,7 @@ public class FileInstructionTest extends BaseResourceTest {
         copyInstruction.setSource(SOURCE);
         copyInstruction.setTarget(TARGET);
         copyInstruction.setOverwrite(true);
-        assertEquals(InstructionStatus.SUCCESS, executor.execute(set, context));
+        assertEquals(Instruction.Status.SUCCESS, executor.execute(set, context));
 
         final File file = new File(target);
         assertTrue(file.exists());
@@ -99,6 +99,6 @@ public class FileInstructionTest extends BaseResourceTest {
         deleteInstruction.setTarget(TARGET);
         final PluginInstructionSet deleteSet = new PluginInstructionSet();
         deleteSet.addInstruction(deleteInstruction);
-        assertEquals(InstructionStatus.SUCCESS, executor.execute(deleteSet, context));
+        assertEquals(Instruction.Status.SUCCESS, executor.execute(deleteSet, context));
     }
 }

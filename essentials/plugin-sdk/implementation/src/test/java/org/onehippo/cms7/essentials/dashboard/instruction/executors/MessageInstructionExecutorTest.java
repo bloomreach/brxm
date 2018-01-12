@@ -29,8 +29,8 @@ import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.DefaultInstructionParser;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -49,9 +49,9 @@ public class MessageInstructionExecutorTest extends BaseTest {
         final PluginInstructions instructions = parser.parseInstructions(content);
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
-        final Multimap<MessageGroup, Restful> messages = ArrayListMultimap.create();
+        final Multimap<Instruction.Type, Restful> messages = ArrayListMultimap.create();
         for (PluginInstructionSet instructionSet : instructionSets) {
-            final Multimap<MessageGroup, Restful> m = executor.execute(instructionSet, getContext());
+            final Multimap<Instruction.Type, Restful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }
         assertEquals(10, messages.size());

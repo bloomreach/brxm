@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.instructions;
 import java.util.function.BiConsumer;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 /**
  * Contract for implementing a plugin installation instruction.
@@ -34,22 +33,44 @@ import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 public interface Instruction {
 
     /**
+     * Enumeration of the instruction type. Used to group change messages of a plugin.
+     */
+    enum Type {
+        FILE_CREATE,
+        FILE_DELETE,
+        XML_NODE_CREATE,
+        XML_NODE_DELETE,
+        XML_NODE_FOLDER_DELETE,
+        XML_NODE_FOLDER_CREATE,
+        DOCUMENT_REGISTER,
+        EXECUTE,
+        UNKNOWN,
+    }
+
+    /**
+     * Result of executing an instruction. If the instruction determines that it is superfluous, it shall return SKIPPED.
+     */
+    enum Status {
+        SUCCESS, FAILED, SKIPPED
+    }
+
+    /**
      * Execute this instruction.
      *
      * @param context {@link PluginContext} providing access to the project sources and repository through Essentials'
      *                                     services
      * @return result of the instruction execution (success, failure, skipped)
      */
-    InstructionStatus execute(PluginContext context);
+    Status execute(PluginContext context);
 
     /**
      * Ask the instruction to declare its contribution to the "Changes made by this feature".
      *
-     * An instruction can push 0 or more messages. Each message pertains to a {@link MessageGroup},
+     * An instruction can push 0 or more messages. Each message pertains to a {@link Type},
      * and instruction-specific variables should be interpolated before pushing. Each change message will
      * be post-processed in order to interpolate project-specific variables.
      *
      * @param changeMessageQueue 'consumer' to push 0 or more [messageGroup, changeMessage] tuples onto.
      */
-    default void populateChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue) { }
+    default void populateChangeMessages(BiConsumer<Type, String> changeMessageQueue) { }
 }

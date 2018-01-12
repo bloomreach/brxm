@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialsFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,13 +61,13 @@ public class DirectoryInstructionTest extends BaseResourceTest {
 
         final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(createInstruction);
-        InstructionStatus status = executor.execute(set, getContext());
+        Instruction.Status status = executor.execute(set, getContext());
         // invalid instruction:
-        assertTrue(status == InstructionStatus.FAILED);
+        assertTrue(status == Instruction.Status.FAILED);
         createInstruction.setAction("create");
         createInstruction.setTarget(System.getProperty("java.io.tmpdir") + DIR);
         status = executor.execute(set, getContext());
-        assertTrue(status == InstructionStatus.SUCCESS);
+        assertTrue(status == Instruction.Status.SUCCESS);
 
     }
 
@@ -79,13 +79,13 @@ public class DirectoryInstructionTest extends BaseResourceTest {
         final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         final PluginContext context = getContext();
-        InstructionStatus status = executor.execute(set, context);
-        assertTrue(status == InstructionStatus.FAILED);
+        Instruction.Status status = executor.execute(set, context);
+        assertTrue(status == Instruction.Status.FAILED);
         copyInstruction.setSource("/");
         copyInstruction.setAction("copy");
         copyInstruction.setTarget(targetDir.getAbsolutePath());
         status = executor.execute(set, context);
-        assertTrue("Expected to fail: " + status, status == InstructionStatus.FAILED);
+        assertTrue("Expected to fail: " + status, status == Instruction.Status.FAILED);
 
     }
 

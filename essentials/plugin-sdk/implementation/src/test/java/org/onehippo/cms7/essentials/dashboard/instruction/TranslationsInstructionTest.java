@@ -20,10 +20,10 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 
 import static org.junit.Assert.assertEquals;
-import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus.SUCCESS;
+import static org.onehippo.cms7.essentials.dashboard.instructions.Instruction.Status.SUCCESS;
 
 public class TranslationsInstructionTest extends BaseRepositoryTest {
 
@@ -35,7 +35,7 @@ public class TranslationsInstructionTest extends BaseRepositoryTest {
         translationsInstruction.setSource("/instruction_translations_file.json");
         final PluginInstructionSet set = new PluginInstructionSet();
         set.addInstruction(translationsInstruction);
-        final InstructionStatus status = executor.execute(set, getContext());
+        final Instruction.Status status = executor.execute(set, getContext());
         assertEquals(SUCCESS, status);
     }
 

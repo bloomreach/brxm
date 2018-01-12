@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.springframework.stereotype.Component;
@@ -40,7 +38,7 @@ public class HstBeanClassesInstruction extends BuiltinInstruction {
     private String pattern;
 
     public HstBeanClassesInstruction() {
-        super(MessageGroup.EXECUTE);
+        super(Type.EXECUTE);
     }
 
     @XmlAttribute
@@ -53,13 +51,13 @@ public class HstBeanClassesInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         return webXmlService.addHstBeanClassPattern(pattern)
-                ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+                ? Status.SUCCESS : Status.FAILED;
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(getDefaultGroup(),
                 "Add mapping '" + pattern + "' for annotated HST beans to Site web.xml.");
     }

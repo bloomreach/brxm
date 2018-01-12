@@ -25,15 +25,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus.FAILED;
-import static org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus.SUCCESS;
+import static org.onehippo.cms7.essentials.dashboard.instructions.Instruction.Status.FAILED;
+import static org.onehippo.cms7.essentials.dashboard.instructions.Instruction.Status.SUCCESS;
 
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends BuiltinInstruction {
@@ -53,11 +51,11 @@ public class FileInstruction extends BuiltinInstruction {
     private Action action = Action.COPY;
 
     public FileInstruction() {
-        super(MessageGroup.FILE_CREATE);
+        super(Type.FILE_CREATE);
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         switch (action) {
             case COPY:
                 if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
@@ -79,11 +77,11 @@ public class FileInstruction extends BuiltinInstruction {
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         if (action == Action.COPY) {
-            changeMessageQueue.accept(MessageGroup.FILE_CREATE, "Create project file '" + target + "'.");
+            changeMessageQueue.accept(Type.FILE_CREATE, "Create project file '" + target + "'.");
         } else {
-            changeMessageQueue.accept(MessageGroup.FILE_DELETE, "Delete project file '" + target + "'.");
+            changeMessageQueue.accept(Type.FILE_DELETE, "Delete project file '" + target + "'.");
         }
     }
 

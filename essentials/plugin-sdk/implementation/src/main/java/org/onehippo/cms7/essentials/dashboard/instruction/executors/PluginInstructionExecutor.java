@@ -23,9 +23,7 @@ import com.google.common.collect.Multimap;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,8 +32,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PluginInstructionExecutor {
 
-    public InstructionStatus execute(final PluginInstructionSet set, PluginContext context) {
-        InstructionStatus status = InstructionStatus.SUCCESS;
+    public Instruction.Status execute(final PluginInstructionSet set, PluginContext context) {
+        Instruction.Status status = Instruction.Status.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {
             status = instruction.execute(context);
@@ -44,7 +42,7 @@ public class PluginInstructionExecutor {
     }
 
     @SuppressWarnings("unchecked")
-    public Multimap<MessageGroup,Restful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
+    public Multimap<Instruction.Type,Restful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
         return executor.execute(instruction, context);
     }

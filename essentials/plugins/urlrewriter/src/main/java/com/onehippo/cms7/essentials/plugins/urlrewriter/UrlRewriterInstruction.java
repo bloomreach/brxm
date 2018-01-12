@@ -27,9 +27,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 
 /**
@@ -56,18 +54,18 @@ public class UrlRewriterInstruction implements Instruction {
     @Inject private WebXmlService webXmlService;
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         if (webXmlService.addFilter(MODULE, FILTER_NAME, FILTER_CLASS, initParams)
                 && webXmlService.addFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS)
                 && webXmlService.addDispatchersToFilterMapping(MODULE, FILTER_NAME, DISPATCHERS)
                 && webXmlService.addDispatchersToFilterMapping(MODULE, "HstFilter", DISPATCHERS)) {
-            return InstructionStatus.SUCCESS;
+            return Status.SUCCESS;
         }
-        return InstructionStatus.FAILED;
+        return Status.FAILED;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Install URL Rewriter filter into Site web.xml.");
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE, "Install URL Rewriter filter into Site web.xml.");
     }
 }

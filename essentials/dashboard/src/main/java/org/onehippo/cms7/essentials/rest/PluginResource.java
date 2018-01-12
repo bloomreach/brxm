@@ -40,12 +40,12 @@ import com.google.common.collect.Multimap;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -155,9 +155,9 @@ public class PluginResource extends BaseResource {
         context.addPlaceholderData(properties);
 
         @SuppressWarnings("unchecked")
-        final Multimap<MessageGroup, MessageRestful> messages = (Multimap<MessageGroup, MessageRestful>) instructionPackage.getInstructionsMessages(context);
-        final Collection<Map.Entry<MessageGroup, MessageRestful>> entries = messages.entries();
-        for (Map.Entry<MessageGroup, MessageRestful> entry : entries) {
+        final Multimap<Instruction.Type, MessageRestful> messages = (Multimap<Instruction.Type, MessageRestful>) instructionPackage.getInstructionsMessages(context);
+        final Collection<Map.Entry<Instruction.Type, MessageRestful>> entries = messages.entries();
+        for (Map.Entry<Instruction.Type, MessageRestful> entry : entries) {
             final MessageRestful value = entry.getValue();
             value.setGroup(entry.getKey());
             value.setGlobalMessage(false);

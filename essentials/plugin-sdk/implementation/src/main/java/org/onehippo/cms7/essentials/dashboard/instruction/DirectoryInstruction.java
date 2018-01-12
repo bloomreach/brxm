@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialsFileUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -89,18 +87,18 @@ public class DirectoryInstruction extends BuiltinInstruction {
             .build();
 
     public DirectoryInstruction() {
-        super(MessageGroup.FILE_CREATE);
+        super(Type.FILE_CREATE);
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         if (action == null) {
             log.warn("DirectoryInstruction: action was empty");
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         if (Strings.isNullOrEmpty(target)) {
             log.warn("DirectoryInstruction: target was empty");
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         processPlaceholders(context.getPlaceholderData());
         switch (action) {
@@ -109,11 +107,11 @@ public class DirectoryInstruction extends BuiltinInstruction {
             case COPY:
                 return copy(context.getPlaceholderData());
         }
-        return InstructionStatus.FAILED;
+        return Status.FAILED;
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         final String message = action == DirectoryInstruction.Action.COPY
                 ? "Copy directory '" + source + "' to project directory '" + target + "'."
                 : "Create directory '" + target + "'.";
@@ -121,28 +119,28 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
 
-    private InstructionStatus copy(final Map<String, Object> placeholderData) {
+    private Status copy(final Map<String, Object> placeholderData) {
         if (Strings.isNullOrEmpty(source)) {
             log.warn("Source was not defined");
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         if (Strings.isNullOrEmpty(target)) {
             log.warn("target was not defined");
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
 
         return copyResources(source, new File(target), placeholderData);
     }
 
-    private InstructionStatus create() {
+    private Status create() {
         log.debug("Creating directory: {}", target);
         try {
             EssentialsFileUtils.createParentDirectories(new File(target));
         } catch (IOException e) {
             log.error("Error creating directory: " + target, e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     private void processPlaceholders(final Map<String, Object> data) {
@@ -193,7 +191,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
     //
     //############################################
 
-    private InstructionStatus copyResources(final String source, final File targetDirectory, final Map<String, Object> placeholderData) {
+    private Status copyResources(final String source, final File targetDirectory, final Map<String, Object> placeholderData) {
 
         if (!targetDirectory.exists()) {
             log.warn("Directory {} doesn't exist, creating new one", targetDirectory);
@@ -201,7 +199,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
                 EssentialsFileUtils.createParentDirectories(targetDirectory);
             } catch (IOException e) {
                 log.error("Error creating directory", e);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
 
         }
@@ -210,7 +208,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
             final JarURLConnection connection = createConnection(source);
             if (connection == null) {
                 log.warn("Couldn't process jar source: {}", source);
-                return InstructionStatus.FAILED;
+                return Status.FAILED;
             }
             final String name = connection.getEntryName();
             log.debug("Processing zip file for connection: {}", name);
@@ -253,10 +251,10 @@ public class DirectoryInstruction extends BuiltinInstruction {
             }
         } catch (IOException e) {
             log.error("Error extracting files", e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
 
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     private JarURLConnection createConnection(final String source) throws IOException {

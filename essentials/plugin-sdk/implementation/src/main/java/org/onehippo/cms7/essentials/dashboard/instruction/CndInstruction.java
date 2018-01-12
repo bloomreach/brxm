@@ -32,8 +32,6 @@ import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
@@ -62,11 +60,11 @@ public class CndInstruction extends BuiltinInstruction {
     @Inject private SettingsService settingsService;
 
     public CndInstruction() {
-        super(MessageGroup.DOCUMENT_REGISTER);
+        super(Type.DOCUMENT_REGISTER);
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(namespacePrefix)) {
             namespace = settingsService.getSettings().getProjectNamespace();
         } else {
@@ -90,18 +88,18 @@ public class CndInstruction extends BuiltinInstruction {
             log.info("Successfully registered document type '{}:{}'.", namespace, documentType);
         } catch (NodeTypeExistsException e) {
             log.info("Node type '{}:{}' already exists.", namespace, documentType);
-            return InstructionStatus.SKIPPED;
+            return Status.SKIPPED;
         } catch (RepositoryException e) {
             log.error("Error registering document type '{}:{}': ", namespace, documentType, e);
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         } finally {
             jcrService.destroySession(session);
         }
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(getDefaultGroup(), "Register document type '" + documentType + "'.");
     }
 

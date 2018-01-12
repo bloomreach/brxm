@@ -23,10 +23,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.springframework.stereotype.Component;
@@ -44,17 +42,17 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
     @Inject MavenDependencyService dependencyService;
 
     public MavenDependencyInstruction() {
-        super(MessageGroup.EXECUTE);
+        super(Type.EXECUTE);
     }
 
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         final TargetPom module = TargetPom.pomForName(targetPom);
         return module != TargetPom.INVALID && dependencyService.addDependency(module, dependency)
-                ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+                ? Status.SUCCESS : Status.FAILED;
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         final String message = String.format("Add Maven dependency %s:%s to module '%s'.",
                 dependency.getGroupId(), dependency.getArtifactId(), targetPom);
         changeMessageQueue.accept(getDefaultGroup(), message);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,15 @@ import java.util.function.BiConsumer;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 public class DummyInstruction implements Instruction {
     @Override
-    public InstructionStatus execute(final PluginContext context) {
-        return InstructionStatus.SUCCESS;
+    public Status execute(final PluginContext context) {
+        return Status.SUCCESS;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
 
     }
 }

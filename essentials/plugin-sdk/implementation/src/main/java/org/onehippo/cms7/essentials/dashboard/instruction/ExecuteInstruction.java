@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import com.google.common.base.Strings;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -48,7 +46,7 @@ public class ExecuteInstruction extends BuiltinInstruction {
     private String clazz;
 
     public ExecuteInstruction() {
-        super(MessageGroup.EXECUTE);
+        super(Type.EXECUTE);
     }
 
     @XmlAttribute(name = "class")
@@ -61,10 +59,10 @@ public class ExecuteInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final PluginContext context) {
         if (Strings.isNullOrEmpty(clazz)) {
             log.warn("Cannot execute instruction, class name was not defined");
-            return InstructionStatus.FAILED;
+            return Status.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
         injector.autowireBean(instruction);
@@ -73,7 +71,7 @@ public class ExecuteInstruction extends BuiltinInstruction {
     }
 
     @Override
-    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+    void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         final Instruction instruction = GlobalUtils.newInstance(clazz);
         injector.autowireBean(instruction);
 

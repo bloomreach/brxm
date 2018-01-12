@@ -24,9 +24,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 
 public class LuceneIndexExporterInstruction implements Instruction {
@@ -38,15 +36,15 @@ public class LuceneIndexExporterInstruction implements Instruction {
     private WebXmlService webXmlService;
 
     @Override
-    public InstructionStatus execute(PluginContext context) {
+    public Status execute(PluginContext context) {
         return webXmlService.addServlet(TargetPom.CMS, SERVLET_NAME, SERVLET_FQCN, 6)
                 && webXmlService.addServletMapping(TargetPom.CMS, SERVLET_NAME, URL_PATTERNS)
-                ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+                ? Status.SUCCESS : Status.FAILED;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE,
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE,
                 "Ensure availability of '" + SERVLET_NAME + "' through cms web.xml");
     }
 }

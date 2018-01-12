@@ -21,8 +21,7 @@ import java.util.function.BiConsumer;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,8 +31,8 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
 
     @Test
     public void default_change_message() {
-        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
-            assertTrue(MessageGroup.EXECUTE == g);
+        final BiConsumer<Instruction.Type, String> collector = (g, m) -> {
+            assertTrue(Instruction.Type.EXECUTE == g);
             assertEquals("Add Maven dependency group:artifact to module 'cms'.", m);
             counter++;
         };
@@ -50,8 +49,8 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
     @Test
     public void xml_based_change_message() {
         final String message = "anything";
-        final BiConsumer<MessageGroup, String> collector = (g, m) -> {
-            assertTrue(MessageGroup.EXECUTE == g);
+        final BiConsumer<Instruction.Type, String> collector = (g, m) -> {
+            assertTrue(Instruction.Type.EXECUTE == g);
             assertEquals(message, m);
             counter++;
         };
@@ -87,7 +86,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
         assertEquals(scope, instruction.getScope());
 
         // no target pom specified
-        assertEquals(InstructionStatus.FAILED, instruction.execute(null));
+        assertEquals(Instruction.Status.FAILED, instruction.execute(null));
         assertEquals(0, nrOfOccurrences(pom, groupId));
         assertEquals(0, nrOfOccurrences(pom, artifactId));
         assertEquals(0, nrOfOccurrences(pom, version));
@@ -98,7 +97,7 @@ public class MavenDependencyInstructionTest extends ResourceModifyingTest {
 
         assertEquals("cms", instruction.getTargetPom());
 
-        assertEquals(InstructionStatus.SUCCESS, instruction.execute(null));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(null));
         assertEquals(1, nrOfOccurrences(pom, groupId));
         assertEquals(1, nrOfOccurrences(pom, artifactId));
         assertEquals(1, nrOfOccurrences(pom, version));
