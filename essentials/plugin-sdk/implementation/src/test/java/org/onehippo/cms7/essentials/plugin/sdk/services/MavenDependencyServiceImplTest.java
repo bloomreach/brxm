@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 

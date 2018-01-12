@@ -26,7 +26,7 @@ import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;

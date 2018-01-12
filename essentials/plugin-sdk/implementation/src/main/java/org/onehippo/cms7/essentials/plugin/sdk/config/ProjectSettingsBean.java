@@ -21,8 +21,8 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.ProjectSettings;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 
 import com.google.common.base.Strings;
 

@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.service;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 
 /**
  * Service for checking if a Maven dependency (in the dependencies section) is present, and for adding them otherwise.

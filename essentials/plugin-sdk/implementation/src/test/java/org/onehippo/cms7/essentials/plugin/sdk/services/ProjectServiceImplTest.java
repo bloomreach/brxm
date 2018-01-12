@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;

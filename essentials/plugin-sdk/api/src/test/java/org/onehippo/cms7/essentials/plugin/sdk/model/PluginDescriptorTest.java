@@ -23,6 +23,7 @@ import java.util.Collections;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 
 import static org.junit.Assert.assertEquals;
 

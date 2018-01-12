@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
 
 /**
  * ProjectService provides access to the project, and in particular to the file resources of a project.

@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.service;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.ProjectSettings;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
 
 /**
  * SettingsService provides Essentials with the current project settings.
