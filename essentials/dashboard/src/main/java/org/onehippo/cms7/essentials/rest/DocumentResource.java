@@ -38,13 +38,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms7.essentials.dashboard.model.ContentType;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
+import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials;
 
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.service.SettingsService;
+import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

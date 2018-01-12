@@ -30,13 +30,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

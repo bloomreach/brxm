@@ -34,9 +34,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugins.relateddocuments.model.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

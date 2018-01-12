@@ -48,9 +48,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.repository.util.JcrConstants;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

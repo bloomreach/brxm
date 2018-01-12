@@ -20,7 +20,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 
 /**
  * @version "$Id$"

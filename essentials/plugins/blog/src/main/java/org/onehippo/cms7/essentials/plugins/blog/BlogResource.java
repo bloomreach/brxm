@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugins.blog.model.BlogDaemonModuleConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

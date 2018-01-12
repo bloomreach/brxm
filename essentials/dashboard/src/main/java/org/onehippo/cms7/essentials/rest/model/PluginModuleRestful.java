@@ -19,8 +19,8 @@ package org.onehippo.cms7.essentials.rest.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 import io.swagger.annotations.ApiModel;
 

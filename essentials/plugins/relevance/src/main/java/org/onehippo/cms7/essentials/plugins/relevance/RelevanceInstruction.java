@@ -22,12 +22,12 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
-import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
+import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
+import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ContextXmlService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.LoggingService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.MavenCargoService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 
 /**
  * Add JDBC resource to context.xml.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.onehippo.cms7.essentials;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

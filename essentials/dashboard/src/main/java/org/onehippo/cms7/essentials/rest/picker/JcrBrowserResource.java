@@ -32,8 +32,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.BaseResource;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

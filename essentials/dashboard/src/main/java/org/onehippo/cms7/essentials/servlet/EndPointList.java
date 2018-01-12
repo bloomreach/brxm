@@ -32,8 +32,8 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

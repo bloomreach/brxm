@@ -52,12 +52,12 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.service.RebuildService;
+import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

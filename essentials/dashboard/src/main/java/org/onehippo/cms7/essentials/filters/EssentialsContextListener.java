@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

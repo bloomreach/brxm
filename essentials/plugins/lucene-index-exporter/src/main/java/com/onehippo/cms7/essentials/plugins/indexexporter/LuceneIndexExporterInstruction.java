@@ -22,10 +22,10 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
+import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
+import org.onehippo.cms7.essentials.plugin.sdk.instructions.Instruction;
+import org.onehippo.cms7.essentials.plugin.sdk.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 
 public class LuceneIndexExporterInstruction implements Instruction {
     private static final String SERVLET_NAME = "RepositoryJaxrsServlet";

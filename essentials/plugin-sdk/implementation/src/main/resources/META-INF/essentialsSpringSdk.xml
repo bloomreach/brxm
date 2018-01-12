@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,6 +20,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- APPLICATION CONFIG -->
-  <bean id="applicationModule" class="org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule"/>
+  <bean id="applicationModule" class="org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule"/>
 
 </beans>

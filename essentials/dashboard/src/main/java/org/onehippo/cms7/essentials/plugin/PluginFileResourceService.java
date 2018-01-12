@@ -18,11 +18,9 @@ package org.onehippo.cms7.essentials.plugin;
 
 import java.io.InputStream;
 
-import com.google.common.base.Strings;
-
-import org.onehippo.cms7.essentials.dashboard.config.PluginFileService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
+import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

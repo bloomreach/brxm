@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.onehippo.cms7.essentials.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 
 /**
  * @version "$Id$"
