@@ -55,14 +55,14 @@ const ERROR_MAP = {
 };
 
 class ContentEditorService {
-  constructor($q, $timeout, $translate, CmsService, ContentService, FeedbackService, FieldService) {
+  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService) {
     'ngInject';
 
     this.$q = $q;
-    this.$timeout = $timeout;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
+    this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
   }
