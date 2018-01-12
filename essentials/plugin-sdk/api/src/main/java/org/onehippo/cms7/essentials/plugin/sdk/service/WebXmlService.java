@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.service;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 /**
  * Exposes services for manipulating web.xml files.
@@ -50,7 +50,7 @@ public interface WebXmlService {
      * @param initParams  name-value map of init-param's
      * @return            true if the filter exists upon returning, false otherwise.
      */
-    boolean addFilter(TargetPom module, String filterName, String filterClass, Map<String, String> initParams);
+    boolean addFilter(Module module, String filterName, String filterClass, Map<String, String> initParams);
 
     /**
      * Add a filter mapping to the web.xml file of the specified module.
@@ -62,7 +62,7 @@ public interface WebXmlService {
      * @param urlPatterns list of URL patterns to map to the filter
      * @return            true if the mapping was added successfully, false otherwise.
      */
-    boolean addFilterMapping(TargetPom module, String filterName, List<String> urlPatterns);
+    boolean addFilterMapping(Module module, String filterName, List<String> urlPatterns);
 
     /**
      * Add dispatchers to a filter mapping of the web.xml file of the specified module.
@@ -72,7 +72,7 @@ public interface WebXmlService {
      * @param dispatchers list of dispatchers to be added
      * @return            true if the dispatchers were added successfully, false otherwise.
      */
-    boolean addDispatchersToFilterMapping(TargetPom module, String filterName,  List<Dispatcher> dispatchers);
+    boolean addDispatchersToFilterMapping(Module module, String filterName, List<Dispatcher> dispatchers);
 
     /**
      * Ensure that named servlet exists in the web.xml file of the specified module.
@@ -83,7 +83,7 @@ public interface WebXmlService {
      * @param loadOnStartup optional integer number to control initialization of servlets within web application
      * @return              true if the servlet exists upon returning, false otherwise.
      */
-    boolean addServlet(TargetPom module, String servletName, String servletClass, Integer loadOnStartup);
+    boolean addServlet(Module module, String servletName, String servletClass, Integer loadOnStartup);
 
     /**
      * Ensure that a servlet-mapping for the named servlet exists with <b>at least</b> the specified URL patterns,
@@ -94,5 +94,5 @@ public interface WebXmlService {
      * @param urlPatterns list of URL patterns to put in place
      * @return            true if the servlet mapping exists with all specified URL patters, upon returning. False otherwise
      */
-    boolean addServletMapping(TargetPom module, String servletName, List<String> urlPatterns);
+    boolean addServletMapping(Module module, String servletName, List<String> urlPatterns);
 }

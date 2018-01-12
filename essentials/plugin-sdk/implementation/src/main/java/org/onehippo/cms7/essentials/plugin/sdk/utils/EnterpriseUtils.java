@@ -22,7 +22,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
@@ -63,7 +63,7 @@ public final class EnterpriseUtils {
     public static boolean upgradeToEnterpriseProject(final ProjectService projectService,
                                                      final MavenDependencyService dependencyService,
                                                      final MavenRepositoryService repositoryService) {
-        final File pom = projectService.getPomPathForModule(TargetPom.PROJECT).toFile();
+        final File pom = projectService.getPomPathForModule(Module.PROJECT).toFile();
         final Model pomModel = MavenModelUtils.readPom(pom);
         if (pomModel == null) {
             return false;
@@ -83,8 +83,8 @@ public final class EnterpriseUtils {
             }
         }
 
-        return repositoryService.addRepository(TargetPom.PROJECT, ENTERPRISE_REPOSITORY)
-                && dependencyService.addDependency(TargetPom.CMS, EDITION_INDICATOR)
-                && dependencyService.addDependency(TargetPom.CMS, APP_DEPENDENCIES_PACKAGE);
+        return repositoryService.addRepository(Module.PROJECT, ENTERPRISE_REPOSITORY)
+                && dependencyService.addDependency(Module.CMS, EDITION_INDICATOR)
+                && dependencyService.addDependency(Module.CMS, APP_DEPENDENCIES_PACKAGE);
     }
 }

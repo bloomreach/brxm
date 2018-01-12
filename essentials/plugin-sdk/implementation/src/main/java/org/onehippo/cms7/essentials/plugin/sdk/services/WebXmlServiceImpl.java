@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.Dom4JUtils;
@@ -49,7 +49,7 @@ public class WebXmlServiceImpl implements WebXmlService {
 
     @Override
     public boolean addHstBeanClassPattern(final String pattern) {
-        return update(TargetPom.SITE, doc -> {
+        return update(Module.SITE, doc -> {
             Element contextParameter = contextParameterFor(HST_BEANS_ANNOTATED_CLASSES, doc);
             if (contextParameter != null) {
                 final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");
@@ -100,7 +100,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addFilter(final TargetPom module, final String filterName,
+    public boolean addFilter(final Module module, final String filterName,
                              final String filterClass, final Map<String, String> initParams) {
         return update(module, doc -> {
             Element filter = filterFor(filterName, doc);
@@ -130,7 +130,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addFilterMapping(final TargetPom module, final String filterName, final List<String> urlPatterns) {
+    public boolean addFilterMapping(final Module module, final String filterName, final List<String> urlPatterns) {
         return update(module, doc -> {
             final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
             final Element filterMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "filter-mapping", null);
@@ -142,7 +142,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addDispatchersToFilterMapping(final TargetPom module, final String filterName,
+    public boolean addDispatchersToFilterMapping(final Module module, final String filterName,
                                                  final List<Dispatcher> dispatchers) {
         return update(module, doc -> {
             Element filterMapping = filterMappingFor(filterName, doc);
@@ -170,7 +170,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addServlet(final TargetPom module, final String servletName, final String servletClass,
+    public boolean addServlet(final Module module, final String servletName, final String servletClass,
                               final Integer loadOnStartup) {
         return update(module, doc -> {
             Element servlet = servletFor(servletName, doc);
@@ -199,7 +199,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     @Override
-    public boolean addServletMapping(final TargetPom module, final String servletName, final List<String> urlPatterns) {
+    public boolean addServletMapping(final Module module, final String servletName, final List<String> urlPatterns) {
         return update(module, doc -> {
             Element servletMapping = servletMappingFor(servletName, doc);
             if (servletMapping == null) {
@@ -239,7 +239,7 @@ public class WebXmlServiceImpl implements WebXmlService {
         return element != null ? element.getParent() : null;
     }
 
-    private boolean update(final TargetPom module, final Dom4JUtils.Modifier modifier) {
+    private boolean update(final Module module, final Dom4JUtils.Modifier modifier) {
         final File webXml = projectService.getWebInfPathForModule(module).resolve("web.xml").toFile();
 
         return Dom4JUtils.update(webXml, modifier);

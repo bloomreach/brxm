@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 import com.google.common.base.Strings;
 
@@ -65,7 +65,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getSiteModule() {
         if (Strings.isNullOrEmpty(siteModule)) {
-            return TargetPom.SITE.getName();
+            return Module.SITE.getName();
         }
         return siteModule;
     }
@@ -77,7 +77,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getCmsModule() {
         if (Strings.isNullOrEmpty(cmsModule)) {
-            return TargetPom.CMS.getName();
+            return Module.CMS.getName();
         }
         return cmsModule;
     }
@@ -89,7 +89,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getRepositoryDataModule() {
         if (Strings.isNullOrEmpty(repositoryDataModule)) {
-            return TargetPom.REPOSITORY_DATA.getName();
+            return Module.REPOSITORY_DATA.getName();
         }
         return repositoryDataModule;
     }
@@ -101,7 +101,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getApplicationSubModule() {
         if (Strings.isNullOrEmpty(applicationSubModule)) {
-            return TargetPom.REPOSITORY_DATA_APPLICATION.getName();
+            return Module.REPOSITORY_DATA_APPLICATION.getName();
         }
         return applicationSubModule;
     }
@@ -113,7 +113,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getDevelopmentSubModule() {
         if (Strings.isNullOrEmpty(developmentSubModule)) {
-            return TargetPom.REPOSITORY_DATA_DEVELOPMENT.getName();
+            return Module.REPOSITORY_DATA_DEVELOPMENT.getName();
         }
         return developmentSubModule;
     }
@@ -125,7 +125,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getWebfilesSubModule() {
         if (Strings.isNullOrEmpty(webfilesSubModule)) {
-            return TargetPom.REPOSITORY_DATA_WEB_FILES.getName();
+            return Module.REPOSITORY_DATA_WEB_FILES.getName();
         }
         return webfilesSubModule;
     }

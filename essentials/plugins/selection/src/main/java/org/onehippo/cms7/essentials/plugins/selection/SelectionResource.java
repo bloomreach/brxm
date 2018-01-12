@@ -52,7 +52,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
@@ -412,7 +412,7 @@ public class SelectionResource {
     }
 
     private File getSpringFile() {
-        return projectService.getResourcesRootPathForModule(TargetPom.SITE)
+        return projectService.getResourcesRootPathForModule(Module.SITE)
                 .resolve("META-INF").resolve("hst-assembly").resolve("overrides").resolve("valueListManager.xml").toFile();
     }
 }

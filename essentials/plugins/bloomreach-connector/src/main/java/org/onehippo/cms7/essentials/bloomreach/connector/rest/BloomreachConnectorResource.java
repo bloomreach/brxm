@@ -31,7 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
@@ -62,8 +62,8 @@ public class BloomreachConnectorResource {
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
         final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
-        final boolean hasDependency = dependencyService.hasDependency(TargetPom.CMS, CRISP_API)
-                && dependencyService.hasDependency(TargetPom.CMS, CRISP_REPOSITORY);
+        final boolean hasDependency = dependencyService.hasDependency(Module.CMS, CRISP_API)
+                && dependencyService.hasDependency(Module.CMS, CRISP_REPOSITORY);
 
         final ResourceData resourceData = new ResourceData();
         resourceData.setCrispDependencyExists(hasDependency);
@@ -77,8 +77,8 @@ public class BloomreachConnectorResource {
     public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
         final UserFeedback feedback = new UserFeedback();
-        boolean added = dependencyService.addDependency(TargetPom.CMS, CRISP_API)
-                && dependencyService.addDependency(TargetPom.CMS, CRISP_REPOSITORY);
+        boolean added = dependencyService.addDependency(Module.CMS, CRISP_API)
+                && dependencyService.addDependency(Module.CMS, CRISP_REPOSITORY);
         if (added) {
             feedback.addSuccess("Successfully added dependencies");
         } else {

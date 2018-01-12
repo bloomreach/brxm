@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 
@@ -42,7 +42,7 @@ public class CommonsInstructionPackage extends TemplateSupportInstructionPackage
     @Override
     public Instruction.Status execute(final PluginContext context) {
         // add provided dependency to webfiles artifact so we have freemarker autocompletion support
-        dependencyService.addDependency(TargetPom.REPOSITORY_DATA_WEB_FILES, ESSENTIALS_COMPONENTS);
+        dependencyService.addDependency(Module.REPOSITORY_DATA_WEB_FILES, ESSENTIALS_COMPONENTS);
 
         return super.execute(context);
     }

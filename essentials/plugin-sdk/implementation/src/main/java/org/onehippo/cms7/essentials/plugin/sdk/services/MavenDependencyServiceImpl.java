@@ -26,7 +26,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.MavenModelUtils;
@@ -42,12 +42,12 @@ public class MavenDependencyServiceImpl implements MavenDependencyService {
     @Inject private ProjectService projectService;
 
     @Override
-    public boolean hasDependency(final TargetPom module, final MavenDependency dependency) {
+    public boolean hasDependency(final Module module, final MavenDependency dependency) {
         return updatePomModel(module, model -> hasDependency(model, dependency));
     }
 
     @Override
-    public boolean addDependency(final TargetPom module, final MavenDependency dependency) {
+    public boolean addDependency(final Module module, final MavenDependency dependency) {
         return updatePomModel(module, model -> {
             if (hasDependency(model, dependency)) {
                 return true;
@@ -103,7 +103,7 @@ public class MavenDependencyServiceImpl implements MavenDependencyService {
         return new DefaultArtifactVersion(currentVersion).compareTo(new DefaultArtifactVersion(incomingVersion)) >= 0;
     }
 
-    private boolean updatePomModel(final TargetPom module, final Predicate<Model> checker) {
+    private boolean updatePomModel(final Module module, final Predicate<Model> checker) {
         final File pom = projectService.getPomPathForModule(module).toFile();
         final Model model = MavenModelUtils.readPom(pom);
         return model != null && checker.test(model);

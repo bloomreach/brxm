@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 /**
  * ProjectService provides access to the project, and in particular to the file resources of a project.
@@ -38,7 +38,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to module base directory
      */
-    Path getBasePathForModule(TargetPom module);
+    Path getBasePathForModule(Module module);
 
     /**
      * Get the Path to the pom.xml file of the specified project module.
@@ -46,7 +46,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to pom.xml file
      */
-    Path getPomPathForModule(TargetPom module);
+    Path getPomPathForModule(Module module);
 
     /**
      * Get the Path to the Java root directory (src/main/java) of the specified project module.
@@ -54,7 +54,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to Java root directory
      */
-    Path getJavaRootPathForModule(TargetPom module);
+    Path getJavaRootPathForModule(Module module);
 
     /**
      * Get the Path to the resources root directory (src/main/resources) of the specified project module.
@@ -62,7 +62,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to resources root directory
      */
-    Path getResourcesRootPathForModule(TargetPom module);
+    Path getResourcesRootPathForModule(Module module);
 
     /**
      * Get the Path to the web application root directory (src/main/webapp) of the specified project module.
@@ -70,7 +70,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to web application root directory
      */
-    Path getWebApplicationRootPathForModule(TargetPom module);
+    Path getWebApplicationRootPathForModule(Module module);
 
     /**
      * Get the Path to the WEB-INF directory of the specified project module.
@@ -78,7 +78,7 @@ public interface ProjectService {
      * @param module desired project module
      * @return Path to WEB-INF directory
      */
-    Path getWebInfPathForModule(TargetPom module);
+    Path getWebInfPathForModule(Module module);
 
     /**
      * Get the Path to the Java root directory of the module containing the HST bean classes.

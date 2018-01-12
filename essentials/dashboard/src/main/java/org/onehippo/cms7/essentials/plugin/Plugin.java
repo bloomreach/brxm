@@ -26,7 +26,7 @@ import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
@@ -133,7 +133,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenRepository.WithModule repository : descriptor.getRepositories()) {
-            if (!repositoryService.addRepository(TargetPom.pomForName(repository.getTargetPom()), repository)) {
+            if (!repositoryService.addRepository(Module.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
@@ -152,7 +152,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenDependency.WithModule dependency : descriptor.getDependencies()) {
-            if (!dependencyService.addDependency(TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
+            if (!dependencyService.addDependency(Module.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {

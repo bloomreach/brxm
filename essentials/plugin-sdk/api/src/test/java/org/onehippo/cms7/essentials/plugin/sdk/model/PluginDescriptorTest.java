@@ -23,7 +23,7 @@ import java.util.Collections;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,7 +54,7 @@ public class PluginDescriptorTest {
         repositoryPolicy.setChecksumPolicy("testchecksumpolicy");
         repositoryPolicy.setUpdatePolicy("testupdatepolicy");
         repository.setReleasePolicy(repositoryPolicy);
-        repository.setTargetPom(TargetPom.PROJECT.getName());
+        repository.setTargetPom(Module.PROJECT.getName());
         value.setRepositories(Collections.singletonList(repository));
 
         // test json:

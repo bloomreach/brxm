@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import com.google.common.base.Function;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
@@ -72,7 +72,7 @@ public class DefaultPluginContext implements PluginContext {
         }
 
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, settingsService.getSettings().getProjectNamespace());
-        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, projectService.getBasePathForModule(TargetPom.PROJECT));
+        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, projectService.getBasePathForModule(Module.PROJECT));
         //############################################
         // DATE PLACEHOLDERS
         //############################################
@@ -110,25 +110,25 @@ public class DefaultPluginContext implements PluginContext {
                 };
             }
         });
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, projectService.getBasePathForModule(TargetPom.SITE));
-        final Path siteWebRoot = projectService.getWebApplicationRootPathForModule(TargetPom.SITE);
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, projectService.getBasePathForModule(Module.SITE));
+        final Path siteWebRoot = projectService.getWebApplicationRootPathForModule(Module.SITE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, siteWebRoot);
         placeholderData.put(EssentialConst.PLACEHOLDER_JAVASCRIPT_ROOT, siteWebRoot.resolve("js"));
         placeholderData.put(EssentialConst.PLACEHOLDER_IMAGES_ROOT, siteWebRoot.resolve("images"));
         placeholderData.put(EssentialConst.PLACEHOLDER_CSS_ROOT, siteWebRoot.resolve("css"));
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_INF_ROOT, siteWebRoot.resolve("WEB-INF"));
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, siteWebRoot.resolve("WEB-INF").resolve("jsp"));
-        final Path siteResourcesRoot = projectService.getResourcesRootPathForModule(TargetPom.SITE);
+        final Path siteResourcesRoot = projectService.getResourcesRootPathForModule(Module.SITE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_RESOURCES, siteResourcesRoot);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, siteResourcesRoot.resolve("META-INF").resolve("hst-assembly").resolve("overrides"));
 
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, projectService.getBasePathForModule(TargetPom.CMS));
-        final Path cmsWebRoot = projectService.getWebApplicationRootPathForModule(TargetPom.CMS);
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, projectService.getBasePathForModule(Module.CMS));
+        final Path cmsWebRoot = projectService.getWebApplicationRootPathForModule(Module.CMS);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_ROOT, cmsWebRoot);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_INF_ROOT, cmsWebRoot.resolve("WEB-INF"));
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, projectService.getResourcesRootPathForModule(TargetPom.CMS).toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, projectService.getResourcesRootPathForModule(Module.CMS).toString());
 
-        final Path webFilesResourcesRoot = projectService.getResourcesRootPathForModule(TargetPom.REPOSITORY_DATA_WEB_FILES);
+        final Path webFilesResourcesRoot = projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_WEB_FILES);
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_RESOURCES, webFilesResourcesRoot);
         final Path webFilesRoot = webFilesResourcesRoot.resolve("site");
         placeholderData.put(EssentialConst.PLACEHOLDER_WEBFILES_ROOT, webFilesRoot);
@@ -148,7 +148,7 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, projectService.getComponentsPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
         // essentials
-        placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, projectService.getBasePathForModule(TargetPom.ESSENTIALS));
+        placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, projectService.getBasePathForModule(Module.ESSENTIALS));
         return placeholderData;
     }
 

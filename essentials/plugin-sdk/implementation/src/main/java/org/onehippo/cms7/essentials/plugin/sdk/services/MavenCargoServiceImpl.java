@@ -28,7 +28,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenCargoService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.MavenModelUtils;
@@ -139,7 +139,7 @@ public class MavenCargoServiceImpl implements MavenCargoService {
     }
 
     private boolean updateProjectPom(final Function<Model, Boolean> modifier) {
-        final File pom = projectService.getPomPathForModule(TargetPom.PROJECT).toFile();
+        final File pom = projectService.getPomPathForModule(Module.PROJECT).toFile();
         final Model pomModel = MavenModelUtils.readPom(pom);
         if (pomModel == null) {
             return false;

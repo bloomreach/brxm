@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.service;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 /**
  * Service for checking if a Maven dependency (in the dependencies section) is present, and for adding them otherwise.
@@ -32,7 +32,7 @@ public interface MavenDependencyService {
      * @param dependency Maven dependency to check for
      * @return           true if dependency already present (and version not older), false otherwise
      */
-    boolean hasDependency(TargetPom module, MavenDependency dependency);
+    boolean hasDependency(Module module, MavenDependency dependency);
 
     /**
      * If not already present, add the specified Maven dependency to the dependencies section of the specified module.
@@ -41,5 +41,5 @@ public interface MavenDependencyService {
      * @param dependency Maven dependency to add
      * @return           true if the specified dependency if present upon returning, false otherwise
      */
-    boolean addDependency(TargetPom module, MavenDependency dependency);
+    boolean addDependency(Module module, MavenDependency dependency);
 }

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +35,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void get_base_path() {
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/foo/bar");
-        assertEquals("/foo/bar", projectService.getBasePathForModule(TargetPom.PROJECT).toString());
+        assertEquals("/foo/bar", projectService.getBasePathForModule(Module.PROJECT).toString());
     }
 
     @Test

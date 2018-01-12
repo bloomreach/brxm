@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.service.model;
 
 import com.google.common.base.Strings;
 
-public enum TargetPom {
+public enum Module {
 
     INVALID(null),
     SITE("site"),
@@ -32,7 +32,7 @@ public enum TargetPom {
 
     private final String name;
 
-    TargetPom(final String name) {
+    Module(final String name) {
         this.name = name;
     }
 
@@ -49,9 +49,9 @@ public enum TargetPom {
         return sb.toString();
     }
 
-    public static TargetPom pomForName(final String type) {
+    public static Module pomForName(final String type) {
         if (Strings.isNullOrEmpty(type)) {
-            return TargetPom.INVALID;
+            return Module.INVALID;
         }
         if (type.equals(SITE.name)) {
             return SITE;
@@ -70,7 +70,7 @@ public enum TargetPom {
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
         }
-        return TargetPom.INVALID;
+        return Module.INVALID;
 
     }
 }

@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 
 public class LuceneIndexExporterInstruction implements Instruction {
@@ -37,8 +37,8 @@ public class LuceneIndexExporterInstruction implements Instruction {
 
     @Override
     public Status execute(PluginContext context) {
-        return webXmlService.addServlet(TargetPom.CMS, SERVLET_NAME, SERVLET_FQCN, 6)
-                && webXmlService.addServletMapping(TargetPom.CMS, SERVLET_NAME, URL_PATTERNS)
+        return webXmlService.addServlet(Module.CMS, SERVLET_NAME, SERVLET_FQCN, 6)
+                && webXmlService.addServletMapping(Module.CMS, SERVLET_NAME, URL_PATTERNS)
                 ? Status.SUCCESS : Status.FAILED;
     }
 

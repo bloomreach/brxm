@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -61,8 +61,8 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<checksumPolicy>checksum-policy</checksumPolicy>"));
         assertFalse(before.contains("<snapshots />"));
 
-        assertTrue(service.addRepository(TargetPom.PROJECT, repository));
-        assertTrue(service.addRepository(TargetPom.PROJECT, repository));
+        assertTrue(service.addRepository(Module.PROJECT, repository));
+        assertTrue(service.addRepository(Module.PROJECT, repository));
 
         String after = contentOf(pomXml);
         assertEquals(1, StringUtils.countMatches(after, "<id>test</id>"));
@@ -83,7 +83,7 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
         // no URL
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MavenRepositoryServiceImpl.class).build()) {
-            assertFalse(service.addRepository(TargetPom.PROJECT, repository));
+            assertFalse(service.addRepository(Module.PROJECT, repository));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add Maven repository 'MavenRepository{id='test', name='Test Repository', url='null'}'"
                     + " to module 'project', no repository URL specified.")));
@@ -98,7 +98,7 @@ public class MavenRepositoryServiceImplTest extends ResourceModifyingTest {
         repository.setUrl("boo");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(MavenRepositoryServiceImpl.class).build()) {
-            assertFalse(service.addRepository(TargetPom.PROJECT, repository));
+            assertFalse(service.addRepository(Module.PROJECT, repository));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Unable to load model for pom.xml of module 'project'.")));
         }

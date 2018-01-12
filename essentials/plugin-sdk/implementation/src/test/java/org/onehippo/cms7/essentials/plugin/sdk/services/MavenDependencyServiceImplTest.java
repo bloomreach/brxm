@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -48,11 +48,11 @@ public class MavenDependencyServiceImplTest extends ResourceModifyingTest {
         dependency.setArtifactId("hippo-plugins-non-existing");
         dependency.setVersion("1.01.00-SNAPSHOT");
 
-        assertFalse(service.hasDependency(TargetPom.CMS, dependency));
-        assertTrue(service.addDependency(TargetPom.CMS, dependency));
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
-        assertTrue(service.addDependency(TargetPom.CMS, dependency));
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertFalse(service.hasDependency(Module.CMS, dependency));
+        assertTrue(service.addDependency(Module.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
+        assertTrue(service.addDependency(Module.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         String after = contentOf(pomXml);
         assertEquals(1, StringUtils.countMatches(after, "hippo-plugins-non-existing"));
@@ -67,21 +67,21 @@ public class MavenDependencyServiceImplTest extends ResourceModifyingTest {
 
         // incoming version not specified - always true
         dependency.setArtifactId("artifact-no-version");
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         // incoming version specified, but existing dependency managed
         dependency.setVersion("1.2.3");
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         // incoming version parameterized and equal
         dependency.setArtifactId("artifact-parameterized-version");
         dependency.setVersion("${project.version}");
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         // incoming version parameterized and not equal
         dependency.setVersion("${another.version}");
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MavenDependencyServiceImpl.class).build()) {
-            assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+            assertTrue(service.hasDependency(Module.CMS, dependency));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Maven dependency 'Dependency {groupId=org.onehippo.cms7, artifactId=artifact-parameterized-version,"
                     + " version=${project.version}, type=jar}' already exists, checking for version '${another.version}', consider matching.")));
@@ -90,14 +90,14 @@ public class MavenDependencyServiceImplTest extends ResourceModifyingTest {
         // incoming version specified and older
         dependency.setArtifactId("artifact-explicit-version");
         dependency.setVersion("1.3.4");
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         // incoming version specified and same
         dependency.setVersion("1.3.5-SNAPSHOT");
-        assertTrue(service.hasDependency(TargetPom.CMS, dependency));
+        assertTrue(service.hasDependency(Module.CMS, dependency));
 
         // incoming version specified and newer
         dependency.setVersion("1.3.6");
-        assertFalse(service.hasDependency(TargetPom.CMS, dependency));
+        assertFalse(service.hasDependency(Module.CMS, dependency));
     }
 }

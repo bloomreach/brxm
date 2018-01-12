@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.service;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 /**
  * Service for checking if a Maven repository is present, and for adding them otherwise.
@@ -32,5 +32,5 @@ public interface MavenRepositoryService {
      * @param repository repository entry to add, if not already present
      * @return           true if the repository exists in the specified module upon returning, false otherwise
      */
-    boolean addRepository(final TargetPom module, final MavenRepository repository);
+    boolean addRepository(final Module module, final MavenRepository repository);
 }

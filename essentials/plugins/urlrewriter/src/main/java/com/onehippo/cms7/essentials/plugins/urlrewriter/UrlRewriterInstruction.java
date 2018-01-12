@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 
 /**
@@ -39,7 +39,7 @@ public class UrlRewriterInstruction implements Instruction {
     private static final String FILTER_NAME = "RewriteFilter";
     private static final List<String> URL_PATTERNS = Collections.singletonList("/*");
     private static final List<WebXmlService.Dispatcher> DISPATCHERS = Arrays.asList(WebXmlService.Dispatcher.REQUEST, WebXmlService.Dispatcher.FORWARD);
-    private static final TargetPom MODULE = TargetPom.SITE;
+    private static final Module MODULE = Module.SITE;
     private static final Map<String, String> initParams = new HashMap<>();
 
     static {

@@ -26,7 +26,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.RepositoryPolicy;
 import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.MavenModelUtils;
@@ -42,7 +42,7 @@ public class MavenRepositoryServiceImpl implements MavenRepositoryService {
     @Inject private ProjectService projectService;
 
     @Override
-    public boolean addRepository(final TargetPom module, final MavenRepository repository) {
+    public boolean addRepository(final Module module, final MavenRepository repository) {
         if (StringUtils.isBlank(repository.getUrl())) {
             LOG.error("Failed to add Maven repository '{}' to module '{}', no repository URL specified.", repository, module.getName());
             return false;
@@ -90,7 +90,7 @@ public class MavenRepositoryServiceImpl implements MavenRepositoryService {
                 .anyMatch(r -> repository.getUrl().equals(r.getUrl()));
     }
 
-    private boolean updatePomModel(final TargetPom module, final Predicate<Model> updater) {
+    private boolean updatePomModel(final Module module, final Predicate<Model> updater) {
         final File pom = projectService.getPomPathForModule(module).toFile();
         final Model model = MavenModelUtils.readPom(pom);
         if (model == null) {

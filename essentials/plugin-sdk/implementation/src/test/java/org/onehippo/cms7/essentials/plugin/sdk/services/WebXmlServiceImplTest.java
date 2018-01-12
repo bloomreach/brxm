@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.WebXmlService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -90,7 +90,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
 
         assertEquals(2, nrOfOccurrences(webxml, "Console"));
-        assertTrue(service.addFilter(TargetPom.SITE, "Console", null, null));
+        assertTrue(service.addFilter(Module.SITE, "Console", null, null));
         assertEquals(2, nrOfOccurrences(webxml, "Console"));
     }
 
@@ -107,7 +107,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("filter-init-param-name1"));
         assertFalse(before.contains("filter-init-param-value2"));
 
-        assertTrue(service.addFilter(TargetPom.SITE, "DummyFilter", "f.q.c.n.Dummy", initParams));
+        assertTrue(service.addFilter(Module.SITE, "DummyFilter", "f.q.c.n.Dummy", initParams));
 
         final String after = contentOf(webxml);
         assertEquals(1, StringUtils.countMatches(after, "DummyFilter"));
@@ -121,7 +121,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addFilter(TargetPom.SITE, "Console", null, null));
+            assertFalse(service.addFilter(Module.SITE, "Console", null, null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
@@ -136,7 +136,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<url-pattern>/foo/*</url-pattern>"));
         assertFalse(before.contains("<url-pattern>/bar/baz/*</url-pattern>"));
 
-        assertTrue(service.addFilterMapping(TargetPom.SITE, "DummyFilter", urlPatterns));
+        assertTrue(service.addFilterMapping(Module.SITE, "DummyFilter", urlPatterns));
 
         final String after = contentOf(webxml);
         assertEquals(1, StringUtils.countMatches(after, "<filter-name>DummyFilter</filter-name>"));
@@ -149,7 +149,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addFilterMapping(TargetPom.SITE, "Console", null));
+            assertFalse(service.addFilterMapping(Module.SITE, "Console", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
@@ -159,7 +159,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addDispatchersToFilterMapping(TargetPom.SITE, "non-existent-filter", null));
+            assertFalse(service.addDispatchersToFilterMapping(Module.SITE, "non-existent-filter", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to find filter-mapping for filter 'non-existent-filter' in web.xml file of module 'site'.")));
         }
@@ -175,7 +175,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertEquals(1, StringUtils.countMatches(before, "<dispatcher>REQUEST</dispatcher>"));
         assertFalse(before.contains("<dispatcher>FORWARD</dispatcher>"));
 
-        assertTrue(service.addDispatchersToFilterMapping(TargetPom.SITE, "Console", dispatchers));
+        assertTrue(service.addDispatchersToFilterMapping(Module.SITE, "Console", dispatchers));
 
         final String after = contentOf(webxml);
         assertEquals(2, StringUtils.countMatches(after, "<filter-name>Console</filter-name>"));
@@ -188,7 +188,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addDispatchersToFilterMapping(TargetPom.SITE, "dummy", null));
+            assertFalse(service.addDispatchersToFilterMapping(Module.SITE, "dummy", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
@@ -198,7 +198,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
 
         assertEquals(2, nrOfOccurrences(webxml, "AngularResourceServlet"));
-        assertTrue(service.addServlet(TargetPom.SITE, "AngularResourceServlet", null, null));
+        assertTrue(service.addServlet(Module.SITE, "AngularResourceServlet", null, null));
         assertEquals(2, nrOfOccurrences(webxml, "AngularResourceServlet"));
     }
 
@@ -211,7 +211,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<servlet-class>f.q.c.n.Dummy</servlet-class>"));
         assertFalse(before.contains("<load-on-startup>3</load-on-startup>"));
 
-        assertTrue(service.addServlet(TargetPom.SITE, "DummyServlet", "f.q.c.n.Dummy", 3));
+        assertTrue(service.addServlet(Module.SITE, "DummyServlet", "f.q.c.n.Dummy", 3));
 
         final String after = contentOf(webxml);
         assertEquals(1, StringUtils.countMatches(after, "<servlet-name>DummyServlet</servlet-name>"));
@@ -224,7 +224,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addServlet(TargetPom.SITE, "Console", null, null));
+            assertFalse(service.addServlet(Module.SITE, "Console", null, null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }
@@ -239,7 +239,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertFalse(before.contains("<url-pattern>/bla/*</url-pattern>"));
         assertFalse(before.contains("<url-pattern>/foo/bar/*</url-pattern>"));
 
-        assertTrue(service.addServletMapping(TargetPom.SITE, "DummyServlet", urlPatterns));
+        assertTrue(service.addServletMapping(Module.SITE, "DummyServlet", urlPatterns));
 
         final String after = contentOf(webxml);
         assertEquals(1, StringUtils.countMatches(after, "<servlet-name>DummyServlet</servlet-name>"));
@@ -257,7 +257,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         assertEquals(1, StringUtils.countMatches(before, "<url-pattern>/angular/*</url-pattern>"));
         assertFalse(before.contains("<url-pattern>/test/*</url-pattern>"));
 
-        assertTrue(service.addServletMapping(TargetPom.SITE, "AngularResourceServlet", urlPatterns));
+        assertTrue(service.addServletMapping(Module.SITE, "AngularResourceServlet", urlPatterns));
 
         final String after = contentOf(webxml);
         assertEquals(2, StringUtils.countMatches(after, "<servlet-name>AngularResourceServlet</servlet-name>"));
@@ -270,7 +270,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
-            assertFalse(service.addServletMapping(TargetPom.SITE, "Console", null));
+            assertFalse(service.addServletMapping(Module.SITE, "Console", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
     }

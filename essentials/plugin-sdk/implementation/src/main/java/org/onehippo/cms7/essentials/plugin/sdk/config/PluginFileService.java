@@ -24,7 +24,7 @@ import java.io.IOException;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.FileUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class PluginFileService {
             return null;
         }
 
-        return projectService.getResourcesRootPathForModule(TargetPom.ESSENTIALS).resolve(sanitized).toFile();
+        return projectService.getResourcesRootPathForModule(Module.ESSENTIALS).resolve(sanitized).toFile();
     }
 
     protected String sanitizeFileName(final String candidate) {

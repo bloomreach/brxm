@@ -34,7 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Inject private SettingsService settingsService;
 
     @Override
-    public Path getBasePathForModule(final TargetPom module) {
+    public Path getBasePathForModule(final Module module) {
         final Path projectPath = Paths.get(ProjectUtils.getBaseProjectDirectory());
 
         switch (module) {
@@ -84,27 +84,27 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Path getPomPathForModule(final TargetPom module) {
+    public Path getPomPathForModule(final Module module) {
         return getBasePathForModule(module).resolve("pom.xml");
     }
 
     @Override
-    public Path getJavaRootPathForModule(final TargetPom module) {
+    public Path getJavaRootPathForModule(final Module module) {
         return getBasePathForModule(module).resolve("src").resolve("main").resolve("java");
     }
 
     @Override
-    public Path getResourcesRootPathForModule(final TargetPom module) {
+    public Path getResourcesRootPathForModule(final Module module) {
         return getBasePathForModule(module).resolve("src").resolve("main").resolve("resources");
     }
 
     @Override
-    public Path getWebApplicationRootPathForModule(final TargetPom module) {
+    public Path getWebApplicationRootPathForModule(final Module module) {
         return getBasePathForModule(module).resolve("src").resolve("main").resolve("webapp");
     }
 
     @Override
-    public Path getWebInfPathForModule(final TargetPom module) {
+    public Path getWebInfPathForModule(final Module module) {
         return getWebApplicationRootPathForModule(module).resolve("WEB-INF");
     }
 
@@ -113,11 +113,11 @@ public class ProjectServiceImpl implements ProjectService {
         final String explicitBeansFolder = settingsService.getSettings().getBeansFolder();
 
         if (StringUtils.isNotBlank(explicitBeansFolder)) {
-            final Path projectPath = getBasePathForModule(TargetPom.PROJECT);
+            final Path projectPath = getBasePathForModule(Module.PROJECT);
             return projectPath.resolve(explicitBeansFolder);
         }
 
-        return getJavaRootPathForModule(TargetPom.SITE);
+        return getJavaRootPathForModule(Module.SITE);
     }
 
     @Override
@@ -129,13 +129,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Path getRestPackagePath() {
         final String restPackage = settingsService.getSettings().getSelectedRestPackage();
-        return makePackagePath(getJavaRootPathForModule(TargetPom.SITE), restPackage);
+        return makePackagePath(getJavaRootPathForModule(Module.SITE), restPackage);
     }
 
     @Override
     public Path getComponentsPackagePath() {
         final String componentsPackage = settingsService.getSettings().getSelectedComponentsPackage();
-        return makePackagePath(getJavaRootPathForModule(TargetPom.SITE), componentsPackage);
+        return makePackagePath(getJavaRootPathForModule(Module.SITE), componentsPackage);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Path getAssemblyFolderPath() {
-        return getBasePathForModule(TargetPom.PROJECT).resolve("src").resolve("main").resolve("assembly");
+        return getBasePathForModule(Module.PROJECT).resolve("src").resolve("main").resolve("assembly");
     }
 
     private Path makePackagePath(final Path basePath, final String packagesName) {
@@ -187,7 +187,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private Path getConfDirPath() {
-        return getBasePathForModule(TargetPom.PROJECT).resolve("conf");
+        return getBasePathForModule(Module.PROJECT).resolve("conf");
     }
 
     @Override

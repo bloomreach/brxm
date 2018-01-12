@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.TargetPom;
+import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     public ProjectSettingsBean getModifiableSettings() {
         if (projectSettingsFile == null) {
-            projectSettingsFile = projectService.getResourcesRootPathForModule(TargetPom.ESSENTIALS)
+            projectSettingsFile = projectService.getResourcesRootPathForModule(Module.ESSENTIALS)
                     .resolve("project-settings.xml").toFile();
         }
 
