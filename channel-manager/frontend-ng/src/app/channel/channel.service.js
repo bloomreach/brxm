@@ -95,10 +95,10 @@ class ChannelService {
       .then(() => this.loadChannel(channelId))
       .then(() => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
-        this.$state.go('hippo-cm.channel',
-          { channelId: this.channel.id, initialRenderPath },
-          { reload: true },
-        );
+        this.$state.go('hippo-cm.channel', {
+          channelId: this.channel.id,
+          initialRenderPath,
+        });
       });
   }
 

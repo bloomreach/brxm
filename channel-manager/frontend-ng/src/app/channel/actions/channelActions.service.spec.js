@@ -296,7 +296,7 @@ describe('ChannelActionsService', () => {
     close.onClick();
     $rootScope.$apply();
 
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
   });
 
@@ -307,7 +307,7 @@ describe('ChannelActionsService', () => {
     $window.CMS_TO_APP.publish('close-channel');
     $rootScope.$apply();
 
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
   });
 
@@ -320,7 +320,7 @@ describe('ChannelActionsService', () => {
     close.onClick();
     $rootScope.$apply();
 
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).not.toHaveBeenCalled();
   });
 

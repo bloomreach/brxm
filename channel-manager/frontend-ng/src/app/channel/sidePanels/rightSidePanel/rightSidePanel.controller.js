@@ -55,8 +55,8 @@ class RightSidePanelCtrl {
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
 
-    this.$transitions.onBefore({ to: 'hippo-cm.channel.**' }, () => this._openPanel());
-    this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
+    this.$transitions.onBefore({ to: 'hippo-cm.channel.*' }, () => this._openPanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel' }, () => this._closePanel());
   }
 
   onResize(newWidth) {
