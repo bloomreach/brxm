@@ -558,7 +558,7 @@ public class Esv2Yaml {
 
         orderContentDefinitions(nodeDefinitions.values());
 
-        if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
+        if (resourceBundleParents.getNode() == null || !resourceBundleParents.getNode().getNodes().findAny().isPresent()) {
             // remove empty resourcebundles translations root definition parents
             for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
                 if (defIter.next() == resourceBundleParents) {

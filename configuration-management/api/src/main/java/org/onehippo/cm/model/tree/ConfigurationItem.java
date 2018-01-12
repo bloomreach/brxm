@@ -21,13 +21,7 @@ import java.util.List;
  * Represents an item in the Configuration tree, which may be a ConfigurationNode or ConfigurationProperty.
  * @param <D> the type of DefinitionItem expected from {@link #getDefinitions()}
  */
-public interface ConfigurationItem<D extends DefinitionItem> extends ModelItem {
-
-    /**
-     * @return the parent node for this item
-     */
-    @Override
-    ConfigurationNode getParent();
+public interface ConfigurationItem<D extends DefinitionItem, N extends ConfigurationNode> extends ModelItem<N> {
 
     /**
      * @return The <strong>ordered</strong> immutable {@link List} of {@link DefinitionItem}s that were used to

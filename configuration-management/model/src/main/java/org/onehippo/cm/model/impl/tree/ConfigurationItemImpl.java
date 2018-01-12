@@ -27,8 +27,8 @@ import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
-public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl
-        implements ConfigurationItem<D> {
+public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl<ConfigurationNodeImpl>
+        implements ConfigurationItem<D,ConfigurationNodeImpl> {
 
     private ConfigurationNodeImpl parent;
     private final List<D> modifiableDefinitions = new ArrayList<>();
@@ -46,7 +46,7 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
         if (isRoot()) {
             return JcrPaths.ROOT;
         } else {
-            if (SnsUtils.hasSns(getName(), parent.getNodes().keySet())) {
+            if (SnsUtils.hasSns(getName(), parent.getNodeNames())) {
                 return parent.getJcrPath().resolve(name);
             } else {
                 return parent.getJcrPath().resolve(name.withIndex(0));

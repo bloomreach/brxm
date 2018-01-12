@@ -131,14 +131,14 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
 
         assertEquals(1, m1.getContentDefinitions().size());
         final ContentDefinitionImpl d1 = m1.getContentDefinitions().get(0);
-        assertEquals("/content/documents/myhippoproject", d1.getRootPath());
+        assertEquals("/content/documents/myhippoproject", d1.getRootPath().toString());
         assertEquals("test", d1.getNode().getOrderBefore());
         assertTrue(d1.getNode().getProperties().isEmpty());
         assertTrue(d1.getNode().getNodes().isEmpty());
 
         assertEquals(1, m2.getContentDefinitions().size());
         final ContentDefinitionImpl d2 = m2.getContentDefinitions().get(0);
-        assertEquals("/content/documents/myhippoproject", d2.getRootPath());
+        assertEquals("/content/documents/myhippoproject", d2.getRootPath().toString());
         assertEquals("test", d2.getNode().getOrderBefore());
         assertFalse(d2.getNode().getProperties().isEmpty());
         assertFalse(d2.getNode().getNodes().isEmpty());

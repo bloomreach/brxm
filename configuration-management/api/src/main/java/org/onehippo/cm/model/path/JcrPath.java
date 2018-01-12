@@ -147,11 +147,13 @@ public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
     /**
      * @return a {@link JcrPath} equivalent to this one, except that each segment has had forceIndex() applied to it
      */
+    // TODO: remove this
     JcrPath toFullyIndexedPath();
 
     /**
      * @return a {@link JcrPath} equivalent to this one, except that each segment has had suppressIndex() applied to it
      */
+    // TODO: rename this?
     JcrPath toMinimallyIndexedPath();
 
     /**

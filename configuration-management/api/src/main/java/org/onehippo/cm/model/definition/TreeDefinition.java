@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model.definition;
 
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.DefinitionNode;
 
@@ -27,7 +28,7 @@ public interface TreeDefinition<S extends Source> extends Definition<S>, Compara
     /**
      * @return the root node of this definition
      */
-    DefinitionNode getNode();
+    DefinitionNode<?,?> getNode();
 
     /**
      * The effective root path of this tree definition, which <em>may</em> be different from the
@@ -39,6 +40,6 @@ public interface TreeDefinition<S extends Source> extends Definition<S>, Compara
      * </p>
      * @return the effective root path of this definition.
      */
-    String getRootPath();
+    JcrPath getRootPath();
 
 }

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -42,7 +43,8 @@ import com.google.common.collect.Maps;
 
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
-public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
+public class DefinitionNodeImpl extends DefinitionItemImpl
+        implements DefinitionNode<DefinitionNodeImpl,DefinitionPropertyImpl> {
 
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, DefinitionNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
@@ -75,12 +77,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         super(name, parent);
     }
 
-    @Override
-    public Map<String, DefinitionNodeImpl> getNodes() {
-        return nodes;
+    public Stream<DefinitionNodeImpl> getNodes() {
+        return nodes.values().stream();
     }
 
     @Override
+    public DefinitionNodeImpl getNode(final JcrPathSegment name) {
+        return getNode(name.toString());
+    }
+
     public DefinitionNodeImpl getNode(final String name) {
         return modifiableNodes.get(name);
     }
@@ -109,11 +114,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     @Override
-    public Map<String, DefinitionPropertyImpl> getProperties() {
-        return properties;
+    public Stream<DefinitionPropertyImpl> getProperties() {
+        return properties.values().stream();
     }
 
     @Override
+    public DefinitionPropertyImpl getProperty(final JcrPathSegment name) {
+        return getProperty(name.toString());
+    }
+
     public DefinitionPropertyImpl getProperty(final String name) {
         return modifiableProperties.get(name);
     }
@@ -343,12 +352,12 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public void recursiveSortProperties() {
         sortProperties();
-        getNodes().values().forEach(DefinitionNodeImpl::recursiveSortProperties);
+        getNodes().forEach(DefinitionNodeImpl::recursiveSortProperties);
     }
 
     public void visitResources(ValueConsumer consumer) throws RepositoryException, IOException {
         // find resource values
-        for (DefinitionPropertyImpl dp : getProperties().values()) {
+        for (DefinitionPropertyImpl dp : modifiableProperties.values()) {
             switch (dp.getKind()) {
                 case SINGLE:
                     final ValueImpl val = dp.getValue();
@@ -368,7 +377,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         }
 
         // recursively visit child definition nodes
-        for (DefinitionNodeImpl dn : getNodes().values()) {
+        for (DefinitionNodeImpl dn : modifiableNodes.values()) {
             dn.visitResources(consumer);
         }
     }

@@ -26,8 +26,7 @@ public abstract class TreeDefinitionImpl<S extends SourceImpl> extends AbstractD
 
     private DefinitionNodeImpl node = new DefinitionNodeImpl("/", "/", this);
 
-    // todo: convert to NodePath for storage
-    private String rootPath;
+    private JcrPath rootPath;
 
     TreeDefinitionImpl(final S source) {
         super(source);
@@ -51,11 +50,11 @@ public abstract class TreeDefinitionImpl<S extends SourceImpl> extends AbstractD
     }
 
     @Override
-    public String getRootPath() {
-        return rootPath != null ? rootPath : node.getJcrPath().toString();
+    public JcrPath getRootPath() {
+        return rootPath != null ? rootPath : node.getJcrPath();
     }
 
-    public void setRootPath(String rootPath) {
+    public void setRootPath(final JcrPath rootPath) {
         this.rootPath = rootPath;
     }
 

@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.model.impl;
+package org.onehippo.cm.model.impl.tree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
+import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.ModelItem;
 import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
@@ -45,16 +41,16 @@ public class ConfigurationTreeBuilderTest {
 
     private final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder();
 
-    private String valuesToString(final ConfigurationProperty property) {
-        return property.getValues().stream().map(Value::getString).collect(Collectors.toList()).toString();
+    private String valuesToString(final ConfigurationPropertyImpl property) {
+        return property.getValues().stream().map(Value::getString).collect(Collectors.joining(", ", "[", "]"));
     }
 
-    private String valueToString(final ConfigurationProperty property) {
+    private String valueToString(final ConfigurationPropertyImpl property) {
         return property.getValue().getString();
     }
 
-    private String sortedCollectionToString(final Map<String, ?> map) {
-        return new ArrayList<>(map.keySet()).toString();
+    private String streamToString(final Stream<? extends ModelItem> stream) {
+        return stream.map(ModelItem::getName).collect(Collectors.joining(", ", "[", "]"));
     }
 
     @Test
@@ -71,11 +67,11 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property1, property2]", sortedCollectionToString(a.getProperties()));
-        assertEquals("[]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property1, property2]", streamToString(a.getProperties()));
+        assertEquals("[]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -102,20 +98,20 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property2, property1]", sortedCollectionToString(a.getProperties()));
-        assertEquals("[b[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property2, property1]", streamToString(a.getProperties()));
+        assertEquals("[b[1]]", streamToString(a.getNodes()));
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(b.getProperties()));
-        assertEquals("[d[1], c[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(b.getProperties()));
+        assertEquals("[d[1], c[1]]", streamToString(b.getNodes()));
         final ConfigurationNodeImpl c = b.getNode("c[1]");
-        assertEquals("[jcr:primaryType, property5]", sortedCollectionToString(c.getProperties()));
-        assertEquals("[]", sortedCollectionToString(c.getNodes()));
+        assertEquals("[jcr:primaryType, property5]", streamToString(c.getProperties()));
+        assertEquals("[]", streamToString(c.getNodes()));
         final ConfigurationNodeImpl d = b.getNode("d[1]");
-        assertEquals("[jcr:primaryType, property4]", sortedCollectionToString(d.getProperties()));
-        assertEquals("[]", sortedCollectionToString(d.getNodes()));
+        assertEquals("[jcr:primaryType, property4]", streamToString(d.getProperties()));
+        assertEquals("[]", streamToString(d.getNodes()));
     }
 
     @Test
@@ -151,13 +147,13 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes, property1]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes, property1]", streamToString(root.getProperties()));
         assertEquals(PropertyKind.SINGLE, root.getProperty("property1").getKind());
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(a.getProperties()));
         assertEquals(PropertyKind.LIST, a.getProperty("property2").getKind());
-        assertEquals("[]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -187,17 +183,17 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property2, property1]", sortedCollectionToString(a.getProperties()));
-        assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property2, property1]", streamToString(a.getProperties()));
+        assertEquals("[b[1], d[1]]", streamToString(a.getNodes()));
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property8]", sortedCollectionToString(b.getProperties()));
-        assertEquals("[d[1], c[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[jcr:primaryType, property8]", streamToString(b.getProperties()));
+        assertEquals("[d[1], c[1]]", streamToString(b.getNodes()));
         final ConfigurationNodeImpl d = a.getNode("d[1]");
-        assertEquals("[jcr:primaryType, property7]", sortedCollectionToString(d.getProperties()));
-        assertEquals("[]", sortedCollectionToString(d.getNodes()));
+        assertEquals("[jcr:primaryType, property7]", streamToString(d.getProperties()));
+        assertEquals("[]", streamToString(d.getNodes()));
     }
 
     @Test
@@ -238,20 +234,20 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ConfigDefinitionImpl)definitions2.get(0));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property2, property1, property3]", sortedCollectionToString(a.getProperties()));
-        assertEquals("[b[1], e[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property2, property1, property3]", streamToString(a.getProperties()));
+        assertEquals("[b[1], e[1]]", streamToString(a.getNodes()));
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property8, property7]", sortedCollectionToString(b.getProperties()));
-        assertEquals("[d[1], c[1], f[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[jcr:primaryType, property8, property7]", streamToString(b.getProperties()));
+        assertEquals("[d[1], c[1], f[1]]", streamToString(b.getNodes()));
         final ConfigurationNodeImpl e = a.getNode("e[1]");
-        assertEquals("[jcr:primaryType, property6]", sortedCollectionToString(e.getProperties()));
-        assertEquals("[]", sortedCollectionToString(e.getNodes()));
+        assertEquals("[jcr:primaryType, property6]", streamToString(e.getProperties()));
+        assertEquals("[]", streamToString(e.getNodes()));
         final ConfigurationNodeImpl f = b.getNode("f[1]");
-        assertEquals("[jcr:primaryType, property9]", sortedCollectionToString(f.getProperties()));
-        assertEquals("[]", sortedCollectionToString(f.getNodes()));
+        assertEquals("[jcr:primaryType, property9]", streamToString(f.getProperties()));
+        assertEquals("[]", streamToString(f.getNodes()));
     }
 
     @Test
@@ -280,7 +276,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], c[1], d[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -309,7 +305,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], c[1], d[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -334,7 +330,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[d[1], b[1], c[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[d[1], b[1], c[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -363,7 +359,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], e[1], c[1], d[1], f[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], e[1], c[1], d[1], f[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -392,7 +388,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], d[1], e[1], c[1], f[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], d[1], e[1], c[1], f[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -419,7 +415,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[c[1], e[1], d[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[c[1], e[1], d[1]]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -447,7 +443,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[e[1], c[1], d[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[e[1], c[1], d[1]]", streamToString(b.getNodes()));
 
         assertEquals("a definition adding only child nodes should be listed as a definition for the containing node",
                 2, b.getDefinitions().size());
@@ -478,7 +474,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         final ConfigurationNodeImpl d = b.getNode("d[1]");
-        assertEquals("[d[1], c[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[d[1], c[1]]", streamToString(b.getNodes()));
 
         assertEquals("a definition only reordering child nodes should be listed as a definition for the containing node",
                 2, b.getDefinitions().size());
@@ -516,7 +512,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[c[1], d[1], e[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[c[1], d[1], e[1]]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -541,7 +537,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], d[1]]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -566,7 +562,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -603,10 +599,10 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         final ConfigurationNodeImpl c = b.getNode("c[1]");
         final ConfigurationNodeImpl e = b.getNode("e[1]");
-        assertEquals("[c[1], e[1]]", sortedCollectionToString(b.getNodes()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
-        assertEquals("[jcr:primaryType, property2, property4]", sortedCollectionToString(c.getProperties()));
-        assertEquals("[jcr:primaryType, property5]", sortedCollectionToString(e.getProperties()));
+        assertEquals("[c[1], e[1]]", streamToString(b.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property2, property4]", streamToString(c.getProperties()));
+        assertEquals("[jcr:primaryType, property5]", streamToString(e.getProperties()));
     }
 
     @Test
@@ -651,7 +647,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -679,7 +675,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -706,7 +702,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -734,7 +730,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[c[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[c[1]]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -763,7 +759,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -793,7 +789,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[c[1]]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[c[1]]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -881,7 +877,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[]", streamToString(b.getNodes()));
     }
 
     @Test
@@ -919,7 +915,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         final ConfigurationNodeImpl c = b.getNode("c[1]");
-        assertEquals("[]", sortedCollectionToString(c.getNodes()));
+        assertEquals("[]", streamToString(c.getNodes()));
     }
 
     @Test
@@ -941,14 +937,14 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ConfigDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
-        assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
+        assertEquals("[a[1]]", streamToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getProperties()));
-        assertEquals("[b[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(a.getProperties()));
+        assertEquals("[b[1]]", streamToString(a.getNodes()));
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
-        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(b.getProperties()));
+        assertEquals("[]", streamToString(b.getNodes()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
         assertEquals(PropertyKind.SINGLE, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
@@ -990,7 +986,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("bla1", valueToString(b.getProperty("property1")));
     }
 
@@ -1028,7 +1024,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("bla1", valueToString(b.getProperty("property1")));
     }
 
@@ -1065,7 +1061,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("resource.txt", valueToString(b.getProperty("property1")));
     }
 
@@ -1103,7 +1099,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("resource.txt", valueToString(b.getProperty("property1")));
     }
 
@@ -1128,7 +1124,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(b.getProperties()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
         assertEquals(PropertyKind.LIST, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
@@ -1157,7 +1153,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(b.getProperties()));
         final ConfigurationPropertyImpl property2 = b.getProperty("property2");
         assertEquals(PropertyKind.LIST, property2.getKind());
         assertEquals(ValueType.STRING, property2.getValueType());
@@ -1191,7 +1187,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("[bla1, bla2]", valuesToString(b.getProperty("property1")));
     }
 
@@ -1217,7 +1213,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("[bla1, bla2, bla3, bla2]", valuesToString(b.getProperty("property1")));
 
         assertEquals("a definition modifying a property should be listed as a definition for the containing node",
@@ -1250,7 +1246,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1, property2]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1, property2]", streamToString(b.getProperties()));
         assertEquals("[bla3, bla2]", valuesToString(b.getProperty("property2")));
     }
 
@@ -1301,7 +1297,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(b.getProperties()));
         assertEquals("[bla2, bla3]", valuesToString(b.getProperty("property1")));
     }
 
@@ -1550,7 +1546,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
-        assertEquals("[jcr:primaryType]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[jcr:primaryType]", streamToString(b.getProperties()));
     }
 
     @Test
@@ -1603,7 +1599,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         final ConfigurationNodeImpl c = b.getNode("c[1]");
-        assertEquals("[jcr:primaryType]", sortedCollectionToString(c.getProperties()));
+        assertEquals("[jcr:primaryType]", streamToString(c.getProperties()));
     }
 
     @Test
@@ -1723,7 +1719,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], c[1], d[1]]", streamToString(a.getNodes()));
     }
 
     private final String snsFixture = "definitions:\n"
@@ -1747,10 +1743,10 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl test = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(test.getNodes()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(test.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(test.getNode("sns[2]").getProperties()));
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(test.getNode("sns[3]").getProperties()));
+        assertEquals("[sns[1], sns[2], sns[3]]", streamToString(test.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(test.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(test.getNode("sns[2]").getProperties()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(test.getNode("sns[3]").getProperties()));
     }
 
     @Test
@@ -1769,7 +1765,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property1, property2]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property1, property2]", streamToString(a.getNode("sns[1]").getProperties()));
     }
 
     @Test
@@ -1788,9 +1784,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(a.getNode("sns[2]").getProperties()));
+        assertEquals("[sns[1], sns[2]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(a.getNode("sns[2]").getProperties()));
     }
 
     @Test
@@ -1809,9 +1805,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(a.getNode("sns[2]").getProperties()));
+        assertEquals("[sns[1], sns[2]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(a.getNode("sns[2]").getProperties()));
     }
 
     @Test
@@ -1830,9 +1826,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getNode("sns[2]").getProperties()));
+        assertEquals("[sns[1], sns[2]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(a.getNode("sns[2]").getProperties()));
     }
 
     @Test
@@ -1853,7 +1849,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[]", streamToString(a.getNodes()));
     }
 
     @Test
@@ -1871,10 +1867,10 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getNode("sns[2]").getProperties()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getNode("sns[3]").getProperties()));
+        assertEquals("[sns[1], sns[2], sns[3]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(a.getNode("sns[2]").getProperties()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(a.getNode("sns[3]").getProperties()));
     }
 
     @Test
@@ -1892,10 +1888,10 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property2]", sortedCollectionToString(a.getNode("sns[1]").getProperties()));
-        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getNode("sns[2]").getProperties()));
-        assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(a.getNode("sns[3]").getProperties()));
+        assertEquals("[sns[1], sns[2], sns[3]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property2]", streamToString(a.getNode("sns[1]").getProperties()));
+        assertEquals("[jcr:primaryType, property1]", streamToString(a.getNode("sns[2]").getProperties()));
+        assertEquals("[jcr:primaryType, property3]", streamToString(a.getNode("sns[3]").getProperties()));
     }
 
     @Test
@@ -1952,7 +1948,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getProperties()));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
         assertEquals("value", valueToString(a.getProperty("property")));
     }
@@ -1972,7 +1968,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getProperties()));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
         assertEquals("[]", valuesToString(a.getProperty("property")));
     }
@@ -1999,7 +1995,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType]", streamToString(a.getProperties()));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
     }
 
@@ -2055,7 +2051,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getProperties()));
         assertEquals("[value]", valuesToString(a.getProperty("property")));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildPropertyCategory("property"));
     }
@@ -2085,7 +2081,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getProperties()));
         assertEquals("true", valueToString(a.getProperty("property")));
         assertEquals(ConfigurationItemCategory.CONFIG, a.getChildPropertyCategory("property"));
     }
@@ -2115,7 +2111,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getProperties()));
         assertEquals("updated", valueToString(a.getProperty("property")));
         assertEquals(ConfigurationItemCategory.CONFIG, a.getChildPropertyCategory("property"));
     }
@@ -2198,7 +2194,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[d[1]]", streamToString(a.getNodes()));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("b[1]"));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("c[1]"));
     }
@@ -2229,7 +2225,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
+        assertEquals("[b[1], d[1]]", streamToString(a.getNodes()));
         assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("c[1]"));
     }
 
@@ -2283,8 +2279,8 @@ public class ConfigurationTreeBuilderTest {
         }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
-        assertEquals("[b[1]]", sortedCollectionToString(root.getNodes()));
-        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[b[1]]", streamToString(root.getNodes()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", streamToString(root.getProperties()));
     }
 
     @Test
@@ -2316,8 +2312,8 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
-        assertEquals("[b[1]]", sortedCollectionToString(a.getNodes()));
-        assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getNode("b[1]").getProperties()));
+        assertEquals("[b[1]]", streamToString(a.getNodes()));
+        assertEquals("[jcr:primaryType, property]", streamToString(a.getNode("b[1]").getProperties()));
         assertEquals(ConfigurationItemCategory.CONFIG, a.getChildNodeCategory("b[1]"));
         assertEquals(ConfigurationItemCategory.CONFIG, a.getChildNodeCategory("c[1]"));
     }
@@ -2452,7 +2448,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
-        final Iterator<ConfigurationNodeImpl> nodeIterator = node.getNodes().values().iterator();
+        final Iterator<ConfigurationNodeImpl> nodeIterator = node.getNodes().iterator();
         assertEquals("first[1]", nodeIterator.next().getName());
         assertEquals("second[1]", nodeIterator.next().getName());
     }

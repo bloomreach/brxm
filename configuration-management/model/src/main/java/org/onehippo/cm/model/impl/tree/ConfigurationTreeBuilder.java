@@ -159,7 +159,7 @@ public class ConfigurationTreeBuilder {
             }
 
             final String indexedName = createIndexedName(definitionNode.getName());
-            if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
+            if (SnsUtils.hasSns(indexedName, node.getParent().getNodeNames())) {
                 node.addDefinition(definitionNode);
                 node.getParent().removeNode(indexedName, true);
             } else {
@@ -256,12 +256,10 @@ public class ConfigurationTreeBuilder {
 
         requirePrimaryType(node, definitionNode);
 
-        final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
             final String indexedName = createIndexedName(definitionChild.getName());
-            final ConfigurationNodeImpl child;
-            if (children.containsKey(indexedName)) {
-                child = children.get(indexedName);
+            ConfigurationNodeImpl child = node.getNode(indexedName);
+            if (child != null) {
                 if (child.isDeleted()) {
                     logger.warn("{} tries to modify already deleted node '{}', skipping.",
                             child.getOrigin(), child.getJcrPath());
@@ -285,7 +283,7 @@ public class ConfigurationTreeBuilder {
     private void applyNodeOrdering(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl parent, final String orderBefore, final boolean orderFirst, final String orderBeforeIndexedName) {
         boolean first = true;
         boolean prevIsSrc = false;
-        for (String name : parent.getNodes().keySet()) {
+        for (final String name : parent.getNodeNames()) {
             if (name.equals(node.getName())) {
                 // current == src
                 if (first && orderFirst) {
@@ -319,10 +317,10 @@ public class ConfigurationTreeBuilder {
     }
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
-        if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
+        if (SnsUtils.hasSns(indexedName, node.getNodeNames())) {
             final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
-            for (String siblingIndexedName : node.getNodes().keySet()) {
+            for (String siblingIndexedName : node.getNodeNames()) {
                 final JcrPathSegment siblingNameAndIndex = JcrPaths.getSegment(siblingIndexedName);
                 if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
@@ -421,7 +419,7 @@ public class ConfigurationTreeBuilder {
         if (definitionNode.getCategory() != null) {
             if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIG) {
                 parent.clearChildNodeCategorySettings(name);
-                if (definitionNode.getNodes().size() == 0 && definitionNode.getProperties().size() == 0) {
+                if (!definitionNode.getNodes().findAny().isPresent() && !definitionNode.getProperties().findAny().isPresent()) {
                     return null;
                 }
             } else {
@@ -454,7 +452,6 @@ public class ConfigurationTreeBuilder {
         // a node should have a back-reference to any definition that changes its properties
         parent.addDefinition(definitionProperty.getParent());
 
-        final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = definitionProperty.getName();
         final PropertyOperation op = definitionProperty.getOperation();
 
@@ -465,10 +462,9 @@ public class ConfigurationTreeBuilder {
         // 4. a config node may have a config property that is redefined to system -- in this case, the previous value
         //    will be treated as an initial value unless an explicit operation: delete is specified
 
-        ConfigurationPropertyImpl property;
+        ConfigurationPropertyImpl property = parent.getProperty(name);
         final ConfigurationItemCategory category = definitionProperty.getCategory();
-        if (properties.containsKey(name)) {
-            property = properties.get(name);
+        if (property != null) {
             final ConfigurationItemCategory configCategory = parent.getChildPropertyCategory(name);
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
@@ -733,15 +729,13 @@ public class ConfigurationTreeBuilder {
             return;
         }
 
-        final Map<String, ConfigurationPropertyImpl> propertyMap = node.getModifiableProperties();
-        final List<String> deletedProperties = propertyMap.keySet().stream()
-                .filter(propertyName -> propertyMap.get(propertyName).isDeleted())
+        final List<String> deletedProperties = node.getPropertyNames().stream()
+                .filter(propertyName -> node.getProperty(propertyName).isDeleted())
                 .collect(Collectors.toList());
         deletedProperties.forEach(node::removeProperty);
 
-        final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
-        final List<String> children = new ArrayList<>(childMap.keySet());
-        children.forEach(name -> pruneDeletedItems(childMap.get(name)));
+        final List<String> children = new ArrayList<>(node.getNodeNames());
+        children.forEach(name -> pruneDeletedItems(node.getNode(name)));
     }
 
 }

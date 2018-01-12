@@ -19,6 +19,8 @@ package org.onehippo.cm.model.util;
 import java.util.function.Function;
 
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -100,22 +102,21 @@ public class ConfigurationModelUtils {
         }
 
         JcrPath parent = JcrPaths.ROOT;
-        ConfigurationNode modelNode = model.getConfigurationRootNode();
+        ConfigurationNode<?,?,?> modelNode = model.getConfigurationRootNode();
         for (int i = 0; i < itemPath.getSegmentCount(); i++) {
             final JcrPathSegment childSegment = itemPath.getSegment(i);
-            final String childName = childSegment.toString();
-            final String indexedChildName = childSegment.forceIndex().toString();
+            final JcrPathSegment indexedChildSegment = childSegment.forceIndex();
             if (i == itemPath.getSegmentCount() - 1) {
                 final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
                 return propertyPath
-                        ? modelNode.getChildPropertyCategory(childName)
-                        : modelNode.getChildNodeCategory(indexedChildName, override);
+                        ? modelNode.getChildPropertyCategory(childSegment)
+                        : modelNode.getChildNodeCategory(indexedChildSegment, override);
             } else {
-                if (modelNode.getNode(indexedChildName) != null) {
-                    modelNode = modelNode.getNode(indexedChildName);
+                if (modelNode.getNode(indexedChildSegment) != null) {
+                    modelNode = modelNode.getNode(indexedChildSegment);
                 } else {
                     final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
-                    return modelNode.getChildNodeCategory(indexedChildName, override);
+                    return modelNode.getChildNodeCategory(indexedChildSegment, override);
                 }
             }
             parent = parent.resolve(childSegment);

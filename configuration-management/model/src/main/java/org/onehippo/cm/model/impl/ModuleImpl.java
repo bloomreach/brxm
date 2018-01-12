@@ -491,36 +491,33 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     protected void digestResourcesForNode(DefinitionNodeImpl defNode, SourceImpl source, ResourceInputProvider rip,
                                           TreeMap<String,String> items) {
-        // find resource values
-        for (DefinitionPropertyImpl dp : defNode.getProperties().values()) {
-            // if value is a resource, digest it
-            Consumer<ValueImpl> digester = v -> {
-                if (v.isResource()) {
-                    try {
-                        digestResource(source, v.getString(), v.getResourceInputStream(), rip, items);
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException("Exception while computing resource digest", e);
-                    }
-                }
-            };
 
+        final Consumer<ValueImpl> digester = v -> {
+            if (v.isResource()) {
+                try {
+                    digestResource(source, v.getString(), v.getResourceInputStream(), rip, items);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException("Exception while computing resource digest", e);
+                }
+            }
+        };
+
+        // find resource values
+        defNode.getProperties().forEach(dp -> {
+            // if value is a resource, digest it
             switch (dp.getKind()) {
                 case SINGLE:
                     digester.accept(dp.getValue());
                     break;
                 case SET: case LIST:
-                    for (ValueImpl value : dp.getValues()) {
-                        digester.accept(value);
-                    }
+                    dp.getValues().forEach(digester);
                     break;
             }
-        }
+        });
 
         // recursively visit child definition nodes
-        for (DefinitionNodeImpl dn : defNode.getNodes().values()) {
-            digestResourcesForNode(dn, source, rip, items);
-        }
+        defNode.getNodes().forEach(dn -> digestResourcesForNode(dn, source, rip, items));
     }
 
     /**

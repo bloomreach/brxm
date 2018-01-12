@@ -24,7 +24,7 @@ import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
 
 public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionPropertyImpl>
-        implements ConfigurationProperty<DefinitionPropertyImpl> {
+        implements ConfigurationProperty<DefinitionPropertyImpl,ConfigurationNodeImpl> {
 
     private PropertyKind kind;
     private ValueType valueType;

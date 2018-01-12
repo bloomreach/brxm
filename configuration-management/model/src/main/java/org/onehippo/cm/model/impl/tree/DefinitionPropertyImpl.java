@@ -34,7 +34,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
 
-public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty, Comparable<DefinitionProperty> {
+public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty<DefinitionNodeImpl>, Comparable<DefinitionProperty> {
 
     private PropertyKind kind;
     private ValueType valueType;

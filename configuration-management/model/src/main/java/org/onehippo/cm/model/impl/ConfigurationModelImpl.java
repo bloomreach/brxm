@@ -270,8 +270,12 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             final JcrPath pathDiff = deletedRootNode.getJcrPath().relativize(path);
             ConfigurationNodeImpl currentNode = deletedRootNode;
             for (final JcrPathSegment jcrPathSegment : pathDiff) {
-                currentNode = currentNode.getNodes().getOrDefault(jcrPathSegment.toString(),
-                        currentNode.getNodes().get(jcrPathSegment.forceIndex().toString()));
+                ConfigurationNodeImpl nextNode = currentNode.getNode(jcrPathSegment);
+                if (nextNode == null) {
+                    nextNode = currentNode.getNode(jcrPathSegment.forceIndex());
+                }
+
+                currentNode = nextNode;
                 if (currentNode == null) {
                     break; //wrong path
                 } else if (currentNode.getJcrPath().equals(path)) {
@@ -382,7 +386,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         }
     }
 
-    @Override
     public ConfigurationNodeImpl resolveNode(String path) {
         return resolveNode(JcrPaths.getPath(path));
     }
@@ -392,6 +395,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param path the path of a node
      * @return a ConfigurationNode or null, if no node exists with this path
      */
+    @Override
     public ConfigurationNodeImpl resolveNode(JcrPath path) {
         // special handling for root node
         if (path.isRoot()) {
@@ -408,7 +412,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return currentNode;
     }
 
-    @Override
     public ConfigurationPropertyImpl resolveProperty(String path) {
         return resolveProperty(JcrPaths.getPath(path));
     }
@@ -418,6 +421,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param path the path of a property
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
+    @Override
     public ConfigurationPropertyImpl resolveProperty(JcrPath path) {
         ConfigurationNodeImpl node = resolveNode(path.getParent());
         if (node == null) {
@@ -428,19 +432,19 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         }
     }
 
-    @Override
     public ContentDefinitionImpl getNearestContentDefinition(final String path) {
         return getNearestContentDefinition(JcrPaths.getPath(path));
     }
 
+    @Override
     public ContentDefinitionImpl getNearestContentDefinition(final JcrPath path) {
-        String originPath = "";
+        JcrPath originPath = JcrPaths.ROOT;
         ContentDefinitionImpl defValue = null;
         for (ContentDefinitionImpl def : getContentDefinitions()) {
             // this def is a better candidate if it has a starting substring match
             if (path.startsWith(def.getRootPath())
                     // and that subpath is longer than the previous match
-                    && (def.getRootPath().length() > originPath.length())) {
+                    && (def.getRootPath().getSegmentCount() > originPath.getSegmentCount())) {
                 originPath = def.getRootPath();
                 defValue = def;
             }

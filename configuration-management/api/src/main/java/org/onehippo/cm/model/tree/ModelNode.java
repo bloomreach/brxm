@@ -15,43 +15,50 @@
  */
 package org.onehippo.cm.model.tree;
 
-import java.util.Map;
+import java.util.stream.Stream;
+
+import org.onehippo.cm.model.path.JcrPathSegment;
 
 /**
  * Represents the (potential) state of a JCR Node as specified in either a ConfigurationItem or DefinitionItem tree.
  */
-public interface ModelNode extends ModelItem {
+public interface ModelNode<N extends ModelNode, P extends ModelProperty> extends ModelItem<N> {
 
     /**
-     * @return The <strong>ordered</strong> map of {@link ModelNode}s by name for this {@link ModelNode} as an immutable map
-     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
-     * model processing order.
+     * @return An ordered Stream of child nodes of this model node. Note the ordering is according to encounter order
+     *      in the serialized yaml format.
      */
-    Map<String, ? extends ModelNode> getNodes();
+    Stream<N> getNodes();
+
+    /**
+     * @return An ordered Stream of properties of this model node. Note the ordering is according to encounter order in
+     *      the serialized yaml format. These properties may include JCR properties or metadata properties (identifiable
+     *      with the ".meta:" namespace prefix).
+     */
+    Stream<P> getProperties();
 
     /**
      * @param name the name of the child node
      * @return the child {@link ModelNode node} requested, or null if not configured
      */
-    ModelNode getNode(final String name);
-
-    /**
-     * @return The <strong>ordered</strong> map of {@link ModelProperty}s by name for this {@link ModelNode} as an immutable map
-     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
-     * model processing order.
-     */
-    Map<String, ? extends ModelProperty> getProperties();
+    N getNode(JcrPathSegment name);
 
     /**
      * @param name the name of the property
      * @return the {@link ModelProperty} requested, or null if not configured
      */
-    ModelProperty getProperty(final String name);
+    P getProperty(JcrPathSegment name);
 
     /**
-     * @return Boolean.TRUE iff for this node the order of its children can be ignored on detecting changes,
+     * @return Boolean.TRUE if and only if the order of child nodes of this node can be ignored on detecting changes,
      * even if its primary node type indicates otherwise, or null if unspecified.
      */
     Boolean getIgnoreReorderedChildren();
+
+//    /**
+//     * @return true if and only if this model node contains no significant information, including but not limited to
+//     *      child nodes, JCR properties, and metadata properties.
+//     */
+//    boolean isEmpty();
 
 }

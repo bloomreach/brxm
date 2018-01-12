@@ -25,6 +25,7 @@ import java.util.Comparator;
  * states as distinct must use the {@link #compareUnindexedFirst(JcrPathSegment)} and
  * {@link #equalsUnindexedSignificant(Object)} methods or the {@link #UNINDEXED_FIRST_ORDER} comparator.
  */
+// TODO: support concept of property segment that cannot accept an index != 0
 public interface JcrPathSegment extends Comparable<JcrPathSegment> {
 
     /**

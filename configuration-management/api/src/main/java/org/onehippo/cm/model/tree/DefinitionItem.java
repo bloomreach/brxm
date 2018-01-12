@@ -20,13 +20,7 @@ import org.onehippo.cm.model.definition.TreeDefinition;
 /**
  * Represents the (potential) state of a JCR Node or Property as specified in a DefinitionItem tree.
  */
-public interface DefinitionItem extends ModelItem {
-
-    /**
-     * @return the parent node for this item
-     */
-    @Override
-    DefinitionNode getParent();
+public interface DefinitionItem<N extends DefinitionNode> extends ModelItem<N> {
 
     /**
      * @return the ContentDefinition (or ConfigDefinition) in which this item is defined

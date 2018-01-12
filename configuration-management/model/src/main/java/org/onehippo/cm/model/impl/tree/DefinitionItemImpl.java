@@ -23,7 +23,7 @@ import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionItem;
 
-public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
+public abstract class DefinitionItemImpl extends ModelItemImpl<DefinitionNodeImpl> implements DefinitionItem<DefinitionNodeImpl> {
 
     private JcrPath path;
     private DefinitionNodeImpl parent;
