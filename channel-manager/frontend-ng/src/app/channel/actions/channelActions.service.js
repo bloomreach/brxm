@@ -20,6 +20,7 @@ import deleteProgressTemplate from './delete/delete-channel-progress.html';
 class ChannelActionsService extends MenuService {
   constructor(
     $log,
+    $state,
     $translate,
     ChannelService,
     CmsService,
@@ -28,7 +29,6 @@ class ChannelActionsService extends MenuService {
     FeedbackService,
     HippoIframeService,
     SessionService,
-    SidePanelService,
     SiteMapService,
     ProjectService,
   ) {
@@ -37,6 +37,7 @@ class ChannelActionsService extends MenuService {
     super();
 
     this.$log = $log;
+    this.$state = $state;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -45,7 +46,6 @@ class ChannelActionsService extends MenuService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
-    this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
     this.ProjectService = ProjectService;
 
@@ -263,7 +263,7 @@ class ChannelActionsService extends MenuService {
 
   // Close
   _closeChannel() {
-    this.SidePanelService.close('right')
+    this.$state.go('hippo-cm.channel')
       .then(() => this.CmsService.publish('close-channel'));
   }
 }
