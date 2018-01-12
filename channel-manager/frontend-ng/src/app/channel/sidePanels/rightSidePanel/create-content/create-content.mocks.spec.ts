@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 export class CreateContentServiceMock {
-  getTemplateQuery(id): Observable<TemplateQuery> {
-    return Observable.of(null);
+  getTemplateQuery(id) {
+    return Promise.resolve(null);
   }
 
-  createDraft(documentDetails: DocumentDetails): Observable<TemplateQuery> {
-    return Observable.of(null);
+  createDraft(documentDetails: DocumentDetails) {
+    return Promise.resolve(null);
   }
 
-  generateDocumentUrlByName(name, locale: string = ''): Observable<string> {
-    return Observable.of(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
+  generateDocumentUrlByName(name, locale: string = '') {
+    return Promise.resolve(name.replace(/\s+/g, '-').toLowerCase()); // will transform "TestName123" into "test-name-123"
   }
 
   getDocument() {
@@ -44,8 +44,8 @@ export class CreateContentServiceMock {
     };
   }
 
-  getFolders(path: string): Observable<Array<Folder>> {
-    return Observable.of([]);
+  getFolders(path: string) {
+    return Promise.resolve([]);
   }
 
   setDraftNameUrl(documentId: string, data: { name, url }) {
@@ -75,16 +75,6 @@ export class ContentServiceMock {
   }
 }
 
-export class DialogServiceMock {
-  confirm(): any {
-    return new ConfirmDialogMock();
-  }
-
-  show(dialog: object): Promise<void> {
-    return Promise.resolve();
-  }
-}
-
 export class ConfirmDialogMock {
   title() {
     return this;
@@ -103,19 +93,29 @@ export class ConfirmDialogMock {
   }
 }
 
-export class FieldServiceMock {
-  setDocumentId(id: string): void {}
+export class DialogServiceMock {
+  confirm(): any {
+    return new ConfirmDialogMock();
+  }
+
+  show(dialog: object): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
-export class MdDialogMock {
-  open() {
-    return new MdDialogRefMock();
-  }
+export class FieldServiceMock {
+  setDocumentId(id: string): void {}
 }
 
 export class MdDialogRefMock {
   afterClosed () {
     return Observable.of({ name: 'docName', url: 'doc-url' });
+  }
+}
+
+export class MdDialogMock {
+  open() {
+    return new MdDialogRefMock();
   }
 }
 
@@ -125,9 +125,4 @@ export class ChannelServiceMock {
       contentRoot: '/channel/content'
     };
   }
-}
-
-export class CmsServiceMock {
-  publish() {}
-  subscribe() {}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import template from './fieldsEditor.html';
-import '../create-content/step2/step2.scss';
+import './step2.scss';
+import template from './step2.html';
+import controller from './step2.controller';
 
-const fieldsEditorComponent = {
+const createContentStep2Component = {
+  controller,
   template,
   bindings: {
-    fieldTypes: '=',
-    fieldValues: '=',
+    options: '=',
+    isFullWidth: '=',
+    onSave: '&',
+    onClose: '&',
+    onFullWidth: '&',
+    onBeforeStateChange: '&',
   },
 };
 
-export default fieldsEditorComponent;
+export default createContentStep2Component;

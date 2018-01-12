@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import template from './fieldsEditor.html';
-import '../create-content/step2/step2.scss';
+import CreateContentService from './createContent.service.js';
 
-const fieldsEditorComponent = {
-  template,
-  bindings: {
-    fieldTypes: '=',
-    fieldValues: '=',
-  },
+export function createContentServiceFactory(i: any) {
+  return i.get('CreateContentService');
+}
+export const CreateContentServiceProvider = {
+  provide: CreateContentService,
+  useFactory: createContentServiceFactory,
+  deps: ['$injector']
 };
-
-export default fieldsEditorComponent;

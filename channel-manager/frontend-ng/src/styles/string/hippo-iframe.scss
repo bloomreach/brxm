@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -295,10 +295,9 @@
       box-shadow: $overlay-link-shadow-active !important;
     }
     &-open {
-      svg { fill: $white; }
-
-      //  Different fab buttons are using different .svg files (among default ones provided by AngularJS Material).
-      //  Therefore, we need to adjust the padding of each button type.
+      svg { fill: $white;}
+      // Different fab buttons are using different .svg files (among default ones provided by AngularJS Material).
+      // Therefore, we need to adjust the padding of each button type.
       &[title='Cancel'] {
         padding: 7px 0 0;
       }

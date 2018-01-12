@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
   limitations under the License.
   -->
 
-<form #form="ngForm">
+<form name="$ctrl.form">
   <!-- Document location field -->
   <div class="field">
-    <mat-form-field
-      class="create-content-field qa-document-location create-content-field-clickable">
-      <input matInput required readonly
+    <md-input-container class="create-content-field qa-document-location create-content-field-clickable">
+      <input ng-model="$ctrl.documentLocationLabel"
              name="documentLocation"
              placeholder="Document location"
-             (click)="openPicker()"
-             [(ngModel)]="documentLocationLabel">
-    </mat-form-field>
+             required
+             readonly
+             ng-click="$ctrl.openPicker()">
 
-    <hippo-hints
-      [data]="form.controls.documentLocation.errors"
-      *ngIf="form.controls.documentLocation && form.controls.documentLocation.touched">
-      <div hint="required">This field is required</div>
-    </hippo-hints>
+      <div ng-messages="form.controls.documentLocation && form.controls.documentLocation.touched">
+        <div ng-message="required">This field is required</div>
+      </div>
+    </md-input-container>
   </div>
 </form>

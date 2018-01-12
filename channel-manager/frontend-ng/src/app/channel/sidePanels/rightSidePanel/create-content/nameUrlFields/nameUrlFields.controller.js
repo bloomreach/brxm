@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,58 +14,46 @@
  * limitations under the License.
  */
 
-import {
-  Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges, ViewChild, Output,
-  EventEmitter
-} from '@angular/core';
-import { CreateContentService } from '../create-content.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/do';
 
-@Component({
-  selector: 'hippo-name-url-fields',
-  templateUrl: 'name-url-fields.html'
-})
-export class NameUrlFieldsComponent implements OnInit, OnChanges {
-  @ViewChild('form') form: HTMLFormElement;
-  @ViewChild('nameInputElement') nameInputElement: ElementRef;
-  @Input() locale: string;
-  @Input() nameField: string;
-  @Input() urlField: string;
-  @Output() urlUpdate: EventEmitter<boolean> = new EventEmitter();
-  public isManualUrlMode = false;
+class NameUrlFieldsController {
+  constructor($element, $timeout, CreateContentService) {
+    'ngInject';
 
-  constructor(private createContentService: CreateContentService) {}
+    this.createContentService = CreateContentService;
+    this.nameInputField = $element.find('#nameInputElement');
+    this.isManualUrlMode = false;
+    this.$timeout = $timeout;
+  }
 
-  ngOnInit() {
+  $onInit() {
     this.nameField = this.nameField || '';
     this.urlField = this.urlField || '';
 
-    Observable.fromEvent(this.nameInputElement.nativeElement, 'keyup')
+    Observable.fromEvent(this.nameInputField, 'keyup')
       .filter(() => !this.isManualUrlMode)
-      .do(() => this.urlUpdate.emit(true))
+      .do(() => { this.urlUpdate = true; })
       .debounceTime(1000)
       .subscribe(() => {
         this.setDocumentUrlByName();
-        this.urlUpdate.emit(false);
+        this.urlUpdate = false;
       });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty('locale') && this.form.controls.name) {
+  $onChanges(changes) {
+    if (changes.hasOwnProperty('locale') && !changes.locale.isFirstChange()) {
       this.setDocumentUrlByName();
     }
   }
 
   setDocumentUrlByName() {
-    const observable = this.createContentService.generateDocumentUrlByName(this.nameField, this.locale);
-    observable.subscribe((slug) => {
+    return this.createContentService.generateDocumentUrlByName(this.nameField, this.locale).then((slug) => {
       this.urlField = slug;
     });
-    return observable;
   }
 
   validateFields() {
@@ -73,12 +61,12 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
       this.nameField.length !== 0, // name empty
       this.urlField.length !== 0, // url empty
       /\S/.test(this.nameField), // name is only whitespace(s)
-      /\S/.test(this.urlField) // url is only whitespaces
+      /\S/.test(this.urlField), // url is only whitespaces
     ];
-    return conditions.every((condition) => condition === true);
+    return conditions.every(condition => condition === true);
   }
 
-  setManualUrlEditMode(state: boolean) {
+  setManualUrlEditMode(state) {
     if (state) {
       this.isManualUrlMode = true;
     } else {
@@ -87,3 +75,5 @@ export class NameUrlFieldsComponent implements OnInit, OnChanges {
     }
   }
 }
+
+export default NameUrlFieldsController;

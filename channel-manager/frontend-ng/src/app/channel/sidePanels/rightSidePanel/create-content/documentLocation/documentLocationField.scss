@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.create-content-field-clickable input {
-  cursor: pointer;
+document-location-field {
+  md-input-container {
+    width: 100%;
+  }
+
+  .create-content-field-clickable input {
+    cursor: pointer;
+  }
 }

@@ -34,24 +34,24 @@
                       on-close="RightSidePanelCtrl.closePanel()">
   </hippo-edit-content>
 
-  <hippo-create-content-step-1 flex
-                               layout="column"
-                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
-                               [options]="RightSidePanelCtrl.options"
-                               (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
-                               (on-close)="RightSidePanelCtrl.closePanel()"
-                               (on-continue)="RightSidePanelCtrl.switchCreateContentStep($event)"
-                               (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
-  </hippo-create-content-step-1>
-  <hippo-create-content-step-2 flex
-                               layout="column"
-                               ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create2"
-                               [options]="RightSidePanelCtrl.options"
-                               [is-full-width]="RightSidePanelCtrl.isFullWidth"
-                               (on-save)="RightSidePanelCtrl.editDocumentAndRefreshPage($event)"
-                               (on-close)="RightSidePanelCtrl.closePanel()"
-                               (on-full-width)="RightSidePanelCtrl.setFullWidth($event)"
-                               (on-before-state-change)="RightSidePanelCtrl.onBeforeStateChange($event)">
-  </hippo-create-content-step-2>
+  <create-content-step-1 flex
+                        layout="column"
+                        ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
+                        options="RightSidePanelCtrl.options"
+                        on-full-width="RightSidePanelCtrl.setFullWidth(state)"
+                        on-close="RightSidePanelCtrl.closePanel($event)"
+                        on-continue="RightSidePanelCtrl.switchCreateContentStep(options)"
+                        on-before-state-change="RightSidePanelCtrl.onBeforeStateChange($event)">
+  </create-content-step-1>
 
+  <create-content-step-2 flex
+                         layout="column"
+                         ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create2"
+                         options="RightSidePanelCtrl.options"
+                         is-full-width="RightSidePanelCtrl.isFullWidth"
+                         on-save="RightSidePanelCtrl.editDocumentAndRefreshPage(documentId)"
+                         on-close="RightSidePanelCtrl.closePanel()"
+                         on-full-width="RightSidePanelCtrl.setFullWidth(state)"
+                         on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
+  </create-content-step-2>
 </md-sidenav>

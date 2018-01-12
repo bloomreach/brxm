@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import template from './fieldsEditor.html';
-import '../create-content/step2/step2.scss';
+import template from './nameUrlFields.html';
+import controller from './nameUrlFields.controller';
+import './nameUrlFields.scss';
 
-const fieldsEditorComponent = {
+const nameUrlFieldsComponent = {
+  controller,
   template,
   bindings: {
-    fieldTypes: '=',
-    fieldValues: '=',
+    locale: '<',
+    nameField: '=',
+    urlField: '=',
   },
 };
 
-export default fieldsEditorComponent;
+export default nameUrlFieldsComponent;

@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import template from './fieldsEditor.html';
-import '../create-content/step2/step2.scss';
+import template from './documentLocationField.html';
+import controller from './documentLocationField.controller';
+import './documentLocationField.scss';
 
-const fieldsEditorComponent = {
+const documentLocationFieldComponent = {
+  controller,
   template,
   bindings: {
-    fieldTypes: '=',
-    fieldValues: '=',
+    rootPath: '=',
+    defaultPath: '=',
+    changeLocale: '&',
   },
 };
 
-export default fieldsEditorComponent;
+export default documentLocationFieldComponent;

@@ -13,28 +13,17 @@
 // limitations under the License.
 
 @import 'variables';
-.create-content {
-  &-container {
-    background: $grey-100;
-  }
 
-  &-form {
+.create-content-container {
+  background: $grey-100;
+
+  form {
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 12px;
 
-    mat-form-field {
-      width: 100%;
-    }
-
     .field {
       margin-bottom: 4px;
-    }
-
-    hippo-hints div {
-      color: $red-500;
-      font-size: 12px;
-      margin-top: -15px;
     }
 
     .edit-title-toolbar {
@@ -42,19 +31,31 @@
       padding-bottom: 0;
       padding-top: 0;
     }
-
-    // TODO: shared hippo material overrides
-    .hide-select-arrow {
-      .mat-select-arrow {
-        visibility: hidden;
-      }
-    }
   }
 
-  &-actions {
+  .create-content-actions {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     padding: 10px 16px;
+  }
+
+  .hide-select-arrow .md-select-icon {
+    visibility: hidden;
+  }
+
+  .input-document-type.ng-untouched.ng-invalid-required md-select-value span:first-child::after {
+    color: $text-dim;
+  }
+
+  .step1-bottom-toolbar {
+    background-color: transparent;
+    &:last-child {
+      border-top: 0;
+    }
+  }
+
+  md-input-container .md-errors-spacer {
+    min-height: 0;
   }
 }

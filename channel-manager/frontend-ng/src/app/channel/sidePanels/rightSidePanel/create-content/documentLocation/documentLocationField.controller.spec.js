@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,91 +14,76 @@
  * limitations under the License.
  */
 
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/observable/of';
+describe('DocumentLocationField', () => {
+  let $componentController;
+  let $q;
+  let $rootScope;
+  let ChannelService;
+  let CreateContentService;
 
-import ChannelService from '../../../../channel.service.js';
-import CmsService from '../../../../../services/cms.service';
-import { CreateContentService } from '../create-content.service';
-import { DocumentLocationFieldComponent } from './document-location-field.component';
-import FeedbackService from '../../../../../services/feedback.service.js';
-import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
-import { SharedModule } from '../../../../../shared/shared.module';
-import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock, CmsServiceMock } from '../create-content.mocks.spec';
-
-describe('DocumentLocationField Component', () => {
-  let component: DocumentLocationFieldComponent;
-  let fixture: ComponentFixture<DocumentLocationFieldComponent>;
-  let createContentService: CreateContentService;
+  let component;
   let getFolderSpy;
+  let getChannelSpy;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        DocumentLocationFieldComponent,
-        HintsComponent
-      ],
-      imports: [
-        BrowserAnimationsModule,
-        FormsModule,
-        SharedModule
-      ],
-      providers: [
-        { provide: ChannelService, useClass: ChannelServiceMock },
-        { provide: CmsService, useClass: CmsServiceMock },
-        { provide: CreateContentService, useClass: CreateContentServiceMock },
-        { provide: FeedbackService, useClass: FeedbackServiceMock },
-      ]
+    angular.mock.module('hippo-cm.channel.createContentModule');
+
+    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_, _CreateContentService_) => {
+      $componentController = _$componentController_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
+      CreateContentService = _CreateContentService_;
     });
 
-    fixture = TestBed.createComponent(DocumentLocationFieldComponent);
-    component = fixture.componentInstance;
-    createContentService = fixture.debugElement.injector.get(CreateContentService);
-    getFolderSpy = spyOn(createContentService, 'getFolders').and.callThrough();
+    component = $componentController('documentLocationField');
+
+    getFolderSpy = spyOn(CreateContentService, 'getFolders').and.returnValue($q.resolve());
+    getChannelSpy = spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/channel/content' });
+    component.changeLocale = () => angular.noop();
   });
+
 
   describe('parsing the rootPath @Input', () => {
     it('defaults to the channel root if not set', () => {
-      fixture.detectChanges();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content');
     });
 
     it('overrides the channel root path if absolute', () => {
       component.rootPath = '/root/path';
-      fixture.detectChanges();
+      component.$onInit();
       expect(component.rootPath).toBe('/root/path');
     });
 
     it('is concatenated wth the channel\'s root path if relative', () => {
       component.rootPath = 'some/path';
-      fixture.detectChanges();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content/some/path');
     });
 
     it('never ends with a slash', () => {
+      getChannelSpy.and.returnValue({ contentRoot: '/channel/content' });
       component.rootPath = '/root/path/';
-      fixture.detectChanges();
+      component.$onInit();
       expect(component.rootPath).toBe('/root/path');
 
       component.rootPath = 'some/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPath).toBe('/channel/content/some/path');
     });
 
     it('detects the root path depth', () => {
       component.rootPath = '/root';
-      fixture.detectChanges();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(1);
 
       component.rootPath = '/root/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(2);
 
       component.rootPath = 'some/path/';
-      component.ngOnInit();
+      component.$onInit();
       expect(component.rootPathDepth).toBe(4);
     });
   });
@@ -106,23 +91,29 @@ describe('DocumentLocationField Component', () => {
   describe('parsing the defaultPath @Input', () => {
     it('throws an error if defaultPath is absolute', () => {
       component.defaultPath = '/path';
-      expect(() => fixture.detectChanges()).toThrow(new Error('The defaultPath option can only be a relative path'));
+      expect(() => component.$onInit()).toThrow(new Error('The defaultPath option can only be a relative path'));
     });
   });
 
   describe('setting the document location', () => {
     it('stores the path of the last folder returned by the create-content-service', () => {
-      const folders = [{path: '/root'}, {path: '/root/path'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
-      component.ngOnInit();
+      const folders = [{ path: '/root' }, { path: '/root/path' }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
+
+      component.$onInit();
+      $rootScope.$apply();
+
       expect(component.documentLocation).toBe('/root/path');
     });
 
     it('stores the value of defaultPath returned by the create-content-service', () => {
       component.rootPath = '/root';
-      const folders = [{name: 'root'}, {name: 'default'}, {name: 'path'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
-      component.ngOnInit();
+      const folders = [{ name: 'root' }, { name: 'default' }, { name: 'path' }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
+
+      component.$onInit();
+      $rootScope.$apply();
+
       expect(component.defaultPath).toBe('default/path');
     });
   });
@@ -133,11 +124,12 @@ describe('DocumentLocationField Component', () => {
       displayNames.forEach((displayName) => {
         folders.push({ displayName, path: '' });
       });
-      getFolderSpy.and.returnValue(Observable.of(folders));
+      getFolderSpy.and.returnValue($q.resolve(folders));
 
       component.rootPath = rootPath;
       component.defaultPath = defaultPath;
-      component.ngOnInit();
+      component.$onInit();
+      $rootScope.$apply();
     };
 
     it('uses displayName(s) for the document location label', () => {
@@ -199,14 +191,14 @@ describe('DocumentLocationField Component', () => {
 
   describe('the locale @Output', () => {
     it('emits the locale when component is initialized', () => {
-      let changedLocale: string;
-      component.changeLocale.subscribe((locale: string) => changedLocale = locale);
+      spyOn(component, 'changeLocale');
+      const folders = [{ path: '/root' }, { path: '/root/path', locale: 'de' }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
 
-      const folders = [{path: '/root'}, {path: '/root/path', locale: 'de'}];
-      getFolderSpy.and.returnValue(Observable.of(folders));
-      component.ngOnInit();
+      component.$onInit();
+      $rootScope.$apply();
 
-      expect(changedLocale).toBe('de');
+      expect(component.changeLocale).toHaveBeenCalledWith({ locale: 'de' });
     });
   });
 });
