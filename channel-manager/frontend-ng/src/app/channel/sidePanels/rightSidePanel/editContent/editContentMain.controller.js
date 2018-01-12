@@ -54,6 +54,17 @@ class EditContentMainCtrl {
       });
   }
 
+  uiCanExit() {
+    return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
+      .then((saved) => {
+        if (saved) {
+          this.HippoIframeService.reload();
+        }
+        return this.ContentEditor.deleteDraft()
+          .then(() => this.ContentEditor.close());
+      });
+  }
+
   closeButtonLabel() {
     return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }

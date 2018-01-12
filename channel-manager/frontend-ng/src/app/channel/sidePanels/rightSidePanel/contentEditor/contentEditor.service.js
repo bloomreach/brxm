@@ -228,13 +228,20 @@ class ContentEditorService {
       });
   }
 
+  /**
+   * Possible return values:
+   * - resolved promise with value 'true' when changes have been saved
+   * - resolved promise with value 'false' when changes have been discarded
+   * - rejected promise when user canceled
+   */
   confirmPendingChanges(messageKey) {
     return this._confirmSaveOrDiscardChanges(messageKey)
       .then((action) => {
         if (action === 'SAVE') {
-          return this._saveDraft();
+          return this._saveDraft()
+            .then(() => true); // let caller know that changes have been saved
         }
-        return this.$q.resolve();
+        return this.$q.resolve(false); // let caller know that changes have not been saved
       });
   }
 
