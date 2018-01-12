@@ -15,11 +15,28 @@
  */
 
 class EditContentMainCtrl {
-  constructor($mdDialog, EditContentService) {
+  constructor($translate, CmsService, ContentEditor, EditContentService, HippoIframeService) {
     'ngInject';
 
-    this.$mdDialog = $mdDialog;
+    this.CmsService = CmsService;
+    this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
+    this.HippoIframeService = HippoIframeService;
+
+    this.cancelLabel = $translate.instant('CANCEL');
+    this.closeLabel = $translate.instant('CLOSE');
+  }
+
+  closeButtonLabel() {
+    return this.ContentEditor.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  }
+
+  save() {
+    this.ContentEditor.save()
+      .then(() => {
+        this.HippoIframeService.reload();
+        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+      });
   }
 
   close() {

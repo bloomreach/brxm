@@ -13,8 +13,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<p>
-  Edit Content Main
-</p>
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex></span>
 
-<button ng-click="$ctrl.close()">Close</button>
+    <md-button class="qa-close"
+               ng-click="$ctrl.close()">
+      {{ $ctrl.closeButtonLabel() }}
+    </md-button>
+
+    <md-button class="qa-save"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.editing || !$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+  </div>
+</md-toolbar>

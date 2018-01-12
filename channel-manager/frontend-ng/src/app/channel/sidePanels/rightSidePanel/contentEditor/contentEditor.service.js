@@ -79,6 +79,10 @@ class ContentEditorService {
     return this.documentType;
   }
 
+  isDocumentDirty() {
+    return this.documentDirty;
+  }
+
   markDocumentDirty() {
     this.documentDirty = true;
   }
