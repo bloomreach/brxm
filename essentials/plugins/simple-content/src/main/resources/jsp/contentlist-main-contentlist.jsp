@@ -7,7 +7,7 @@
   <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
     <hst:link var="link" hippobean="${item}"/>
     <article class="has-edit-button">
-      <hst:cmseditlink hippobean="${item}"/>
+      <hst:manageContent document="${requestScope.document}"/>
       <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
       <c:if test="${hst:isReadable(item, 'publicationDate.time')}">
         <p>
@@ -17,6 +17,9 @@
       <p><c:out value="${item.introduction}"/></p>
     </article>
   </c:forEach>
+  <div class="has-new-content-button">
+    <hst:manageContent templateQuery="new-content-document" rootPath="content"/>
+  </div>
   <c:if test="${requestScope.cparam.showPagination}">
     <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
   </c:if>

@@ -7,7 +7,8 @@
     <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
       <hst:link var="link" hippobean="${item}"/>
       <article class="has-edit-button">
-        <hst:cmseditlink hippobean="${item}"/>
+        <%-- No possibility to create new blog documents since not all fields types are supported --%>
+        <hst:managecontent document="${item}"/>
         <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
         <c:if test="${hst:isReadable(item, 'publicationDate.time')}">
           <p>

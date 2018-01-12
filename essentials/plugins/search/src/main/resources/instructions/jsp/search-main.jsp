@@ -20,8 +20,8 @@
                 <c:set var="linkName" value="${item.localizedName}"/>
               </c:otherwise>
             </c:choose>
-            <article>
-              <hst:cmseditlink hippobean="${item}"/>
+            <article class="has-edit-button">
+              <hst:manageContent document="${item}"/>
               <hst:link var="link" hippobean="${item}"/>
               <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
             </article>
