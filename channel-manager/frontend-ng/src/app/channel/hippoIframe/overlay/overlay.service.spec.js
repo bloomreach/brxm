@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-describe('OverlayService', () => {
+xdescribe('OverlayService', () => {
   let $q;
   let $rootScope;
   let DomService;

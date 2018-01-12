@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('hippoIframeCtrl', () => {
+xdescribe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
   let ChannelService;

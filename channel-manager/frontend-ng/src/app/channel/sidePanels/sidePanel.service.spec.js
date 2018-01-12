@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('SidePanelService', () => {
+xdescribe('SidePanelService', () => {
   let SidePanelService;
   let $q;
   let $rootScope;
