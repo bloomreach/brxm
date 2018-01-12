@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ class ChannelCtrl {
     OverlayService,
     ChannelActionsService,
     ChannelService,
-    CmsService,
     ConfigService,
     FeedbackService,
     HippoIframeService,
@@ -41,7 +40,6 @@ class ChannelCtrl {
     this.OverlayService = OverlayService;
     this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
