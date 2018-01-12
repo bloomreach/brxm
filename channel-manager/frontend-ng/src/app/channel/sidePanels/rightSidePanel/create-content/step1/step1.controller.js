@@ -39,8 +39,8 @@ class Step1Controller {
     };
 
     this.documentLocationField = {
-      rootPath: null,
       defaultPath: null,
+      rootPath: null,
     };
   }
 
@@ -52,6 +52,9 @@ class Step1Controller {
     if (!this.options.templateQuery) {
       throw new Error('Configuration option "templateQuery" is required');
     }
+
+    this.documentLocationField.defaultPath = this.options.defaultPath;
+    this.documentLocationField.rootPath = this.options.rootPath;
 
     this.CreateContentService.getTemplateQuery(this.options.templateQuery)
       .then(templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes))
