@@ -6,7 +6,8 @@
   <#list pageable.items as item>
     <@hst.link var="link" hippobean=item />
     <article class="has-edit-button">
-      <@hst.manageContent templateQuery="new-blog-document" document=item defaultPath="blog"/>
+      <!-- No possibility to create new blog documents since not all fields types are supported -->
+      <@hst.manageContent document=item/>
       <h3><a href="${link}">${item.title?html}</a></h3>
       <#if item.publicationDate?? && item.publicationDate.time??>
         <p><@fmt.formatDate value=item.publicationDate.time type="both" dateStyle="medium" timeStyle="short"/></p>
@@ -22,6 +23,5 @@
 <#elseif editMode>
 <div>
   <img src="<@hst.link path='/images/essentials/catalog-component-icons/blog-list.png'/>"> Click to edit Blog List
-  <@hst.manageContent templateQuery="new-blog-document" defaultPath="blog"/>
 </div>
 </#if>

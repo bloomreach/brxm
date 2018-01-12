@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Blogpost" -->
 <#if document??>
 <div class="has-edit-button">
-    <@hst.manageContent templateQuery="new-blog-document" document=document defaultPath="blog"/>
+    <@hst.manageContent document=document/>
   <h1>
   ${document.title?html}
       <#if document.publicationDate??>
