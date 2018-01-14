@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-import FeedbackService from '../../services/feedback.service.js';
-
-export function feedbackServiceFactory(i: any) {
-  return i.get('FeedbackService');
-}
-export const FeedbackServiceProvider = {
-  provide: FeedbackService,
-  useFactory: feedbackServiceFactory,
-  deps: ['$injector']
-};
+import './vendor.scss';
+import './index.scss';
+import './app/hippo-cm';

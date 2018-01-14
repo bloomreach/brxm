@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.ng1.module';
+import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.module';
 import ckeditorComponent from './ckeditor.component';
 import ckeditorService from './ckeditor.service';
 

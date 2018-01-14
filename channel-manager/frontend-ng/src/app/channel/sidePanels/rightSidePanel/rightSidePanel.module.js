@@ -18,8 +18,8 @@ import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
 import fieldsEditorComponent from './fieldsEditor/fieldsEditor.ng1.component';
 
-import fieldsModule from './fields/fields.ng1.module';
-import resizeHandleModule from './resizeHandle/resizeHandle.ng1.module';
+import fieldsModule from './fields/fields.module';
+import resizeHandleModule from './resizeHandle/resizeHandle.module';
 import createContentModule from './create-content/createContent.module';
 
 const rightSidePanelModule = angular

@@ -13,33 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import './vendor';
 
-import 'zone.js/dist/zone';
-import 'zone.js/dist/long-stack-trace-zone';
-import 'zone.js/dist/proxy';
-import 'zone.js/dist/sync-test';
-import 'zone.js/dist/jasmine-patch';
-import 'zone.js/dist/async-test';
-import 'zone.js/dist/fake-async-test';
-
-import './app/hippo-cm.ng1.module.js';
+import 'angular';
 import 'angular-mocks';
-
-import { getTestBed, TestBed } from '@angular/core/testing';
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
-
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
-);
-
-import * as angular from 'angular';
-import { TranslateFakeLoader, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { MatIcon, MatIconModule } from '@angular/material';
 
 function createMessageBus($window) {
   const subscriptions = {};
@@ -111,7 +87,7 @@ function createMessageBus($window) {
 
 function mockHost() {
   angular.mock.module(($provide) => {
-    const $window: any = {
+    const $window = {
       document: window.document,
       confirm: window.confirm.bind(window),
       getComputedStyle: window.getComputedStyle.bind(window),
@@ -174,32 +150,9 @@ function mockMdIcon() {
   });
 }
 
-function configureNg4GlobalTestBed() {
-  // Provide fake translations to ignore GET request for the translation file
-  TestBed.configureTestingModule({
-    imports: [
-      TranslateModule.forRoot({
-        loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
-      })
-    ]
-  });
-  // Some modules imports/declares things that are not needed in tests
-  // We override the module to remove these things, since they cause bugs in tests,
-  // in this case we make mdIconsModule ignore all "mat-icon" elements, not looking for the icons that are declared in the template
-  TestBed.overrideModule(MatIconModule, {
-    remove: {
-      declarations: [MatIcon],
-      exports: [MatIcon]
-    }
-  });
-}
+beforeEach(mockHost);
+beforeEach(mockFallbackTranslations);
+beforeEach(mockMdIcon);
 
-beforeEach(() => {
-  mockHost();
-  mockFallbackTranslations();
-  mockMdIcon();
-  configureNg4GlobalTestBed();
-});
-
-const testsContext = require.context('./app', true, /.spec$/);
-testsContext.keys().forEach(testsContext);
+const context = require.context('./app', true, /\.js$/);
+context.keys().forEach(context);
