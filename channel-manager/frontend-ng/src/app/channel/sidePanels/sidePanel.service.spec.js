@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-xdescribe('SidePanelService', () => {
+describe('SidePanelService', () => {
   let SidePanelService;
   let $q;
   let $rootScope;
@@ -106,38 +106,6 @@ xdescribe('SidePanelService', () => {
     $rootScope.$digest();
   });
 
-  it('calls the onCloseCallback before closing a side panel', (done) => {
-    const element = angular.element('<div></div>');
-    const onClose = jasmine.createSpy('onClose');
-    SidePanelService.initialize('left', element, null, onClose);
-
-    leftSidePanel.isOpen.and.returnValue(true);
-    onClose.and.returnValue($q.resolve());
-
-    SidePanelService.close('left').then(() => {
-      expect(onClose).toHaveBeenCalled();
-      expect(leftSidePanel.close).toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('does not close a side panel if its onCloseCallback fails', (done) => {
-    const element = angular.element('<div></div>');
-    const onClose = jasmine.createSpy('onClose');
-    SidePanelService.initialize('left', element, null, onClose);
-
-    leftSidePanel.isOpen.and.returnValue(true);
-    onClose.and.returnValue($q.reject());
-
-    SidePanelService.close('left').catch(() => {
-      expect(onClose).toHaveBeenCalled();
-      expect(leftSidePanel.close).not.toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
   it('forwards the open call to the mdSidenav service', () => {
     const element = angular.element('<div></div>');
     SidePanelService.initialize('left', element);
@@ -147,36 +115,6 @@ xdescribe('SidePanelService', () => {
   });
 
   it('ignores the open call when the a side panel has not been rendered yet', () => {
-    expect(() => {
-      SidePanelService.open('left');
-    }).not.toThrow(jasmine.any(Error));
-  });
-
-  it('calls the onOpen callback when specified', () => {
-    const element = angular.element('<div md-component-id="left"></div>');
-    const onOpen = jasmine.createSpy('onOpen');
-
-    SidePanelService.initialize('left', element, onOpen);
-
-    SidePanelService.open('left');
-    expect(onOpen).toHaveBeenCalled();
-  });
-
-  it('calls the onOpen callback when the side-panel is already open', () => {
-    const element = angular.element('<div md-component-id="left"></div>');
-    const onOpen = jasmine.createSpy('onOpen');
-
-    SidePanelService.initialize('left', element, onOpen);
-
-    leftSidePanel.isOpen.and.returnValue(true);
-    SidePanelService.open('left');
-
-    expect(onOpen).toHaveBeenCalled();
-  });
-
-  it('opens without errors when the onOpen callback is omitted', () => {
-    const element = angular.element('<div md-component-id="left"></div>');
-    SidePanelService.initialize('left', element);
     expect(() => {
       SidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
