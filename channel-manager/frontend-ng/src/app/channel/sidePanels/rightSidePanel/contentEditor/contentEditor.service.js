@@ -165,10 +165,7 @@ class ContentEditorService {
     if (this._isErrorInfo(response.data)) {
       const errorInfo = response.data;
       errorKey = errorInfo.reason;
-      if (errorInfo.params) {
-        params = errorInfo.params;
-        params.user = errorInfo.params.userName || errorInfo.params.userId;
-      }
+      params = this._extractErrorParams(errorInfo);
     } else if (response.status === 404) {
       errorKey = 'NOT_FOUND';
     } else {
@@ -186,8 +183,9 @@ class ContentEditorService {
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
         if (this._isErrorInfo(response.data)) {
-          errorKey = `ERROR_${response.data.reason}`;
-          params = this._extractErrorParams(response.data);
+          const errorInfo = response.data;
+          errorKey = `ERROR_${errorInfo.reason}`;
+          params = this._extractErrorParams(errorInfo);
         } else if (this._isDocument(response.data)) {
           errorKey = 'ERROR_INVALID_DATA';
           this._reloadDocumentType();
@@ -213,6 +211,12 @@ class ContentEditorService {
 
   _isErrorInfo(obj) {
     return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
+  }
+
+  _extractErrorParams(errorInfo) {
+    const params = errorInfo.params || {};
+    params.user = errorInfo.params.userName || errorInfo.params.userId;
+    return params;
   }
 
   _reloadDocumentType() {
