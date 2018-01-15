@@ -28,10 +28,10 @@
 </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
-<div>
-  <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Content list
-  <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-content-document" rootPath="content"/>
+  <div>
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Content list
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-content-document" rootPath="content"/>
+    </div>
   </div>
-</div>
 </#if>

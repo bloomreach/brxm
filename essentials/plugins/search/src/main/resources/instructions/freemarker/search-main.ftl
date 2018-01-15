@@ -3,27 +3,26 @@
 <#-- @ftlvariable name="query" type="java.lang.String" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#if pageable??>
-    <#if pageable.total == 0>
+  <#if pageable.total == 0>
     <h3>No results for: ${query?html}</h3>
-    <#else>
+  <#else>
     <div>
       <#list pageable.items as item>
-          <#if item.title??>
-              <#assign linkName=item.title/>
-          <#else>
-              <#assign linkName=item.localizedName/>
-          </#if>
+        <#if item.title??>
+          <#assign linkName=item.title/>
+        <#else>
+          <#assign linkName=item.localizedName/>
+        </#if>
         <article class="has-edit-button">
-          <@hst.manageContent document=item />
           <@hst.link var="link" hippobean=item />
           <h3><a href="${link}">${linkName?html}</a></h3>
         </article>
       </#list>
       <#if cparam.showPagination>
-          <#include "../include/pagination.ftl">
+        <#include "../include/pagination.ftl">
       </#if>
     </div>
-    </#if>
+  </#if>
 <#else>
   <h3>Please fill in a search term.</h3>
 </#if>

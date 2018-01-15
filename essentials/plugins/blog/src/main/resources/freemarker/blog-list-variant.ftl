@@ -5,7 +5,6 @@
 <div>
   <#list pageable.items as item>
     <div class="media has-edit-button">
-      <!-- No possibility to create new blog documents since not all fields types are supported -->
       <@hst.manageContent document=item/>
       <div class="media-body">
         <h4 class="media-heading">

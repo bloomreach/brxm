@@ -6,7 +6,6 @@
   <#list pageable.items as item>
     <@hst.link var="link" hippobean=item />
     <article class="has-edit-button">
-      <!-- No possibility to create new blog documents since not all fields types are supported -->
       <@hst.manageContent document=item/>
       <h3><a href="${link}">${item.title?html}</a></h3>
       <#if item.publicationDate?? && item.publicationDate.time??>

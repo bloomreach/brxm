@@ -9,7 +9,7 @@
         <h1><c:out value="${requestScope.document.title}"/></h1>
         <div><hst:html hippohtml="${requestScope.document.description}"/></div>
         <c:forEach var="faq" items="${requestScope.document.faqItems}">
-          <div>
+          <div class="has-edit-button">
             <h3><a href="<hst:link hippobean="${faq}"/>"><c:out value="${faq.question}"/></a></h3>
             <hst:html hippohtml="${faq.answer}"/>
             <hst:manageContent document="${faq}"/> <%-- edit faq item --%>

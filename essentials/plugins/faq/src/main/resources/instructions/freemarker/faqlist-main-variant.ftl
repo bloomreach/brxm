@@ -18,7 +18,8 @@
             </h4>
           </div>
           <div id="faq_${faq_index}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading${faq_index}">
-            <div class="panel-body">
+            <div class="panel-body has-edit-button">
+              <@hst.manageContent document=faq/>
               <@hst.html hippohtml=faq.answer/>
             </div>
           </div>

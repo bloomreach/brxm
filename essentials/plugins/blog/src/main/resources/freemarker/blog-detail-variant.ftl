@@ -2,14 +2,14 @@
 
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Blogpost" -->
 <#if document??>
-<div class="has-edit-button">
+  <div class="has-edit-button">
     <@hst.manageContent document=document/>
-  <h1>
-  ${document.title?html}
+    <h1>
+      ${document.title?html}
       <#if document.publicationDate??>
         <small><@fmt.formatDate type="date" pattern="yyyy-MM-dd" value=document.publicationDate.time/></small>
       </#if>
-  </h1>
+    </h1>
     <#if document.introduction??>
       <p class="lead">${document.introduction?html}</p>
     </#if>
@@ -19,5 +19,5 @@
         <p>-- by <em>${document.author?html}</em></p>
       </footer>
     </#if>
-</div>
+  </div>
 </#if>

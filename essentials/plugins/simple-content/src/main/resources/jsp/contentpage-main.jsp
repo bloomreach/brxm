@@ -20,7 +20,8 @@
 </c:if>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${requestScope.editMode && empty requestScope.document}">
-  <div>
+  <div class="has-edit-button">
     <img src="<hst:link path='/images/essentials/catalog-component-icons/simple-content.png'/>"> Click to edit Simple Content
+    <hst:manageContent templateQuery="new-content-document" rootPath="content"/>
   </div>
 </c:if>
