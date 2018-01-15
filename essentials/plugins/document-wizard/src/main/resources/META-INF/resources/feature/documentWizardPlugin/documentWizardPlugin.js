@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             var endpointQueries = $rootScope.REST.documents_template_queries;
-            $scope.pluginId = "documentWizardPlugin";
             $scope.valueListPath = null;
             $scope.documentQuery = null;
             $scope.selectedDocument = null;
@@ -45,31 +44,28 @@
                 $scope.showDialog = false;
             };
             $scope.addWizard = function () {
-                var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument.fullName, null);
-                Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
-                Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
-                Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
-                Essentials.addPayloadData("documentQuery", $scope.documentQuery.value, payload);
+                var payload = {
+                  shortcutName: $scope.shortcutName,
+                  classificationType: $scope.classificationType,
+                  documentType: $scope.selectedDocument.fullName,
+                  baseFolder: $scope.baseFolder,
+                  documentQuery: $scope.documentQuery.value,
+
+                  shortcutLinkLabel: $scope.shortcutLinkLabel,
+                  nameLabel: $scope.nameLabel,
+                  dateLabel: $scope.dateLabel,
+                  listLabel: $scope.listLabel
+                };
+                
                 if ($scope.valueListPath !== null) {
-                    Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
+                    payload.valueListPath = $scope.valueListPath.value;
                 }
-                // labels
-                Essentials.addPayloadData("shortcutLinkLabel", $scope.shortcutLinkLabel, payload);
-                Essentials.addPayloadData("nameLabel", $scope.nameLabel, payload);
-                Essentials.addPayloadData("dateLabel", $scope.dateLabel, payload);
-                Essentials.addPayloadData("listLabel", $scope.listLabel, payload);
-
-                $http.post(endpoint, payload).success(function (data) {
-
-                });
+                $http.post(endpoint, payload); // User feedback is handled globally
             };
 
             //############################################
             // INIT
             //############################################
-            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });

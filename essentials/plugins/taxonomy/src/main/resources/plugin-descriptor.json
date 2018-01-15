@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "taxonomyPlugin",
   "name": "Taxonomy",
   "icon": "/essentials/feature/images/taxonomy-plugin-icon.png",
@@ -11,14 +10,14 @@
     "/essentials/feature/images/screenshots/taxonomy03.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyParameterService",
+  "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/taxonomy_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -35,15 +34,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "taxonomyPlugin",
-          "file": "taxonomyPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

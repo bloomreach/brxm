@@ -17,12 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -38,23 +38,14 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
  */
 public class MessageInstructionExecutor {
 
-    @SuppressWarnings("InstanceofInterfaces")
     public Multimap<MessageGroup, Restful> execute(final InstructionSet instructionSet, PluginContext context) {
-        final Multimap<MessageGroup, Restful> retVal = ArrayListMultimap.create();
+        final Multimap<MessageGroup, Restful> changeMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
+        final BiConsumer<MessageGroup, String> changeMessageCollector
+                = (g, m) -> changeMessages.put(g, new MessageRestful(TemplateUtils.replaceTemplateData(m, placeholderData)));
 
-        for (Instruction instruction : instructionSet.getInstructions()) {
-            final Multimap<MessageGroup, String> changeMessages = instruction.getChangeMessages();
-            if (changeMessages != null) {
-                for (MessageGroup group : changeMessages.keySet()) {
-                    changeMessages.get(group)
-                            .stream()
-                            .map(m -> TemplateUtils.replaceTemplateData(m, placeholderData))
-                            .forEach(m -> retVal.put(group, new MessageRestful(m)));
-                }
-            }
-        }
+        instructionSet.getInstructions().forEach(i -> i.populateChangeMessages(changeMessageCollector));
 
-        return retVal;
+        return changeMessages;
     }
 }

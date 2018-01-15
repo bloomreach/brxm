@@ -32,7 +32,9 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+      <scope>provided</scope>
     </dependency>
+    <!--Please don't add a direct dependency on plugin-sdk-implementation-->
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>

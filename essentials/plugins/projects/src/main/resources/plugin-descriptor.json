@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "projectsPlugin",
   "name": "Projects",
   "icon": "/essentials/feature/images/projects-plugin-icon.png",
@@ -8,11 +7,11 @@
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/workflow-process-management/introduction-to-workflow-process-management.html",
   "imageUrls": [
     "/essentials/feature/images/screenshots/project-details-no-channels.png"
-  ],  "restClasses": [],
+  ],
+  "setupParameters": false,
   "packageFile": "/META-INF/projects_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -28,9 +27,5 @@
     "license": [
       "enterprise"
     ]
-  },
-  "libraries": [
-  ],
-  "dependencies": [
-  ]
+  }
 }

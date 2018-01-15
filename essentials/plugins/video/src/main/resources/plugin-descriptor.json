@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "videoComponentPlugin",
   "name": "Videos",
   "icon": "/essentials/feature/images/videos-plugin-icon.png",
@@ -12,10 +11,8 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/video-component.html",
   "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -31,11 +28,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-      ]
-    }
-  ]
+  }
 }

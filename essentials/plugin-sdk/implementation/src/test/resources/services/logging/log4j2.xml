@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Configuration>
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <ThresholdFilter level="INFO"/>
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+
+    <!-- CMS logging -->
+    <Logger name="org.apache.jackrabbit.core" level="warn"/>
+    <Logger name="org.apache.jackrabbit.extractor" level="warn"/>
+    <Logger name="org.apache.jackrabbit" level="warn"/>
+    <Logger name="org.hippoecm.repository" level="warn"/>
+    <Logger name="org.hippoecm.frontend" level="warn"/>
+    <Logger name="org.apache.wicket" level="warn"/>
+
+    <!-- audit logging -->
+    <Logger name="org.hippoecm.repository.api.Workflow" level="info"/>
+    <Logger name="org.onehippo.audit" level="info"/>
+
+    <!-- Site logging -->
+    <Logger name="org.hippoecm.hst" level="warn"/>
+
+    <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
+         can be here on level 'info' -->
+    <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
+
+    <Logger name="freemarker" level="warn"/>
+    <Logger name="org.apache.cxf" level="warn"/>
+    <Logger name="javax.ws.rs.core" level="warn"/>
+    <Logger name="org.apache.commons.pool" level="warn"/>
+    <Logger name="org.apache.commons.beanutils" level="warn"/>
+
+    <!-- too many caching warnings -->
+    <Logger name="org.apache.jackrabbit.core.state" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.ItemManager" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache" level="error"/>
+
+    <!-- ignore wicket localizer warnings -->
+    <Logger name="org.apache.wicket.Localizer" level="error"/>
+
+    <!-- more info wanted -->
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle" level="warn"/>
+    <Logger name="org.hippoecm.repository.jackrabbit.persistence" level="info"/>
+    <Logger name="org.hippoecm.repository.updater" level="info"/>
+    <Logger name="org.hippoecm.repository.export" level="info"/>
+    <Logger name="org.springframework" level="warn"/>
+    <Logger name="org.onehippo.cms7.essentials" level="debug"/>
+
+
+    <Root level="info">
+      <AppenderRef ref="console"/>
+    </Root>
+  </Loggers>
+</Configuration>

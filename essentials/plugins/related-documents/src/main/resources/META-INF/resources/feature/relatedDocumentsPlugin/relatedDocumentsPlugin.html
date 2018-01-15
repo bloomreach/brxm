@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 <div ng-controller="relatedDocumentsCtrl">
   <div class="panel panel-default">
-    <div class="panel-heading"><h3>{{plugin.name}}</h3></div>
+    <div class="panel-heading"><h3>Related Documents</h3></div>
     <div class="panel-body">
         <essentials-draft-warning></essentials-draft-warning>
         <form novalidate name="documentsForm">
@@ -39,7 +39,7 @@
                         </td>
                         <td>{{doc.name}}</td>
                         <td>
-                            <input type="text" ng-model="doc.searchPaths" ng-required="doc.checked" name="searchPaths"/>
+                            <input type="text" ng-model="doc.searchPaths" ng-required="doc.checked" name="searchPaths" ng-disabled="!doc.checked"/>
                             <essentials-folder-picker button-text="Select search folder"
                                                       title="Select search folder"
                                                       selected-path="doc.searchPaths"
@@ -47,7 +47,8 @@
                                                       end-point="{{endpoint}}"/>
                         </td>
                         <td>
-                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="doc.checked" name="numberOfSuggestions" placeholder="10"/>
+                            <input type="text" ng-model="doc.numberOfSuggestions" ng-required="true" ng-pattern="/^[\d]{1,2}$/"
+                                   name="numberOfSuggestions" ng-disabled="!doc.checked" placeholder="10"/>
                         </td>
                         <td>
                             <essentials-cms-document-type-deep-link
@@ -70,7 +71,7 @@
     </div>
     <div class="panel-footer">
         <div class="pull-right">
-            <button ng-disabled="documentsForm.$invalid" class="btn btn-primary" ng-click="addDocs()">Add related documents</button>
+            <button ng-disabled="documentsForm.$invalid || documentsForm.$pristine" class="btn btn-primary" ng-click="addDocs()">Add related documents</button>
         </div>
         <p class="clearfix">&nbsp;</p>
     </div>

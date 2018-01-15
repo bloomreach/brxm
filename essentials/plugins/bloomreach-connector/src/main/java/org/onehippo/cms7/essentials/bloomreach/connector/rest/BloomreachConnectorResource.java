@@ -32,52 +32,44 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.eventbus.EventBus;
 
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("bloomreachConnector/")
-public class BloomreachConnectorResource extends BaseResource {
+public class BloomreachConnectorResource {
 
     private static final Logger log = LoggerFactory.getLogger(BloomreachConnectorResource.class);
     private static final String CRISP_GROUP_ID = "org.onehippo.cms7";
-    private static final String ARTIFACT_ID_REPOSITORY = "hippo-addon-crisp-repository";
-    private static final String ARTIFACT_ID_API = "hippo-addon-crisp-api";
-    private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
     private static final String CRISP_VERSION = "${hippo.addon-crisp.version}";
-    @Inject private EventBus eventBus;
-    @Inject private PluginContextFactory contextFactory;
+    private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
+    private static final MavenDependency CRISP_API
+            = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-api", CRISP_VERSION, null, null);
+    private static final MavenDependency CRISP_REPOSITORY
+            = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-repository", CRISP_VERSION, null, null);
 
+    @Inject private PluginContextFactory contextFactory;
+    @Inject private MavenDependencyService dependencyService;
+    @Inject private JcrService jcrService;
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
         final PluginContext context = contextFactory.getContext();
-        final boolean exists = CndUtils.nodeTypeExists(context, CRISP_NODE);
+        final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
+        final boolean hasDependency = dependencyService.hasDependency(context, TargetPom.CMS, CRISP_API)
+                && dependencyService.hasDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
+
         final ResourceData resourceData = new ResourceData();
-        final DependencyRestful dependency = new DependencyRestful();
-        dependency.setTargetPom(TargetPom.CMS.getName());
-        dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);
-        dependency.setGroupId(CRISP_GROUP_ID);
-        final DependencyRestful dependencyApi = new DependencyRestful();
-        dependencyApi.setTargetPom(TargetPom.CMS.getName());
-        dependencyApi.setArtifactId(ARTIFACT_ID_API);
-        dependencyApi.setGroupId(CRISP_GROUP_ID);
-        final boolean hasDependency = DependencyUtils.hasDependency(context, dependency)
-                && DependencyUtils.hasDependency(context, dependencyApi);
         resourceData.setCrispDependencyExists(hasDependency);
         resourceData.setCrispExists(exists);
         return resourceData;
@@ -86,46 +78,38 @@ public class BloomreachConnectorResource extends BaseResource {
 
     @POST
     @Path("/install")
-    public RestfulList<MessageRestful> install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
+        final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
-        final RestfulList<MessageRestful> retVal = new RestfulList<>();
-        final DependencyRestful dependency = new DependencyRestful();
-        dependency.setTargetPom(TargetPom.CMS.getName());
-        dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);
-        dependency.setGroupId(CRISP_GROUP_ID);
-        dependency.setVersion(CRISP_VERSION);
-        final DependencyRestful dependencyApi = new DependencyRestful();
-        dependencyApi.setTargetPom(TargetPom.CMS.getName());
-        dependencyApi.setArtifactId(ARTIFACT_ID_API);
-        dependencyApi.setGroupId(CRISP_GROUP_ID);
-        dependencyApi.setVersion(CRISP_VERSION);
-        boolean added = DependencyUtils.addDependency(context, dependency) &&
-                DependencyUtils.addDependency(context, dependencyApi);
+        boolean added = dependencyService.addDependency(context, TargetPom.CMS, CRISP_API)
+                && dependencyService.addDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
         if (added) {
-            retVal.add(new MessageRestful("Successfully added dependencies"));
+            feedback.addSuccess("Successfully added dependencies");
         } else {
-            retVal.add(new ErrorMessageRestful("Failed to add dependencies"));
+            feedback.addError("Failed to add dependencies");
         }
-        return retVal;
+        return feedback;
     }
 
     @POST
-    public RestfulList<MessageRestful> run(final ResourceData data, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback run(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         log.info("data = {}", data);
         // TODO validate data
 
-        final PluginContext context = contextFactory.getContext();
-        final Session session = context.createSession();
-        final RestfulList<MessageRestful> retVal = new RestfulList<>();
-        try {
+        final UserFeedback feedback = new UserFeedback();
+        final Session session = jcrService.createSession();
+        if (session == null) {
+            // set response status
+            return feedback.addError("Failed to access JCR repository.");
+        }
 
+        try {
             final String basePath = data.getBasePath();
             final Node root = session.getNode(basePath);
             final String resourceName = data.getResourceName();
             if (root.hasNode(resourceName)) {
-                retVal.add(new MessageRestful("Resource with name" + resourceName + " already exists!"));
-                return retVal;
+                return feedback.addSuccess("Resource with name '" + resourceName + "' already exists.");
             }
             final Node node = root.addNode(resourceName, "crisp:resourceresolver");
             final InputStream stream = getClass().getResourceAsStream("/bloomreachResourcetemplate.xml");
@@ -167,12 +151,10 @@ public class BloomreachConnectorResource extends BaseResource {
 
             });
             session.save();
-            retVal.add(new MessageRestful("Successfully created Bloomreach CRSIP resource: " + resourceName));
+            feedback.addSuccess("Successfully created Bloomreach CRSIP resource: " + resourceName);
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return retVal;
+        return feedback;
     }
-
-
 }

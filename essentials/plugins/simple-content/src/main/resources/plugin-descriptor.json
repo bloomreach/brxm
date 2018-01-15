@@ -1,6 +1,6 @@
 {
-  "@type": "plugin",
   "id": "simpleContent",
+  "type": "feature",
   "name": "Simple Content",
   "icon": "/essentials/feature/images/simple-content-plugin-icon.png",
   "introduction": "The Simple content feature installs a new document type 'Simple Document' and adds a new drag-and-drop component to the component library in the Channel Manager. In the CMS, you can configure this component to show a single document in your project.",
@@ -11,10 +11,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/document-component.html",
   "packageFile": "/META-INF/simpleContent_instructions.xml",
-  "restClasses": [],
-  "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -28,11 +25,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-      ]
-    }
-  ]
+  }
 }

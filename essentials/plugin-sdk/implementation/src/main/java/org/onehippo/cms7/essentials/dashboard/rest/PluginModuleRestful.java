@@ -17,56 +17,48 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 import io.swagger.annotations.ApiModel;
 
 /**
  * Plugin javascript module descriptor.
- * Contains application name and plugin(s) javascript references.
+ * Contains application name and plugin's javascript references.
  */
 
 @ApiModel
 @XmlRootElement(name = "module")
 public class PluginModuleRestful implements Restful {
 
+    public static final String DEFAULT_APP_NAME = "hippo.essentials";
+
     private static final long serialVersionUID = 1L;
 
-
-    /**
-     * Contains a list of all include libraries
-     */
-
-
-    public static final String DEFAULT_APP_NAME = "hippo.essentials";
-    /**
-     * Name fo module application,
-     */
     private String application = DEFAULT_APP_NAME;
+    private List<String> files;
 
-
-    private Map<String, PrefixedLibrary> includes = new HashMap<>();
-
-
-    public void addLibrary(final String name, final PrefixedLibrary library) {
-
-        includes.put(name, library);
-
+    public void addFiles(final PluginDescriptor descriptor) {
+        if (PluginDescriptor.TYPE_TOOL.equals(descriptor.getType())
+            || descriptor.getHasConfiguration()) {
+            if (files == null) {
+                files = new ArrayList<>();
+            }
+            final String pluginId = descriptor.getId();
+            files.add(descriptor.getType() + "/" + pluginId + "/" + pluginId + ".js");
+        }
     }
 
-
-    public Map<String, PrefixedLibrary> getIncludes() {
-        return includes;
+    public List<String> getFiles() {
+        return files;
     }
 
-    public void setIncludes(final Map<String, PrefixedLibrary> includes) {
-        this.includes = includes;
+    public void setFiles(final List<String> files) {
+        this.files = files;
     }
 
     public String getApplication() {
@@ -81,98 +73,9 @@ public class PluginModuleRestful implements Restful {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginModuleRestful{");
-        sb.append("includes=").append(includes);
+        sb.append("files=").append(files);
         sb.append(", application='").append(application).append('\'');
         sb.append('}');
         return sb.toString();
     }
-
-
-    //############################################
-    // HELPER CLASSES
-    //############################################
-
-
-    public static class PrefixedLibrary {
-
-        private String prefix;
-
-        public PrefixedLibrary(final String prefix) {
-            this.prefix = prefix;
-        }
-
-        public PrefixedLibrary() {
-        }
-
-        private List<Library> items = new ArrayList<>();
-
-        public void addLibrary(final Library library) {
-
-            items.add(library);
-
-        }
-
-        public List<Library> getItems() {
-            return items;
-        }
-
-        public void setItems(final List<Library> items) {
-            this.items = items;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(final String prefix) {
-            this.prefix = prefix;
-        }
-    }
-
-    public static class Library {
-        private String browser;
-        private String component;
-        private String file;
-
-
-        public Library(final String component, final String file, final String browser) {
-            this.component = component;
-            this.file = file;
-            this.browser = browser;
-        }
-
-        public Library(final String component, final String file) {
-            this.component = component;
-            this.file = file;
-        }
-
-        public Library() {
-        }
-
-        public String getBrowser() {
-            return browser;
-        }
-
-        public void setBrowser(final String browser) {
-            this.browser = browser;
-        }
-
-        public String getComponent() {
-            return component;
-        }
-
-        public void setComponent(final String component) {
-            this.component = component;
-        }
-
-        public String getFile() {
-            return file;
-        }
-
-        public void setFile(final String file) {
-            this.file = file;
-        }
-    }
-
-
 }

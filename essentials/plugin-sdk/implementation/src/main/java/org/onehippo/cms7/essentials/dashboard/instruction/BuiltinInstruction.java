@@ -16,10 +16,10 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-
-import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -28,9 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
  * Instructions built into Essentials (such that they can be used through a corresponding element in a plugin's
  * "instructions.xml" file) should extend from BuiltinInstruction, such that they all share the optional "message"
  * attribute. When provided, this attribute's value shall override the instruction's default change message (see
- * #getChangeMessages).
- *
- * TODO: this class should be moved out of the plugin sdk and into the dashboard.
+ * #populateChangeMessages).
  */
 public abstract class BuiltinInstruction implements Instruction {
     private final MessageGroup defaultGroup;
@@ -50,22 +48,22 @@ public abstract class BuiltinInstruction implements Instruction {
     }
 
     @XmlTransient
-    protected MessageGroup getDefaultGroup() {
+    MessageGroup getDefaultGroup() {
         return defaultGroup;
     }
 
     @Override
-    public Multimap<MessageGroup, String> getChangeMessages() {
+    public final void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         String message = getMessage();
         if (message != null) {
-            return Instruction.makeChangeMessages(defaultGroup, message);
+            changeMessageQueue.accept(defaultGroup, message);
+        } else {
+            populateDefaultChangeMessages(changeMessageQueue);
         }
-
-        return getDefaultChangeMessages();
     }
 
     /**
      * Implement this method to provide sensible default messages per subclass.
      */
-    protected abstract Multimap<MessageGroup, String> getDefaultChangeMessages();
+    abstract void populateDefaultChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue);
 }

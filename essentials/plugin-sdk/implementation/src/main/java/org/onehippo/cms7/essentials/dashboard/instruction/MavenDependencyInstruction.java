@@ -16,18 +16,18 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.function.BiConsumer;
+
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.common.collect.Multimap;
-
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.springframework.stereotype.Component;
 
@@ -38,21 +38,35 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name = "mavenDependency", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class MavenDependencyInstruction extends BuiltinInstruction {
 
-    private final EssentialsDependency dependency;
+    private final MavenDependency dependency = new MavenDependency();
+    private String targetPom;
+
+    @Inject MavenDependencyService dependencyService;
 
     public MavenDependencyInstruction() {
         super(MessageGroup.EXECUTE);
-        dependency = new DependencyRestful();
     }
 
     public InstructionStatus execute(final PluginContext context) {
-        return DependencyUtils.addDependency(context, dependency) ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
+        final TargetPom module = TargetPom.pomForName(targetPom);
+        return module != TargetPom.INVALID && dependencyService.addDependency(context, module, dependency)
+                ? InstructionStatus.SUCCESS : InstructionStatus.FAILED;
     }
 
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
+    @Override
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         final String message = String.format("Add Maven dependency %s:%s to module '%s'.",
-                dependency.getGroupId(), dependency.getArtifactId(), dependency.getTargetPom());
-        return Instruction.makeChangeMessages(getDefaultGroup(), message);
+                dependency.getGroupId(), dependency.getArtifactId(), targetPom);
+        changeMessageQueue.accept(getDefaultGroup(), message);
+    }
+
+    @XmlAttribute
+    public String getTargetPom() {
+        return targetPom;
+    }
+
+    public void setTargetPom(final String targetPom) {
+        this.targetPom = targetPom;
     }
 
     @XmlAttribute
@@ -71,15 +85,6 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
 
     public void setArtifactId(final String artifactId) {
         dependency.setArtifactId(artifactId);
-    }
-
-    @XmlAttribute
-    public String getTargetPom() {
-        return dependency.getTargetPom();
-    }
-
-    public void setTargetPom(final String targetPom) {
-        dependency.setTargetPom(targetPom);
     }
 
     @XmlAttribute

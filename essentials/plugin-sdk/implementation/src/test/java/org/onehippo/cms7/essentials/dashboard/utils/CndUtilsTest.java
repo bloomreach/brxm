@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,38 +40,37 @@ public class CndUtilsTest extends BaseRepositoryTest {
     @Test
     public void testRegisterNamespaceUri() throws Exception {
 
-        Session session = getSession();
+        Session session = jcrService.createSession();
         if (!session.nodeExists("/"+HippoNodeType.NAMESPACES_PATH)) {
             session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
             session.save();
         }
-        CndUtils.registerNamespace(getContext(), TEST_PREFIX, TEST_URI);
+        CndUtils.registerNamespace(jcrService, TEST_PREFIX, TEST_URI);
         assertTrue("CndUtils.registerNamespaceUri", true);
-        CndUtils.createHippoNamespace(getContext(), TEST_PREFIX);
+        CndUtils.createHippoNamespace(jcrService, TEST_PREFIX);
         assertTrue("CndUtils.createHippoNamespace", true);
-        boolean exists = CndUtils.namespaceUriExists(getContext(), TEST_URI);
+        boolean exists = CndUtils.namespaceUriExists(jcrService, TEST_URI);
         assertTrue(exists);
-        CndUtils.registerDocumentType(getContext(), TEST_PREFIX, "myname", false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
+        CndUtils.registerDocumentType(jcrService, TEST_PREFIX, "myname", false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
         assertTrue("CndUtils.registerDocumentType", true);
         // check if exists:
-        final boolean prefixExists = CndUtils.namespacePrefixExists(getContext(), TEST_PREFIX);
+        final boolean prefixExists = CndUtils.namespacePrefixExists(jcrService, TEST_PREFIX);
         assertTrue("Expected to find namespace prefix: " + TEST_PREFIX, prefixExists);
-        final boolean nodeTypeExists = CndUtils.nodeTypeExists(getContext(), NODE_TYPE);
+        final boolean nodeTypeExists = CndUtils.nodeTypeExists(jcrService, NODE_TYPE);
         assertTrue("Expected registered nodetype, found nothing", nodeTypeExists);
-        final boolean isMySupertype = CndUtils.isNodeOfSuperType(getContext(), NODE_TYPE, GalleryUtils.HIPPOGALLERY_IMAGE_SET);
+        final boolean isMySupertype = CndUtils.isNodeOfSuperType(jcrService, NODE_TYPE, GalleryUtils.HIPPOGALLERY_IMAGE_SET);
         assertTrue("Expected to be of supertype:" + GalleryUtils.HIPPOGALLERY_IMAGE_SET, isMySupertype);
         // fetch supertype nodes
-        final List<String> superTypes = CndUtils.getNodeTypesOfType(getContext(), GalleryUtils.HIPPOGALLERY_IMAGE_SET);
+        final List<String> superTypes = CndUtils.getNodeTypesOfType(jcrService, GalleryUtils.HIPPOGALLERY_IMAGE_SET);
         assertEquals("Expected 2 gallery types", 2, superTypes.size());
-        session.logout();
+        jcrService.destroySession(session);
 
     }
 
     @Test
     public void testNamespaceNoneExists() throws Exception {
-        assertFalse(CndUtils.namespaceUriExists(getContext(), TEST_URI + "/none"));
-        assertFalse(CndUtils.namespacePrefixExists(getContext(), TEST_PREFIX + "none"));
-        assertFalse(CndUtils.nodeTypeExists(getContext(), NODE_TYPE + "none"));
-
+        assertFalse(CndUtils.namespaceUriExists(jcrService, TEST_URI + "/none"));
+        assertFalse(CndUtils.namespacePrefixExists(jcrService, TEST_PREFIX + "none"));
+        assertFalse(CndUtils.nodeTypeExists(jcrService, NODE_TYPE + "none"));
     }
 }

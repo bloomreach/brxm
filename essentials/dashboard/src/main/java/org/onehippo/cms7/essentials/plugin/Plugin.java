@@ -19,20 +19,25 @@ package org.onehippo.cms7.essentials.plugin;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import com.google.common.base.Strings;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
+import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.dashboard.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import com.google.common.base.Strings;
 
 public class Plugin {
     private final static Logger log = LoggerFactory.getLogger(Plugin.class);
@@ -40,6 +45,9 @@ public class Plugin {
     private final PluginDescriptor descriptor;
     private final InstallStateMachine stateMachine;
     private final PluginContext context;
+
+    @Inject private MavenDependencyService dependencyService;
+    @Inject private MavenRepositoryService repositoryService;
 
     public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
         this.context = context;
@@ -116,7 +124,7 @@ public class Plugin {
         if (categories != null) {
             final Set<String> licenses = categories.get("license");
             if (licenses != null && licenses.contains("enterprise")) {
-                DependencyUtils.upgradeToEnterpriseProject(context);
+                EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService);
             }
         }
     }
@@ -124,8 +132,8 @@ public class Plugin {
     private void installRepositories() throws PluginException {
         final StringBuilder builder = new StringBuilder();
 
-        for (Repository repository : descriptor.getRepositories()) {
-            if (!DependencyUtils.addRepository(context, repository)) {
+        for (MavenRepository.WithModule repository : descriptor.getRepositories()) {
+            if (!repositoryService.addRepository(context, TargetPom.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
@@ -143,8 +151,8 @@ public class Plugin {
     private void installDependencies() throws PluginException {
         final StringBuilder builder = new StringBuilder();
 
-        for (EssentialsDependency dependency : descriptor.getDependencies()) {
-            if (!DependencyUtils.addDependency(context, dependency)) {
+        for (MavenDependency.WithModule dependency : descriptor.getDependencies()) {
+            if (!dependencyService.addDependency(context, TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {

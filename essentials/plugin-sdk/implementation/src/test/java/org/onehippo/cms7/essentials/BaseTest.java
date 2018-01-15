@@ -141,7 +141,7 @@ public abstract class BaseTest {
                     repositoryDataFolder.mkdir();
                 }
             }
-            context = new TestPluginContext(null);
+            context = new TestPluginContext();
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");

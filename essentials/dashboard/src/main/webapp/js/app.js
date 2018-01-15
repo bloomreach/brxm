@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,9 @@
                         return;
                     }
                 }
-                if (error.data) {
+                if (error.data && error.data.feedbackMessages) {
+                    addFeedbackMessages($rootScope, error.data.feedbackMessages);
+                } else if (error.data) {
                     if (error.data.value) {
                         $rootScope.feedbackMessages.push({type: 'error', message: error.data.value});
                     } else {
@@ -71,6 +73,8 @@
                             $rootScope.feedbackMessages.push({type: 'info', message: v.value});
                         }
                     });
+                } else if (data.data && data.data.feedbackMessages) {
+                    addFeedbackMessages($rootScope, data.data.feedbackMessages);
                 }
                 else if (data.data && data.data.successMessage && data.data.globalMessage) {
                     $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
@@ -78,6 +82,15 @@
                     $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
                 }
 
+            }
+
+            function addFeedbackMessages($rootScope, messages) {
+                angular.forEach(messages, function (details) {
+                    $rootScope.feedbackMessages.push({
+                        type: details.error ? 'error' : 'info',
+                        message: details.message
+                    });
+                });
             }
 
             $provide.factory('MyHttpInterceptor', function ($q, $rootScope) {
@@ -161,8 +174,8 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
-            $rootScope.applicationUrl = 'http://' + window.SERVER_URL + '/essentials';
-            var root = 'http://' + window.SERVER_URL + '/essentials/rest';
+            $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
+            var root = window.SERVER_URL + '/essentials/rest';
             var pluginsStem = root + "/plugins";
             var projectStem = root + "/project";
 
@@ -170,8 +183,6 @@
             $rootScope.REST = {
                 root: root,
                 menus: root + '/menus/',
-                jcr: root + '/jcr/',
-                jcrQuery: root + '/jcr/query/',
                 dynamic: root + '/dynamic/',
 
                 /**
@@ -193,13 +204,6 @@
                     settings:    projectStem + '/settings',
                     coordinates: projectStem + '/coordinates'
                 },
-
-                //############################################
-                // NODE
-                //############################################
-                node: root + '/node/',
-                getProperty: root + '/node/property',
-                setProperty: root + '/node/property/save',
 
                 //############################################
                 // DOCUMENTS

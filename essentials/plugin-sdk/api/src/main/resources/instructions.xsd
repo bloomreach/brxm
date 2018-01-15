@@ -199,9 +199,9 @@
   </xs:complexType>
 
   <xs:complexType name="dependencyType" mixed="true">
+    <xs:attribute use="required" name="targetPom" type="targetPomType"/>
     <xs:attribute use="required" name="groupId" type="xs:string"/>
     <xs:attribute use="required" name="artifactId" type="xs:string"/>
-    <xs:attribute use="required" name="targetPom" type="targetPomType"/>
     <xs:attribute use="optional" name="version" type="xs:string"/>
     <xs:attribute use="optional" name="scope" type="mavenDependencyScopeType"/>
     <xs:attribute use="optional" name="type" type="xs:string"/>

@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "newsPlugin",
   "name": "News",
   "icon": "/essentials/feature/images/news-plugin-icon.png",
@@ -13,10 +12,8 @@
     "/essentials/feature/images/screenshots/news04.png"
   ],
   "packageFile": "/META-INF/news_package_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -31,11 +28,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-      ]
-    }
-  ]
+  }
 }

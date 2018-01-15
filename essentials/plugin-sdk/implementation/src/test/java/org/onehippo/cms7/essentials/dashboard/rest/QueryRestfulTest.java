@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
