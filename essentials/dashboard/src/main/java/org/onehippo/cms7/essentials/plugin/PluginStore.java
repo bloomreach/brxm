@@ -32,36 +32,34 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * Created by tjeger on 10/11/14.
@@ -75,6 +73,7 @@ public class PluginStore {
 
     @Inject private RebuildProjectEventListener rebuildListener;
     @Inject private PluginContextFactory contextFactory;
+    @Inject private AutowireCapableBeanFactory injector;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -93,12 +92,12 @@ public class PluginStore {
      *
      * @see org.springframework.util.ResourceUtils
      */
-    private final LoadingCache<String, RestfulList<PluginDescriptorRestful>> pluginCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, RestfulList<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginDescriptorRestful>>() {
+            .build(new CacheLoader<String, RestfulList<PluginDescriptor>>() {
                 @Override
-                public RestfulList<PluginDescriptorRestful> load(final String url) throws Exception {
+                public RestfulList<PluginDescriptor> load(final String url) throws Exception {
                     String pluginJson = null;
 
                     if (url.startsWith("http")) {
@@ -124,9 +123,11 @@ public class PluginStore {
         final PluginContext context = contextFactory.getContext();
 
         // Read local descriptors
-        final List<PluginDescriptorRestful> localDescriptors = getLocalDescriptors();
-        for (PluginDescriptorRestful descriptor : localDescriptors) {
-            plugins.add(new Plugin(context, descriptor));
+        final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
+        for (PluginDescriptor descriptor : localDescriptors) {
+            final Plugin plugin = new Plugin(context, descriptor);
+            injector.autowireBean(plugin);
+            plugins.add(plugin);
         }
 
         // Read remote descriptors
@@ -134,11 +135,13 @@ public class PluginStore {
         final Set<String> pluginRepositories = getProjectSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
-                final RestfulList<PluginDescriptorRestful> descriptors = pluginCache.get(pluginRepository);
+                final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptorRestful descriptor : descriptors.getItems()) {
-                        plugins.add(new Plugin(context, descriptor));
+                    for (PluginDescriptor descriptor : descriptors.getItems()) {
+                        final Plugin plugin = new Plugin(context, descriptor);
+                        injector.autowireBean(plugin);
+                        plugins.add(plugin);
                     }
                 }
             } catch (Exception e) {
@@ -222,16 +225,16 @@ public class PluginStore {
         return contextFactory.getContext().getProjectSettings();
     }
 
-    private List<PluginDescriptorRestful> getLocalDescriptors() {
-        final List<PluginDescriptorRestful> descriptors = new ArrayList<>();
-        final Collection<PluginDescriptorRestful> values = EssentialsContextListener.getPluginCache().asMap().values();
+    private List<PluginDescriptor> getLocalDescriptors() {
+        final List<PluginDescriptor> descriptors = new ArrayList<>();
+        final Collection<PluginDescriptor> values = EssentialsContextListener.getPluginCache().asMap().values();
         descriptors.addAll(values);
         descriptors.addAll(loadPluginDescriptorsFromResource("/project_plugin_descriptor.json"));
 
         return descriptors;
     }
 
-    private List<PluginDescriptorRestful> loadPluginDescriptorsFromResource(final String resource) {
+    private List<PluginDescriptor> loadPluginDescriptorsFromResource(final String resource) {
         final InputStream stream = PluginStore.class.getResourceAsStream(resource);
         final String json = GlobalUtils.readStreamAsText(stream);
 
@@ -239,7 +242,7 @@ public class PluginStore {
     }
 
     @SuppressWarnings("unchecked")
-    private RestfulList<PluginDescriptorRestful> parsePlugins(final String jsonString) {
+    private RestfulList<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
                 return WebUtils.fromJson(jsonString, RestfulList.class);
@@ -253,48 +256,23 @@ public class PluginStore {
     private static final Semaphore serverSemaphore = new Semaphore(1);
 
     private void processPlugins(final List<Plugin> plugins) {
-        for (Plugin plugin : plugins) {
-            final PluginDescriptor descriptor = plugin.getDescriptor();
-
-            final InstallState state = plugin.getInstallState();
-            if (state == InstallState.ONBOARD
-                    || state == InstallState.INSTALLING
-                    || state == InstallState.INSTALLED) {
-                final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
-                descriptor.setHasConfiguration(params.hasConfiguration());
-            }
-
-            registerEndPoints(descriptor);
-        }
+        plugins.forEach(p -> registerEndPoints(p.getDescriptor()));
 
         // Make sure we only attempt starting the server once!
-        if (application.getClasses().size() > 0 && serverSemaphore.drainPermits() > 0) {
+        if (!application.getSingletons().isEmpty() && serverSemaphore.drainPermits() > 0) {
             startServer();
         }
     }
 
     private void registerEndPoints(final PluginDescriptor descriptor) {
-        final List<String> pluginRestClasses = descriptor.getRestClasses();
-        if (pluginRestClasses != null) {
-            for (String restClassName : pluginRestClasses) {
-                final Class<?> endpointClass = GlobalUtils.loadCLass(restClassName);
-                if (endpointClass == null) {
-                    log.error("Failed to load REST endpoint class: {}", restClassName);
-                    continue;
-                }
-                final Set<Class<?>> classes = application.getClasses();
-                if (classes.contains(endpointClass)) {
-                    log.debug("REST endpoint class already loaded {}", restClassName);
-                    continue;
-                }
-                application.addClass(endpointClass);
-                log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
-            }
+        final List<String> restClasses = descriptor.getRestClasses();
+        if (restClasses != null) {
+            restClasses.forEach(application::addSingleton);
         }
     }
 
     private void startServer() {
-        ApplicationModule.getInjector().autowireBean(application);
+        injector.autowireBean(application);
 
         final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
         final RuntimeDelegate delegate = RuntimeDelegate.getInstance();

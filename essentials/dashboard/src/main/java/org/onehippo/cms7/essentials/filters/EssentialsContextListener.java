@@ -27,17 +27,17 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import org.onehippo.cms7.essentials.WebUtils;
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads plugin descriptors from jar files and caches those once application is initialized
@@ -45,19 +45,19 @@ import com.google.common.cache.LoadingCache;
 public class EssentialsContextListener implements ServletContextListener {
 
     private static final Logger log = LoggerFactory.getLogger(EssentialsContextListener.class);
-    private static final LoadingCache<String, PluginDescriptorRestful> PLUGIN_CACHE = CacheBuilder.newBuilder()
+    private static final LoadingCache<String, PluginDescriptor> PLUGIN_CACHE = CacheBuilder.newBuilder()
             .maximumSize(1000)
             // keep it for a while:
-            .expireAfterAccess(365, TimeUnit.DAYS).build(new CacheLoader<String, PluginDescriptorRestful>() {
+            .expireAfterAccess(365, TimeUnit.DAYS).build(new CacheLoader<String, PluginDescriptor>() {
                 @Override
-                public PluginDescriptorRestful load(final String key) throws Exception {
+                public PluginDescriptor load(final String key) throws Exception {
                     // we load cache ourselves
                     return null;
                 }
             });
 
 
-    public static LoadingCache<String, PluginDescriptorRestful> getPluginCache() {
+    public static LoadingCache<String, PluginDescriptor> getPluginCache() {
         return PLUGIN_CACHE;
     }
 
@@ -66,7 +66,7 @@ public class EssentialsContextListener implements ServletContextListener {
      *
      * @param descriptor final PluginDescriptorRestful descriptor
      */
-    public static void addToPluginToCache(final PluginDescriptorRestful descriptor) {
+    public static void addToPluginToCache(final PluginDescriptor descriptor) {
         if (descriptor == null) {
             log.error("Plugin descriptor was null");
             return;
@@ -121,7 +121,7 @@ public class EssentialsContextListener implements ServletContextListener {
                     log.warn("Plugin descriptor was empty for: {}", file);
                     return;
                 }
-                final PluginDescriptorRestful descriptor = WebUtils.fromJson(content, PluginDescriptorRestful.class);
+                final PluginDescriptor descriptor = WebUtils.fromJson(content, PluginDescriptor.class);
                 if (descriptor != null) {
                     final String id = descriptor.getId();
                     log.debug("Cache plugin for id: {}", id);

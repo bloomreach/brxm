@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "selectionPlugin",
   "name": "Selections",
   "icon": "/essentials/tool/images/selections-icon.png",
@@ -16,7 +15,6 @@
   ],
   "type": "tool",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -31,15 +29,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "selectionPlugin",
-          "file": "selectionPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

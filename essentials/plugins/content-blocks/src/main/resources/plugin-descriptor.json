@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "contentBlocks",
   "name": "Content Blocks",
   "icon": "/essentials/feature/images/content-blocks-plugin-icon.png",
@@ -10,13 +9,13 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html",
   "type": "feature",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksParameterService",
+  "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/content_blocks_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"
   ],
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -32,15 +31,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "contentBlocks",
-          "file": "contentBlocks.js"
-        }
-      ]
-    }
-  ]
+  }
 }

@@ -16,19 +16,17 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -45,34 +43,27 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.DocumentRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.ContentTypeServiceUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.dashboard.model.ContentType;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
+import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
-import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("contentblocks")
-public class ContentBlocksResource extends BaseResource {
+public class ContentBlocksResource {
+    private static final Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
     private static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
     private static final String EDITOR_TEMPLATES_NODE = "editor:templates/_default_";
     private static final String ERROR_MSG = "The Content Blocks plugin encountered an error, check the log messages for more info.";
@@ -82,36 +73,42 @@ public class ContentBlocksResource extends BaseResource {
     private static final String PROP_MAXITEMS = "maxitems";
     private static final String PROP_PATH = "hipposysedit:path";
     private static final String PROP_PICKERTYPE = "contentPickerType";
-    private static final Predicate<ContentType> NO_IMAGE_FILTER = type -> !type.isContentType("hippogallery:imageset");
+    private static final Predicate<ContentType> NO_IMAGE_FILTER
+        = type -> !type.getFullName().equals("hippogallery:imageset") && !type.getSuperTypes().contains("hippogallery:imageset");
 
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
+    // These "compounds" don't have the compoundType flag set internally.
+    private static final Set<String> BUILTIN_COMPOUNDS
+            = new HashSet<>(Arrays.asList("hippo:mirror", "hippo:resource", "hippostd:html", "hippogallerypicker:imagelink"));
 
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
+    @Inject private ContentTypeService contentTypeService;
 
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> documents = ContentTypeServiceUtils.fetchDocumentsFromOwnNamespace(context, NO_IMAGE_FILTER);
+        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace(context, NO_IMAGE_FILTER);
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
-        final Session session = GlobalUtils.createSession();
-        try {
-            for (DocumentRestful documentType : documents) {
-                if ("basedocument".equals(documentType.getName())) {
-                    continue; // don't expose the base document as you can't instantiate it.
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                for (ContentType documentType : documents) {
+                    if ("basedocument".equals(documentType.getName())) {
+                        continue; // don't expose the base document as you can't instantiate it.
+                    }
+                    final String primaryType = documentType.getFullName();
+                    final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
+                    cbDocument.setId(primaryType);
+                    cbDocument.setName(documentType.getDisplayName());
+                    populateContentBlocksFields(cbDocument, session);
+                    cbDocuments.add(cbDocument);
                 }
-                final String primaryType = documentType.getFullName();
-                final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
-                cbDocument.setId(primaryType);
-                cbDocument.setName(makeDisplayName(session, primaryType));
-                populateContentBlocksFields(cbDocument, session);
-                cbDocuments.add(cbDocument);
+            } finally {
+                jcrService.destroySession(session);
             }
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
-
         return cbDocuments;
     }
 
@@ -124,25 +121,29 @@ public class ContentBlocksResource extends BaseResource {
      */
     @POST
     @Path("/")
-    public MessageRestful update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
+    public UserFeedback update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
         final PluginContext context = contextFactory.getContext();
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
-        final Session session = GlobalUtils.createSession();
 
-        try {
-            for (DocumentTypeRestful docType : docTypes) {
-                updateDocumentType(context, docType, session, updaters);
+        final Session session = jcrService.createSession();
+        if (session != null) {
+            try {
+                for (DocumentTypeRestful docType : docTypes) {
+                    updateDocumentType(context, docType, session, updaters);
+                }
+                session.save();
+                updatersRun = executeUpdaters(session, updaters);
+            } catch (RepositoryException e) {
+                log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return new UserFeedback().addError(ERROR_MSG);
+            } catch (ContentBlocksException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return new UserFeedback().addError(e.getMessage());
+            } finally {
+                jcrService.destroySession(session);
             }
-            session.save();
-            updatersRun = executeUpdaters(session, updaters);
-        } catch (RepositoryException e) {
-            log.warn("Problem saving the JCR changes after updating the content blocks fields.", e);
-            return createErrorMessage(ERROR_MSG, response);
-        } catch (ContentBlocksException e) {
-            return createErrorMessage(e.getMessage(), response);
-        } finally {
-            GlobalUtils.cleanupSession(session);
         }
 
         String message = "Successfully updated content blocks settings.";
@@ -152,41 +153,26 @@ public class ContentBlocksResource extends BaseResource {
                     + " on other environments, too.";
         }
 
-        return new MessageRestful(message);
+        return new UserFeedback().addSuccess(message);
     }
 
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
+        final Predicate<ContentType> considerCompound = ct -> ct.isCompoundType() || BUILTIN_COMPOUNDS.contains(ct.getFullName());
         final PluginContext context = contextFactory.getContext();
-        List<DocumentRestful> compoundTypes = ContentTypeServiceUtils.fetchDocuments(context, ContentType::isCompoundType, false);
-        List<String> compoundTypeNames = new ArrayList<>(Arrays.asList(
-                "hippo:mirror", // TODO: avoid hard-coding these. How can I use the content type service to achieve this?
-                "hippo:resource",
-                "hippostd:html",
-                "hippogallerypicker:imagelink"
-        ));
-        List<CompoundRestful> cbCompounds = new ArrayList<>();
+        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(context, considerCompound, false);
+        final List<CompoundRestful> cbCompounds = new ArrayList<>();
 
-        for (DocumentRestful compoundType : compoundTypes) {
-            compoundTypeNames.add(compoundType.getFullName());
-        }
-
-        final Session session = GlobalUtils.createSession();
-        try {
-            for (String primaryType : compoundTypeNames) {
-                if ("hippo:compound".equals(primaryType)) {
-                    continue; // don't expose the base compound as you don't want to instantiate it.
-                }
-                final CompoundRestful cbCompound = new CompoundRestful();
-                cbCompound.setId(primaryType);
-                cbCompound.setName(makeDisplayName(session, primaryType));
-                cbCompounds.add(cbCompound);
+        for (ContentType compoundType : compoundTypes) {
+            if ("hippo:compound".equals(compoundType.getFullName())) {
+                continue; // don't expose the base compound as you don't want to instantiate it.
             }
-        } finally {
-            GlobalUtils.cleanupSession(session);
+            final CompoundRestful cbCompound = new CompoundRestful();
+            cbCompound.setId(compoundType.getFullName());
+            cbCompound.setName(compoundType.getDisplayName());
+            cbCompounds.add(cbCompound);
         }
-
         return cbCompounds;
     }
 
@@ -198,7 +184,8 @@ public class ContentBlocksResource extends BaseResource {
      */
     private void populateContentBlocksFields(final DocumentTypeRestful docType, final Session session) {
         final String primaryType = docType.getId();
-        docType.setContentBlocksFields(new ArrayList<ContentBlocksFieldRestful>());
+        final List<ContentBlocksFieldRestful> contentBlocksFields = new ArrayList<>();
+        docType.setContentBlocksFields(new ArrayList<>());
         try {
             final NodeIterator it = findContentBlockFields(primaryType, session);
 
@@ -211,15 +198,13 @@ public class ContentBlocksResource extends BaseResource {
                     field.setMaxItems(Long.parseLong(fieldNode.getNode(NODE_OPTIONS).getProperty(PROP_MAXITEMS).getString()));
                 }
                 final String[] compoundNames = fieldNode.getProperty(PROP_COMPOUNDLIST).getString().split(",");
-                for (String compoundName : compoundNames) {
-                    field.addCompoundRef(compoundName);
-                }
-
-                docType.addContentBlocksField(field);
+                field.setCompoundRefs(Arrays.asList(compoundNames));
+                contentBlocksFields.add(field);
             }
         } catch (RepositoryException e) {
             log.warn("Problem populating content blocks fields for primary type '" + primaryType + "'.", e);
         }
+        docType.setContentBlocksFields(contentBlocksFields);
     }
 
     /**
@@ -280,7 +265,6 @@ public class ContentBlocksResource extends BaseResource {
         final String primaryType = docType.getId();
         final String errorMsg = "Failed to create content blocks field '" + field.getName() + "' for document type '"
                               + docType.getName() + "'.";
-        InputStream in = null;
 
         try {
             final Node docTypeNode = getDocTypeNode(session, primaryType);
@@ -317,35 +301,21 @@ public class ContentBlocksResource extends BaseResource {
             data.put("compoundList", makeCompoundList(field));
             data.put("fieldType", fieldType);
 
-            // Import nodetype
-            String parsed = TemplateUtils.injectTemplate("content_blocks_nodetype.xml", data, getClass());
-            if (parsed == null) {
-                log.error("Can't read resource 'content_blocks_nodetype.xml'.");
+            if (!jcrService.importResource(nodeTypeNode, "/content_blocks_nodetype.xml", data)
+                    || !jcrService.importResource(editorTemplateNode, "/content_blocks_template.xml", data)) {
+                jcrService.refreshSession(session, false);
                 throw new ContentBlocksException(errorMsg);
             }
-            in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            session.importXML(nodeTypeNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
-
-            // Import editor template
-            parsed = TemplateUtils.injectTemplate("content_blocks_template.xml", data, getClass());
-            if (parsed == null) {
-                log.error("Can't read resource 'content_blocks_template.xml'.");
-                throw new ContentBlocksException(errorMsg);
-            }
-            in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-            session.importXML(editorTemplateNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
             // Set maxitems
             if (field.getMaxItems() > 0) {
                 final Node options = editorTemplateNode.getNode(field.getName() + "/" + NODE_OPTIONS);
                 options.setProperty(PROP_MAXITEMS, field.getMaxItems());
             }
-        } catch (RepositoryException | IOException e) {
-            GlobalUtils.refreshSession(session, false);
+        } catch (RepositoryException e) {
+            jcrService.refreshSession(session, false);
             log.error("Error in content bocks plugin", e);
             throw new ContentBlocksException(errorMsg);
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 
@@ -395,7 +365,7 @@ public class ContentBlocksResource extends BaseResource {
                 vars.put("oldNodeName", oldNodeCaption);
                 vars.put("newNodePath", newNodePath);
                 vars.put("newNodeName", field.getName());
-                updaters.add(new UpdateRequest("content-updater.xml", vars));
+                updaters.add(new UpdateRequest("/content-updater.xml", vars));
             }
 
             fieldNode.setProperty(PROP_CAPTION, field.getName());
@@ -439,7 +409,7 @@ public class ContentBlocksResource extends BaseResource {
             vars.put("docName", docType.getName());
             vars.put("nodePath", nodePath);
             vars.put("nodeName", nodeName);
-            updaters.add(new UpdateRequest("content-deleter.xml", vars));
+            updaters.add(new UpdateRequest("/content-deleter.xml", vars));
         } catch (RepositoryException e) {
             final String msg = "Failed to remove content blocks field '" + fieldName + "' from document type '"
                     + docType.getName() + "'.";
@@ -450,35 +420,18 @@ public class ContentBlocksResource extends BaseResource {
 
     private int executeUpdaters(final Session session, final List<UpdateRequest> updaters) {
         int updatersRun = 0;
-        for (UpdateRequest updater : updaters) {
-            final String parsed = TemplateUtils.injectTemplate(updater.getResource(), updater.getVars(), getClass());
-            if (parsed != null) {
-                InputStream in = null;
-                try {
-                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-                    session.importXML("/hippo:configuration/hippo:update/hippo:queue", in,
-                            ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+        try {
+            final Node targetNode = session.getNode("/hippo:configuration/hippo:update/hippo:queue");
+            for (UpdateRequest updater : updaters) {
+                if (jcrService.importResource(targetNode, updater.getResource(), updater.getVars())) {
                     session.save();
                     updatersRun++;
-                } catch (RepositoryException | IOException e) {
-                    GlobalUtils.refreshSession(session, false);
-                    log.error("Error scheduling updater", e);
-                } finally {
-                    IOUtils.closeQuietly(in);
                 }
             }
+        } catch (RepositoryException e) {
+            log.error("Failed retrieving updater queue node.", e);
         }
         return updatersRun;
-    }
-
-    private String makeDisplayName(final Session session, final String primaryType) {
-        String name = primaryType;
-        try {
-            name = HippoNodeUtils.getDisplayValue(session, primaryType);
-        } catch (RepositoryException e) {
-            log.warn("Problem retrieving translated name for primary type '" + primaryType + "'.", e);
-        }
-        return name;
     }
 
     private String makeNodeName(final String caption) {
@@ -496,9 +449,9 @@ public class ContentBlocksResource extends BaseResource {
 
     private NodeIterator findContentBlockFields(final String primaryType, final Session session) throws RepositoryException {
         final String queryString = MessageFormat.format("{0}//element(*, frontend:plugin)[@compoundList]",
-                                                        HippoNodeUtils.resolvePath(primaryType).substring(1));
+                                                        contentTypeService.jcrBasePathForContentType(primaryType).substring(1));
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
+        final Query query = queryManager.createQuery(queryString, "xpath");
         final QueryResult execute = query.execute();
         return execute.getNodes();
     }

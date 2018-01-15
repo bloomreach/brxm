@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,26 +28,21 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @version "$Id$"
@@ -61,7 +55,6 @@ public class DefaultPluginContext implements PluginContext {
     private static final Logger log = LoggerFactory.getLogger(DefaultPluginContext.class);
     private static final long serialVersionUID = 1L;
 
-    private final Multimap<String, Object> contextData = ArrayListMultimap.create();
     private transient File siteFile;
     private String componentsPackage;
     private String beansPackage;
@@ -103,27 +96,6 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     @Override
-    public Multimap<String, Object> getPluginContextData() {
-        return contextData;
-    }
-
-    @Override
-    public Collection<Object> getPluginContextData(final String key) {
-        return contextData.get(key);
-    }
-
-    @Override
-    public void addPluginContextData(final String key, final Object value) {
-        contextData.put(key, value);
-
-    }
-
-    @Override
-    public Session createSession() {
-        return GlobalUtils.createSession();
-    }
-
-    @Override
     public File getSiteDirectory() {
         if (siteFile == null) {
             siteFile = ProjectUtils.getSite(this);
@@ -148,12 +120,6 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public String getEssentialsResourcePath() {
         return ProjectUtils.getEssentialsFolderName(this).getAbsolutePath() + MAIN_RESOURCE_PART;
-    }
-
-
-    @Override
-    public boolean isEnterpriseProject() {
-        return DependencyUtils.isEnterpriseProject(this);
     }
 
     @Override

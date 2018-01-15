@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@
     <!-- workspace-->
     <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- translations -->
-    <translations source="instructions/json/translations/faqtypes-translations.json" />
-    <translations source="instructions/json/translations/faqtemplates-translations.json" />
+    <translations source="/instructions/json/translations/faqtypes-translations.json" />
+    <translations source="/instructions/json/translations/faqtemplates-translations.json" />
   </instructionSet>
 
   <instructionSet group="freemarker">

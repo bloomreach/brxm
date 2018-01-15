@@ -23,12 +23,13 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.collect.Lists;
+
+import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
-import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 
 @ApiModel
@@ -54,7 +55,7 @@ public class RestfulList<T extends Restful> implements Serializable {
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({
             @JsonSubTypes.Type(value = KeyValueRestful.class, name = "keyvalue"),
-            @JsonSubTypes.Type(value = PluginDescriptorRestful.class, name = "plugin"),
+            @JsonSubTypes.Type(value = PluginDescriptor.class, name = "plugin"),
             @JsonSubTypes.Type(value = ProjectRestful.class, name = "project"),
             @JsonSubTypes.Type(value = PropertyRestful.class, name = "property"),
             @JsonSubTypes.Type(value = NodeRestful.class, name = "node"),

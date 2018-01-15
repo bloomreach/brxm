@@ -1,17 +1,16 @@
 {
-  "@type": "plugin",
   "id": "relevanceCollectorsBundlePlugin",
   "name": "Relevance Collectors Bundle",
   "icon": "/essentials/feature/images/relevance-collectors-bundle-plugin-icon.png",
   "introduction": "Install commonly used collectors, characteristics and UI plugins into your project.",
   "description": "Please note that this component is a BloomReach Experience only component. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/targeting/add-the-collectors-bundle-to-a-project.html",
+  "setupParameters": false,
   "packageFile": "/META-INF/relevance_collectors_bundle_instructions.xml",
   "imageUrls": [
   ],
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },

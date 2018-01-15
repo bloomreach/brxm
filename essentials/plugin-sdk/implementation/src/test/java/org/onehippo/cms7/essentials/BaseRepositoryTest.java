@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,31 @@
 
 package org.onehippo.cms7.essentials;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.inject.Inject;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * @version "$Id$"
  */
+@ActiveProfiles("repository-test")
 public abstract class BaseRepositoryTest extends BaseTest {
 
-
-    private static final Logger log = LoggerFactory.getLogger(BaseRepositoryTest.class);
-    protected MemoryRepository repository;
-    protected Session hippoSession;
+    @Inject private JcrService injectedJcrService;
+    protected TestJcrService jcrService;
 
     @Override
     public PluginContext getContext() {
-        final TestPluginContext testPluginContext = new TestPluginContext(repository);
+        final TestPluginContext testPluginContext = new TestPluginContext();
+
         testPluginContext.setComponentsPackageName("org.onehippo.essentials.test.components");
         testPluginContext.setBeansPackageName("org.onehippo.essentials.test.beans");
         testPluginContext.setRestPackageName("org.onehippo.essentials.test.rest");
-        final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
-        testPluginContext.setProjectSettings(projectSettings);
+        testPluginContext.setProjectSettings(new ProjectSettingsBean());
 
         return testPluginContext;
     }
@@ -54,73 +48,8 @@ public abstract class BaseRepositoryTest extends BaseTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        log.info("======================================");
-        log.info("setUp()");
-        log.info("======================================");
-        projectSetup();
-        repository = new MemoryRepository();
-    }
-
-    public void projectSetup() throws Exception {
+        jcrService = (TestJcrService) injectedJcrService;
+        jcrService.resetNodes();
         super.setUp();
     }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        log.info("======================================");
-        log.info("tearDown()");
-        log.info("======================================");
-        super.tearDown();
-        if (repository != null) {
-            repository.shutDown();
-        }
-        if (hippoSession != null) {
-            hippoSession.logout();
-        }
-    }
-
-    //############################################
-    // UTILITY METHODS
-    //############################################
-    public void createHstRootConfig() throws RepositoryException {
-        final Session session = repository.getSession();
-        final Node rootNode = session.getRootNode();
-        final Node siteRootNode = rootNode.addNode("hst:hst", "hst:hst");
-        final Node configs = siteRootNode.addNode("hst:configurations", "hst:configurations");
-        final Node siteNode = configs.addNode(getContext().getProjectNamespacePrefix(), "hst:configuration");
-        siteNode.addNode("hst:sitemap", "hst:sitemap");
-        siteNode.addNode("hst:pages", "hst:pages");
-        siteNode.addNode("hst:components", "hst:components");
-        siteNode.addNode("hst:catalog", "hst:catalog");
-        siteNode.addNode("hst:sitemenus", "hst:sitemenus");
-        siteNode.addNode("hst:templates", "hst:templates");
-        session.save();
-        session.logout();
-    }
-
-    /**
-     * Method useful when testing with local build (useful when you wanna see the changes)
-     *
-     * @return remote session (HippoSession)
-     */
-    public Session getHippoSession() throws RepositoryException {
-        if (hippoSession == null) {
-
-            final HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-            hippoSession = hippoRepository.login("admin", "admin".toCharArray());
-        }
-        return hippoSession;
-
-    }
-
-    public Session getSession(){
-        try {
-            return repository.getSession();
-        } catch (RepositoryException e) {
-           // ignore
-        }
-        return null;
-    }
-
 }

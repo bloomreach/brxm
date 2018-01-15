@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "documentWizardPlugin",
   "name": "Documents Wizard",
   "icon": "/essentials/feature/images/documents-wizard-plugin-icon.png",
@@ -10,14 +9,14 @@
     "/essentials/feature/images/screenshots/documentwizard02.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
-  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
+  "hasConfiguration": true,
+  "setupParameters": false,
   "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"
   ],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -32,15 +31,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": [
-        {
-          "component": "documentWizardPlugin",
-          "file": "documentWizardPlugin.js"
-        }
-      ]
-    }
-  ]
+  }
 }

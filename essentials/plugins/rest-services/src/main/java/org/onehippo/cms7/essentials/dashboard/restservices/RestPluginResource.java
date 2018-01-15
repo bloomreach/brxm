@@ -49,32 +49,29 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
 
-    private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
-
     @Inject private EventBus eventBus;
     @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @GET
     @Path("/beans")
@@ -94,8 +91,7 @@ public class RestPluginResource extends BaseResource {
     @Path("/mounts")
     public List<MountRestful> getHippoSites(@Context ServletContext servletContext) throws RepositoryException {
 
-        final PluginContext context = contextFactory.getContext();
-        final Set<Node> hstMounts = HstUtils.getHstMounts(context);
+        final Set<Node> hstMounts = HstUtils.getHstMounts(jcrService);
         final List<MountRestful> list = new ArrayList<>();
         for (Node m : hstMounts) {
             list.add(new MountRestful(m.getIdentifier(), m.getPath(), m.getName()));
@@ -106,8 +102,8 @@ public class RestPluginResource extends BaseResource {
 
     @POST
     @Path("/")
-    public RestfulList<MessageRestful> executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final RestfulList<MessageRestful> messages = new RestfulList<>();
+    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+        final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();
         final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
@@ -116,14 +112,12 @@ public class RestPluginResource extends BaseResource {
         final String manualRestName = values.get(RestPluginConst.MANUAL_REST_NAME);
 
         if (isGenericApiEnabled && isManualApiEnabled && genericRestName.equals(manualRestName)) {
-            messages.add(new ErrorMessageRestful("Generic and manual REST resources must use different URLs."));
-            return messages;
+            return feedback.addError("Generic and manual REST resources must use different URLs.");
         }
 
         if (isManualApiEnabled) {
             if (Strings.isNullOrEmpty(manualRestName)) {
-                messages.add(new ErrorMessageRestful("Manual REST resource URL must be specified."));
-                return messages;
+                return feedback.addError("Manual REST resource URL must be specified.");
             }
 
             final InstructionExecutor executor = new PluginInstructionExecutor();
@@ -159,13 +153,12 @@ public class RestPluginResource extends BaseResource {
 
             final String message = "Spring configuration changed, project rebuild needed.";
             eventBus.post(new RebuildEvent("restServices", message));
-            messages.add(new MessageRestful(message));
+            feedback.addSuccess(message);
         }
 
         if (isGenericApiEnabled) {
             if (Strings.isNullOrEmpty(genericRestName)) {
-                messages.add(new ErrorMessageRestful("Generic REST resource URL must be specified."));
-                return messages;
+                return feedback.addError("Generic REST resource URL must be specified.");
             }
 
             final InstructionPackage instructionPackage = new DefaultInstructionPackage() {
@@ -181,9 +174,7 @@ public class RestPluginResource extends BaseResource {
             instructionPackage.execute(context);
         }
 
-        final String message = "REST configuration setup was successful.";
-        messages.add(new MessageRestful(message));
-        return messages;
+        return feedback.addSuccess("REST configuration setup was successful.");
     }
 
     public FileInstruction createFileInstruction() {

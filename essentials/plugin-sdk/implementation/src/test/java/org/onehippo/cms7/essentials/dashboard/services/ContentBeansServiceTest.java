@@ -18,34 +18,36 @@ package org.onehippo.cms7.essentials.dashboard.services;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 @Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
+    private ContentBeansService contentBeansService = new ContentBeansServiceImpl();
+
     @Test
     public void testCreateBeans() throws Exception {
 
         final TestPluginContext context = getTestContext();
+        final UserFeedback feedback = new UserFeedback();
         context.addPlaceholderData(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS, "true");
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-        context.setUseHippoSession(true);
-        context.setHippoRepository(repository);
+        jcrService.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");
-        final ContentBeansService contentBeansService = new ContentBeansService(context);
-        contentBeansService.createBeans();
-        contentBeansService.convertImageMethods("testproject:testasasasas");
+        contentBeansService.createBeans(jcrService, context, feedback, null);
+        contentBeansService.convertImageMethods("testproject:testasasasas", context, feedback);
 
     }
 
+    // TODO: still needed? or use getContext instead?
     private TestPluginContext getTestContext() {
 
-        final TestPluginContext testPluginContext = new TestPluginContext(repository);
+        final TestPluginContext testPluginContext = new TestPluginContext();
         testPluginContext.setComponentsPackageName("org.example.components");
         testPluginContext.setBeansPackageName("org.example.beans");
         testPluginContext.setRestPackageName("org.example.rest");
@@ -53,16 +55,5 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
         testPluginContext.setProjectPackageName("org.example");
 
         return testPluginContext;
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        projectSetup();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 }

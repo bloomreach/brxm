@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "menuPlugin",
   "name": "Menus",
   "icon": "/essentials/feature/images/menu-plugin-icon.png",
@@ -9,10 +8,8 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/menu-component.html",
   "packageFile": "/META-INF/menu_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -27,10 +24,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": []
-    }
-  ]
+  }
 }

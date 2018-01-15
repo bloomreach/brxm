@@ -16,26 +16,68 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.QName;
+import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods to help with the correct indentation of added pieces of XML.
  */
 public class Dom4JUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(Dom4JUtils.class);
     private static final int DEFAULT_INDENT_CHARS = 2;
     private static final String INDENT = "\n                                                                      ";
     private static final String CHILD_ELEMENTS = "./*";
 
     private Dom4JUtils() { }
+
+    public static class ModifierException extends Exception {
+        public ModifierException(final String message) {
+            super(message);
+        }
+    }
+
+    @FunctionalInterface
+    public interface Modifier {
+        void run(Document doc) throws ModifierException;
+    }
+
+    /**
+     * Let a modifier update the content of an XML file
+     *
+     * @param xmlFile  the file to update
+     * @param modifier logic to modify the dom4j document. Should throw a ModifierException if the modifier logic fails.
+     * @return         true if the modifier was applied and potential changes were saved successfully, false otherwise.
+     */
+    public static boolean update(final File xmlFile, final Modifier modifier) {
+        try {
+            final Document doc = new SAXReader().read(xmlFile);
+            modifier.run(doc);
+            final FileWriter writer = new FileWriter(xmlFile);
+            doc.write(writer);
+            writer.close();
+            return true;
+        } catch (ModifierException e) {
+            LOG.error(e.getMessage());
+        } catch (DocumentException | IOException e) {
+            LOG.error("Failed to update XML file '{}'.", xmlFile, e);
+        }
+        return false;
+    }
 
     public static Element addIndentedElement(final Element parent, final String elementName) {
         return addIndentedElement(parent, elementName, null, DEFAULT_INDENT_CHARS, false);

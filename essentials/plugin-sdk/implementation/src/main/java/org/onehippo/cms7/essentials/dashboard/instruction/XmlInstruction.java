@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,13 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -53,6 +54,8 @@ public class XmlInstruction extends BuiltinInstruction {
     public enum Action {
         COPY, DELETE
     }
+
+    @Inject private JcrService jcrService;
 
     private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
     private boolean overwrite;
@@ -75,23 +78,21 @@ public class XmlInstruction extends BuiltinInstruction {
         if (action == Action.COPY) {
             return copy(context);
         } else {
-            return delete(context);
+            return delete();
         }
     }
 
     @Override
-    public Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
         if (action == Action.COPY) {
-            result.put(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.XML_NODE_CREATE, "Import file '" + source + "' to repository parent node '" + target + "'.");
         } else {
-            result.put(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
+            changeMessageQueue.accept(MessageGroup.XML_NODE_DELETE, "Delete repository node '" + target + "'.");
         }
-        return result;
     }
 
     private InstructionStatus copy(final PluginContext context) {
-        final Session session = context.createSession();
+        final Session session = jcrService.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             if (!session.itemExists(target)) {
@@ -99,7 +100,6 @@ public class XmlInstruction extends BuiltinInstruction {
                 return InstructionStatus.FAILED;
             }
             final Node destination = session.getNode(target);
-
 
             if (stream == null) {
                 log.error("Source file not found {}", source);
@@ -117,15 +117,14 @@ public class XmlInstruction extends BuiltinInstruction {
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Imported XML from '{}' to '{}'.", source, target);
-            return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error on copy node", e);
+            return InstructionStatus.FAILED;
         } finally {
             IOUtils.closeQuietly(stream);
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return InstructionStatus.FAILED;
-
+        return InstructionStatus.SUCCESS;
     }
 
     private boolean nodeExists(final PluginContext context, final Session session, final String source, final String parentPath) throws RepositoryException {
@@ -135,7 +134,6 @@ public class XmlInstruction extends BuiltinInstruction {
             final XmlNode xmlNode = XmlUtils.parseXml(stream);
             final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
             if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
-
                 final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
                 if (session.itemExists(absPath)) {
                     log.debug("Node already exists: {}", absPath);
@@ -150,8 +148,8 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
 
-    private InstructionStatus delete(final PluginContext context) {
-        final Session session = context.createSession();
+    private InstructionStatus delete() {
+        final Session session = jcrService.createSession();
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist: {}", target);
@@ -160,13 +158,13 @@ public class XmlInstruction extends BuiltinInstruction {
             session.getNode(target).remove();
             session.save();
             log.info("Deleted node '{}'.", target);
-            return InstructionStatus.SUCCESS;
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
+            return InstructionStatus.FAILED;
         } finally {
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
-        return InstructionStatus.FAILED;
+        return InstructionStatus.SUCCESS;
     }
 
     private void processPlaceholders(final Map<String, Object> data) {

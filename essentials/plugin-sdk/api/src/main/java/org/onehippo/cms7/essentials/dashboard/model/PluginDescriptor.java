@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,88 +16,262 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
+import com.google.common.base.Strings;
 
+public class PluginDescriptor implements Restful {
 
-@XmlTransient
-public interface PluginDescriptor extends Serializable {
+    public static final String TYPE_TOOL = "tool";
+    public static final String TYPE_FEATURE = "feature";
 
+    private List<String> restClasses;
 
-    Map<String, Set<String>> getCategories();
+    private Vendor vendor;
+    private List<MavenDependency.WithModule> dependencies;
+    private List<MavenRepository.WithModule> repositories;
+    private String name;
+    private String introduction;
+    private String description;
+    private List<String> imageUrls;
+    private String id;
+    private String packageClass;
+    private boolean hasConfiguration;
+    private boolean noRebuildAfterSetup;
+    private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
+    private String packageFile;
+    private String type;
+    private String installState;
+    private String icon;
 
-    void setCategories(Map<String, Set<String>> categories);
+    private Calendar dateInstalled;
+    private String documentationLink;
 
-    List<String> getRestClasses();
+    private Map<String, Set<String>> categories;
 
-    void setRestClasses(List<String> restClasses);
+    public PluginDescriptor(final String name) {
+        this.name = name;
+    }
 
-    String getDescription();
+    public PluginDescriptor() {
 
-    void setDescription(String description);
+    }
 
-    String getIcon();
+    public Map<String, Set<String>> getCategories() {
+        return categories;
+    }
 
-    void setIcon(String icon);
+    public void setCategories(final Map<String, Set<String>> categories) {
+        this.categories = categories;
+    }
 
-    List<String> getImageUrls();
+    public Calendar getDateInstalled() {
+        return dateInstalled;
+    }
 
-    void setImageUrls(List<String> imageUrls);
+    public void setDateInstalled(final Calendar dateInstalled) {
+        this.dateInstalled = dateInstalled;
+    }
 
-    String getInstallState();
+    public String getType() {
+        return type;
+    }
 
-    void setInstallState(String installState);
+    public void setType(final String type) {
+        this.type = type;
+    }
 
-    String getId();
+    public String getInstallState() {
+        return installState;
+    }
 
-    void setId(String id);
+    public void setInstallState(final String installState) {
+        this.installState = installState;
+    }
 
-    String getPackageFile();
+    public String getId() {
+        return id;
+    }
 
-    void setPackageFile(String packageFile);
+    public void setId(final String id) {
+        this.id = id;
+    }
 
-    Vendor getVendor();
+    public String getPackageFile() {
+        return packageFile;
+    }
 
-    String getPackageClass();
+    public void setPackageFile(final String packageFile) {
+        this.packageFile = packageFile;
+    }
 
-    void setPackageClass(String packageClass);
+    public String getPackageClass() {
+        return packageClass;
+    }
 
-    String getParameterServiceClass();
+    public void setPackageClass(final String packageClass) {
+        this.packageClass = packageClass;
+    }
 
-    void setParameterServiceClass(String parameterServiceClass);
+    public void setHasConfiguration(final boolean hasConfiguration) {
+        this.hasConfiguration = hasConfiguration;
+    }
 
-    void setVendor(Vendor vendor);
+    public boolean getHasConfiguration() {
+        return hasConfiguration;
+    }
 
-    String getName();
+    public boolean isNoRebuildAfterSetup() {
+        return noRebuildAfterSetup;
+    }
 
-    void setName(String name);
+    public void setNoRebuildAfterSetup(final boolean noRebuildAfterSetup) {
+        this.noRebuildAfterSetup = noRebuildAfterSetup;
+    }
+    
+    public Vendor getVendor() {
+        return vendor;
+    }
 
-    String getDocumentationLink();
+    public void setVendor(final Vendor vendor) {
+        this.vendor = vendor;
+    }
 
-    void setDocumentationLink(String documentationLink);
+    public String getName() {
+        return name;
+    }
 
-    String getType();
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-    void setType(String type);
+    public String getDocumentationLink() {
+        return documentationLink;
+    }
 
+    public void setDocumentationLink(final String documentationLink) {
+        this.documentationLink = documentationLink;
+    }
 
-    List<EssentialsDependency> getDependencies();
+    public List<MavenDependency.WithModule> getDependencies() {
+        if (dependencies == null) {
+            return new ArrayList<>();
+        }
+        return dependencies;
+    }
 
-    void setDependencies(List<EssentialsDependency> dependencies);
+    public void setDependencies(final List<MavenDependency.WithModule> dependencies) {
+        this.dependencies = dependencies;
+    }
 
-    String getIntroduction();
+    public String getIntroduction() {
+        return introduction;
+    }
 
-    void setIntroduction(String introduction);
+    public void setIntroduction(final String introduction) {
+        this.introduction = introduction;
+    }
 
-    List<Repository> getRepositories();
+    public List<String> getRestClasses() {
+        return restClasses;
+    }
 
-    void setRepositories(List<Repository> repositories);
+    public void setRestClasses(final List<String> restClasses) {
+        this.restClasses = restClasses;
+    }
 
-    void setHasConfiguration(boolean hasConfiguration);
+    public String getDescription() {
+        return description;
+    }
 
-    boolean getHasConfiguration();
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public List<MavenRepository.WithModule> getRepositories() {
+        if (repositories == null) {
+            return new ArrayList<>();
+        }
+        return repositories;
+    }
+
+    public void setRepositories(final List<MavenRepository.WithModule> repositories) {
+        this.repositories = repositories;
+    }
+
+    public String getIcon() {
+        if (Strings.isNullOrEmpty(icon)) {
+            return "/essentials/images/icons/missing-icon.png";
+        }
+        return icon;
+    }
+
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginRestful{");
+        sb.append("restClasses=").append(restClasses);
+        sb.append(", vendor=").append(vendor);
+        sb.append(", dependencies=").append(dependencies);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", introduction='").append(introduction).append('\'');
+        sb.append(", id='").append(id).append('\'');
+        sb.append(", type='").append(type).append('\'');
+        sb.append(", dateInstalled=").append(dateInstalled);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    public boolean hasSetupParameters() {
+        return setupParameters;
+    }
+
+    public void setSetupParameters(final boolean noSetupParameters) {
+        this.setupParameters = noSetupParameters;
+    }
+
+    public static class Vendor implements Restful {
+        private String name;
+        private String url;
+        private String logo;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public void setLogo(final String logo) {
+            this.logo = logo;
+        }
+    }
 }

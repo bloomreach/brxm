@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "bannerPlugin",
   "name": "Banners",
   "icon": "/essentials/feature/images/banner-plugin-icon.png",
@@ -12,10 +11,8 @@
     "/essentials/feature/images/screenshots/banner04.png"
   ],
   "packageFile": "/META-INF/banner_instructions.xml",
-  "restClasses": [],
   "type": "feature",
   "vendor": {
-    "@type": "vendor",
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
@@ -32,10 +29,5 @@
     "license": [
       "community"
     ]
-  },
-  "libraries": [
-    {
-      "items": []
-    }
-  ]
+  }
 }

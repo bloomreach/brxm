@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 public class ContentBlocksFieldRestful implements Restful {
@@ -28,7 +25,7 @@ public class ContentBlocksFieldRestful implements Restful {
     private String originalName;
     private String pickerType;
     private long maxItems;
-    List<String> compoundRefs;
+    private List<String> compoundRefs;
 
     public String getName() {
         return name;
@@ -62,28 +59,11 @@ public class ContentBlocksFieldRestful implements Restful {
         this.maxItems = maxItems;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(String.class)
-    })
     public List<String> getCompoundRefs() {
         return compoundRefs;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(String.class)
-    })
     public void setCompoundRefs(final List<String> compoundRefs) {
         this.compoundRefs = compoundRefs;
     }
-
-    public void addCompoundRef(String compoundRef) {
-        if (compoundRefs == null) {
-            compoundRefs = new ArrayList<>();
-        }
-
-        compoundRefs.add(compoundRef);
-    }
-
 }

@@ -16,46 +16,42 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import com.google.common.base.Strings;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.archetype.common.DefaultPomManager;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class MavenModelUtils {
     private MavenModelUtils() {
         throw new IllegalStateException("Utility class");
     }
 
-    private static final String DEFAULT_PROFILE_ID = "default";
     private static Logger log = LoggerFactory.getLogger(MavenModelUtils.class);
 
     public static Model readPom(File pomFile) {
         try {
             return new DefaultPomManager().readPom(pomFile);
         } catch (XmlPullParserException | IOException e) {
-            log.error("Error parsing pom", e);
+            log.error("Error parsing pom '{}'.", pomFile, e);
         }
         return null;
     }
 
-    public static Model readPom(InputStream pomStream) {
-        try {
+    public static Model readPom(URL pomUrl) {
+        try (InputStream pomStream = pomUrl.openStream()) {
             return new DefaultPomManager().readPom(pomStream);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom resource", e);
@@ -66,11 +62,11 @@ public class MavenModelUtils {
     public static boolean writePom(final Model model, final File pomFile) {
         try {
             new DefaultPomManager().writePom(model, pomFile, pomFile);
+            return true;
         } catch (IOException e) {
             log.error("Error adding maven dependency", e);
-            return false;
         }
-        return true;
+        return false;
     }
 
     public static void mergeProperties(ModelBase model, ModelBase incomingModel) {

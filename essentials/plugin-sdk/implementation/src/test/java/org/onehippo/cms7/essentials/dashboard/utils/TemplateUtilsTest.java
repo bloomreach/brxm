@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,18 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -81,9 +76,9 @@ public class TemplateUtilsTest extends BaseTest {
                 "</sv:property>\n" +
                 "{{/sortBy}}";
 
-        final Map<String, String> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("sortBy", "namespace:document");
-        final String result = TemplateUtils.replaceStringPlaceholders(template, data);
+        final String result = TemplateUtils.replaceTemplateData(template, data);
         log.info("result {}", result);
         assertTrue(result.length() > 20);
     }
@@ -129,8 +124,6 @@ public class TemplateUtilsTest extends BaseTest {
     private void populateExistingBeans() {
         final PluginContext context = getContext();
         context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
-
-
     }
 
     public class TemplateObject {

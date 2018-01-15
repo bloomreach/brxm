@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,37 +17,26 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
-            var endpoint = $rootScope.REST.dynamic + 'related-documents';
-            $scope.pluginId = "relatedDocumentsPlugin";
+        .controller('relatedDocumentsCtrl', function ($scope, $rootScope, $http) {
             $scope.fieldsAdded = false;
             $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
             $scope.addDocs = function () {
-                var documents = [];
-                var searchPaths = [];
-                var suggestions = [];
+                var configuration = {
+                    fields: []
+                };
                 angular.forEach($scope.documentTypes, function (value) {
                     if (value.checked) {
-                        documents.push(value.name);
-                        searchPaths.push(value.searchPaths);
-                        suggestions.push(value.numberOfSuggestions);
+                        configuration.fields.push({
+                            jcrContentType: value.fullName,
+                            searchPath: value.searchPaths,
+                            nrOfSuggestions: value.numberOfSuggestions
+                        });
                     }
                 });
-                var payload = Essentials.addPayloadData("documents", documents.join(','), null);
-                Essentials.addPayloadData("numberOfSuggestions", suggestions.join(','), payload);
-                Essentials.addPayloadData("searchPaths", searchPaths.join(','), payload);
-                $http.post(endpoint, payload).success(function (data) {
+                $http.post($rootScope.REST.dynamic + 'related-documents', configuration).success(function () {
                     $scope.fieldsAdded = true;
                 });
-
             };
-
-            //############################################
-            // INIT
-            //############################################
-            $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
 
             $http.get($rootScope.REST.documents).success(function (docTypes) {
                 // Filter out basedocument

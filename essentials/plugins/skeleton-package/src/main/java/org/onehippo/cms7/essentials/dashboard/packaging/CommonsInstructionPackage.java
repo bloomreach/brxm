@@ -16,12 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import javax.inject.Inject;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
+import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
 
 /**
  * Adds all files that are shared between other installer packages,
@@ -31,15 +33,17 @@ import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
  */
 public class CommonsInstructionPackage extends TemplateSupportInstructionPackage {
 
+    private static final MavenDependency ESSENTIALS_COMPONENTS
+            = new MavenDependency(ProjectService.GROUP_ID_COMMUNITY, "hippo-essentials-components-hst", null, null, "provided");
+
+    @Inject
+    private MavenDependencyService dependencyService;
+
     @Override
     public InstructionStatus execute(final PluginContext context) {
         // add provided dependency to webfiles artifact so we have freemarker autocompletion support
-        final EssentialsDependency dependency = new DependencyRestful();
-        dependency.setGroupId("org.onehippo.cms7");
-        dependency.setArtifactId("hippo-essentials-components-hst");
-        dependency.setScope("provided");
-        dependency.setTargetPom(TargetPom.REPOSITORY_DATA_WEB_FILES.getName());
-        DependencyUtils.addDependency(context, dependency);
+        dependencyService.addDependency(context, TargetPom.REPOSITORY_DATA_WEB_FILES, ESSENTIALS_COMPONENTS);
+
         return super.execute(context);
     }
 

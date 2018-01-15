@@ -20,7 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,13 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -55,6 +56,8 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     private static Logger log = LoggerFactory.getLogger(NodeFolderInstruction.class);
     private String template;
     private String path;
+
+    @Inject JcrService jcrService;
 
     public NodeFolderInstruction() {
         super(MessageGroup.XML_NODE_FOLDER_CREATE);
@@ -75,16 +78,12 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     }
 
     @Override
-    protected Multimap<MessageGroup, String> getDefaultChangeMessages() {
-        final Multimap<MessageGroup, String> result = ArrayListMultimap.create();
-        result.put(getDefaultGroup(), "Create repository folder '" + path + "'.");
-        return result;
+    void populateDefaultChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
+        changeMessageQueue.accept(getDefaultGroup(), "Create repository folder '" + path + "'.");
     }
 
     private InstructionStatus createFolders(final PluginContext context) {
-
-        final Session session = context.createSession();
-
+        final Session session = jcrService.createSession();
         InputStream stream = null;
         try {
             if (session.itemExists(path)) {
@@ -116,10 +115,9 @@ public class NodeFolderInstruction extends BuiltinInstruction {
             return InstructionStatus.SUCCESS;
         } catch (RepositoryException | IOException e) {
             log.error("Error creating folders" + this, e);
-            GlobalUtils.refreshSession(session, false);
         } finally {
             IOUtils.closeQuietly(stream);
-            GlobalUtils.cleanupSession(session);
+            jcrService.destroySession(session);
         }
         return InstructionStatus.FAILED;
     }

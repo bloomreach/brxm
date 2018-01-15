@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,14 +48,14 @@ public class CndInstructionTest extends BaseRepositoryTest {
     @Test
     public void testProcess() throws Exception {
 
-        final Session session = getSession();
+        final Session session = jcrService.createSession();
         session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
         session.save();
-        CndUtils.registerNamespace(getContext(), TEST_PREFIX, TEST_URI);
+        CndUtils.registerNamespace(jcrService, TEST_PREFIX, TEST_URI);
         assertTrue("CndUtils.registerNamespaceUri", true);
-        CndUtils.createHippoNamespace(getContext(), TEST_PREFIX);
+        CndUtils.createHippoNamespace(jcrService, TEST_PREFIX);
         assertTrue("CndUtils.createHippoNamespace", true);
-        boolean exists = CndUtils.namespaceUriExists(getContext(), TEST_URI);
+        boolean exists = CndUtils.namespaceUriExists(jcrService, TEST_URI);
         assertTrue(exists);
 
         cndInstruction.setDocumentType("newsdocument");
@@ -72,6 +72,6 @@ public class CndInstructionTest extends BaseRepositoryTest {
         cndInstruction.setNamespacePrefix(testingPrefix);
         assertEquals("testingprefix", cndInstruction.getNamespacePrefix());
 
-        session.logout();
+        jcrService.destroySession(session);
     }
 }

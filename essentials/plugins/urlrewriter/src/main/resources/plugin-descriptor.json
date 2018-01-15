@@ -1,5 +1,4 @@
 {
-  "@type": "plugin",
   "id": "urlrewriterPlugin",
   "name": "URL Rewriter",
   "icon": "/essentials/feature/images/urlrewriter-plugin-icon.png",
@@ -9,11 +8,9 @@
     "/essentials/feature/images/screenshots/urlrewriter01.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/url-rewriter/about-url-rewriter.html",
-  "restClasses": [],
   "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "@type": "vendor",
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
   },
@@ -28,25 +25,20 @@
       "enterprise"
     ]
   },
-  "libraries": [
-  ],
   "dependencies": [
     {
-      "@type": "dependency",
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-cms",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-repository",
       "scope": "compile",
       "targetPom": "cms"
     },
     {
-      "@type": "dependency",
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-hst",
       "scope": "compile",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.collect.Multimap;
+
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
@@ -50,19 +50,18 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.service.JcrService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
-import org.onehippo.cms7.essentials.plugin.PluginParameterServiceFactory;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.project.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -81,9 +80,8 @@ public class PluginResource extends BaseResource {
     @Inject
     private PluginStore pluginStore;
 
-    @Inject
-    private PluginContextFactory contextFactory;
-
+    @Inject private PluginContextFactory contextFactory;
+    @Inject private JcrService jcrService;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
@@ -93,12 +91,12 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public RestfulList<PluginDescriptorRestful> getAllPlugins() {
-        final RestfulList<PluginDescriptorRestful> restfulList = new RestfulList<>();
+    public RestfulList<PluginDescriptor> getAllPlugins() {
+        final RestfulList<PluginDescriptor> restfulList = new RestfulList<>();
         final List<Plugin> plugins = pluginStore.getAllPlugins();
 
         for (Plugin plugin : plugins) {
-            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful) plugin.getDescriptor();
+            final PluginDescriptor descriptor = plugin.getDescriptor();
             descriptor.setInstallState(plugin.getInstallState().toString());
             restfulList.add(descriptor);
         }
@@ -110,7 +108,7 @@ public class PluginResource extends BaseResource {
     @ApiOperation(
             value = "Return plugin descriptor.",
             notes = "[API] plugin descriptor augmented with plugin's installState.",
-            response = PluginDescriptorRestful.class)
+            response = PluginDescriptor.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @GET
     @Path("/{" + PLUGIN_ID + '}')
@@ -285,23 +283,7 @@ public class PluginResource extends BaseResource {
     @Path("/modules")
     public PluginModuleRestful getModules() {
         final PluginModuleRestful modules = new PluginModuleRestful();
-        final List<Plugin> plugins = pluginStore.getAllPlugins();
-        for (Plugin plugin : plugins) {
-            // TODO: why is getLibraries not part of the descriptor interface?
-            // re:mm
-            //  most probably because of concrete class
-            // (PluginModuleRestful.PrefixedLibrary) which is also not part of the api
-            final PluginDescriptorRestful descriptor = (PluginDescriptorRestful) plugin.getDescriptor();
-            final List<PluginModuleRestful.PrefixedLibrary> libraries = descriptor.getLibraries();
-            if (libraries != null) {
-                final String prefix = descriptor.getType();
-                for (PluginModuleRestful.PrefixedLibrary library : libraries) {
-                    // prefix libraries by plugin id:
-                    library.setPrefix(prefix);
-                    modules.addLibrary(plugin.getId(), library);
-                }
-            }
-        }
+        pluginStore.getAllPlugins().forEach(p -> modules.addFiles(p.getDescriptor()));
         return modules;
     }
 
@@ -312,8 +294,7 @@ public class PluginResource extends BaseResource {
         }
 
         final ProjectSettings settings = pluginStore.getProjectSettings();
-        final PluginParameterService pluginParameters = PluginParameterServiceFactory.getParameterService(plugin);
-        if (settings.isConfirmParams() && pluginParameters.hasGeneralizedSetupParameters()) {
+        if (settings.isConfirmParams() && plugin.getDescriptor().hasSetupParameters()) {
             return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 
@@ -327,7 +308,7 @@ public class PluginResource extends BaseResource {
         final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
-        HstUtils.erasePreview(context);
+        HstUtils.erasePreview(jcrService, context);
 
         // execute skeleton
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
