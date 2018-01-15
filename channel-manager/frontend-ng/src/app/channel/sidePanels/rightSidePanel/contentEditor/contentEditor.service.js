@@ -147,9 +147,6 @@ class ContentEditorService {
     this.documentType = documentType;
     this.documentDirty = document.info && document.info.dirty;
     delete this.error;
-
-    // TODO: move this to the contentEditor component
-    // this._resizeTextareas();
   }
 
   _reportUnsupportedFieldTypes(documentType) {
