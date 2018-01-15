@@ -92,10 +92,6 @@ class RightSidePanelCtrl {
         this.$element.css('max-width', '0px');
         this.setFullWidth(false);
       });
-
-    if (!this.ChannelService.isToolbarDisplayed) {
-      this.ChannelService.setToolbarDisplayed(true);
-    }
   }
 
   setFullWidth(state) {
