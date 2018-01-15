@@ -53,9 +53,9 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
             long start = System.currentTimeMillis();
             result = q.execute();
             long end = System.currentTimeMillis();
-            TextSearchBuilder.log.info("Executing search query: " + TextSearchBuilder.TEXT_QUERY_NAME + " took " + (end - start) + "ms");
+            TextSearchBuilder.log.info("Executing search query: " + GeneralSearchBuilder.TEXT_QUERY_NAME + " took " + (end - start) + "ms");
         } catch (RepositoryException e) {
-            TextSearchBuilder.log.error("Error executing query[" + TextSearchBuilder.TEXT_QUERY_NAME + "]: " + query, e);
+            TextSearchBuilder.log.error("Error executing query[" + GeneralSearchBuilder.TEXT_QUERY_NAME + "]: " + query, e);
         }
         return result;
     }

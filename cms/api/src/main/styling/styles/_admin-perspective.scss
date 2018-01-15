@@ -1,4 +1,4 @@
-// Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@
 
 .hippo-controlpanel-table-default {
   border: 1px solid $dark-shade;
-  border-collapse: separate
+  border-collapse: collapse;
 }
 
 .hippo-controlpanel-table-default .navigator {
@@ -257,6 +257,12 @@
 
 .hidden_field {
   visibility: hidden;
+}
+
+.search-input {
+  width: auto !important;
+  font-size: 12px;
+  color: $dark-shade;
 }
 
 .updater-editor-plugin {

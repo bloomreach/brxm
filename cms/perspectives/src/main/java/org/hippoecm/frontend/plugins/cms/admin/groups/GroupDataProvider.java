@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +27,11 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
+import org.hippoecm.frontend.plugins.cms.admin.comparators.PropertyComparator;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import static java.util.Comparator.comparing;
 
 public class GroupDataProvider extends SearchableDataProvider<Group> {
 
@@ -37,19 +41,14 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
                 " FROM " + HippoNodeType.NT_GROUP +
                 " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
 
-    private static final String QUERY_GROUP_LIST_TEMPLATE = "SELECT * " +
-                    " FROM " + HippoNodeType.NT_GROUP +
-                    " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
-                          " (  " +
-                              "fn:name() = '{}' OR " +
-                              "contains(hipposys:description, '{}') OR " +
-                              "contains(hipposys:members, '{}') OR " +
-                              "contains(hipposys:groups, '{}') " +
-                            ") ";
+    private static final Collator collator = Collator.getInstance(UserSession.get().getLocale());
+    private static final Comparator<String> propertyComparator = new PropertyComparator(collator);
+    private static final Comparator<Group> groupnameComparator = comparing(Group::getGroupname, propertyComparator);
 
     public GroupDataProvider() {
-        super(QUERY_ALL_GROUP_LIST, QUERY_GROUP_LIST_TEMPLATE, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
+        super(QUERY_ALL_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
         setSort("groupname", SortOrder.ASCENDING);
+        setIncludePrimaryTypes(new String[] {HippoNodeType.NT_GROUP});
     }
 
     @Override
@@ -64,14 +63,11 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
 
     @Override
     public Iterator<Group> iterator(long first, long count) {
-        List<Group> groupList = new ArrayList<Group>(getList());
+        final List<Group> groupList = new ArrayList<>(getList());
 
-        Collections.sort(groupList, new Comparator<Group>() {
-            public int compare(Group group1, Group group2) {
-                int direction = getSort().isAscending() ? 1 : -1;
-
-                return direction * (group1.compareTo(group2));
-            }
+        groupList.sort((group1, group2) -> {
+            final int direction = getSort().isAscending() ? 1 : -1;
+            return direction * groupnameComparator.compare(group1, group2);
         });
 
         return groupList.subList((int) first, (int) Math.min(first + count, groupList.size())).iterator();
