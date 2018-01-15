@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -144,7 +145,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
                     final String svgContent = IOUtils.toString(is, StandardCharsets.UTF_8);
-                    if (svgContent.contains("<script")) {
+                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
                         throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
                     is.reset();
