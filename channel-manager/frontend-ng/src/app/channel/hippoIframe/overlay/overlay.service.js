@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ class OverlayService {
   constructor(
     $log,
     $rootScope,
-    $state,
     $translate,
     CmsService,
     DomService,
-    CreateContentService,
+    // CreateContentService,
     EditContentService,
     ExperimentStateService,
     HippoIframeService,
@@ -41,11 +40,10 @@ class OverlayService {
 
     this.$log = $log;
     this.$rootScope = $rootScope;
-    this.$state = $state;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
-    this.CreateContentService = CreateContentService;
+    // this.CreateContentService = CreateContentService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-xdescribe('OverlayService', () => {
+describe('OverlayService', () => {
   let $q;
   let $rootScope;
+  let CmsService;
   let DomService;
+  let EditContentService;
   let ExperimentStateService;
   let hstCommentsProcessorService;
   let OverlayService;
@@ -34,8 +36,10 @@ xdescribe('OverlayService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _CmsService_,
       _DomService_,
       _ExperimentStateService_,
+      _EditContentService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
       _PageStructureService_,
@@ -43,7 +47,9 @@ xdescribe('OverlayService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
       DomService = _DomService_;
+      EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
@@ -508,28 +514,18 @@ xdescribe('OverlayService', () => {
     });
   });
 
-  it('does not throw an error when calling edit content handler if not set', (done) => {
-    loadIframeFixture(() => {
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
+  it('can edit content', (done) => {
+    spyOn(EditContentService, 'startEditing');
+    spyOn(CmsService, 'reportUsageStatistic');
 
-      expectNoPropagatedClicks();
-      expect(() => contentLink.click()).not.toThrow();
-
-      done();
-    });
-  });
-
-  it('calls the edit content handler to edit a document', (done) => {
-    const editContentHandler = jasmine.createSpy('editContentHandler');
-
-    OverlayService.onEditContent(editContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
 
       done();
     });
