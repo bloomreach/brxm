@@ -71,7 +71,7 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="resourcebundle:messages" sv:type="String">
       <sv:value>Page not found (404)</sv:value>
-      <sv:value>The page you requested was not found. - [This text can be edited &lt;a href="http://localhost:8080/cms/?1&amp;path=/content/documents/administration/labels/pagenotfound" target="_blank"&gt;here&lt;/a&gt;.]</sv:value>
+      <sv:value>The page you requested was not found. - [This text can be edited here: http://localhost:8080/cms/?1&amp;path=/content/documents/administration/labels/pagenotfound]</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
