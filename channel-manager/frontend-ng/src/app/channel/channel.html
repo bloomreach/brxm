@@ -43,7 +43,8 @@
       <div flex="30"
            layout
            layout-align="end center">
-        <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
+        <overlay-toggle name="components"
+                        state="channelCtrl.isComponentsOverlayDisplayed"
                         icon-svg="toggle_components_overlay"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
@@ -51,7 +52,8 @@
                         ng-if="channelCtrl.isEditable()">
         </overlay-toggle>
 
-        <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
+        <overlay-toggle name="content"
+                        state="channelCtrl.isContentOverlayDisplayed"
                         icon-svg="document"
                         class="qa-toggle-content"
                         tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
