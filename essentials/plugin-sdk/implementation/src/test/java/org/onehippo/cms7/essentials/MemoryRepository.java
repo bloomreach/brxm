@@ -123,12 +123,14 @@ class MemoryRepository {
      * test case. Typically, use this method in conjunction with #registerNodeTypes.
      */
     static void reset() {
-        perpetualSession.logout();
-        perpetualSession = null;
-
-        repository.shutdown();
-        repository = null;
-
+        if (perpetualSession != null) {
+            perpetualSession.logout();
+            perpetualSession = null;
+        }
+        if (repository != null) {
+            repository.shutdown();
+            repository = null;
+        }
         clearStorageDirectory();
     }
 

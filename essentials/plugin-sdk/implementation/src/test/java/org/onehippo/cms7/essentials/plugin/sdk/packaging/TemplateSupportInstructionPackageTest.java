@@ -45,10 +45,6 @@ public class TemplateSupportInstructionPackageTest extends BaseTest {
         assertEquals("Expected empty property set", 0, properties.size());
         final Set<String> groupNames = instructionPackage.groupNames();
         assertEquals("Expected default group names", 3, groupNames.size());
-        final DefaultInstructionParser parser = instructionPackage.getInstructionParser();
-        assertNotNull(parser);
-        final EventBus bus = instructionPackage.getEventBus();
-        assertNotNull(bus);
         final PluginInstructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
     }

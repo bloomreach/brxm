@@ -16,26 +16,30 @@
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
 import javax.inject.Inject;
+import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TranslationsInstructionTest extends BaseRepositoryTest {
 
-    @Inject private PluginInstructionExecutor executor;
-    @Inject private TranslationsInstruction translationsInstruction;
+    @Inject private AutowireCapableBeanFactory injector;
 
     @Test
     public void testInstruction() throws Exception {
-        translationsInstruction.setSource("/instruction_translations_file.json");
-        final PluginInstructionSet set = new PluginInstructionSet();
-        set.addInstruction(translationsInstruction);
-        final Instruction.Status status = executor.execute(set, getContext());
-        assertEquals(Instruction.Status.SUCCESS, status);
-    }
+        final TranslationsInstruction instruction = new TranslationsInstruction();
+        injector.autowireBean(instruction);
 
+        instruction.setSource("/instruction_translations_file.json");
+        assertEquals(Instruction.Status.SUCCESS,instruction.execute(getContext()));
+
+        final Session session = jcrService.createSession();
+        assertTrue(session.itemExists("/hippo:configuration/hippo:translations/foo/bar/nl"));
+        jcrService.destroySession(session);
+    }
 }

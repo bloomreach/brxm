@@ -39,14 +39,6 @@ import com.google.common.base.Strings;
  */
 public class TemplateSupportInstructionPackage extends DefaultInstructionPackage {
 
-    public TemplateSupportInstructionPackage() {
-    }
-
-    public TemplateSupportInstructionPackage(final String path) {
-        setInstructionPath(path);
-    }
-
-
     @Override
     public Set<String> groupNames() {
         final Map<String, Object> props = getProperties();

@@ -41,44 +41,9 @@ public final class EssentialsFileUtils {
         processDirectories(directories);
     }
 
-    /**
-     * Deletes director only if content of the directory doesn't contain any child directories
-     * @param directory  directory to delete
-     * @return boolean on success
-     */
-    public static boolean deleteSingleDirectory(final File directory) {
-        if (directory == null) {
-            throw new IllegalArgumentException("Directory was null");
-        }
-        if (!directory.exists()) {
-            log.warn("directory {} doesn't exist", directory);
-            return false;
-        }
-        if (!directory.isDirectory()) {
-            log.warn("file {} is not a directory", directory);
-            return false;
-        }
-        final File[] files = directory.listFiles();
-        if (files !=null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    throw new IllegalArgumentException("Directory contains directories");
-                }
-            }
-            // delete files:
-            for (File file : files) {
-                file.delete();
-            }
-        }
-        return directory.delete();
-    }
-
     private static void processDirectories(final Deque<String> directories) throws IOException {
         if (!directories.isEmpty()) {
             Files.createDirectories(new File(directories.getLast()).toPath());
         }
     }
-
-
-
 }

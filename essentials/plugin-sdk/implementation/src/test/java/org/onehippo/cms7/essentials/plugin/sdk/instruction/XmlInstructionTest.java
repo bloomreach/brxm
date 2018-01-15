@@ -20,63 +20,42 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
+import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
 public class XmlInstructionTest extends BaseRepositoryTest {
 
-    /**
-     * See instruction_xml_file.xml file
-     */
-    private static final String NODE_NAME = "testNode";
-    @Inject private PluginInstructionExecutor executor;
-    @Inject private XmlInstruction addNodeInstruction;
-    @Inject private XmlInstruction removeNodeInstruction;
+    @Inject private AutowireCapableBeanFactory injector;
 
     @Test
     public void testInstructions() throws Exception {
+        final PluginContext context = getContext();
+        final XmlInstruction instruction = new XmlInstruction();
+        injector.autowireBean(instruction);
 
-        //############################################
-        // ADD
-        //############################################
-        addNodeInstruction.setActionEnum(XmlInstruction.Action.COPY);
-        addNodeInstruction.setTarget("/");
-        addNodeInstruction.setSource("instruction_xml_file.xml");
-        final PluginInstructionSet set = new PluginInstructionSet();
-        set.addInstruction(addNodeInstruction);
-        Instruction.Status status = executor.execute(set, getContext());
-        assertTrue("Expected SUCCESS but got: " + status, status == Instruction.Status.SUCCESS);
-        //############################################
-        // OVERRIDE FALSE TEST
-        //############################################
-        addNodeInstruction.setOverwrite(false);
-        status = executor.execute(set, getContext());
-        assertTrue("Expected SKIPPED but got: " + status, status == Instruction.Status.SKIPPED);
-        //############################################
-        // OVERRIDE TRUE TEST: NOT SUPPORTED YET
-        //############################################
-        /*
-        addNodeInstruction.setOverwrite(true);
-        status = executor.execute(set, getContext());
-        assertTrue("Expected SUCCESS but got: " + status, status == InstructionStatus.SUCCESS);
-        */
+        // copy successfully
+        instruction.setActionEnum(XmlInstruction.Action.COPY);
+        instruction.setTarget("/");
+        instruction.setSource("instruction_xml_file.xml");
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
 
-        //############################################
-        // DELETE
-        //############################################
+        // no override
+        instruction.setOverwrite(false);
+        assertEquals(Instruction.Status.SKIPPED, instruction.execute(context));
 
-        removeNodeInstruction.setActionEnum(XmlInstruction.Action.DELETE);
-        removeNodeInstruction.setTarget('/' + NODE_NAME);
-        final PluginInstructionSet removeSet = new PluginInstructionSet();
-        removeSet.addInstruction(removeNodeInstruction);
-        final Instruction.Status deleteStatus = executor.execute(removeSet, getContext());
-        assertTrue("Expected SUCCESS but got: " + deleteStatus, deleteStatus == Instruction.Status.SUCCESS);
+        // override (currently not supported!)
+//        instruction.setOverwrite(true);
+//        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
 
-
+        // delete
+        instruction.setActionEnum(XmlInstruction.Action.DELETE);
+        instruction.setTarget("/testNode"); // matches root node of instruction_xml_file.xml
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
     }
 }

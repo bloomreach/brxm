@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
-import org.onehippo.cms7.essentials.plugin.sdk.annotations.HippoEssentialsGenerated;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

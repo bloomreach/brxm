@@ -20,44 +20,50 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
+import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class NodeFolderInstructionTest extends BaseRepositoryTest {
 
-    @Inject private NodeFolderInstruction instruction;
-    @Inject private PluginInstructionExecutor executor;
+    @Inject private AutowireCapableBeanFactory injector;
 
     @Test
     public void testInstruction() throws Exception {
+        final PluginContext context = getContext();
+        final NodeFolderInstruction instruction = new NodeFolderInstruction();
+        injector.autowireBean(instruction);
+
         instruction.setPath("/foo/bar/foobar");
         instruction.setTemplate("my_folder_template.xml");
-        final PluginInstructionSet instructionSet = new PluginInstructionSet();
-        instructionSet.addInstruction(instruction);
-        Instruction.Status execute = executor.execute(instructionSet, getContext());
-        assertEquals(Instruction.Status.SUCCESS, execute);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+
         // should skip second time
-        execute = executor.execute(instructionSet, getContext());
-        assertEquals(Instruction.Status.SKIPPED, execute);
+        assertEquals(Instruction.Status.SKIPPED, instruction.execute(context));
 
-        // should fail,  wrong path
+        // should fail, wrong path
         instruction.setPath("foo/bar/foobar");
-        Log4jInterceptor.onError().deny(NodeFolderInstruction.class).run(() -> {
-            assertEquals(Instruction.Status.FAILED, executor.execute(instructionSet, getContext()));
-        });
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(NodeFolderInstruction.class).build()) {
+            assertEquals(Instruction.Status.FAILED, instruction.execute(context));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Error creating folders")));
+        }
 
-        // should skip,  folder exists
+        // should skip, folder exists
         instruction.setTemplate("no_template_my_folder_template.xml");
         instruction.setPath("/foo/bar/foobar");
-        execute = executor.execute(instructionSet, getContext());
-        assertEquals(Instruction.Status.SKIPPED, execute);
-        // should fail, no  folder exists , wrong path
+        assertEquals(Instruction.Status.SKIPPED, instruction.execute(context));
+
+        // should fail, no folder exists , wrong path
         instruction.setTemplate("no_template_my_folder_template.xml");
         instruction.setPath("/foo/bar/foobar/somepath");
-        execute = executor.execute(instructionSet, getContext());
-        assertEquals(Instruction.Status.FAILED, execute);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(NodeFolderInstruction.class).build()) {
+            assertEquals(Instruction.Status.FAILED, instruction.execute(context));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains(
+                    "Template was not found: no_template_my_folder_template.xml")));
+        }
     }
 }

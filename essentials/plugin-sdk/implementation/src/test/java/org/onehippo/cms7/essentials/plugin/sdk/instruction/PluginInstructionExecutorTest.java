@@ -65,25 +65,25 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     @Test
     public void testExecuteByGroup() throws Exception {
-
         final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-        log.info("content {}", content);
-
         final PluginInstructions instructions = instructionParser.parseInstructions(content);
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
+
+        // execute groups labelled with "myGroup"
         for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains("myGroup")) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }
 
-        // default group:
+        // execute groups labelled with "default"
         for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }
+
         // check if date folder is created
         DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
         final Date today = Calendar.getInstance().getTime();

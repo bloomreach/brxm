@@ -194,7 +194,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
     private Status copyResources(final String source, final File targetDirectory, final Map<String, Object> placeholderData) {
 
         if (!targetDirectory.exists()) {
-            log.warn("Directory {} doesn't exist, creating new one", targetDirectory);
+            log.info("Directory {} doesn't exist, creating new one", targetDirectory);
             try {
                 EssentialsFileUtils.createParentDirectories(targetDirectory);
             } catch (IOException e) {

@@ -18,87 +18,54 @@ package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.TestSettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @version "$Id$"
- */
-public class FileInstructionTest extends BaseResourceTest {
-
-    private static final String SOURCE = "file_instruction_test.txt";
-    private static final String TARGET = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/file_instruction_copy.txt";
-
-    @Inject private PluginInstructionExecutor executor;
-
-    private FileInstruction copyInstruction;
-    private FileInstruction deleteInstruction;
-
-    private static String createPlaceHolder(final String placeholderProjectRoot) {
-        return "{{" + placeholderProjectRoot + "}}";
-    }
-
-    @Before
-    public void setup() {
-        copyInstruction = new FileInstruction();
-        injector.autowireBean(copyInstruction);
-        deleteInstruction = new FileInstruction();
-        injector.autowireBean(deleteInstruction);
-    }
+public class FileInstructionTest extends ResourceModifyingTest {
 
     @Test
     public void testProcess() throws Exception {
         final PluginContext context = getContext();
-        final String target = TemplateUtils.replaceTemplateData(TARGET, context.getPlaceholderData());
+        final String targetInput = "{{projectRoot}}/file_instruction_copy.txt";
+        final String target = TemplateUtils.replaceTemplateData(targetInput, context.getPlaceholderData());
+        final File file = new File(target);
+        final FileInstruction instruction = new FileInstruction();
+        autoWire(instruction);
 
-        final PluginInstructionSet set = new PluginInstructionSet();
-        set.addInstruction(copyInstruction);
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(FileInstruction.class).build()) {
-            assertEquals(Instruction.Status.FAILED, executor.execute(set, context));
-            interceptor.messages().anyMatch(m -> m.contains("Invalid file instruction"));
+            assertEquals(Instruction.Status.FAILED, instruction.execute(context));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Invalid file instruction")));
         }
 
-        copyInstruction.setAction(FileInstruction.Action.COPY.toString());
-        copyInstruction.setSource(SOURCE);
-        copyInstruction.setTarget(TARGET);
-        copyInstruction.setOverwrite(true);
-        assertEquals(Instruction.Status.SUCCESS, executor.execute(set, context));
-
-        final File file = new File(target);
+        // copy file and validate result
+        instruction.setAction(FileInstruction.Action.COPY.toString());
+        instruction.setSource("file_instruction_test.txt");
+        instruction.setTarget(targetInput);
+        instruction.setOverwrite(true);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
         assertTrue(file.exists());
-        StringBuilder textFile = GlobalUtils.readTextFile(file.toPath());
-        assertTrue(textFile.toString().contains(TestSettingsService.PROJECT_NAMESPACE_TEST));
-        //############################################
-        // BINARY TEST (no replacements):
-        //############################################
-        copyInstruction.setOverwrite(true);
-        copyInstruction.setBinary(true);
-        executor.execute(set, context);
-        assertTrue(file.exists());
-        textFile = GlobalUtils.readTextFile(file.toPath());
-        assertTrue(textFile.toString().contains("{{namespace}}"));
+        assertTrue(GlobalUtils.readTextFile(file.toPath()).toString().contains(TestSettingsService.PROJECT_NAMESPACE_TEST));
 
-        //############################################
-        // DELETE
-        //############################################
-        deleteInstruction.setActionEnum(FileInstruction.Action.DELETE);
-        deleteInstruction.setTarget(TARGET);
-        final PluginInstructionSet deleteSet = new PluginInstructionSet();
-        deleteSet.addInstruction(deleteInstruction);
-        assertEquals(Instruction.Status.SUCCESS, executor.execute(deleteSet, context));
+        // overwrite with binary content (no interpolation)
+        instruction.setOverwrite(true);
+        instruction.setBinary(true);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+        assertTrue(file.exists());
+        assertTrue(GlobalUtils.readTextFile(file.toPath()).toString().contains("{{namespace}}"));
+
+        // and delete again
+        instruction.setActionEnum(FileInstruction.Action.DELETE);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+        assertFalse(file.exists());
     }
 }

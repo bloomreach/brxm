@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
@@ -51,7 +50,6 @@ public class DefaultInstructionPackage {
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
     @Inject private DefaultInstructionParser instructionParser;
-    @Inject private EventBus eventBus;
 
     private Map<String, Object> properties;
     private PluginInstructions instructions;
@@ -116,30 +114,11 @@ public class DefaultInstructionPackage {
 
     public PluginInstructions getInstructions() {
         if (instructions == null) {
-
             final InputStream resourceAsStream = getClass().getResourceAsStream(getInstructionPath());
             final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-            if (instructionParser == null) {
-                final StringBuilder errorBuilder = new StringBuilder();
-                errorBuilder.append('\n')
-                        .append("=============================================================================")
-                        .append('\n')
-                        .append("InstructionParser was null. This can means it is not injected by Spring.")
-                        .append('\n')
-                        .append("If you are running a test case, make sure you autowire beans like:")
-                        .append('\n')
-                        .append("InstructionPackage instructionPackage = new MyInstructionPackage();injector.autowireBean(instructionPackage);")
-                        .append('\n')
-                        .append("=============================================================================")
-                        .append('\n');
-
-                log.error("{}", errorBuilder);
-                throw new IllegalArgumentException("Instruction parser not injected");
-            }
             instructions = instructionParser.parseInstructions(content);
         }
         return instructions;
-
     }
 
     public Instruction.Status execute(final PluginContext context) {
@@ -176,14 +155,5 @@ public class DefaultInstructionPackage {
 
         }
         return status;
-    }
-
-
-    public DefaultInstructionParser getInstructionParser() {
-        return instructionParser;
-    }
-
-    public EventBus getEventBus() {
-        return eventBus;
     }
 }

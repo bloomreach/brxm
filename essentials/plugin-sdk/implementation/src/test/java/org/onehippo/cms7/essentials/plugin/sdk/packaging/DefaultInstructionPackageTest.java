@@ -38,7 +38,7 @@ public class DefaultInstructionPackageTest extends BaseTest {
 
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testInstructionPackageNoInjection() throws Exception {
         DefaultInstructionPackage instructionPackage = new DefaultInstructionPackage();
         instructionPackage.execute(getContext());
@@ -55,10 +55,6 @@ public class DefaultInstructionPackageTest extends BaseTest {
         final Set<String> groupNames = instructionPackage.groupNames();
         assertEquals("Expected default group names", EssentialConst.DEFAULT_GROUPS.size(), groupNames.size());
         assertEquals("Expected default group name", EssentialConst.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
-        final DefaultInstructionParser parser = instructionPackage.getInstructionParser();
-        assertNotNull(parser);
-        final EventBus bus = instructionPackage.getEventBus();
-        assertNotNull(bus);
         final PluginInstructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
 

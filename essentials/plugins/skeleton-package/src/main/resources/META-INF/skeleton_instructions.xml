@@ -25,6 +25,7 @@
   -->
 
   <instructionSet>
+    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-essentials-components-hst" scope="provided"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-resource-bundle.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-untranslated-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <translations source="/instructions/json/translations/skeletontemplates-translations.json"/>

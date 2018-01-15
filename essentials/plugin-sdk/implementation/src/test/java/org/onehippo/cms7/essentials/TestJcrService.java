@@ -55,8 +55,8 @@ public class TestJcrService {
         }
 
         public void reset() {
-            ensureRepository();
             MemoryRepository.reset();
+            resetNodes();
         }
 
         public void registerNodeTypes(final String cndResourcePath) throws RepositoryException, IOException {

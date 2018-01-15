@@ -108,6 +108,11 @@ public abstract class ResourceModifyingTest {
         injector.autowireBean(bean);
     }
 
+    protected PluginContext getContext() throws IOException {
+        ensureContext();
+        return context;
+    }
+
     private void ensureContext() throws IOException {
         if (context == null) {
             // create a temporary directory representing the root of modifiable project files

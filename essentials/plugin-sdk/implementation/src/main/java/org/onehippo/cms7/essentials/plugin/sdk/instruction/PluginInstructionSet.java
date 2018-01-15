@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
@@ -36,11 +35,8 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 @XmlRootElement(name = "instructionSet", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class PluginInstructionSet {
 
-    private static final Set<String> DEFAULT_GROUPS =  ImmutableSet.of(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
     private Set<Instruction> instructions = new LinkedHashSet<>();
-
     private String group;
-
 
     @XmlElementRefs({
             @XmlElementRef(type = XmlInstruction.class),
@@ -70,7 +66,6 @@ public class PluginInstructionSet {
             return;
         }
         instructions.add(instruction);
-
     }
 
     @XmlAttribute
@@ -86,8 +81,8 @@ public class PluginInstructionSet {
     }
 
     public Set<String> getGroups() {
-        if(Strings.isNullOrEmpty(group)){
-            return DEFAULT_GROUPS;
+        if (Strings.isNullOrEmpty(group)) {
+            return EssentialConst.DEFAULT_GROUPS;
         }
         final Iterable<String> groups = Splitter.on(',').trimResults().omitEmptyStrings().split(group);
         return Sets.newHashSet(groups);

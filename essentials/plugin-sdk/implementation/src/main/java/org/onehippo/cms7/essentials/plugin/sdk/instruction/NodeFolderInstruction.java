@@ -113,7 +113,7 @@ public class NodeFolderInstruction extends BuiltinInstruction {
             log.info("Created '{}' from '{}'.", path, template);
             return Status.SUCCESS;
         } catch (RepositoryException | IOException e) {
-            log.error("Error creating folders" + this, e);
+            log.error("Error creating folders " + this, e);
         } finally {
             IOUtils.closeQuietly(stream);
             jcrService.destroySession(session);

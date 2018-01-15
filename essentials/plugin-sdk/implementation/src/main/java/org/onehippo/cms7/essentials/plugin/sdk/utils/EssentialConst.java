@@ -21,7 +21,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import org.onehippo.cms7.essentials.plugin.sdk.annotations.HippoEssentialsGenerated;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 public final class EssentialConst {
 

@@ -47,7 +47,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.packaging.CommonsInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
@@ -319,7 +319,7 @@ public class PluginResource {
         HstUtils.erasePreview(jcrService, settingsService);
 
         // execute skeleton
-        final DefaultInstructionPackage commonPackage = new CommonsInstructionPackage();
+        final DefaultInstructionPackage commonPackage = new SkeletonInstructionPackage();
         commonPackage.setProperties(properties);
         injector.autowireBean(commonPackage);
         commonPackage.execute(context);

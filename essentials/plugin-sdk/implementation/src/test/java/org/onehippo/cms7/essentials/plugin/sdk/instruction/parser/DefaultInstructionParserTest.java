@@ -76,10 +76,6 @@ public class DefaultInstructionParserTest extends BaseTest {
         Assert.assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroups().iterator().next());
         assertEquals(8, set1.getInstructions().size());
         assertEquals(1, set2.getInstructions().size());
-        // total instructions is 6:
-        assertEquals(10, myInstructions.totalInstructions());
-        assertEquals(3, myInstructions.totalInstructionSets());
-
 
         //############################################
         // OBJECTS
