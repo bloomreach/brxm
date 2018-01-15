@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>5.2.0-improve-state-mgmt</version>
+  <version>5.2.0-improve-state-mgmt-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 

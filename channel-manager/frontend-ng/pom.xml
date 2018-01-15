@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.2.0-improve-state-mgmt</version>
+    <version>5.2.0-improve-state-mgmt-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
