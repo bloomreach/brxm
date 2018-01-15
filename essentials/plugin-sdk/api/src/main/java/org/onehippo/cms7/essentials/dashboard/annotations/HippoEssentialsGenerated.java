@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin.sdk.annotations;
+package org.onehippo.cms7.essentials.dashboard.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
