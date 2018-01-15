@@ -233,14 +233,29 @@ class ContentEditorService {
     this.killed = true;
   }
 
+  confirmDiscardChanges() {
+    if (this._doNotConfirm()) {
+      return this.$q.resolve();
+    }
+    const messageParams = {
+      documentName: this.document.displayName,
+    };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
   /**
    * Possible return values:
    * - resolved promise with value 'true' when changes have been saved
    * - resolved promise with value 'false' when changes have been discarded
    * - rejected promise when user canceled
    */
-  confirmPendingChanges(messageKey) {
-    return this._confirmSaveOrDiscardChanges(messageKey)
+  confirmSaveOrDiscardChanges(messageKey) {
+    return this._askSaveOrDiscardChanges(messageKey)
       .then((action) => {
         if (action === 'SAVE') {
           return this._saveDraft()
@@ -250,9 +265,8 @@ class ContentEditorService {
       });
   }
 
-  _confirmSaveOrDiscardChanges(messageKey) {
-    if (!this.documentDirty // no pending changes, no dialog, continue normally
-        || this.killed) { // editor was killed, don't show dialog
+  _askSaveOrDiscardChanges(messageKey) {
+    if (this._doNotConfirm()) {
       return this.$q.resolve('DISCARD');
     }
 
@@ -270,6 +284,11 @@ class ContentEditorService {
       },
       bindToController: true,
     });
+  }
+
+  _doNotConfirm() {
+    return !this.documentDirty // no pending changes, no dialog, continue normally
+      || this.killed; // editor was killed, don't show dialog
   }
 
   deleteDraft() {

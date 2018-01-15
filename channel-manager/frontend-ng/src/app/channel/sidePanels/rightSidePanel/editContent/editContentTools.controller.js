@@ -40,7 +40,7 @@ class EditContentToolsCtrl {
 
   uiCanExit() {
     if (this.mode === 'view') {
-      return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
+      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
         .then(() => this.ContentEditor.deleteDraft())
         .then(() => this._viewContent());
     } else if (this.mode === 'edit') {

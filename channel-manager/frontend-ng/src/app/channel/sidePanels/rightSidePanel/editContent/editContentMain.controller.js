@@ -15,9 +15,10 @@
  */
 
 class EditContentMainCtrl {
-  constructor($translate, CmsService, ContentEditor, EditContentService, HippoIframeService) {
+  constructor($q, $translate, CmsService, ContentEditor, EditContentService, HippoIframeService) {
     'ngInject';
 
+    this.$q = $q;
     this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
@@ -25,6 +26,7 @@ class EditContentMainCtrl {
 
     this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
+    this.closing = false;
   }
 
   isEditing() {
@@ -55,13 +57,29 @@ class EditContentMainCtrl {
   }
 
   uiCanExit() {
-    return this.ContentEditor.confirmPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
+    return this._confirmExit()
+      .then(() => {
+        // don't return the result of deleteDraft: if it fails (e.g. because an admin 'stole' the document)
+        // the editor should still be closed.
+        this.ContentEditor.deleteDraft()
+          .finally(() => this.ContentEditor.close());
+      })
+      .catch(() => {
+        // user cancelled the exit
+        this.closing = false;
+        return this.$q.reject();
+      });
+  }
+
+  _confirmExit() {
+    if (this.closing) {
+      return this.ContentEditor.confirmDiscardChanges();
+    }
+    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
       .then((saved) => {
         if (saved) {
           this.HippoIframeService.reload();
         }
-        return this.ContentEditor.deleteDraft()
-          .then(() => this.ContentEditor.close());
       });
   }
 
@@ -70,6 +88,7 @@ class EditContentMainCtrl {
   }
 
   close() {
+    this.closing = true;
     this.EditContentService.stopEditing();
   }
 }
