@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.htmlprocessor.filter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.htmlcleaner.TagNode;
@@ -29,7 +30,9 @@ public class WhitelistHtmlFilter implements HtmlFilter {
 
     public static final Logger log = LoggerFactory.getLogger(WhitelistHtmlFilter.class);
 
-    private static final String JAVASCRIPT_PROTOCOL = "javascript:";
+    private static final String JAVASCRIPT_PROTOCOL = "javascript";
+    private static final String DATA_PROTOCOL = "data";
+    private static final Pattern CRLFTAB = Pattern.compile("[\r\n\t]");
 
     private final Map<String, Element> elements = new HashMap<>();
     private final boolean omitJavascriptProtocol;
@@ -81,7 +84,8 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                 .filter(attribute -> allowedElement.hasAttribute(attribute.getKey()))
                 .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
                     final String value = attribute.getValue();
-                    final String normalizedValue = CharacterReferenceNormalizer.normalize(value.toLowerCase().trim());
+                    final String normalizedValue =
+                            cleanCRLFTAB(CharacterReferenceNormalizer.normalize(value.toLowerCase().trim()));
                     if (omitJavascriptProtocol &&
                             (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL) ||
                                     checkDataAttrValue(node.getName(), attribute.getKey(), normalizedValue))) {
@@ -92,8 +96,12 @@ public class WhitelistHtmlFilter implements HtmlFilter {
         node.setAttributes(attributes);
     }
 
+    private static String cleanCRLFTAB(final String value) {
+        return CRLFTAB.matcher(value).replaceAll("");
+    }
+
     private boolean checkDataAttrValue(final String tagName, final String attrName, final String attrValue) {
-        return attrValue.startsWith("data:")
+        return attrValue.startsWith(DATA_PROTOCOL)
                 ? ("a".equals(tagName) && "href".equals(attrName)) || ("object".equals(tagName) && "data".equals(attrName))
                 : false;
     }
