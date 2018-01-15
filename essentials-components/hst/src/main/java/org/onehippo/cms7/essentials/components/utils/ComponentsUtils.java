@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.components.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +39,9 @@ import com.google.common.base.Splitter;
  */
 public final class ComponentsUtils {
 
+    public final static DateTimeFormatter yearFormat = DateTimeFormatter.ofPattern("yyyy");
+    public final static DateTimeFormatter monthFormat = DateTimeFormatter.ofPattern("MM");
+    public final static DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("dd");
 
     /**
      * Get content bean based on path e.g. {@code "/foo/bar/"}
@@ -88,7 +93,7 @@ public final class ComponentsUtils {
         final Iterable<String> iterable = Splitter.on(',').omitEmptyStrings().trimResults().split(commaSepValues);
         List<String> list = new ArrayList<>();
         for (String value : iterable) {
-            list.add(CharMatcher.BREAKING_WHITESPACE.trimFrom(value));
+            list.add(CharMatcher.breakingWhitespace().trimFrom(value));
         }
         return list;
     }
@@ -238,6 +243,20 @@ public final class ComponentsUtils {
         return namespaceLessParameters.get(paramName);
     }
 
+    /**
+     * Adds three request attributes to the request:
+     * <ul>
+     *     <li>"currentYear" with the current year in yyyy format.</li>
+     *     <li>"currentMonth" with the current month in MM format, so with leading zeros.</li>
+     *     <li>"currentDay" with the current day of the month in dd format, so with leading zeros.</li>
+     * </ul>
+     */
+    public static void addCurrentDateStrings(final HstRequest request) {
+        final LocalDate now = LocalDate.now();
+        request.setAttribute("currentYear", now.format(yearFormat));
+        request.setAttribute("currentMonth", now.format(monthFormat));
+        request.setAttribute("currentDay", now.format(dayFormat));
+    }
 
     private ComponentsUtils() {
         // prevent instantiation
