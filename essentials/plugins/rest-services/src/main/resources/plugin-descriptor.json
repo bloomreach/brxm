@@ -4,7 +4,7 @@
   "icon": "/essentials/tool/images/rest-services-icon.png",
   "introduction": "Configure your project's site application to have REST endpoints.",
   "restClasses": [
-    "org.onehippo.cms7.essentials.dashboard.restservices.RestPluginResource"
+    "org.onehippo.cms7.essentials.plugin.restservices.RestPluginResource"
   ],
   "type": "tool",
   "vendor" : {

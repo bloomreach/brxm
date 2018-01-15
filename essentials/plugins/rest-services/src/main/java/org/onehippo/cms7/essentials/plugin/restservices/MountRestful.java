@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin.sdk.restservices;
+package org.onehippo.cms7.essentials.plugin.restservices;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
