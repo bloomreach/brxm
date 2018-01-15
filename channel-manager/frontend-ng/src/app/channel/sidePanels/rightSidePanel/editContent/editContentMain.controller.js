@@ -59,7 +59,7 @@ class EditContentMainCtrl {
   uiCanExit() {
     return this._confirmExit()
       .then(() => {
-        // don't return the result of deleteDraft: if it fails (e.g. because an admin 'stole' the document)
+        // don't return the result of deleteDraft: if it fails (e.g. because an admin unlocked the document)
         // the editor should still be closed.
         this.ContentEditor.deleteDraft()
           .finally(() => this.ContentEditor.close());
