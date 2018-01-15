@@ -33,19 +33,22 @@ class EditContentToolsCtrl {
     return this.ContentEditor.isEditing();
   }
 
-  openContentEditor(mode) {
-    this.mode = mode;
+  openContentEditor(exitMode) {
+    this.exitMode = exitMode;
     this.EditContentService.stopEditing();
   }
 
   uiCanExit() {
-    if (this.mode === 'view') {
+    if (this.exitMode === 'view') {
       return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
         .then(() => this.ContentEditor.deleteDraft())
-        .then(() => this._viewContent());
-    } else if (this.mode === 'edit') {
+        .then(() => this._viewContent())
+        .finally(() => this._clearExitMode());
+    } else if (this.exitMode === 'edit') {
       this._editContent();
     }
+    // yes, the UI can exit. Return something to make ESLint happy.
+    this._clearExitMode();
     return true;
   }
 
@@ -59,6 +62,10 @@ class EditContentToolsCtrl {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
+  }
+
+  _clearExitMode() {
+    delete this.exitMode;
   }
 }
 
