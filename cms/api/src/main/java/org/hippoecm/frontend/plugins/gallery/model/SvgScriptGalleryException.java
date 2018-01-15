@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.users;
+package org.hippoecm.frontend.plugins.gallery.model;
 
-import org.hippoecm.repository.api.HippoNodeType;
+public class SvgScriptGalleryException extends GalleryException {
 
-/**
- * UserDataProvider that provides system users.
- */
-public class SystemUserDataProvider extends UserDataProvider {
+    public SvgScriptGalleryException(final String message) {
+        super(message);
+    }
 
-    private static final String QUERY_SYSTEM_USER_LIST = "SELECT * " +
-            " FROM " + HippoNodeType.NT_USER
-            +" WHERE hipposys:system = 'true'";
-
-    public SystemUserDataProvider() {
-        super(QUERY_SYSTEM_USER_LIST);
+    public SvgScriptGalleryException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

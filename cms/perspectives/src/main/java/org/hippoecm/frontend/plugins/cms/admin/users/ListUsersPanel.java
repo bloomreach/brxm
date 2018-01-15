@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkLabel;
@@ -34,13 +33,11 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -51,7 +48,7 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
@@ -112,7 +109,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
-        final List<IColumn> columns = new ArrayList<>();
+        final List<IColumn<User, String>> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-username"), "username") {
             @Override
@@ -123,7 +120,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         });
         columns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
         columns.add(new PropertyColumn<>(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
-        columns.add(new AbstractColumn(new ResourceModel("user-email")) {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-email")) {
             @Override
             public void populateItem(final Item cellItem, final String componentId, final IModel rowModel) {
                 cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<>(rowModel, "email")));
@@ -162,25 +159,17 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             }
         });
 
-        final Form form = new Form("search-form");
-        form.setOutputMarkupId(true);
-        add(form);
-
-        final TextField<String> search = new TextField<>("search-query",
-                                                               new PropertyModel<String>(userDataProvider, "searchTerm"));
-        search.add(StringValidator.minimumLength(1));
-        search.setRequired(false);
-        search.add(new DefaultFocusBehavior());
-        form.add(search);
-
-        form.add(new AjaxButton("search-button", form) {
+        final SearchTermPanel searchTermPanel = new SearchTermPanel("search-field") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
+                super.processSubmit(target, form, searchTerm);
+                userDataProvider.setSearchTerm(searchTerm);
                 target.add(table);
             }
-        });
+        };
+        add(searchTermPanel);
 
-        table = new AdminDataTable("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
+        table = new AdminDataTable<>("table", columns, userDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         table.setOutputMarkupId(true);
         add(table);
     }
@@ -241,6 +230,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
 
     @Override
     protected void onRemovedFromBreadCrumbsBar() {
+        userDataProvider.setSearchTerm(null);
         context.unregisterService(this, IObserver.class.getName());
     }
 

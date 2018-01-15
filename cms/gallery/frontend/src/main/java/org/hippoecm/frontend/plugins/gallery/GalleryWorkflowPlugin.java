@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,17 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -50,6 +54,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.multiple.JQueryFileUploadDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
@@ -75,6 +80,8 @@ import org.slf4j.LoggerFactory;
 public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWorkflow> {
     private static final long serialVersionUID = 1L;
 
+    private static final String SVG_MIME_TYPE = "image/svg+xml";
+    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
@@ -133,6 +140,17 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             HippoNode node;
             try {
+
+                final boolean svgScriptsEnabled = GalleryWorkflowPlugin.this.getPluginConfig()
+                        .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
+                if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
+                    final String svgContent = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
+                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
+                    }
+                    is.reset();
+                }
+
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
 
