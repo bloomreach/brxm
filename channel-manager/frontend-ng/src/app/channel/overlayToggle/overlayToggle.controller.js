@@ -15,12 +15,26 @@
  */
 
 class modeToggleController {
-  constructor() {
+  constructor(
+    localStorageService,
+  ) {
     'ngInject';
+
+    this.localStorageService = localStorageService;
+  }
+
+  $onInit() {
+    this.storageKey = `channelManager.overlays.${this.name}`;
+    this.loadPersistentState();
   }
 
   toggleState() {
     this.state = !this.state;
+    this.localStorageService.set(this.storageKey, this.state);
+  }
+
+  loadPersistentState() {
+    this.state = !!this.localStorageService.get(this.storageKey);
   }
 }
 

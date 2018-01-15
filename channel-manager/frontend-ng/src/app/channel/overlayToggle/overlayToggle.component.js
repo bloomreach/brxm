@@ -22,6 +22,7 @@ const modeToggleComponent = {
   template,
   controller,
   bindings: {
+    name: '@',
     state: '=',
     iconName: '@?',
     iconSvg: '@?',
