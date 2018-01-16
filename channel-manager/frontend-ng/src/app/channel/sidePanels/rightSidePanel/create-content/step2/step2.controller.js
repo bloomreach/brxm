@@ -15,6 +15,7 @@
  */
 
 import nameUrlFieldsDialogController from '../step2/nameUrlFieldsDialog/nameUrlFieldsDialog.controller';
+import nameUrlFieldsDialogTemplate from '../step2/nameUrlFieldsDialog/nameUrlFieldsDialog.html';
 
 const DEFAULT_TITLE = 'Create new title';
 
@@ -100,7 +101,7 @@ class Step2Controller {
 
   openEditNameUrlDialog() {
     const dialog = {
-      templateUrl: './nameUrlFieldsDialog/nameUrlFieldsDialog.html',
+      template: nameUrlFieldsDialogTemplate,
       controller: nameUrlFieldsDialogController,
       locals: {
         title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
