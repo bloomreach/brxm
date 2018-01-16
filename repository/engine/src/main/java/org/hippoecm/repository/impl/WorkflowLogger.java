@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 package org.hippoecm.repository.impl;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.ActionAware;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -66,9 +69,22 @@ public class WorkflowLogger {
             if (arguments != null) {
                 event.arguments(Arrays.asList(arguments));
             }
+            getAction(methodName, args)
+                    .ifPresent(event::action);
             eventBus.post(event);
         }
 
+    }
+
+    private Optional<String> getAction(final String methodName, final Object[] args) {
+        if ("triggerAction".equals(methodName) && args != null && args.length > 0) {
+            return Stream.of(args)
+                    .filter(ActionAware.class::isInstance)
+                    .map(ActionAware.class::cast)
+                    .map(ActionAware::getAction)
+                    .findFirst();
+        }
+        return Optional.empty();
     }
 
     private Boolean isSystemUser(String userName) {
