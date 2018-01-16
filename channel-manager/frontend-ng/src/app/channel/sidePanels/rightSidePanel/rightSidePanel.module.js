@@ -16,7 +16,6 @@
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import editContentComponent from './editContent/editContent.component';
-import fieldsEditorComponent from './fieldsEditor/fieldsEditor.ng1.component';
 
 import fieldsModule from './fields/fields.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.module';
@@ -29,8 +28,7 @@ const rightSidePanelModule = angular
     createContentModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
-  .component('hippoEditContent', editContentComponent)
-  .component('fieldsEditor', fieldsEditorComponent);
+  .component('hippoEditContent', editContentComponent);
 
 export default rightSidePanelModule.name;
 
