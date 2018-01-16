@@ -25,7 +25,7 @@
                 md-colors="{background: 'hippo-grey-200'}">
     <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
     <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.onSwitchEditor()' translate-compile></div>
   </md-subheader>
 
   <div ng-if="$ctrl.getError()"
@@ -39,15 +39,35 @@
     </p>
 
     <md-button ng-if="::$ctrl.getError().linkToContentEditor"
-               ng-click="$ctrl.switchEditor()">
+               ng-click="$ctrl.onSwitchEditor()">
       <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
       {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
     </md-button>
   </div>
 
-  <document-fields ng-if="$ctrl.isEditing()"
-                   class="top-level"
-                   field-types="$ctrl.getFieldTypes()"
-                   field-values="$ctrl.getFieldValues()">
-  </document-fields>
+  <form name="$ctrl.form"
+        class="form-dense-layout">
+    <document-fields ng-if="$ctrl.isEditing()"
+                     class="top-level"
+                     field-types="$ctrl.getFieldTypes()"
+                     field-values="$ctrl.getFieldValues()">
+    </document-fields>
+  </form>
 </md-content>
+
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex></span>
+
+    <md-button class="qa-close"
+               ng-click="$ctrl.onClose()">
+      {{ $ctrl.closeButtonLabel() }}
+    </md-button>
+
+    <md-button class="qa-save"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+  </div>
+</md-toolbar>

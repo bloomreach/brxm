@@ -15,10 +15,9 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(ContentEditor, FieldService, SharedSpaceToolbarService) {
+  constructor(FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
-    this.ContentEditor = ContentEditor;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
   }
@@ -77,7 +76,6 @@ class PrimitiveFieldCtrl {
 
   valueChanged() {
     this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
-    this.ContentEditor.markDocumentDirty();
   }
 
   _draftField() {

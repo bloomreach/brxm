@@ -22,7 +22,6 @@ class CKEditorController {
     CKEditorService,
     CmsService,
     ConfigService,
-    ContentEditor,
     DomService,
     SharedSpaceToolbarService,
     FieldService,
@@ -35,7 +34,6 @@ class CKEditorController {
     this.CKEditorService = CKEditorService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.ContentEditor = ContentEditor;
     this.DomService = DomService;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
@@ -118,7 +116,6 @@ class CKEditorController {
       this.ngModel.$setViewValue(this.editor.getData());
     });
     this._validate();
-    this.ContentEditor.markDocumentDirty();
   }
 
   _validate() {

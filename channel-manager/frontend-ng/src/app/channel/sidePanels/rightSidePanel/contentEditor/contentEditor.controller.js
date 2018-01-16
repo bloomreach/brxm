@@ -15,14 +15,36 @@
  */
 
 class ContentEditorCtrl {
-  constructor(ContentEditor) {
+  constructor($scope, $translate, ContentEditor) {
     'ngInject';
 
+    this.$scope = $scope;
     this.ContentEditor = ContentEditor;
+    this.closeLabel = $translate.instant('CLOSE');
+  }
+
+  $onInit() {
+    this._monitorDirty();
+  }
+
+  _monitorDirty() {
+    this.$scope.$watch('$ctrl.form.$dirty', (dirty) => {
+      if (dirty) {
+        this.ContentEditor.markDocumentDirty();
+      }
+    });
   }
 
   isEditing() {
     return this.ContentEditor.isEditing();
+  }
+
+  isSaveAllowed() {
+    return this.isEditing() && this._isDocumentDirty() && this.form.$valid;
+  }
+
+  _isDocumentDirty() {
+    return this.ContentEditor.isDocumentDirty();
   }
 
   allFieldsShown() {
@@ -39,6 +61,18 @@ class ContentEditorCtrl {
 
   getError() {
     return this.ContentEditor.getError();
+  }
+
+  closeButtonLabel() {
+    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  }
+
+  save() {
+    this.ContentEditor.save()
+      .then(() => {
+        this.form.$setPristine();
+        this.onSave();
+      });
   }
 }
 

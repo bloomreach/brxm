@@ -22,7 +22,10 @@ const contentEditorComponent = {
   controller,
   template,
   bindings: {
-    switchEditor: '&',
+    cancelLabel: '@',
+    onClose: '&',
+    onSave: '&',
+    onSwitchEditor: '&',
   },
 };
 

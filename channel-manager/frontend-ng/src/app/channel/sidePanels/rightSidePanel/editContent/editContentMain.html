@@ -14,27 +14,10 @@
   ~ limitations under the License.
   -->
 
-<form flex layout="column"
-      name="$ctrl.form"
-      class="form-dense-layout">
-  <content-editor flex="grow" layout="column"
-    switch-editor="$ctrl.switchEditor()">
-  </content-editor>
-</form>
-
-<md-toolbar>
-  <div class="md-toolbar-tools">
-    <span flex></span>
-
-    <md-button class="qa-close"
-               ng-click="$ctrl.close()">
-      {{ $ctrl.closeButtonLabel() }}
-    </md-button>
-
-    <md-button class="qa-save"
-               ng-click="$ctrl.save()"
-               ng-disabled="!$ctrl.isSaveAllowed()">
-      {{ ::'SAVE' | translate }}
-    </md-button>
-  </div>
-</md-toolbar>
+<content-editor flex="grow"
+                layout="column"
+                cancel-label="{{ 'CANCEL' | translate }}"
+                on-save="$ctrl.save()"
+                on-close="$ctrl.close()"
+                on-switch-editor="$ctrl.switchEditor()">
+</content-editor>

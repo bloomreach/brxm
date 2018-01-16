@@ -24,37 +24,24 @@ class EditContentMainCtrl {
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
 
-    this.cancelLabel = $translate.instant('CANCEL');
-    this.closeLabel = $translate.instant('CLOSE');
     this.closing = false;
   }
 
-  isEditing() {
-    return this.ContentEditor.isEditing();
-  }
-
-  isDocumentDirty() {
-    return this.ContentEditor.isDocumentDirty();
-  }
-
   switchEditor() {
+    console.log('SWITCH!');
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.EditContentService.stopEditing();
   }
 
-  isSaveAllowed() {
-    return this.isEditing() && this.isDocumentDirty() && this.form.$valid;
+  _isEditing() {
+    return this.ContentEditor.isEditing();
   }
 
-  save() {
-    this.ContentEditor.save()
-      .then(() => {
-        this.form.$setPristine();
-        this.HippoIframeService.reload();
-        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      });
+  _isDocumentDirty() {
+    return this.ContentEditor.isDocumentDirty();
   }
+
 
   uiCanExit() {
     return this._confirmExit()
@@ -83,8 +70,13 @@ class EditContentMainCtrl {
       });
   }
 
-  closeButtonLabel() {
-    return this.isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  save() {
+    this.HippoIframeService.reload();
+    this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+  }
+
+  closeLabel() {
+    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }
 
   close() {
