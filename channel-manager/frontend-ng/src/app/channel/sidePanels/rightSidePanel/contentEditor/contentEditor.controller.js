@@ -47,8 +47,8 @@ class ContentEditorCtrl {
     return this.ContentEditor.isDocumentDirty();
   }
 
-  allFieldsShown() {
-    return this.isEditing() && this.ContentEditor.getDocumentType().allFieldsIncluded;
+  notAllFieldsShown() {
+    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
   }
 
   getFieldTypes() {

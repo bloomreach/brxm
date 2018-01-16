@@ -21,7 +21,7 @@
             id="rightSidePanel-content">
 
   <md-subheader class="md-no-sticky"
-                ng-if="!$ctrl.allFieldsShown()"
+                ng-if="$ctrl.notAllFieldsShown()"
                 md-colors="{background: 'hippo-grey-200'}">
     <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
     <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
