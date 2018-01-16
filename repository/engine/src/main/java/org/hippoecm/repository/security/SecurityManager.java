@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -362,10 +362,11 @@ public class SecurityManager implements HippoSecurityManager {
      */
     private Set<String> getMemberships(String rawUserId, String providerId) {
         try {
+            final String sanitizedUserId = sanitizeUserId(rawUserId, providerId);
             if (providers.containsKey(providerId)) {
-                return providers.get(providerId).getGroupManager().getMembershipIds(rawUserId);
+                return providers.get(providerId).getGroupManager().getMembershipIds(sanitizedUserId);
             } else {
-                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(sanitizeUserId(rawUserId, providerId));
+                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(sanitizedUserId);
             }
         } catch (RepositoryException e) {
             log.warn("Unable to get memberships for userId: " + rawUserId, e);
