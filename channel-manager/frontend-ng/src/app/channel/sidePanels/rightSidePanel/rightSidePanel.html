@@ -35,13 +35,13 @@
   </hippo-edit-content>
 
   <create-content-step-1 flex
-                        layout="column"
-                        ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
-                        options="RightSidePanelCtrl.options"
-                        on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                        on-close="RightSidePanelCtrl.closePanel($event)"
-                        on-continue="RightSidePanelCtrl.switchCreateContentStep(options)"
-                        on-before-state-change="RightSidePanelCtrl.onBeforeStateChange($event)">
+                         layout="column"
+                         ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
+                         options="RightSidePanelCtrl.options"
+                         on-full-width="RightSidePanelCtrl.setFullWidth(state)"
+                         on-close="RightSidePanelCtrl.closePanel($event)"
+                         on-continue="RightSidePanelCtrl.switchCreateContentStep(options)"
+                         on-before-state-change="RightSidePanelCtrl.onBeforeStateChange($event)">
   </create-content-step-1>
 
   <create-content-step-2 flex
