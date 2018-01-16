@@ -59,8 +59,18 @@ public class SettingsServiceImpl implements SettingsService {
         return settings;
     }
 
-    public boolean updateSettings(final ProjectSettingsBean settings) {
+    /**
+     * Set settings without persisting. For testing purposes.
+     */
+    public void setSettings(final ProjectSettingsBean settings) {
         this.settings = settings;
+    }
+
+    /**
+     * Set settings and persist to filesystem.
+     */
+    public boolean updateSettings(final ProjectSettingsBean settings) {
+        setSettings(settings);
         return new PluginFileService(projectService).write(DEFAULT_NAME, settings);
     }
 }

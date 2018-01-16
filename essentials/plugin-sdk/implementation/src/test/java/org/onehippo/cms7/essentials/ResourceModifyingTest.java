@@ -28,13 +28,14 @@ import com.google.common.base.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -45,15 +46,20 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
-@ActiveProfiles("base-test")
 public abstract class ResourceModifyingTest {
 
+    @Inject protected SettingsServiceImpl settingsService;
     @Inject private PluginContextFactory contextFactory;
     @Inject private AutowireCapableBeanFactory injector;
 
     private PluginContext context;
     private String oldProjectBaseDir;
     private Path projectRootPath;
+
+    @Before
+    public void setUp() {
+        settingsService.setSettings(BaseTest.projectSettings);
+    }
 
     @After
     public void after() throws IOException {
@@ -75,6 +81,10 @@ public abstract class ResourceModifyingTest {
         FileUtils.copyFile(input, output);
 
         return output;
+    }
+
+    protected File getModifiableFile(final String projectLocation) throws IOException {
+        return fileAt(projectLocation);
     }
 
     protected File createModifiableDirectory(final String projectLocation) throws IOException {

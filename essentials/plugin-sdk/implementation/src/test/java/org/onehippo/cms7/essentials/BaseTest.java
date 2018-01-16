@@ -29,8 +29,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
+import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
@@ -48,9 +50,23 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
 @ActiveProfiles("base-test")
 public abstract class BaseTest {
+    public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
+
+    static final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+
     private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
+    private static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
+
+    static {
+        projectSettings.setProjectNamespace(PROJECT_NAMESPACE_TEST);
+        projectSettings.setSelectedProjectPackage(TEST_PROJECT_PACKAGE);
+        projectSettings.setSelectedBeansPackage(TEST_PROJECT_PACKAGE + ".beans");
+        projectSettings.setSelectedComponentsPackage(TEST_PROJECT_PACKAGE + ".components");
+        projectSettings.setSelectedRestPackage(TEST_PROJECT_PACKAGE + ".rest");
+    }
 
     @Inject protected AutowireCapableBeanFactory injector;
+    @Inject protected SettingsServiceImpl settingsService;
     @Inject private PluginContextFactory contextFactory;
 
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
@@ -90,6 +106,7 @@ public abstract class BaseTest {
 
     @Before
     public void setUp() throws Exception {
+        settingsService.setSettings(projectSettings);
 
         // create temp dir:
         final String tmpDir = System.getProperty("java.io.tmpdir");

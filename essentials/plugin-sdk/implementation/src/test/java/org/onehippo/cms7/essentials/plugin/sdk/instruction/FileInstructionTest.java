@@ -19,8 +19,8 @@ package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 import java.io.File;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.TestSettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
@@ -54,7 +54,7 @@ public class FileInstructionTest extends ResourceModifyingTest {
         instruction.setOverwrite(true);
         assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
         assertTrue(file.exists());
-        assertTrue(GlobalUtils.readTextFile(file.toPath()).toString().contains(TestSettingsService.PROJECT_NAMESPACE_TEST));
+        assertTrue(GlobalUtils.readTextFile(file.toPath()).toString().contains(BaseTest.PROJECT_NAMESPACE_TEST));
 
         // overwrite with binary content (no interpolation)
         instruction.setOverwrite(true);
