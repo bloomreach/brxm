@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,11 +88,6 @@ describe('ChannelCtrl', () => {
   });
 
   describe('initialise overlays', () => {
-    it('initially, content overlay is toggled on, component overlay is toggled off', () => {
-      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(true);
-      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
-    });
-
     it('content overlay and component overlay values are aligned with OverlayService', () => {
       expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
       expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);

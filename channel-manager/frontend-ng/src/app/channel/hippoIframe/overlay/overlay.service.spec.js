@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,11 +84,6 @@ describe('OverlayService', () => {
   function iframe(selector) {
     return $(selector, iframeWindow.document);
   }
-
-  it('initially, content overlay is toggled on, component overlay is toggled off', () => {
-    expect(OverlayService.isContentOverlayDisplayed).toEqual(true);
-    expect(OverlayService.isComponentsOverlayDisplayed).toEqual(false);
-  });
 
   it('initializes when the iframe is loaded', (done) => {
     spyOn(OverlayService, '_onLoad');
