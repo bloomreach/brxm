@@ -45,6 +45,7 @@
            layout-align="end center">
         <overlay-toggle name="components"
                         state="channelCtrl.isComponentsOverlayDisplayed"
+                        default-state="false"
                         icon-svg="toggle_components_overlay"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
@@ -54,6 +55,7 @@
 
         <overlay-toggle name="content"
                         state="channelCtrl.isContentOverlayDisplayed"
+                        default-state="true"
                         icon-svg="document"
                         class="qa-toggle-content"
                         tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">

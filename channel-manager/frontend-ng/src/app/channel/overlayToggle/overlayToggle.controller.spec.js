@@ -34,6 +34,7 @@ describe('overlayToggle component', () => {
       $ctrl = $componentController('overlayToggle', {}, {
         name: 'testToggle',
         state: false,
+        defaultState: true,
         iconName: 'md-icon-name',
         tooltip: 'Test tooltip',
       });
@@ -57,27 +58,25 @@ describe('overlayToggle component', () => {
     });
   });
 
-  describe('toggleState', () => {
-    beforeEach(() => {
+  describe('setState', () => {
+    it('sets the visibility state of an overlay and stores it for persistence', () => {
       $ctrl.$onInit();
-    });
-
-    it('toggles overlay state and sets it to local storage', () => {
       $ctrl.state = false;
-
-      $ctrl.toggleState();
+      $ctrl.setState(true);
       expect($ctrl.state).toEqual(true);
       expect(localStorageService.set).toHaveBeenCalledWith(testStorageKey, true);
-
-      $ctrl.toggleState();
-      expect($ctrl.state).toEqual(false);
-      expect(localStorageService.set).toHaveBeenCalledWith(testStorageKey, false);
     });
   });
 
   describe('loadPersistentState', () => {
-    it('sets the local state variable based on the state in local storage', () => {
+    it('sets the local state variable based on the state in local storage, if not null (not first visit)', () => {
       localStorageService.get.and.returnValue(true);
+      $ctrl.loadPersistentState();
+      expect($ctrl.state).toEqual(true);
+    });
+
+    it('uses default state value if local storage value is null (first visit)', () => {
+      localStorageService.get.and.returnValue(null);
       $ctrl.loadPersistentState();
       expect($ctrl.state).toEqual(true);
     });

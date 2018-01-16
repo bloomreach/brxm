@@ -28,13 +28,18 @@ class modeToggleController {
     this.loadPersistentState();
   }
 
-  toggleState() {
-    this.state = !this.state;
+  setState(state) {
+    this.state = state;
     this.localStorageService.set(this.storageKey, this.state);
   }
 
   loadPersistentState() {
-    this.state = !!this.localStorageService.get(this.storageKey);
+    let state = this.localStorageService.get(this.storageKey);
+    if (this.localStorageService.get(this.storageKey) == null) {
+      state = this.defaultState;
+    }
+
+    this.setState(state);
   }
 }
 
