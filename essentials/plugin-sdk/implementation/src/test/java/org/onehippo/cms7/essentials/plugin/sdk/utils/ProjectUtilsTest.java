@@ -16,25 +16,36 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class ProjectUtilsTest extends BaseResourceTest {
-
-    @Inject private ProjectService projectService;
+public class ProjectUtilsTest {
 
     @Test
-    public void testGetContextXml() throws Exception {
-        assertTrue(projectService.getContextXmlPath().toFile().exists());
+    public void get_base_project_dir() {
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/foo/bar");
+
+        assertEquals("/foo/bar", ProjectUtils.getBaseProjectDirectory());
+
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, " ");
+
+        try {
+            ProjectUtils.getBaseProjectDirectory();
+            fail("Should not get here.");
+        } catch (IllegalStateException e) {
+            assertEquals("System property 'project.basedir' was null or empty. " +
+                    "Please start your application with -D=project.basedir=/project/path", e.getMessage());
+        }
     }
 
     @Test
-    public void testGetAssemblyFile() throws Exception {
-        assertTrue(projectService.getAssemblyFolderPath().resolve("common-lib-component.xml").toFile().exists());
+    public void get_essentials_module_name() throws Exception {
+        assertEquals("essentials", ProjectUtils.getEssentialsModuleName());
+
+        System.setProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY, "test");
+
+        assertEquals("test", ProjectUtils.getEssentialsModuleName());
     }
 }

@@ -20,11 +20,11 @@ import org.apache.commons.lang.StringUtils;
 
 public final class ProjectUtils {
 
-    public static final String ENT_GROUP_ID = "com.onehippo.cms7";
-    public static final String ENT_RELEASE_ID = "hippo-cms7-enterprise-release";
-    public static final String ENT_REPO_ID = "hippo-maven2-enterprise";
-    public static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
-    public static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
+    static final String ENT_GROUP_ID = "com.onehippo.cms7";
+    static final String ENT_RELEASE_ID = "hippo-cms7-enterprise-release";
+    static final String ENT_REPO_ID = "hippo-maven2-enterprise";
+    static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
+    static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
 
     public static String getBaseProjectDirectory() {
         final String basePath = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
