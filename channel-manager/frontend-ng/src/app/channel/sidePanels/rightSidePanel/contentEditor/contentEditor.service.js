@@ -68,7 +68,6 @@ class ContentEditorService {
   }
 
   open(documentId) {
-    this.documentId = document;
     return this._loadDocument(documentId);
   }
 
@@ -250,18 +249,21 @@ class ContentEditorService {
 
   /**
    * Possible return values:
-   * - resolved promise with value 'true' when changes have been saved
-   * - resolved promise with value 'false' when changes have been discarded
+   * - resolved promise with value 'SAVE' when changes have been saved
+   * - resolved promise with value 'DISCARD' when changes have been discarded
    * - rejected promise when user canceled
    */
   confirmSaveOrDiscardChanges(messageKey) {
     return this._askSaveOrDiscardChanges(messageKey)
       .then((action) => {
-        if (action === 'SAVE') {
-          return this._saveDraft()
-            .then(() => true); // let caller know that changes have been saved
+        switch (action) {
+          case 'SAVE':
+            return this._saveDraft()
+              .then(() => action); // let caller know that changes have been saved
+          default:
+            this.close();
+            return this.$q.resolve(action); // let caller know that changes have not been saved
         }
-        return this.$q.resolve(false); // let caller know that changes have not been saved
       });
   }
 

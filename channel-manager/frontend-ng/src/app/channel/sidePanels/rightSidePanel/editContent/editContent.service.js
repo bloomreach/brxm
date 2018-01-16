@@ -27,6 +27,10 @@ class EditContentService {
       { entering: '**.edit-content' },
       transition => this._loadDocument(transition.params().documentId),
     );
+    $transitions.onBefore(
+      { from: '**.edit-content', to: 'hippo-cm' },
+      () => this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL'),
+    );
 
     CmsService.subscribe('kill-editor', (documentId) => {
       if (this.ContentEditor.getDocumentId() === documentId) {

@@ -41,7 +41,6 @@ class EditContentMainCtrl {
     return this.ContentEditor.isDocumentDirty();
   }
 
-
   uiCanExit() {
     return this._confirmExit()
       .then(() => {
@@ -62,8 +61,8 @@ class EditContentMainCtrl {
       return this.ContentEditor.confirmDiscardChanges();
     }
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
-      .then((saved) => {
-        if (saved) {
+      .then((action) => {
+        if (action === 'SAVE') {
           this.HippoIframeService.reload();
         }
       });
