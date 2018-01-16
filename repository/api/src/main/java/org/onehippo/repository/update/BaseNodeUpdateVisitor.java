@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.repository.update;
 
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -43,8 +44,45 @@ public abstract class BaseNodeUpdateVisitor implements NodeUpdateVisitor {
         this.visitorContext = visitorContext;
     }
 
+    /**
+     * Overridable boolean function to indicate if skipped node paths should be logged (default true)
+     * @return true if skipped node paths should be logged
+     */
+    public boolean logSkippedNodePaths() {
+        return true;
+    }
+
+    /**
+     * Overridable boolean function to indicate if node checkout can be skipped (default false)
+     * @return true if node checkout can be skipped (e.g. for readonly visitors and/or updates unrelated to versioned content)
+     */
+    public boolean skipCheckoutNodes() {
+        return false;
+    }
+
     @Override
     public void initialize(Session session) throws RepositoryException {
+    }
+
+    /**
+     * Initiates the retrieval of the nodes when using custom, instead of path or xpath (query) based, node
+     * selection/navigation, returning the first node to visit. Intended to be overridden, default implementation returns null.
+     * @param session
+     * @return first node to visit, or null if none found
+     * @throws RepositoryException
+     */
+    public Node firstNode(final Session session) throws RepositoryException {
+        return null;
+    }
+
+    /**
+     * Return a following node, when using custom, instead of path or xpath (query) based, node selection/navigation.
+     * Intended to be overridden, default implementation returns null.
+     * @return next node to visit, or null if none left
+     * @throws RepositoryException
+     */
+    public Node nextNode() throws RepositoryException {
+        return null;
     }
 
     @Override
