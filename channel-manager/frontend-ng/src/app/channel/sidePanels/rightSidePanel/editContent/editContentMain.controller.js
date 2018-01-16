@@ -28,7 +28,6 @@ class EditContentMainCtrl {
   }
 
   switchEditor() {
-    console.log('SWITCH!');
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.EditContentService.stopEditing();
