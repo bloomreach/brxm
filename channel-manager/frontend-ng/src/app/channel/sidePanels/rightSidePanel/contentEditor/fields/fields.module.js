@@ -20,6 +20,7 @@ import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
+import './fields.scss';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
