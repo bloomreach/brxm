@@ -99,7 +99,7 @@ describe('RightSidePanel', () => {
       CmsService,
       SidePanelService,
     });
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     // sidePanelHandlers = {
     //   onOpen: SidePanelService.initialize.calls.mostRecent().args[2],
@@ -999,7 +999,7 @@ describe('RightSidePanel', () => {
     SidePanelService.open.and.returnValue($q.resolve());
 
     $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect($element.hasClass('sidepanel-open')).toBe(true);
     expect($element.css('width')).toBe('800px');
@@ -1015,10 +1015,10 @@ describe('RightSidePanel', () => {
     $ctrl.$onInit();
 
     $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     $state.go('hippo-cm.channel');
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect($element.hasClass('sidepanel-open')).toBe(false);
     expect($element.css('max-width')).toBe('0px');

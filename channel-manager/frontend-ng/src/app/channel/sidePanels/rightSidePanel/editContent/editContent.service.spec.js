@@ -54,7 +54,7 @@ describe('EditContentService', () => {
     ContentEditor.getDocument.and.returnValue(document);
 
     EditContentService.startEditing(document.id);
-    $rootScope.$apply();
+    $rootScope.$digest();
   }
 
   function editLockedDocument(documentId, error) {
@@ -63,7 +63,7 @@ describe('EditContentService', () => {
     ContentEditor.getError.and.returnValue(error);
 
     EditContentService.startEditing(documentId);
-    $rootScope.$apply();
+    $rootScope.$digest();
   }
 
   it('starts editing a document', () => {
@@ -131,7 +131,7 @@ describe('EditContentService', () => {
     ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
 
     $state.go('hippo-cm');
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect(ContentEditor.close).toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe('EditContentService', () => {
     ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
 
     $state.go('hippo-cm');
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect(ContentEditor.close).not.toHaveBeenCalled();

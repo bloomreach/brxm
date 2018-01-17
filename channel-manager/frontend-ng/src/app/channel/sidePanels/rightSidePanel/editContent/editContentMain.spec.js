@@ -92,7 +92,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
@@ -105,7 +105,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('fails when discarding changes is canceled', (done) => {
@@ -115,7 +115,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
     });
 
@@ -131,7 +131,7 @@ describe('EditContentMainCtrl', () => {
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('succeeds and still closes the editor when deleting the draft fails after saving changes', (done) => {
@@ -145,7 +145,7 @@ describe('EditContentMainCtrl', () => {
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('succeeds when discarding changes', (done) => {
@@ -159,7 +159,7 @@ describe('EditContentMainCtrl', () => {
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
@@ -173,7 +173,7 @@ describe('EditContentMainCtrl', () => {
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
 
       it('fails when save or discard changes is canceled', (done) => {
@@ -183,7 +183,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           done();
         });
-        $rootScope.$apply();
+        $rootScope.$digest();
       });
     });
 
@@ -194,7 +194,7 @@ describe('EditContentMainCtrl', () => {
       ContentEditor.deleteDraft.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(done);
-      $rootScope.$apply();
+      $rootScope.$digest();
     });
   });
 });

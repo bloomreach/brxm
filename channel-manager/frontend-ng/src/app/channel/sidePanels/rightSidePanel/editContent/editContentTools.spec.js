@@ -95,7 +95,7 @@ describe('EditContentToolsCtrl', () => {
         expectSuccess();
         done();
       });
-      $rootScope.$apply();
+      $rootScope.$digest();
     });
 
     it('fails because save/discard changes is canceled', (done) => {
@@ -105,7 +105,7 @@ describe('EditContentToolsCtrl', () => {
         expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
         done();
       });
-      $rootScope.$apply();
+      $rootScope.$digest();
     });
 
     it('fails because the draft cannot be deleted', (done) => {
@@ -117,7 +117,7 @@ describe('EditContentToolsCtrl', () => {
         expect(ContentEditor.deleteDraft).toHaveBeenCalled();
         done();
       });
-      $rootScope.$apply();
+      $rootScope.$digest();
     });
 
     it('succeeds after a previous attempt failed because save/discard changes was canceled', (done) => {
@@ -130,7 +130,7 @@ describe('EditContentToolsCtrl', () => {
           done();
         });
       });
-      $rootScope.$apply();
+      $rootScope.$digest();
     });
   });
 
