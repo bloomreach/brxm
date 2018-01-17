@@ -27,7 +27,7 @@ describe('EditContentMainCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$q_, _$rootScope_, _EditContentService_, _HippoIframeService_) => {
+    inject(($controller, _$q_, _$rootScope_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
 
@@ -35,19 +35,18 @@ describe('EditContentMainCtrl', () => {
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
         'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'isDocumentDirty',
       ]);
-      EditContentService = _EditContentService_;
-      HippoIframeService = _HippoIframeService_;
+      EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
+      HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
       const $scope = $rootScope.$new();
       $ctrl = $controller('editContentMainCtrl', {
         $scope,
         CmsService,
         ContentEditor,
+        EditContentService,
+        HippoIframeService,
       });
     });
-
-    spyOn(EditContentService, 'stopEditing');
-    spyOn(HippoIframeService, 'reload');
   });
 
   describe('on save', () => {
