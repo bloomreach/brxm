@@ -36,7 +36,6 @@ const ERROR_MAP = {
   OTHER_HOLDER: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
-    hasUser: true,
   },
   REQUEST_PENDING: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -159,7 +158,7 @@ class ContentEditorService {
 
   _onLoadFailure(response) {
     let errorKey;
-    let params = {};
+    let params = null;
 
     if (this._isErrorInfo(response.data)) {
       const errorInfo = response.data;
@@ -172,13 +171,15 @@ class ContentEditorService {
     }
 
     this.error = ERROR_MAP[errorKey];
-    this.error.messageParams = params;
+    if (params) {
+      this.error.messageParams = params;
+    }
   }
 
   save() {
     return this._saveDraft()
       .catch((response) => {
-        let params = {};
+        let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
         if (this._isErrorInfo(response.data)) {
@@ -190,7 +191,11 @@ class ContentEditorService {
           this._reloadDocumentType();
         }
 
-        this.FeedbackService.showError(errorKey, params);
+        if (params) {
+          this.FeedbackService.showError(errorKey, params);
+        } else {
+          this.FeedbackService.showError(errorKey);
+        }
 
         return this.$q.reject(); // tell the caller that saving has failed.
       });
@@ -213,8 +218,16 @@ class ContentEditorService {
   }
 
   _extractErrorParams(errorInfo) {
-    const params = errorInfo.params || {};
-    params.user = errorInfo.params.userName || errorInfo.params.userId;
+    if (!angular.isDefined(errorInfo.params)) {
+      return undefined;
+    }
+    const params = angular.copy(errorInfo.params);
+    const user = params.userName || params.userId;
+    if (user) {
+      params.user = user;
+      delete params.userId;
+      delete params.userName;
+    }
     return params;
   }
 
