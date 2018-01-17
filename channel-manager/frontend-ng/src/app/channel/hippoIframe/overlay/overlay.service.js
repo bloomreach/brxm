@@ -29,7 +29,6 @@ class OverlayService {
     $translate,
     CmsService,
     DomService,
-    // CreateContentService,
     EditContentService,
     ExperimentStateService,
     HippoIframeService,
@@ -43,7 +42,6 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
-    // this.CreateContentService = CreateContentService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
@@ -316,10 +314,6 @@ class OverlayService {
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
         this.EditContentService.startEditing(structureElement.getUuid());
-
-        // for testing, make 'edit content' buttons trigger 'create content' instead
-        // this.CreateContentService.start();
-
         this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
