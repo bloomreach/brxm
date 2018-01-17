@@ -27,18 +27,20 @@ class EditContentMainCtrl {
     this.closing = false;
   }
 
+  save() {
+    this.HippoIframeService.reload();
+    this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+  }
+
+  close() {
+    this.closing = true;
+    this.EditContentService.stopEditing();
+  }
+
   switchEditor() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.EditContentService.stopEditing();
-  }
-
-  _isEditing() {
-    return this.ContentEditor.isEditing();
-  }
-
-  _isDocumentDirty() {
-    return this.ContentEditor.isDocumentDirty();
   }
 
   uiCanExit() {
@@ -66,20 +68,6 @@ class EditContentMainCtrl {
           this.HippoIframeService.reload();
         }
       });
-  }
-
-  save() {
-    this.HippoIframeService.reload();
-    this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-  }
-
-  closeLabel() {
-    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
-  }
-
-  close() {
-    this.closing = true;
-    this.EditContentService.stopEditing();
   }
 }
 
