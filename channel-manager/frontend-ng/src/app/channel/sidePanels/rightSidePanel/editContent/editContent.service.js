@@ -29,7 +29,7 @@ class EditContentService {
     );
     $transitions.onBefore(
       { from: '**.edit-content', to: 'hippo-cm' },
-      () => this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL'),
+      () => this._onCloseChannel(),
     );
 
     CmsService.subscribe('kill-editor', (documentId) => {
@@ -68,6 +68,11 @@ class EditContentService {
     const document = this.ContentEditor.getDocument() || this.ContentEditor.getError().messageParams;
     const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
     this.RightSidePanelService.setTitle(documentTitle);
+  }
+
+  _onCloseChannel() {
+    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
+      .then(() => this.ContentEditor.close());
   }
 }
 

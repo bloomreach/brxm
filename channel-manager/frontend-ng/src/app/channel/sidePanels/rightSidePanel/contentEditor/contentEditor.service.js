@@ -261,7 +261,6 @@ class ContentEditorService {
             return this._saveDraft()
               .then(() => action); // let caller know that changes have been saved
           default:
-            this.close();
             return this.$q.resolve(action); // let caller know that changes have not been saved
         }
       });
