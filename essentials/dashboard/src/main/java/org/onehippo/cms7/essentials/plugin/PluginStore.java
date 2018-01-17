@@ -43,7 +43,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
-import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;

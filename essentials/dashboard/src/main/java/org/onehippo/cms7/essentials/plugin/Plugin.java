@@ -23,9 +23,9 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenRepository;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.TemplateSupportInstructionPackage;

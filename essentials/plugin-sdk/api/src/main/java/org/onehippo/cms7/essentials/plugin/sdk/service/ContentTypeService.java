@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ContentType;
 
 /**
  * ContentTypeService provides access to the project's content types.

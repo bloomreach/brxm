@@ -53,7 +53,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;

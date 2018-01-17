@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin.sdk.model;
+package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,6 +23,8 @@ import java.util.Collections;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenRepository;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 import static org.junit.Assert.assertEquals;

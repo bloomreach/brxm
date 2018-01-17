@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 
 import static org.junit.Assert.assertEquals;
 

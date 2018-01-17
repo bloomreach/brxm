@@ -30,9 +30,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;

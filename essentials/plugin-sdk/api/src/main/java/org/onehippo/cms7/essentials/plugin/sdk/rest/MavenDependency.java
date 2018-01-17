@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin.sdk.model;
+package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 public class MavenDependency {
     public static final String GROUP_ID = "groupId";

@@ -36,7 +36,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ContentType;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;

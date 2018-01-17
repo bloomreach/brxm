@@ -22,7 +22,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 @Ignore("Needs running hippo repository through RMI")

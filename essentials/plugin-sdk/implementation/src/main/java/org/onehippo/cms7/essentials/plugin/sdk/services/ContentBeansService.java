@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.services;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 
 /**

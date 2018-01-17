@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.service;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 
 /**

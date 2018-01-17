@@ -20,7 +20,7 @@ import java.io.InputStream;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;

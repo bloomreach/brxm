@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenRepository;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenRepository;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;

@@ -27,7 +27,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.service.MavenCargoService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;

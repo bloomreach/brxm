@@ -40,7 +40,7 @@ import javax.jcr.nodetype.NodeType;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ContentType;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;

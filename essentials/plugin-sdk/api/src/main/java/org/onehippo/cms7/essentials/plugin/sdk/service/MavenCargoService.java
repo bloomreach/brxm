@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.service;
 
 import java.net.URL;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.MavenDependency;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
 
 /**
  * MavenCargoService provides methods to manipulate the configuration of the Maven Cargo plugin,
