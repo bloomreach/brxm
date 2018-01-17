@@ -16,7 +16,9 @@
 
 package org.onehippo.cms7.essentials.servlet;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,7 +35,6 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +49,11 @@ public class EndPointList {
     private static Logger log = LoggerFactory.getLogger(EndPointList.class);
 
     @GET
-    public RestfulList<MessageRestful> list() {
+    public List<MessageRestful> list() {
         log.info("@@@@ LISTING REST ENDPOINTS @@@@");
-        final RestfulList<MessageRestful> endpoints = new RestfulList<>();
+        final List<MessageRestful> endpoints = new ArrayList<>();
 
         try {
-
             final Bus bus = BusFactory.getDefaultBus();
             final DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
             final DestinationFactory df = dfm.getDestinationFactory("http://cxf.apache.org/transports/http/configuration");
@@ -69,7 +69,6 @@ public class EndPointList {
                 }
             }
         } catch (BusException e) {
-
             log.error("e {}", e);
         }
         return endpoints;

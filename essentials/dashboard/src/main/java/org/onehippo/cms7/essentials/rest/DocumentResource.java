@@ -41,7 +41,6 @@ import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.plugin.sdk.model.ContentType;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public class DocumentResource {
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/")
     public List<ContentType> getAllTypes() {
@@ -76,7 +75,7 @@ public class DocumentResource {
 
     @ApiOperation(
             value = "Fetches all project document types (compounds are *excluded*)",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/documents")
     public List<ContentType> getDocumentTypes() {
@@ -88,7 +87,7 @@ public class DocumentResource {
 
     @ApiOperation(
             value = "Fetches all project compound types",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/compounds")
     public List<ContentType> getCompounds() {

@@ -22,13 +22,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "system")
-public class SystemInfo implements Restful {
+public class SystemInfo {
 
     private static final long serialVersionUID = 1L;
     private int totalPlugins;

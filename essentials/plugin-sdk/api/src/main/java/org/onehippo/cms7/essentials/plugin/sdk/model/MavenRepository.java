@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.model;
 
-public class MavenRepository implements Restful {
+public class MavenRepository {
 
     private String id;
     private String name;
@@ -74,7 +74,7 @@ public class MavenRepository implements Restful {
         return sb.toString();
     }
 
-    public static class Policy implements Restful {
+    public static class Policy {
 
         private String enabled;
         private String updatePolicy;

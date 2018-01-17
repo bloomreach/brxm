@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -403,17 +403,16 @@
 
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
-                            var payload = {
-                                values: {
-                                    sampleData: $rootScope.projectSettings.useSamples,
-                                    templateName: $rootScope.projectSettings.templateLanguage
-                                }
-                            };
-                            $http.post($rootScope.REST.PLUGINS.changesById($scope.plugin.id), payload).success(function (data){
+                            var url = $rootScope.REST.PLUGINS.changesById($scope.plugin.id);
+                            url += '?sampleData=' + $rootScope.projectSettings.useSamples;
+                            url += '&templateName=' + $rootScope.projectSettings.templateLanguage;
+                            url += '&extraTemplates=' + $rootScope.projectSettings.extraTemplates;
+
+                            $http.get(url).success(function (data){
                                 // If there are no messages, the backend sends a single "no messages" message
                                 // with the group not set. Filter those out.
-                                if (data.items.length > 1 || data.items[0].group) {
-                                    $scope.messages = data.items;
+                                if (data.length > 1 || data[0].group) {
+                                    $scope.messages = data;
                                 }
                                 $scope.messagesLoaded = true;
                             });

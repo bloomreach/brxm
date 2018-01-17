@@ -19,26 +19,17 @@ package org.onehippo.cms7.essentials.rest.picker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-import com.google.common.collect.ImmutableSet;
 
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "jcrNode")
-public class JcrNode implements Restful {
+public class JcrNode {
 
-    private static final long serialVersionUID = 1L;
     private List<JcrProperty<?>> properties;
-    public static final Set<String> SYSTEM_NODE_TYPES  = new ImmutableSet.Builder<String>()
-            .add("rep:system")
-            .build();
     private List<JcrNode> items;
 
     /**
@@ -128,10 +119,6 @@ public class JcrNode implements Restful {
 
     public void setPath(final String path) {
         this.path = path;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public List<JcrNode> getItems() {

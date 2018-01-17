@@ -16,12 +16,14 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -34,6 +36,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import com.google.common.collect.Multimap;
 
@@ -47,12 +51,11 @@ import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.model.ProjectSettings;
@@ -91,20 +94,18 @@ public class PluginResource {
             value = "Fetch list of all plugin descriptors. " +
                     "For all plugins with dynamic REST endpoints, these get registered at /dynamic/{pluginEndpoint}",
             notes = "Retrieve a list of PluginDescriptorRestful objects",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/")
-    public RestfulList<PluginDescriptor> getAllPlugins() {
-        final RestfulList<PluginDescriptor> restfulList = new RestfulList<>();
-        final List<Plugin> plugins = pluginStore.getAllPlugins();
-
-        for (Plugin plugin : plugins) {
-            final PluginDescriptor descriptor = plugin.getDescriptor();
-            descriptor.setInstallState(plugin.getInstallState().toString());
-            restfulList.add(descriptor);
-        }
-
-        return restfulList;
+    public List<PluginDescriptor> getAllPlugins() {
+        return pluginStore.getAllPlugins()
+                .stream()
+                .map(plugin -> {
+                    final PluginDescriptor descriptor = plugin.getDescriptor();
+                    descriptor.setInstallState(plugin.getInstallState().toString());
+                    return descriptor;
+                })
+                .collect(Collectors.toList());
     }
 
 
@@ -130,13 +131,13 @@ public class PluginResource {
             value = "Return a list of changes made by the plugin during setup, given certain parameter values.",
             notes = "[API] Messages are only indication what might change, because operations may be skipped, "
                     + "e.g. file copy is not executed if file already exists.",
-            response = RestfulList.class)
+            response = List.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
-    @POST
+    @GET
     @Path("/{" + PLUGIN_ID + "}/changes")
-    public RestfulList<MessageRestful> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
-                                                                    final PostPayloadRestful payload) throws Exception {
-        final RestfulList<MessageRestful> list = new RestfulList<>();
+    public List<MessageRestful> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
+                                                             @Context final UriInfo uriInfo) throws Exception {
+        final List<MessageRestful> list = new ArrayList<>();
 
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
@@ -150,13 +151,13 @@ public class PluginResource {
             return list;
         }
 
-        final Map<String, Object> properties = makeSetupPropertiesFromValues(payload.getValues());
+        final Map<String, Object> properties = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
         instructionPackage.setProperties(properties);
         final PluginContext context = contextFactory.getContext();
         context.addPlaceholderData(properties);
 
         @SuppressWarnings("unchecked")
-        final Multimap<Instruction.Type, MessageRestful> messages = (Multimap<Instruction.Type, MessageRestful>) instructionPackage.getInstructionsMessages(context);
+        final Multimap<Instruction.Type, MessageRestful> messages = instructionPackage.getInstructionsMessages(context);
         final Collection<Map.Entry<Instruction.Type, MessageRestful>> entries = messages.entries();
         for (Map.Entry<Instruction.Type, MessageRestful> entry : entries) {
             final MessageRestful value = entry.getValue();
@@ -368,6 +369,21 @@ public class PluginResource {
         }
 
         preProcessSetupProperties(properties);
+
+        return properties;
+    }
+
+    private Map<String, Object> extractSetupParametersFromQueryParameters(final MultivaluedMap<String, String> values) {
+        final Map<String, Object> properties = new HashMap<>();
+
+        for (String key : values.keySet()) {
+            final String value = values.getFirst(key);
+            if ("true".equals(value) || "false".equals(value)) {
+                properties.put(key, Boolean.valueOf(value));
+            } else {
+                properties.put(key, value);
+            }
+        }
 
         return properties;
     }

@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-public class ProvisionedValueList implements Restful {
+public class ProvisionedValueList {
     private String id;
     private String path;
 

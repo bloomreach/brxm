@@ -23,6 +23,7 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -89,12 +91,12 @@ public class PluginStore {
      *
      * @see org.springframework.util.ResourceUtils
      */
-    private final LoadingCache<String, RestfulList<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, List<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginDescriptor>>() {
+            .build(new CacheLoader<String, List<PluginDescriptor>>() {
                 @Override
-                public RestfulList<PluginDescriptor> load(final String url) throws Exception {
+                public List<PluginDescriptor> load(final String url) throws Exception {
                     String pluginJson = null;
 
                     if (url.startsWith("http")) {
@@ -131,10 +133,10 @@ public class PluginStore {
         final Set<String> pluginRepositories = settingsService.getModifiableSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
-                final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
+                final List<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptor descriptor : descriptors.getItems()) {
+                    for (PluginDescriptor descriptor : descriptors) {
                         final Plugin plugin = new Plugin(descriptor, projectService);
                         injector.autowireBean(plugin);
                         plugins.add(plugin);
@@ -228,19 +230,23 @@ public class PluginStore {
         final InputStream stream = PluginStore.class.getResourceAsStream(resource);
         final String json = GlobalUtils.readStreamAsText(stream);
 
-        return parsePlugins(json).getItems();
+        return parsePlugins(json);
     }
 
     @SuppressWarnings("unchecked")
-    private RestfulList<PluginDescriptor> parsePlugins(final String jsonString) {
+    private List<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
-                return WebUtils.fromJson(jsonString, RestfulList.class);
+                final RestfulList<PluginDescriptor> restfulList
+                        = WebUtils.fromJson(jsonString, new TypeReference<RestfulList<PluginDescriptor>>() { });
+                if (restfulList != null) {
+                    return restfulList.getItems();
+                }
             } catch (Exception e) {
                 log.error("Error parsing plugins", e);
             }
         }
-        return new RestfulList<>();
+        return Collections.emptyList();
     }
 
     private static final Semaphore serverSemaphore = new Semaphore(1);

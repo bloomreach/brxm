@@ -16,14 +16,11 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,36 +32,19 @@ public class RestfulListTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testList() throws Exception {
-        RestfulList<Restful> myList = new RestfulList<>();
+        RestfulList<PluginDescriptor> myList = new RestfulList<>();
         final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setDescription("test");
         final PluginDescriptor.Vendor vendor = new PluginDescriptor.Vendor();
         vendor.setUrl("http://www.test.com");
         plugin.setVendor(vendor);
         myList.add(plugin);
-        // add key value
-        myList.add(new KeyValueRestful("test", "value"));
 
         ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(myList);
-        myList = mapper.readValue(json, RestfulList.class);
-        final List<Restful> items = myList.getItems();
-        final int listSize = myList.getItems().size();
-        final List<Class<?>> classList = new ArrayList<>();
-        for (Restful item : items) {
-            classList.add(item.getClass());
-        }
-        assertEquals("Expected all list items to be of  different class", listSize, classList.size());
-    }
-
-    @Test
-    public void test_more() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final RestfulList<KeyValueRestful> keyValue = new RestfulList<>();
-        keyValue.add(new KeyValueRestful("test", "test"));
-        keyValue.add(new KeyValueRestful("test1", "test1"));
-        String result = mapper.writeValueAsString(keyValue);
-        @SuppressWarnings("unchecked") final RestfulList<KeyValueRestful> myList = mapper.readValue(result, RestfulList.class);
-        assertEquals(2, myList.getItems().size());
+        myList = mapper.readValue(json, new TypeReference<RestfulList<PluginDescriptor>>() { });
+        assertEquals(1, myList.getItems().size());
+        assertEquals("test", myList.getItems().get(0).getDescription());
+        assertEquals("http://www.test.com", myList.getItems().get(0).getVendor().getUrl());
     }
 }

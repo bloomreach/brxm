@@ -24,19 +24,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
  */
-public class JcrQuery implements Restful {
+public class JcrQuery {
 
-
-    private static final long serialVersionUID = 1L;
-
-    public static final Set<String> EXCLUDED_FOLDER_PATHS = new ImmutableSet.Builder<String>()
+    private static final Set<String> EXCLUDED_FOLDER_PATHS = new ImmutableSet.Builder<String>()
             .add("/content/attic")
             .build();
     private boolean folderPicker = true;

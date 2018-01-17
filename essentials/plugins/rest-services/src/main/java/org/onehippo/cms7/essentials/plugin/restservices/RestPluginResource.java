@@ -18,10 +18,8 @@ package org.onehippo.cms7.essentials.plugin.restservices;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -44,16 +41,12 @@ import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.model.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
 import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;
 import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
-import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.annotations.AnnotationUtils;
 import org.slf4j.Logger;
@@ -70,37 +63,11 @@ public class RestPluginResource {
     @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
-    @Inject private ContentBeansService contentBeansService;
     @Inject private ProjectService projectService;
-
-    @GET
-    @Path("/beans")
-    public RestfulList<KeyValueRestful> getHippoBeans() {
-        final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final Map<String, java.nio.file.Path> beans = contentBeansService.findBeans();
-        for (java.nio.file.Path beanPath : beans.values()) {
-            final String fileName = beanPath.toFile().getName();
-            list.add(new KeyValueRestful(fileName, beanPath.toString()));
-        }
-        return list;
-    }
-
-
-    @GET
-    @Path("/mounts")
-    public List<MountRestful> getHippoSites() throws RepositoryException {
-        final Set<Node> hstMounts = HstUtils.getHstMounts(jcrService);
-        final List<MountRestful> list = new ArrayList<>();
-        for (Node m : hstMounts) {
-            list.add(new MountRestful(m.getIdentifier(), m.getPath(), m.getName()));
-        }
-        return list;
-    }
-
 
     @POST
     @Path("/")
-    public UserFeedback executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+    public UserFeedback setup(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
         final UserFeedback feedback = new UserFeedback();
         final PluginContext context = contextFactory.getContext();
         final Map<String, String> values = payloadRestful.getValues();

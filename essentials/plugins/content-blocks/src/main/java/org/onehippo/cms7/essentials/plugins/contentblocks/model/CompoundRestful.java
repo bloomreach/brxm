@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-public class CompoundRestful implements Restful {
+public class CompoundRestful {
     private String id;
     private String name;
 

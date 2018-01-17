@@ -26,11 +26,11 @@ import com.google.common.collect.Multimap;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstructionParser;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -49,9 +49,9 @@ public class MessageInstructionExecutorTest extends BaseTest {
         final PluginInstructions instructions = parser.parseInstructions(content);
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
-        final Multimap<Instruction.Type, Restful> messages = ArrayListMultimap.create();
+        final Multimap<Instruction.Type, MessageRestful> messages = ArrayListMultimap.create();
         for (PluginInstructionSet instructionSet : instructionSets) {
-            final Multimap<Instruction.Type, Restful> m = executor.execute(instructionSet, getContext());
+            final Multimap<Instruction.Type, MessageRestful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }
         assertEquals(10, messages.size());

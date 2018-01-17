@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Serializable representation of a project's content type.
  */
-public class ContentType implements Restful {
+public class ContentType {
 
     private String displayName; // "localized" (English) display name
     private String javaName;    // name of the Java bean class

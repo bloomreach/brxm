@@ -18,14 +18,13 @@ package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import io.swagger.annotations.ApiModel;
-
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
+
+import io.swagger.annotations.ApiModel;
 
 @ApiModel
 @XmlRootElement(name = "message")
-public class MessageRestful implements Restful {
+public class MessageRestful {
 
     private boolean successMessage = true;
     private boolean globalMessage = true;

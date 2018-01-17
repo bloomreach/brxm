@@ -22,18 +22,13 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Lists;
-
-import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 import io.swagger.annotations.ApiModel;
 
 @ApiModel
 @XmlRootElement(name = "collection")
-public class RestfulList<T extends Restful> implements Serializable {
+public class RestfulList<T> implements Serializable {
 
     private List<T> items = Lists.newArrayList();
 
@@ -45,12 +40,6 @@ public class RestfulList<T extends Restful> implements Serializable {
         return items.iterator();
     }
 
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = KeyValueRestful.class, name = "keyvalue"),
-            @JsonSubTypes.Type(value = PluginDescriptor.class, name = "plugin"),
-            @JsonSubTypes.Type(value = MessageRestful.class, name = "message")})
     public List<T> getItems() {
         return items;
     }

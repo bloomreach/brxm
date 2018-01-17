@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.model;
 
-public class MavenDependency implements Restful {
+public class MavenDependency {
     public static final String GROUP_ID = "groupId";
     public static final String ARTIFACT_ID = "artifactId";
     public static final String VERSION = "version";

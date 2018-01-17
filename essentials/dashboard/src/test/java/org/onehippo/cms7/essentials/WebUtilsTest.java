@@ -17,6 +17,8 @@ package org.onehippo.cms7.essentials;
 
 import java.io.InputStream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
@@ -88,7 +90,8 @@ public class WebUtilsTest {
         final String jsonString = GlobalUtils.readStreamAsText(stream);
 
         try {
-            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptor> restfulList = WebUtils.fromJson(jsonString, RestfulList.class);
+            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptor> restfulList
+                    = WebUtils.fromJson(jsonString, new TypeReference<RestfulList<PluginDescriptor>>() { });
             assertNotNull(restfulList);
             assertEquals(restfulList.getItems().size(), 4);
         } catch (Exception e) {

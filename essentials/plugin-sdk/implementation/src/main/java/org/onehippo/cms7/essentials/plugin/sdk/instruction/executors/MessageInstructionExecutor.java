@@ -23,9 +23,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
+import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
 
@@ -38,8 +37,8 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
  */
 public class MessageInstructionExecutor {
 
-    public Multimap<Instruction.Type, Restful> execute(final PluginInstructionSet instructionSet, PluginContext context) {
-        final Multimap<Instruction.Type, Restful> changeMessages = ArrayListMultimap.create();
+    public Multimap<Instruction.Type, MessageRestful> execute(final PluginInstructionSet instructionSet, PluginContext context) {
+        final Multimap<Instruction.Type, MessageRestful> changeMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
         final BiConsumer<Instruction.Type, String> changeMessageCollector
                 = (g, m) -> changeMessages.put(g, new MessageRestful(TemplateUtils.replaceTemplateData(m, placeholderData)));

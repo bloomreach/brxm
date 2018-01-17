@@ -24,7 +24,7 @@ import java.util.Set;
 
 import com.google.common.base.Strings;
 
-public class PluginDescriptor implements Restful {
+public class PluginDescriptor {
 
     public static final String TYPE_TOOL = "tool";
     public static final String TYPE_FEATURE = "feature";
@@ -245,7 +245,7 @@ public class PluginDescriptor implements Restful {
         this.setupParameters = setupParameters;
     }
 
-    public static class Vendor implements Restful {
+    public static class Vendor {
         private String name;
         private String url;
         private String logo;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.plugin.sdk.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 import io.swagger.annotations.ApiModel;
 
@@ -30,7 +29,7 @@ import io.swagger.annotations.ApiModel;
  */
 
 @ApiModel
-public class PluginModuleRestful implements Restful {
+public class PluginModuleRestful {
 
     private static final String DEFAULT_APP_NAME = "hippo.essentials";
 

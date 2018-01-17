@@ -19,23 +19,17 @@ package org.onehippo.cms7.essentials.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 
 /**
  * @version "$Id$"
  */
-public class GalleryModel implements Restful {
-
-    private static final long serialVersionUID = 1L;
+public class GalleryModel {
 
     private String path;
     private String name;
     private boolean readOnly;
     private List<ImageModel> models;
-
-    public GalleryModel() {
-    }
 
     public String getPrefix(){
         return GlobalUtils.getNamespacePrefix(name);

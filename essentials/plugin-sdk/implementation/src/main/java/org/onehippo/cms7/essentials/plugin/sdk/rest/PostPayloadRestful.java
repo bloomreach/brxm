@@ -20,8 +20,6 @@ import java.util.LinkedHashMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -29,18 +27,7 @@ import io.swagger.annotations.ApiModel;
  */
 @ApiModel
 @XmlRootElement(name = "payload")
-public final class PostPayloadRestful implements Restful {
-
-    private static final long serialVersionUID = 1L;
-
-
-    public PostPayloadRestful() {
-    }
-
-    public PostPayloadRestful(final String key, final String value) {
-        add(key, value);
-    }
-
+public final class PostPayloadRestful {
 
     private LinkedHashMap<String, String> values = new LinkedHashMap<>();
 

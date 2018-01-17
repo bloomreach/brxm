@@ -18,15 +18,11 @@ package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
 import io.swagger.annotations.ApiModel;
 
 @ApiModel
 @XmlRootElement(name = "keyvalue")
-public class KeyValueRestful implements Restful, Comparable<KeyValueRestful> {
-
-    private static final long serialVersionUID = 1L;
+public class KeyValueRestful implements Comparable<KeyValueRestful> {
 
     private String key;
     private String value;

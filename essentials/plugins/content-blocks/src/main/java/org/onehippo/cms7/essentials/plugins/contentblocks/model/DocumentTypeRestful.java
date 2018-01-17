@@ -18,9 +18,7 @@ package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
 import java.util.List;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-public class DocumentTypeRestful implements Restful {
+public class DocumentTypeRestful {
     private String id;
     private String name;
     private List<ContentBlocksFieldRestful> contentBlocksFields;

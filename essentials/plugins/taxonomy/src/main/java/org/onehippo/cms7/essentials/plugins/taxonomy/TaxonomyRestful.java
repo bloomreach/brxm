@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.taxonomy;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-public class TaxonomyRestful implements Restful {
+public class TaxonomyRestful {
     private String name;
     private String path;
     private String[] locales;

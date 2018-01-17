@@ -18,9 +18,7 @@ package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
 import java.util.List;
 
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
-
-public class ContentBlocksFieldRestful implements Restful {
+public class ContentBlocksFieldRestful {
     private String name;
     private String originalName;
     private String pickerType;

@@ -21,9 +21,9 @@ import java.util.Set;
 import com.google.common.collect.Multimap;
 
 import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
+import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,7 +42,7 @@ public class PluginInstructionExecutor {
     }
 
     @SuppressWarnings("unchecked")
-    public Multimap<Instruction.Type,Restful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
+    public Multimap<Instruction.Type, MessageRestful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
         return executor.execute(instruction, context);
     }

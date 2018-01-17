@@ -16,20 +16,16 @@
 
 package org.onehippo.cms7.essentials.rest.picker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.plugin.sdk.model.Restful;
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "jcrProperty")
-public class JcrProperty<T> implements Restful {
+public class JcrProperty<T> {
 
-    private static final long serialVersionUID = 1L;
     private String name;
     private String title;
     private T value;
@@ -46,14 +42,6 @@ public class JcrProperty<T> implements Restful {
     public JcrProperty() {
     }
 
-
-    public void addValue(final T value) {
-        if (values == null) {
-            values = new ArrayList<>();
-        }
-        values.add(value);
-
-    }
 
     public String getTitle() {
         if (title == null) {
