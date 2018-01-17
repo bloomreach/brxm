@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,14 @@ import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/observable/of';
 
+import ChannelService from '../../../../channel.service.js';
+import CmsService from '../../../../../services/cms.service';
+import { CreateContentService } from '../create-content.service';
 import { DocumentLocationFieldComponent } from './document-location-field.component';
 import FeedbackService from '../../../../../services/feedback.service.js';
 import { HintsComponent } from '../../../../../shared/components/hints/hints.component';
 import { SharedModule } from '../../../../../shared/shared.module';
-import { CreateContentService } from '../create-content.service';
-import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock } from '../create-content.mocks.spec';
-import ChannelService from '../../../../channel.service.js';
+import { ChannelServiceMock, CreateContentServiceMock, FeedbackServiceMock, CmsServiceMock } from '../create-content.mocks.spec';
 
 describe('DocumentLocationField Component', () => {
   let component: DocumentLocationFieldComponent;
@@ -47,6 +48,7 @@ describe('DocumentLocationField Component', () => {
       ],
       providers: [
         { provide: ChannelService, useClass: ChannelServiceMock },
+        { provide: CmsService, useClass: CmsServiceMock },
         { provide: CreateContentService, useClass: CreateContentServiceMock },
         { provide: FeedbackService, useClass: FeedbackServiceMock },
       ]

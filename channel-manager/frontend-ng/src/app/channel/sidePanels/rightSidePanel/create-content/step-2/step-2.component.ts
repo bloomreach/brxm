@@ -103,7 +103,7 @@ export class CreateContentStep2Component implements OnInit {
     dialog.beforeClose().subscribe((result: { name: string, url: string }) => {
       // If dialog was not cancelled (has a result)
       if (result) {
-        this.onEditNameUrlDialogClose(result)
+        this.onEditNameUrlDialogClose(result);
       }
     });
     return dialog;
@@ -115,7 +115,7 @@ export class CreateContentStep2Component implements OnInit {
       this.doc.displayName = result.displayName;
       this.documentUrl = result.urlName;
     } catch (error) {
-        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`)
+        const errorKey = this.translate.instant(`ERROR_${error.data.reason}`);
         this.feedbackService.showError(errorKey, error.data.params);
     }
   }
