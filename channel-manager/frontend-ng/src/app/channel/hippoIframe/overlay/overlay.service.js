@@ -419,40 +419,54 @@ class OverlayService {
     };
   }
 
-  filterConfigByPrivileges(configObj) {
-    if (this.ChannelService.isEditable()) {
-      return configObj;
+  _initManageContentConfig(structureElement) {
+    // each property should be filled with the method that will extract the data from the HST comment
+    // Passing the full config through privileges to adjust buttons for authors
+    const documentUuid = structureElement.getUuid();
+    const componentParameter = structureElement.getComponentParameter();
+
+    const config = {
+      componentParameter,
+      componentPickerConfig: structureElement.getComponentPickerConfig(),
+      componentValue: structureElement.getComponentValue(),
+      containerItem: structureElement.getEnclosingElement(),
+      defaultPath: structureElement.getDefaultPath(),
+      documentUuid,
+      rootPath: structureElement.getRootPath(),
+      templateQuery: structureElement.getTemplateQuery(),
+    };
+
+    if (!this.ChannelService.isEditable()) {
+      delete config.componentParameter;
+
+      if (config.documentUuid) { // whenever uuid is available, only edit button for authors
+        delete config.templateQuery;
+        return config;
+      }
+
+      if (componentParameter) {
+        return {};
+      }
     }
 
-    const config = angular.copy(configObj);
-    delete config.componentParameter;
-    if (configObj.documentUuid) { // whenever uuid is available, only edit button for authors
+    if (structureElement.getEnclosingElement().isLocked() && componentParameter) {
+      if (!documentUuid) {
+        return {};
+      }
+      delete config.componentParameter;
       delete config.templateQuery;
-      return config;
-    }
-    if (!configObj.documentUuid && configObj.componentParameter) {
-      return {};
     }
 
-    return config; // when uuid doesn't exist, only templateQuery (create content option) is returned
+    return config;
   }
 
   _initManageContentLink(structureElement, overlayElement) {
-    // each property should be filled with the method that will extract the data from the HST comment
-    // Passing the full config through privileges to adjust buttons for authors
-    const config = this.filterConfigByPrivileges({
-      componentParameter: structureElement.getComponentParameter(),
-      componentPickerConfig: structureElement.getComponentPickerConfig(),
-      componentValue: structureElement.getComponentValue(),
-      defaultPath: structureElement.getDefaultPath(),
-      documentUuid: structureElement.getUuid(),
-      rootPath: structureElement.getRootPath(),
-      templateQuery: structureElement.getTemplateQuery(),
-      containerItem: structureElement.getEnclosingElement(),
-    });
+    const config = this._initManageContentConfig(structureElement);
 
     // if the config is empty, create no button
-    if (angular.equals(config, {})) return;
+    if (Object.keys(config).length === 0) {
+      return;
+    }
 
     const optionsSet = this._getDialOptions(config);
 

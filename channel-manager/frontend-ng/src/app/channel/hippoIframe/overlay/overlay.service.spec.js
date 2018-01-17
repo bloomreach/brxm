@@ -216,13 +216,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(5);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(6);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(8);
       done();
     });
   });
@@ -281,7 +281,7 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(5);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
@@ -293,7 +293,7 @@ describe('OverlayService', () => {
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(5);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -318,7 +318,7 @@ describe('OverlayService', () => {
 
   it('renders lock icons for disabled containers', (done) => {
     loadIframeFixture(() => {
-      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -330,8 +330,9 @@ describe('OverlayService', () => {
 
   it('does not render lock icons for enabled containers', (done) => {
     loadIframeFixture(() => {
-      const enabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(1);
-      expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
+      const containers = iframe('.hippo-overlay > .hippo-overlay-element-container');
+      expect(containers.eq(0).find('.hippo-overlay-lock').length).toBe(0);
+      expect(containers.eq(1).find('.hippo-overlay-lock').length).toBe(0);
       done();
     });
   });
@@ -590,7 +591,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(16);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -603,7 +604,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(15);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(18);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
@@ -701,7 +702,7 @@ describe('OverlayService', () => {
     });
   });
 
-  describe('Manage content dial button', () => {
+  describe('Manage content dial button(s)', () => {
     beforeEach(() => {
       ChannelService.isEditable = () => true;
     });
@@ -722,14 +723,69 @@ describe('OverlayService', () => {
       expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
     });
 
-    describe('Dial buttons', () => {
-      function manageContentScenario(scenarioNumber, callback) {
-        loadIframeFixture(() => {
-          const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
-          callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
-        });
+    describe('_initManageContentConfig', () => {
+      function mockManageContentConfig(uuid = false, templateQuery = false, componentParameter = false, locked = false) {
+        const enclosing = {
+          isLocked: () => locked,
+        };
+        const config = {
+          getUuid: () => uuid,
+          getTemplateQuery: () => templateQuery,
+          getComponentParameter: () => componentParameter,
+          getComponentPickerConfig: () => null,
+          getComponentValue: () => null,
+          getDefaultPath: () => null,
+          getRootPath: () => null,
+          getEnclosingElement: () => enclosing,
+        };
+        return OverlayService._initManageContentConfig(config);
       }
 
+      it('does not filter out config properties when channel is editable', () => {
+        const config = mockManageContentConfig(true, true, true);
+        expect(config.documentUuid).toBe(true);
+        expect(config.templateQuery).toBe(true);
+        expect(config.componentParameter).toBe(true);
+      });
+
+      describe('when channel is not editable', () => {
+        beforeEach(() => {
+          ChannelService.isEditable = () => false;
+        });
+
+        it('always filters out property componentParameter', () => {
+          const config = mockManageContentConfig(false, false, true);
+          expect(config.componentParameter).not.toBeDefined();
+        });
+
+        it('filters out property templateQuery when documentUuid is set', () => {
+          let config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBeDefined();
+
+          config = mockManageContentConfig(true, true);
+          expect(config.templateQuery).not.toBeDefined();
+        });
+
+        it('filters all properties when componentParameter is set but documentId is not', () => {
+          const config = mockManageContentConfig(false, true, true);
+          expect(config).toEqual({});
+        });
+
+        it('does not filter templateQuery when componentParameter and documentId are not set', () => {
+          const config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBe(true);
+        });
+      });
+    });
+
+    function manageContentScenario(scenarioNumber, callback) {
+      loadIframeFixture(() => {
+        const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+        callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+      });
+    }
+
+    describe('Dial button scenario\'s for unlocked containers', () => {
       it('Scenario 1', (done) => {
         manageContentScenario(1, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
@@ -804,6 +860,45 @@ describe('OverlayService', () => {
           expect(optionButtons.children().length).toBe(2);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+    });
+
+    describe('when channel is not editable', () => {
+      beforeEach(() => {
+        ChannelService.isEditable = () => false;
+      });
+
+      it('Scenario 5 does not show any button(s)', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.length).toBe(0);
+          expect(optionButtons.length).toBe(0);
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+    });
+
+    describe('when container is locked', () => {
+      it('alway shows an edit button when documentUuid is set', (done) => {
+        manageContentScenario(7, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(0);
+
+          done();
+        });
+      });
+
+      it('does not show any button(s)', (done) => {
+        manageContentScenario(8, (mainButton, optionButtons) => {
+          expect(mainButton.length).toBe(0);
+          expect(optionButtons.length).toBe(0);
+          expect(optionButtons.children().length).toBe(0);
           done();
         });
       });
