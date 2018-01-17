@@ -20,8 +20,8 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 

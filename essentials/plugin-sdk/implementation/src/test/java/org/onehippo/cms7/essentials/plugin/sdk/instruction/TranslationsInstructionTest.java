@@ -20,7 +20,7 @@ import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;

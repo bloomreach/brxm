@@ -23,8 +23,8 @@ import javax.inject.Inject;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ContextXmlService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.Dom4JUtils;
 import org.springframework.stereotype.Service;
 

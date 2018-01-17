@@ -29,10 +29,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
 
 

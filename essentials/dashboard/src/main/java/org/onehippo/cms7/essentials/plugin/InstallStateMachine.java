@@ -20,7 +20,7 @@ import java.util.Calendar;
 
 import org.onehippo.cms7.essentials.plugin.sdk.config.InstallerDocument;
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

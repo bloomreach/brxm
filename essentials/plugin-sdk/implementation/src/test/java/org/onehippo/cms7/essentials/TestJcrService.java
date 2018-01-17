@@ -24,7 +24,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.services.JcrServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

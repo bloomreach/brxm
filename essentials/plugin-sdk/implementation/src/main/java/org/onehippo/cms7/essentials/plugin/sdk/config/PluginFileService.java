@@ -24,8 +24,8 @@ import java.io.IOException;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.FileUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

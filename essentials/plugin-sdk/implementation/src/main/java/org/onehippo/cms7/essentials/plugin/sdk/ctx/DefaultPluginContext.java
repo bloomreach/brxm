@@ -32,9 +32,10 @@ import javax.jcr.RepositoryException;
 import com.google.common.base.Function;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

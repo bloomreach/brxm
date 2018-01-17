@@ -26,7 +26,7 @@ import com.google.common.collect.Multimap;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstructionParser;

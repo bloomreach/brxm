@@ -23,15 +23,15 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;

@@ -33,7 +33,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;

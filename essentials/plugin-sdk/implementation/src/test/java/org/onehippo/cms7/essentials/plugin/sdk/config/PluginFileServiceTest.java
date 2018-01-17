@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

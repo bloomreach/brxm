@@ -24,10 +24,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 
 import static org.junit.Assert.assertEquals;
 

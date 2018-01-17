@@ -23,9 +23,9 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

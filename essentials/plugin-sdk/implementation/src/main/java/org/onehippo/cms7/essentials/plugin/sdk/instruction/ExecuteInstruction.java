@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;

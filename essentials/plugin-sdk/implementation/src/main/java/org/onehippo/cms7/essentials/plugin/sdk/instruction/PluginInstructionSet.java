@@ -28,7 +28,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 

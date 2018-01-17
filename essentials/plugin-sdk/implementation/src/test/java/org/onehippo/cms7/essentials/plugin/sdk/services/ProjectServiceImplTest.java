@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 

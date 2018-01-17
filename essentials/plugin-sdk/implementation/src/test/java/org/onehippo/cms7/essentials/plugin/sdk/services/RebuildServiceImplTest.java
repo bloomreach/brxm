@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.services;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;
+import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

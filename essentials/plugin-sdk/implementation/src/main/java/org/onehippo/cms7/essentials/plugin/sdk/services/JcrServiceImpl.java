@@ -28,7 +28,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TranslationsUtils;
 import org.slf4j.Logger;

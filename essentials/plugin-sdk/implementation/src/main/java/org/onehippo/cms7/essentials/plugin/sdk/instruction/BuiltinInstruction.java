@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
 /**
  * Instructions built into Essentials (such that they can be used through a corresponding element in a plugin's

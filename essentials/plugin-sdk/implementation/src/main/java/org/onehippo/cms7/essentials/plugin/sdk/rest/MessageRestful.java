@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
 import io.swagger.annotations.ApiModel;
 

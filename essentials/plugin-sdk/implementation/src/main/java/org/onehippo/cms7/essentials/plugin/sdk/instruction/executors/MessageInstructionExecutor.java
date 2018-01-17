@@ -22,8 +22,8 @@ import java.util.function.BiConsumer;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;

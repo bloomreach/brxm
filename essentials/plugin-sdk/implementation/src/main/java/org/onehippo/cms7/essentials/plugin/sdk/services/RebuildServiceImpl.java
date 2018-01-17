@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.onehippo.cms7.essentials.plugin.sdk.service.RebuildService;
+import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 import org.springframework.stereotype.Service;
 
 @Service

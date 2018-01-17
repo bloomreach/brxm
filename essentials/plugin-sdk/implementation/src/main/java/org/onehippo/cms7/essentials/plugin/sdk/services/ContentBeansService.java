@@ -19,8 +19,8 @@ package org.onehippo.cms7.essentials.plugin.sdk.services;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.onehippo.cms7.essentials.plugin.sdk.rest.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 
 /**
  * ContentBeansService provides support for updating the project's (HST) content beans, to be used typically after

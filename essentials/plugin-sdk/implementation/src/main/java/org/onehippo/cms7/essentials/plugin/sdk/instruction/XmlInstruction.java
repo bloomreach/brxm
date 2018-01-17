@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;

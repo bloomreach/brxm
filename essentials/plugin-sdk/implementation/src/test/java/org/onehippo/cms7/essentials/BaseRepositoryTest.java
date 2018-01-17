@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials;
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.springframework.test.context.ActiveProfiles;
 
 /**

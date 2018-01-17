@@ -31,9 +31,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;

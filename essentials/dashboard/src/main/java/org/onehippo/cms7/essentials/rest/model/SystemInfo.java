@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 
 /**
  * @version "$Id$"

@@ -30,7 +30,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.xml.XmlNode;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.xml.XmlProperty;
 import org.slf4j.Logger;

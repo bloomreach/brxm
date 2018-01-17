@@ -25,7 +25,7 @@ import javax.xml.bind.Unmarshaller;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.slf4j.Logger;

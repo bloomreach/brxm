@@ -30,8 +30,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

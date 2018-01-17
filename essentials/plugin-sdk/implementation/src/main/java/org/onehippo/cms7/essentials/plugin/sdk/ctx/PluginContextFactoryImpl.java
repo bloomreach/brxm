@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.plugin.sdk.ctx;
 
 import javax.inject.Inject;
 
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 

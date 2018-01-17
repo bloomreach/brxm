@@ -20,12 +20,12 @@ import java.io.File;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenDependency;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MavenRepository;
-import org.onehippo.cms7.essentials.plugin.sdk.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

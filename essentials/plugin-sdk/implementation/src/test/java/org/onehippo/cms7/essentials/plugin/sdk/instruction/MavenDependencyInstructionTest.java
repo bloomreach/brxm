@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.plugin.sdk.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

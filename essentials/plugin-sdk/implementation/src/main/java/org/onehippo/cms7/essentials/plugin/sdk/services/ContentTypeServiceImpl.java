@@ -36,10 +36,10 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.ContentType;
-import org.onehippo.cms7.essentials.plugin.sdk.service.ContentTypeService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.JcrService;
-import org.onehippo.cms7.essentials.plugin.sdk.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.LocalizationUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
