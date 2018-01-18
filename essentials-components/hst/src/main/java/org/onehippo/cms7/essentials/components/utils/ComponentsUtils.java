@@ -39,9 +39,9 @@ import com.google.common.base.Splitter;
  */
 public final class ComponentsUtils {
 
-    public final static DateTimeFormatter yearFormat = DateTimeFormatter.ofPattern("yyyy");
-    public final static DateTimeFormatter monthFormat = DateTimeFormatter.ofPattern("MM");
-    public final static DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("dd");
+    public static final DateTimeFormatter YEAR_FORMAT = DateTimeFormatter.ofPattern("yyyy");
+    public static final DateTimeFormatter MONTH_FORMAT = DateTimeFormatter.ofPattern("MM");
+    public static final DateTimeFormatter DAY_FORMAT = DateTimeFormatter.ofPattern("dd");
 
     /**
      * Get content bean based on path e.g. {@code "/foo/bar/"}
@@ -253,9 +253,9 @@ public final class ComponentsUtils {
      */
     public static void addCurrentDateStrings(final HstRequest request) {
         final LocalDate now = LocalDate.now();
-        request.setAttribute("currentYear", now.format(yearFormat));
-        request.setAttribute("currentMonth", now.format(monthFormat));
-        request.setAttribute("currentDay", now.format(dayFormat));
+        request.setAttribute("currentYear", now.format(YEAR_FORMAT));
+        request.setAttribute("currentMonth", now.format(MONTH_FORMAT));
+        request.setAttribute("currentDay", now.format(DAY_FORMAT));
     }
 
     private ComponentsUtils() {
