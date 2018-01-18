@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import fieldsModule from '../fields/fields.ng1.module';
+import fieldsModule from '../fields/fields.module';
 import CreateContentService from './createContent.service';
 import documentLocationFieldComponent from './documentLocation/documentLocationField.component';
 import nameUrlFieldsComponent from './nameUrlFields/nameUrlFields.component';
 import createContentStep1Component from './step1/step1.component';
 import createContentStep2Component from './step2/step2.component';
-
 
 const createContentModule = angular
   .module('hippo-cm.channel.createContentModule', [
