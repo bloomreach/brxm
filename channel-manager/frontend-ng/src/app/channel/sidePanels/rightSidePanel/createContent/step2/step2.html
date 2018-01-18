@@ -47,7 +47,7 @@
     </h6>
 
     <span flex></span>
-    
+
     <md-button class="md-icon-button" ng-click="$ctrl.openEditNameUrlDialog()">
       <md-icon class="btn-edit-document-title qa-edit-url">mode_edit</md-icon>
     </md-button>
@@ -58,16 +58,16 @@
 
 <md-content flex="grow"
             layout="column"
-            class="right-side-panel-content">
+            class="rightSidePanel-content">
 
-  <div ng-if="$ctrl.feedback" 
-       class="feedback qa-feedback" 
+  <div ng-if="$ctrl.feedback"
+       class="feedback qa-feedback"
        md-colors="{background: 'hippo-red-50'}">
     <h4 class="qa-feedback-title">{{ $ctrl.feedback.title }}</h4>
     <p class="qa-feedback-message">{{ $ctrl.feedback.message }}</p>
   </div>
 
-  <form novalidate 
+  <form novalidate
         name="$ctrl.form"
         class="create-content-step2-form">
     <document-fields class="top-level"

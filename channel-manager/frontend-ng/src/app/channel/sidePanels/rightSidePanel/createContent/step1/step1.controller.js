@@ -100,7 +100,8 @@ class Step1Controller {
   }
 
   close() {
-    this.onClose();
+    this.CreateContentService.stop();
+    // this.onClose();
   }
 
   _onLoadDocumentTypes(types) {

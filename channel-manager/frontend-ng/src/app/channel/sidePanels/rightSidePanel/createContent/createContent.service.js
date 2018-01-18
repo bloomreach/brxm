@@ -15,11 +15,33 @@
  */
 
 class CreateContentService {
-  constructor(ContentService) {
+  constructor($state, $transitions, $translate, ContentEditor, ContentService, RightSidePanelService) {
     'ngInject';
 
-    this.ContentService = ContentService;
     this.doc = null;
+    this.$state = $state;
+    this.$translate = $translate;
+    this.ContentEditor = ContentEditor;
+    this.ContentService = ContentService;
+    this.RightSidePanelService = RightSidePanelService;
+
+    $transitions.onEnter(
+      { entering: '**.create-content-step-1' },
+      () => this._init(),
+    );
+  }
+
+  _init() {
+    // TODO: translate title
+    this.RightSidePanelService.setTitle('Create new content');
+  }
+
+  start() {
+    this.$state.go('hippo-cm.channel.create-content-step-1');
+  }
+
+  stop() {
+    this.$state.go('^');
   }
 
   getTemplateQuery(id) {
