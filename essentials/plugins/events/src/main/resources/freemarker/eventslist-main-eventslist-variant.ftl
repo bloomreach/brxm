@@ -2,8 +2,6 @@
 
 <#-- @ftlvariable name="item" type="{{beansPackage}}.EventsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#assign year = "${.now?string['YYYY']}"/>
-<#assign month = "${.now?string['MM']}"/>
 <#if pageable?? && pageable.items?has_content>
   <div>
     <#list pageable.items as item>
@@ -38,7 +36,7 @@
       </div>
     </#list>
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
     <#if cparam.showPagination>
         <#include "../../include/pagination.ftl">
@@ -49,7 +47,7 @@
   <div>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
   </div>
 </#if>

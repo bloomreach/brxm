@@ -1,8 +1,6 @@
 <%@ page import="java.util.Calendar" %>
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 
-<% pageContext.setAttribute("year", Calendar.getInstance().get(Calendar.YEAR)); %>
-<% pageContext.setAttribute("month", Calendar.getInstance().get(Calendar.MONTH)); %>
 <%--@elvariable name="item" type="{{beansPackage}}.EventsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <c:if test="${requestScope.pageable ne null && requestScope.pageable.total gt 0}">
@@ -26,7 +24,7 @@
       </article>
     </c:forEach>
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
     <c:if test="${requestScope.cparam.showPagination}">
       <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
@@ -38,7 +36,7 @@
   <div>
     <img src="<hst:link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${year}/${month}"/>
+      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
   </div>
 </c:if>

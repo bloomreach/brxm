@@ -1,7 +1,5 @@
 <#include "../include/imports.ftl">
 
-<#assign year = "${.now?string['YYYY']}"/>
-<#assign month = "${.now?string['MM']}"/>
 <#-- @ftlvariable name="item" type="{{beansPackage}}.NewsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#if pageable?? && pageable.items?has_content>
@@ -19,7 +17,7 @@
     </article>
   </#list>
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${year}/${month}"/>
+    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${currentYear}/${currentMonth}"/>
   </div>
   <#if cparam.showPagination>
     <#include "../include/pagination.ftl">
@@ -30,7 +28,7 @@
 <div>
   <img src="<@hst.link path='/images/essentials/catalog-component-icons/news-list.png'/>"> Click to edit News List
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${year}/${month}"/>
+    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${currentYear}/${currentMonth}"/>
   </div>
 </div>
 </#if>

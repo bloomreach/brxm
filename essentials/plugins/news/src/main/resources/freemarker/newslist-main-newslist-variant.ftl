@@ -3,8 +3,6 @@
 <#-- @ftlvariable name="item" type="{{beansPackage}}.NewsDocument" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo" -->
-<#assign year = "${.now?string['YYYY']}"/>
-<#assign month = "${.now?string['MM']}"/>
 <#if pageable?? && pageable.items?has_content>
 <div>
   <#list pageable.items as item>
@@ -32,7 +30,7 @@
     </div>
   </#list>
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${year}/${month}"/>
+    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${currentYear}/${currentMonth}"/>
   </div>
   <#if cparam.showPagination>
     <#include "../../include/pagination.ftl">
@@ -43,7 +41,7 @@
 <div>
   <img src="<@hst.link path='/images/essentials/catalog-component-icons/news-list.png'/>"> Click to edit News List
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${year}/${month}"/>
+    <@hst.manageContent templateQuery="new-news-document" rootPath="news" defaultPath="${currentYear}/${currentMonth}"/>
   </div>
 </div>
 </#if>
