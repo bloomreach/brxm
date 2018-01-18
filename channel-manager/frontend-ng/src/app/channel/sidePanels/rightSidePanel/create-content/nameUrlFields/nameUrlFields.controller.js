@@ -14,34 +14,22 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/do';
+const URL_UPDATE_DELAY = 400;
 
 class NameUrlFieldsController {
-  constructor($element, $timeout, CreateContentService) {
+  constructor($element, CreateContentService, throttle) {
     'ngInject';
 
     this.createContentService = CreateContentService;
-    this.nameInputField = $element.find('#nameInputElement');
     this.isManualUrlMode = false;
-    this.$timeout = $timeout;
+    this.urlUpdate = false;
+    this.nameInputField = $element.find('#nameInputElement');
+    this.updateUrlThrottle = throttle(() => this.updateUrl(), URL_UPDATE_DELAY, true);
   }
 
   $onInit() {
     this.nameField = this.nameField || '';
     this.urlField = this.urlField || '';
-
-    Observable.fromEvent(this.nameInputField, 'keyup')
-      .filter(() => !this.isManualUrlMode)
-      .do(() => { this.urlUpdate = true; })
-      .debounceTime(1000)
-      .subscribe(() => {
-        this.setDocumentUrlByName();
-        this.urlUpdate = false;
-      });
   }
 
   $onChanges(changes) {
@@ -50,10 +38,34 @@ class NameUrlFieldsController {
     }
   }
 
+  onNameChange() {
+    if (!this.isManualUrlMode) {
+      this.updateUrlThrottle();
+    }
+  }
+
+  updateUrl() {
+    if (this.urlUpdate) {
+      this.triggerAfterFinish = true;
+      return;
+    }
+
+    this.urlUpdate = true;
+    this.setDocumentUrlByName()
+      .then(() => {
+        this.urlUpdate = false;
+        if (this.triggerAfterFinish) {
+          this.triggerAfterFinish = false;
+          this.updateUrl();
+        }
+      });
+  }
+
   setDocumentUrlByName() {
-    return this.createContentService.generateDocumentUrlByName(this.nameField, this.locale).then((slug) => {
-      this.urlField = slug;
-    });
+    return this.createContentService.generateDocumentUrlByName(this.nameField, this.locale)
+      .then((slug) => {
+        this.urlField = slug;
+      });
   }
 
   validateFields() {

@@ -17,7 +17,14 @@
 <ng-form name="$ctrl.form" novalidate>
   <!-- Document name field -->
   <md-input-container class="create-content-field qa-name-field">
-    <input ng-model="$ctrl.nameField" name="nameField" placeholder="Document name" type="text" required autocomplete="off" id="nameInputElement">
+    <input id="nameInputElement"
+           name="nameField"
+           placeholder="Document name"
+           ng-model="$ctrl.nameField"
+           ng-change="$ctrl.onNameChange($event)"
+           type="text"
+           required
+           autocomplete="off">
     <div ng-messages="$ctrl.form.nameField.$error">
       <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
     </div>
@@ -27,7 +34,13 @@
   <div class="field">
 
     <md-input-container class="create-content-field qa-url-field">
-      <input ng-model="$ctrl.urlField" name="url" placeholder="URL" type="text" ng-disabled="!$ctrl.isManualUrlMode" autocomplete="off" required>
+      <input name="url"
+             placeholder="URL"
+             type="text"
+             ng-model="$ctrl.urlField"
+             ng-disabled="!$ctrl.isManualUrlMode" 
+             autocomplete="off"
+             required>
 
       <!-- Edit button -->
       <md-button ng-if="!$ctrl.isManualUrlMode"

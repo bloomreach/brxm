@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { fakeAsync, tick } from '@angular/core/testing';
-
 describe('NameUrlFields', () => {
   let $componentController;
   let $q;
   let $rootScope;
+  let $timeout;
   let CreateContentService;
 
   let component;
@@ -33,6 +32,7 @@ describe('NameUrlFields', () => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       CreateContentService = _CreateContentService_;
     });
 
@@ -46,7 +46,6 @@ describe('NameUrlFields', () => {
     spies.setDocumentUrlByName = spyOn(component, 'setDocumentUrlByName').and.callThrough();
 
     component.locale = 'en';
-    component.urlUpdate = () => angular.noop();
     component.$onInit();
   });
 
@@ -57,20 +56,43 @@ describe('NameUrlFields', () => {
   function setNameInputValue(value) {
     component.nameInputField.val(value);
     component.nameField = value;
-    component.nameInputField.trigger('keyup');
+    component.onNameChange();
   }
 
   describe('$onInit', () => {
-    it('calls setDocumentUrlByName 1 second after keyup was triggered on nameInputElement', fakeAsync(() => {
+    it('calls setDocumentUrlByName directly after first keyup is triggered on nameInputElement', () => {
       setNameInputValue('test val');
-      tick(1000);
-
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
-    }));
+    });
 
-    it('sets the url with locale automatically after locale has been changed', fakeAsync(() => {
+    it('calls setDocumentUrlByName 400ms after second keyup is triggered on nameInputElement', () => {
+      setNameInputValue('test');
+      setNameInputValue(' val');
+      expect(component.setDocumentUrlByName.calls.count()).toBe(1);
+      $timeout.flush();
+      expect(component.setDocumentUrlByName.calls.count()).toBe(2);
+    });
+
+    it('waits until server callback resolves before submitting a new documentUrlByName request with the latest value', () => {
+      const deferredRequest = $q.defer();
+      spies.generateDocumentUrlByName.and.returnValue(deferredRequest.promise);
+      setNameInputValue('1');
+      setNameInputValue('12');
+      setNameInputValue('123');
+      setNameInputValue('1234');
+      expect(component.setDocumentUrlByName.calls.count()).toBe(1);
+
+      deferredRequest.resolve();
+      $timeout.flush();
+      expect(component.setDocumentUrlByName.calls.count()).toBe(2);
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('1', 'en');
+      expect(spies.generateDocumentUrlByName).not.toHaveBeenCalledWith('12', 'en');
+      expect(spies.generateDocumentUrlByName).not.toHaveBeenCalledWith('123', 'en');
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('1234', 'en');
+    });
+
+    it('sets the url with locale automatically after locale has been changed', () => {
       setNameInputValue('some val');
-      tick(1000);
 
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'en');
@@ -86,25 +108,25 @@ describe('NameUrlFields', () => {
       component.$onChanges(changes);
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
-    }));
+    });
   });
 
   describe('setDocumentUrlByName', () => {
-    it('applies the url', fakeAsync(() => {
+    it('applies the url', () => {
       spies.generateDocumentUrlByName.and.returnValue($q.resolve('test'));
 
       component.$onInit();
       setNameInputValue('test');
-      tick(1000);
+      $rootScope.$apply();
       component.setDocumentUrlByName();
 
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('test', 'en');
 
       $rootScope.$apply();
       expect(component.urlField).toEqual('test');
-    }));
+    });
 
-    it('Manual editing of the URL', fakeAsync(() => {
+    it('Manual editing of the URL', () => {
       component.$onInit();
       component.setManualUrlEditMode(true);
       component.urlField = 'manual-edit-of-url';
@@ -113,10 +135,10 @@ describe('NameUrlFields', () => {
 
       // Until manual editing mode is disabled, URL generations should be bypassed
       setNameInputValue('Second edit, should not change the URL');
-      tick(1000);
+      $rootScope.$apply();
       expect(spies.generateDocumentUrlByName).not.toHaveBeenCalled();
       expect(component.urlField).toEqual('manual-edit-of-url');
-    }));
+    });
   });
 
   describe('validateFields', () => {

@@ -25,6 +25,7 @@ const nameUrlFieldsComponent = {
     locale: '<',
     nameField: '=',
     urlField: '=',
+    urlUpdate: '=',
   },
 };
 
