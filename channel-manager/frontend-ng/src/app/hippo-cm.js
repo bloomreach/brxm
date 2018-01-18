@@ -50,6 +50,7 @@ import incrementPropertyFilter from './filters/incrementProperty.filter';
 import HippoGlobal from './services/hippoGlobal.service';
 
 import channelModule from './channel/channel';
+import factoriesModule from './factories/factories.module';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
 
@@ -63,6 +64,7 @@ const hippoCmng = angular
     ngTranslate,
     uiRouter,
     channelModule.name,
+    factoriesModule,
   ])
   .config(config)
   .run(run)
