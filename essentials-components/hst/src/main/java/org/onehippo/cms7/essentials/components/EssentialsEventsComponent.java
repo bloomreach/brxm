@@ -48,12 +48,12 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsEventsComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentTypes = paramInfo.getDocumentTypes();
+        ComponentsUtils.addCurrentDateStrings(request);
         if (Strings.isNullOrEmpty(documentTypes)) {
             setEditMode(request);
             return;
         }
         super.doBeforeRender(request, response);
-        ComponentsUtils.addCurrentDateStrings(request);
     }
 
     @Override
