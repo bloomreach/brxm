@@ -23,7 +23,6 @@ describe('ChannelCtrl', () => {
   let $timeout;
   let ChannelCtrl;
   let ChannelService;
-  let CmsService;
   let SidePanelService;
   let ComponentsService;
   let FeedbackService;
@@ -42,7 +41,6 @@ describe('ChannelCtrl', () => {
       $q = _$q_;
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
-      CmsService = _CmsService_;
       OverlayService = _OverlayService_;
 
       const $stateParams = {
@@ -196,15 +194,6 @@ describe('ChannelCtrl', () => {
 
     expect(ChannelCtrl.menuUuid).toBe('testUuid');
     expect(ChannelCtrl.currentSubpage).toBe('menu-editor');
-  });
-
-  it('opens the content editor in the right sidepanel when told so', () => {
-    spyOn(CmsService, 'reportUsageStatistic');
-
-    ChannelCtrl.editContent('testUuid');
-
-    expect(SidePanelService.open).toHaveBeenCalledWith('right', 'edit', 'testUuid');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
   });
 
   it('should return channel toolbar display status', () => {

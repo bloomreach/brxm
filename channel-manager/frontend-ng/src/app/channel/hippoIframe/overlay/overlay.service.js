@@ -36,6 +36,7 @@ class OverlayService {
     ChannelService,
     CmsService,
     DomService,
+    EditContentService,
     ExperimentStateService,
     FeedbackService,
     HippoIframeService,
@@ -51,6 +52,7 @@ class OverlayService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -59,8 +61,6 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.createContentHandler = angular.noop;
-    this.editContentHandler = angular.noop;
     this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
@@ -83,14 +83,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onCreateContent(callback) {
-    this.createContentHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   pickPath(config) {
@@ -605,7 +597,8 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.EditContentService.startEditing(structureElement.getUuid());
+        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
   }

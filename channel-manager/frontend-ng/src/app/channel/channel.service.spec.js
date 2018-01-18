@@ -140,9 +140,6 @@ describe('ChannelService', () => {
         channelId: testChannel.id,
         initialRenderPath: '/testMount/testPath',
       },
-      {
-        reload: true,
-      },
     );
   });
 
@@ -187,9 +184,6 @@ describe('ChannelService', () => {
         channelId: editableTestChannel.id,
         initialRenderPath: '/testMount/testPath',
       },
-      {
-        reload: true,
-      },
     );
   });
 
@@ -228,9 +222,6 @@ describe('ChannelService', () => {
       {
         channelId: testChannel.id,
         initialRenderPath: '/testMount/testPath',
-      },
-      {
-        reload: true,
       },
     );
     expect(ChannelService.isEditable()).toBe(false);
