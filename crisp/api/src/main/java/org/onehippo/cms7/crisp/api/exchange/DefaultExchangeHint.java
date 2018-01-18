@@ -15,13 +15,29 @@
  */
 package org.onehippo.cms7.crisp.api.exchange;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Default {@link ExchangeHint} implementation.
  */
 class DefaultExchangeHint implements ExchangeHint {
 
     private String methodName;
+
+    /**
+     * @deprecated
+     */
+    @Deprecated
     private Object request;
+
+    private Map<String, List<String>> requestHeaders;
+
+    private Map<String, List<String>> unmodifiableRequestHeaders = Collections.emptyMap();
+
+    private Object requestBody;
 
     @Override
     public String getMethodName() {
@@ -32,13 +48,44 @@ class DefaultExchangeHint implements ExchangeHint {
         this.methodName = methodName;
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     @Override
     public Object getRequest() {
         return request;
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     void setRequest(Object request) {
         this.request = request;
+    }
+
+    @Override
+    public Map<String, List<String>> getRequestHeaders() {
+        return unmodifiableRequestHeaders;
+    }
+
+    void setRequestHeaders(Map<String, List<String>> requestHeaders) {
+        this.requestHeaders = new LinkedHashMap<>();
+        unmodifiableRequestHeaders = Collections.unmodifiableMap(this.requestHeaders);
+
+        if (requestHeaders != null) {
+            this.requestHeaders.putAll(requestHeaders);
+        }
+    }
+
+    @Override
+    public Object getRequestBody() {
+        return requestBody;
+    }
+
+    void setRequestBody(Object requestBody) {
+        this.requestBody = requestBody;
     }
 
     @Override
@@ -52,6 +99,18 @@ class DefaultExchangeHint implements ExchangeHint {
                 sb.append(", ");
             }
             sb.append("request=").append(request.toString());
+        }
+        if (requestHeaders != null) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("requestHeaders=").append(requestHeaders.toString());
+        }
+        if (requestBody != null) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("requestBody=").append(requestBody.toString());
         }
         return sb.toString();
     }

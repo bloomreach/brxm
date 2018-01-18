@@ -153,6 +153,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
         if (!StringUtils.equalsIgnoreCase("POST", methodName)) {
             return null;
         }
-        return ExchangeHintBuilder.create().methodName("POST").request("{}").build();
+        return ExchangeHintBuilder.create().methodName("POST").requestHeader("Content-Type", "application/json")
+                .requestBody("{}").build();
     }
 }

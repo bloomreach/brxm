@@ -43,7 +43,7 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
             final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+            final Object requestObject = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<ByteArrayResource> result;
@@ -78,7 +78,7 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
             throws ResourceException {
         try {
             final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+            final Object requestObject = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<ByteArrayResource> result;

@@ -31,6 +31,8 @@ import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -218,5 +220,35 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
      */
     protected boolean isSuccessfulResponse(final ResponseEntity responseEntity) {
         return responseEntity.getStatusCode().is2xxSuccessful();
+    }
+
+    /**
+     * Return a request entity object, which needs to be understood by Spring RestTemplate, from the {@code exchangeHint}.
+     * @param exchangeHint exchange hint
+     * @return a request entity object, which needs to be understood by Spring RestTemplate, from the {@code exchangeHint}
+     */
+    protected Object getRequestEntityObject(ExchangeHint exchangeHint) {
+        if (exchangeHint == null) {
+            return null;
+        }
+
+        final Map<String, List<String>> requestHeaders = exchangeHint.getRequestHeaders();
+        final Object requestBody = exchangeHint.getRequestBody();
+        final Object requestEntity = exchangeHint.getRequest();
+
+        final int headerKeyCount = (requestHeaders != null) ? requestHeaders.size() : 0;
+
+        if (headerKeyCount > 0 || requestBody != null) {
+            HttpHeaders headers = null;
+
+            if (headerKeyCount > 0) {
+                headers = new HttpHeaders();
+                headers.putAll(requestHeaders);
+            }
+
+            return new HttpEntity(requestBody, headers);
+        }
+
+        return requestEntity;
     }
 }

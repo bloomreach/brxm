@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms7.crisp.api.exchange;
 
+import java.util.List;
+import java.util.Map;
+
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 /**
@@ -32,8 +35,22 @@ public interface ExchangeHint {
      * Return request object representation or custom request callback instance that can be understood by the underlying
      * {@link ResourceResolver} implementation.
      * @return request object representation to be understood by the underlying {@link ResourceResolver} implementation
+     * @deprecated Use {@link #getRequestHeaders()} and {@link #getRequestBody()} instead.
      */
+    @Deprecated
     public Object getRequest();
+
+    /**
+     * Return request headers map.
+     * @return request headers map
+     */
+    public Map<String, List<String>> getRequestHeaders();
+
+    /**
+     * Return request body.
+     * @return request body
+     */
+    public Object getRequestBody();
 
     /**
      * Return a cache key of this hint.
