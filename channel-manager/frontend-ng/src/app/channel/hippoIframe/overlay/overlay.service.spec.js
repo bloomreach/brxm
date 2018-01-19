@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -715,12 +715,8 @@ describe('OverlayService', () => {
       };
       const returnedConfigurations = OverlayService._getDialOptions(config);
 
-      expect(returnedConfigurations.mainButtonIcon).toBeDefined();
-      expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
-      expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
-      expect(returnedConfigurations.buttons).toBeDefined();
-      expect(returnedConfigurations.buttons.length).toEqual(2);
-      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+      expect(returnedConfigurations.buttons.length).toEqual(3);
+      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['mainIcon', 'dialIcon','callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
@@ -842,10 +838,9 @@ describe('OverlayService', () => {
           expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
 
           mainButton.trigger('mouseenter');
-          expect(mainButton.attr('title')).toBe('CANCEL');
-          expect(optionButtons.children().length).toBe(2);
-          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
-          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
           done();
         });
       });
@@ -908,7 +903,7 @@ describe('OverlayService', () => {
       function fetchButtonCallbackAndHover(config) {
         const optionsSet = OverlayService._getDialOptions(config);
         return {
-          callback: OverlayService.fabButtonCallback(config, optionsSet),
+          callback: optionsSet.buttons[0].callback,
           isHoverEnabled: OverlayService.isHoverEnabled(config),
         };
       }
@@ -921,7 +916,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
+        expect(returnedConfiguration.callback).toBeDefined();
         expect(returnedConfiguration.isHoverEnabled).toBe(false);
       });
 
@@ -945,7 +940,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
+        expect(returnedConfiguration.callback).toBeDefined();
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -957,7 +952,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
+        expect(returnedConfiguration.callback).toBeDefined();
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -969,7 +964,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(null);
+        expect(returnedConfiguration.callback).toBeDefined();
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
 
@@ -981,7 +976,7 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
+        expect(returnedConfiguration.callback).toBeDefined();
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
       });
     });
