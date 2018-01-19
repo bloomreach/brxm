@@ -43,7 +43,16 @@ right-side-panel {
   }
 
   .right-side-panel-top-toolbar {
+    max-height: 64px;
     z-index: 3 !important;
+
+    .md-toolbar-tools > .md-icon-button {
+      min-width: 40px;
+    }
+  }
+
+  .right-side-panel-top-toolbar-tools {
+    display: flex;
   }
 }
 
