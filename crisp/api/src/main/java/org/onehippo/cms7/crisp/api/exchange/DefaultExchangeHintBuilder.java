@@ -15,6 +15,12 @@
  */
 package org.onehippo.cms7.crisp.api.exchange;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Default {@link ExchangeHintBuilder} implementation.
  */
@@ -28,9 +34,17 @@ class DefaultExchangeHintBuilder extends ExchangeHintBuilder {
     /**
      * Request object representation than can be understood by the backend.
      * The request object representation can be an implementation or backend specific object such as <code>HttpEntity</code>
-     * to include HTTP header or body data in the request
+     * to include HTTP header or body data in the request.
+     * @deprecated
      */
+    @Deprecated
     private Object request;
+
+    private Map<String, List<String>> requestHeaders;
+
+    private Map<String, List<String>> unmodifiableRequestHeaders = Collections.emptyMap();
+
+    private Object requestBody;
 
     DefaultExchangeHintBuilder() {
     }
@@ -58,10 +72,70 @@ class DefaultExchangeHintBuilder extends ExchangeHintBuilder {
     }
 
     @Override
+    public ExchangeHintBuilder requestHeader(String headerName, String ... headerValues) {
+        if (headerValues == null || headerValues.length == 0) {
+            return this;
+        }
+
+        if (requestHeaders == null) {
+            requestHeaders = new LinkedHashMap<>();
+            unmodifiableRequestHeaders = Collections.unmodifiableMap(this.requestHeaders);
+        }
+
+        List<String> valueList = requestHeaders.get(headerName);
+
+        if (valueList == null) {
+            valueList = new ArrayList<>();
+        }
+
+        for (String value : headerValues) {
+            valueList.add(value);
+        }
+
+        requestHeaders.put(headerName, valueList);
+
+        return this;
+    }
+
+    @Override
+    public ExchangeHintBuilder requestHeaders(Map<String, List<String>> requestHeaders) {
+        if (this.requestHeaders == null) {
+            this.requestHeaders = new LinkedHashMap<>();
+            unmodifiableRequestHeaders = Collections.unmodifiableMap(this.requestHeaders);
+        } else {
+            this.requestHeaders.clear();
+        }
+
+        if (requestHeaders != null) {
+            this.requestHeaders.putAll(requestHeaders);
+        }
+
+        return this;
+    }
+
+    @Override
+    public Map<String, List<String>> requestHeaders() {
+        return unmodifiableRequestHeaders;
+    }
+
+    @Override
+    public ExchangeHintBuilder requestBody(Object requestBody) {
+        this.requestBody = requestBody;
+        return this;
+    }
+
+    @Override
+    public Object requestBody() {
+        return requestBody;
+    }
+
+    @Override
     public ExchangeHint build() {
         DefaultExchangeHint exchangeHint = new DefaultExchangeHint();
         exchangeHint.setMethodName(methodName());
         exchangeHint.setRequest(request());
+        exchangeHint.setRequestHeaders(requestHeaders);
+        exchangeHint.setRequestBody(requestBody);
         return exchangeHint;
     }
 

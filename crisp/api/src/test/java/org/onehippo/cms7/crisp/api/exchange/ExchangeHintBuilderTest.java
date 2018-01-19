@@ -15,16 +15,24 @@
  */
 package org.onehippo.cms7.crisp.api.exchange;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import org.junit.Test;
-
 public class ExchangeHintBuilderTest {
 
+    /**
+     * @deprecated Keep this for now to test the deprecated <code>request(...)</code> methods.
+     */
+    @Deprecated
     @Test
-    public void testDefaultExchangeBuilder() {
+    public void testDefaultExchangeBuilderWithDeprecatedRequest() {
         ExchangeHint exchangeHint = ExchangeHintBuilder.create()
                 .build();
         assertEquals("GET", exchangeHint.getMethodName());
@@ -37,5 +45,39 @@ public class ExchangeHintBuilderTest {
                 .build();
         assertEquals("POST", exchangeHint.getMethodName());
         assertSame(requestHttpEntity, exchangeHint.getRequest());
+    }
+
+    @Test
+    public void testDefaultExchangeBuilder() {
+        ExchangeHint exchangeHint = ExchangeHintBuilder.create()
+                .build();
+        assertEquals("GET", exchangeHint.getMethodName());
+        assertNull(exchangeHint.getRequestBody());
+
+        Object requestBody = new Object();
+        exchangeHint = ExchangeHintBuilder.create()
+                .methodName("POST")
+                .requestBody(requestBody)
+                .build();
+        assertEquals("POST", exchangeHint.getMethodName());
+        assertSame(requestBody, exchangeHint.getRequestBody());
+    }
+
+    @Test
+    public void testExchangeBuilderWithHeadersAndBody() {
+        String requestBody = "{ 'action' : 'something' }";
+        ExchangeHint exchangeHint = ExchangeHintBuilder.create()
+                .methodName("POST")
+                .requestHeader("Content-Type", "application/json")
+                .requestHeader("Accept", "application/json", "application/xml")
+                .requestBody(requestBody)
+                .build();
+        assertEquals("POST", exchangeHint.getMethodName());
+        assertNull(exchangeHint.getRequest());
+        Map<String, List<String>> headers = exchangeHint.getRequestHeaders();
+        assertEquals(2, headers.size());
+        assertEquals(Arrays.asList("application/json"), headers.get("Content-Type"));
+        assertEquals(Arrays.asList("application/json", "application/xml"), headers.get("Accept"));
+        assertEquals(requestBody, exchangeHint.getRequestBody());
     }
 }

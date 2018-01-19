@@ -47,7 +47,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
             final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+            final Object requestObject = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<String> result;
@@ -87,7 +87,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             throws ResourceException {
         try {
             final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = (exchangeHint != null) ? exchangeHint.getRequest() : null;
+            final Object requestObject = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<String> result;
