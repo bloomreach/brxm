@@ -170,7 +170,6 @@
   "VIEWPORT_ANY_DEVICE": "Elk apparaat",
   "TOOLBAR_MENU_PAGE_NEW": "Nieuw",
   "EDIT_MENU": "Menu aanpassen",
-  "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "{{documentName}}' bevat aanpassingen die niet zijn opgeslagen. Wilt u deze opslaan of annuleren voordat u naar de content editor gaat?",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "Het geselecteerde sjabloon bevat geen containers. Containeritems op deze pagina zullen worden verwijderd zodra de pagina wordt opgeslagen met dit sjabloon.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Het is niet gelukt de sitemap voor het huidige kanaal op te halen",
   "FEEDBACK_DEFAULT_MESSAGE": "Het document kon niet worden geopend om aan te passen.",

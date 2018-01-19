@@ -169,7 +169,6 @@
   "VIEWPORT_ANY_DEVICE": "Jedes Gerät",
   "TOOLBAR_MENU_PAGE_NEW": "Neu",
   "EDIT_MENU": "Menü bearbeiten",
-  "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "'{{documentName}}' verfügt über nicht gespeicherte Änderungen. Wollen Sie diese Änderungen vor dem Wechsel zum Inhaltseditor speichern oder verwerfen?",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "Die ausgewählte Vorlage hat keine Container. Container-Elemente auf dieser Seite werden entfernt, wenn diese Seite mit dieser Vorlage gespeichert wird.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Sitemap für aktuellen Channel konnte nicht abgerufen werden",
   "FEEDBACK_DEFAULT_MESSAGE": "Das Dokument konnte nicht zum Bearbeiten geöffnet werden",

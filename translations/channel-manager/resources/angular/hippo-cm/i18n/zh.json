@@ -170,7 +170,6 @@
   "VIEWPORT_ANY_DEVICE": "任何设备",
   "TOOLBAR_MENU_PAGE_NEW": "新",
   "EDIT_MENU": "编辑菜单",
-  "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "'{{documentName}}'包含未保存的更改。是否要在切换到内容编辑器之前保存或弃置这些更改？",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "所选模板无任何容器。按本模板保持该页面后，本页面的容器项目将被删除。",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "检索当前通道的网站地图失败",
   "FEEDBACK_DEFAULT_MESSAGE": "无法打开文档进行编辑",

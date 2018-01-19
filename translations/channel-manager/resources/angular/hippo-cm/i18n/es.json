@@ -170,7 +170,6 @@
   "VIEWPORT_ANY_DEVICE": "Cualquier dispositivo",
   "TOOLBAR_MENU_PAGE_NEW": "Nuevo",
   "EDIT_MENU": "Menú Edición",
-  "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "'{{documentName}}' contiene cambios sin guardar. ¿Desea guardar o descartar estos cambios antes de cambiar al editor de contenidos?",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "La plantilla seleccionada no tiene contenedores. Los elementos del contenedor de esta página se eliminarán cuando se guarde la página con esta plantilla.",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "No se pudo recuperar el mapa del sitio para el canal actual",
   "FEEDBACK_DEFAULT_MESSAGE": "No ha sido posible abrir el documento para su edición",

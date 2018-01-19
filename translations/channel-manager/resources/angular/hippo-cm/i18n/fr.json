@@ -168,7 +168,6 @@
   "VIEWPORT_ANY_DEVICE": "Tout appareil",
   "TOOLBAR_MENU_PAGE_NEW": "Nouveau",
   "EDIT_MENU": "Menu « Modifier »",
-  "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "'{{documentName}}' contient des changements non sauvegardés. Voulez-vous sauvegarder ou ignorer ces changements avant d’aller à l’éditeur de contenu ?",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "Le modèle sélectionné ne comprend aucun conteneur. Les éléments de conteneur de cette page seront supprimés lorsque la page sera enregistrée avec ce modèle",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Le plan du site de ce canal n'a pas pu être récupéré",
   "FEEDBACK_DEFAULT_MESSAGE": "Le document n’a pas pu être ouvert pour être modifié",
