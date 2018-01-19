@@ -16,9 +16,11 @@
 
 right-side-panel {
   max-width: 0;
+  transition: max-width $swift-ease-out;
 
   &.sidepanel-open {
     max-width: 50% !important;
+    transition: max-width $swift-ease-in;
 
     md-sidenav {
       margin-left: auto;
