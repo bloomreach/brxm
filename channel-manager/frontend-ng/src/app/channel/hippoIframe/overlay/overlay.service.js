@@ -455,8 +455,8 @@ class OverlayService {
   _initManageContentLink(structureElement, overlayElement) {
     const config = this._initManageContentConfig(structureElement);
 
-    // if the config is empty, create no button
     if (Object.keys(config).length === 0) {
+      // config is empty, no buttons to render
       return;
     }
 
@@ -548,7 +548,9 @@ class OverlayService {
 
   fabButtonCallback(config, optionsSet) {
     if (config.documentUuid) {
-      return this.editContentHandler;
+      return () => {
+        this._startEditing(config.documentUuid);
+      };
     }
     if (config.templateQuery && !config.componentParameter) {
       return optionsSet.buttons[0].callback;
@@ -596,10 +598,7 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$apply(() => {
-        this.EditContentService.startEditing(structureElement.getUuid());
-        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
-      });
+      this._startEditing(structureElement.getUuid());
     });
   }
 
@@ -618,6 +617,11 @@ class OverlayService {
       event.stopPropagation();
       handler();
     });
+  }
+
+  _startEditing(uuid) {
+    this.EditContentService.startEditing(uuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   _linkButtonTransition(element) {
