@@ -107,7 +107,7 @@ describe('collapse controller', () => {
 
     collapseCtrl.collapse();
 
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(collapseCtrl.toggleTrigger.hasClass('closed')).toBe(true);
   });
@@ -117,7 +117,7 @@ describe('collapse controller', () => {
 
     collapseCtrl.open();
 
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(collapseCtrl.toggledElement.attr('style')).toBeFalsy();
   });

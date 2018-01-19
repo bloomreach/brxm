@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-import template from './channel.html';
+import editContentMainTemplate from './editContentMain.html';
+import editContentToolsTemplate from './editContentTools.html';
 
 function config($stateProvider) {
   'ngInject';
 
   $stateProvider.state({
-    name: 'hippo-cm.channel',
-    controller: 'ChannelCtrl as channelCtrl',
-    template,
-    params: {
-      channelId: '',
-      initialRenderPath: '',
+    name: 'hippo-cm.channel.edit-content',
+    url: 'edit-content/{documentId}',
+    views: {
+      main: {
+        controller: 'editContentMainCtrl',
+        controllerAs: '$ctrl',
+        template: editContentMainTemplate,
+      },
+      tools: {
+        controller: 'editContentToolsCtrl',
+        controllerAs: '$ctrl',
+        template: editContentToolsTemplate,
+      },
     },
   });
 }

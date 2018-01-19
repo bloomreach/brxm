@@ -29,6 +29,7 @@ class OverlayService {
     $translate,
     CmsService,
     DomService,
+    EditContentService,
     ExperimentStateService,
     HippoIframeService,
     MaskService,
@@ -41,13 +42,13 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
@@ -62,10 +63,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -316,7 +313,8 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.EditContentService.startEditing(structureElement.getUuid());
+        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
   }

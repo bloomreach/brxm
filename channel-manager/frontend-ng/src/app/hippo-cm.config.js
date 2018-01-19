@@ -29,7 +29,6 @@ function config(
 
   $urlRouterProvider.otherwise('/');
 
-  // TODO: Switch to component router
   $stateProvider.state('hippo-cm', {
     url: '/',
     template,

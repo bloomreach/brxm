@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import rightSidePanelComponent from './rightSidePanel.component';
-import fieldsModule from './fields/fields.module';
+import rightSidePanelService from './rightSidePanel.service';
+import contentEditorModule from './contentEditor/contentEditor.module';
+import editContentModule from './editContent/editContent.module';
 import resizeHandleModule from './resizeHandle/resizeHandle.module';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
-    fieldsModule,
+    contentEditorModule,
+    editContentModule,
     resizeHandleModule,
   ])
-  .component('rightSidePanel', rightSidePanelComponent);
+  .component('rightSidePanel', rightSidePanelComponent)
+  .service('RightSidePanelService', rightSidePanelService);
 
 export default rightSidePanelModule.name;
 
