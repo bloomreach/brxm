@@ -45,9 +45,9 @@ right-side-panel {
   .right-side-panel-top-toolbar {
     max-height: 64px;
     z-index: 3 !important;
-    &-tools {
-      display: flex;
-      justify-content: space-between;
+
+    .md-toolbar-tools > .md-icon-button {
+      min-width: 40px;
     }
   }
 

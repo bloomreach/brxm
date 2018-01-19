@@ -16,10 +16,7 @@
 @import 'variables';
 
 content-editor {
-  // Workaround for Firefox; render scrollbar in content-editor instead of ui-view element
-  &.display-contents {
-    display: contents;
-  }
+  min-height: 0;
 
   .feedback > :last-child {
     margin-bottom: 0;
