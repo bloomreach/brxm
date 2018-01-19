@@ -22,9 +22,9 @@ import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
 import plusSvg from '../../../../images/html/plus.svg';
+import plusWhiteSvg from '../../../../images/html/plus-white.svg';
 import searchSvg from '../../../../images/html/search.svg';
 import searchWhiteSvg from '../../../../images/html/search-white.svg';
-import addContentSvg from '../../../../images/html/add-content.svg';
 
 const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
 
@@ -389,9 +389,19 @@ class OverlayService {
 
     }
 
+    if (config.componentParameter) {
+      const selectDocumentButton = {
+        mainIcon: searchWhiteSvg,
+        dialIcon: searchSvg,
+        callback: () => this.pickPath(config),
+        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+      };
+      optionsSet.buttons.push(selectDocumentButton);
+    }
+
     if (config.templateQuery) {
       const createContentButton = {
-        mainIcon: addContentSvg,
+        mainIcon: plusWhiteSvg,
         dialIcon: plusSvg,
         callback: () => {
           this.$rootScope.$apply(() => {
@@ -401,16 +411,6 @@ class OverlayService {
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
       };
       optionsSet.buttons.push(createContentButton);
-    }
-
-    if (config.componentParameter) {
-      const selectDocumentButton = {
-        mainIcon: searchWhiteSvg,
-        dialIcon: searchSvg,
-        callback: () => this.pickPath(config),
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-      };
-      optionsSet.buttons.push(selectDocumentButton);
     }
 
     return optionsSet;
