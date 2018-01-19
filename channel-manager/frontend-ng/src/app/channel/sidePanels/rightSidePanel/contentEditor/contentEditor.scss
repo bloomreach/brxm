@@ -16,6 +16,8 @@
 @import 'variables';
 
 content-editor {
+  min-height: 0;
+
   .feedback > :last-child {
     margin-bottom: 0;
   }
