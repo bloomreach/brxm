@@ -21,8 +21,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,20 +39,14 @@ public class TemplateUtilsTest extends BaseTest {
     private static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
 
-    @Test
-    public void testWhitespaceNewlines() throws Exception {
-        String result = TemplateUtils.injectTemplate("/test_java_parsing.txt", getContext().getPlaceholderData());
-        final Object beansPackage = getContext().getPlaceholderData().get("beansPackage");
-        assertTrue(result.contains((CharSequence) beansPackage));
-        log.info("{}", result);
-    }
+    @Inject private PlaceholderService placeholderService;
 
     @Test
     public void testJavaParsing() throws Exception {
-        String result = TemplateUtils.injectTemplate("/test_java_parsing.txt", getContext().getPlaceholderData());
-        final Object beansPackage = getContext().getPlaceholderData().get("beansPackage");
-        assertTrue(result.contains((CharSequence) beansPackage));
-        log.info("{}", result);
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+        String result = TemplateUtils.injectTemplate("/test_java_parsing.txt", placeholderData);
+        final String beansPackage = (String) placeholderData.get("beansPackage");
+        assertTrue(result.contains(beansPackage));
     }
 
     @Test

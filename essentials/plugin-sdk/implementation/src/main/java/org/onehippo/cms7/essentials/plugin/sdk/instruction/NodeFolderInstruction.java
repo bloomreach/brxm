@@ -34,11 +34,11 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -55,25 +55,25 @@ public class NodeFolderInstruction extends BuiltinInstruction {
     private String template;
     private String path;
 
-    @Inject
-    JcrService jcrService;
+    @Inject private JcrService jcrService;
+    @Inject private PlaceholderService placeholderService;
 
     public NodeFolderInstruction() {
         super(Type.XML_NODE_FOLDER_CREATE);
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(template)) {
             log.error("Invalid instruction:", this);
             return Status.FAILED;
         }
-        final Map<String, Object> data = context.getPlaceholderData();
+        final Map<String, Object> data = placeholderService.makePlaceholders();
         final String myPath = TemplateUtils.replaceTemplateData(path, data);
         if (myPath != null) {
             path = myPath;
         }
-        return createFolders(context);
+        return createFolders(data);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NodeFolderInstruction extends BuiltinInstruction {
         changeMessageQueue.accept(getDefaultGroup(), "Create repository folder '" + path + "'.");
     }
 
-    private Status createFolders(final PluginContext context) {
+    private Status createFolders(final Map<String, Object> placeholderData) {
         final Session session = jcrService.createSession();
         InputStream stream = null;
         try {
@@ -94,7 +94,6 @@ public class NodeFolderInstruction extends BuiltinInstruction {
                 return Status.FAILED;
             }
             String content = GlobalUtils.readStreamAsText(stream);
-            final Map<String, Object> data = context.getPlaceholderData();
             final Iterable<String> pathParts = Splitter.on('/').omitEmptyStrings().split(path);
             Node parent = session.getRootNode();
             for (String part : pathParts) {
@@ -104,8 +103,8 @@ public class NodeFolderInstruction extends BuiltinInstruction {
                 }
                 // replace node name
 
-                data.put("name", part);
-                final String folderXml = TemplateUtils.replaceTemplateData(content, data);
+                placeholderData.put("name", part);
+                final String folderXml = TemplateUtils.replaceTemplateData(content, placeholderData);
                 session.importXML(parent.getPath(), new ByteArrayInputStream(folderXml.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 parent = parent.getNode(part);
             }

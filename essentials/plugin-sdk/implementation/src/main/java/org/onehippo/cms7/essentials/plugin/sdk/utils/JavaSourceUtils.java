@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -43,19 +47,13 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.beansmodel.HippoEssentialsGeneratedObject;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.beansmodel.MemoryBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.code.EssentialsGeneratedMethod;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.code.ExistingMethodsVisitor;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.code.NoAnnotationMethodVisitor;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.code.exc.EssentialsCodeCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 /**
  * Utility class for manipulating java source files.
@@ -783,58 +781,6 @@ public final class JavaSourceUtils {
         }
 
         return importList;
-    }
-
-    /**
-     * Parse given java file and return method visitor (NoAnnotationMethodVisitor).
-     * This visitor contains method names which are *not* annotated and we can annotate
-     *
-     * @param path path to java file
-     * @return NoAnnotationMethodVisitor instance
-     * @see NoAnnotationMethodVisitor
-     */
-    public static NoAnnotationMethodVisitor getAnnotateMethods(final PluginContext context, final Path path) {
-
-        /*
-        When you use: parser.setSource(source); What is the type of param "source"?
-        Binding information is obtained from the Java model. This means that the compilation unit
-        must be located relative to the Java model. This happens automatically when the source code comes from
-        either setSource(ICompilationUnit) or setSource(IClassFile). When source is supplied by setSource(char[]),
-        the location must be extablished explicitly by calling setProject(IJavaProject) and setUnitName(String).
-    */
-        final CompilationUnit unit = getCompilationUnit(path);
-        final ASTParser parser = ASTParser.newParser(AST.JLS8);
-        /*IFile file =
-        parser.setSource(JavaCore.createClassFileFrom(file));*/
-        parser.setSource(GlobalUtils.readTextFile(path).toString().toCharArray());
-        parser.setStatementsRecovery(true);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setBindingsRecovery(true);
-        parser.setResolveBindings(true);
-        final ASTNode node = parser.createAST(null);
-        //
-
-
-
-        /*
-        final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        log.info("workspace {}", workspace);
-        IWorkspaceRoot root = workspace.getRoot();
-        IProject project = root.getProject("dummy");
-        try {
-            project.open(null *//* IProgressMonitor *//*);
-        } catch (CoreException e) {
-            log.error("", e);
-        }
-        IJavaProject javaProject = JavaCore.create(project);
-        */
-
-
-        node.accept(new NoAnnotationMethodVisitor());
-
-        final NoAnnotationMethodVisitor visitor = new NoAnnotationMethodVisitor();
-        unit.accept(visitor);
-        return visitor;
     }
 
     /**

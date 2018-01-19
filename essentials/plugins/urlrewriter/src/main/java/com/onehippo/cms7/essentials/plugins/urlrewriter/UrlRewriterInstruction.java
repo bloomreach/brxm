@@ -25,10 +25,9 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 
 /**
  * Modify the site's web.xml to install the rewrite filter.
@@ -54,7 +53,7 @@ public class UrlRewriterInstruction implements Instruction {
     @Inject private WebXmlService webXmlService;
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         if (webXmlService.addFilter(MODULE, FILTER_NAME, FILTER_CLASS, initParams)
                 && webXmlService.addFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS)
                 && webXmlService.addDispatchersToFilterMapping(MODULE, FILTER_NAME, DISPATCHERS)

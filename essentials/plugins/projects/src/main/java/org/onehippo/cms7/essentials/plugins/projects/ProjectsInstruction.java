@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
@@ -73,7 +72,7 @@ public class ProjectsInstruction implements Instruction {
     @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         contextXmlService.addResource(WPM_RESOURCE_NAME, WPM_RESOURCE_ATTRIBUTES);
 
         projectService.getLog4j2Files().forEach(f -> {

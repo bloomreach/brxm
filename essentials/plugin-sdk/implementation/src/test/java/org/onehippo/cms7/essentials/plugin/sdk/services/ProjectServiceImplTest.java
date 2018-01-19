@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -29,9 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -55,6 +56,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     }
 
     @Inject private ProjectServiceImpl projectService;
+    @Inject private PlaceholderService placeholderService;
     private final Path projectRoot = Paths.get("/foo/bar");
 
     @Before
@@ -175,21 +177,24 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void copy_resource() throws Exception {
         final String resourcePath = "/services/project/to-be-copied.txt";
-        final String targetLocation = "{{" + EssentialConst.PLACEHOLDER_PROJECT_ROOT + "}}/test/copy.txt";
-        final PluginContext context = getContext();
-        context.addPlaceholderData("key", "value");
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test/copy.txt";
 
-        assertTrue(projectService.copyResource(resourcePath, targetLocation, context, false, false));
+        // resets the project root
+        createModifiableDirectory("test");
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+        placeholderData.put("key", "value");
+
+        assertTrue(projectService.copyResource(resourcePath, targetLocation, placeholderData, false, false));
 
         // validate targetLocation interpolation and data interpolation
         final File copied = getModifiableFile("test/copy.txt");
         assertTrue(contentOf(copied).contains("value"));
 
         // cannot do is again if overwrite is false
-        assertFalse(projectService.copyResource(resourcePath, targetLocation, context, false, false));
+        assertFalse(projectService.copyResource(resourcePath, targetLocation, placeholderData, false, false));
 
         // can do is again if overwrite is true
-        assertTrue(projectService.copyResource(resourcePath, targetLocation, context, true, true));
+        assertTrue(projectService.copyResource(resourcePath, targetLocation, placeholderData, true, true));
 
         // no data interpolation in binary mode
         final String binaryContent = contentOf(copied);
@@ -198,18 +203,18 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
         // and delete again
         assertTrue(copied.exists());
-        assertTrue(projectService.deleteFile(targetLocation, context));
+        assertTrue(projectService.deleteFile(targetLocation, placeholderData));
         assertFalse(copied.exists());
     }
 
     @Test
     public void copy_absent_resource() throws Exception {
         final String resourcePath = "/services/project/absent.txt";
-        final String targetLocation = "{{" + EssentialConst.PLACEHOLDER_PROJECT_ROOT + "}}/test/copy.txt";
-        final PluginContext context = getContext();
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test/copy.txt";
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
-            assertFalse(projectService.copyResource(resourcePath, targetLocation, context, false, false));
+            assertFalse(projectService.copyResource(resourcePath, targetLocation, placeholderData, false, false));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to access resource '/services/project/absent.txt'.")));
         }
     }
@@ -217,12 +222,12 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void copy_onto_directory() throws Exception {
         final String resourcePath = "/services/project/to-be-copied.txt";
-        final String targetLocation = "{{" + EssentialConst.PLACEHOLDER_PROJECT_ROOT + "}}/test";
-        final PluginContext context = getContext();
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test";
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
         createModifiableDirectory("test");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
-            assertFalse(projectService.copyResource(resourcePath, targetLocation, context, true, false));
+            assertFalse(projectService.copyResource(resourcePath, targetLocation, placeholderData, true, false));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to copy file from '/services/project/to-be-copied.txt' to")));
         }
     }
@@ -230,12 +235,12 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void delete_non_empty_dir() throws Exception {
         final String resourcePath = "/services/project/to-be-copied.txt";
-        final String targetLocation = "{{" + EssentialConst.PLACEHOLDER_PROJECT_ROOT + "}}/test";
-        final PluginContext context = getContext();
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test";
         createModifiableFile(resourcePath, "test/file.txt");
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
-            assertFalse(projectService.deleteFile(targetLocation, context));
+            assertFalse(projectService.deleteFile(targetLocation, placeholderData));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to deleting file")));
         }
     }

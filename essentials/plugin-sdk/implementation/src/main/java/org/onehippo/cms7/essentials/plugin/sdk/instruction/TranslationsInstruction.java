@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -24,9 +25,9 @@ import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,7 @@ public class TranslationsInstruction extends BuiltinInstruction {
     private static final Logger LOG = LoggerFactory.getLogger(TranslationsInstruction.class);
 
     @Inject private JcrService jcrService;
+    @Inject private PlaceholderService placeholderService;
 
     private String source;
 
@@ -55,11 +57,11 @@ public class TranslationsInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         final Session session = jcrService.createSession();
         boolean success = false;
         try {
-            success = jcrService.importTranslationsResource(session, source, context.getPlaceholderData());
+            success = jcrService.importTranslationsResource(session, source, placeholderService.makePlaceholders());
             session.save();
         } catch (RepositoryException e) {
             LOG.error("Failed to import translations into repository.", e);

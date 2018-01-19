@@ -16,17 +16,17 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.springframework.stereotype.Component;
 
 /**
@@ -45,7 +45,7 @@ public class MavenDependencyInstruction extends BuiltinInstruction {
         super(Type.EXECUTE);
     }
 
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         final Module module = Module.pomForName(targetPom);
         return module != Module.INVALID && dependencyService.addDependency(module, dependency)
                 ? Status.SUCCESS : Status.FAILED;

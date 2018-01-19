@@ -23,20 +23,19 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.rest.MavenRepository;
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
-import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
-import org.onehippo.cms7.essentials.plugin.sdk.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.util.StringUtils;
 
 public class Plugin {
@@ -46,6 +45,7 @@ public class Plugin {
     private final ProjectService projectService;
     private final InstallStateMachine stateMachine;
 
+    @Inject private AutowireCapableBeanFactory injector;
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
 
@@ -103,13 +103,13 @@ public class Plugin {
         if (instructionPackage == null) {
             final String packageFile = descriptor.getPackageFile();
             if (!Strings.isNullOrEmpty(packageFile)) {
-                instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);
+                instructionPackage = GlobalUtils.newInstance(DefaultInstructionPackage.class);
                 instructionPackage.setInstructionPath(packageFile);
             }
         }
 
         if (instructionPackage != null) {
-            ApplicationModule.getInjector().autowireBean(instructionPackage);
+            injector.autowireBean(instructionPackage);
         }
         return instructionPackage;
     }

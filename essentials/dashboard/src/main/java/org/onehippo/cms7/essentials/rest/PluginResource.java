@@ -46,23 +46,19 @@ import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
+import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.sdk.api.service.model.ProjectSettings;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
-import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +81,6 @@ public class PluginResource {
 
     @Inject private PluginStore pluginStore;
     @Inject private SettingsService settingsService;
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private AutowireCapableBeanFactory injector;
 
@@ -151,13 +146,10 @@ public class PluginResource {
             return list;
         }
 
-        final Map<String, Object> properties = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
-        instructionPackage.setProperties(properties);
-        final PluginContext context = contextFactory.getContext();
-        context.addPlaceholderData(properties);
+        final Map<String, Object> parameters = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
 
         @SuppressWarnings("unchecked")
-        final Multimap<Instruction.Type, MessageRestful> messages = instructionPackage.getInstructionsMessages(context);
+        final Multimap<Instruction.Type, MessageRestful> messages = instructionPackage.getInstructionsMessages(parameters);
         final Collection<Map.Entry<Instruction.Type, MessageRestful>> entries = messages.entries();
         for (Map.Entry<Instruction.Type, MessageRestful> entry : entries) {
             final MessageRestful value = entry.getValue();
@@ -204,12 +196,12 @@ public class PluginResource {
             value = "Trigger a generalized setup (by means of executing an instructions package).",
             notes = "[API] generalized setup may be executed automatically for installed plugins," +
                     "depending on the project settings.",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/setup")
     public UserFeedback setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
-                                               final PostPayloadRestful payloadRestful,
+                                               final Map<String, Object> parameters,
                                                @Context HttpServletResponse response) {
         final UserFeedback feedback = new UserFeedback();
         final Plugin plugin = pluginStore.getPluginById(pluginId);
@@ -218,8 +210,8 @@ public class PluginResource {
             return feedback.addError("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
         }
 
-        final Map<String, Object> properties = makeSetupPropertiesFromValues(payloadRestful.getValues());
-        setupPlugin(plugin, properties, feedback);
+        prepareSetupParameters(parameters);
+        setupPlugin(plugin, parameters, feedback);
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("Plugin <strong>" + plugin + "</strong> successfully set up.");
         }
@@ -307,70 +299,59 @@ public class PluginResource {
             return; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 
-        final Map<String, Object> properties = new HashMap<>();
-        preProcessSetupProperties(properties);
-
-        setupPlugin(plugin, properties, feedback);
+        setupPlugin(plugin, createDefaultSetupParameters(), feedback);
     }
 
-    private void setupPlugin(final Plugin plugin, final Map<String, Object> properties, final UserFeedback feedback) {
-        final PluginContext context = contextFactory.getContext();
-        context.addPlaceholderData(properties);
-
+    private void setupPlugin(final Plugin plugin, final Map<String, Object> parameters, final UserFeedback feedback) {
         HstUtils.erasePreview(jcrService, settingsService);
 
         // execute skeleton
+        // TODO: replace by inter-plugin dependency mechanism
         final DefaultInstructionPackage commonPackage = new SkeletonInstructionPackage();
-        commonPackage.setProperties(properties);
         injector.autowireBean(commonPackage);
-        commonPackage.execute(context);
+        commonPackage.execute(parameters);
 
         // execute InstructionPackage itself
         final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage != null) {
-            ApplicationModule.getInjector().autowireBean(instructionPackage);
-            instructionPackage.setProperties(properties);
-            instructionPackage.execute(context);
+            instructionPackage.execute(parameters);
         }
 
         updateInstallStateAfterSetup(plugin, feedback);
     }
 
-    private void preProcessSetupProperties(final Map<String, Object> properties) {
+    private Map<String, Object> createDefaultSetupParameters() {
+        final Map<String, Object> parameters = new HashMap<>();
         final ProjectSettings settings = settingsService.getSettings();
 
-        if (!properties.containsKey(EssentialConst.PROP_SAMPLE_DATA)) {
-            properties.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
-        }
-        if (!properties.containsKey(EssentialConst.PROP_TEMPLATE_NAME)) {
-            properties.put(EssentialConst.PROP_TEMPLATE_NAME, settings.getTemplateLanguage());
-        }
-        if (!properties.containsKey(EssentialConst.PROP_EXTRA_TEMPLATES)) {
-            properties.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
-        }
+        parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
+        parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        parameters.put(settings.getTemplateLanguage(), true);
+
+        return parameters;
     }
 
     /**
-     * Convert String values to Booleans if possible.
-     * Doing this here helps avoiding additional conversions downstream.
-     *
-     * TODO: check if we can refactor the PostPayloadRestful so this happens automatically?
+     * Make sure that the generic setup parameters are set.
      */
-    private Map<String, Object> makeSetupPropertiesFromValues(final Map<String, String> values) {
-        final Map<String, Object> properties = new HashMap<>();
+    private void prepareSetupParameters(final Map<String, Object> parameters) {
+        final ProjectSettings settings = settingsService.getSettings();
 
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            if ("true".equalsIgnoreCase(entry.getValue()) ||
-                "false".equalsIgnoreCase(entry.getValue())) {
-                properties.put(entry.getKey(), Boolean.valueOf(entry.getValue()));
-            } else {
-                properties.put(entry.getKey(), entry.getValue());
-            }
+        final Object templateName = parameters.get(EssentialConst.PROP_TEMPLATE_NAME);
+        final String templateLanguage = (templateName instanceof String)
+                ? (String) templateName
+                : settings.getTemplateLanguage();
+        parameters.put(templateLanguage, true);
+
+        final Object sampleData = parameters.get(EssentialConst.PROP_SAMPLE_DATA);
+        if (!(sampleData instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
         }
 
-        preProcessSetupProperties(properties);
-
-        return properties;
+        final Object extraTemplates = parameters.get(EssentialConst.PROP_EXTRA_TEMPLATES);
+        if (!(extraTemplates instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        }
     }
 
     private Map<String, Object> extractSetupParametersFromQueryParameters(final MultivaluedMap<String, String> values) {

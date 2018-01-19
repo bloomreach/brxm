@@ -17,48 +17,50 @@ package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
 
-public class DirectoryInstructionTest extends BaseResourceTest {
+public class DirectoryInstructionTest extends ResourceModifyingTest {
 
+    private static Map<String, Object> dummyParameters = new HashMap<>();
+
+    @Inject private AutowireCapableBeanFactory injector;
     @Inject private ProjectService projectService;
 
     @Test
     public void test_create() throws Exception {
+        createModifiableDirectory("test");
+
         final DirectoryInstruction instruction = new DirectoryInstruction();
+        injector.autowireBean(instruction);
         instruction.setAction("create");
         instruction.setTarget(getTargetPath().toString());
-        assertEquals(Instruction.Status.SUCCESS, instruction.execute(getContext()));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
     }
 
     @Test
     public void testCopy() throws Exception {
-        final PluginContext context = getContext();
+        createModifiableDirectory("test");
+
         final DirectoryInstruction instruction = new DirectoryInstruction();
-        assertEquals(Instruction.Status.FAILED, instruction.execute(context));
+        injector.autowireBean(instruction);
+        assertEquals(Instruction.Status.FAILED, instruction.execute(dummyParameters));
 
         instruction.setSource("/instructions");
         instruction.setAction("copy");
         instruction.setTarget(getTargetPath().toString());
-        assertEquals(Instruction.Status.FAILED, instruction.execute(context)); // Fails because unit test is not running in JAR
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(getTargetPath().toFile());
+        assertEquals(Instruction.Status.FAILED, instruction.execute(dummyParameters)); // Fails because unit test is not running in JAR
     }
 
     private Path getTargetPath() {

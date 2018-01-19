@@ -16,9 +16,8 @@
 
 package org.onehippo.cms7.essentials.sdk.api.install;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
-
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 
 /**
  * Contract for implementing a plugin installation instruction.
@@ -57,11 +56,10 @@ public interface Instruction {
     /**
      * Execute this instruction.
      *
-     * @param context {@link PluginContext} providing access to the project sources and repository through Essentials'
-     *                                     services
+     * @param parameters provides access to built-in and custom execution parameters
      * @return result of the instruction execution (success, failure, skipped)
      */
-    Status execute(PluginContext context);
+    Status execute(Map<String, Object> parameters);
 
     /**
      * Ask the instruction to declare its contribution to the "Changes made by this feature".

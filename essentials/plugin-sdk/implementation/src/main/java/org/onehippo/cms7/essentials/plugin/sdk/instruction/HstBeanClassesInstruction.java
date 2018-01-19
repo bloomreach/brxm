@@ -16,15 +16,15 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,7 +52,7 @@ public class HstBeanClassesInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         return webXmlService.addHstBeanClassPattern(pattern)
                 ? Status.SUCCESS : Status.FAILED;
     }

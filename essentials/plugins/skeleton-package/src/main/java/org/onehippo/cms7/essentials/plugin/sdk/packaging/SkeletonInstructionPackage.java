@@ -22,7 +22,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.packaging;
  *
  * @version "$Id$"
  */
-public class SkeletonInstructionPackage extends TemplateSupportInstructionPackage {
+public class SkeletonInstructionPackage extends DefaultInstructionPackage {
 
     @Override
     public String getInstructionPath() {

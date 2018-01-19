@@ -20,20 +20,18 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
 import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
-import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
 
 
 /**
@@ -49,13 +47,12 @@ public class BeanWriterResource {
     @Inject private ContentBeansService contentBeansService;
 
     @POST
-    public UserFeedback runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
+    public UserFeedback runBeanWriter(final Map<String, Object> parameters) throws Exception {
         final UserFeedback feedback = new UserFeedback();
-        final Map<String, String> values = payload.getValues();
-        final String imageSet = values.get("imageSet");
+        final String imageSet = (String) parameters.get("imageSet");
 
         contentBeansService.createBeans(jcrService, feedback, imageSet);
-        if ("true".equals(values.get("updateImageMethods"))) {
+        if (BooleanUtils.isTrue((Boolean) parameters.get("updateImageMethods"))) {
             contentBeansService.convertImageMethodsForClassname(imageSet, feedback);
         }
         contentBeansService.cleanupMethods(jcrService, feedback);

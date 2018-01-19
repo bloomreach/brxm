@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.plugin.sdk.packaging;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,8 +26,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
@@ -36,6 +33,9 @@ import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstruc
 import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,54 +46,32 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultInstructionPackage {
 
-
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
+    @Inject private PluginInstructionExecutor executor;
     @Inject private DefaultInstructionParser instructionParser;
+    @Inject private PlaceholderService placeholderService;
 
-    private Map<String, Object> properties;
     private PluginInstructions instructions;
     private String path;
 
-    public Map<String, Object> getProperties() {
-
-        if (properties == null) {
-            return new HashMap<>();
-        }
-        return properties;
-    }
-
-    public void setProperties(final Map<String, Object> properties) {
-        this.properties = properties;
-    }
-
-
-
-    public Set<String> groupNames() {
-        return EssentialConst.DEFAULT_GROUPS;
-    }
-
-    public Multimap<Instruction.Type, MessageRestful> getInstructionsMessages(final PluginContext context) {
+    public Multimap<Instruction.Type, MessageRestful> getInstructionsMessages(final Map<String, Object> parameters) {
         final PluginInstructions myInstructions = getInstructions();
         if (myInstructions == null) {
             return ArrayListMultimap.create();
-
         }
-        final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
-        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
-        final Set<String> myGroupNames = groupNames();
-        final Multimap<Instruction.Type, MessageRestful> instructionsMessages = ArrayListMultimap.create();
-        for (PluginInstructionSet instructionSet : instructionSets) {
-            final Set<String> groups = instructionSet.getGroups();
-            for (String group : groups) {
-                // execute only or group(s)
-                if (myGroupNames.contains(group)) {
-                    final Multimap<Instruction.Type, MessageRestful> instr = executor.getInstructionsMessages(instructionSet, context);
-                    instructionsMessages.putAll(instr);
+        final Multimap<Instruction.Type, String> messageMap = ArrayListMultimap.create();
+        for (PluginInstructionSet instructionSet : instructions.getInstructionSets()) {
+            if (shouldExecuteInstructionSet(instructionSet, parameters)) {
+                executor.getInstructionsMessages(instructionSet, messageMap);
+            }
+        }
 
-                } else {
-                    log.debug("Skipping instruction group for name: [{}]", group);
-                }
+        final Multimap<Instruction.Type, MessageRestful> instructionsMessages = ArrayListMultimap.create();
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+        for (Instruction.Type type : messageMap.keys()) {
+            for (String rawMessage : messageMap.get(type)) {
+                instructionsMessages.put(type, new MessageRestful(TemplateUtils.replaceTemplateData(rawMessage, placeholderData)));
             }
         }
         return instructionsMessages;
@@ -106,7 +84,6 @@ public class DefaultInstructionPackage {
         }
         return path;
     }
-
 
     public void setInstructionPath(final String path) {
         this.path = path;
@@ -121,11 +98,7 @@ public class DefaultInstructionPackage {
         return instructions;
     }
 
-    public Instruction.Status execute(final PluginContext context) {
-        // NOTE: we'll add any additional context properties into context:
-        context.addPlaceholderData(properties);
-
-
+    public Instruction.Status execute(final Map<String, Object> parameters) {
         if (instructions == null) {
             instructions = getInstructions();
         }
@@ -135,25 +108,29 @@ public class DefaultInstructionPackage {
         }
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         Instruction.Status status = Instruction.Status.SUCCESS;
-        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
-        final Set<String> myGroupNames = groupNames();
         for (PluginInstructionSet instructionSet : instructionSets) {
-            final Set<String> groups = instructionSet.getGroups();
-            for (String group : groups) {
-                // execute only or group(s)
-                if (myGroupNames.contains(group)) {
-                    // currently we return fail if any of instructions is failed
-                    if (status == Instruction.Status.FAILED) {
-                        executor.execute(instructionSet, context);
-                        continue;
-                    }
-                    status = executor.execute(instructionSet, context);
-                } else {
-                    log.debug("Skipping instruction group for name: [{}]", group);
+            if (shouldExecuteInstructionSet(instructionSet, parameters)) {
+                final Instruction.Status sts = executor.execute(instructionSet, parameters);
+                if (sts == Instruction.Status.FAILED) {
+                    status = sts; // remember the 'worst' result
                 }
             }
-
         }
         return status;
+    }
+
+    private boolean shouldExecuteInstructionSet(final PluginInstructionSet instructionSet, final Map<String, Object> parameters) {
+        for (String group : instructionSet.getGroups()) {
+            // always execute default instruction sets
+            if (EssentialConst.INSTRUCTION_GROUP_DEFAULT.equals(group)) {
+                return true;
+            }
+
+            final Object value = parameters.get(group);
+            if (value instanceof Boolean && (Boolean)value) {
+                return true;
+            }
+        }
+        return false;
     }
 }

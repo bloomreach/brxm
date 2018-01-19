@@ -16,17 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.utils.inject;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import com.google.common.eventbus.EventBus;
-
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.ContextLoader;
 
 
 /**
@@ -36,45 +27,7 @@ import org.springframework.web.context.ContextLoader;
  */
 
 @Configuration
-@ComponentScan(value = {"org.onehippo.cms7.essentials", "org.onehippo.cms7.essentials.dashboard.rest"})
+@ComponentScan(value = {"org.onehippo.cms7.essentials"})
 public class ApplicationModule {
 
-
-    @SuppressWarnings("StaticVariableOfConcreteClass")
-
-    private static final transient EventBus eventBus = new EventBus("Essentials Event Bus");
-
-    private static volatile boolean initialized = false;
-
-    @Inject
-    private ApplicationContext applicationContext;
-    private static ApplicationContext applicationContextRef;
-
-
-    @Bean(name = "eventBus")
-    @Singleton
-    public EventBus getEventBus() {
-        if (!initialized) {
-            applicationContextRef = applicationContext;
-            initialized = true;
-        }
-        return eventBus;
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-    public static ApplicationContext getApplicationContextRef() {
-        return applicationContextRef;
-    }
-
-    private static AutowireCapableBeanFactory injector;
-
-    public static AutowireCapableBeanFactory getInjector() {
-        if (injector == null) {
-            // TODO when called during spring initialization, the application context is still null!
-            injector = ContextLoader.getCurrentWebApplicationContext().getAutowireCapableBeanFactory();
-        }
-        return injector;
-    }
 }

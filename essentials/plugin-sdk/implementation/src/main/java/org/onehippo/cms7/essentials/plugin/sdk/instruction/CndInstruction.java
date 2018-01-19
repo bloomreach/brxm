@@ -31,8 +31,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
@@ -58,20 +58,15 @@ public class CndInstruction extends BuiltinInstruction {
 
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
+    @Inject private PlaceholderService placeholderService;
 
     public CndInstruction() {
         super(Type.DOCUMENT_REGISTER);
     }
 
     @Override
-    public Status execute(final PluginContext context) {
-        if (Strings.isNullOrEmpty(namespacePrefix)) {
-            namespace = settingsService.getSettings().getProjectNamespace();
-        } else {
-            namespace = namespacePrefix;
-        }
-        final Map<String, Object> data = context.getPlaceholderData();
-        processAllPlaceholders(data);
+    public Status execute(final Map<String, Object> parameters) {
+        preProcessAttributes();
 
         final Session session = jcrService.createSession();
         try {
@@ -103,9 +98,14 @@ public class CndInstruction extends BuiltinInstruction {
         changeMessageQueue.accept(getDefaultGroup(), "Register document type '" + documentType + "'.");
     }
 
-    private void processAllPlaceholders(final Map<String, Object> data) {
-        data.put("documentType", documentType);
-        data.put("superType", superType);
+    private void preProcessAttributes() {
+        if (Strings.isNullOrEmpty(namespacePrefix)) {
+            namespace = settingsService.getSettings().getProjectNamespace();
+        } else {
+            namespace = namespacePrefix;
+        }
+
+        final Map<String, Object> data = placeholderService.makePlaceholders();
         final String mySupertype = TemplateUtils.replaceTemplateData(superType, data);
         if (mySupertype != null) {
             superType = mySupertype;

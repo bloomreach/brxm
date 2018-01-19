@@ -16,11 +16,13 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
@@ -31,11 +33,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class XmlInstructionTest extends BaseRepositoryTest {
 
+    private static Map<String, Object> dummyParameters = new HashMap<>();
+
     @Inject private AutowireCapableBeanFactory injector;
 
     @Test
     public void testInstructions() throws Exception {
-        final PluginContext context = getContext();
         final XmlInstruction instruction = new XmlInstruction();
         injector.autowireBean(instruction);
 
@@ -43,11 +46,11 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         instruction.setActionEnum(XmlInstruction.Action.COPY);
         instruction.setTarget("/");
         instruction.setSource("instruction_xml_file.xml");
-        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
 
         // no override
         instruction.setOverwrite(false);
-        assertEquals(Instruction.Status.SKIPPED, instruction.execute(context));
+        assertEquals(Instruction.Status.SKIPPED, instruction.execute(dummyParameters));
 
         // override (currently not supported!)
 //        instruction.setOverwrite(true);
@@ -56,6 +59,6 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         // delete
         instruction.setActionEnum(XmlInstruction.Action.DELETE);
         instruction.setTarget("/testNode"); // matches root node of instruction_xml_file.xml
-        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
     }
 }

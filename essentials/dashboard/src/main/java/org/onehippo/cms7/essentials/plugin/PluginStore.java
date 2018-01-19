@@ -263,7 +263,7 @@ public class PluginStore {
     private void registerEndPoints(final PluginDescriptor descriptor) {
         final List<String> restClasses = descriptor.getRestClasses();
         if (restClasses != null) {
-            restClasses.forEach(application::addSingleton);
+            restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
         }
     }
 

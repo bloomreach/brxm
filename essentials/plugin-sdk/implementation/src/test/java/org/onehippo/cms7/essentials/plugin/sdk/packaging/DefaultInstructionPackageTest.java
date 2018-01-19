@@ -16,20 +16,15 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.packaging;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.eventbus.EventBus;
+import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
-import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstructionParser;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * @version "$Id$"
@@ -41,7 +36,7 @@ public class DefaultInstructionPackageTest extends BaseTest {
     @Test(expected = NullPointerException.class)
     public void testInstructionPackageNoInjection() throws Exception {
         DefaultInstructionPackage instructionPackage = new DefaultInstructionPackage();
-        instructionPackage.execute(getContext());
+        instructionPackage.execute(new HashMap<>());
     }
 
     @Test
@@ -50,11 +45,6 @@ public class DefaultInstructionPackageTest extends BaseTest {
         injector.autowireBean(instructionPackage);
         final String instructionPath = instructionPackage.getInstructionPath();
         Assert.assertEquals("Expected default path", instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
-        final Map<String, Object> properties = instructionPackage.getProperties();
-        assertEquals("Expected empty property set", 0, properties.size());
-        final Set<String> groupNames = instructionPackage.groupNames();
-        assertEquals("Expected default group names", EssentialConst.DEFAULT_GROUPS.size(), groupNames.size());
-        assertEquals("Expected default group name", EssentialConst.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
         final PluginInstructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
 

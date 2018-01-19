@@ -16,19 +16,22 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
+import org.onehippo.cms7.essentials.plugin.sdk.services.WebXmlServiceImpl;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
-import org.onehippo.cms7.essentials.plugin.sdk.services.WebXmlServiceImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HstBeanClassesInstructionTest extends BaseTest {
+
+    private static Map<String, Object> dummyParameters = new HashMap<>();
 
     private String relayedPattern;
     private boolean result;
@@ -75,16 +78,15 @@ public class HstBeanClassesInstructionTest extends BaseTest {
                 return result;
             }
         };
-        final PluginContext context = getContext();
         final HstBeanClassesInstruction instruction = new HstBeanClassesInstruction();
         instruction.setPattern("foo");
         instruction.webXmlService = webXmlService;
 
         result = true;
-        assertEquals(Instruction.Status.SUCCESS, instruction.execute(context));
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
         assertEquals("foo", relayedPattern);
 
         result = false;
-        assertEquals(Instruction.Status.FAILED, instruction.execute(context));
+        assertEquals(Instruction.Status.FAILED, instruction.execute(dummyParameters));
     }
 }

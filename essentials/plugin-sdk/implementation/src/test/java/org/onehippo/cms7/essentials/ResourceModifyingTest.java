@@ -30,8 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
@@ -49,10 +47,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 public abstract class ResourceModifyingTest {
 
     @Inject protected SettingsServiceImpl settingsService;
-    @Inject private PluginContextFactory contextFactory;
     @Inject private AutowireCapableBeanFactory injector;
 
-    private PluginContext context;
     private String oldProjectBaseDir;
     private Path projectRootPath;
 
@@ -63,14 +59,15 @@ public abstract class ResourceModifyingTest {
 
     @After
     public void after() throws IOException {
-        if (context != null) {
+        if (projectRootPath != null) {
             FileUtils.deleteDirectory(projectRootPath.toFile());
+            projectRootPath = null;
+
             if (oldProjectBaseDir != null) {
                 System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldProjectBaseDir);
             } else {
                 System.clearProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
             }
-            context = null;
         }
     }
 
@@ -97,7 +94,7 @@ public abstract class ResourceModifyingTest {
 
     private File fileAt(final String projectLocation) throws IOException {
         final String[] projectLegs = projectLocation.split("/");
-        ensureContext();
+        ensureModifiableProjectRoot();
         Path outputPath = projectRootPath;
         for (String leg : projectLegs) {
             outputPath = outputPath.resolve(leg);
@@ -118,19 +115,12 @@ public abstract class ResourceModifyingTest {
         injector.autowireBean(bean);
     }
 
-    protected PluginContext getContext() throws IOException {
-        ensureContext();
-        return context;
-    }
-
-    private void ensureContext() throws IOException {
-        if (context == null) {
+    private void ensureModifiableProjectRoot() throws IOException {
+        if (projectRootPath == null) {
             // create a temporary directory representing the root of modifiable project files
             projectRootPath = Files.createTempDirectory("test");
             oldProjectBaseDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, projectRootPath.toString());
-
-            context = contextFactory.getContext();
         }
     }
 }

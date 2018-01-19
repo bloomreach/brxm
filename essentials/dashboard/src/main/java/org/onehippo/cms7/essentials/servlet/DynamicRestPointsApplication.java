@@ -23,9 +23,9 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
  * Implementation of a JAXRS Application which instantiates and Spring-wires resource classes as singletons.
@@ -41,7 +41,7 @@ public class DynamicRestPointsApplication extends Application {
         return singletons;
     }
 
-    public void addSingleton(final String fqcn) {
+    public void addSingleton(final String fqcn, final AutowireCapableBeanFactory injector) {
         if (fqcns.contains(fqcn)) {
             return;
         }
@@ -50,7 +50,7 @@ public class DynamicRestPointsApplication extends Application {
         if (singleton != null) {
             LOG.info("Add dynamic (plugin) REST endpoint '{}'.", fqcn);
 
-            ApplicationModule.getInjector().autowireBean(singleton);
+            injector.autowireBean(singleton);
             fqcns.add(fqcn);
             singletons.add(singleton);
         }

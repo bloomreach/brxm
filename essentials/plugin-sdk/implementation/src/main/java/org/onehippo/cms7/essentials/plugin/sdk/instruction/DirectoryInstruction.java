@@ -30,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,10 +39,10 @@ import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialsFileUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,9 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
     private static final Logger log = LoggerFactory.getLogger(DirectoryInstruction.class);
+
+    @Inject private PlaceholderService placeholderService;
+
     private String target;
     private Action action;
     private String source;
@@ -91,7 +95,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         if (action == null) {
             log.warn("DirectoryInstruction: action was empty");
             return Status.FAILED;
@@ -100,12 +104,14 @@ public class DirectoryInstruction extends BuiltinInstruction {
             log.warn("DirectoryInstruction: target was empty");
             return Status.FAILED;
         }
-        processPlaceholders(context.getPlaceholderData());
+
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+        preProcessAttributes(placeholderData);
         switch (action) {
             case CREATE:
                 return create();
             case COPY:
-                return copy(context.getPlaceholderData());
+                return copy(placeholderData);
         }
         return Status.FAILED;
     }
@@ -143,7 +149,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
         return Status.SUCCESS;
     }
 
-    private void processPlaceholders(final Map<String, Object> data) {
+    private void preProcessAttributes(final Map<String, Object> data) {
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);
         if (myTarget != null) {
             target = myTarget;

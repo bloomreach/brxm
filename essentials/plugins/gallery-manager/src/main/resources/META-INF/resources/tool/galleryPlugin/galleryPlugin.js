@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,15 +64,13 @@
                               + "be updated to this image set, too.";
 
             $scope.create = function() {
-                var payload = {
-                    values: {
-                        imageSetPrefix: prefix,
-                        imageSetName: $scope.name,
-                        updateExisting: $scope.updateExisting
-                    }
+                var parameters = {
+                    imageSetPrefix: prefix,
+                    imageSetName: $scope.name,
+                    updateExisting: $scope.updateExisting
                 };
 
-                $http.post(resource, payload).success(function () {
+                $http.post(resource, parameters).success(function () {
                     $uibModalInstance.close(prefix + ":" + $scope.name);
                 });
             };
@@ -87,13 +85,11 @@
 
             $scope.imageSet = imageSet;
             $scope.create = function() {
-                var payload = {
-                    values: {
-                        imageVariantName: $scope.name,
-                        selectedImageSet: $scope.imageSet.name
-                    }
+                var parameters = {
+                    imageVariantName: $scope.name,
+                    selectedImageSet: $scope.imageSet.name
                 };
-                $http.post(resource, payload).success(function () {
+                $http.post(resource, parameters).success(function () {
                     $uibModalInstance.close($scope.name);
                 });
             };

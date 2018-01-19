@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -24,10 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -59,15 +59,19 @@ public class ExecuteInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         if (Strings.isNullOrEmpty(clazz)) {
             log.warn("Cannot execute instruction, class name was not defined");
             return Status.FAILED;
         }
         final Instruction instruction = GlobalUtils.newInstance(clazz);
+        if (instruction == null) {
+            log.warn("Failed to instantiate instruction for class '{}'.", clazz);
+            return Status.FAILED;
+        }
         injector.autowireBean(instruction);
         log.info("Executing instruction '{}'.", clazz);
-        return instruction.execute(context);
+        return instruction.execute(parameters);
     }
 
     @Override

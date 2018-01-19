@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
 import org.onehippo.cms7.essentials.sdk.api.service.LoggingService;
@@ -67,7 +66,7 @@ public class RelevanceInstruction implements Instruction {
     @Inject private MavenCargoService mavenCargoService;
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         contextXmlService.addResource(TARGETING_RESOURCE_NAME, TARGETING_RESOURCE_ATTRIBUTES);
         contextXmlService.addEnvironment(TARGETING_ENVIRONMENT_NAME, TARGETING_ENVIRONMENT_ATTRIBUTES);
 

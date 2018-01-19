@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -28,6 +31,8 @@ import static org.junit.Assert.assertTrue;
 
 public class TranslationsInstructionTest extends BaseRepositoryTest {
 
+    private static Map<String, Object> dummyParameters = new HashMap<>();
+
     @Inject private AutowireCapableBeanFactory injector;
 
     @Test
@@ -36,7 +41,7 @@ public class TranslationsInstructionTest extends BaseRepositoryTest {
         injector.autowireBean(instruction);
 
         instruction.setSource("/instruction_translations_file.json");
-        assertEquals(Instruction.Status.SUCCESS,instruction.execute(getContext()));
+        assertEquals(Instruction.Status.SUCCESS,instruction.execute(dummyParameters));
 
         final Session session = jcrService.createSession();
         assertTrue(session.itemExists("/hippo:configuration/hippo:translations/foo/bar/nl"));

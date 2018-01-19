@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -24,9 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ public class FileInstruction extends BuiltinInstruction {
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
 
     @Inject private ProjectService projectService;
+    @Inject private PlaceholderService placeholderService;
 
     private boolean binary;
     private boolean overwrite;
@@ -52,21 +54,22 @@ public class FileInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
         switch (action) {
             case COPY:
                 if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
                     log.error("Invalid file instruction '{}'.", toString());
                     return Status.FAILED;
                 }
-                return projectService.copyResource("/" + source, target, context, overwrite, binary)
+                return projectService.copyResource("/" + source, target, placeholderData, overwrite, binary)
                         ? Status.SUCCESS : Status.FAILED;
             case DELETE:
                 if (StringUtils.isBlank(target)) {
                     log.error("Invalid file instruction '{}'.", toString());
                     return Status.FAILED;
                 }
-                return projectService.deleteFile(target, context) ? Status.SUCCESS : Status.FAILED;
+                return projectService.deleteFile(target, placeholderData) ? Status.SUCCESS : Status.FAILED;
         }
 
         log.error("Unsupported file instruction action '{}'.", action);

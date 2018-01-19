@@ -30,8 +30,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.inject.ApplicationModule;
@@ -67,7 +65,6 @@ public abstract class BaseTest {
 
     @Inject protected AutowireCapableBeanFactory injector;
     @Inject protected SettingsServiceImpl settingsService;
-    @Inject private PluginContextFactory contextFactory;
 
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
@@ -81,8 +78,8 @@ public abstract class BaseTest {
             .add("hippoplugins:version")
             .add("hippoplugins:dependency")
             .build();
-    private PluginContext context;
     private Path projectRoot;
+    private boolean hasProjectStructure;
 
 
     public void setProjectRoot(final Path projectRoot) {
@@ -116,7 +113,7 @@ public abstract class BaseTest {
             projectRootDir.mkdir();
         }
         projectRoot = projectRootDir.toPath();
-        context = getPluginContextFile();
+        ensureProjectStructure();
     }
 
     /**
@@ -124,8 +121,8 @@ public abstract class BaseTest {
      *
      * @return PluginContext with file system initialized (so no JCR session)
      */
-    PluginContext getPluginContextFile() {
-        if (context == null) {
+    public void ensureProjectStructure() {
+        if (!hasProjectStructure) {
 
             final String basePath = projectRoot.toString();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
@@ -148,19 +145,11 @@ public abstract class BaseTest {
                     repositoryDataFolder.mkdir();
                 }
             }
-            context = contextFactory.getContext();
+            hasProjectStructure = true;
         }
-        return context;
     }
 
     public Path getProjectRoot() {
         return projectRoot;
-    }
-
-    public PluginContext getContext() {
-        if (context == null) {
-            context = getPluginContextFile();
-        }
-        return context;
     }
 }

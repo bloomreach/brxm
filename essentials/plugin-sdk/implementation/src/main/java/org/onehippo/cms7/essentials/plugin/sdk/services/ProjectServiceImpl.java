@@ -27,19 +27,19 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -199,9 +199,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public boolean copyResource(final String resourcePath, final String targetLocation, final PluginContext context,
+    public boolean copyResource(final String resourcePath, final String targetLocation, final Map<String, Object> placeholderData,
                                 final boolean canOverwrite, final boolean isBinary) {
-        final String destinationPath = TemplateUtils.replaceTemplateData(targetLocation, context.getPlaceholderData());
+        final String destinationPath = TemplateUtils.replaceTemplateData(targetLocation, placeholderData);
         final File destination = new File(destinationPath);
         if (!canOverwrite && destination.exists()) {
             log.info("File already exists {}", destinationPath);
@@ -219,7 +219,7 @@ public class ProjectServiceImpl implements ProjectService {
                 FileUtils.copyInputStreamToFile(stream, destination);
             } else {
                 final String content = GlobalUtils.readStreamAsText(stream);
-                final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
+                final String replacedData = TemplateUtils.replaceTemplateData(content, placeholderData);
                 FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
             }
             log.info("Copied file from '{}' to '{}'.", resourcePath, destinationPath);
@@ -231,8 +231,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public boolean deleteFile(final String targetLocation, final PluginContext context) {
-        final String destinationFile = TemplateUtils.replaceTemplateData(targetLocation, context.getPlaceholderData());
+    public boolean deleteFile(final String targetLocation, final Map<String, Object> placeholderData) {
+        final String destinationFile = TemplateUtils.replaceTemplateData(targetLocation, placeholderData);
         final Path path = new File(destinationFile).toPath();
         try {
             Files.deleteIfExists(path);

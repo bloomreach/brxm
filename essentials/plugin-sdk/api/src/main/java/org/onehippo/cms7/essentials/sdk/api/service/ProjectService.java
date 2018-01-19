@@ -19,8 +19,8 @@ package org.onehippo.cms7.essentials.sdk.api.service;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
 import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 
 /**
@@ -146,14 +146,14 @@ public interface ProjectService {
      * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path
      * for the destination file. It therefore typically starts with a placeholder such as {{siteResources}}.
      *
-     * @param resourcePath   absolute classloader path to the resource to copy
-     * @param targetLocation of the copied file
-     * @param context        provides placeholder data
-     * @param canOverwrite   flag indicating that if the file already exists, it may or may not be overwritten
-     * @param isBinary       flag indicating that the resource has binary content and is therefore not subject to interpolation
+     * @param resourcePath    absolute classloader path to the resource to copy
+     * @param targetLocation  of the copied file
+     * @param placeholderData to interpolate placeholders in resource and targetLocation
+     * @param canOverwrite    flag indicating that if the file already exists, it may or may not be overwritten
+     * @param isBinary        flag indicating that the resource has binary content and is therefore not subject to interpolation
      * @return true if the file was copied successfully, false otherwise
      */
-    boolean copyResource(String resourcePath, String targetLocation, PluginContext context, boolean canOverwrite, boolean isBinary);
+    boolean copyResource(String resourcePath, String targetLocation, Map<String, Object> placeholderData, boolean canOverwrite, boolean isBinary);
 
     /**
      * Delete a file from the project sources.
@@ -161,9 +161,9 @@ public interface ProjectService {
      * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path
      * for the destination file. It therefore typically starts with a placeholder such as {{siteResources}}.
      *
-     * @param targetLocation of the to-be-deleted file
-     * @param context        provides placeholder data
+     * @param targetLocation  of the to-be-deleted file
+     * @param placeholderData to interpolate placeholders in targetLocation
      * @return true if the file doesn't exist after the invocation, false otherwise
      */
-    boolean deleteFile(String targetLocation, PluginContext context);
+    boolean deleteFile(String targetLocation, Map<String, Object> placeholderData);
 }

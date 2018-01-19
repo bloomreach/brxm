@@ -21,6 +21,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -45,6 +47,8 @@ import static org.junit.Assert.assertTrue;
 public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
+    private static Map<String, Object> dummyParameters = new HashMap<>();
+
     @Inject private PluginInstructionExecutor pluginInstructionExecutor;
     @Inject private DefaultInstructionParser instructionParser;
 
@@ -59,7 +63,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final Set<PluginInstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
         for (PluginInstructionSet instructionSet : instructionSets) {
-            pluginInstructionExecutor.execute(instructionSet, getContext());
+            pluginInstructionExecutor.execute(instructionSet, dummyParameters);
         }
     }
 
@@ -73,14 +77,14 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         // execute groups labelled with "myGroup"
         for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains("myGroup")) {
-                pluginInstructionExecutor.execute(instructionSet, getContext());
+                pluginInstructionExecutor.execute(instructionSet, dummyParameters);
             }
         }
 
         // execute groups labelled with "default"
         for (PluginInstructionSet instructionSet : instructionSets) {
             if (instructionSet.getGroups().contains(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
-                pluginInstructionExecutor.execute(instructionSet, getContext());
+                pluginInstructionExecutor.execute(instructionSet, dummyParameters);
             }
         }
 

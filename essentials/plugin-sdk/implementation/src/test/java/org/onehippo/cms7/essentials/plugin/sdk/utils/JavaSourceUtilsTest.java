@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,10 +32,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseResourceTest;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.code.ExistingMethodsVisitor;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class JavaSourceUtilsTest extends BaseResourceTest {
+public class JavaSourceUtilsTest extends BaseTest {
 
     public static final String CLASS_NAME = "TestExampleClass";
     public static final String CLASS_DOC_NAME = "TestDocClass";
@@ -55,21 +56,22 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     private String absolutePath = "";
     private Path path;
     private Path docPath;
-    private Path componentFile;
 
     @Inject private ProjectService projectService;
 
     @Override
     @Before
     public void setUp() throws Exception {
+        final URL resource = getClass().getResource("/project");
+        final Path myDir = new File(GlobalUtils.decodeUrl(resource.getPath())).toPath();
+        setProjectRoot(myDir);
+        ensureProjectStructure();
 
-        super.setUp();
         final String tmpDir = System.getProperty("java.io.tmpdir");
         absolutePath = new File(tmpDir).getAbsolutePath();
         path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, PACKAGE_NAME, ".txt");
         docPath = JavaSourceUtils.createJavaClass(absolutePath, CLASS_DOC_NAME, PACKAGE_NAME, ".txt");
     }
-
 
     @Test
     public void testInsertComment() throws Exception {
@@ -169,17 +171,11 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     @Override
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
         if (path != null) {
             Files.deleteIfExists(path);
         }
         if (docPath != null) {
             Files.deleteIfExists(docPath);
         }
-        if (componentFile != null) {
-            Files.deleteIfExists(componentFile);
-        }
-
-
     }
 }

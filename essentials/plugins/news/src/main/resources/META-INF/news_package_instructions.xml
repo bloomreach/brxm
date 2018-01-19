@@ -91,10 +91,10 @@
 
   <!-- SAMPLES GROUP-->
   <instructionSet group="sampleData">
-    <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
-    <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <folder path="/content/documents/{{namespace}}/news/{{dateCurrentYear}}/{{dateCurrentMonth}}" template="xml/content/news.xml"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
     <folder path="/content/gallery/{{namespace}}/samples" template="xml/samples/content/gallery/samples.xml"/>
     <xml action="copy" source="xml/samples/content/gallery/samples/grapes.xml" target="/content/gallery/{{namespace}}/samples"/>
     <xml action="copy" source="xml/samples/content/gallery/samples/medusa.xml" target="/content/gallery/{{namespace}}/samples"/>

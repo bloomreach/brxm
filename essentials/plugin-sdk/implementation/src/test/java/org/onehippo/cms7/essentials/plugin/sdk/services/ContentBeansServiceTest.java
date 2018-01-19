@@ -21,9 +21,8 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 
 @Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
@@ -32,9 +31,7 @@ public class ContentBeansServiceTest extends BaseRepositoryTest {
 
     @Test
     public void testCreateBeans() throws Exception {
-        final PluginContext context = getContext();
         final UserFeedback feedback = new UserFeedback();
-        context.addPlaceholderData(EssentialConst.INSTRUCTION_UPDATE_IMAGE_SETS, "true");
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
         jcrService.setHippoRepository(repository);
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/home/machak/java/projects/hippo/testproject");

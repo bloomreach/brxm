@@ -40,20 +40,19 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.base.Strings;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GalleryUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,10 +72,10 @@ public class GalleryPluginResource {
     private static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     private static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private ContentBeansService contentBeansService;
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
+    @Inject private PlaceholderService placeholderService;
 
     /**
      * Updates an image model
@@ -84,7 +83,6 @@ public class GalleryPluginResource {
     @POST
     @Path("/update")
     public UserFeedback update(final ImageModel payload, @Context HttpServletResponse response) {
-        final PluginContext context = contextFactory.getContext();
         final Session session = jcrService.createSession();
         final String myType = payload.getType();
         try {
@@ -94,7 +92,7 @@ public class GalleryPluginResource {
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
             // update sets
-            scheduleImageScript(context);
+            scheduleImageScript();
             session.save();
         } catch (RepositoryException e) {
             log.error("Error saving image path", e);
@@ -160,12 +158,11 @@ public class GalleryPluginResource {
      */
     @POST
     @Path("/create")
-    public UserFeedback create(final PostPayloadRestful payload, @Context HttpServletResponse response) {
-        final Map<String, String> values = payload.getValues();
-        final String imageSetName = values.get("imageSetName");
-        final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
+    public UserFeedback create(final Map<String, Object> parameters, @Context HttpServletResponse response) {
+        final String imageSetName = (String) parameters.get("imageSetName");
+        final String imageSetPrefix = (String) parameters.get("imageSetPrefix");
+        final boolean updateExisting = BooleanUtils.isTrue((Boolean) parameters.get("updateExisting"));
 
-        final String imageSetPrefix = values.get("imageSetPrefix");
         final UserFeedback feedback = new UserFeedback();
         final int status = createImageSet(imageSetPrefix, imageSetName, feedback);
         if (Response.Status.Family.familyOf(status) != SUCCESSFUL) {
@@ -254,10 +251,9 @@ public class GalleryPluginResource {
      */
     @POST
     @Path("/addvariant")
-    public UserFeedback addVariant(final PostPayloadRestful payload, @Context HttpServletResponse response) {
-        final Map<String, String> values = payload.getValues();
-        final String imageVariantName = values.get("imageVariantName");
-        final String selectedImageSet = values.get("selectedImageSet");
+    public UserFeedback addVariant(final Map<String, Object> parameters, @Context HttpServletResponse response) {
+        final String imageVariantName = (String) parameters.get("imageVariantName");
+        final String selectedImageSet = (String) parameters.get("selectedImageSet");
         if (Strings.isNullOrEmpty(imageVariantName) || Strings.isNullOrEmpty(selectedImageSet)) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
             return new UserFeedback().addError("Image Set name or image variant name were empty");
@@ -295,11 +291,11 @@ public class GalleryPluginResource {
     }
 
 
-    private void scheduleImageScript(final PluginContext context) {
+    private void scheduleImageScript() {
         final Session session = jcrService.createSession();
         try {
             final Node updaterQueue = session.getNode("/hippo:configuration/hippo:update/hippo:queue");
-            jcrService.importResource(updaterQueue, "/image_set_updater.xml", context.getPlaceholderData());
+            jcrService.importResource(updaterQueue, "/image_set_updater.xml", placeholderService.makePlaceholders());
             session.save();
         } catch (RepositoryException e) {
             log.error("Failed to run image set updater.", e);

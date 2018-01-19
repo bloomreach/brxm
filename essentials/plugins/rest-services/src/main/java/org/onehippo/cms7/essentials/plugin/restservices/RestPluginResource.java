@@ -20,6 +20,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,20 +36,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
-import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.apache.commons.lang.BooleanUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.annotations.AnnotationUtils;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,21 +59,19 @@ public class RestPluginResource {
     private static final Logger LOG = LoggerFactory.getLogger(RestPluginResource.class);
 
     @Inject private RebuildService rebuildService;
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
     @Inject private ProjectService projectService;
+    @Inject private PlaceholderService placeholderService;
 
     @POST
     @Path("/")
-    public UserFeedback setup(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response) {
+    public UserFeedback setup(final Map<String, Object> parameters, @Context HttpServletResponse response) {
         final UserFeedback feedback = new UserFeedback();
-        final PluginContext context = contextFactory.getContext();
-        final Map<String, String> values = payloadRestful.getValues();
-        final boolean isGenericApiEnabled = Boolean.valueOf(values.get(RestPluginConst.GENERIC_API_ENABLED));
-        final boolean isManualApiEnabled = Boolean.valueOf(values.get(RestPluginConst.MANUAL_API_ENABLED));
-        final String genericRestName = values.get(RestPluginConst.GENERIC_REST_NAME);
-        final String manualRestName = values.get(RestPluginConst.MANUAL_REST_NAME);
+        final boolean isGenericApiEnabled = BooleanUtils.isTrue((Boolean) parameters.get(RestPluginConst.GENERIC_API_ENABLED));
+        final boolean isManualApiEnabled = BooleanUtils.isTrue((Boolean) parameters.get(RestPluginConst.MANUAL_API_ENABLED));
+        final String genericRestName = (String) parameters.get(RestPluginConst.GENERIC_REST_NAME);
+        final String manualRestName = (String) parameters.get(RestPluginConst.MANUAL_REST_NAME);
 
         if (isGenericApiEnabled && isManualApiEnabled && genericRestName.equals(manualRestName)) {
             return feedback.addError("Generic and manual REST resources must use different URLs.");
@@ -86,19 +83,19 @@ public class RestPluginResource {
                 return feedback.addError("Manual REST resource URL must be specified.");
             }
 
-            final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
-            final Set<ValidBean> validBeans = annotateBeans(selectedBeans);
+            final Set<ValidBean> validBeans = annotateBeans((List<String>) parameters.get(RestPluginConst.JAVA_FILES));
+            final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
 
             for (ValidBean validBean : validBeans) {
-                context.addPlaceholderData("beanName", validBean.getBeanName());
-                context.addPlaceholderData("fullQualifiedName", validBean.getFullQualifiedName());
+                placeholderData.put("beanName", validBean.getBeanName());
+                placeholderData.put("fullQualifiedName", validBean.getFullQualifiedName());
                 projectService.copyResource("/BeanNameResource.txt",
-                        "{{restFolder}}/{{beanName}}Resource.java", context, false, false);
+                        "{{restFolder}}/{{beanName}}Resource.java", placeholderData, false, false);
             }
 
-            context.addPlaceholderData("beans", validBeans);
+            placeholderData.put("beans", validBeans);
             if (!projectService.copyResource("/spring-plain-rest-api.xml",
-                    "{{siteOverrideFolder}}/spring-plain-rest-api.xml", context, true, false)) {
+                    "{{siteOverrideFolder}}/spring-plain-rest-api.xml", placeholderData, true, false)) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return feedback.addError("Failed to set up Spring configuration for 'manual' REST endpoint. See back-end logs for mode details.");
             }
@@ -147,14 +144,10 @@ public class RestPluginResource {
         return true;
     }
 
-    private Set<ValidBean> annotateBeans(final String input) {
+    private Set<ValidBean> annotateBeans(final List<String> paths) {
         final Set<ValidBean> validBeans = new HashSet<>();
 
-        if (Strings.isNullOrEmpty(input)) {
-            return validBeans;
-        }
-        final Iterable<String> split = Splitter.on(',').split(input);
-        for (String path : split) {
+        for (String path : paths) {
             final File file = new File(path);
             if (file.exists()) {
                 final java.nio.file.Path filePath = file.toPath();

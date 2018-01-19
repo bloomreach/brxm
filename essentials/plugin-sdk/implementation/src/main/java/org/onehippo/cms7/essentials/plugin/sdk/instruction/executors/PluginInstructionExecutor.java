@@ -16,14 +16,13 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction.executors;
 
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Multimap;
 
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,19 +31,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class PluginInstructionExecutor {
 
-    public Instruction.Status execute(final PluginInstructionSet set, PluginContext context) {
+    public Instruction.Status execute(final PluginInstructionSet set, final Map<String, Object> parameters) {
         Instruction.Status status = Instruction.Status.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {
-            status = instruction.execute(context);
+            final Instruction.Status sts = instruction.execute(parameters);
+            if (sts == Instruction.Status.FAILED) {
+                status = sts;
+            }
         }
         return status;
     }
 
-    @SuppressWarnings("unchecked")
-    public Multimap<Instruction.Type, MessageRestful> getInstructionsMessages(final PluginInstructionSet instruction, final PluginContext context) {
-        MessageInstructionExecutor executor = new MessageInstructionExecutor();
-        return executor.execute(instruction, context);
+    public void getInstructionsMessages(final PluginInstructionSet instructionSet,
+                                        final Multimap<Instruction.Type, String> messageMap) {
+        instructionSet.getInstructions().forEach(i -> i.populateChangeMessages(messageMap::put));
     }
-
 }

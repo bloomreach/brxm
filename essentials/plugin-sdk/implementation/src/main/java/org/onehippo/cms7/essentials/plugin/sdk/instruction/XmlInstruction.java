@@ -34,13 +34,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cms7.essentials.sdk.api.ctx.PluginContext;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.XmlUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.xml.XmlNode;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -54,6 +54,7 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
     @Inject private JcrService jcrService;
+    @Inject private PlaceholderService placeholderService;
 
     private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
     private boolean overwrite;
@@ -66,15 +67,16 @@ public class XmlInstruction extends BuiltinInstruction {
     }
 
     @Override
-    public Status execute(final PluginContext context) {
-        processPlaceholders(context.getPlaceholderData());
+    public Status execute(final Map<String, Object> parameters) {
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+        processPlaceholders(placeholderData);
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
             log.info("Invalid instruction descriptor: {}", toString());
             return Status.FAILED;
         }
         if (action == Action.COPY) {
-            return copy(context);
+            return copy(placeholderData);
         } else {
             return delete();
         }
@@ -89,7 +91,7 @@ public class XmlInstruction extends BuiltinInstruction {
         }
     }
 
-    private Status copy(final PluginContext context) {
+    private Status copy(final Map<String, Object> placeholderData) {
         final Session session = jcrService.createSession();
         InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
@@ -105,13 +107,13 @@ public class XmlInstruction extends BuiltinInstruction {
             }
 
             // first check if node exists:
-            if (!isOverwrite() && nodeExists(context, session, source, destination.getPath())) {
+            if (!isOverwrite() && nodeExists(placeholderData, session, source, destination.getPath())) {
                 log.info("Skipping XML import, target node '{}' already exists.", target);
                 return Status.SKIPPED;
             }
 
             // Import XML with replaced NAMESPACE placeholder
-            final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
+            final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), placeholderData);
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Imported XML from '{}' to '{}'.", source, target);
@@ -125,12 +127,12 @@ public class XmlInstruction extends BuiltinInstruction {
         return Status.SUCCESS;
     }
 
-    private boolean nodeExists(final PluginContext context, final Session session, final String source, final String parentPath) throws RepositoryException {
+    private boolean nodeExists(final Map<String, Object> placeholderData, final Session session, final String source, final String parentPath) throws RepositoryException {
 
         final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             final XmlNode xmlNode = XmlUtils.parseXml(stream);
-            final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), context.getPlaceholderData());
+            final String name = TemplateUtils.replaceTemplateData(xmlNode.getName(), placeholderData);
             if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
                 final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
                 if (session.itemExists(absPath)) {
@@ -175,9 +177,6 @@ public class XmlInstruction extends BuiltinInstruction {
         if (mySource != null) {
             source = mySource;
         }
-        // add local data
-        data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
-        data.put(EssentialConst.PLACEHOLDER_TARGET, target);
     }
 
     private boolean valid() {
