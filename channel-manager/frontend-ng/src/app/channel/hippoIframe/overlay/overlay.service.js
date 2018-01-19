@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
-import clearSvg from '../../../../images/html/clear.svg';
 import plusSvg from '../../../../images/html/plus.svg';
 import searchSvg from '../../../../images/html/search.svg';
+import searchWhiteSvg from '../../../../images/html/search-white.svg';
 import addContentSvg from '../../../../images/html/add-content.svg';
 
 const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
@@ -372,51 +372,48 @@ class OverlayService {
   }
 
   _getDialOptions(config) {
-    // The order of the properties in variable optionButtons defines
-    // the order in which they will be rendered in the dial widget.
-    const optionButtons = {
-      templateQuery: {
-        svg: plusSvg,
+    const optionsSet = Object.assign({buttons: []});
+
+    if (config.documentUuid) {
+      const editContentButton = {
+        mainIcon: contentLinkSvg,
+        dialIcon: '', // edit button should never be a dial button
+        callback: () => {
+          this.$rootScope.$apply(() => {
+            this.editContentHandler(config.documentUuid);
+          });
+        },
+        tooltip: this.$translate.instant('EDIT_CONTENT'),
+      };
+      optionsSet.buttons.push(editContentButton);
+
+    }
+
+    if (config.templateQuery) {
+      const createContentButton = {
+        mainIcon: addContentSvg,
+        dialIcon: plusSvg,
         callback: () => {
           this.$rootScope.$apply(() => {
             this.createContentHandler(config);
           });
         },
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
-      },
-      componentParameter: {
-        svg: searchSvg,
+      };
+      optionsSet.buttons.push(createContentButton);
+    }
+
+    if (config.componentParameter) {
+      const selectDocumentButton = {
+        mainIcon: searchWhiteSvg,
+        dialIcon: searchSvg,
         callback: () => this.pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-      },
-    };
-
-    const optionsSet = Object.assign({ buttons: [] },
-      config.documentUuid ? this._getMainEditButtonConfig() : this._getMainCreateButtonConfig());
-
-    Object.keys(optionButtons)
-      .filter(key => config[key])
-      .forEach(key => optionsSet.buttons.push(optionButtons[key]));
+      };
+      optionsSet.buttons.push(selectDocumentButton);
+    }
 
     return optionsSet;
-  }
-
-  _getMainCreateButtonConfig() {
-    return {
-      mainButtonIcon: addContentSvg,
-      mainButtonTooltip: this.$translate.instant('CREATE_DOCUMENT'),
-      mainButtonCloseIcon: clearSvg,
-      mainButtonCloseTooltip: this.$translate.instant('CANCEL'),
-    };
-  }
-
-  _getMainEditButtonConfig() {
-    return {
-      mainButtonIcon: contentLinkSvg,
-      mainButtonTooltip: this.$translate.instant('EDIT_CONTENT'),
-      mainButtonCloseIcon: contentLinkSvg,
-      mainButtonCloseTooltip: this.$translate.instant('EDIT_CONTENT'),
-    };
   }
 
   _initManageContentConfig(structureElement) {
@@ -473,8 +470,8 @@ class OverlayService {
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button title="${optionsSet.mainButtonTooltip}"
-                 class="hippo-fab-btn qa-manage-content-link">${optionsSet.mainButtonIcon}</button>`)
+      .append(`<button title="${optionsSet.buttons[0].tooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${optionsSet.buttons[0].mainIcon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('.hippo-fab-btn');
@@ -489,6 +486,8 @@ class OverlayService {
     if (config.componentParameter) {
       fabBtn.addClass('qa-manage-parameters');
     }
+
+    fabBtn.on('click', optionsSet.buttons[0].callback);
 
     const adjustOptionsPosition = () => {
       const boxElement = structureElement.prepareBoxElement();
@@ -506,10 +505,8 @@ class OverlayService {
     const showOptions = () => {
       adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(this._createButtonsHtml(optionsSet.buttons));
+        optionButtonsContainer.html(this._createButtonsHtml(optionsSet.buttons.slice(1)));
         fabBtn.addClass('hippo-fab-btn-open');
-        fabBtn.html(optionsSet.mainButtonCloseIcon);
-        fabBtn.attr('title', optionsSet.mainButtonCloseTooltip);
         overlayElement.addClass('is-showing-options');
         return true;
       }
@@ -517,8 +514,6 @@ class OverlayService {
     };
     const hideOptions = () => {
       fabBtn.removeClass('hippo-fab-btn-open');
-      fabBtn.html(optionsSet.mainButtonIcon);
-      fabBtn.attr('title', optionsSet.mainButtonTooltip);
       overlayElement.removeClass('is-showing-options');
     };
     const showOptionsIfLeft = () => {
@@ -531,12 +526,6 @@ class OverlayService {
       hideOptions();
       overlayElement.addClass('is-left');
     };
-    const fabButtonCallback = this.fabButtonCallback(config, optionsSet);
-    if (fabButtonCallback) {
-      fabBtn.on('click', () => fabButtonCallback(config.documentUuid));
-    } else {
-      overlayElement.on('click', () => showOptions() || hideOptions());
-    }
 
     if (this.isHoverEnabled(config)) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
@@ -549,19 +538,9 @@ class OverlayService {
   }
 
   _createButtonTemplate(button, index) {
-    return $(`<button title="${button.tooltip}">${button.svg}</button>`)
+    return $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
       .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
       .on('click', button.callback);
-  }
-
-  fabButtonCallback(config, optionsSet) {
-    if (config.documentUuid) {
-      return this.editContentHandler;
-    }
-    if (config.templateQuery && !config.componentParameter) {
-      return optionsSet.buttons[0].callback;
-    }
-    return null;
   }
 
   isHoverEnabled(config) {
