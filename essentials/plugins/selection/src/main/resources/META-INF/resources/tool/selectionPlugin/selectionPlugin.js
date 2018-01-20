@@ -40,7 +40,7 @@
                     jcrContentType: $scope.data.selectedDocumentType.fullName,
                     fieldName:      $scope.data.fieldName,
                     selectionType:  $scope.data.selectionType,
-                    valueList:      $scope.data.selectedValueList.value,
+                    valueList:      $scope.data.selectedValueList.jcrPath,
                     presentation:   $scope.data.presentation.id,
                     orientation:    $scope.data.orientation,
                     maxRows:        maxRows,
@@ -58,7 +58,7 @@
             };
 
             $scope.valueListAsOption = function(valueList) {
-                return valueList.key + ' (' + valueList.value + ')';
+                return valueList.displayName + ' (' + valueList.jcrPath + ')';
             };
             $scope.saveProvisioning = function() {
                 var provisionedValueLists = [];
@@ -139,7 +139,7 @@
                         angular.forEach($scope.valueLists, function(valueList) {
                             var oldItem, newItem;
                             angular.forEach(oldProvisionedValueLists, function(oldValueList) {
-                                if (oldValueList.path === valueList.value) {
+                                if (oldValueList.path === valueList.jcrPath) {
                                     oldItem = oldValueList;
                                 }
                             });
@@ -148,7 +148,7 @@
                                 newItem = oldItem;
                             } else {
                                 newItem = {
-                                    path: valueList.value
+                                    path: valueList.jcrPath
                                 };
                             }
                             provisionedValueLists.push(newItem);

@@ -20,7 +20,7 @@
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             var endpointQueries = $rootScope.REST.documents_template_queries;
-            $scope.valueListPath = null;
+            $scope.valueList = null;
             $scope.documentQuery = null;
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
@@ -36,8 +36,8 @@
             $scope.anyOf = function () {
                 return true;
             };
-            $scope.documentFirstSorting = function (keyValue) {
-                return keyValue.key.indexOf('document') == -1 ? 1 : 0;
+            $scope.documentFirstSorting = function (query) {
+                return query.name.indexOf('document') == -1 ? 1 : 0;
             };
 
             $scope.addCancel = function () {
@@ -49,7 +49,7 @@
                   classificationType: $scope.classificationType,
                   documentType: $scope.selectedDocument.fullName,
                   baseFolder: $scope.baseFolder,
-                  documentQuery: $scope.documentQuery.value,
+                  documentQuery: $scope.documentQuery.name,
 
                   shortcutLinkLabel: $scope.shortcutLinkLabel,
                   nameLabel: $scope.nameLabel,
@@ -57,8 +57,8 @@
                   listLabel: $scope.listLabel
                 };
                 
-                if ($scope.valueListPath !== null) {
-                    payload.valueListPath = $scope.valueListPath.value;
+                if ($scope.valueList !== null) {
+                    payload.valueListPath = $scope.valueList.jcrPath;
                 }
                 $http.post(endpoint, payload); // User feedback is handled globally
             };
@@ -75,7 +75,7 @@
 
                 // Set default selection
                 angular.forEach($scope.queries, function(query) {
-                    if (query.key === "new-document") {
+                    if (query.name === "new-document") {
                         $scope.documentQuery = query;
                     }
                 });

@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +38,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.sdk.api.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.rest.ContentTypeInstance;
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.sdk.api.rest.TemplateQuery;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
@@ -105,8 +105,8 @@ public class DocumentResource {
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")
-    public List<KeyValueRestful> getDocumentsByType(@PathParam("docType") String docType) {
-        final List<KeyValueRestful> valueLists = new ArrayList<>();
+    public List<ContentTypeInstance> getDocumentsByType(@PathParam("docType") String docType) {
+        final List<ContentTypeInstance> instances = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
@@ -120,7 +120,8 @@ public class DocumentResource {
                         node = parent;
                     }
                     final String path = node.getPath();
-                    valueLists.add(new KeyValueRestful(((HippoNode) node).getDisplayName(), path));
+                    final String displayName = ((HippoNode) node).getDisplayName();
+                    instances.add(new ContentTypeInstance(path, docType, displayName));
                 }
             } catch (RepositoryException e) {
                 log.debug("Error fetching value lists", e);
@@ -128,19 +129,18 @@ public class DocumentResource {
                 jcrService.destroySession(session);
             }
         }
-        Collections.sort(valueLists);
-        return valueLists;
+        return instances;
     }
 
     @ApiOperation(
             value = "Returns all document / folder query types",
             notes = "No pairing is done (e.g.: news-folder + news-document combinations. This is left to users themselves)",
-            response = KeyValueRestful.class)
+            response = List.class)
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/templatequeries")
-    public List<KeyValueRestful> getQueryCombinations() {
-        final List<KeyValueRestful> templateList = new ArrayList<>();
+    public List<TemplateQuery> getQueries() {
+        final List<TemplateQuery> templateList = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
@@ -150,8 +150,7 @@ public class DocumentResource {
                 final NodeIterator nodes = result.getNodes();
                 while (nodes.hasNext()) {
                     final Node node = nodes.nextNode();
-                    final String name = node.getName();
-                    templateList.add(new KeyValueRestful(name, name));
+                    templateList.add(new TemplateQuery(node.getName()));
                 }
             } catch (RepositoryException e) {
                 log.debug("Error fetching value lists", e);
