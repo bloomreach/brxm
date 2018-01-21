@@ -39,7 +39,6 @@ public class PluginDescriptor {
     private String description;
     private List<String> imageUrls;
     private String id;
-    private String packageClass;
     private boolean hasConfiguration;
     private boolean noRebuildAfterSetup;
     private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
@@ -107,14 +106,6 @@ public class PluginDescriptor {
 
     public void setPackageFile(final String packageFile) {
         this.packageFile = packageFile;
-    }
-
-    public String getPackageClass() {
-        return packageClass;
-    }
-
-    public void setPackageClass(final String packageClass) {
-        this.packageClass = packageClass;
     }
 
     public void setHasConfiguration(final boolean hasConfiguration) {

@@ -84,34 +84,20 @@ public class Plugin {
     }
 
     public boolean hasGeneralizedSetUp() {
-        return StringUtils.hasText(getDescriptor().getPackageFile())
-            || StringUtils.hasText(getDescriptor().getPackageClass());
+        return StringUtils.hasText(getDescriptor().getPackageFile());
     }
 
     public DefaultInstructionPackage makeInstructionPackageInstance() {
-        DefaultInstructionPackage instructionPackage = null;
-
-        // Prefers packageClass over packageFile.
-        final String packageClass = descriptor.getPackageClass();
-        if (!Strings.isNullOrEmpty(packageClass)) {
-            instructionPackage = GlobalUtils.newInstance(packageClass);
-            if (instructionPackage == null) {
-                log.warn("Can't create instance for instruction package class {}", packageClass);
-            }
-        }
-
-        if (instructionPackage == null) {
-            final String packageFile = descriptor.getPackageFile();
-            if (!Strings.isNullOrEmpty(packageFile)) {
-                instructionPackage = GlobalUtils.newInstance(DefaultInstructionPackage.class);
+        final String packageFile = descriptor.getPackageFile();
+        if (!Strings.isNullOrEmpty(packageFile)) {
+            final DefaultInstructionPackage instructionPackage = GlobalUtils.newInstance(DefaultInstructionPackage.class);
+            if (instructionPackage != null) {
                 instructionPackage.setInstructionPath(packageFile);
+                injector.autowireBean(instructionPackage);
+                return instructionPackage;
             }
         }
-
-        if (instructionPackage != null) {
-            injector.autowireBean(instructionPackage);
-        }
-        return instructionPackage;
+        return null;
     }
 
     @Override
