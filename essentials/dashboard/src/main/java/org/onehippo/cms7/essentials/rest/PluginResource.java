@@ -366,6 +366,8 @@ public class PluginResource {
             }
         }
 
+        properties.put((String)properties.get(EssentialConst.PROP_TEMPLATE_NAME), true);
+
         return properties;
     }
 

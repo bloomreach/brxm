@@ -69,10 +69,8 @@ public class DefaultInstructionPackage {
 
         final Multimap<Instruction.Type, MessageRestful> instructionsMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
-        for (Instruction.Type type : messageMap.keys()) {
-            for (String rawMessage : messageMap.get(type)) {
-                instructionsMessages.put(type, new MessageRestful(TemplateUtils.replaceTemplateData(rawMessage, placeholderData)));
-            }
+        for (Map.Entry<Instruction.Type, String> entry : messageMap.entries()) {
+            instructionsMessages.put(entry.getKey(), new MessageRestful(TemplateUtils.replaceTemplateData(entry.getValue(), placeholderData)));
         }
         return instructionsMessages;
     }
