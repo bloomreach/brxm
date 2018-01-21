@@ -424,12 +424,13 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
     const componentParameter = structureElement.getComponentParameter();
+    const enclosingElement = structureElement.getEnclosingElement();
 
     const config = {
       componentParameter,
       componentPickerConfig: structureElement.getComponentPickerConfig(),
       componentValue: structureElement.getComponentValue(),
-      containerItem: structureElement.getEnclosingElement(),
+      containerItem: enclosingElement,
       defaultPath: structureElement.getDefaultPath(),
       documentUuid,
       rootPath: structureElement.getRootPath(),
@@ -449,7 +450,9 @@ class OverlayService {
       }
     }
 
-    if (structureElement.getEnclosingElement().isLocked() && componentParameter) {
+    if (enclosingElement.isLocked()
+      && componentParameter
+      && !enclosingElement.isLockedByCurrentUser()) {
       if (!documentUuid) {
         return {};
       }
