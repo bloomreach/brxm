@@ -17,8 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('beanWriterCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.endpoint = $rootScope.REST.dynamic + 'beanwriter/';
+        .controller('beanWriterCtrl', function ($scope, $http, essentialsRestService) {
+            $scope.endpoint = essentialsRestService.baseUrl + '/beanwriter';
             $scope.resultMessages = [];
             $scope.selectedImageSet = 'HippoGalleryImageSet';
             $scope.updateImageMethods = false;
@@ -31,7 +31,7 @@
             };
             $scope.identity = angular.identity; // for sorting the imageSets in the UI.
 
-            $http.get($scope.endpoint + "imagesets").success(function (data) {
+            $http.get($scope.endpoint + "/imagesets").success(function (data) {
                 $scope.imageSets = data;
                 // check if we have custom image sets and preselect (first) one.
                 if ($scope.imageSets) {

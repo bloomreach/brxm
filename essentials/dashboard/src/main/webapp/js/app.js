@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,18 +173,12 @@
                 });
 
             $rootScope.feedbackMessages = [];
-            $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
             var root = window.SERVER_URL + '/essentials/rest';
             var pluginsStem = root + "/plugins";
             var projectStem = root + "/project";
 
-            /* TODO generate this server side ?*/
             $rootScope.REST = {
-                root: root,
-                menus: root + '/menus/',
-                dynamic: root + '/dynamic/',
-
                 /**
                  * PluginResource
                  */
@@ -202,17 +196,7 @@
                 project: projectStem,
                 PROJECT: { // Front-end API
                     settings: projectStem + '/settings'
-                },
-
-                //############################################
-                // DOCUMENTS
-                //############################################
-                documents: root + '/documents/',
-                documents_compounds: root + '/documents/' + 'compounds',
-                documents_documents: root + '/documents/' + 'documents',
-                documents_template_queries: root + '/documents/' + 'templatequeries'
-
-
+                }
             };
 
             /**
@@ -220,7 +204,7 @@
              */
             $rootScope.initData = function () {
                 $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
+                    $rootScope.projectSettings = data;
                 });
             };
 

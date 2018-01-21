@@ -17,9 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('taxonomyPluginCtrl', function ($scope, $rootScope, $http) {
-            var endpointDocuments = $rootScope.REST.documents;
-            var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + 'taxonomyplugin/';
+        .controller('taxonomyPluginCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
+            var endpointTaxonomy = essentialsRestService.baseUrl + '/taxonomyplugin';
             $scope.addDocuments = function () {
                 var taxonomyFields = [];
                 angular.forEach($scope.documentTypes, function (docType) {
@@ -30,7 +29,7 @@
                         });
                     }
                 });
-                $http.post(endpointTaxonomy + 'add', taxonomyFields).success(function () {
+                $http.post(endpointTaxonomy + '/add', taxonomyFields).success(function () {
                     $scope.fieldsAdded = true;
                     updateDocumentTypes();
                 });
@@ -41,7 +40,7 @@
                     name: $scope.taxonomyName,
                     locales: extractLocales($scope.locales)
                 };
-                $http.post(endpointTaxonomy + 'taxonomies/add', taxonomy).success(function () {
+                $http.post(endpointTaxonomy + '/taxonomies/add', taxonomy).success(function () {
                     loadTaxonomies();
                 });
             };
@@ -52,7 +51,7 @@
             //############################################
             // INITIALIZE APP:
             //############################################
-            $http.get(endpointDocuments).success(function (data) {
+            essentialsContentTypeService.getContentTypes().success(function (data) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
                 angular.forEach(data, function(docType) {
@@ -82,7 +81,7 @@
                 ];
                 $scope.taxonomyName = null;
 
-                $http.get(endpointTaxonomy + "taxonomies").success(function (data) {
+                $http.get(endpointTaxonomy + "/taxonomies").success(function (data) {
                     $scope.taxonomies = data;
 
                     angular.forEach(data, function (taxonomy) {
@@ -99,7 +98,7 @@
                     $scope.typesWithTaxonomyField = 0;
 
                     // update list of per-document used taxonomies
-                    $http.get(endpointTaxonomy + 'taxonomies/' + docType.fullName).success(function (taxonomies) {
+                    $http.get(endpointTaxonomy + '/taxonomies/' + docType.fullName).success(function (taxonomies) {
                         docType.taxonomies = taxonomies;
                         docType.taxonomiesString = taxonomies.join(', ');
                         docType.hasTaxonomyFields = !!docType.taxonomiesString;

@@ -17,7 +17,7 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('taggingPluginCtrl', function ($scope, $rootScope, $http) {
+        .controller('taggingPluginCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
             $scope.widgetCols = 20;
             $scope.widgetRows = 2;
             $scope.numberOfSuggestions = 10;
@@ -37,12 +37,12 @@
                         configuration.jcrContentTypes.push(docType.fullName);
                     }
                 });
-                $http.post($rootScope.REST.dynamic + 'taggingplugin/', configuration).success(function () {
+                $http.post(essentialsRestService.baseUrl + '/taggingplugin', configuration).success(function () {
                     $scope.fieldsAdded = true;
                 });
             };
 
-            $http.get($rootScope.REST.documents).success(function (docTypes) {
+            essentialsContentTypeService.getContentTypes().success(function (docTypes) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
                 angular.forEach(docTypes, function(docType) {

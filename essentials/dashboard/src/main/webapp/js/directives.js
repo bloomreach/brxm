@@ -27,7 +27,6 @@
                 scope: {
                     title: '@',
                     buttonText: '@',
-                    endPoint: '@',
                     selectedPath: '=',
                     selected: '='
                 },
@@ -39,9 +38,7 @@
                             controller: ModalInstanceCtrl,
                             size: size,
                             resolve: {
-                                endPoint: function () {
-                                    return $scope.endPoint;
-                                }, title: function () {
+                                title: function () {
                                     return $scope.title;
                                 }, buttonText: function () {
                                     return $scope.buttonText;
@@ -65,9 +62,9 @@
                     //############################################
                     // MODAL
                     //############################################
-                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, endPoint, title) {
+                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, title) {
                         $scope.title = title;
-                        $http.get(endPoint).success(function (data) {
+                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').success(function (data) {
                             $scope.treeItems = data.items;
                         });
                         $scope.ok = function () {
@@ -149,8 +146,7 @@
                     var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
                     function getMessages() {
                         if ($scope.params) {
-                            var payload = {values: $scope.params};
-                            $http.post(url, payload).success(function (data) {
+                            $http.get(url, { params: $scope.params }).success(function (data) {
                                 $scope.packageMessages = data;
                             });
                         }
@@ -404,11 +400,13 @@
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
                             var url = $rootScope.REST.PLUGINS.changesById($scope.plugin.id);
-                            url += '?sampleData=' + $rootScope.projectSettings.useSamples;
-                            url += '&templateName=' + $rootScope.projectSettings.templateLanguage;
-                            url += '&extraTemplates=' + $rootScope.projectSettings.extraTemplates;
+                            var params = {
+                                sampleData: $rootScope.projectSettings.useSamples,
+                                templateName: $rootScope.projectSettings.templateLanguage,
+                                extraTemplates: $rootScope.projectSettings.extraTemplates
+                            };
 
-                            $http.get(url).success(function (data){
+                            $http.get(url, { params: params }).success(function(data) {
                                 // If there are no messages, the backend sends a single "no messages" message
                                 // with the group not set. Filter those out.
                                 if (data.length > 1 || data[0].group) {

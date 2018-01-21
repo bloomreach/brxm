@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
   -->
 
 <div ng-controller="blogPluginCtrl">
-    <div ng-show="plugin.installState === 'onBoard'">
+    <div ng-if="plugin.installState === 'onBoard'">
         <essentials-simple-install-plugin
             plugin-id="{{pluginId}}"
             has-sample-data="true"
             has-extra-templates="true">
         </essentials-simple-install-plugin>
     </div>
-    <div class="panel panel-default" ng-show="plugin.installState === 'installed'">
+    <div class="panel panel-default" ng-if="plugin.installState === 'installed'">
         <div class="panel-heading"><h3>{{plugin.name}}</h3></div>
         <div class="panel-body">
             <form novalidate name="blogForm">

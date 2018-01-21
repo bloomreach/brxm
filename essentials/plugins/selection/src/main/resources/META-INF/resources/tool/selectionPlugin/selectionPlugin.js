@@ -17,9 +17,9 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('selectionPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+        .controller('selectionPluginCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
 
-            var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+            var restEndpoint = essentialsRestService.baseUrl + '/selectionplugin';
             var singlePresentations = [
                 { id: 'dropdown', label: 'Dropdown'},
                 { id: 'radioboxes', label: 'Radio Group'}
@@ -46,7 +46,7 @@
                     maxRows:        maxRows,
                     allowOrdering:  $scope.data.allowOrdering
                 };
-                $http.post(restEndpoint + 'addfield/', payload).success(function () {
+                $http.post(restEndpoint + '/addfield', payload).success(function () {
                     resetAddFieldForm();
                     reloadSelectionFields($scope.data.selectedDocumentType);
                     $scope.fieldAdded = true;
@@ -70,7 +70,7 @@
                         });
                     }
                 });
-                $http.post(restEndpoint + 'spring', provisionedValueLists).success(function() {
+                $http.post(restEndpoint + '/spring', provisionedValueLists).success(function() {
                     loadProvisionedValueLists();
                 });
             };
@@ -99,7 +99,7 @@
             loadValueLists();
 
             $scope.documentTypes = [];
-            $http.get($rootScope.REST.documents).success(function (data){
+            essentialsContentTypeService.getContentTypes().success(function (data){
                 $scope.documentTypes = data;
                 $scope.initializing = false;
 
@@ -126,7 +126,7 @@
 
             // Helper functions
             function loadValueLists() {
-                $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                essentialsContentTypeService.getContentTypeInstances('selection:valuelist').success(function (data) {
                     $scope.valueLists = data;
 
                     loadProvisionedValueLists();
@@ -134,7 +134,7 @@
             }
             function loadProvisionedValueLists() {
                 if ($scope.valueLists.length > 0) {
-                    $http.get(restEndpoint + 'spring').success(function (oldProvisionedValueLists) {
+                    $http.get(restEndpoint + '/spring').success(function (oldProvisionedValueLists) {
                         var provisionedValueLists = [];
                         angular.forEach($scope.valueLists, function(valueList) {
                             var oldItem, newItem;
@@ -166,7 +166,7 @@
             }
             function reloadSelectionFields(documentType) {
                 $scope.selectionFields = [];
-                $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
+                $http.get(restEndpoint + '/fieldsfor/' + documentType.fullName).success(function (data) {
                     $scope.selectionFields = data;
                 });
             }

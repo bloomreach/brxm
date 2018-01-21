@@ -17,8 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
+        .controller('restServicesCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
+            $scope.endpoint = essentialsRestService.baseUrl + '/restservices';
             $scope.genericRestName = "api";
             $scope.manualRestName = "api-manual";
             $scope.documentTypes = [];
@@ -68,7 +68,7 @@
                 });
             };
 
-            $http.get($rootScope.REST.documents).success(function (data) {
+            essentialsContentTypeService.getContentTypes().success(function (data) {
                 angular.forEach(data, function (docType) {
                     if (docType.fullPath) {
                         $scope.documentTypes.push(docType);

@@ -17,9 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
-            var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
-            var endpointQueries = $rootScope.REST.documents_template_queries;
+        .controller('documentWizardCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
+            var endpoint = essentialsRestService.baseUrl + '/documentwizard';
             $scope.valueList = null;
             $scope.documentQuery = null;
             $scope.selectedDocument = null;
@@ -31,7 +30,6 @@
             $scope.nameLabel = "New document";
             $scope.dateLabel = "Document date";
             $scope.listLabel = "";
-            $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
 
             $scope.anyOf = function () {
                 return true;
@@ -66,11 +64,11 @@
             //############################################
             // INIT
             //############################################
-            $http.get($rootScope.REST.documents).success(function (data) {
+            essentialsContentTypeService.getContentTypes().success(function (data) {
                 $scope.documentTypes = data;
             });
 
-            $http.get(endpointQueries).success(function (data) {
+            essentialsContentTypeService.getTemplateQueries().success(function (data) {
                 $scope.queries = data;
 
                 // Set default selection
@@ -81,7 +79,7 @@
                 });
             });
 
-            $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+            essentialsContentTypeService.getContentTypeInstances('selection:valuelist').success(function (data) {
                 $scope.valueLists = data;
             });
         })

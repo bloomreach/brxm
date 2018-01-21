@@ -190,10 +190,10 @@
             }
         }])
 
-        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal',
-            function ($scope, $rootScope, $http, $uibModal) {
+        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal', 'essentialsRestService',
+            function ($scope, $rootScope, $http, $uibModal, essentialsRestService) {
 
-            var endpoint = $rootScope.REST.dynamic + "galleryplugin";
+            var endpoint = essentialsRestService.baseUrl + "/galleryplugin";
             $scope.imageSets = [];
             $scope.selectedImageSet = null;
             $scope.feedback = "You have changed Image Sets and may want to update your Hippo Image Set beans now. "
