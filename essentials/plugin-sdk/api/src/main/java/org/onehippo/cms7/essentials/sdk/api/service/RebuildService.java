@@ -30,9 +30,4 @@ public interface RebuildService {
      * @param pluginId identifies the requesting plugin
      */
     void requestRebuild(String pluginId);
-
-    /**
-     * Retrieve a set of plugin IDs requesting a rebuild and restart.
-     */
-    Set<String> getRequestingPluginIds();
 }

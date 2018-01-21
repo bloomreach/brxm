@@ -33,7 +33,6 @@ public class RebuildServiceImpl implements RebuildService {
         pluginIds.add(pluginId);
     }
 
-    @Override
     public Set<String> getRequestingPluginIds() {
         return new HashSet<>(pluginIds);
     }

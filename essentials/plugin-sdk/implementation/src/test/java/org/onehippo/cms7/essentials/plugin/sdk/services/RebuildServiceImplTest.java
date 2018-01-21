@@ -26,7 +26,7 @@ public class RebuildServiceImplTest {
 
     @Test
     public void collect_plugin_ids() {
-        final RebuildService rebuildService = new RebuildServiceImpl();
+        final RebuildServiceImpl rebuildService = new RebuildServiceImpl();
 
         assertTrue(rebuildService.getRequestingPluginIds().isEmpty());
 
