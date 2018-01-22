@@ -23,19 +23,15 @@ class Step1Service {
 
     this.ChannelService = ChannelService;
     this.ContentService = ContentService;
-    this._resetState();
+    this._reset();
   }
 
   stop() {
-    this._resetState();
-  }
-
-  setLocale(locale) {
-    this.locale = locale;
+    this._reset();
   }
 
   open(templateQuery, rootPath, defaultPath) {
-    this._resetState();
+    this._reset();
 
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
@@ -101,7 +97,7 @@ class Step1Service {
     }
   }
 
-  _resetState() {
+  _reset() {
     delete this.name;
     delete this.url;
     delete this.locale;

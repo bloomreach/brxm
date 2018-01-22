@@ -88,7 +88,7 @@ class DocumentLocationFieldController {
     const lastFolder = folders[folders.length - 1];
     this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
     this.documentLocation = lastFolder.path;
-    this.changeLocale({ locale: lastFolder.locale });
+    this.locale = lastFolder.locale;
     this.defaultPath = folders
       .filter((folder, index) => index >= this.rootPathDepth)
       .map(folder => folder.name)
