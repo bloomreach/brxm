@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -881,7 +881,7 @@ describe('OverlayService', () => {
     });
 
     describe('when container is locked', () => {
-      it('always shows an edit button when locked', (done) => {
+      it('always shows an edit button even when locked', (done) => {
         manageContentScenario(7, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
@@ -903,7 +903,7 @@ describe('OverlayService', () => {
         });
       });
 
-      it('Shows everything when locked by user', (done) => {
+      it('shows everything when locked by current user', (done) => {
         manageContentScenario(5, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
           expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
