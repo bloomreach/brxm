@@ -23,6 +23,7 @@ const contentEditorComponent = {
   template,
   bindings: {
     cancelLabel: '@',
+    closeLabel: '@',
     onClose: '&',
     onSave: '&',
     onSwitchEditor: '&',

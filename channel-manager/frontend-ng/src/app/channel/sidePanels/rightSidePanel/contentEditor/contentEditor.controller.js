@@ -20,6 +20,7 @@ class ContentEditorCtrl {
 
     this.$scope = $scope;
     this.ContentEditor = ContentEditor;
+    this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }
 
