@@ -99,17 +99,13 @@ class ContentEditorService {
   }
 
   _loadDocument(id) {
-    this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
+    this._setDocumentId(id);
+
     return this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)
         .then((document) => {
           if (this._hasFields(document)) {
-            return this.ContentService.getDocumentType(document.info.type.id)
-              .then((documentType) => {
-                this._onLoadSuccess(document, documentType);
-                this._reportUnsupportedFieldTypes(documentType);
-              });
+            this.loadDocumentType(document);
           }
           return this.$q.reject(this._noContentResponse(document));
         })
@@ -117,8 +113,23 @@ class ContentEditorService {
       .catch(() => this._setErrorDraftInvalid());
   }
 
+  _setDocumentId(id) {
+    this.documentId = id;
+    this.FieldService.setDocumentId(this.documentId);
+  }
+
   _hasFields(document) {
     return document.fields && Object.keys(document.fields).length > 0;
+  }
+
+  loadDocumentType(document) {
+    this._setDocumentId(document.id);
+    return this.ContentService.getDocumentType(document.info.type.id)
+      .then((documentType) => {
+        this._onLoadSuccess(document, documentType);
+        this._reportUnsupportedFieldTypes(documentType);
+        return documentType;
+      });
   }
 
   _noContentResponse(document) {
