@@ -372,7 +372,7 @@ class OverlayService {
   }
 
   _getDialOptions(config) {
-    const optionsSet = Object.assign({buttons: []});
+    const optionsSet = { buttons: [] };
 
     if (config.documentUuid) {
       const editContentButton = {
@@ -527,7 +527,7 @@ class OverlayService {
       overlayElement.addClass('is-left');
     };
 
-    if (this.isHoverEnabled(config)) {
+    if (optionsSet.buttons.length > 1) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }
@@ -541,14 +541,6 @@ class OverlayService {
     return $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
       .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
       .on('click', button.callback);
-  }
-
-  isHoverEnabled(config) {
-    const conditions = [
-      config.documentUuid && (config.templateQuery || config.componentParameter),
-      !config.documentUuid && config.componentParameter,
-    ];
-    return conditions.some(condition => condition);
   }
 
   _getElementPositionObject(boxElement) {
