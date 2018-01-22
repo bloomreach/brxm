@@ -50,48 +50,18 @@ describe('DocumentLocationField', () => {
   });
 
 
-  describe('parsing the rootPath @Input', () => {
-    it('defaults to the channel root if not set', () => {
-      component.$onInit();
-      expect(component.rootPath).toBe('/channel/content');
-    });
+  it('detects the root path depth', () => {
+    component.rootPath = '/root';
+    component.$onInit();
+    expect(component.rootPathDepth).toBe(1);
 
-    it('overrides the channel root path if absolute', () => {
-      component.rootPath = '/root/path';
-      component.$onInit();
-      expect(component.rootPath).toBe('/root/path');
-    });
+    component.rootPath = '/root/path/';
+    component.$onInit();
+    expect(component.rootPathDepth).toBe(2);
 
-    it('is concatenated wth the channel\'s root path if relative', () => {
-      component.rootPath = 'some/path';
-      component.$onInit();
-      expect(component.rootPath).toBe('/channel/content/some/path');
-    });
-
-    it('never ends with a slash', () => {
-      getChannelSpy.and.returnValue({ contentRoot: '/channel/content' });
-      component.rootPath = '/root/path/';
-      component.$onInit();
-      expect(component.rootPath).toBe('/root/path');
-
-      component.rootPath = 'some/path/';
-      component.$onInit();
-      expect(component.rootPath).toBe('/channel/content/some/path');
-    });
-
-    it('detects the root path depth', () => {
-      component.rootPath = '/root';
-      component.$onInit();
-      expect(component.rootPathDepth).toBe(1);
-
-      component.rootPath = '/root/path/';
-      component.$onInit();
-      expect(component.rootPathDepth).toBe(2);
-
-      component.rootPath = 'some/path/';
-      component.$onInit();
-      expect(component.rootPathDepth).toBe(4);
-    });
+    component.rootPath = 'some/path/';
+    component.$onInit();
+    expect(component.rootPathDepth).toBe(4);
   });
 
   describe('parsing the defaultPath @Input', () => {
