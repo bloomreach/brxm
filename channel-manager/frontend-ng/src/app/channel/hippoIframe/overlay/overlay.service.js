@@ -618,17 +618,12 @@ class OverlayService {
   }
 
   _createContent(config) {
-    this.$rootScope.$apply(() => {
-      this.CreateContentService.start(config);
-    });
+    this.CreateContentService.start(config);
   }
 
   _editContent(uuid) {
-    // TODO: rootscope.apply still needed?
-    this.$rootScope.$apply(() => {
-      this.EditContentService.startEditing(uuid);
-      this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
-    });
+    this.EditContentService.startEditing(uuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   _linkButtonTransition(element) {
