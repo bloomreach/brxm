@@ -16,44 +16,70 @@
 
 class Step1Service {
   constructor(
+    ChannelService,
     ContentService,
   ) {
     'ngInject';
 
+    this.ChannelService = ChannelService;
     this.ContentService = ContentService;
     this._resetState();
   }
 
-  getData() {
-    return this.data;
+  stop() {
+    this._resetState();
   }
 
   setLocale(locale) {
-    this.data.locale = locale;
+    this.locale = locale;
   }
 
   open(templateQuery, rootPath, defaultPath) {
     this._resetState();
 
-    this.data.templateQuery = templateQuery;
-    this.data.rootPath = rootPath;
-    this.data.defaultPath = defaultPath;
+    this.rootPath = this._initRootPath(rootPath);
+    this.defaultPath = defaultPath;
+    this.templateQuery = templateQuery;
 
     return this.getTemplateQuery(templateQuery)
       .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))
       .catch(error => this._onError(error, 'Unknown error loading template query'));
   }
 
+  /**
+   * Parse the rootPath input value;
+   * - use channelRootPath if rootPath is empty
+   * - use as is if rootPath is absolute
+   * - concatenate with channelRootPath if rootPath is relative
+   * - make sure it does not end with a slash
+   *
+   * @param rootPath the component's rootPath
+   */
+  _initRootPath(rootPath) {
+    const channel = this.ChannelService.getChannel();
+    if (!rootPath) {
+      return channel.contentRoot;
+    }
+
+    if (rootPath.endsWith('/')) {
+      rootPath = rootPath.substring(0, rootPath.length - 1);
+    }
+
+    if (!rootPath.startsWith('/')) {
+      rootPath = `${channel.contentRoot}/${rootPath}`;
+    }
+    return rootPath;
+  }
+
   createDraft() {
     const draft = {
-      name: this.data.nameField,
-      slug: this.data.urlField,
-      templateQuery: this.data.templateQuery,
-      documentTypeId: this.data.documentType,
-      rootPath: this.data.rootPath,
-      defaultPath: this.data.defaultPath,
+      name: this.name,
+      slug: this.url,
+      templateQuery: this.templateQuery,
+      documentTypeId: this.documentType,
+      rootPath: this.rootPath,
+      defaultPath: this.defaultPath,
     };
-
     return this.ContentService._send('POST', ['documents'], draft);
   }
 
@@ -65,30 +91,23 @@ class Step1Service {
     return this.ContentService._send('GET', ['templatequery', id], null, true);
   }
 
-  stop() {
-    this._resetState();
-  }
-
   _onLoadDocumentTypes(types) {
-    this.data.documentTypes = types;
+    this.documentTypes = types;
 
     if (types.length === 1) {
-      this.data.documentType = types[0].id;
+      this.documentType = types[0].id;
     } else {
-      this.data.documentType = '';
+      this.documentType = '';
     }
   }
 
   _resetState() {
-    this.data = {
-      nameField: '',
-      urlField: '',
-      isUrlUpdating: false,
-      locale: '',
-      rootPath: '',
-      defaultPath: '',
-      templateQuery: '',
-    };
+    delete this.name;
+    delete this.url;
+    delete this.locale;
+    delete this.rootPath;
+    delete this.defaultPath;
+    delete this.templateQuery;
   }
 }
 

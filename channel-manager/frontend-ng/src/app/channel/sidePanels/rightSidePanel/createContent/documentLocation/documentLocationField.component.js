@@ -22,7 +22,7 @@ const documentLocationFieldComponent = {
   controller,
   template,
   bindings: {
-    rootPath: '=',
+    rootPath: '<',
     defaultPath: '=',
     changeLocale: '&',
   },

@@ -37,19 +37,17 @@ class Step2Service {
     return this.data;
   }
 
-  open(document, step1) {
+  open(document, name, url, locale) {
     this._reset();
 
     return this.ContentService.getDocumentType(document.info.type.id)
       .then((docType) => {
-        // this._onLoadSuccess(document, docType);
-        this.data.document = document;
-        this.data.step1 = step1;
+        this.document = document;
         this.data.docType = docType;
 
-        this.data.document.displayName = step1.nameField;
-        this.data.documentUrl = step1.urlField;
-        this.data.documentLocale = step1.locale;
+        this.document.displayName = name;
+        this.documentUrl = url;
+        this.documentLocale = locale;
 
         this.FieldService.setDocumentId(document.id);
 

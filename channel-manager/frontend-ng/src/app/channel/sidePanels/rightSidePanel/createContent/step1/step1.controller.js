@@ -31,19 +31,56 @@ class Step1Controller {
     this.Step1Service = Step1Service;
   }
 
-  getData() {
-    return this.Step1Service.getData();
+  get name() {
+    return this.Step1Service.name;
   }
 
-  submit() {
-    this.Step1Service.createDraft()
-      .then(document => this.CreateContentService.next(document, this.getData()))
-      .catch(error => this._onError(error, 'Unknown error creating new draft document'));
+  set name(name) {
+    this.Step1Service.name = name;
+  }
+
+  get url() {
+    return this.Step1Service.url;
+  }
+
+  set url(url) {
+    this.Step1Service.url = url;
+  }
+
+  get rootPath() {
+    return this.Step1Service.rootPath;
+  }
+
+  get defaultPath() {
+    return this.Step1Service.defaultPath;
+  }
+
+  set defaultPath(defaultPath) {
+    this.Step1Service.defaultPath = defaultPath;
+  }
+
+  get documentType() {
+    return this.Step1Service.documentType;
+  }
+
+  set documentType(documentType) {
+    this.Step1Service.documentType = documentType;
+  }
+
+  get documentTypes() {
+    return this.Step1Service.documentTypes;
   }
 
   setLocale(locale) {
     this.Step1Service.setLocale(locale);
   }
+
+  submit() {
+    this.Step1Service.createDraft()
+      .then(document => this.CreateContentService.next(document, this.name, this.url, this.Step1Service.locale))
+      .catch(error => this._onError(error, 'Unknown error creating new draft document'));
+  }
+
 
   close() {
     this.CreateContentService.stop();

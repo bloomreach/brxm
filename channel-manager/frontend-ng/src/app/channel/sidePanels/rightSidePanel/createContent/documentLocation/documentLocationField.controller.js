@@ -20,7 +20,6 @@ const MAX_DEPTH = 3;
 class DocumentLocationFieldController {
   constructor(
     $log,
-    ChannelService,
     CmsService,
     Step1Service,
     FeedbackService,
@@ -28,7 +27,6 @@ class DocumentLocationFieldController {
     'ngInject';
 
     this.$log = $log;
-    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
@@ -38,38 +36,11 @@ class DocumentLocationFieldController {
     this.documentLocation = '';
   }
 
-  /**
-   * Parse the rootPath input value;
-   * - use channelRootPath if rootPath is empty
-   * - use as is if rootPath is absolute
-   * - concatenate with channelRootPath if rootPath is relative
-   * - make sure it does not end with a slash
-   *
-   * @param rootPath the component's rootPath
-   * @param channelRootPath the channel's rootPath
-   */
-  static parseRootPath(rootPath, channelRootPath) {
-    if (!rootPath) {
-      return channelRootPath;
-    }
-
-    if (rootPath.endsWith('/')) {
-      rootPath = rootPath.substring(0, rootPath.length - 1);
-    }
-
-    if (!rootPath.startsWith('/')) {
-      rootPath = `${channelRootPath}/${rootPath}`;
-    }
-    return rootPath;
-  }
-
   $onInit() {
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
 
-    const channel = this.ChannelService.getChannel();
-    this.rootPath = DocumentLocationFieldController.parseRootPath(this.rootPath, channel.contentRoot);
     this.rootPathDepth = (this.rootPath.match(/\//g) || []).length;
 
     let documentLocationPath = this.rootPath;

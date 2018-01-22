@@ -49,8 +49,8 @@ class CreateContentService {
     this.$state.go('hippo-cm.channel.create-content-step-1', { config });
   }
 
-  next(document, step1) {
-    this.$state.go('hippo-cm.channel.create-content-step-2', { document, step1 });
+  next(document, name, url, locale) {
+    this.$state.go('hippo-cm.channel.create-content-step-2', { document, name, url, locale });
   }
 
   finish(documentId) {
