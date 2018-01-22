@@ -15,6 +15,8 @@
  */
 
 export default function throttle($q, $timeout) {
+  'ngInject';
+
   return (callback, threshhold, trailing) => {
     threshhold = threshhold || 250;
 
