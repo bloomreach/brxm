@@ -40,7 +40,6 @@ class DocumentLocationFieldController {
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
-
     this.rootPathDepth = (this.rootPath.match(/\//g) || []).length;
 
     let documentLocationPath = this.rootPath;
@@ -54,20 +53,21 @@ class DocumentLocationFieldController {
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    this.CmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === PICKER_CALLBACK_ID) {
-        if (!path.startsWith('/')) {
-          path = `/${path}`;
-        }
-        if (!path.startsWith(this.rootPath)) {
-          this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
-        } else {
-          this.setDocumentLocation(path);
-        }
-      }
-    });
-
+    this.CmsService.subscribe('path-picked', this.onPathPicked, this);
     this.setDocumentLocation(documentLocationPath);
+  }
+
+  onPathPicked(callbackId, path) {
+    if (callbackId === PICKER_CALLBACK_ID) {
+      if (!path.startsWith('/')) {
+        path = `/${path}`;
+      }
+      if (!path.startsWith(this.rootPath)) {
+        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+      } else {
+        this.setDocumentLocation(path);
+      }
+    }
   }
 
   setDocumentLocation(documentLocation) {
@@ -75,14 +75,6 @@ class DocumentLocationFieldController {
       folders => this.onLoadFolders(folders),
       error => this.onError(error, 'Unknown error loading folders'),
     );
-  }
-
-  openPicker() {
-    this.CmsService.publish(
-      'show-path-picker',
-      PICKER_CALLBACK_ID,
-      this.documentLocation,
-      this.pickerConfig);
   }
 
   /**
@@ -112,6 +104,14 @@ class DocumentLocationFieldController {
     }
   }
 
+  openPicker() {
+    this.CmsService.publish(
+      'show-path-picker',
+      PICKER_CALLBACK_ID,
+      this.documentLocation,
+      this.pickerConfig);
+  }
+
   /**
    * Calculate the document location label from the given array of folders, using the folder's
    * displayName. It always shows a maximum of three folders in total, and only the last folder
@@ -126,6 +126,10 @@ class DocumentLocationFieldController {
       .filter((folder, index) => index >= start)
       .map(folder => folder.displayName)
       .join('/');
+  }
+
+  $onDestroy() {
+    this.CmsService.unsubscribe('path-picked', this.onPathPicked, this);
   }
 }
 
