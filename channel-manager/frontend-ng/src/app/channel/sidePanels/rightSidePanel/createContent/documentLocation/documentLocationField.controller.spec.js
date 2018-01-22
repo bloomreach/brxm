@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ describe('DocumentLocationField', () => {
   let $q;
   let $rootScope;
   let ChannelService;
-  let CreateContentService;
+  let Step1Service;
 
   let component;
   let getFolderSpy;
@@ -28,17 +28,23 @@ describe('DocumentLocationField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_, _CreateContentService_) => {
+    inject((
+      _$componentController_,
+      _$q_,
+      _$rootScope_,
+      _ChannelService_,
+      _Step1Service_,
+    ) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
-      CreateContentService = _CreateContentService_;
+      Step1Service = _Step1Service_;
     });
 
     component = $componentController('documentLocationField');
 
-    getFolderSpy = spyOn(CreateContentService, 'getFolders').and.returnValue($q.resolve());
+    getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
     getChannelSpy = spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/channel/content' });
     component.changeLocale = () => angular.noop();
   });
@@ -91,7 +97,7 @@ describe('DocumentLocationField', () => {
   describe('parsing the defaultPath @Input', () => {
     it('throws an error if defaultPath is absolute', () => {
       component.defaultPath = '/path';
-      expect(() => component.$onInit()).toThrow(new Error('The defaultPath option can only be a relative path'));
+      expect(() => component.$onInit()).toThrow(new Error('The defaultPath option can only be a relative path: /path'));
     });
   });
 

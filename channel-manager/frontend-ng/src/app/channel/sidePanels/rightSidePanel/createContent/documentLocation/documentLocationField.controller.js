@@ -22,7 +22,6 @@ class DocumentLocationFieldController {
     $log,
     ChannelService,
     CmsService,
-    CreateContentService,
     Step1Service,
     FeedbackService,
   ) {
@@ -31,7 +30,6 @@ class DocumentLocationFieldController {
     this.$log = $log;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-    this.CreateContentService = CreateContentService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
 
@@ -67,7 +65,7 @@ class DocumentLocationFieldController {
 
   $onInit() {
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
-      throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath} - ${this.rootPath}`);
+      throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
 
     const channel = this.ChannelService.getChannel();
