@@ -896,13 +896,12 @@ describe('OverlayService', () => {
       it('shows everything when locked by current user', (done) => {
         manageContentScenario(5, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
-          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
 
           mainButton.trigger('mouseenter');
-          expect(mainButton.attr('title')).toBe('CANCEL');
-          expect(optionButtons.children().length).toBe(2);
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
-          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
           done();
         });
       });
