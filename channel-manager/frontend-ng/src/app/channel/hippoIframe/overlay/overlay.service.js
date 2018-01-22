@@ -64,7 +64,7 @@ class OverlayService {
     this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = true;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -445,7 +445,9 @@ class OverlayService {
       }
     }
 
-    if (structureElement.getEnclosingElement().isLocked() && componentParameter) {
+    if (config.containerItem.isLocked()
+      && componentParameter
+      && !config.containerItem.isLockedByCurrentUser()) {
       if (!documentUuid) {
         return {};
       }

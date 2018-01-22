@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import angular from 'angular';
 import 'angular-mocks';
-import { fakeAsync, tick } from '@angular/core/testing';
 
 describe('selectAllOnFocusDirective', () => {
   let $rootScope;
@@ -29,9 +28,15 @@ describe('selectAllOnFocusDirective', () => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
     });
+
+    jasmine.clock().install();
   });
 
-  it('selects all content on focus', fakeAsync(() => {
+  afterEach(() => {
+    jasmine.clock().uninstall();
+  });
+
+  it('selects all content on focus', () => {
     const $scope = $rootScope.$new();
     const $element = angular.element('<input select-all-on-focus value="foo bah"></input>');
     const valueLength = $element.val().length;
@@ -40,9 +45,9 @@ describe('selectAllOnFocusDirective', () => {
 
     $element.triggerHandler('focus');
 
-    tick(1);
+    jasmine.clock().tick(1);
 
     expect($element[0].selectionStart).toEqual(0);
     expect($element[0].selectionEnd).toEqual(valueLength);
-  }));
+  });
 });

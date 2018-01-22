@@ -1,9 +1,0 @@
-{
-  "extends": "./node_modules/@bloomreach/frontend-build/tsconfig.json",
-  "exclude": [
-    "node_modules",
-    "target",
-    "coverage",
-    ".awcache"
-  ]
-}
