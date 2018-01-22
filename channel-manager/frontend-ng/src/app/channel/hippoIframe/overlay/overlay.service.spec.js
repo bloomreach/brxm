@@ -909,8 +909,11 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(false);
+
+        const editContentSpy = spyOn(OverlayService, '_editContent');
+        returnedConfiguration.callback();
+        expect(editContentSpy).toHaveBeenCalledWith(true);
       });
 
       it('Scenario 2', () => {
@@ -933,8 +936,11 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
+
+        const editContentSpy = spyOn(OverlayService, '_editContent');
+        returnedConfiguration.callback();
+        expect(editContentSpy).toHaveBeenCalledWith(true);
       });
 
       it('Scenario 4', () => {
@@ -945,8 +951,11 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
+
+        const editContentSpy = spyOn(OverlayService, '_editContent');
+        returnedConfiguration.callback();
+        expect(editContentSpy).toHaveBeenCalledWith(true);
       });
 
       it('Scenario 5', () => {
@@ -969,8 +978,11 @@ describe('OverlayService', () => {
         };
 
         const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
         expect(returnedConfiguration.isHoverEnabled).toBe(true);
+
+        const editContentSpy = spyOn(OverlayService, '_editContent');
+        returnedConfiguration.callback();
+        expect(editContentSpy).toHaveBeenCalledWith(true);
       });
     });
   });
