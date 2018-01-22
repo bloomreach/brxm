@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,31 @@
  */
 
 class modeToggleController {
-  constructor() {
+  constructor(
+    localStorageService,
+  ) {
     'ngInject';
+
+    this.localStorageService = localStorageService;
   }
 
-  toggleState() {
-    this.state = !this.state;
+  $onInit() {
+    this.storageKey = `channelManager.overlays.${this.name}`;
+    this.loadPersistentState();
+  }
+
+  setState(state) {
+    this.state = state;
+    this.localStorageService.set(this.storageKey, this.state);
+  }
+
+  loadPersistentState() {
+    let state = this.localStorageService.get(this.storageKey);
+    if (this.localStorageService.get(this.storageKey) == null) {
+      state = this.defaultState;
+    }
+
+    this.setState(state);
   }
 }
 

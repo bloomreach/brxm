@@ -19,6 +19,7 @@ const targetDir = path.resolve('./target/classes/angular/hippo-cm/');
 const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
+  typeScript: false,
   dist: targetDir,
   publicPath: '',
   htmlExcludes: /items.renderer.html/,
@@ -70,24 +71,6 @@ const customConfig = {
       'angular-ui-tree',
       'ng-device-detector',
       'ng-focus-if'],
-    angular: [
-      'core-js',
-      'hammerjs',
-      'es6-shim',
-      '@angular/animations',
-      '@angular/cdk',
-      '@angular/common',
-      '@angular/compiler',
-      '@angular/core',
-      '@angular/forms',
-      '@angular/http',
-      '@angular/material',
-      '@angular/platform-browser',
-      '@angular/platform-browser-dynamic',
-      '@angular/router',
-      '@angular/upgrade',
-      'rxjs',
-      'zone.js'],
     vendor: [
       '@bloomreach/dragula',
       'jquery',

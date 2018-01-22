@@ -105,11 +105,6 @@ describe('OverlayService', () => {
     return $(selector, iframeWindow.document);
   }
 
-  it('initially, content overlay is toggled on, component overlay is toggled off', () => {
-    expect(OverlayService.isContentOverlayDisplayed).toEqual(true);
-    expect(OverlayService.isComponentsOverlayDisplayed).toEqual(false);
-  });
-
   it('initializes when the iframe is loaded', (done) => {
     spyOn(OverlayService, '_onLoad');
     loadIframeFixture(() => {

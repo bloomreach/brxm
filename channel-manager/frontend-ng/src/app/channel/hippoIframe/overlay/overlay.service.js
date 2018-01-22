@@ -64,7 +64,7 @@ class OverlayService {
     this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = true;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }

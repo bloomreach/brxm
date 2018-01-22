@@ -1,0 +1,67 @@
+<!--
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<ng-form name="$ctrl.form" novalidate>
+  <!-- Document name field -->
+  <md-input-container class="create-content-field qa-name-field">
+    <input id="nameInputElement"
+           name="nameField"
+           placeholder="Document name"
+           ng-model="$ctrl.nameField"
+           ng-change="$ctrl.onNameChange($event)"
+           type="text"
+           required
+           autocomplete="off">
+    <div ng-messages="$ctrl.form.nameField.$error">
+      <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
+    </div>
+  </md-input-container>
+
+  <!-- Document URL field -->
+  <div class="field">
+
+    <md-input-container class="create-content-field qa-url-field">
+      <input name="url"
+             placeholder="URL"
+             type="text"
+             ng-model="$ctrl.urlField"
+             ng-disabled="!$ctrl.isManualUrlMode" 
+             autocomplete="off"
+             required>
+
+      <!-- Edit button -->
+      <md-button ng-if="!$ctrl.isManualUrlMode"
+                 type="button"
+                 ng-click="$ctrl.setManualUrlEditMode(true)"
+                 class="qa-edit-url md-icon-button input-icon-button">
+        <md-icon>mode_edit</md-icon>
+      </md-button>
+
+      <!-- Regenerate button -->
+      <md-button ng-if="$ctrl.isManualUrlMode"
+                 type="button"
+                 ng-click="$ctrl.setManualUrlEditMode(false)"
+                 class="qa-generate-url md-icon-button input-icon-button">
+        <md-icon>autorenew</md-icon>
+      </md-button>
+
+      <div ng-messages="$ctrl.form.url.$error">
+        <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
+      </div>
+    </md-input-container>
+
+  </div>
+</ng-form>
