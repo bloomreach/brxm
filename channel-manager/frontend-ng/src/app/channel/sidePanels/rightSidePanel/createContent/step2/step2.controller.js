@@ -17,12 +17,12 @@
 import nameUrlFieldsDialogController from '../step2/nameUrlFieldsDialog/nameUrlFieldsDialog.controller';
 import nameUrlFieldsDialogTemplate from '../step2/nameUrlFieldsDialog/nameUrlFieldsDialog.html';
 
-const DEFAULT_TITLE = 'Create new title';
-
 class Step2Controller {
   constructor(
+    $q,
     $translate,
     CreateContentService,
+    Step2Service,
     FieldService,
     ContentService,
     DialogService,
@@ -30,84 +30,74 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$translate = $translate;
-    this.CreateContentService = CreateContentService;
-    this.FieldService = FieldService;
     this.ContentService = ContentService;
+    this.CreateContentService = CreateContentService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
-
-    this.title = 'Create new content';
-    this.isFullWidth = false;
-    this.loading = false;
-
-    this.doc = null;
-    this.docType = null;
+    this.FieldService = FieldService;
+    this.Step2Service = Step2Service;
   }
 
   $onInit() {
-    this.loadNewDocument();
-    this._resetBeforeStateChange();
+    this.documentIsSaved = false;
   }
 
-  loadNewDocument() {
-    const doc = this.CreateContentService.getDocument();
-    this.documentId = doc.id;
-    this.FieldService.setDocumentId(doc.id);
-    this.loading = true;
-    return this.ContentService.getDocumentType(doc.info.type.id)
-      .then((docType) => {
-        this._onLoadSuccess(doc, docType);
-        this.loading = false;
-      }).catch(() => {
-        this.loading = false;
-      });
+  getData() {
+    return this.Step2Service.getData();
   }
 
   discardAndClose() {
     return this._confirmDiscardChanges().then(async () => {
       try {
-        await this.CreateContentService.deleteDraft(this.documentId);
+        await this.Step2Service.deleteDraft(this.documentId);
       } catch (error) {
         const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
         this.FeedbackService.showError(errorKey, error.data.params);
-        return Promise.reject();
       }
-
-      return Promise.resolve();
+      return this.$q.resolve();
     });
   }
 
-  saveDocument() {
-    this.ContentService.saveDraft(this.doc)
+  save() {
+    this.ContentService.saveDraft(this.getData().document)
       .then(() => {
-        this.onBeforeStateChange({ callback: () => Promise.resolve() });
-        this.onSave({ documentId: this.doc.id });
+        this.documentIsSaved = true;
+        this.CreateContentService.finish(this.getData().document.id);
       });
   }
 
-  isDocumentDirty() {
-    return (this.doc && this.doc.info && this.doc.info.dirty);
+  close() {
+    this.CreateContentService.stop();
   }
 
-  close() {
-    return this.discardAndClose()
-      .then(() => {
-        this._resetState();
-        this.onClose();
-      })
-      .catch(() => angular.noop());
+  uiCanExit() {
+    if (this.documentIsSaved) {
+      return true;
+    }
+    return this.Step2Service.confirmDiscardChanges()
+      .then(async () => {
+        try {
+          await this.Step2Service.deleteDraft(this.getData().document.id);
+        } catch (error) {
+          const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+          this.FeedbackService.showError(errorKey, error.data.params);
+        }
+        return true;
+      });
   }
 
   openEditNameUrlDialog() {
+    const data = this.getData();
     const dialog = {
       template: nameUrlFieldsDialogTemplate,
       controller: nameUrlFieldsDialogController,
       locals: {
         title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
-        nameField: this.doc.displayName,
-        urlField: this.documentUrl,
-        locale: this.documentLocale,
+        nameField: data.document.displayName,
+        urlField: data.documentUrl,
+        locale: data.documentLocale,
       },
       controllerAs: '$ctrl',
       bindToController: true,
@@ -118,57 +108,17 @@ class Step2Controller {
     });
   }
 
-  _onEditNameUrlDialogClose(data) {
-    return this.CreateContentService.setDraftNameUrl(this.doc.id, data)
+  _onEditNameUrlDialogClose(dialogData) {
+    const data = this.getData();
+    return this.Step2Service.setDraftNameUrl(data.document.id, dialogData)
       .then((result) => {
-        this.doc.displayName = result.displayName;
-        this.documentUrl = result.urlName;
+        data.document.displayName = result.displayName;
+        data.documentUrl = result.urlName;
       })
       .catch((error) => {
         const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
         this.FeedbackService.showError(errorKey, error.data.params);
       });
-  }
-
-  _resetState() {
-    delete this.doc;
-    delete this.documentId;
-    delete this.docType;
-    delete this.feedback;
-    this.title = DEFAULT_TITLE;
-    this.onBeforeStateChange({ callback: () => Promise.resolve() });
-  }
-
-  _onLoadSuccess(doc, docTypeInfo) {
-    this.doc = doc;
-    this.docType = docTypeInfo;
-    this.title = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: docTypeInfo.displayName });
-    this.doc.displayName = this.options.name;
-    this.documentUrl = this.options.url;
-    this.documentLocale = this.options.locale;
-  }
-
-  _resetBeforeStateChange() {
-    this.onBeforeStateChange({ callback: () => this.discardAndClose() });
-  }
-
-  _confirmDiscardChanges() {
-    const messageParams = {
-      documentName: this.doc.displayName,
-    };
-
-    const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('DISCARD_DOCUMENT', messageParams))
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
-      .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.$translate.instant('CANCEL'));
-
-    return this.DialogService.show(confirm);
-  }
-
-  setWidthState(state) {
-    this.isFullWidth = state;
-    this.onFullWidth({ state });
   }
 }
 

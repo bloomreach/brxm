@@ -23,6 +23,7 @@ class DocumentLocationFieldController {
     ChannelService,
     CmsService,
     CreateContentService,
+    Step1Service,
     FeedbackService,
   ) {
     'ngInject';
@@ -31,6 +32,7 @@ class DocumentLocationFieldController {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CreateContentService = CreateContentService;
+    this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
 
     this.rootPathDepth = 0;
@@ -65,7 +67,7 @@ class DocumentLocationFieldController {
 
   $onInit() {
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
-      throw new Error('The defaultPath option can only be a relative path');
+      throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath} - ${this.rootPath}`);
     }
 
     const channel = this.ChannelService.getChannel();
@@ -100,7 +102,7 @@ class DocumentLocationFieldController {
   }
 
   setDocumentLocation(documentLocation) {
-    this.CreateContentService.getFolders(documentLocation).then(
+    this.Step1Service.getFolders(documentLocation).then(
       folders => this.onLoadFolders(folders),
       error => this.onError(error, 'Unknown error loading folders'),
     );
@@ -122,7 +124,6 @@ class DocumentLocationFieldController {
     if (folders.length === 0) {
       return;
     }
-
     const lastFolder = folders[folders.length - 1];
     this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
     this.documentLocation = lastFolder.path;

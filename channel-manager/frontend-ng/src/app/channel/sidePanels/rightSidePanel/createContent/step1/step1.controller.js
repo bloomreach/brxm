@@ -19,6 +19,7 @@ class Step1Controller {
     $translate,
     $log,
     CreateContentService,
+    Step1Service,
     FeedbackService,
   ) {
     'ngInject';
@@ -27,89 +28,25 @@ class Step1Controller {
     this.$log = $log;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
-
-    this.title = 'Create new content';
-    this.isFullWidth = false;
-    this.documentType = null;
-
-    this.nameUrlFields = {
-      nameField: '',
-      urlField: '',
-      urlUpdate: false,
-    };
-
-    this.documentLocationField = {
-      defaultPath: null,
-      rootPath: null,
-    };
+    this.Step1Service = Step1Service;
   }
 
-  $onInit() {
-    if (!this.options) {
-      throw new Error('Input "options" is required');
-    }
-
-    if (!this.options.templateQuery) {
-      throw new Error('Configuration option "templateQuery" is required');
-    }
-
-    this.documentLocationField.defaultPath = this.options.defaultPath;
-    this.documentLocationField.rootPath = this.options.rootPath;
-
-    this.CreateContentService.getTemplateQuery(this.options.templateQuery)
-      .then(templateQuery => this._onLoadDocumentTypes(templateQuery.documentTypes))
-      .catch(error => this._onError(error, 'Unknown error loading template query'));
+  getData() {
+    return this.Step1Service.getData();
   }
 
   submit() {
-    if (!this.options) {
-      throw new Error('Input "options" is required');
-    }
-
-    if (!this.options.templateQuery) {
-      throw new Error('Configuration option "templateQuery" is required');
-    }
-
-    const document = {
-      name: this.nameUrlFields.nameField,
-      slug: this.nameUrlFields.urlField,
-      templateQuery: this.options.templateQuery,
-      documentTypeId: this.documentType,
-      rootPath: this.documentLocationField.rootPath,
-      defaultPath: this.documentLocationField.defaultPath,
-    };
-
-    this.CreateContentService.createDraft(document)
-      .then(() => this.onContinue({
-        options: {
-          name: this.nameUrlFields.nameField,
-          url: this.nameUrlFields.urlField,
-          locale: this.locale,
-        },
-      }))
+    this.Step1Service.createDraft()
+      .then(document => this.CreateContentService.next(document, this.getData()))
       .catch(error => this._onError(error, 'Unknown error creating new draft document'));
   }
 
-  setWidthState(state) {
-    this.isFullWidth = state;
-    this.onFullWidth({ state });
-  }
-
   setLocale(locale) {
-    this.locale = locale;
+    this.Step1Service.setLocale(locale);
   }
 
   close() {
     this.CreateContentService.stop();
-    // this.onClose();
-  }
-
-  _onLoadDocumentTypes(types) {
-    this.documentTypes = types;
-
-    if (this.documentTypes.length === 1) {
-      this.documentType = this.documentTypes[0].id;
-    }
   }
 
   _onError(error, genericMessage) {

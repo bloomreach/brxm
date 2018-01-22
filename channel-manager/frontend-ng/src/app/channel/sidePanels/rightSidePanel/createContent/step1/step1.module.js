@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-import './step1.scss';
-import template from './step1.html';
-import controller from './step1.controller';
+import step1Component from './step1.component';
+import step1Service from './step1.service';
 
-const step1Component = {
-  controller,
-  template,
-  bindings: {
-    onClose: '&',
-    onContinue: '&',
-    onFullWidth: '&',
-  },
-};
+const step1Module = angular
+  .module('hippo-cm.channel.createContent.step1', [])
+  .component('step1Component', step1Component)
+  .service('Step1Service', step1Service);
 
-export default step1Component;
+export default step1Module.name;

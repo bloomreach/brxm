@@ -18,7 +18,7 @@ import './step2.scss';
 import template from './step2.html';
 import controller from './step2.controller';
 
-const createContentStep2Component = {
+const step2Component = {
   controller,
   template,
   bindings: {
@@ -27,8 +27,7 @@ const createContentStep2Component = {
     onSave: '&',
     onClose: '&',
     onFullWidth: '&',
-    onBeforeStateChange: '&',
   },
 };
 
-export default createContentStep2Component;
+export default step2Component;

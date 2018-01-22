@@ -13,37 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
-<md-toolbar class="edit-title-toolbar">
-  <div class="md-toolbar-tools">
-    <h1 class="md-title text-truncate" title="{{ ::$ctrl.title }}">
-      {{ ::$ctrl.title }}
-    </h1>
-
-    <span flex></span>
-
-    <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-               ng-click="$ctrl.setWidthState(true)"
-               ng-show="!$ctrl.isFullWidth"
-               title="{{ ::'FULL_WIDTH' | translate }}">
-      <md-icon md-svg-icon="maximize-sidepanel"></md-icon>
-    </md-button>
-    <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-               ng-click="$ctrl.setWidthState(false)"
-               ng-show="$ctrl.isFullWidth"
-               title="{{ ::'RESTORE_WIDTH' | translate }}">
-      <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
-    </md-button>
-  </div>
-  <md-progress-linear md-mode="indeterminate"
-                      ng-if="$ctrl.loading">
-  </md-progress-linear>
-</md-toolbar>
-
-<md-toolbar class="editable-title-toolbar" ng-if="$ctrl.doc">
+<md-toolbar class="editable-title-toolbar" ng-if="$ctrl.getData().document">
   <div class="md-toolbar-tools">
     <h6 class="md-subhead text-truncate qa-editable-title">
-      {{ $ctrl.doc.displayName }}
+      {{ $ctrl.getData().document.displayName }}
     </h6>
 
     <span flex></span>
@@ -54,7 +27,7 @@
   </div>
 </md-toolbar>
 
-<sharedspace-toolbar ng-if="$ctrl.docType"></sharedspace-toolbar>
+<sharedspace-toolbar ng-if="$ctrl.getData().docType"></sharedspace-toolbar>
 
 <md-content flex="grow"
             layout="column"
@@ -71,9 +44,9 @@
         name="$ctrl.form"
         class="create-content-step2-form">
     <document-fields class="top-level"
-                     ng-if="$ctrl.docType"
-                     field-types="$ctrl.docType.fields"
-                     field-values="$ctrl.doc.fields">
+                     ng-if="$ctrl.getData().docType"
+                     field-types="$ctrl.getData().docType.fields"
+                     field-values="$ctrl.getData().document.fields">
     </document-fields>
   </form>
 </md-content>
@@ -88,8 +61,8 @@
     </md-button>
 
     <md-button class="qa-create-content-save"
-               ng-click="$ctrl.saveDocument()"
-               ng-disabled="$ctrl.isDocumentDirty() || $ctrl.form.$invalid">
+               ng-click="$ctrl.save()"
+               ng-disabled="$ctrl.form.$invalid">
       {{'SAVE' | translate }}
     </md-button>
   </div>
