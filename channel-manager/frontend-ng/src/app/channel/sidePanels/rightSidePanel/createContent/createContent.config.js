@@ -43,7 +43,6 @@ function config($stateProvider) {
     url: 'create-content-step-2',
     params: {
       document: {},
-      name: '',
       url: '',
       locale: '',
     },

@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
+import nameUrlFieldsDialogController from './nameUrlFieldsDialog/nameUrlFieldsDialog.controller';
+import nameUrlFieldsDialogTemplate from './nameUrlFieldsDialog/nameUrlFieldsDialog.html';
+
 class Step2Service {
-  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService) {
+  constructor(
+    $q,
+    $translate,
+    ContentEditor,
+    ContentService,
+    DialogService,
+    FeedbackService,
+  ) {
     'ngInject';
 
     this.$q = $q;
     this.$translate = $translate;
-    this.CmsService = CmsService;
     this.ContentService = ContentService;
+    this.ContentEditor = ContentEditor;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
-    this.FieldService = FieldService;
 
     this._reset();
   }
@@ -33,31 +42,26 @@ class Step2Service {
     this.data = {};
   }
 
-  getData() {
-    return this.data;
-  }
-
-  open(document, name, url, locale) {
+  open(document, url, locale) {
     this._reset();
 
-    return this.ContentService.getDocumentType(document.info.type.id)
+    return this.ContentEditor.loadDocumentType(document)
       .then((docType) => {
-        this.document = document;
-        this.data.docType = docType;
-
-        this.document.displayName = name;
         this.documentUrl = url;
         this.documentLocale = locale;
 
-        this.FieldService.setDocumentId(document.id);
-
-        return this.data;
+        return docType;
       });
   }
 
   confirmDiscardChanges() {
+    const document = this.ContentEditor.getDocument();
+    if (!document) {
+      return this.$q.resolve(true);
+    }
+
     const messageParams = {
-      documentName: this.data.document.displayName,
+      documentName: document.displayName,
     };
 
     const confirm = this.DialogService.confirm()
@@ -69,8 +73,31 @@ class Step2Service {
     return this.DialogService.show(confirm);
   }
 
-  deleteDraft(id) {
-    return this.ContentService._send('DELETE', ['documents', id]);
+  openEditNameUrlDialog() {
+    const document = this.ContentEditor.getDocument();
+    const dialog = {
+      template: nameUrlFieldsDialogTemplate,
+      controller: nameUrlFieldsDialogController,
+      locals: {
+        title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
+        nameField: document.displayName,
+        urlField: this.documentUrl,
+        locale: this.documentLocale,
+      },
+      controllerAs: '$ctrl',
+      bindToController: true,
+    };
+
+    return this.DialogService.show(dialog)
+      .then(dialogData => this.setDraftNameUrl(document.id, dialogData)
+        .then((result) => {
+          document.displayName = result.displayName;
+          this.documentUrl = result.urlName;
+        })
+        .catch((error) => {
+          const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+          this.FeedbackService.showError(errorKey, error.data.params);
+        }));
   }
 
   setDraftNameUrl(documentId, data) {
