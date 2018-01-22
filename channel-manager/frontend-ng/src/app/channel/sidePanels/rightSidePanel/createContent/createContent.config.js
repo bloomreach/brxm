@@ -19,12 +19,30 @@ function config($stateProvider) {
 
   $stateProvider.state({
     name: 'hippo-cm.channel.create-content-step-1',
-    url: '/create-content-step-1',
+    url: 'create-content-step-1',
+    params: {
+      config: {},
+    },
     views: {
       tools: {
         template: '', // no tools
       },
-      main: 'createContentStep1',
+      main: 'step1Component',
+    },
+  });
+
+  $stateProvider.state({
+    name: 'hippo-cm.channel.create-content-step-2',
+    url: 'create-content-step-2',
+    params: {
+      document: {},
+      step1: {},
+    },
+    views: {
+      tools: {
+        template: '', // no tools
+      },
+      main: 'step2Component',
     },
   });
 }

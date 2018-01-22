@@ -15,64 +15,90 @@
  */
 
 class CreateContentService {
-  constructor($state, $transitions, $translate, ContentEditor, ContentService, RightSidePanelService) {
+  constructor(
+    $state,
+    $transitions,
+    $translate,
+    ContentService,
+    EditContentService,
+    Step1Service,
+    Step2Service,
+    RightSidePanelService,
+  ) {
     'ngInject';
 
-    this.doc = null;
     this.$state = $state;
     this.$translate = $translate;
-    this.ContentEditor = ContentEditor;
     this.ContentService = ContentService;
+    this.EditContentService = EditContentService;
+    this.Step1Service = Step1Service;
+    this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
       { entering: '**.create-content-step-1' },
-      () => this._init(),
+      transition => this._step1(transition.params().config),
+    );
+    $transitions.onEnter(
+      { entering: '**.create-content-step-2' },
+      transition => this._step2(transition.params().document, transition.params().step1),
     );
   }
 
-  _init() {
-    // TODO: translate title
-    this.RightSidePanelService.setTitle('Create new content');
+  start(config) {
+    this.$state.go('hippo-cm.channel.create-content-step-1', { config });
   }
 
-  start() {
-    this.$state.go('hippo-cm.channel.create-content-step-1');
+  next(document, step1) {
+    this.$state.go('hippo-cm.channel.create-content-step-2', { document, step1 });
+  }
+
+  finish(documentId) {
+    this.EditContentService.startEditing(documentId);
   }
 
   stop() {
     this.$state.go('^');
   }
 
-  getTemplateQuery(id) {
-    return this.ContentService._send('GET', ['templatequery', id], null, true);
+  _step1(config) {
+    if (!config) {
+      throw new Error('Input "options" is required');
+    }
+
+    if (!config.templateQuery) {
+      throw new Error('Configuration option "templateQuery" is required');
+    }
+
+    this._showStep1Title();
+    this.RightSidePanelService.startLoading();
+    return this.Step1Service.open(config.templateQuery, config.rootPath, config.defaultPath)
+      .then(() => {
+        this.RightSidePanelService.stopLoading();
+      });
   }
 
-  getDocument() {
-    return this.doc;
+  _showStep1Title() {
+    const title = this.$translate.instant('CREATE_CONTENT');
+    this.RightSidePanelService.setTitle(title);
   }
 
-  createDraft(documentDetails) {
-    return this.ContentService._send('POST', ['documents'], documentDetails).then((doc) => {
-      this.doc = doc;
-      return doc;
-    });
+  _step2(document, step1) {
+    this.RightSidePanelService.startLoading();
+    this.Step2Service.open(document, step1)
+      .then((step2) => {
+        this._showStep2Title(step2);
+        this.RightSidePanelService.stopLoading();
+      });
+  }
+
+  _showStep2Title(step2) {
+    const documentTitle = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', { documentType: step2.docType.displayName });
+    this.RightSidePanelService.setTitle(documentTitle);
   }
 
   generateDocumentUrlByName(name, locale) {
     return this.ContentService._send('POST', ['slugs'], name, true, { locale });
-  }
-
-  getFolders(path) {
-    return this.ContentService._send('GET', ['folders', path], null, true);
-  }
-
-  deleteDraft(id) {
-    return this.ContentService._send('DELETE', ['documents', id]);
-  }
-
-  setDraftNameUrl(documentId, data) {
-    return this.ContentService._send('PUT', ['documents', documentId], { displayName: data.name, urlName: data.url });
   }
 }
 
