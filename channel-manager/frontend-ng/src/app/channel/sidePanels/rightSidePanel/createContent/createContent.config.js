@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import step1Template from './step1/step1.html';
+import step2Template from './step2/step2.html';
+
 function config($stateProvider) {
   'ngInject';
 
@@ -27,7 +30,11 @@ function config($stateProvider) {
       tools: {
         template: '', // no tools
       },
-      main: 'step1Component',
+      main: {
+        controller: 'step1Ctrl',
+        controllerAs: '$ctrl',
+        template: step1Template,
+      },
     },
   });
 
@@ -42,7 +49,11 @@ function config($stateProvider) {
       tools: {
         template: '', // no tools
       },
-      main: 'step2Component',
+      main: {
+        controller: 'step2Ctrl',
+        controllerAs: '$ctrl',
+        template: step2Template,
+      },
     },
   });
 }

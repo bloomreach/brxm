@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import step2Component from './step2.component';
+import step2Controller from './step2.controller';
 import step2Service from './step2.service';
+import './step2.scss';
 
 const step2Module = angular
   .module('hippo-cm.channel.createContent.step2', [])
-  .component('step2Component', step2Component)
+  .controller('step2Ctrl', step2Controller)
   .service('Step2Service', step2Service);
 
 export default step2Module.name;

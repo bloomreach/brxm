@@ -14,16 +14,7 @@
 
 @import 'variables';
 
-step1-component {
-  // FIXME: add flex and layout directives on component element
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  overflow: auto;
-}
-
-.create-content-container {
+.create-content-step1 {
   background: $grey-100;
 
   form {

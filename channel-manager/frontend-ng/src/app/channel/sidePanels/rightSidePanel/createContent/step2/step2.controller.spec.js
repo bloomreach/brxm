@@ -31,7 +31,6 @@ const testDocumentType = {
 };
 
 describe('Create content step 2 component', () => {
-  let $componentController;
   let $rootScope;
   let $q;
   let CreateContentService;
@@ -39,13 +38,13 @@ describe('Create content step 2 component', () => {
   let ContentService;
   let DialogService;
 
-  let component;
+  let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
     inject((
-      _$componentController_,
+      _$controller_,
       _$rootScope_,
       _$q_,
       _CreateContentService_,
@@ -53,18 +52,18 @@ describe('Create content step 2 component', () => {
       _ContentService_,
       _DialogService_,
     ) => {
-      $componentController = _$componentController_;
       $rootScope = _$rootScope_;
       $q = _$q_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
       ContentService = _ContentService_;
       DialogService = _DialogService_;
+
+      $ctrl = $controller('step2Ctrl');
     });
 
-    component = $componentController('createContentStep2');
 
-    component.options = {
+    $ctrl.options = {
       name: testDocument.displayName,
       url: 'test-document',
       locale: 'en',
@@ -74,108 +73,108 @@ describe('Create content step 2 component', () => {
     spyOn(CreateContentService, 'getDocument').and.returnValue(testDocument);
     spyOn(DialogService, 'confirm').and.callThrough();
 
-    component.onFullWidth = () => {};
-    component.onSave = () => {};
-    component.onBeforeStateChange = obj => obj.callback();
+    $ctrl.onFullWidth = () => {};
+    $ctrl.onSave = () => {};
+    $ctrl.onBeforeStateChange = obj => obj.callback();
   });
 
   describe('$onInit', () => {
     it('loads the document from CreateContentService', () => {
-      spyOn(component, 'loadNewDocument').and.callThrough();
-      spyOn(component, 'discardAndClose');
-      spyOn(component, 'onBeforeStateChange').and.callThrough();
+      spyOn($ctrl, 'loadNewDocument').and.callThrough();
+      spyOn($ctrl, 'discardAndClose');
+      spyOn($ctrl, 'onBeforeStateChange').and.callThrough();
 
-      component.$onInit();
-      expect(component.loadNewDocument).toHaveBeenCalled();
-      expect(component.onBeforeStateChange).toHaveBeenCalled();
-      expect(component.discardAndClose).toHaveBeenCalled();
+      $ctrl.$onInit();
+      expect($ctrl.loadNewDocument).toHaveBeenCalled();
+      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
+      expect($ctrl.discardAndClose).toHaveBeenCalled();
     });
   });
 
   describe('setWidthState', () => {
     it('toggles parent "onFullWidth" mode on and off', () => {
-      spyOn(component, 'onFullWidth');
-      component.setWidthState(true);
-      expect(component.isFullWidth).toBe(true);
-      expect(component.onFullWidth).toHaveBeenCalledWith({ state: true });
+      spyOn($ctrl, 'onFullWidth');
+      $ctrl.setWidthState(true);
+      expect($ctrl.isFullWidth).toBe(true);
+      expect($ctrl.onFullWidth).toHaveBeenCalledWith({ state: true });
 
-      component.setWidthState(false);
-      expect(component.isFullWidth).toBe(false);
-      expect(component.onFullWidth).toHaveBeenCalledWith({ state: false });
+      $ctrl.setWidthState(false);
+      expect($ctrl.isFullWidth).toBe(false);
+      expect($ctrl.onFullWidth).toHaveBeenCalledWith({ state: false });
     });
   });
 
   describe('loadNewDocument', () => {
     it('gets the newly created draft document from create content service', () => {
-      component.loadNewDocument();
+      $ctrl.loadNewDocument();
       expect(CreateContentService.getDocument).toHaveBeenCalled();
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
     });
 
     it('gets the newly created draft document from create content service', () => {
-      component.loadNewDocument().then(() => {
-        expect(component.doc).toEqual(testDocument);
-        expect(component.docType).toEqual(testDocumentType);
-        expect(component.loading).toEqual(false);
+      $ctrl.loadNewDocument().then(() => {
+        expect($ctrl.doc).toEqual(testDocument);
+        expect($ctrl.docType).toEqual(testDocumentType);
+        expect($ctrl.loading).toEqual(false);
       });
     });
   });
 
   describe('close', () => {
     beforeEach(() => {
-      spyOn(component, 'onClose');
+      spyOn($ctrl, 'onClose');
     });
   });
 
   it('calls the confirmation dialog', () => {
-    component.doc = testDocument;
-    component.close();
+    $ctrl.doc = testDocument;
+    $ctrl.close();
     expect(DialogService.confirm).toHaveBeenCalled();
   });
 
   it('calls discardAndClose method to confirm document discard and close the panel', () => {
-    spyOn(component, 'discardAndClose').and.returnValue($q.resolve());
-    component.close();
-    expect(component.discardAndClose).toHaveBeenCalled();
+    spyOn($ctrl, 'discardAndClose').and.returnValue($q.resolve());
+    $ctrl.close();
+    expect($ctrl.discardAndClose).toHaveBeenCalled();
   });
 
   it('discards the document when "discard" is selected', () => {
-    component.doc = testDocument;
-    spyOn(component, 'onBeforeStateChange').and.callThrough();
+    $ctrl.doc = testDocument;
+    spyOn($ctrl, 'onBeforeStateChange').and.callThrough();
     spyOn(Promise, 'resolve').and.callThrough();
-    component.close().then(() => {
-      expect(component.documentId).not.toBeDefined();
-      expect(component.doc).not.toBeDefined();
-      expect(component.docType).not.toBeDefined();
-      expect(component.feedback).not.toBeDefined();
-      expect(component.title).toEqual('Create new content');
-      expect(component.onBeforeStateChange).toHaveBeenCalled();
+    $ctrl.close().then(() => {
+      expect($ctrl.documentId).not.toBeDefined();
+      expect($ctrl.doc).not.toBeDefined();
+      expect($ctrl.docType).not.toBeDefined();
+      expect($ctrl.feedback).not.toBeDefined();
+      expect($ctrl.title).toEqual('Create new content');
+      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
       expect(Promise.resolve).toHaveBeenCalled();
-      expect(component, 'onClose').toHaveBeenCalled();
+      expect($ctrl, 'onClose').toHaveBeenCalled();
     });
   });
 
   it('does not discard the document when cancel is clicked', () => {
-    spyOn(component, 'discardAndClose').and.returnValue(Promise.reject(null));
+    spyOn($ctrl, 'discardAndClose').and.returnValue(Promise.reject(null));
 
-    component.close().catch(() => {
-      expect(component.onClose).not.toHaveBeenCalled();
+    $ctrl.close().catch(() => {
+      expect($ctrl.onClose).not.toHaveBeenCalled();
     });
   });
 
   describe('onEditNameUrlClose', () => {
     beforeEach(() => {
-      component.doc = testDocument;
+      $ctrl.doc = testDocument;
     });
 
     it('receives new document name and URL when dialog is submitted', () => {
       spyOn(CreateContentService, 'setDraftNameUrl').and.callThrough();
 
-      expect(component.doc.displayName).toEqual('test document');
-      component._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' }).then(() => {
-        expect(CreateContentService.setDraftNameUrl).toHaveBeenCalledWith(component.doc.id, { name: 'New name', url: 'new-url' });
-        expect(component.doc.displayName).toEqual('New name');
-        expect(component.documentUrl).toEqual('new-url');
+      expect($ctrl.doc.displayName).toEqual('test document');
+      $ctrl._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' }).then(() => {
+        expect(CreateContentService.setDraftNameUrl).toHaveBeenCalledWith($ctrl.doc.id, { name: 'New name', url: 'new-url' });
+        expect($ctrl.doc.displayName).toEqual('New name');
+        expect($ctrl.documentUrl).toEqual('new-url');
       });
     });
 
@@ -185,19 +184,19 @@ describe('Create content step 2 component', () => {
       }));
       spyOn(FeedbackService, 'showError');
 
-      expect(component.doc.displayName).toEqual('test document');
-      component._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' });
+      expect($ctrl.doc.displayName).toEqual('test document');
+      $ctrl._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' });
       $rootScope.$apply();
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
-      expect(component.doc.displayName).toEqual('test document');
+      expect($ctrl.doc.displayName).toEqual('test document');
     });
   });
 
   describe('isDocumentDirty', () => {
     it('returns true if document is set to dirty by the backend', () => {
-      component.doc = testDocument;
-      component.doc.info.dirty = true;
-      expect(component.isDocumentDirty()).toBe(true);
+      $ctrl.doc = testDocument;
+      $ctrl.doc.info.dirty = true;
+      expect($ctrl.isDocumentDirty()).toBe(true);
     });
   });
 
@@ -210,13 +209,13 @@ describe('Create content step 2 component', () => {
     });
 
     it('deletes the draft after confirming the discard dialog', (done) => {
-      spyOn(component, '_confirmDiscardChanges').and.returnValue($q.resolve());
-      component.doc = testDocument;
-      component.discardAndClose();
+      spyOn($ctrl, '_confirmDiscardChanges').and.returnValue($q.resolve());
+      $ctrl.doc = testDocument;
+      $ctrl.discardAndClose();
       $rootScope.$apply();
 
       setTimeout(() => {
-        expect(component._confirmDiscardChanges).toHaveBeenCalled();
+        expect($ctrl._confirmDiscardChanges).toHaveBeenCalled();
         expect(deleteDraftSpy).toHaveBeenCalled();
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         done();
@@ -228,30 +227,30 @@ describe('Create content step 2 component', () => {
     let saveDraftSpy;
 
     beforeEach(() => {
-      component.doc = testDocument;
+      $ctrl.doc = testDocument;
       saveDraftSpy = spyOn(ContentService, 'saveDraft');
     });
 
     it('creates a draft of the current document', () => {
       saveDraftSpy.and.callThrough();
-      component.saveDocument();
+      $ctrl.saveDocument();
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     });
 
     it('emits the id of the saved document', () => {
       saveDraftSpy.and.returnValue($q.resolve());
-      spyOn(component, 'onSave');
-      component.saveDocument();
+      spyOn($ctrl, 'onSave');
+      $ctrl.saveDocument();
       $rootScope.$apply();
-      expect(component.onSave).toHaveBeenCalledWith({ documentId: testDocument.id });
+      expect($ctrl.onSave).toHaveBeenCalledWith({ documentId: testDocument.id });
     });
 
     it('does not trigger a discardAndClose dialog by resetting onBeforeStateChange', () => {
       saveDraftSpy.and.returnValue($q.resolve());
-      spyOn(component, 'onBeforeStateChange');
-      component.saveDocument();
+      spyOn($ctrl, 'onBeforeStateChange');
+      $ctrl.saveDocument();
       $rootScope.$apply();
-      expect(component.onBeforeStateChange).toHaveBeenCalled();
+      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
     });
   });
 });

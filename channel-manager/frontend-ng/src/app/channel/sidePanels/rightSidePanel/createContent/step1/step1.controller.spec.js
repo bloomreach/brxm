@@ -14,61 +14,57 @@
  * limitations under the License.
  */
 
-describe('Create content step 1 component', () => {
-  let $componentController;
+fdescribe('Create content step 1 component', () => {
   let $rootScope;
   let $q;
   let CreateContentService;
   let FeedbackService;
 
-  let component;
+  let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
     inject((
-      _$componentController_,
+      _$controller_,
       _$rootScope_,
       _$q_,
       _CreateContentService_,
       _FeedbackService_,
     ) => {
-      $componentController = _$componentController_;
       $rootScope = _$rootScope_;
       $q = _$q_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
-    });
 
-    component = $componentController('createContentStep1');
-    component.onClose = () => {};
-    component.onContinue = () => {};
+      $ctrl = $controller('step1Ctrl');
+    });
   });
 
   describe('DocumentType', () => {
     it('throws an error if options are not set', () => {
       expect(() => {
-        component.options = null;
-        component.$onInit();
+        $ctrl.options = null;
+        $ctrl.$onInit();
       }).toThrow();
     });
 
     it('throws an error if templateQuery is not set', () => {
       expect(() => {
-        component.options = { templatQuery: null };
-        component.$onInit();
+        $ctrl.options = { templatQuery: null };
+        $ctrl.$onInit();
       }).toThrow();
     });
 
     it('loads documentLocation properties from options object', () => {
-      component.options = {
+      $ctrl.options = {
         templateQuery: 'test-templateQuery',
         rootPath: 'test-rootPath',
         defaultPath: 'test-defaultPath',
       };
-      component.$onInit();
-      expect(component.documentLocationField.defaultPath).toBe('test-defaultPath');
-      expect(component.documentLocationField.rootPath).toBe('test-rootPath');
+      $ctrl.$onInit();
+      expect($ctrl.documentLocationField.defaultPath).toBe('test-defaultPath');
+      expect($ctrl.documentLocationField.rootPath).toBe('test-rootPath');
     });
 
     it('loads documentTypes from the templateQuery', () => {
@@ -80,13 +76,13 @@ describe('Create content step 1 component', () => {
       const spy = spyOn(CreateContentService, 'getTemplateQuery')
         .and.returnValue($q.resolve({ documentTypes }));
 
-      component.options = { templateQuery: 'test-template-query' };
-      component.$onInit();
+      $ctrl.options = { templateQuery: 'test-template-query' };
+      $ctrl.$onInit();
       $rootScope.$apply();
 
       expect(spy).toHaveBeenCalledWith('test-template-query');
-      expect(component.documentType).toBeNull();
-      expect(component.documentTypes).toBe(documentTypes);
+      expect($ctrl.documentType).toBeNull();
+      expect($ctrl.documentTypes).toBe(documentTypes);
     });
 
     it('pre-selects the documentType if only one is returned from the templateQuery', () => {
@@ -94,11 +90,11 @@ describe('Create content step 1 component', () => {
       spyOn(CreateContentService, 'getTemplateQuery')
         .and.returnValue($q.resolve({ documentTypes }));
 
-      component.options = { templateQuery: 'test-template-query' };
-      component.$onInit();
+      $ctrl.options = { templateQuery: 'test-template-query' };
+      $ctrl.$onInit();
       $rootScope.$apply();
 
-      expect(component.documentType).toBe('test-id1');
+      expect($ctrl.documentType).toBe('test-id1');
     });
 
     it('sends feedback as error when server returns 500', () => {
@@ -114,8 +110,8 @@ describe('Create content step 1 component', () => {
           },
         }));
 
-      component.options = { templateQuery: 'test-template-query' };
-      component.$onInit();
+      $ctrl.options = { templateQuery: 'test-template-query' };
+      $ctrl.$onInit();
       $rootScope.$apply();
 
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { templateQuery: 'new-document' });
@@ -126,7 +122,7 @@ describe('Create content step 1 component', () => {
     beforeEach(() => {
       // Mock templateQuery calls that gets executed on "onInit"
       // Disabling this will fail the tests
-      component.options = {
+      $ctrl.options = {
         templateQuery: 'test-template-query',
         rootPath: '/content/documents/hap/news',
         defaultPath: '2017/12',
@@ -139,13 +135,13 @@ describe('Create content step 1 component', () => {
     });
 
     it('assembles document object and sends it to the server', () => {
-      component.$onInit();
+      $ctrl.$onInit();
 
-      component.nameUrlFields.nameField = 'New doc';
-      component.nameUrlFields.urlField = 'new-doc';
-      component.documentType = 'hap:contentdocument';
-      component.documentLocationField.rootPath = '/content/documents/hap/news';
-      component.documentLocationField.defaultPath = '2017/12';
+      $ctrl.nameUrlFields.nameField = 'New doc';
+      $ctrl.nameUrlFields.urlField = 'new-doc';
+      $ctrl.documentType = 'hap:contentdocument';
+      $ctrl.documentLocationField.rootPath = '/content/documents/hap/news';
+      $ctrl.documentLocationField.defaultPath = '2017/12';
 
       const data = {
         name: 'New doc',
@@ -159,7 +155,7 @@ describe('Create content step 1 component', () => {
       const spy = spyOn(CreateContentService, 'createDraft')
         .and.returnValue($q.resolve('resolved'));
 
-      component.submit();
+      $ctrl.submit();
       $rootScope.$apply();
 
       expect(spy).toHaveBeenCalledWith(data);
@@ -175,7 +171,7 @@ describe('Create content step 1 component', () => {
           },
         }));
 
-      component.submit();
+      $ctrl.submit();
       $rootScope.$apply();
 
       expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_DOCUMENT_DETAILS');
