@@ -22,7 +22,7 @@ class NameUrlFieldsController {
 
     this.createContentService = CreateContentService;
     this.isManualUrlMode = false;
-    this.urlUpdate = false;
+    this.isUrlUpdating = false;
     this.nameInputField = $element.find('#nameInputElement');
     this.updateUrlThrottle = throttle(() => this.updateUrl(), URL_UPDATE_DELAY, true);
   }
@@ -45,15 +45,17 @@ class NameUrlFieldsController {
   }
 
   updateUrl() {
-    if (this.urlUpdate) {
+    if (this.isUrlUpdating) {
+      // Backend call in progress, make sure to update the url one more time after it has finished.
+      // This prevents concurrent calls to a slow backend.
       this.triggerAfterFinish = true;
       return;
     }
 
-    this.urlUpdate = true;
+    this.isUrlUpdating = true;
     this.setDocumentUrlByName()
       .then(() => {
-        this.urlUpdate = false;
+        this.isUrlUpdating = false;
         if (this.triggerAfterFinish) {
           this.triggerAfterFinish = false;
           this.updateUrl();

@@ -83,7 +83,7 @@ class Step1Service {
     this.data = {
       nameField: '',
       urlField: '',
-      urlUpdate: false,
+      isUrlUpdating: false,
       locale: '',
       rootPath: '',
       defaultPath: '',

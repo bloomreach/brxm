@@ -21,7 +21,7 @@
       name-field="$ctrl.nameField"
       url-field="$ctrl.urlField"
       locale="$ctrl.locale"
-      url-update="$ctrl.isUrlBusyUpdating">
+      is-url-updating="$ctrl.isUrlUpdating">
     </name-url-fields>
   </div>
 </div>
@@ -34,7 +34,7 @@
 
   <md-button mat-button ng-click="$ctrl.submit()"
           class="qa-submit-name-url"
-          ng-disabled="$ctrl.isUrlBusyUpdating || !$ctrl.validateFields()">
+          ng-disabled="$ctrl.isUrlUpdating || !$ctrl.validateFields()">
     {{ 'CHANGE' | translate | uppercase }}
   </md-button>
 </md-dialog-actions>

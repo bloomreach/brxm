@@ -23,7 +23,7 @@ class NameUrlFieldsDialogController {
     this.nameField = nameField;
     this.urlField = urlField;
     this.locale = locale;
-    this.isUrlBusyUpdating = false;
+    this.isUrlUpdating = false;
   }
 
   validateFields() {
