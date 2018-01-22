@@ -35,6 +35,7 @@ class OverlayService {
     $translate,
     ChannelService,
     CmsService,
+    CreateContentService,
     DomService,
     EditContentService,
     ExperimentStateService,
@@ -51,6 +52,7 @@ class OverlayService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
@@ -369,11 +371,7 @@ class OverlayService {
     const optionButtons = {
       templateQuery: {
         svg: plusSvg,
-        callback: () => {
-          this.$rootScope.$apply(() => {
-            this.createContentHandler(config);
-          });
-        },
+        callback: () => this._createContent(config),
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
       },
       componentParameter: {
@@ -549,7 +547,7 @@ class OverlayService {
   fabButtonCallback(config, optionsSet) {
     if (config.documentUuid) {
       return () => {
-        this._startEditing(config.documentUuid);
+        this._editContent(config.documentUuid);
       };
     }
     if (config.templateQuery && !config.componentParameter) {
@@ -598,7 +596,7 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this._startEditing(structureElement.getUuid());
+      this._editContent(structureElement.getUuid());
     });
   }
 
@@ -619,9 +617,18 @@ class OverlayService {
     });
   }
 
-  _startEditing(uuid) {
-    this.EditContentService.startEditing(uuid);
-    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+  _createContent(config) {
+    this.$rootScope.$apply(() => {
+      this.CreateContentService.start(config);
+    });
+  }
+
+  _editContent(uuid) {
+    // TODO: rootscope.apply still needed?
+    this.$rootScope.$apply(() => {
+      this.EditContentService.startEditing(uuid);
+      this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+    });
   }
 
   _linkButtonTransition(element) {
