@@ -713,10 +713,10 @@ describe('OverlayService', () => {
         templateQuery: true,
         componentParameter: true,
       };
-      const returnedConfigurations = OverlayService._getDialOptions(config);
+      const buttons = OverlayService._getButtons(config);
 
-      expect(returnedConfigurations.buttons.length).toEqual(3);
-      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['mainIcon', 'dialIcon','callback', 'tooltip']);
+      expect(buttons.length).toEqual(3);
+      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon','callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
@@ -835,12 +835,12 @@ describe('OverlayService', () => {
       it('Scenario 5', (done) => {
         manageContentScenario(5, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
-          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
 
           mainButton.trigger('mouseenter');
-          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
           expect(optionButtons.children().length).toBe(1);
-          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           done();
         });
       });
@@ -853,8 +853,8 @@ describe('OverlayService', () => {
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(2);
-          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
-          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('CREATE_DOCUMENT');
           done();
         });
       });
@@ -899,14 +899,7 @@ describe('OverlayService', () => {
       });
     });
 
-    describe('setting fab button callback and enabling hover', () => {
-      function fetchButtonCallbackAndHover(config) {
-        const optionsSet = OverlayService._getDialOptions(config);
-        return {
-          callback: optionsSet.buttons[0].callback,
-          isHoverEnabled: OverlayService.isHoverEnabled(config),
-        };
-      }
+    describe('order and number of buttons', () => {
 
       it('Scenario 1', () => {
         const config = {
@@ -915,9 +908,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(false);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
       });
 
       it('Scenario 2', () => {
@@ -927,9 +920,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(false);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 3', () => {
@@ -939,9 +932,10 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 4', () => {
@@ -951,9 +945,10 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
       });
 
       it('Scenario 5', () => {
@@ -963,9 +958,10 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 6', () => {
@@ -975,10 +971,25 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(3);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[2].tooltip).toBe('CREATE_DOCUMENT');
       });
+
+      it('Scenario 7', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: false,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
+      });
+
     });
   });
 });

@@ -371,8 +371,8 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _getDialOptions(config) {
-    const optionsSet = { buttons: [] };
+  _getButtons(config) {
+    const buttons = [];
 
     if (config.documentUuid) {
       const editContentButton = {
@@ -385,8 +385,7 @@ class OverlayService {
         },
         tooltip: this.$translate.instant('EDIT_CONTENT'),
       };
-      optionsSet.buttons.push(editContentButton);
-
+      buttons.push(editContentButton);
     }
 
     if (config.componentParameter) {
@@ -396,7 +395,7 @@ class OverlayService {
         callback: () => this.pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
       };
-      optionsSet.buttons.push(selectDocumentButton);
+      buttons.push(selectDocumentButton);
     }
 
     if (config.templateQuery) {
@@ -410,10 +409,10 @@ class OverlayService {
         },
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
       };
-      optionsSet.buttons.push(createContentButton);
+      buttons.push(createContentButton);
     }
 
-    return optionsSet;
+    return buttons;
   }
 
   _initManageContentConfig(structureElement) {
@@ -465,13 +464,13 @@ class OverlayService {
       return;
     }
 
-    const optionsSet = this._getDialOptions(config);
+    const buttons = this._getButtons(config);
 
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button title="${optionsSet.buttons[0].tooltip}"
-                 class="hippo-fab-btn qa-manage-content-link">${optionsSet.buttons[0].mainIcon}</button>`)
+      .append(`<button title="${buttons[0].tooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('.hippo-fab-btn');
@@ -487,7 +486,7 @@ class OverlayService {
       fabBtn.addClass('qa-manage-parameters');
     }
 
-    fabBtn.on('click', optionsSet.buttons[0].callback);
+    fabBtn.on('click', buttons[0].callback);
 
     const adjustOptionsPosition = () => {
       const boxElement = structureElement.prepareBoxElement();
@@ -505,7 +504,7 @@ class OverlayService {
     const showOptions = () => {
       adjustOptionsPosition();
       if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(this._createButtonsHtml(optionsSet.buttons.slice(1)));
+        optionButtonsContainer.html(this._createButtonsHtml(buttons.slice(1)));
         fabBtn.addClass('hippo-fab-btn-open');
         overlayElement.addClass('is-showing-options');
         return true;
@@ -527,7 +526,7 @@ class OverlayService {
       overlayElement.addClass('is-left');
     };
 
-    if (optionsSet.buttons.length > 1) {
+    if (buttons.length > 1) {
       overlayElement.on('mouseenter', showOptionsIfLeft);
       overlayElement.on('mouseleave', hideOptionsAndLeave);
     }
