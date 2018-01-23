@@ -105,7 +105,7 @@ class ContentEditorService {
       .then(() => this.ContentService.createDraft(id)
         .then((document) => {
           if (this._hasFields(document)) {
-            this.loadDocumentType(document);
+            return this.loadDocumentType(document);
           }
           return this.$q.reject(this._noContentResponse(document));
         })
