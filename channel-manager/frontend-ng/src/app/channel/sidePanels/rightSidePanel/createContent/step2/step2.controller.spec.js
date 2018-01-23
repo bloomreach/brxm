@@ -30,7 +30,7 @@ const testDocumentType = {
   displayName: 'test-name 1',
 };
 
-describe('Create content step 2 component', () => {
+xdescribe('Create content step 2 component', () => {
   let $rootScope;
   let $q;
   let CreateContentService;

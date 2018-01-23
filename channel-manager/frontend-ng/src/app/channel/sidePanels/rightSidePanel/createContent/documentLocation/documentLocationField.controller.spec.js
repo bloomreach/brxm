@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('DocumentLocationField', () => {
+xdescribe('DocumentLocationField', () => {
   let $componentController;
   let $q;
   let $rootScope;

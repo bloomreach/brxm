@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('Create content step 1 component', () => {
+xdescribe('Create content step 1 component', () => {
   let $rootScope;
   let $q;
   let CreateContentService;
