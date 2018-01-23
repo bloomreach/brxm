@@ -24,7 +24,9 @@ describe('OverlayService', () => {
   let iframeWindow;
   let ChannelService;
   let CmsService;
+  let CreateContentService;
   let DomService;
+  let EditContentService;
   let ExperimentStateService;
   let FeedbackService;
   let HippoIframeService;
@@ -43,7 +45,9 @@ describe('OverlayService', () => {
       _$window_,
       _ChannelService_,
       _CmsService_,
+      _CreateContentService_,
       _DomService_,
+      _EditContentService_,
       _ExperimentStateService_,
       _FeedbackService_,
       _HippoIframeService_,
@@ -58,7 +62,9 @@ describe('OverlayService', () => {
       $window = _$window_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      CreateContentService = _CreateContentService_;
       DomService = _DomService_;
+      EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
@@ -527,28 +533,51 @@ describe('OverlayService', () => {
     });
   });
 
-  it('does not throw an error when calling edit content handler if not set', (done) => {
-    loadIframeFixture(() => {
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
+  it('can edit content', (done) => {
+    spyOn(EditContentService, 'startEditing');
+    spyOn(CmsService, 'reportUsageStatistic');
 
-      expectNoPropagatedClicks();
-      expect(() => contentLink.click()).not.toThrow();
-
-      done();
-    });
-  });
-
-  it('calls the edit content handler to edit a document', (done) => {
-    const editContentHandler = jasmine.createSpy('editContentHandler');
-
-    OverlayService.onEditContent(editContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
+
+      done();
+    });
+  });
+
+  it('can create content', (done) => {
+    spyOn(CreateContentService, 'start');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
+      const createContentButton = $(overlayElementScenario2).find('.hippo-fab-btn');
+
+      expectNoPropagatedClicks();
+      createContentButton.click();
+
+      const config = CreateContentService.start.calls.mostRecent().args[0];
+      expect(config.templateQuery).toBe('manage-content-template-query');
+
+      done();
+    });
+  });
+
+  it('can pick a path', (done) => {
+    ChannelService.isEditable = () => true;
+    spyOn(CmsService, 'publish');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', undefined, jasmine.any(Object));
 
       done();
     });
@@ -711,7 +740,7 @@ describe('OverlayService', () => {
       const buttons = OverlayService._getButtons(config);
 
       expect(buttons.length).toEqual(3);
-      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon','callback', 'tooltip']);
+      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon', 'callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
@@ -905,11 +934,9 @@ describe('OverlayService', () => {
           done();
         });
       });
-
     });
 
     describe('order and number of buttons', () => {
-
       it('Scenario 1', () => {
         const config = {
           documentUuid: true,
@@ -998,7 +1025,6 @@ describe('OverlayService', () => {
         expect(buttons.length).toBe(1);
         expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
       });
-
     });
   });
 });

@@ -35,7 +35,9 @@ class OverlayService {
     $translate,
     ChannelService,
     CmsService,
+    CreateContentService,
     DomService,
+    EditContentService,
     ExperimentStateService,
     FeedbackService,
     HippoIframeService,
@@ -50,7 +52,9 @@ class OverlayService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -59,8 +63,6 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.createContentHandler = angular.noop;
-    this.editContentHandler = angular.noop;
     this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
@@ -83,14 +85,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onCreateContent(callback) {
-    this.createContentHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   pickPath(config) {
@@ -378,11 +372,7 @@ class OverlayService {
       const editContentButton = {
         mainIcon: contentLinkSvg,
         dialIcon: '', // edit button should never be a dial button
-        callback: () => {
-          this.$rootScope.$apply(() => {
-            this.editContentHandler(config.documentUuid);
-          });
-        },
+        callback: () => this._editContent(config.documentUuid),
         tooltip: this.$translate.instant('EDIT_CONTENT'),
       };
       buttons.push(editContentButton);
@@ -402,11 +392,7 @@ class OverlayService {
       const createContentButton = {
         mainIcon: plusWhiteSvg,
         dialIcon: plusSvg,
-        callback: () => {
-          this.$rootScope.$apply(() => {
-            this.createContentHandler(config);
-          });
-        },
+        callback: () => this._createContent(config),
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
       };
       buttons.push(createContentButton);
@@ -461,8 +447,8 @@ class OverlayService {
   _initManageContentLink(structureElement, overlayElement) {
     const config = this._initManageContentConfig(structureElement);
 
-    // if the config is empty, create no button
     if (Object.keys(config).length === 0) {
+      // config is empty, no buttons to render
       return;
     }
 
@@ -488,7 +474,7 @@ class OverlayService {
       fabBtn.addClass('qa-manage-parameters');
     }
 
-    fabBtn.on('click', buttons[0].callback);
+    this._addClickHandler(fabBtn, () => buttons[0].callback());
 
     const adjustOptionsPosition = () => {
       const boxElement = structureElement.prepareBoxElement();
@@ -576,9 +562,7 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
-      });
+      this._editContent(structureElement.getUuid());
     });
   }
 
@@ -592,11 +576,20 @@ class OverlayService {
     });
   }
 
-  _addClickHandler(overlayElement, handler) {
-    overlayElement.click((event) => {
+  _addClickHandler(jqueryElement, handler) {
+    jqueryElement.click((event) => {
       event.stopPropagation();
       handler();
     });
+  }
+
+  _createContent(config) {
+    this.CreateContentService.start(config);
+  }
+
+  _editContent(uuid) {
+    this.EditContentService.startEditing(uuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   _linkButtonTransition(element) {
