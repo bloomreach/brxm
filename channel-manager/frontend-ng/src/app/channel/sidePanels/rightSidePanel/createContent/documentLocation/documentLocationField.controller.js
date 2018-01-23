@@ -35,6 +35,14 @@ class DocumentLocationFieldController {
   }
 
   $onInit() {
+    if (!this.rootPath) {
+      throw new Error('The rootPath option can not be empty');
+    }
+
+    if (!this.rootPath.startsWith('/')) {
+      throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
+    }
+
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
@@ -77,17 +85,16 @@ class DocumentLocationFieldController {
    * @param folders The array of folders returned by the backend
    */
   onLoadFolders(folders) {
-    if (folders.length === 0) {
-      return;
+    if (folders.length > 0) {
+      const lastFolder = folders[folders.length - 1];
+      this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
+      this.documentLocation = lastFolder.path;
+      this.locale = lastFolder.locale;
+      this.defaultPath = folders
+        .filter((folder, index) => index >= this.rootPathDepth)
+        .map(folder => folder.name)
+        .join('/');
     }
-    const lastFolder = folders[folders.length - 1];
-    this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
-    this.documentLocation = lastFolder.path;
-    this.locale = lastFolder.locale;
-    this.defaultPath = folders
-      .filter((folder, index) => index >= this.rootPathDepth)
-      .map(folder => folder.name)
-      .join('/');
   }
 
   openPicker() {

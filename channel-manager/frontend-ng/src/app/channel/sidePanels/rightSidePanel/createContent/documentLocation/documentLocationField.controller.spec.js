@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-xdescribe('DocumentLocationField', () => {
+describe('DocumentLocationField', () => {
   let $componentController;
   let $q;
   let $rootScope;
-  let ChannelService;
+  let CmsService;
+  let FeedbackService;
   let Step1Service;
-
   let component;
   let getFolderSpy;
-  let getChannelSpy;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
@@ -32,42 +31,63 @@ xdescribe('DocumentLocationField', () => {
       _$componentController_,
       _$q_,
       _$rootScope_,
-      _ChannelService_,
+      _CmsService_,
+      _FeedbackService_,
       _Step1Service_,
     ) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
+      FeedbackService = _FeedbackService_;
       Step1Service = _Step1Service_;
     });
 
     component = $componentController('documentLocationField');
-
     getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
-    getChannelSpy = spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/channel/content' });
+
+    component.rootPath = '/root';
     component.changeLocale = () => angular.noop();
   });
 
+  describe('$onInit', () => {
+    it('throws an error if rootPath if not configured', () => {
+      component.rootPath = undefined;
+      expect(() => component.$onInit()).toThrowError('The rootPath option can not be empty');
+    });
 
-  it('detects the root path depth', () => {
-    component.rootPath = '/root';
-    component.$onInit();
-    expect(component.rootPathDepth).toBe(1);
+    it('throws an error if rootPath is a relative path', () => {
+      component.rootPath = 'relative/path';
+      expect(() => component.$onInit()).toThrowError('The rootPath option can only be an absolute path: relative/path');
+    });
 
-    component.rootPath = '/root/path/';
-    component.$onInit();
-    expect(component.rootPathDepth).toBe(2);
-
-    component.rootPath = 'some/path/';
-    component.$onInit();
-    expect(component.rootPathDepth).toBe(4);
-  });
-
-  describe('parsing the defaultPath @Input', () => {
     it('throws an error if defaultPath is absolute', () => {
       component.defaultPath = '/path';
-      expect(() => component.$onInit()).toThrow(new Error('The defaultPath option can only be a relative path: /path'));
+      expect(() => component.$onInit()).toThrowError('The defaultPath option can only be a relative path: /path');
+    });
+
+    it('detects the root path depth', () => {
+      component.rootPath = '/root';
+      component.$onInit();
+      expect(component.rootPathDepth).toBe(1);
+
+      component.rootPath = '/root/path';
+      component.$onInit();
+      expect(component.rootPathDepth).toBe(2);
+
+      component.rootPath = '/root/path/';
+      component.$onInit();
+      expect(component.rootPathDepth).toBe(3);
+    });
+
+    it('stores the locale returned by the "getFolders" backend call', () => {
+      const folders = [{ path: '/root' }, { path: '/root/path', locale: 'de' }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
+
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(component.locale).toBe('de');
     });
   });
 
@@ -117,16 +137,16 @@ xdescribe('DocumentLocationField', () => {
     });
 
     it('uses only one folder of root path if default path is empty', () => {
-      setup('', '', ['channel', 'content']);
+      setup('/channel/content', '', ['channel', 'content']);
       expect(component.documentLocationLabel).toBe('content');
 
-      setup('root', '', ['channel', 'content', 'root']);
+      setup('/channel/content/root', '', ['channel', 'content', 'root']);
       expect(component.documentLocationLabel).toBe('root');
 
       setup('/root', '', ['root']);
       expect(component.documentLocationLabel).toBe('root');
 
-      setup('root/path', '', ['channel', 'content', 'root', 'path']);
+      setup('/channel/content/root/path', '', ['channel', 'content', 'root', 'path']);
       expect(component.documentLocationLabel).toBe('path');
 
       setup('/root/path', '', ['root', 'path']);
@@ -134,13 +154,13 @@ xdescribe('DocumentLocationField', () => {
     });
 
     it('uses only one folder of root path if default path depth is less than 3', () => {
-      setup('', 'some', ['channel', 'content', 'some']);
+      setup('/channel/content', 'some', ['channel', 'content', 'some']);
       expect(component.documentLocationLabel).toBe('content/some');
 
-      setup('', 'some/folder', ['channel', 'content', 'some', 'folder']);
+      setup('/channel/content', 'some/folder', ['channel', 'content', 'some', 'folder']);
       expect(component.documentLocationLabel).toBe('content/some/folder');
 
-      setup('root', 'some/folder', ['channel', 'content', 'root', 'some', 'folder']);
+      setup('/channel/content/root', 'some/folder', ['channel', 'content', 'root', 'some', 'folder']);
       expect(component.documentLocationLabel).toBe('root/some/folder');
 
       setup('/root', 'some/folder', ['root', 'some', 'folder']);
@@ -148,7 +168,7 @@ xdescribe('DocumentLocationField', () => {
     });
 
     it('always shows a maximum of 3 folders', () => {
-      setup('root', 'folder/with/document', ['channel', 'content', 'root', 'folder', 'with', 'document']);
+      setup('/channel/content/root', 'folder/with/document', ['channel', 'content', 'root', 'folder', 'with', 'document']);
       expect(component.documentLocationLabel).toBe('folder/with/document');
 
       setup('/root', 'folder/with/document', ['root', 'folder', 'with', 'document']);
@@ -165,16 +185,67 @@ xdescribe('DocumentLocationField', () => {
     });
   });
 
-  describe('the locale @Output', () => {
-    it('emits the locale when component is initialized', () => {
-      spyOn(component, 'changeLocale');
-      const folders = [{ path: '/root' }, { path: '/root/path', locale: 'de' }];
-      getFolderSpy.and.returnValue($q.resolve(folders));
+  describe('onLoadFolders', () => {
+    it('ignores an empty result from the backend', () => {
+      component.documentLocationLabel = 'test-document-location-label';
+      component.documentLocation = 'test-document-location';
+      component.locale = 'test-locale';
+      component.defaultPath = 'test-default-path';
 
-      component.$onInit();
-      $rootScope.$apply();
+      component.onLoadFolders([]);
 
-      expect(component.changeLocale).toHaveBeenCalledWith({ locale: 'de' });
+      expect(component.documentLocationLabel).toBe('test-document-location-label');
+      expect(component.documentLocation).toBe('test-document-location');
+      expect(component.locale).toBe('test-locale');
+      expect(component.defaultPath).toBe('test-default-path');
+    });
+  });
+
+  describe('openPicker', () => {
+    it('subscribes once to the "path-picked" event of the CMS before opening the picker', () => {
+      spyOn(CmsService, 'subscribeOnce');
+      component.openPicker();
+      expect(CmsService.subscribeOnce).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
+    });
+
+    it('opens the picker by publishing the "show-path-picker" event', () => {
+      spyOn(CmsService, 'publish');
+      const pickerConfig = {};
+      component.documentLocation = 'current-location';
+      component.pickerConfig = pickerConfig;
+      component.openPicker();
+      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
+    });
+  });
+
+  describe('onPathPicked', () => {
+    it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+      spyOn(component, 'setDocumentLocation');
+
+      component.onPathPicked('some-id', '/root/some-path');
+      expect(component.setDocumentLocation).not.toHaveBeenCalled();
+
+      component.onPathPicked('document-location-callback-id', '/root/new-path');
+      expect(component.setDocumentLocation).toHaveBeenCalledWith('/root/new-path');
+    });
+
+    it('prepends relative paths with a /', () => {
+      spyOn(component, 'setDocumentLocation');
+
+      component.onPathPicked('document-location-callback-id', 'root/path');
+      expect(component.setDocumentLocation).toHaveBeenCalledWith('/root/path');
+    });
+
+    it('shows an error if the chosen path is not part of the rootPath tree', () => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(component, 'setDocumentLocation');
+
+      component.onPathPicked('document-location-callback-id', '/flowers/tulip');
+      expect(component.setDocumentLocation).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
+        root: '/root',
+        path: '/flowers/tulip',
+      });
     });
   });
 });
