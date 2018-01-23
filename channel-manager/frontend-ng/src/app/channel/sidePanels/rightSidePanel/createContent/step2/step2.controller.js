@@ -57,7 +57,7 @@ class Step2Controller {
     if (this.documentIsSaved) {
       return true;
     }
-    return this.Step2Service.confirmDiscardChanges()
+    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
       .then(async () => {
         try {
           await this.ContentService.deleteDocument(this.ContentEditor.getDocumentId());

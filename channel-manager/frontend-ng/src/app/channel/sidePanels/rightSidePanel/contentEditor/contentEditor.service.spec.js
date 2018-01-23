@@ -553,10 +553,26 @@ describe('ContentEditorService', () => {
     it('shows a dialog', () => {
       ContentEditor.markDocumentDirty();
 
-      const result = ContentEditor.confirmDiscardChanges();
+      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY');
 
       expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('shows a dialog with a title', () => {
+      ContentEditor.markDocumentDirty();
+
+      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY', 'TITLE_KEY');
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('TITLE_KEY', {
         documentName: 'Test',
       });
       expect(DialogService.show).toHaveBeenCalled();

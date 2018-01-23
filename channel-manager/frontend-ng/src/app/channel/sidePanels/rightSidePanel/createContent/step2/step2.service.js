@@ -54,25 +54,6 @@ class Step2Service {
       });
   }
 
-  confirmDiscardChanges() {
-    const document = this.ContentEditor.getDocument();
-    if (!document) {
-      return this.$q.resolve(true);
-    }
-
-    const messageParams = {
-      documentName: document.displayName,
-    };
-
-    const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('DISCARD_DOCUMENT', messageParams))
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_NEW_DOCUMENT', messageParams))
-      .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.$translate.instant('CANCEL'));
-
-    return this.DialogService.show(confirm);
-  }
-
   openEditNameUrlDialog() {
     const document = this.ContentEditor.getDocument();
     const dialog = {

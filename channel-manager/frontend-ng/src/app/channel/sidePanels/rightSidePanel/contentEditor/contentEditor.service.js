@@ -256,17 +256,22 @@ class ContentEditorService {
     this.killed = true;
   }
 
-  confirmDiscardChanges() {
+  confirmDiscardChanges(messageKey, titleKey) {
     if (this._doNotConfirm()) {
       return this.$q.resolve();
     }
-    const messageParams = {
+    const translateParams = {
       documentName: this.document.displayName,
     };
+
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .textContent(this.$translate.instant(messageKey, translateParams))
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.$translate.instant('CANCEL'));
+
+    if (titleKey) {
+      confirm.title(this.$translate.instant(titleKey, translateParams))
+    }
 
     return this.DialogService.show(confirm);
   }
