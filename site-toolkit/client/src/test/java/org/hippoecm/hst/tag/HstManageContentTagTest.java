@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.Writer;
 
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
@@ -32,10 +30,8 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
-import org.hippoecm.hst.mock.core.request.MockComponentConfiguration;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -134,11 +130,7 @@ public class HstManageContentTagTest {
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertThat(response.getContentAsString(), is("<!-- {"
-                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"templateQuery\":\"new-document\","
-                + "\"componentId\":\"1234\""
-                + "} -->"));
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"templateQuery\":\"new-document\"} -->"));
     }
 
     @Test
@@ -153,11 +145,7 @@ public class HstManageContentTagTest {
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertThat(response.getContentAsString(), is("<!-- {"
-                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\""
-                + "} -->"));
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->"));
     }
 
     @Test
@@ -173,11 +161,7 @@ public class HstManageContentTagTest {
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
-        assertThat(response.getContentAsString(), is("<!-- {"
-                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\""
-                + "} -->"));
+        assertThat(response.getContentAsString(), is("<!-- {\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"" + handle.getIdentifier() + "\"} -->"));
     }
 
     @Test
@@ -236,7 +220,6 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -254,7 +237,6 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"relPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -272,7 +254,6 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"string\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
@@ -304,7 +285,6 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"test\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
@@ -328,7 +308,6 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentValue\":\"/absolute/path\","
@@ -362,7 +341,6 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"relPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentValue\":\"/mount/path/relative/path\","
@@ -379,7 +357,6 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"pickerPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentPickerConfiguration\":\"picker-config\","
@@ -413,7 +390,6 @@ public class HstManageContentTagTest {
                 + "\"templateQuery\":\"new-newsdocument\","
                 + "\"rootPath\":\"news/amsterdam\","
                 + "\"defaultPath\":\"2018/09/23\","
-                + "\"componentId\":\"1234\","
                 + "\"componentParameter\":\"newsDocument\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
@@ -422,7 +398,7 @@ public class HstManageContentTagTest {
     @Test(expected = JspException.class)
     public void exceptionWhileWritingToJspOutputsNothing() throws Exception {
         tag.setTemplateQuery("new-document");
-        tag.setPageContext(new BrokenPageContext(pageContext));
+        tag.setPageContext(new BrokenPageContext());
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
     }
 
@@ -499,10 +475,6 @@ public class HstManageContentTagTest {
 
     private static class BrokenPageContext extends MockPageContext {
 
-        public BrokenPageContext(final MockPageContext context) {
-            super(context.getServletContext(), (HttpServletRequest)context.getRequest(), (HttpServletResponse)context.getResponse());
-        }
-
         @Override
         public JspWriter getOut() {
             return new MockJspWriter((Writer) null) {
@@ -516,13 +488,6 @@ public class HstManageContentTagTest {
 
     @ParametersInfo(type = TestComponentInfo.class)
     public class TestComponent extends GenericHstComponent {
-
-        @Override
-        public ComponentConfiguration getComponentConfiguration() {
-            final MockComponentConfiguration config = new MockComponentConfiguration();
-            config.setCanonicalIdentifier("1234");
-            return config;
-        }
     }
 
     private interface TestComponentInfo {
