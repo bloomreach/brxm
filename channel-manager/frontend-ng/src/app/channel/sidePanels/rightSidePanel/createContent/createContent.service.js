@@ -21,6 +21,7 @@ class CreateContentService {
     $translate,
     ContentService,
     EditContentService,
+    HippoIframeService,
     Step1Service,
     Step2Service,
     RightSidePanelService,
@@ -31,6 +32,7 @@ class CreateContentService {
     this.$translate = $translate;
     this.ContentService = ContentService;
     this.EditContentService = EditContentService;
+    this.HippoIframeService = HippoIframeService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
@@ -57,6 +59,7 @@ class CreateContentService {
   }
 
   finish(documentId) {
+    this.HippoIframeService.reload();
     this.EditContentService.startEditing(documentId);
   }
 
