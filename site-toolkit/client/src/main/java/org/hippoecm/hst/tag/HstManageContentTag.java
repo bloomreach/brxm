@@ -142,10 +142,6 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private String getComponentId() {
-        if (componentParameter == null) {
-            return null;
-        }
-
         final HstComponentWindow window = getComponentWindow();
         final ComponentConfiguration configuration = window.getComponent().getComponentConfiguration();
         if (configuration == null) {
