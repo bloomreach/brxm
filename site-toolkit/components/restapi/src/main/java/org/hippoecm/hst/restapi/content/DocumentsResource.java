@@ -213,9 +213,8 @@ public class DocumentsResource extends AbstractResource {
                 andClause = andClause.and(new ExistsConstraint(ob));
             }
 
-            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders);
-            query.offsetBy(offset)
-                 .limitTo(max);
+            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders).offsetBy(offset)
+                    .limitTo(max);
 
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
@@ -261,7 +260,7 @@ public class DocumentsResource extends AbstractResource {
                                        @QueryParam("_attributes") final String attributeString) {
         try {
             final List<String> includedAttributes = parseAttributes(attributeString);
-            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes, true);
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed

@@ -64,6 +64,15 @@ public class ResourceContextFactory {
         return new ResourceContextImpl(restApiLinkCreator, explicitNodeVisitors, fallbackNodeVisitors, attributes);
     }
 
+    public ResourceContext createResourceContext(final List<String> attributes,
+                                                 final boolean includeDocumentDataByDefault)
+                           throws RepositoryException {
+        final ResourceContextImpl resourceContext =
+                new ResourceContextImpl(restApiLinkCreator, explicitNodeVisitors, fallbackNodeVisitors, attributes);
+        resourceContext.setIncludeDocumentDataByDefault(includeDocumentDataByDefault);
+        return resourceContext;
+    }
+
     private static class ResourceContextImpl implements ResourceContext {
 
         private final ContentTypes contentTypes;
@@ -71,6 +80,7 @@ public class ResourceContextFactory {
         private final List<NodeVisitor> explicitNodeVisitors;
         private final List<NodeVisitor> fallbackNodeVisitors;
         private final List<String> includedAttributes;
+        private boolean includeDocumentDataByDefault = false;
 
         public ResourceContextImpl(final RestApiLinkCreator restApiLinkCreator,
                                    final List<NodeVisitor> explicitNodeVisitors,
@@ -101,6 +111,15 @@ public class ResourceContextFactory {
         @Override
         public List<String> getIncludedAttributes() {
             return includedAttributes;
+        }
+
+        @Override
+        public boolean includeDocumentDataByDefault() {
+            return includeDocumentDataByDefault;
+        }
+
+        public void setIncludeDocumentDataByDefault(final boolean includeDocumentDataByDefault) {
+            this.includeDocumentDataByDefault = includeDocumentDataByDefault;
         }
 
         public NodeVisitor getVisitor(final Node node) throws RepositoryException {
