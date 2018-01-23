@@ -16,14 +16,27 @@
 
 class Step1Service {
   constructor(
+    $translate,
     ChannelService,
     ContentService,
+    FeedbackService,
   ) {
     'ngInject';
 
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.ContentService = ContentService;
+    this.FeedbackService = FeedbackService;
     this._reset();
+  }
+
+  _reset() {
+    delete this.name;
+    delete this.url;
+    delete this.locale;
+    delete this.rootPath;
+    delete this.defaultPath;
+    delete this.templateQuery;
   }
 
   stop() {
@@ -37,9 +50,19 @@ class Step1Service {
     this.defaultPath = defaultPath;
     this.templateQuery = templateQuery;
 
-    return this.getTemplateQuery(templateQuery)
+    return this.ContentService._send('GET', ['templatequery', templateQuery], null, true)
       .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))
-      .catch(error => this._onError(error, 'Unknown error loading template query'));
+      .catch(error => this._onError(error, 'Unexpected error loading template query'));
+  }
+
+  _onLoadDocumentTypes(types) {
+    this.documentTypes = types;
+
+    if (types.length === 1) {
+      this.documentType = types[0].id;
+    } else {
+      this.documentType = '';
+    }
   }
 
   /**
@@ -76,34 +99,23 @@ class Step1Service {
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
     };
-    return this.ContentService._send('POST', ['documents'], draft);
+    return this.ContentService._send('POST', ['documents'], draft)
+      .catch(error => this._onError(error, 'Unexpected error creating new draft document'));
+  }
+
+  _onError(error, genericMessage) {
+    if (error.data && error.data.reason) {
+      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
+      const args = [errorKey];
+      if (error.data.params) args.push(error.data.params);
+      this.FeedbackService.showError(...args);
+    } else {
+      this.FeedbackService.showError(genericMessage);
+    }
   }
 
   getFolders(path) {
     return this.ContentService._send('GET', ['folders', path], null, true);
-  }
-
-  getTemplateQuery(id) {
-    return this.ContentService._send('GET', ['templatequery', id], null, true);
-  }
-
-  _onLoadDocumentTypes(types) {
-    this.documentTypes = types;
-
-    if (types.length === 1) {
-      this.documentType = types[0].id;
-    } else {
-      this.documentType = '';
-    }
-  }
-
-  _reset() {
-    delete this.name;
-    delete this.url;
-    delete this.locale;
-    delete this.rootPath;
-    delete this.defaultPath;
-    delete this.templateQuery;
   }
 }
 

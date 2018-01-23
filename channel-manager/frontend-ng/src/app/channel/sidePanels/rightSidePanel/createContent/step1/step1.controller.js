@@ -16,18 +16,12 @@
 
 class Step1Controller {
   constructor(
-    $translate,
-    $log,
     CreateContentService,
     Step1Service,
-    FeedbackService,
   ) {
     'ngInject';
 
-    this.$translate = $translate;
-    this.$log = $log;
     this.CreateContentService = CreateContentService;
-    this.FeedbackService = FeedbackService;
     this.Step1Service = Step1Service;
   }
 
@@ -81,23 +75,11 @@ class Step1Controller {
 
   submit() {
     this.Step1Service.createDraft()
-      .then(document => this.CreateContentService.next(document, this.name, this.url, this.Step1Service.locale))
-      .catch(error => this._onError(error, 'Unknown error creating new draft document'));
+      .then(document => this.CreateContentService.next(document, this.url, this.locale));
   }
 
   close() {
     this.CreateContentService.stop();
-  }
-
-  _onError(error, genericMessage) {
-    if (error.data && error.data.reason) {
-      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-      const args = [errorKey];
-      if (error.data.params) args.push(error.data.params);
-      this.FeedbackService.showError(...args);
-    } else {
-      this.$log.error(genericMessage, error);
-    }
   }
 }
 
