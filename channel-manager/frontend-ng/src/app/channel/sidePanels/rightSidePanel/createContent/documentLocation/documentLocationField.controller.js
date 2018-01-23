@@ -19,14 +19,12 @@ const MAX_DEPTH = 3;
 
 class DocumentLocationFieldController {
   constructor(
-    $log,
     CmsService,
     Step1Service,
     FeedbackService,
   ) {
     'ngInject';
 
-    this.$log = $log;
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
@@ -70,10 +68,8 @@ class DocumentLocationFieldController {
   }
 
   setDocumentLocation(documentLocation) {
-    this.Step1Service.getFolders(documentLocation).then(
-      folders => this.onLoadFolders(folders),
-      error => this.onError(error, 'Unknown error loading folders'),
-    );
+    this.Step1Service.getFolders(documentLocation)
+      .then(folders => this.onLoadFolders(folders));
   }
 
   /**
@@ -94,22 +90,9 @@ class DocumentLocationFieldController {
       .join('/');
   }
 
-  onError(error, unknownErrorMessage) {
-    if (error.data && error.data.reason) {
-      const errorKey = `ERROR_${error.data.reason}`;
-      this.FeedbackService.showError(errorKey, error.data.params);
-    } else {
-      this.$log.error(unknownErrorMessage, error);
-    }
-  }
-
   openPicker() {
     this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
-    this.CmsService.publish(
-      'show-path-picker',
-      PICKER_CALLBACK_ID,
-      this.documentLocation,
-      this.pickerConfig);
+    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.documentLocation, this.pickerConfig);
   }
 
   /**

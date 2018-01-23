@@ -55,16 +55,6 @@ class Step1Service {
       .catch(error => this._onError(error, 'Unexpected error loading template query'));
   }
 
-  _onLoadDocumentTypes(types) {
-    this.documentTypes = types;
-
-    if (types.length === 1) {
-      this.documentType = types[0].id;
-    } else {
-      this.documentType = '';
-    }
-  }
-
   /**
    * Parse the rootPath input value;
    * - use channelRootPath if rootPath is empty
@@ -90,6 +80,16 @@ class Step1Service {
     return rootPath;
   }
 
+  _onLoadDocumentTypes(types) {
+    this.documentTypes = types;
+
+    if (types.length === 1) {
+      this.documentType = types[0].id;
+    } else {
+      this.documentType = '';
+    }
+  }
+
   createDraft() {
     const draft = {
       name: this.name,
@@ -103,19 +103,18 @@ class Step1Service {
       .catch(error => this._onError(error, 'Unexpected error creating new draft document'));
   }
 
-  _onError(error, genericMessage) {
-    if (error.data && error.data.reason) {
-      const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-      const args = [errorKey];
-      if (error.data.params) args.push(error.data.params);
-      this.FeedbackService.showError(...args);
-    } else {
-      this.FeedbackService.showError(genericMessage);
-    }
+  getFolders(path) {
+    return this.ContentService._send('GET', ['folders', path], null, true)
+      .catch(error => this._onError(error, `Unexpected error loading folders for path ${path}`));
   }
 
-  getFolders(path) {
-    return this.ContentService._send('GET', ['folders', path], null, true);
+  _onError(error, genericMessage) {
+    const errorKey = (error.data && error.data.reason) ? `ERROR_${error.data.reason}` : genericMessage;
+    if (error.data && error.data.params) {
+      this.FeedbackService.showError(errorKey, error.data.params);
+    } else {
+      this.FeedbackService.showError(errorKey);
+    }
   }
 }
 
