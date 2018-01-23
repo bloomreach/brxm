@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ class OverlayService {
     $translate,
     CmsService,
     DomService,
+    EditContentService,
     ExperimentStateService,
     HippoIframeService,
     MaskService,
@@ -41,16 +42,16 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = true;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -62,10 +63,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -316,7 +313,8 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
+        this.EditContentService.startEditing(structureElement.getUuid());
+        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
       });
     });
   }

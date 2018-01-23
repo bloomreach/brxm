@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,37 @@
  * limitations under the License.
  */
 
-import './rightSidePanel.scss';
-import controller from './rightSidePanel.controller';
-import template from './rightSidePanel.html';
+class RightSidePanelService {
+  constructor() {
+    'ngInject';
 
-const rightSidePanelComponent = {
-  controller,
-  template,
-};
+    this.stopLoading();
+    this.clearTitle();
+  }
 
-export default rightSidePanelComponent;
+  isLoading() {
+    return this.loading;
+  }
+
+  startLoading() {
+    this.loading = true;
+  }
+
+  stopLoading() {
+    this.loading = false;
+  }
+
+  getTitle() {
+    return this.title;
+  }
+
+  setTitle(title) {
+    this.title = title;
+  }
+
+  clearTitle() {
+    this.title = '';
+  }
+}
+
+export default RightSidePanelService;

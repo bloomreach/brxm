@@ -90,7 +90,7 @@ describe('DocumentFields', () => {
       onFieldFocus,
       onFieldBlur,
     });
-    $rootScope.$apply();
+    $rootScope.$digest();
   });
 
   it('initializes the fields component', () => {

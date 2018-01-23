@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
+    "@uirouter/angularjs": "1.0.12",
+    "@uirouter/visualizer": "5.1.3",
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
     "angular-aria": "1.5.11",
@@ -30,7 +32,6 @@
     "angular-messages": "1.5.11",
     "angular-translate": "2.15.1",
     "angular-translate-loader-static-files": "2.15.1",
-    "angular-ui-router": "1.0.0-rc.1",
     "angular-ui-tree": "2.22.5",
     "es6-shim": "0.35.3",
     "jquery": "3.2.1",
