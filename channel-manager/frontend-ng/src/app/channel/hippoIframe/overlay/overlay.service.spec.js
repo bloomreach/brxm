@@ -217,13 +217,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(21);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(9);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(10);
       done();
     });
   });
@@ -615,7 +615,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(21);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -628,7 +628,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(20);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(21);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
@@ -932,6 +932,16 @@ describe('OverlayService', () => {
           expect(optionButtons.children().length).toBe(1);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
           done();
+        });
+      });
+    });
+
+    describe('when button is on a template of a component that is not a container item', () => {
+      it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
+        (done) => {
+          manageContentScenario(10, (mainButton, optionButtons) => {
+            expect(mainButton.hasClass('qa-add-content')).toBe(true);
+            done();
         });
       });
     });

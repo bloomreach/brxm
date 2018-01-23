@@ -431,8 +431,9 @@ class OverlayService {
       }
     }
 
-    if (config.containerItem.isLocked()
-      && componentParameter
+    if (componentParameter
+      && config.containerItem
+      && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
       if (!documentUuid) {
         return {};
