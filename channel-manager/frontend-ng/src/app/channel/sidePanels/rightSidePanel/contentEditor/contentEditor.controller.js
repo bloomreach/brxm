@@ -75,6 +75,12 @@ class ContentEditorCtrl {
         this.onSave();
       });
   }
+
+  switchEditor() {
+    if (angular.isFunction(this.onSwitchEditor)) {
+      this.onSwitchEditor();
+    }
+  }
 }
 
 export default ContentEditorCtrl;

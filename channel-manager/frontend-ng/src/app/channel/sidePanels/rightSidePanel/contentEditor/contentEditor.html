@@ -25,7 +25,7 @@
                 md-colors="{background: 'hippo-grey-200'}">
     <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
     <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.onSwitchEditor()' translate-compile></div>
+    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
   </md-subheader>
 
   <div ng-if="$ctrl.getError()"
@@ -39,7 +39,7 @@
     </p>
 
     <md-button ng-if="::$ctrl.getError().linkToContentEditor"
-               ng-click="$ctrl.onSwitchEditor()">
+               ng-click="$ctrl.switchEditor()">
       <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
       {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
     </md-button>
