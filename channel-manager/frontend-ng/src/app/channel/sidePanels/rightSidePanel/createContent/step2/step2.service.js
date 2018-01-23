@@ -49,6 +49,8 @@ class Step2Service {
       .then((docType) => {
         this.documentUrl = url;
         this.documentLocale = locale;
+        // Mark the document dirty; this will trigger the discard dialog and enable the save button
+        this.ContentEditor.markDocumentDirty();
 
         return docType;
       });
