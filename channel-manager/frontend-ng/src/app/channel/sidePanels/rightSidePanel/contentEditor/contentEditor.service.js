@@ -270,7 +270,7 @@ class ContentEditorService {
       .cancel(this.$translate.instant('CANCEL'));
 
     if (titleKey) {
-      confirm.title(this.$translate.instant(titleKey, translateParams))
+      confirm.title(this.$translate.instant(titleKey, translateParams));
     }
 
     return this.DialogService.show(confirm);
