@@ -53,7 +53,6 @@ class DocumentLocationFieldController {
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    this.CmsService.subscribe('path-picked', this.onPathPicked, this);
     this.setDocumentLocation(documentLocationPath);
   }
 
@@ -105,6 +104,7 @@ class DocumentLocationFieldController {
   }
 
   openPicker() {
+    this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
     this.CmsService.publish(
       'show-path-picker',
       PICKER_CALLBACK_ID,
@@ -126,10 +126,6 @@ class DocumentLocationFieldController {
       .filter((folder, index) => index >= start)
       .map(folder => folder.displayName)
       .join('/');
-  }
-
-  $onDestroy() {
-    this.CmsService.unsubscribe('path-picked', this.onPathPicked, this);
   }
 }
 
