@@ -52,7 +52,7 @@ class Step1Service {
 
     return this.ContentService._send('GET', ['templatequery', templateQuery], null, true)
       .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))
-      .catch(error => this._onError(error, 'Unexpected error loading template query'));
+      .catch(error => this._onError(error, `Unexpected error loading template query "${templateQuery}"`));
   }
 
   /**
