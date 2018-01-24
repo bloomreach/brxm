@@ -59,13 +59,13 @@ describe('NameUrlFields', () => {
     component.onNameChange();
   }
 
-  describe('$onInit', () => {
+  describe('updating the url field when name changes', () => {
     it('calls setDocumentUrlByName directly after first keyup is triggered on nameInputElement', () => {
       setNameInputValue('test val');
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
     });
 
-    it('calls setDocumentUrlByName 400ms after second keyup is triggered on nameInputElement', () => {
+    it('throttles second call to setDocumentUrlByName until timeout has finished', () => {
       setNameInputValue('test');
       setNameInputValue(' val');
       expect(component.setDocumentUrlByName.calls.count()).toBe(1);
@@ -73,22 +73,25 @@ describe('NameUrlFields', () => {
       expect(component.setDocumentUrlByName.calls.count()).toBe(2);
     });
 
-    it('waits until server callback resolves before submitting a new documentUrlByName request with the latest value', () => {
+    it('waits until server callback resolves before submitting a new documentUrlByName request with the latest nameField value', () => {
       const deferredRequest = $q.defer();
       spies.generateDocumentUrlByName.and.returnValue(deferredRequest.promise);
+
       setNameInputValue('1');
+      $timeout.flush();
       setNameInputValue('12');
+      $timeout.flush();
       setNameInputValue('123');
-      setNameInputValue('1234');
+      $timeout.flush();
       expect(component.setDocumentUrlByName.calls.count()).toBe(1);
 
       deferredRequest.resolve();
-      $timeout.flush();
+      $rootScope.$digest();
+
       expect(component.setDocumentUrlByName.calls.count()).toBe(2);
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('1', 'en');
       expect(spies.generateDocumentUrlByName).not.toHaveBeenCalledWith('12', 'en');
-      expect(spies.generateDocumentUrlByName).not.toHaveBeenCalledWith('123', 'en');
-      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('1234', 'en');
+      expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('123', 'en');
     });
 
     it('sets the url with locale automatically after locale has been changed', () => {
@@ -108,6 +111,24 @@ describe('NameUrlFields', () => {
       component.$onChanges(changes);
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
       expect(spies.generateDocumentUrlByName).toHaveBeenCalledWith('some val', 'de');
+    });
+
+    it('exposes flag "isUrlUpdating" to indicate when a request for new url slug is being processed', () => {
+      const deferredRequest = $q.defer();
+      spies.generateDocumentUrlByName.and.returnValue(deferredRequest.promise);
+
+      expect(component.isUrlUpdating).toBe(false);
+
+      setNameInputValue('1');
+      expect(component.isUrlUpdating).toBe(true);
+
+      setNameInputValue('2');
+      $timeout.flush();
+      expect(component.isUrlUpdating).toBe(true);
+
+      deferredRequest.resolve();
+      $rootScope.$digest();
+      expect(component.isUrlUpdating).toBe(false);
     });
   });
 
