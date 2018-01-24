@@ -74,16 +74,11 @@ class CreateContentService {
   }
 
   _validateStep1(config) {
-    if (!config) {
-      this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration');
-      return false;
+    if (config && config.templateQuery) {
+      return true;
     }
-
-    if (!config.templateQuery) {
-      this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
-      return false;
-    }
-    return true;
+    this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+    return false;
   }
 
   _step1(config) {
