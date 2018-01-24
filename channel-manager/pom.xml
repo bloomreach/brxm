@@ -128,6 +128,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-utilities</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-ckeditor-config</artifactId>
         <version>${hippo.ckeditor.version}</version>
       </dependency>

@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.jcr.Session;
 
+import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
 public class HintsInspectorImpl implements HintsInspector {
