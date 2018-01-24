@@ -69,7 +69,7 @@ public class UserUtilsTest {
     }
 
     @Test
-    public void getUserNNameNoLastName() throws Exception {
+    public void getUserNameNoFirstAndLastName() throws Exception {
         final Session session = createMock(Session.class);
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
         final SecurityService securityService = createMock(SecurityService.class);
@@ -80,6 +80,7 @@ public class UserUtilsTest {
         expect(securityService.getUser("admin")).andReturn(user);
         expect(user.getFirstName()).andReturn(null);
         expect(user.getLastName()).andReturn(null);
+        expect(user.getId()).andReturn("admin");
         replay(session, workspace, securityService, user);
 
         assertEquals(UserUtils.getUserName("admin", session).get(),"admin");
