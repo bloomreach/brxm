@@ -939,11 +939,11 @@ describe('OverlayService', () => {
     describe('when button is on a template of a component that is not a container item', () => {
       it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
         (done) => {
-          manageContentScenario(10, (mainButton, optionButtons) => {
+          manageContentScenario(10, (mainButton) => {
             expect(mainButton.hasClass('qa-add-content')).toBe(true);
             done();
+          });
         });
-      });
     });
 
     describe('order and number of buttons', () => {

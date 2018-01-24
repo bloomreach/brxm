@@ -538,7 +538,6 @@ describe('ContentEditorService', () => {
   });
 
   describe('confirm discard changes', () => {
-
     const showPromise = {};
 
     beforeEach(() => {
@@ -599,7 +598,6 @@ describe('ContentEditorService', () => {
   });
 
   describe('confirm save or discard changes', () => {
-
     beforeEach(() => {
       testDocument.displayName = 'Test';
       ContentEditor.document = testDocument;
@@ -609,7 +607,7 @@ describe('ContentEditorService', () => {
     it('shows a dialog and saves changes', (done) => {
       ContentEditor.markDocumentDirty();
       DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.resolve(testDocument))
+      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
 
       ContentEditor.confirmSaveOrDiscardChanges('TEST_MESSAGE_KEY').then((action) => {
         expect(action).toBe('SAVE');
