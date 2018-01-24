@@ -25,6 +25,7 @@ class Step2Service {
     ContentService,
     DialogService,
     FeedbackService,
+    HstComponentService,
   ) {
     'ngInject';
 
@@ -34,6 +35,7 @@ class Step2Service {
     this.ContentEditor = ContentEditor;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
+    this.HstComponentService = HstComponentService;
 
     this._reset();
   }
@@ -42,8 +44,10 @@ class Step2Service {
     this.data = {};
   }
 
-  open(document, url, locale) {
+  open(document, url, locale, componentInfo) {
     this._reset();
+
+    this.componentInfo = componentInfo;
 
     return this.ContentEditor.loadDocumentType(document)
       .then((docType) => {
@@ -86,6 +90,28 @@ class Step2Service {
   setDraftNameUrl(documentId, data) {
     const nameUrl = { displayName: data.name, urlName: data.url };
     return this.ContentService._send('PUT', ['documents', documentId], nameUrl);
+  }
+
+  saveComponentParameter() {
+    const componentId = this.componentInfo.id;
+
+    if (!this.componentId) {
+      // no component, so no parameter to save
+      return this.$q.resolve();
+    }
+
+    const componentName = this.componentInfo.label;
+    const parameterName = this.componentInfo.parameterName;
+    const parameterBasePath = this.componentInfo.parameterBasePath;
+    const document = this.ContentEditor.getDocument();
+
+    return this.HstComponentService.setPathParameter(componentId, parameterName, document.repositoryPath, parameterBasePath)
+      .then(() => {
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName })
+      })
+      .catch(() => {
+        this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      });
   }
 }
 
