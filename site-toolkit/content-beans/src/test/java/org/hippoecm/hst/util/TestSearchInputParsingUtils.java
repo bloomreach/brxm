@@ -154,17 +154,17 @@ public class TestSearchInputParsingUtils {
 
     @Test
     public void testSearchInputParsingUtils_parse_retainWordBoundaries() throws Exception {
-        assertEquals("I me love Ben Jerrie s?", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", true, true));
-        assertEquals("I me love Ben Jerrie s", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", false, true));
-        assertEquals("Ime love BenJerries?", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", true, false));
-        assertEquals("Ime love BenJerries", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", false, false));
-        assertEquals("The quick \\\"brown\\\" fox can t jump 32.3 feet, right", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", false, true));
-        assertEquals("The quick \\\"brown\\\" fox can t jump 32.3 feet, right?", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", true, true));
+        assertEquals("I me love Ben Jerrie''s?", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", true, true));
+        assertEquals("I me love Ben Jerrie''s", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", false, true));
+        assertEquals("Ime love BenJerrie''s?", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", true, false));
+        assertEquals("Ime love BenJerrie''s", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", false, false));
+        assertEquals("The quick \\\"brown\\\" fox can''t jump 32.3 feet, right", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", false, true));
+        assertEquals("The quick \\\"brown\\\" fox can''t jump 32.3 feet, right?", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", true, true));
         assertEquals("The quick !brown*", SearchInputParsingUtils.parse("The quick! !brown*", true, true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false, true));
 
-        assertEquals("The quick br own", SearchInputParsingUtils.parse("The quick br*'own", false, true));
-        assertEquals("The quick br* own", SearchInputParsingUtils.parse("The quick br*'own", true, true));
+        assertEquals("The quick br''own", SearchInputParsingUtils.parse("The quick br*'own", false, true));
+        assertEquals("The quick br*''own", SearchInputParsingUtils.parse("The quick br*'own", true, true));
     }
 
     @Test
@@ -201,12 +201,12 @@ public class TestSearchInputParsingUtils {
 
     @Test
     public void testSearchInputParsingUtils_parse_differentApostrophes() throws Exception {
-        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic'k", true));
-        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic’k", true));
-        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic‘k", true));
-        assertEquals("The quick", SearchInputParsingUtils.parse("The quic'k", true, false));
-        assertEquals("The quick", SearchInputParsingUtils.parse("The quic’k", true, false));
-        assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true, false));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic'k", true));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic’k", true));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic‘k", true));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic'k", true, false));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic’k", true, false));
+        assertEquals("The quic''k", SearchInputParsingUtils.parse("The quic‘k", true, false));
     }
 
     @Test
