@@ -21,6 +21,7 @@ class CreateContentService {
     $translate,
     ContentService,
     EditContentService,
+    FeedbackService,
     HippoIframeService,
     Step1Service,
     Step2Service,
@@ -32,11 +33,16 @@ class CreateContentService {
     this.$translate = $translate;
     this.ContentService = ContentService;
     this.EditContentService = EditContentService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
 
+    $transitions.onBefore(
+      { to: '**.create-content-step-1' },
+      transition => this._validateStep1(transition.params().config),
+    );
     $transitions.onEnter(
       { entering: '**.create-content-step-1' },
       transition => this._step1(transition.params().config),
@@ -67,15 +73,20 @@ class CreateContentService {
     this.$state.go('^');
   }
 
-  _step1(config) {
+  _validateStep1(config) {
     if (!config) {
-      throw new Error('Input "options" is required');
+      this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration');
+      return false;
     }
 
     if (!config.templateQuery) {
-      throw new Error('Configuration option "templateQuery" is required');
+      this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+      return false;
     }
+    return true;
+  }
 
+  _step1(config) {
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
     return this.Step1Service.open(config.templateQuery, config.rootPath, config.defaultPath)
