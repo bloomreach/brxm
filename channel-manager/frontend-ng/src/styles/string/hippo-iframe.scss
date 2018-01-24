@@ -320,6 +320,16 @@
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
+
+
+        &.disabled {
+          background-color: #E3E3E3;
+          cursor: not-allowed;
+
+          svg {
+            fill: rgba(0, 0, 0, 0.6);
+          }
+        }
       }
 
       @for $i from 0 to 3 {
