@@ -405,6 +405,7 @@ public class DocumentsServiceImplTest {
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -414,6 +415,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(false));
 
@@ -445,6 +447,7 @@ public class DocumentsServiceImplTest {
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         expect(docType.getFields()).andReturn(fields);
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
@@ -455,6 +458,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(true));
 
@@ -1289,6 +1293,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Document Display Name"));
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("document-url-name");
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)).andReturn(Optional.of(published));
         FieldTypeUtils.readFieldValues(eq(published), eq(Collections.emptyList()), isA(Map.class));
         expectLastCall();
@@ -1302,6 +1307,7 @@ public class DocumentsServiceImplTest {
 
         assertThat(document.getUrlName(), equalTo("document-url-name"));
         assertThat(document.getDisplayName(), equalTo("Document Display Name"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
 
         verifyAll();
     }
@@ -1489,6 +1495,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
+        expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
 
         session.save();
         expectLastCall();
@@ -1505,6 +1512,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
         assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
@@ -1555,6 +1563,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
+        expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
 
         session.save();
         expectLastCall();
@@ -1571,6 +1580,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
         assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
