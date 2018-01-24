@@ -16,19 +16,29 @@
 package org.hippoecm.hst.demo.channel;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.demo.components.CssDisplayValueListProvider;
 
 @FieldGroupList({
         @FieldGroup(
                 titleKey = "fields.demochannel",
-                value = { "exampleValue" }
+                value = { "exampleValue", "theme", "defaultCssDisplay" }
         )
 })
 public interface DemoChannelInfo extends ChannelInfo {
 
     @Parameter(name = "exampleValue")
     String getExampleValue();
+
+    @Parameter(name = "theme", defaultValue = "default")
+    @DropDownList({"default", "metal", "warm"})
+    String getTheme();
+
+    @Parameter(name = "defaultCssDisplay")
+    @DropDownList(valueListProvider = CssDisplayValueListProvider.class)
+    String getDefaultCssDisplay();
 
 }
