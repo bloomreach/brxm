@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -278,7 +278,13 @@ class PageStructureService {
     });
   }
 
-  renderComponent(componentId, propertiesMap) {
+  /**
+   * Re-renders a component in the current page.
+   * @param componentId   ID of the component
+   * @param propertiesMap Optional: the parameter names and values to use for rendering.
+   *                      When omitted the persisted names and values are used.
+   */
+  renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {

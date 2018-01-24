@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -649,8 +649,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -676,8 +675,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('component-no-markup', propertiesMap);
+    PageStructureService.renderComponent('component-no-markup');
     $rootScope.$digest();
 
     expect(PageStructureService.getEmbeddedLinks().length).toBe(0);
@@ -699,8 +697,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -720,10 +717,9 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "bbbb" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
 
-    PageStructureService.renderComponent('bbbb', propertiesMap);
-    PageStructureService.renderComponent('bbbb', propertiesMap);
+    PageStructureService.renderComponent('bbbb');
+    PageStructureService.renderComponent('bbbb');
 
     expect(() => {
       $rootScope.$digest();
@@ -734,7 +730,7 @@ describe('PageStructureService', () => {
     spyOn($log, 'warn');
     spyOn(RenderingService, 'fetchComponentMarkup');
 
-    PageStructureService.renderComponent('unknown-component', { });
+    PageStructureService.renderComponent('unknown-component');
 
     expect($log.warn).toHaveBeenCalled();
     expect(RenderingService.fetchComponentMarkup).not.toHaveBeenCalled();
@@ -752,7 +748,7 @@ describe('PageStructureService', () => {
       `;
     spyOn($log, 'error');
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('aaaa', { });
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     expect(PageStructureService.getContainers().length).toBe(1);
@@ -774,8 +770,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
@@ -796,8 +791,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = {};
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -820,8 +814,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
