@@ -17,6 +17,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,6 +48,9 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
+import org.hippoecm.hst.core.parameters.ValueListProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
@@ -93,6 +97,8 @@ public class ChannelServiceImpl implements ChannelService {
             final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, annotatedFields, hiddenFields);
             final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
 
+            augmentDropDownAnnotatedPropertyDefinitionValues(visiblePropertyDefinitions, localizedResources);
+
             final String lockedBy = getChannelLockedBy(channelId);
             final boolean editable = isChannelSettingsEditable(channelId);
             return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
@@ -103,6 +109,89 @@ public class ChannelServiceImpl implements ChannelService {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e.toString());
             }
             throw e;
+        }
+    }
+
+    /**
+     * Inspect {@code propertyDefInfosMap} and augment an annotation of a property definition, the type of which
+     * is {@link DropDownList} with {@link DropDownList#valueListProvider() set to a custom class, by setting the
+     * value to ones dynamically retrieved from the {@link ValueListProvider} implementation.
+     * @param propertyDefInfosMap propertyDefinitionInfo map
+     * @param localizedResources localized resources map
+     */
+    private void augmentDropDownAnnotatedPropertyDefinitionValues(Map<String, HstPropertyDefinitionInfo> propertyDefInfosMap,
+            Map<String, String> localizedResources) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Locale locale = (requestContext != null) ? requestContext.getPreferredLocale() : null;
+
+        for (HstPropertyDefinitionInfo propDefInfo : propertyDefInfosMap.values()) {
+            final List<? extends Annotation> annotations = propDefInfo.getAnnotations();
+            final List<Annotation> augmentedAnnotations = new ArrayList<>();
+            boolean anyItemAugmented = false;
+
+            for (Annotation annotation : annotations) {
+                boolean itemAugmented = false;
+                DropDownList augmentedAnnotation = null;
+
+                if (DropDownList.class.isAssignableFrom(annotation.getClass())) {
+                    final DropDownList dropDownListAnnotation = (DropDownList) annotation;
+                    final Class<? extends ValueListProvider> valueListProviderClass = dropDownListAnnotation.valueListProvider();
+
+                    if (valueListProviderClass != null && !EmptyValueListProvider.class.isAssignableFrom(valueListProviderClass)) {
+                        try {
+                            final ValueListProvider valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+                            final List<String> valueList = valueListProvider.getValues();
+
+                            // NOTE: The following block adds i18n labels for the dynamic values from the custom ValueListProvider.
+                            //       However, Channel Manager currently doesn't use the i18n labels in UI yet, unlike Component Parameters.
+                            //       So, let's keep this, which does no harm, even if it's not effective yet.
+                            {
+                                for (String value : valueList) {
+                                    final String displayValueKey = propDefInfo.getName() + "." + value;
+                                    if (!localizedResources.containsKey(displayValueKey)) {
+                                        final String displayValue = valueListProvider.getDisplayValue(value, locale);
+                                        if (displayValue != null) {
+                                            localizedResources.put(displayValueKey, displayValue);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Augment the annotation instance by this custom instance to return dynamically resolved values.
+                            augmentedAnnotation = new DropDownList() {
+                                @Override
+                                public Class<? extends Annotation> annotationType() {
+                                    return DropDownList.class;
+                                }
+                                @Override
+                                public String[] value() {
+                                    return valueList.toArray(new String[valueList.size()]);
+                                }
+                                @Override
+                                public Class<? extends ValueListProvider> valueListProvider() {
+                                    return valueListProviderClass;
+                                }
+                            };
+
+                            itemAugmented = true;
+                            anyItemAugmented = true;
+                        } catch (Exception e) {
+                            log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
+                                    valueListProviderClass, e);
+                        }
+                    }
+                }
+
+                if (itemAugmented) {
+                    augmentedAnnotations.add(augmentedAnnotation);
+                } else {
+                    augmentedAnnotations.add(annotation);
+                }
+            }
+
+            if (anyItemAugmented) {
+                propDefInfo.setAnnotations(augmentedAnnotations);
+            }
         }
     }
 
