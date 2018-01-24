@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;

@@ -39,7 +39,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.plugin.InstallState;
+import org.onehippo.cms7.essentials.sdk.api.rest.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;

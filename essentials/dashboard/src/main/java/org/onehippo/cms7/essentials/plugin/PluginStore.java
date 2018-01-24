@@ -48,6 +48,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.sdk.api.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
