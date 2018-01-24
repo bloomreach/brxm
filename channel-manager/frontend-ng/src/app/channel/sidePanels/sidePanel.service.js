@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,11 @@ class SidePanelService {
     this.panels = { };
   }
 
-  initialize(side, jQueryElement, onOpenCallback, onCloseCallback) {
+  initialize(side, jQueryElement) {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
-      onOpenCallback: onOpenCallback || (() => this.$q.resolve()),
-      onCloseCallback: onCloseCallback || (() => this.$q.resolve()),
     };
-
-    this.$mdSidenav(panel.sideNavComponentId).onClose(() => {
-      panel.onCloseCallback().then(() => this.OverlayService.sync());
-    });
 
     this.panels[side] = panel;
   }
@@ -47,16 +41,17 @@ class SidePanelService {
     }
   }
 
-  open(side, ...params) {
+  open(side) {
     const panel = this.panels[side];
     if (panel) {
       if (!this.isOpen(side)) {
-        this.$mdSidenav(panel.sideNavComponentId).open().then(() => {
-          this.OverlayService.sync();
-        });
+        return this.$mdSidenav(panel.sideNavComponentId).open()
+          .then(() => {
+            this.OverlayService.sync();
+          });
       }
-      panel.onOpenCallback(...params);
     }
+    return this.$q.resolve();
   }
 
   isOpen(side) {
@@ -65,7 +60,14 @@ class SidePanelService {
   }
 
   close(side) {
-    return this.$mdSidenav(this.panels[side].sideNavComponentId).close();
+    if (this.isOpen(side)) {
+      const panel = this.panels[side];
+      return this.$mdSidenav(panel.sideNavComponentId).close()
+        .then(() => {
+          this.OverlayService.sync();
+        });
+    }
+    return this.$q.resolve();
   }
 
   liftSidePanelAboveMask() {

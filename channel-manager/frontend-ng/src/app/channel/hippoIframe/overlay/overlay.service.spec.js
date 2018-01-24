@@ -24,7 +24,9 @@ describe('OverlayService', () => {
   let iframeWindow;
   let ChannelService;
   let CmsService;
+  let CreateContentService;
   let DomService;
+  let EditContentService;
   let ExperimentStateService;
   let FeedbackService;
   let HippoIframeService;
@@ -43,7 +45,9 @@ describe('OverlayService', () => {
       _$window_,
       _ChannelService_,
       _CmsService_,
+      _CreateContentService_,
       _DomService_,
+      _EditContentService_,
       _ExperimentStateService_,
       _FeedbackService_,
       _HippoIframeService_,
@@ -58,7 +62,9 @@ describe('OverlayService', () => {
       $window = _$window_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      CreateContentService = _CreateContentService_;
       DomService = _DomService_;
+      EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
@@ -211,13 +217,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(5);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(8);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(10);
       done();
     });
   });
@@ -276,7 +282,7 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(5);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
@@ -288,7 +294,7 @@ describe('OverlayService', () => {
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(5);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(6);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -527,28 +533,51 @@ describe('OverlayService', () => {
     });
   });
 
-  it('does not throw an error when calling edit content handler if not set', (done) => {
-    loadIframeFixture(() => {
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
+  it('can edit content', (done) => {
+    spyOn(EditContentService, 'startEditing');
+    spyOn(CmsService, 'reportUsageStatistic');
 
-      expectNoPropagatedClicks();
-      expect(() => contentLink.click()).not.toThrow();
-
-      done();
-    });
-  });
-
-  it('calls the edit content handler to edit a document', (done) => {
-    const editContentHandler = jasmine.createSpy('editContentHandler');
-
-    OverlayService.onEditContent(editContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('content-in-container-vbox');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
+
+      done();
+    });
+  });
+
+  it('can create content', (done) => {
+    spyOn(CreateContentService, 'start');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
+      const createContentButton = $(overlayElementScenario2).find('.hippo-fab-btn');
+
+      expectNoPropagatedClicks();
+      createContentButton.click();
+
+      const config = CreateContentService.start.calls.mostRecent().args[0];
+      expect(config.templateQuery).toBe('manage-content-template-query');
+
+      done();
+    });
+  });
+
+  it('can pick a path', (done) => {
+    ChannelService.isEditable = () => true;
+    spyOn(CmsService, 'publish');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', undefined, jasmine.any(Object));
 
       done();
     });
@@ -586,7 +615,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(19);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -599,7 +628,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(18);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(21);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
@@ -708,14 +737,10 @@ describe('OverlayService', () => {
         templateQuery: true,
         componentParameter: true,
       };
-      const returnedConfigurations = OverlayService._getDialOptions(config);
+      const buttons = OverlayService._getButtons(config);
 
-      expect(returnedConfigurations.mainButtonIcon).toBeDefined();
-      expect(returnedConfigurations.mainButtonCloseIcon).toBeDefined();
-      expect(returnedConfigurations.mainButtonCloseIcon).toEqual(returnedConfigurations.mainButtonIcon);
-      expect(returnedConfigurations.buttons).toBeDefined();
-      expect(returnedConfigurations.buttons.length).toEqual(2);
-      expect(Object.keys(returnedConfigurations.buttons[0])).toEqual(['svg', 'callback', 'tooltip']);
+      expect(buttons.length).toEqual(3);
+      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon', 'callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
@@ -834,13 +859,12 @@ describe('OverlayService', () => {
       it('Scenario 5', (done) => {
         manageContentScenario(5, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-add-content')).toBe(true);
-          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
 
           mainButton.trigger('mouseenter');
-          expect(mainButton.attr('title')).toBe('CANCEL');
-          expect(optionButtons.children().length).toBe(2);
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
           expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
-          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
           done();
         });
       });
@@ -853,8 +877,8 @@ describe('OverlayService', () => {
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
           expect(optionButtons.children().length).toBe(2);
-          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
-          expect(optionButtons.children()[1].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('CREATE_DOCUMENT');
           done();
         });
       });
@@ -876,7 +900,7 @@ describe('OverlayService', () => {
     });
 
     describe('when container is locked', () => {
-      it('alway shows an edit button when documentUuid is set', (done) => {
+      it('always shows an edit button even when locked', (done) => {
         manageContentScenario(7, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
@@ -897,17 +921,32 @@ describe('OverlayService', () => {
           done();
         });
       });
+
+      it('shows everything when locked by current user', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
     });
 
-    describe('setting fab button callback and enabling hover', () => {
-      function fetchButtonCallbackAndHover(config) {
-        const optionsSet = OverlayService._getDialOptions(config);
-        return {
-          callback: OverlayService.fabButtonCallback(config, optionsSet),
-          isHoverEnabled: OverlayService.isHoverEnabled(config),
-        };
-      }
+    describe('when button is on a template of a component that is not a container item', () => {
+      it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
+        (done) => {
+          manageContentScenario(10, (mainButton, optionButtons) => {
+            expect(mainButton.hasClass('qa-add-content')).toBe(true);
+            done();
+        });
+      });
+    });
 
+    describe('order and number of buttons', () => {
       it('Scenario 1', () => {
         const config = {
           documentUuid: true,
@@ -915,9 +954,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
-        expect(returnedConfiguration.isHoverEnabled).toBe(false);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
       });
 
       it('Scenario 2', () => {
@@ -927,9 +966,9 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toBeDefined();
-        expect(returnedConfiguration.isHoverEnabled).toBe(false);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 3', () => {
@@ -939,9 +978,10 @@ describe('OverlayService', () => {
           componentParameter: false,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 4', () => {
@@ -951,9 +991,10 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
       });
 
       it('Scenario 5', () => {
@@ -963,9 +1004,10 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(null);
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
 
       it('Scenario 6', () => {
@@ -975,9 +1017,23 @@ describe('OverlayService', () => {
           componentParameter: true,
         };
 
-        const returnedConfiguration = fetchButtonCallbackAndHover(config);
-        expect(returnedConfiguration.callback).toEqual(OverlayService.editContentHandler);
-        expect(returnedConfiguration.isHoverEnabled).toBe(true);
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(3);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[2].tooltip).toBe('CREATE_DOCUMENT');
+      });
+
+      it('Scenario 7', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: false,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
       });
     });
   });

@@ -20,6 +20,7 @@ import 'angular-mocks';
 describe('ChannelActionsService', () => {
   let $rootScope;
   let $q;
+  let $state;
   let $translate;
   let $window;
   let ConfigService;
@@ -30,7 +31,6 @@ describe('ChannelActionsService', () => {
   let HippoIframeService;
   let SessionService;
   let SiteMapService;
-  let SidePanelService;
   let ProjectService;
 
   let ChannelActionsService;
@@ -47,6 +47,7 @@ describe('ChannelActionsService', () => {
     inject((
       _$rootScope_,
       _$q_,
+      _$state_,
       _$translate_,
       _$window_,
       _ChannelActionsService_,
@@ -58,11 +59,11 @@ describe('ChannelActionsService', () => {
       _FeedbackService_,
       _SessionService_,
       _SiteMapService_,
-      _SidePanelService_,
       _ProjectService_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
+      $state = _$state_;
       $translate = _$translate_;
       $window = _$window_;
       ChannelActionsService = _ChannelActionsService_;
@@ -74,7 +75,6 @@ describe('ChannelActionsService', () => {
       HippoIframeService = _HippoIframeService_;
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
-      SidePanelService = _SidePanelService_;
       ProjectService = _ProjectService_;
     });
 
@@ -291,23 +291,23 @@ describe('ChannelActionsService', () => {
     const close = getItem('close');
 
     spyOn(CmsService, 'publish');
-    spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
+    spyOn($state, 'go').and.returnValue($q.resolve());
 
     close.onClick();
     $rootScope.$apply();
 
-    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
   });
 
   it('closes a channel when receiving a close-channel event from the CMS', () => {
     spyOn(CmsService, 'publish');
-    spyOn(SidePanelService, 'close').and.returnValue($q.resolve());
+    spyOn($state, 'go').and.returnValue($q.resolve());
 
     $window.CMS_TO_APP.publish('close-channel');
     $rootScope.$apply();
 
-    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
   });
 
@@ -315,12 +315,12 @@ describe('ChannelActionsService', () => {
     const close = getItem('close');
     spyOn(CmsService, 'publish');
 
-    spyOn(SidePanelService, 'close').and.returnValue($q.reject());
+    spyOn($state, 'go').and.returnValue($q.reject());
 
     close.onClick();
     $rootScope.$apply();
 
-    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm');
     expect(CmsService.publish).not.toHaveBeenCalled();
   });
 

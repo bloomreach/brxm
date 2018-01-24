@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,53 +18,62 @@ describe('RightSidePanel', () => {
   let $componentController;
   let $q;
   let $rootScope;
-  let SidePanelService;
-  let CmsService;
+  let $state;
   let ChannelService;
-  let HippoIframeService;
+  let CmsService;
+  let RightSidePanelService;
+  let SidePanelService;
 
   let $ctrl;
   let $scope;
-  let sidePanelHandlers;
+  let $element;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _ChannelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $state = _$state_;
       ChannelService = _ChannelService_;
+      RightSidePanelService = _RightSidePanelService_;
     });
 
     CmsService = jasmine.createSpyObj('CmsService', ['reportUsageStatistic']);
-    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open']);
 
     $scope = $rootScope.$new();
-    const $element = angular.element('<div></div>');
+    $element = angular.element('<div></div>');
     $ctrl = $componentController('rightSidePanel', {
-      $scope,
       $element,
+      $scope,
       CmsService,
-      HippoIframeService,
       SidePanelService,
     });
-    $rootScope.$apply();
+    $rootScope.$digest();
+  });
 
-    $ctrl.$postLink();
-    sidePanelHandlers = {
-      onOpen: SidePanelService.initialize.calls.mostRecent().args[2],
-      onClose: SidePanelService.initialize.calls.mostRecent().args[3],
-    };
+  it('knows the loading state', () => {
+    RightSidePanelService.startLoading();
+    expect($ctrl.isLoading()).toBe(true);
+
+    RightSidePanelService.stopLoading();
+    expect($ctrl.isLoading()).toBe(false);
+  });
+
+  it('knows the title', () => {
+    RightSidePanelService.setTitle('test title');
+    expect($ctrl.getTitle()).toEqual('test title');
+
+    RightSidePanelService.clearTitle();
+    expect($ctrl.getTitle()).toEqual('');
   });
 
   it('sets full width mode on and off', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed');
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
     expect($ctrl.isFullWidth).toBe(true);
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
 
     CmsService.reportUsageStatistic.calls.reset();
@@ -72,7 +81,6 @@ describe('RightSidePanel', () => {
     $ctrl.setFullWidth(false);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
     expect($ctrl.isFullWidth).toBe(false);
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
@@ -81,6 +89,24 @@ describe('RightSidePanel', () => {
 
     expect($ctrl.lastSavedWidth).toBe('800px');
     expect($ctrl.localStorageService.get('rightSidePanelWidth')).toBe('800px');
+  });
+
+  it('detects ESC keypress', () => {
+    const e = angular.element.Event('keydown');
+    e.which = 27;
+
+    spyOn($state, 'go');
+    $ctrl.$element.trigger(e);
+    expect($state.go).toHaveBeenCalledWith('^');
+  });
+
+  it('ignores other keypresses', () => {
+    const e = angular.element.Event('keydown');
+    e.which = 28;
+
+    spyOn($state, 'go');
+    $ctrl.$element.trigger(e);
+    expect($state.go).not.toHaveBeenCalled();
   });
 
   it('loads last saved width of right side panel', () => {
@@ -99,165 +125,46 @@ describe('RightSidePanel', () => {
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 
-  describe('when initializing or opening the panel', () => {
-    let testId;
-    let testOptions;
-
-    beforeEach(() => {
-      spyOn($ctrl, '_onOpen').and.callThrough();
-      testId = 'documentId';
-      testOptions = { templateQuery: 'test-query' };
-      $ctrl._resetBeforeStateChange();
-    });
-
-    it('initializes the channel right side panel service', () => {
-      expect(SidePanelService.initialize).toHaveBeenCalled();
-      expect($ctrl.options).not.toBeDefined();
-      expect($ctrl.editing).not.toBeDefined();
-      expect($ctrl.creating).not.toBeDefined();
-    });
-
-    it('resets state if beforeStateChange resolves', () => {
-      spyOn($ctrl, '_resetState');
-      sidePanelHandlers.onOpen('edit');
-      $rootScope.$digest();
-
-      sidePanelHandlers.onOpen('create');
-      $rootScope.$digest();
-
-      expect($ctrl._resetState).toHaveBeenCalledTimes(2);
-    });
-
-    it('initializes "edit" component when calling onOpen with id "edit"', () => {
-      spyOn($ctrl, 'openInMode').and.callThrough();
-      spyOn($ctrl, '_setMode').and.callThrough();
-      sidePanelHandlers.onOpen('edit', testId);
-      $rootScope.$digest();
-
-      expect($ctrl._onOpen).toHaveBeenCalledWith('edit', testId);
-      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
-      expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.edit, testId);
-      expect($ctrl.mode).toBe($ctrl.modes.edit);
-      expect($ctrl.options).toBe(testId);
-    });
-
-    it('initializes "create" component when calling onOpen with id "create"', () => {
-      spyOn($ctrl, 'openInMode').and.callThrough();
-      spyOn($ctrl, '_setMode').and.callThrough();
-      sidePanelHandlers.onOpen('create', testOptions);
-      $rootScope.$digest();
-
-      expect($ctrl._onOpen).toHaveBeenCalledWith('create', testOptions);
-      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
-      expect($ctrl._setMode).toHaveBeenCalledWith($ctrl.modes.create, testOptions);
-      expect($ctrl.mode).toBe($ctrl.modes.create);
-      expect($ctrl.options).toBe(testOptions);
-    });
-
-    it('does not call beforeStateChange and lets editor handle pending changes', () => {
-      $ctrl.options = 'test';
-      $ctrl.mode = $ctrl.modes.edit;
-      const spy = spyOn($ctrl, 'beforeStateChange');
-
-      $ctrl._onOpen('edit', testId);
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it('opens a new document if beforeStateChange is resolved', () => {
-      $ctrl.options = 'test';
-      $ctrl.mode = $ctrl.modes.edit;
-      spyOn($ctrl, 'beforeStateChange');
-      $ctrl.beforeStateChange.and.returnValue($q.resolve());
-      $ctrl._onOpen('edit', testId);
-      $rootScope.$digest();
-
-      expect($ctrl.mode).toBe($ctrl.modes.edit);
-      expect($ctrl.options).toEqual(testId);
-    });
-
-    it('does not call beforeStateChange when changing between one createContent to another', () => {
-      $ctrl.mode = $ctrl.modes.create;
-      $ctrl._onOpen('edit');
-      spyOn($ctrl, 'beforeStateChange');
-      expect($ctrl.beforeStateChange).not.toHaveBeenCalled();
-    });
-
-    it('adds required view classes', () => {
-      $ctrl.lastSavedWidth = '5px';
-      $ctrl._onOpen('edit');
-      $rootScope.$digest();
-      expect($ctrl.$element.hasClass('sidepanel-open')).toEqual(true);
-      expect($ctrl.$element.css('width')).toEqual('5px');
-      expect($ctrl.$element.css('max-width')).toEqual('5px');
-    });
-  });
-
-  it('sets isLockedOpen value in synchronization with SidePanelService.isOpen', () => {
+  it('knows when it is locked open', () => {
     SidePanelService.isOpen.and.returnValue(true);
     expect($ctrl.isLockedOpen()).toBe(true);
+  });
 
+  it('knows when it is not locked open', () => {
     SidePanelService.isOpen.and.returnValue(false);
     expect($ctrl.isLockedOpen()).toBe(false);
   });
 
-  it('closes the panel', () => {
-    spyOn($ctrl, '_resetBeforeStateChange');
-    spyOn($ctrl, 'setFullWidth');
-    SidePanelService.close.and.returnValue($q.resolve());
-    $ctrl.closePanel();
-    $rootScope.$digest();
-    expect(SidePanelService.close).toHaveBeenCalledWith('right');
-    expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
+  it('opens the panel when transitioning to state "hippo-cm.channel.*"', () => {
+    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
+    $ctrl.$onInit();
+    SidePanelService.open.and.returnValue($q.resolve());
 
-    $ctrl.mode = $ctrl.modes.edit;
-    $ctrl.options = 'test';
-    $ctrl.closePanel();
+    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
     $rootScope.$digest();
-    expect(SidePanelService.close).toHaveBeenCalledWith('right');
-    expect($ctrl._resetBeforeStateChange).toHaveBeenCalled();
-    expect($ctrl.mode).toBeUndefined();
-    expect($ctrl.options).toBeUndefined();
+
+    expect($element.hasClass('sidepanel-open')).toBe(true);
+    expect($element.css('width')).toBe('800px');
+    expect($element.css('max-width')).toBe('800px');
   });
 
-  it('resets right side panel state and sharedspace toolbar state', () => {
-    spyOn($ctrl, '_resetState');
+  it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
     spyOn(ChannelService, 'setToolbarDisplayed');
-    SidePanelService.close.and.returnValue($q.resolve(true));
-    $ctrl.closePanel();
-    $ctrl.$scope.$apply();
+    SidePanelService.open.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
+    ChannelService.isToolbarDisplayed = false;
+
+    $ctrl.$onInit();
+
+    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $rootScope.$digest();
+
+    $state.go('hippo-cm.channel');
+    $rootScope.$digest();
+
+    expect($element.hasClass('sidepanel-open')).toBe(false);
+    expect($element.css('max-width')).toBe('0px');
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
-    expect($ctrl._resetState).toHaveBeenCalled();
-  });
-
-  it('closes right side panel', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed').and.callThrough();
-    SidePanelService.close.and.returnValue($q.resolve(true));
-    $ctrl.closePanel();
-    $scope.$apply();
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
-  });
-
-  describe('onBeforeStateChange', () => {
-    it('sets and unsets a onBeforeStateChange callback', () => {
-      const firstCallback = jasmine.createSpy('firstCallback', () => $q.resolve()).and.callThrough();
-      $ctrl.onBeforeStateChange(firstCallback);
-      $ctrl._onOpen('edit', null);
-      expect(firstCallback).toHaveBeenCalled();
-      SidePanelService.close.and.returnValue($q.resolve());
-      $ctrl.closePanel();
-      $rootScope.$digest();
-      firstCallback.calls.reset();
-      $ctrl._onOpen('edit', 'anotherTestId');
-      expect(firstCallback).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('editDocumentAndRefreshPage', () => {
-    it('reloads the iframe and opens the sidePanel in edit mode', () => {
-      spyOn($ctrl, 'openInMode');
-      $ctrl.editDocumentAndRefreshPage('docId');
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect($ctrl.openInMode).toHaveBeenCalledWith($ctrl.modes.edit, 'docId');
-    });
+    expect($element.hasClass('fullwidth')).toBe(false);
   });
 });

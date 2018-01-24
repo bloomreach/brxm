@@ -15,6 +15,8 @@
  */
 
 export default function throttle($q, $timeout) {
+  'ngInject';
+
   return (callback, threshhold, trailing) => {
     threshhold = threshhold || 250;
 
@@ -27,6 +29,7 @@ export default function throttle($q, $timeout) {
       $timeout.cancel(promise);
       if (last && now < (last + threshhold)) {
         if (trailing) {
+          // invoke callback after timeout
           promise = $timeout(() => {
             now = +new Date();
             last = now;
@@ -37,8 +40,8 @@ export default function throttle($q, $timeout) {
       }
       const deferred = $q.defer();
       last = now;
-      deferred.resolve(callback(...args));
       promise = deferred.promise;
+      deferred.resolve(callback(...args));
       return promise;
     };
   };

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,43 +15,46 @@
   -->
 
 <md-sidenav layout="column"
-            md-is-locked-open="RightSidePanelCtrl.isLockedOpen()"
+            md-is-locked-open="$ctrl.isLockedOpen()"
             class="md-sidenav-right right-side-panel qa-side-panel-right"
             md-component-id="right-side-panel"
-  md-disable-backdrop>
+            md-disable-backdrop>
 
-  <resize-handle element="RightSidePanelCtrl.$element"
-                 on-resize="RightSidePanelCtrl.onResize(newWidth)"
-                 ng-if="!RightSidePanelCtrl.isFullWidth">
+  <resize-handle element="$ctrl.$element"
+                 on-resize="$ctrl.onResize(newWidth)"
+                 ng-if="!$ctrl.isFullWidth">
   </resize-handle>
 
-  <hippo-edit-content flex
-                      layout="column"
-                      ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.edit"
-                      requested-document="RightSidePanelCtrl.options"
-                      on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                      on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)"
-                      on-close="RightSidePanelCtrl.closePanel()">
-  </hippo-edit-content>
+  <md-toolbar class="right-side-panel-top-toolbar">
+    <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate" title="{{ $ctrl.getTitle() }}">
+        {{ $ctrl.getTitle() }}
+      </h1>
 
-  <create-content-step-1 flex
-                         layout="column"
-                         ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create"
-                         options="RightSidePanelCtrl.options"
-                         on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                         on-close="RightSidePanelCtrl.closePanel($event)"
-                         on-continue="RightSidePanelCtrl.switchCreateContentStep(options)"
-                         on-before-state-change="RightSidePanelCtrl.onBeforeStateChange($event)">
-  </create-content-step-1>
+      <span flex></span>
 
-  <create-content-step-2 flex
-                         layout="column"
-                         ng-if="RightSidePanelCtrl.mode === RightSidePanelCtrl.modes.create2"
-                         options="RightSidePanelCtrl.options"
-                         is-full-width="RightSidePanelCtrl.isFullWidth"
-                         on-save="RightSidePanelCtrl.editDocumentAndRefreshPage(documentId)"
-                         on-close="RightSidePanelCtrl.closePanel()"
-                         on-full-width="RightSidePanelCtrl.setFullWidth(state)"
-                         on-before-state-change="RightSidePanelCtrl.onBeforeStateChange(callback)">
-  </create-content-step-2>
+      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+                 aria-label="{{ ::'FULL_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(true)"
+                 ng-show="!$ctrl.isFullWidth"
+                 title="{{ ::'FULL_WIDTH' | translate }}">
+        <md-icon md-svg-icon="maximize-sidepanel"></md-icon>
+      </md-button>
+      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+                 aria-label="{{ ::'RESTORE_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(false)"
+                 ng-show="$ctrl.isFullWidth"
+                 title="{{ ::'RESTORE_WIDTH' | translate }}">
+        <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
+      </md-button>
+
+      <ui-view name="tools" class="right-side-panel-top-toolbar-tools"></ui-view>
+    </div>
+    <md-progress-linear md-mode="indeterminate"
+                        ng-if="$ctrl.isLoading()">
+    </md-progress-linear>
+  </md-toolbar>
+
+  <ui-view name="main" flex layout="column"></ui-view>
+
 </md-sidenav>

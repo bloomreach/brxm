@@ -17,6 +17,6 @@
 import throttle from './throttle.factory';
 
 const factoriesModule = angular.module('hippo-cm.factories', [])
-  .factory('throttle', ['$q', '$timeout', throttle]);
+  .factory('throttle', throttle);
 
 export default factoriesModule.name;
