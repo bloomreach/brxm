@@ -384,6 +384,7 @@ class OverlayService {
         dialIcon: searchSvg,
         callback: () => this.pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+        isDisabled: config.isDisabled,
       };
       buttons.push(selectDocumentButton);
     }
@@ -394,6 +395,7 @@ class OverlayService {
         dialIcon: plusSvg,
         callback: () => this._createContent(config),
         tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+        isDisabled: config.isDisabled,
       };
       buttons.push(createContentButton);
     }
@@ -416,6 +418,7 @@ class OverlayService {
       documentUuid,
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
+      customClassName: '',
     };
 
     if (!this.ChannelService.isEditable()) {
@@ -435,11 +438,7 @@ class OverlayService {
       && config.containerItem
       && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
-      if (!documentUuid) {
-        return {};
-      }
-      delete config.componentParameter;
-      delete config.templateQuery;
+      config.isDisabled = true;
     }
 
     return config;
@@ -454,12 +453,13 @@ class OverlayService {
     }
 
     const buttons = this._getButtons(config);
+    const buttonElement = $(`<button title="${buttons[0].tooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`);
 
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button title="${buttons[0].tooltip}"
-                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`)
+      .append(buttonElement)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('.hippo-fab-btn');
@@ -473,6 +473,10 @@ class OverlayService {
     }
     if (config.componentParameter) {
       fabBtn.addClass('qa-manage-parameters');
+    }
+
+    if (!fabBtn.hasClass('qa-edit-content') && config.isDisabled) {
+      this._disableButton(fabBtn);
     }
 
     this._addClickHandler(fabBtn, () => buttons[0].callback());
@@ -526,9 +530,21 @@ class OverlayService {
   }
 
   _createButtonTemplate(button, index) {
-    return $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
+    const optionButton = $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
       .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
       .on('click', button.callback);
+
+    if (button.isDisabled) {
+      this._disableButton(optionButton);
+    }
+
+    return optionButton;
+  }
+
+  _disableButton(btn) {
+    btn.addClass('disabled');
+    btn.off('click');
+    btn.on('click', e => e.stopImmediatePropagation());
   }
 
   _getElementPositionObject(boxElement) {

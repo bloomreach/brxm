@@ -20,6 +20,17 @@
 
 @import '~@bloomreach/dragula/dist/dragula.css';
 
+@mixin disabledFabButton() {
+  &.disabled {
+    background-color: $grey-300;
+    cursor: not-allowed;
+
+    svg {
+      fill: $grey-500;
+    }
+  }
+}
+
 .hst-cmseditlink {
   display: block;
   height: $embedded-link-height;
@@ -286,7 +297,7 @@
     height: 100%;
     padding: 8px 0 0 5px;
     width: 100%;
-    &:hover {
+    &:hover:not(.disabled) {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-hover !important;
     }
@@ -306,9 +317,11 @@
         padding: 8px 0 0 5px;
       }
     }
+
+    @include disabledFabButton();
   }
   &.is-showing-options {
-    .hippo-fab-btn {
+    .hippo-fab-btn:not(.disabled) {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-active !important;
     }
@@ -320,16 +333,7 @@
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
-
-
-        &.disabled {
-          background-color: #E3E3E3;
-          cursor: not-allowed;
-
-          svg {
-            fill: rgba(0, 0, 0, 0.6);
-          }
-        }
+        @include disabledFabButton();
       }
 
       @for $i from 0 to 3 {
@@ -374,5 +378,4 @@
     transform: scale(.8);
   }
 }
-
 
