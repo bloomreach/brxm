@@ -136,8 +136,7 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"templateQuery\":\"new-document\","
-                + "\"componentId\":\"1234\""
+                + "\"templateQuery\":\"new-document\""
                 + "} -->"));
     }
 
@@ -155,9 +154,8 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\""
-                + "} -->"));
+                + "\"uuid\":\"" + handle.getIdentifier()
+                + "\"} -->"));
     }
 
     @Test
@@ -175,9 +173,8 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentId\":\"1234\""
-                + "} -->"));
+                + "\"uuid\":\"" + handle.getIdentifier()
+                + "\"} -->"));
     }
 
     @Test
