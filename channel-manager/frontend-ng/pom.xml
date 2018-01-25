@@ -24,7 +24,6 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
   <name>Addon Channel Manager Frontend Next Generation</name>
   <packaging>jar</packaging>
 
