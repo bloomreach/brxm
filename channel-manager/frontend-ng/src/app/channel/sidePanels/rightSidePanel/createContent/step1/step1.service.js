@@ -16,6 +16,7 @@
 
 class Step1Service {
   constructor(
+    $q,
     $translate,
     ChannelService,
     ContentService,
@@ -23,6 +24,7 @@ class Step1Service {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.ContentService = ContentService;
@@ -115,6 +117,7 @@ class Step1Service {
     } else {
       this.FeedbackService.showError(errorKey);
     }
+    return this.$q.reject();
   }
 }
 
