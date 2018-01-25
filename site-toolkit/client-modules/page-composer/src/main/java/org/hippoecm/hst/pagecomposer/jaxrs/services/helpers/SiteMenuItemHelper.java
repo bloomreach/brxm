@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.NodeIterable;
+import org.htmlcleaner.Utils;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
@@ -50,6 +52,7 @@ import static org.hippoecm.repository.api.NodeNameCodec.encode;
 
 public class SiteMenuItemHelper extends AbstractHelper {
 
+    private Boolean omitJavascriptProtocol;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -126,7 +129,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
             rename(node, modifiedName);
         }
 
-        final String modifiedLink = modifiedItem.getLink();
+        String modifiedLink = modifiedItem.getLink();
         if (modifiedItem.getLinkType() == LinkType.NONE) {
             removeProperty(node, SITEMENUITEM_PROPERTY_EXTERNALLINK);
             removeProperty(node, SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
@@ -134,6 +137,18 @@ public class SiteMenuItemHelper extends AbstractHelper {
             node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, modifiedLink);
             removeProperty(node, SITEMENUITEM_PROPERTY_EXTERNALLINK);
         } else if (modifiedItem.getLinkType() == LinkType.EXTERNAL) {
+            if (omitJavascriptProtocol == null) {
+                omitJavascriptProtocol = HstServices.getComponentManager()
+                        .getContainerConfiguration().getBoolean("sitemenu.externallink.omitJavascriptProtocol", true);
+            }
+            if (modifiedLink != null && omitJavascriptProtocol) {
+                String normalized =
+                        Utils.escapeXml(modifiedLink.trim().toLowerCase(), true, true, true, false, false, false, true)
+                                .replaceAll("[\n\r\t]", "");
+                if (normalized.startsWith("javascript:") || normalized.startsWith("data:")) {
+                    modifiedLink = null;
+                }
+            }
             node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, modifiedLink);
             removeProperty(node, SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
         }
