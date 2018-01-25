@@ -107,7 +107,7 @@ class Step2Service {
 
     return this.HstComponentService.setPathParameter(componentId, parameterName, document.repositoryPath, parameterBasePath)
       .then(() => {
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName })
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
       .catch(() => {
         this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });

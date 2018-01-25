@@ -48,7 +48,7 @@ describe('FeedbackSerfvice', () => {
   });
 
   it('shows a translated notification message', () => {
-    const key = 'MESSAGE_KEY'
+    const key = 'MESSAGE_KEY';
     const params = { foo: 1 };
     FeedbackService.showNotification(key, params);
 
