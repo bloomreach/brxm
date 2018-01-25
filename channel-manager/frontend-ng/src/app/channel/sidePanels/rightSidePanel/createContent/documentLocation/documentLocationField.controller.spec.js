@@ -89,6 +89,23 @@ describe('DocumentLocationField', () => {
 
       expect(component.locale).toBe('de');
     });
+
+    it('disables the component if the path does not exist', () => {
+      const folders = [{ path: '/root', exists: true }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
+
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(component.enabled).toBe(true);
+
+      folders.push({ path: '/root/non-existing-folder', exists: false });
+
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(component.enabled).toBe(false);
+    });
   });
 
   describe('setting the document location', () => {

@@ -17,11 +17,12 @@
 <form name="$ctrl.form">
   <!-- Document location field -->
   <div class="field">
-    <md-input-container class="create-content-field qa-document-location create-content-field-clickable">
+    <md-input-container class="create-content-field qa-document-location" ng-class="{ 'create-content-field-clickable': $ctrl.enabled }">
       <input ng-model="$ctrl.documentLocationLabel"
              name="documentLocation"
              placeholder="Document location"
              required
+             ng-disabled="!$ctrl.enabled"
              readonly
              ng-click="$ctrl.openPicker()">
 

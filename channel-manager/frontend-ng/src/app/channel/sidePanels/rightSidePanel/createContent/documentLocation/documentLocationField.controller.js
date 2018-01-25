@@ -32,6 +32,7 @@ class DocumentLocationFieldController {
     this.rootPathDepth = 0;
     this.documentLocationLabel = '';
     this.documentLocation = '';
+    this.enabled = false;
   }
 
   $onInit() {
@@ -90,6 +91,7 @@ class DocumentLocationFieldController {
       this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
       this.documentLocation = lastFolder.path;
       this.locale = lastFolder.locale;
+      this.enabled = lastFolder.exists;
       this.defaultPath = folders
         .filter((folder, index) => index >= this.rootPathDepth)
         .map(folder => folder.name)
