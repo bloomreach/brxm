@@ -65,7 +65,7 @@ public class HstManageContentTag extends TagSupport {
     private String templateQuery;
 
     @Override
-    public int doStartTag() throws JspException {
+    public int doStartTag() {
         return EVAL_BODY_INCLUDE;
     }
 
@@ -127,10 +127,11 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            final String componentId = getComponentId();
             final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
 
             try {
-                write(documentId, componentValue, jcrPath, isRelativePathParameter);
+                write(documentId, componentId, componentValue, jcrPath, isRelativePathParameter);
             } catch (final IOException ignore) {
                 throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
@@ -140,13 +141,25 @@ public class HstManageContentTag extends TagSupport {
         }
     }
 
+    private String getComponentId() {
+        if (componentParameter == null) {
+            return null;
+        }
+
+        final HstComponentWindow window = getComponentWindow();
+        final ComponentConfiguration configuration = window.getComponent().getComponentConfiguration();
+        if (configuration == null) {
+            return null;
+        }
+        return configuration.getCanonicalIdentifier();
+    }
+
     private String getComponentValue(final HstRequestContext requestContext, final boolean isRelativePathParameter) {
         if (componentParameter == null) {
             return null;
         }
 
-        final ServletRequest request = pageContext.getRequest();
-        final HstComponentWindow window = (HstComponentWindow) request.getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
+        final HstComponentWindow window = getComponentWindow();
         final String componentValue = window.getParameter(componentParameter);
 
         if (componentValue != null && isRelativePathParameter) {
@@ -155,6 +168,11 @@ public class HstManageContentTag extends TagSupport {
             return contentRoot + "/" + componentValue;
         }
         return componentValue;
+    }
+
+    private HstComponentWindow getComponentWindow() {
+        final ServletRequest request = pageContext.getRequest();
+        return (HstComponentWindow) request.getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
     }
 
     private JcrPath getJcrPath() {
@@ -177,22 +195,29 @@ public class HstManageContentTag extends TagSupport {
         document = null;
     }
 
-    private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
+    private void write(final String documentId,
+                       final String componentId,
+                       final String componentValue,
+                       final JcrPath jcrPath,
                        final boolean isRelativePathParameter) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final Map<?, ?> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
+        final Map<String, Object> attributeMap = getAttributeMap(documentId, componentId, componentValue, jcrPath, isRelativePathParameter);
         final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
-    private Map<?, ?> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
-                                      final boolean isRelativePathParameter) {
+    private Map<String, Object> getAttributeMap(final String documentId,
+                                                final String componentId,
+                                                final String componentValue,
+                                                final JcrPath jcrPath,
+                                                final boolean isRelativePathParameter) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
         writeToMap(result, "templateQuery", templateQuery);
         writeToMap(result, "rootPath", rootPath);
         writeToMap(result, "defaultPath", defaultPath);
+        writeToMap(result, "componentId", componentId);
         writeToMap(result, "componentParameter", componentParameter);
 
         if (componentParameter != null) {
@@ -265,7 +290,6 @@ public class HstManageContentTag extends TagSupport {
         }
         this.templateQuery = templateQuery;
     }
-
 }
 
 

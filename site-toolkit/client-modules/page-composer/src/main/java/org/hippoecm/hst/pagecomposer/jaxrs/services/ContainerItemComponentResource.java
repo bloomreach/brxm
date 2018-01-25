@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -131,11 +131,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     /**
-     * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
-     * variant to the new one.
+     * Saves parameters for the given new variant. If a sub-set of the parameters is provided, only that sub-set is
+     * changed and the other parameters are left as-is.
      *
-     * @param variantId the old variant to remove
-     * @param newVariantId the new variant to store parameters for
+     * If a new variant is provided, the old variant is removed and a new variant is created with the given
+     * parameters. This effectively renames the old variant to the new one. Note that in this case, all parameters
+     * for the new variant have to be provided.
+     *
+     * @param variantId the variant to update parameters of, or (if a newVariantId is provided) remove.
+     * @param newVariantId the new variant to store parameters for. Can be null, in which case only the given
+     *                     variant is updated.
      * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
