@@ -12,15 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import '../variables';
-
-@import '~open-sans-fontface/sass/variables';
-@import '~open-sans-fontface/sass/mixins';
-@import '~open-sans-fontface/sass/Regular';
-
-@import '~@bloomreach/dragula/dist/dragula.css';
-
-@mixin disabledFabButton() {
+@mixin disabled-fab-button {
   &.disabled {
     background-color: $grey-300;
     cursor: not-allowed;
@@ -30,6 +22,12 @@
     }
   }
 }
+
+@import '../variables';
+@import '~open-sans-fontface/sass/variables';
+@import '~open-sans-fontface/sass/mixins';
+@import '~open-sans-fontface/sass/Regular';
+@import '~@bloomreach/dragula/dist/dragula.css';
 
 .hst-cmseditlink {
   display: block;
@@ -318,7 +316,7 @@
       }
     }
 
-    @include disabledFabButton();
+    @include disabled-fab-button;
   }
   &.is-showing-options {
     .hippo-fab-btn:not(.disabled) {
@@ -333,7 +331,7 @@
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
-        @include disabledFabButton();
+        @include disabled-fab-button;
       }
 
       @for $i from 0 to 3 {
