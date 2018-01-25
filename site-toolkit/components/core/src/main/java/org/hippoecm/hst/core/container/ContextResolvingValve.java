@@ -115,7 +115,7 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
     }
 
     private void notFound(final String type, final String componentRenderingWindowReferenceNamespace, final ValveContext context) throws ContainerException {
-        log.warn("Illegal request for {} URL found because there is no component for id or path, '{}', for matched " +
+        log.warn("Illegal request for {} URL found because there is no component for id '{}' for matched " +
                 "sitemap item '{}'. Set 404 on response for request '{}'.", type, componentRenderingWindowReferenceNamespace,
                 context.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getId(), context.getServletRequest());
         try {
