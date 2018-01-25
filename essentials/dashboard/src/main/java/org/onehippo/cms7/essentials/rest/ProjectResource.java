@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import com.google.common.base.Strings;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
@@ -55,6 +56,7 @@ public class ProjectResource {
 
     @Inject private SettingsServiceImpl settingsService;
     @Inject private PluginStore pluginStore;
+    @Inject private InstallService installService;
 
 
     @ApiOperation(
@@ -69,7 +71,7 @@ public class ProjectResource {
         if (settings != null && settings.getSetupDone()) {
             status.setProjectInitialized(true);
         }
-        status.setPluginsInstalled(pluginStore.countInstalledPlugins());
+        status.setPluginsInstalled(installService.countInstalledPlugins(pluginStore.loadPlugins()));
         return status;
     }
 
@@ -84,7 +86,7 @@ public class ProjectResource {
 
         // tell the pinger when to (re-)initialize the front-end.
         systemInfo.setInitialized(DashboardUtils.isInitialized());
-        pluginStore.populateSystemInfo(systemInfo);
+        installService.populateSystemInfo(pluginStore.loadPlugins(), systemInfo);
 
         return systemInfo;
     }

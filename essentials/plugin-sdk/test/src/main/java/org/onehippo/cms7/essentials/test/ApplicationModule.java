@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin;
+package org.onehippo.cms7.essentials.test;
 
-public class PluginException extends Exception {
-    public PluginException(final String msg) {
-        super(msg);
-    }
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+
+/**
+ * Guice module for injecting event bus instance
+ *
+ * @version "$Id$"
+ */
+
+@Configuration
+@ComponentScan(value = {"org.onehippo.cms7.essentials"})
+public class ApplicationModule {
+
 }

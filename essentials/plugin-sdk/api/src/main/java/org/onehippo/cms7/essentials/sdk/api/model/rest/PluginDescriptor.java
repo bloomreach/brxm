@@ -18,12 +18,16 @@ package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Strings;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PluginDescriptor {
 
     public static final String TYPE_TOOL = "tool";
@@ -44,20 +48,25 @@ public class PluginDescriptor {
     private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
     private String packageFile;
     private String type;
-    private String installState;
+    @JsonIgnore private InstallState state;
     private String icon;
 
     private Calendar dateInstalled;
     private String documentationLink;
 
     private Map<String, Set<String>> categories;
+    private List<Dependency> pluginDependencies;
 
     public PluginDescriptor(final String name) {
         this.name = name;
     }
 
     public PluginDescriptor() {
-
+        // By default, all plugins rely on the base structure
+        final Dependency dependency = new Dependency();
+        dependency.setPluginId("baseStructure");
+        dependency.setMinInstallStateForInstalling(InstallState.INSTALLING.toString());
+        pluginDependencies = Collections.singletonList(dependency);
     }
 
     public Map<String, Set<String>> getCategories() {
@@ -85,11 +94,11 @@ public class PluginDescriptor {
     }
 
     public String getInstallState() {
-        return installState;
+        return state != null ? state.toString() : null;
     }
 
     public void setInstallState(final String installState) {
-        this.installState = installState;
+        this.state = InstallState.fromString(installState);
     }
 
     public String getId() {
@@ -236,6 +245,23 @@ public class PluginDescriptor {
         this.setupParameters = setupParameters;
     }
 
+    public List<Dependency> getPluginDependencies() {
+        return pluginDependencies;
+    }
+
+    public void setPluginDependencies(final List<Dependency> pluginDependencies) {
+        this.pluginDependencies = pluginDependencies;
+    }
+
+    public InstallState getState() {
+        return state;
+    }
+
+    public void setState(final InstallState state) {
+        this.state = state;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Vendor {
         private String name;
         private String url;
@@ -263,6 +289,45 @@ public class PluginDescriptor {
 
         public void setLogo(final String logo) {
             this.logo = logo;
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Dependency {
+        private String pluginId;
+        @JsonIgnore private InstallState minStateForBoarding;
+        @JsonIgnore private InstallState minStateForInstalling;
+
+        public String getPluginId() {
+            return pluginId;
+        }
+
+        public void setPluginId(final String pluginId) {
+            this.pluginId = pluginId;
+        }
+
+        public InstallState getMinStateForBoarding() {
+            return minStateForBoarding;
+        }
+
+        public String getMinInstallStateForBoarding() {
+            return minStateForBoarding != null ? minStateForBoarding.toString() : null;
+        }
+
+        public void setMinInstallStateForBoarding(final String minInstallStateForBoarding) {
+            this.minStateForBoarding = InstallState.fromString(minInstallStateForBoarding);
+        }
+
+        public InstallState getMinStateForInstalling() {
+            return minStateForInstalling;
+        }
+
+        public String getMinInstallStateForInstalling() {
+            return minStateForInstalling != null ? minStateForInstalling.toString() : null;
+        }
+
+        public void setMinInstallStateForInstalling(final String minInstallStateForInstalling) {
+            this.minStateForInstalling = InstallState.fromString(minInstallStateForInstalling);
         }
     }
 }

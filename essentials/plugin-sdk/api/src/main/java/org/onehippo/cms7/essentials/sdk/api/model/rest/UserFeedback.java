@@ -53,7 +53,7 @@ public class UserFeedback implements Serializable {
         feedbackMessages.add(details);
     }
 
-    private static class Details {
+    public static class Details {
         private String message;
         private boolean error;
 

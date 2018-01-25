@@ -26,8 +26,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -43,14 +43,10 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
-import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
-import org.onehippo.cms7.essentials.rest.model.SystemInfo;
-import org.onehippo.cms7.essentials.sdk.api.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +65,6 @@ public class PluginStore {
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildServiceImpl rebuildService;
-    @Inject private ProjectService projectService;
     @Inject private SettingsServiceImpl settingsService;
     @Inject private AutowireCapableBeanFactory injector;
 
@@ -117,104 +111,32 @@ public class PluginStore {
             });
 
 
-    public List<Plugin> getAllPlugins() {
-        final List<Plugin> plugins = new ArrayList<>();
+    public synchronized PluginSet loadPlugins() {
+        final PluginSet pluginSet = new PluginSet();
 
-        // Read local descriptors
-        final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
-        for (PluginDescriptor descriptor : localDescriptors) {
-            final Plugin plugin = new Plugin(descriptor, projectService);
-            injector.autowireBean(plugin);
-            plugins.add(plugin);
-        }
+        // Read local (packaged) descriptors
+        getLocalDescriptors().forEach(pluginSet::add);
 
         // Read remote descriptors
-
         final Set<String> pluginRepositories = settingsService.getModifiableSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
                 final List<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptor descriptor : descriptors) {
-                        final Plugin plugin = new Plugin(descriptor, projectService);
-                        injector.autowireBean(plugin);
-                        plugins.add(plugin);
-                    }
+                    descriptors.forEach(pluginSet::add);
                 }
             } catch (Exception e) {
                 log.error(MessageFormat.format("Error loading plugins from repository '{0}'", pluginRepository), e);
             }
         }
 
-        processPlugins(plugins);
-        return plugins;
-    }
-
-    public Plugin getPluginById(final String id) {
-        if (Strings.isNullOrEmpty(id)) {
-            return null;
-        }
-
-        for (final Plugin plugin : getAllPlugins()) {
-            if (id.equals(plugin.getId())) {
-                return plugin;
-            }
-        }
-        return null;
-    }
-
-    public int countInstalledPlugins() {
-        int installedPlugins = 0;
-
-        for (Plugin plugin : getAllPlugins()) {
-            if (plugin.getInstallState() != InstallState.DISCOVERED) {
-                installedPlugins++;
-            }
-        }
-
-        return installedPlugins;
+        processPlugins(pluginSet);
+        return pluginSet;
     }
 
     public void clearCache() {
         pluginCache.invalidateAll();
-    }
-
-    public void populateSystemInfo(final SystemInfo systemInfo) {
-        final List<Plugin> plugins = getAllPlugins();
-        for (Plugin plugin : plugins) {
-            systemInfo.incrementPlugins();
-            final InstallState installState = plugin.getInstallState();
-            final String pluginType = plugin.getDescriptor().getType();
-            final boolean isTool = "tool".equals(pluginType);
-            if (isTool) {
-                systemInfo.incrementTools();
-            }
-            final boolean isFeature = "feature".equals(pluginType);
-            if (isFeature && installState != InstallState.DISCOVERED) {
-                systemInfo.incrementInstalledFeatures();
-            }
-            if (!isTool) {
-                if (installState == InstallState.BOARDING || installState == InstallState.INSTALLING) {
-                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
-                    systemInfo.setNeedsRebuild(true);
-                } else if (installState == InstallState.ONBOARD) {
-                    systemInfo.incrementConfigurablePlugins();
-                }
-            }
-        }
-
-        // check if we have external rebuild events:
-        final Set<String> pluginIds = rebuildService.getRequestingPluginIds();
-        for (String pluginId : pluginIds) {
-            for (Plugin plugin : plugins) {
-                if (plugin.getId().equals(pluginId)) {
-                    systemInfo.setNeedsRebuild(true);
-                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
-                    break;
-                }
-            }
-        }
     }
 
     private List<PluginDescriptor> getLocalDescriptors() {
@@ -233,7 +155,6 @@ public class PluginStore {
         return parsePlugins(json);
     }
 
-    @SuppressWarnings("unchecked")
     private List<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
@@ -249,35 +170,29 @@ public class PluginStore {
         return Collections.emptyList();
     }
 
-    private static final Semaphore serverSemaphore = new Semaphore(1);
+    private boolean serverStarted;
 
-    private void processPlugins(final List<Plugin> plugins) {
-        plugins.forEach(p -> registerEndPoints(p.getDescriptor()));
+    private void processPlugins(final PluginSet pluginSet) {
+        final Set<String> restClasses = pluginSet.getPlugins().stream()
+                .filter(d -> d.getRestClasses() != null)
+                .flatMap(d -> d.getRestClasses().stream())
+                .collect(Collectors.toSet());
 
-        // Make sure we only attempt starting the server once!
-        if (!application.getSingletons().isEmpty() && serverSemaphore.drainPermits() > 0) {
-            startServer();
+        restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
+
+        if (!restClasses.isEmpty() && !serverStarted) {
+            injector.autowireBean(application);
+
+            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
+            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
+
+            factoryBean.setProvider(applicationContext.getBean("jsonProvider"));
+            factoryBean.setBus(BusFactory.getDefaultBus());
+
+            final Server server = factoryBean.create();
+            server.start();
+            serverStarted = true;
         }
-    }
-
-    private void registerEndPoints(final PluginDescriptor descriptor) {
-        final List<String> restClasses = descriptor.getRestClasses();
-        if (restClasses != null) {
-            restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
-        }
-    }
-
-    private void startServer() {
-        injector.autowireBean(application);
-
-        final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-        final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
-        final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
-
-        factoryBean.setProvider(applicationContext.getBean("jsonProvider"));
-        factoryBean.setBus(BusFactory.getDefaultBus());
-
-        final Server server = factoryBean.create();
-        server.start();
     }
 }

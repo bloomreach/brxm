@@ -31,7 +31,7 @@ public class PluginFileResourceService extends PluginFileService {
 
     private static Logger log = LoggerFactory.getLogger(PluginFileResourceService.class);
 
-    PluginFileResourceService(final ProjectService projectService) {
+    public PluginFileResourceService(final ProjectService projectService) {
         super(projectService);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.sdk.api.rest;
+package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
+/**
+ * InstallState defines the <em>ordered</em> states a plugin goes through during its installation.
+ */
 public enum InstallState {
     DISCOVERED("discovered"),
+    BOARDING_PENDING("boarding pending"),
     BOARDING("boarding"),
     ONBOARD("onBoard"),
+    INSTALLATION_PENDING("installation pending"),
     INSTALLING("installing"),
     INSTALLED("installed");
 

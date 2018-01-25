@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.onehippo.cms7.essentials.test.ApplicationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
