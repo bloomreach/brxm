@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,232 +25,139 @@ const testDocument = {
   },
 };
 
-const testDocumentType = {
-  id: 'ns:testdocument',
-  displayName: 'test-name 1',
-};
-
-xdescribe('Create content step 2 component', () => {
+describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
+  let ContentEditor;
+  let ContentService;
   let CreateContentService;
   let FeedbackService;
-  let ContentService;
-  let DialogService;
+  let Step2Service;
 
   let $ctrl;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.createContentModule');
+    angular.mock.module('hippo-cm.channel.createContent.step2');
 
     inject((
-      _$controller_,
+      $controller,
       _$rootScope_,
       _$q_,
+      _ContentEditor_,
+      _ContentService_,
       _CreateContentService_,
       _FeedbackService_,
-      _ContentService_,
-      _DialogService_,
+      _Step2Service_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
+      ContentEditor = _ContentEditor_;
+      ContentService = _ContentService_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
-      ContentService = _ContentService_;
-      DialogService = _DialogService_;
+      Step2Service = _Step2Service_;
 
       $ctrl = $controller('step2Ctrl');
     });
 
-
-    $ctrl.options = {
-      name: testDocument.displayName,
-      url: 'test-document',
-      locale: 'en',
-    };
-
-    spyOn(ContentService, 'getDocumentType').and.callThrough();
-    spyOn(CreateContentService, 'getDocument').and.returnValue(testDocument);
-    spyOn(DialogService, 'confirm').and.callThrough();
-
-    $ctrl.onFullWidth = () => {};
-    $ctrl.onSave = () => {};
-    $ctrl.onBeforeStateChange = obj => obj.callback();
+    spyOn(ContentEditor, 'getDocument').and.returnValue(testDocument);
+    spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocument.id);
+    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showNotification');
   });
 
   describe('$onInit', () => {
-    it('loads the document from CreateContentService', () => {
-      spyOn($ctrl, 'loadNewDocument').and.callThrough();
-      spyOn($ctrl, 'discardAndClose');
-      spyOn($ctrl, 'onBeforeStateChange').and.callThrough();
-
+    it('set documentIsSaved state to false', () => {
+      $ctrl.documentIsSaved = true;
       $ctrl.$onInit();
-      expect($ctrl.loadNewDocument).toHaveBeenCalled();
-      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
-      expect($ctrl.discardAndClose).toHaveBeenCalled();
+      expect($ctrl.documentIsSaved).toBe(false);
     });
   });
 
-  describe('setWidthState', () => {
-    it('toggles parent "onFullWidth" mode on and off', () => {
-      spyOn($ctrl, 'onFullWidth');
-      $ctrl.setWidthState(true);
-      expect($ctrl.isFullWidth).toBe(true);
-      expect($ctrl.onFullWidth).toHaveBeenCalledWith({ state: true });
+  it('saves the contentEditor and finishes create-content', () => {
+    spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+    spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
+    spyOn(CreateContentService, 'finish');
+    $ctrl.save();
 
-      $ctrl.setWidthState(false);
-      expect($ctrl.isFullWidth).toBe(false);
-      expect($ctrl.onFullWidth).toHaveBeenCalledWith({ state: false });
-    });
+    expect(ContentEditor.save).toHaveBeenCalled();
+    $rootScope.$digest();
+    expect($ctrl.documentIsSaved).toBe(true);
+    expect(FeedbackService.showNotification).toHaveBeenCalled();
+    expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
   });
 
-  describe('loadNewDocument', () => {
-    it('gets the newly created draft document from create content service', () => {
-      $ctrl.loadNewDocument();
-      expect(CreateContentService.getDocument).toHaveBeenCalled();
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-    });
-
-    it('gets the newly created draft document from create content service', () => {
-      $ctrl.loadNewDocument().then(() => {
-        expect($ctrl.doc).toEqual(testDocument);
-        expect($ctrl.docType).toEqual(testDocumentType);
-        expect($ctrl.loading).toEqual(false);
-      });
-    });
-  });
-
-  describe('close', () => {
-    beforeEach(() => {
-      spyOn($ctrl, 'onClose');
-    });
-  });
-
-  it('calls the confirmation dialog', () => {
-    $ctrl.doc = testDocument;
+  it('stops create content when close is called', () => {
+    spyOn(CreateContentService, 'stop');
     $ctrl.close();
-    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(CreateContentService.stop).toHaveBeenCalled();
   });
 
-  it('calls discardAndClose method to confirm document discard and close the panel', () => {
-    spyOn($ctrl, 'discardAndClose').and.returnValue($q.resolve());
-    $ctrl.close();
-    expect($ctrl.discardAndClose).toHaveBeenCalled();
+  it('returns the document reference of the ContentEditor', () => {
+    expect($ctrl.getDocument()).toBe(testDocument);
   });
 
-  it('discards the document when "discard" is selected', () => {
-    $ctrl.doc = testDocument;
-    spyOn($ctrl, 'onBeforeStateChange').and.callThrough();
-    spyOn(Promise, 'resolve').and.callThrough();
-    $ctrl.close().then(() => {
-      expect($ctrl.documentId).not.toBeDefined();
-      expect($ctrl.doc).not.toBeDefined();
-      expect($ctrl.docType).not.toBeDefined();
-      expect($ctrl.feedback).not.toBeDefined();
-      expect($ctrl.title).toEqual('Create new content');
-      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
-      expect(Promise.resolve).toHaveBeenCalled();
-      expect($ctrl, 'onClose').toHaveBeenCalled();
-    });
+  it('opens the edit-name-url dialog', () => {
+    spyOn(Step2Service, 'openEditNameUrlDialog');
+    $ctrl.openEditNameUrlDialog();
+    expect(Step2Service.openEditNameUrlDialog).toHaveBeenCalled();
   });
 
-  it('does not discard the document when cancel is clicked', () => {
-    spyOn($ctrl, 'discardAndClose').and.returnValue(Promise.reject(null));
-
-    $ctrl.close().catch(() => {
-      expect($ctrl.onClose).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('onEditNameUrlClose', () => {
-    beforeEach(() => {
-      $ctrl.doc = testDocument;
-    });
-
-    it('receives new document name and URL when dialog is submitted', () => {
-      spyOn(CreateContentService, 'setDraftNameUrl').and.callThrough();
-
-      expect($ctrl.doc.displayName).toEqual('test document');
-      $ctrl._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' }).then(() => {
-        expect(CreateContentService.setDraftNameUrl).toHaveBeenCalledWith($ctrl.doc.id, { name: 'New name', url: 'new-url' });
-        expect($ctrl.doc.displayName).toEqual('New name');
-        expect($ctrl.documentUrl).toEqual('new-url');
-      });
-    });
-
-    it('calls feedbackService.showError when an error is returned from the back-end', () => {
-      spyOn(CreateContentService, 'setDraftNameUrl').and.returnValue($q.reject({
-        data: { reason: 'TEST', params: {} },
-      }));
-      spyOn(FeedbackService, 'showError');
-
-      expect($ctrl.doc.displayName).toEqual('test document');
-      $ctrl._onEditNameUrlDialogClose({ name: 'New name', url: 'new-url' });
-      $rootScope.$apply();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
-      expect($ctrl.doc.displayName).toEqual('test document');
-    });
-  });
-
-  describe('isDocumentDirty', () => {
-    it('returns true if document is set to dirty by the backend', () => {
-      $ctrl.doc = testDocument;
-      $ctrl.doc.info.dirty = true;
-      expect($ctrl.isDocumentDirty()).toBe(true);
-    });
-  });
-
-  describe('discardAndClose', () => {
-    let deleteDraftSpy;
+  describe('uiCanExit', () => {
+    let deleteDocumentSpy;
 
     beforeEach(() => {
-      spyOn(FeedbackService, 'showError');
-      deleteDraftSpy = spyOn(CreateContentService, 'deleteDraft').and.returnValue($q.resolve());
+      spyOn(ContentEditor, 'confirmDiscardChanges').and.callThrough();
+      deleteDocumentSpy = spyOn(ContentService, 'deleteDocument').and.returnValue($q.resolve());
     });
 
-    it('deletes the draft after confirming the discard dialog', (done) => {
-      spyOn($ctrl, '_confirmDiscardChanges').and.returnValue($q.resolve());
-      $ctrl.doc = testDocument;
-      $ctrl.discardAndClose();
-      $rootScope.$apply();
+    it('allows ui-exit without dialog if document is already saved', () => {
+      $ctrl.documentIsSaved = true;
+      expect($ctrl.uiCanExit()).toBe(true);
+      expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
+    });
 
-      setTimeout(() => {
-        expect($ctrl._confirmDiscardChanges).toHaveBeenCalled();
-        expect(deleteDraftSpy).toHaveBeenCalled();
-        expect(FeedbackService.showError).not.toHaveBeenCalled();
+    it('calls confirmDiscardChanges if document is not yet saved', () => {
+      $ctrl.uiCanExit();
+      expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+    });
+
+    it('does not delete the draft if confirmDiscardChanges is canceled', (done) => {
+      ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
+
+      $ctrl.uiCanExit().then(
+        () => fail('Dialog promise should not be resolved'),
+        () => {
+          expect(deleteDocumentSpy).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('deletes the document when confirmDiscardChanges is resolved', (done) => {
+      ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(deleteDocumentSpy).toHaveBeenCalledWith('testId');
         done();
-      });
-    });
-  });
-
-  describe('saveDocument', () => {
-    let saveDraftSpy;
-
-    beforeEach(() => {
-      $ctrl.doc = testDocument;
-      saveDraftSpy = spyOn(ContentService, 'saveDraft');
+      }, () => fail('Dialog should not reject'));
+      $rootScope.$digest();
     });
 
-    it('creates a draft of the current document', () => {
-      saveDraftSpy.and.callThrough();
-      $ctrl.saveDocument();
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-    });
+    it('shows errors triggered by calling delete-document and exits the UI', (done) => {
+      ContentService.deleteDocument.and.returnValue($q.reject({
+        data: {
+          reason: 'error_reason',
+          params: 'error_params',
+        },
+      }));
 
-    it('emits the id of the saved document', () => {
-      saveDraftSpy.and.returnValue($q.resolve());
-      spyOn($ctrl, 'onSave');
-      $ctrl.saveDocument();
-      $rootScope.$apply();
-      expect($ctrl.onSave).toHaveBeenCalledWith({ documentId: testDocument.id });
-    });
-
-    it('does not trigger a discardAndClose dialog by resetting onBeforeStateChange', () => {
-      saveDraftSpy.and.returnValue($q.resolve());
-      spyOn($ctrl, 'onBeforeStateChange');
-      $ctrl.saveDocument();
-      $rootScope.$apply();
-      expect($ctrl.onBeforeStateChange).toHaveBeenCalled();
+      $ctrl.uiCanExit()
+        .then(() => {
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error_reason', 'error_params');
+          done();
+        }, () => fail('Dialog should not reject'));
+      $rootScope.$digest();
     });
   });
 });
