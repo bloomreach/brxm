@@ -32,7 +32,6 @@ class DocumentLocationFieldController {
     this.rootPathDepth = 0;
     this.documentLocationLabel = '';
     this.documentLocation = '';
-    this.enabled = false;
   }
 
   $onInit() {
@@ -88,36 +87,31 @@ class DocumentLocationFieldController {
   onLoadFolders(folders) {
     if (folders.length > 0) {
       const lastFolder = folders[folders.length - 1];
-      this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
+      this.locationFolders = this.getLocationFolders(folders);
+      this.documentLocationLabel = this.locationFolders.map(folder => folder.displayName).join('/');
       this.documentLocation = lastFolder.path;
       this.locale = lastFolder.locale;
-      this.enabled = lastFolder.exists;
       this.defaultPath = folders
         .filter((folder, index) => index >= this.rootPathDepth)
         .map(folder => folder.name)
         .join('/');
     }
+    const existingFolders = folders.filter(folder => folder.exists);
+    this.existingPath = existingFolders.length >= 1 ? existingFolders[existingFolders.length - 1].path : '/';
   }
 
   openPicker() {
     this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
-    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.documentLocation, this.pickerConfig);
+    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.existingPath, this.pickerConfig);
   }
 
-  /**
-   * Calculate the document location label from the given array of folders, using the folder's
-   * displayName. It always shows a maximum of three folders in total, and only the last folder
-   * of the rootPath if the path after the rootPath is shorter than the maximum.
-   */
-  calculateDocumentLocationLabel(folders) {
+  getLocationFolders(folders) {
     const defaultPathDepth = folders.length - this.rootPathDepth;
     const start = defaultPathDepth >= MAX_DEPTH ?
       folders.length - MAX_DEPTH : this.rootPathDepth - 1;
 
     return folders
-      .filter((folder, index) => index >= start)
-      .map(folder => folder.displayName)
-      .join('/');
+      .filter((folder, index) => index >= start);
   }
 }
 
