@@ -95,7 +95,7 @@ class Step2Service {
   saveComponentParameter() {
     const componentId = this.componentInfo.id;
 
-    if (!this.componentId) {
+    if (!componentId) {
       // no component, so no parameter to save
       return this.$q.resolve();
     }
