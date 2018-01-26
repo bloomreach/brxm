@@ -68,15 +68,12 @@ class Step2Controller {
       return true;
     }
     return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
-      .then(async () => {
-        try {
-          await this.ContentService.deleteDocument(this.ContentEditor.getDocumentId());
-        } catch (error) {
+      .then(() => this.ContentService.deleteDocument(this.ContentEditor.getDocumentId())
+        .catch((error) => {
           const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
           this.FeedbackService.showError(errorKey, error.data.params);
-        }
-        return true;
-      });
+        }),
+      );
   }
 
   openEditNameUrlDialog() {
