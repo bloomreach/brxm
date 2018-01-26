@@ -37,8 +37,7 @@ class HstComponentService {
   pickPath(componentId, parameterName, parameterValue, pickerConfig, basePath) {
     const deferred = this.$q.defer();
     this.pathPickedHandler = (path) => {
-      const base = pickerConfig.isRelativePath ? basePath : '';
-      this.setPathParameter(componentId, parameterName, path, base)
+      this.setPathParameter(componentId, parameterName, path, basePath)
         .then(() => deferred.resolve())
         .catch(() => deferred.reject());
     };
