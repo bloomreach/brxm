@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.install;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -27,7 +28,6 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.plugin.PluginFileResourceService;
 import org.onehippo.cms7.essentials.plugin.PluginSet;
 import org.onehippo.cms7.essentials.plugin.sdk.config.InstallerDocument;
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
@@ -61,6 +61,7 @@ public class InstallService {
     @Inject private RebuildServiceImpl rebuildService;
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
+    @Inject private PluginFileService pluginFileService;
     @Inject private AutowireCapableBeanFactory injector;
 
     public boolean hasGeneralizedSetUp(final PluginDescriptor plugin) {
@@ -136,36 +137,38 @@ public class InstallService {
         return true;
     }
 
-    public void loadInstallStateFromFileSystem(final PluginDescriptor plugin) {
-        plugin.setState(readInstallState(plugin, false));
-    }
-
     public InstallState readInstallStateFromWar(final PluginDescriptor plugin) {
-        return readInstallState(plugin, true);
+        final String sanitized = pluginFileService.sanitizeFileName(plugin.getId());
+        if (sanitized == null) {
+            return null;
+        }
+
+        final String path = "/" + sanitized;
+        final InputStream stream = getClass().getResourceAsStream(path);
+        if (stream == null) {
+            return null;
+        }
+        final InstallerDocument pluginFile = GlobalUtils.unmarshalStream(stream, InstallerDocument.class);
+        return pluginFile != null ? InstallState.fromString(pluginFile.getInstallationState()) : InstallState.DISCOVERED;
     }
 
-    private InstallState readInstallState(final PluginDescriptor plugin, final boolean fromWar) {
+    public void loadInstallStateFromFileSystem(final PluginDescriptor plugin) {
         InstallState state = InstallState.DISCOVERED;
 
-        final PluginFileService service = fromWar
-                ? new PluginFileResourceService(projectService)
-                : new PluginFileService(projectService);
-
-        final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
+        final InstallerDocument document = pluginFileService.read(plugin.getId(), InstallerDocument.class);
         if (document != null) {
             state = InstallState.fromString(document.getInstallationState());
         }
 
-        return state;
+        plugin.setState(state);
     }
 
     public void storeInstallStateToFileSystem(final PluginDescriptor plugin) {
         final InstallState state = plugin.getState();
         if (state != InstallState.DISCOVERED) {
             final String fileName = plugin.getId();
-            final PluginFileService service = new PluginFileService(projectService);
 
-            InstallerDocument document = service.read(fileName, InstallerDocument.class);
+            InstallerDocument document = pluginFileService.read(fileName, InstallerDocument.class);
             if (document == null) {
                 // create a new installer document
                 document = new InstallerDocument();
@@ -178,7 +181,7 @@ public class InstallService {
             }
 
             document.setInstallationState(state.toString());
-            service.write(fileName, document);
+            pluginFileService.write(fileName, document);
         }
     }
 

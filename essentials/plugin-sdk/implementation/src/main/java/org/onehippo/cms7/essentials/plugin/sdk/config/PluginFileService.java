@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.FileUtils;
@@ -29,18 +31,16 @@ import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @version "$Id$"
  */
+@Service
 public class PluginFileService {
     private static final Logger log = LoggerFactory.getLogger(PluginFileService.class);
 
-    private final ProjectService projectService;
-
-    public PluginFileService(final ProjectService projectService) {
-        this.projectService = projectService;
-    }
+    @Inject private ProjectService projectService;
 
     public boolean write(final String filename, final Object data) {
         final File file = getFile(filename);
@@ -90,7 +90,7 @@ public class PluginFileService {
         return projectService.getResourcesRootPathForModule(Module.ESSENTIALS).resolve(sanitized).toFile();
     }
 
-    protected String sanitizeFileName(final String candidate) {
+    public String sanitizeFileName(final String candidate) {
         final String sanitized = GlobalUtils.validFileName(candidate);
         if (Strings.isNullOrEmpty(sanitized)) {
             log.error("Filename '{}' is not considered valid.", candidate);

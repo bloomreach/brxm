@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.plugin;
+package org.onehippo.cms7.essentials.dashboard.install;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.essentials.dashboard.install.InstallService;
+import org.onehippo.cms7.essentials.plugin.PluginSet;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;

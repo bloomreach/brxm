@@ -40,7 +40,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.install.InstallService;
-import org.onehippo.cms7.essentials.plugin.InstallStateMachine;
+import org.onehippo.cms7.essentials.dashboard.install.InstallStateMachine;
 import org.onehippo.cms7.essentials.plugin.PluginSet;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;

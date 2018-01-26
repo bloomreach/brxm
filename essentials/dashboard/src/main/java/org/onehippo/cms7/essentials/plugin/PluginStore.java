@@ -41,6 +41,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
+import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
@@ -66,6 +67,7 @@ public class PluginStore {
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
     @Inject private SettingsServiceImpl settingsService;
+    @Inject private InstallService installService;
     @Inject private AutowireCapableBeanFactory injector;
 
     /**
@@ -173,6 +175,11 @@ public class PluginStore {
     private boolean serverStarted;
 
     private void processPlugins(final PluginSet pluginSet) {
+        // Load the state for all plugins
+        for (PluginDescriptor plugin : pluginSet.getPlugins()) {
+            installService.loadInstallStateFromFileSystem(plugin);
+        }
+
         final Set<String> restClasses = pluginSet.getPlugins().stream()
                 .filter(d -> d.getRestClasses() != null)
                 .flatMap(d -> d.getRestClasses().stream())

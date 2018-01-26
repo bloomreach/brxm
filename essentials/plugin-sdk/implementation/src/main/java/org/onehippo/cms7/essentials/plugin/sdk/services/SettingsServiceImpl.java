@@ -34,6 +34,7 @@ public class SettingsServiceImpl implements SettingsService {
     private static final String DEFAULT_NAME = "project-settings";
 
     @Inject private ProjectService projectService;
+    @Inject private PluginFileService pluginFileService;
 
     private ProjectSettingsBean settings; // in-memory cached copy of settings
     private File projectSettingsFile;
@@ -53,7 +54,7 @@ public class SettingsServiceImpl implements SettingsService {
         final long lastModified = projectSettingsFile.lastModified();
         if (settings == null || lastModified != this.lastModified) {
             this.lastModified = lastModified;
-            settings = new PluginFileService(projectService).read(DEFAULT_NAME, ProjectSettingsBean.class);
+            settings = pluginFileService.read(DEFAULT_NAME, ProjectSettingsBean.class);
         }
 
         return settings;
@@ -64,6 +65,6 @@ public class SettingsServiceImpl implements SettingsService {
      */
     public boolean updateSettings(final ProjectSettingsBean settings) {
         this.settings = settings;
-        return new PluginFileService(projectService).write(DEFAULT_NAME, settings);
+        return pluginFileService.write(DEFAULT_NAME, settings);
     }
 }
