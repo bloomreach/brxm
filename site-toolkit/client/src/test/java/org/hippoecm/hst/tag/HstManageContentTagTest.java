@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package org.hippoecm.hst.tag;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
@@ -33,6 +36,7 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
@@ -389,7 +393,16 @@ public class HstManageContentTagTest {
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
         expect(document.getNode()).andReturn(handle);
-        replay(document);
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+        hstRequestContext.setSiteContentBasePath("my/channel/path");
+        Node folderNode = createMock(Node.class);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)).andReturn(false);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
+        expect(jcrSession.getNode("/my/channel/path/news/amsterdam")).andReturn(folderNode);
+
+        replay(document, jcrSession, folderNode);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -475,6 +488,50 @@ public class HstManageContentTagTest {
             assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to '  '." +
                     " Expected the name of a template query instead.");
         }
+    }
+
+    @Test
+    public void rootPathNodeNotFound() throws Exception {
+        tag.setRootPath("/exists/not");
+        tag.setDefaultPath("2018/09/23");
+        tag.setTemplateQuery("new-newsdocument");
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+
+        expect(jcrSession.getNode("/exists/not")).andThrow(new PathNotFoundException());
+        replay(jcrSession);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"templateQuery\":\"new-newsdocument\""
+                + "} -->"));
+    }
+
+    @Test
+    public void rootPathNodeNotAFolder() throws Exception {
+        tag.setRootPath("/not/a/folder");
+        tag.setDefaultPath("2018/09/23");
+        tag.setTemplateQuery("new-newsdocument");
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+
+        Node notAFolderNode = createMock(Node.class);
+        expect(notAFolderNode.isNodeType(HippoStdNodeType.NT_FOLDER)).andReturn(false);
+        expect(notAFolderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(false);
+        expect(jcrSession.getNode("/not/a/folder")).andReturn(notAFolderNode);
+
+        replay(jcrSession, notAFolderNode);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"templateQuery\":\"new-newsdocument\""
+                + "} -->"));
     }
 
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
@@ -42,6 +43,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.hst.utils.ParameterUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -127,6 +129,13 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            try {
+                checkRootPath(requestContext);
+            } catch (RepositoryException e) {
+                log.error("Exception while checking rootPath parameter.", e);
+                return EVAL_PAGE;
+            }
+
             final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
 
             try {
@@ -137,6 +146,32 @@ public class HstManageContentTag extends TagSupport {
             return EVAL_PAGE;
         } finally {
             cleanup();
+        }
+    }
+
+    private void checkRootPath(final HstRequestContext requestContext) throws RepositoryException {
+        if (rootPath == null) {
+            return;
+        }
+
+        String checkPath;
+        if (StringUtils.startsWith(rootPath, "/")) {
+            checkPath = rootPath;
+        } else {
+            checkPath = "/" + requestContext.getSiteContentBasePath() + "/" + rootPath;
+        }
+
+        try {
+            final Node rootPathNode = requestContext.getSession().getNode(checkPath);
+            if (!rootPathNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !rootPathNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
+                log.error("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath are ignored.", rootPath);
+                rootPath = null;
+                defaultPath = null;
+            }
+        } catch (PathNotFoundException e) {
+            log.error("Rootpath '{}' does not exist. Parameters rootPath and defaultPath are ignored.", rootPath);
+            rootPath = null;
+            defaultPath = null;
         }
     }
 
