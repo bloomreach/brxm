@@ -102,11 +102,12 @@ class Step2Service {
     }
 
     const componentName = this.componentInfo.label;
+    const componentVariant = this.componentInfo.variant;
     const parameterName = this.componentInfo.parameterName;
     const parameterBasePath = this.componentInfo.parameterBasePath;
     const document = this.ContentEditor.getDocument();
 
-    return this.HstComponentService.setPathParameter(componentId, parameterName, document.repositoryPath, parameterBasePath)
+    return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, document.repositoryPath, parameterBasePath)
       .then(() => {
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })

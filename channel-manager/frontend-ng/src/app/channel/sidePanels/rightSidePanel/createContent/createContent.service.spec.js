@@ -93,6 +93,7 @@ describe('CreateContentService', () => {
     const config = {
       templateQuery: 'tpl-query',
       containerItem: component,
+      componentVariant: 'hippo-default',
       componentParameter: 'document',
       componentParameterBasePath: '/content/documents/channel',
     };
@@ -106,6 +107,7 @@ describe('CreateContentService', () => {
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',
       label: 'Banner',
+      variant: 'hippo-default',
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
     });
@@ -117,6 +119,7 @@ describe('CreateContentService', () => {
     CreateContentService.componentInfo = {
       id: '1234',
       label: 'Banner',
+      variant: 'hippo-default',
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
     };

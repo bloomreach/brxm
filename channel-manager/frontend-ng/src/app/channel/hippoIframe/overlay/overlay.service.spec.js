@@ -32,6 +32,7 @@ describe('OverlayService', () => {
   let HstComponentService;
   let hstCommentsProcessorService;
   let OverlayService;
+  let PageMetaDataService;
   let PageStructureService;
   let RenderingService;
 
@@ -52,6 +53,7 @@ describe('OverlayService', () => {
       _HstComponentService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
+      _PageMetaDataService_,
       _PageStructureService_,
       _RenderingService_,
     ) => {
@@ -68,6 +70,7 @@ describe('OverlayService', () => {
       HstComponentService = _HstComponentService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
+      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
     });
@@ -567,6 +570,7 @@ describe('OverlayService', () => {
   it('can pick a path and update the component', (done) => {
     ChannelService.isEditable = () => true;
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    spyOn(PageMetaDataService, 'getRenderVariant').and.returnValue('hippo-default');
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
 
@@ -576,8 +580,8 @@ describe('OverlayService', () => {
       expectNoPropagatedClicks();
       pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
-        undefined, jasmine.any(Object), '');
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
       $rootScope.$digest();
 
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('container-vbox');
@@ -591,6 +595,7 @@ describe('OverlayService', () => {
 
   it('can pick a path but fail to update the component', (done) => {
     ChannelService.isEditable = () => true;
+    spyOn(PageMetaDataService, 'getRenderVariant').and.returnValue('hippo-default');
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload');
@@ -601,8 +606,8 @@ describe('OverlayService', () => {
       expectNoPropagatedClicks();
       pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
-        undefined, jasmine.any(Object), '');
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
       $rootScope.$digest();
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', {
