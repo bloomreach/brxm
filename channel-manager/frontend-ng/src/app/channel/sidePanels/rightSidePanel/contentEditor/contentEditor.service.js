@@ -328,6 +328,16 @@ class ContentEditorService {
     return this.$q.resolve();
   }
 
+  deleteDocument() {
+    if (this.isEditing() && !this.killed) {
+      return this.ContentService.deleteDocument(this.document.id)
+        .catch((error) => {
+          this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        });
+    }
+    return this.$q.resolve();
+  }
+
   close() {
     delete this.documentId;
     delete this.document;

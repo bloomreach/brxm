@@ -52,6 +52,7 @@ describe('EditContentService', () => {
   function editDocument(document) {
     ContentEditor.open.and.returnValue($q.resolve());
     ContentEditor.getDocument.and.returnValue(document);
+    ContentEditor.getDocumentId.and.returnValue(document.id);
 
     EditContentService.startEditing(document.id);
     $rootScope.$digest();
@@ -103,24 +104,37 @@ describe('EditContentService', () => {
     expect($state.go).toHaveBeenCalledWith('^');
   });
 
-  it('kills an open editor for the same document', () => {
-    ContentEditor.getDocumentId.and.returnValue('42');
-    spyOn($state, 'go');
+  describe('other editor opened', () => {
+    beforeEach(() => {
+      const document = {
+        id: '42',
+      };
+      editDocument(document);
+      spyOn($state, 'go').and.callThrough();
+    });
 
-    $window.CMS_TO_APP.publish('kill-editor', '42');
+    it('kills an open editor for the same document', () => {
+      $window.CMS_TO_APP.publish('kill-editor', '42');
 
-    expect(ContentEditor.kill).toHaveBeenCalled();
-    expect($state.go).toHaveBeenCalledWith('^');
-  });
+      expect(ContentEditor.kill).toHaveBeenCalled();
+      expect($state.go).toHaveBeenCalledWith('^');
+    });
 
-  it('does not kill an open editor for another document', () => {
-    ContentEditor.getDocumentId.and.returnValue('42');
-    spyOn($state, 'go');
+    it('does not kill an open editor for another document', () => {
+      $window.CMS_TO_APP.publish('kill-editor', '1');
 
-    $window.CMS_TO_APP.publish('kill-editor', '1');
+      expect(ContentEditor.kill).not.toHaveBeenCalled();
+      expect($state.go).not.toHaveBeenCalled();
+    });
 
-    expect(ContentEditor.kill).not.toHaveBeenCalled();
-    expect($state.go).not.toHaveBeenCalled();
+    it('does not kill an open editor when another state is active', () => {
+      EditContentService.stopEditing();
+      $rootScope.$digest();
+
+      $window.CMS_TO_APP.publish('kill-editor', '42');
+
+      expect(ContentEditor.kill).not.toHaveBeenCalled();
+    });
   });
 
   it('confirms save or discard changes in the open editor when the channel is closed', () => {

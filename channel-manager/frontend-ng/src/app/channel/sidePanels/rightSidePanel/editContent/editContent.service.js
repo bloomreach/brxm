@@ -33,11 +33,16 @@ class EditContentService {
     );
 
     CmsService.subscribe('kill-editor', (documentId) => {
-      if (this.ContentEditor.getDocumentId() === documentId) {
-        this.ContentEditor.kill();
-        this.stopEditing();
-      }
+      this._stopEditingDocument(documentId);
     });
+  }
+
+  _stopEditingDocument(documentId) {
+    if (this.$state.$current.name === 'hippo-cm.channel.edit-content'
+      && this.ContentEditor.getDocumentId() === documentId) {
+      this.ContentEditor.kill();
+      this.stopEditing();
+    }
   }
 
   startEditing(documentId) {

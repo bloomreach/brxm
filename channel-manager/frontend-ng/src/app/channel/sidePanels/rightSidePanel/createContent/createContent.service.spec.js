@@ -19,6 +19,7 @@ describe('CreateContentService', () => {
   let $rootScope;
   let $state;
   let $translate;
+  let $window;
   let ContentService;
   let CreateContentService;
   let EditContentService;
@@ -58,6 +59,7 @@ describe('CreateContentService', () => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
+      $window = _$window_;
       CreateContentService = _CreateContentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
@@ -159,5 +161,48 @@ describe('CreateContentService', () => {
   it('generates a document url by executing a "slugs" backend call', () => {
     CreateContentService.generateDocumentUrlByName('name', 'nl');
     expect(ContentService._send).toHaveBeenCalledWith('POST', ['slugs'], 'name', true, { locale: 'nl' });
+  });
+
+  describe('other editor opened', () => {
+    beforeEach(() => {
+      const document = {
+        id: 42,
+      };
+      const docType = { displayName: 'document-type-name' };
+      spyOn(Step2Service, 'open').and.returnValue($q.resolve(docType));
+
+      CreateContentService.next(document, 'url', 'en');
+      $rootScope.$digest();
+
+      spyOn(Step2Service, 'killEditor');
+      spyOn($state, 'go').and.callThrough();
+    });
+
+    it('stops step 2 for the same document', () => {
+      Step2Service.killEditor.and.returnValue(true);
+
+      $window.CMS_TO_APP.publish('kill-editor', '42');
+
+      expect(Step2Service.killEditor).toHaveBeenCalledWith('42');
+      expect($state.go).toHaveBeenCalledWith('^');
+    });
+
+    it('does not stop step 2 for another document', () => {
+      Step2Service.killEditor.and.returnValue(false);
+
+      $window.CMS_TO_APP.publish('kill-editor', '1');
+
+      expect(Step2Service.killEditor).toHaveBeenCalledWith('1');
+      expect($state.go).not.toHaveBeenCalled();
+    });
+
+    it('only stops step 2 when it is active', () => {
+      CreateContentService.stop();
+      $rootScope.$digest();
+
+      $window.CMS_TO_APP.publish('kill-editor', '42');
+
+      expect(Step2Service.killEditor).not.toHaveBeenCalled();
+    });
   });
 });
