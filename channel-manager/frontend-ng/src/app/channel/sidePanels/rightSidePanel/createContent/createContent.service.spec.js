@@ -27,6 +27,7 @@ describe('CreateContentService', () => {
   let RightSidePanelService;
   let Step1Service;
   let Step2Service;
+  let CmsService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
@@ -35,18 +36,17 @@ describe('CreateContentService', () => {
     ContentService._send.and.returnValue(Promise.resolve());
 
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading', 'setTitle']);
-
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
-
     inject((
       _$q_,
       _$rootScope_,
       _$state_,
       _$translate_,
       _$window_,
+      _CmsService_,
       _CreateContentService_,
       _EditContentService_,
       _FeedbackService_,
@@ -58,6 +58,7 @@ describe('CreateContentService', () => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
+      CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
@@ -65,8 +66,8 @@ describe('CreateContentService', () => {
       Step1Service = _Step1Service_;
       Step2Service = _Step2Service_;
     });
-
     spyOn($translate, 'instant').and.callThrough();
+    spyOn(CmsService, 'reportUsageStatistic');
   });
 
   it('starts creating a new document', () => {
@@ -80,6 +81,7 @@ describe('CreateContentService', () => {
     expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({});
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContentButton');
   });
 
   it('starts creating a new document for a component', () => {
@@ -107,6 +109,7 @@ describe('CreateContentService', () => {
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
     });
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContentButtonWithComponent');
   });
 
   it('opens the second step of creating a new document', () => {

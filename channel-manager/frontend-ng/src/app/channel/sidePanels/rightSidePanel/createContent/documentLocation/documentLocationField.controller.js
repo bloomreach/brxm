@@ -100,6 +100,7 @@ class DocumentLocationFieldController {
   openPicker() {
     this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
     this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.documentLocation, this.pickerConfig);
+    this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
   }
 
   /**

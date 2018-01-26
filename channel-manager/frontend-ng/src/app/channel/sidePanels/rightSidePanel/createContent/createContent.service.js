@@ -26,6 +26,7 @@ class CreateContentService {
     Step1Service,
     Step2Service,
     RightSidePanelService,
+    CmsService,
   ) {
     'ngInject';
 
@@ -38,6 +39,7 @@ class CreateContentService {
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
+    this.CmsService = CmsService;
 
     $transitions.onBefore(
       { to: '**.create-content-step-1' },
@@ -85,6 +87,7 @@ class CreateContentService {
   _step1(config) {
     const component = config.containerItem;
     if (component) {
+      this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
       this.componentInfo = {
         id: component.getId(),
         label: component.getLabel(),
@@ -92,6 +95,7 @@ class CreateContentService {
         parameterBasePath: config.componentParameterBasePath,
       };
     } else {
+      this.CmsService.reportUsageStatistic('CreateContentButton');
       this.componentInfo = {};
     }
 

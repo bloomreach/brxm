@@ -23,6 +23,7 @@ class Step2Controller {
     FeedbackService,
     RightSidePanelService,
     Step2Service,
+    CmsService,
   ) {
     'ngInject';
 
@@ -33,6 +34,7 @@ class Step2Controller {
     this.FeedbackService = FeedbackService;
     this.RightSidePanelService = RightSidePanelService;
     this.Step2Service = Step2Service;
+    this.CmsService = CmsService;
   }
 
   $onInit() {
@@ -52,11 +54,13 @@ class Step2Controller {
       })
       .finally(() => {
         this.RightSidePanelService.stopLoading();
+        this.CmsService.reportUsageStatistic('CreateContent2Done');
       });
   }
 
   close() {
     this.CreateContentService.stop();
+    this.CmsService.reportUsageStatistic('CreateContent2Cancel');
   }
 
   getDocument() {
