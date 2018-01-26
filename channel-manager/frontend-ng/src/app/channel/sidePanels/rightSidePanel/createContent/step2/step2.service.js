@@ -41,7 +41,8 @@ class Step2Service {
   }
 
   _reset() {
-    this.data = {};
+    delete this.documentLocale;
+    delete this.documentUrl;
   }
 
   open(document, url, locale, componentInfo) {
@@ -51,8 +52,8 @@ class Step2Service {
 
     return this.ContentEditor.loadDocumentType(document)
       .then((docType) => {
-        this.documentUrl = url;
         this.documentLocale = locale;
+        this.documentUrl = url;
         // Mark the document dirty; this will trigger the discard dialog and enable the save button
         this.ContentEditor.markDocumentDirty();
 
