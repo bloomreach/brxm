@@ -21,6 +21,7 @@ class Step2Controller {
     ContentService,
     CreateContentService,
     FeedbackService,
+    RightSidePanelService,
     Step2Service,
   ) {
     'ngInject';
@@ -30,6 +31,7 @@ class Step2Controller {
     this.ContentService = ContentService;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
+    this.RightSidePanelService = RightSidePanelService;
     this.Step2Service = Step2Service;
   }
 
@@ -38,10 +40,18 @@ class Step2Controller {
   }
 
   save() {
+    this.RightSidePanelService.startLoading();
     this.ContentEditor.save()
       .then(() => {
         this.documentIsSaved = true;
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+      })
+      .then(() => this.Step2Service.saveComponentParameter())
+      .then(() => {
         this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+      })
+      .finally(() => {
+        this.RightSidePanelService.stopLoading();
       });
   }
 
@@ -58,15 +68,12 @@ class Step2Controller {
       return true;
     }
     return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
-      .then(async () => {
-        try {
-          await this.ContentService.deleteDocument(this.ContentEditor.getDocumentId());
-        } catch (error) {
+      .then(() => this.ContentService.deleteDocument(this.ContentEditor.getDocumentId())
+        .catch((error) => {
           const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
           this.FeedbackService.showError(errorKey, error.data.params);
-        }
-        return true;
-      });
+        }),
+      );
   }
 
   openEditNameUrlDialog() {

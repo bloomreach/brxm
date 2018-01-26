@@ -45,6 +45,7 @@ function config($stateProvider) {
       document: {},
       url: '',
       locale: '',
+      componentInfo: {},
     },
     views: {
       tools: {

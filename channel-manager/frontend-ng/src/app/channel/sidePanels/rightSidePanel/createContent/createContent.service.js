@@ -51,7 +51,7 @@ class CreateContentService {
       { entering: '**.create-content-step-2' },
       (transition) => {
         const params = transition.params();
-        return this._step2(params.document, params.url, params.locale);
+        return this._step2(params.document, params.url, params.locale, params.componentInfo);
       },
     );
   }
@@ -61,7 +61,8 @@ class CreateContentService {
   }
 
   next(document, url, locale) {
-    this.$state.go('hippo-cm.channel.create-content-step-2', { document, url, locale });
+    const componentInfo = this.componentInfo;
+    this.$state.go('hippo-cm.channel.create-content-step-2', { document, url, locale, componentInfo });
   }
 
   finish(documentId) {
@@ -82,6 +83,18 @@ class CreateContentService {
   }
 
   _step1(config) {
+    const component = config.containerItem;
+    if (component) {
+      this.componentInfo = {
+        id: component.getId(),
+        label: component.getLabel(),
+        parameterName: config.componentParameter,
+        parameterBasePath: config.componentParameterBasePath,
+      };
+    } else {
+      this.componentInfo = {};
+    }
+
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
     return this.Step1Service.open(config.templateQuery, config.rootPath, config.defaultPath)
@@ -95,9 +108,9 @@ class CreateContentService {
     this.RightSidePanelService.setTitle(title);
   }
 
-  _step2(document, url, locale) {
+  _step2(document, url, locale, componentInfo) {
     this.RightSidePanelService.startLoading();
-    this.Step2Service.open(document, url, locale)
+    this.Step2Service.open(document, url, locale, componentInfo)
       .then((documentType) => {
         this._showStep2Title(documentType);
         this.RightSidePanelService.stopLoading();

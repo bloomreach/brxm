@@ -30,7 +30,7 @@ describe('OverlayService', () => {
   let ExperimentStateService;
   let FeedbackService;
   let HippoIframeService;
-  let HstService;
+  let HstComponentService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -51,7 +51,7 @@ describe('OverlayService', () => {
       _ExperimentStateService_,
       _FeedbackService_,
       _HippoIframeService_,
-      _HstService_,
+      _HstComponentService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
       _PageStructureService_,
@@ -68,7 +68,7 @@ describe('OverlayService', () => {
       ExperimentStateService = _ExperimentStateService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
-      HstService = _HstService_;
+      HstComponentService = _HstComponentService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -567,9 +567,11 @@ describe('OverlayService', () => {
     });
   });
 
-  it('can pick a path', (done) => {
+  it('can pick a path and update the component', (done) => {
     ChannelService.isEditable = () => true;
-    spyOn(CmsService, 'publish');
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    spyOn(PageStructureService, 'renderComponent');
+    spyOn(FeedbackService, 'showNotification');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
@@ -577,7 +579,39 @@ describe('OverlayService', () => {
       expectNoPropagatedClicks();
       pickPathButton.click();
 
-      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', undefined, jasmine.any(Object));
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
+        undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('container-vbox');
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'vBox container',
+      });
+
+      done();
+    });
+  });
+
+  it('can pick a path but fail to update the component', (done) => {
+    ChannelService.isEditable = () => true;
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
+    spyOn(FeedbackService, 'showError');
+    spyOn(HippoIframeService, 'reload');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
+        undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'vBox container',
+      });
+      expect(HippoIframeService.reload).toHaveBeenCalled();
 
       done();
     });
@@ -635,97 +669,6 @@ describe('OverlayService', () => {
     });
   });
 
-  describe('path picker', () => {
-    it('subscribes to CMS event "path-picked"', () => {
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function));
-    });
-
-    it('calls pathPickedHandler() only once and only if callbackId is "component-path-picker"', () => {
-      const spy = spyOn(OverlayService, 'pathPickedHandler');
-      $window.CMS_TO_APP.publish('path-picked', 'unknownCallbackId');
-      expect(spy).not.toHaveBeenCalled();
-
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path');
-      expect(spy).toHaveBeenCalledWith('/path');
-
-      spy.calls.reset();
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path');
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it('opens the path picker through the CmsService', () => {
-      spyOn(CmsService, 'publish');
-      OverlayService.pickPath({
-        componentValue: 'component-value',
-        componentPickerConfig: 'component-picker-config',
-      });
-      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', 'component-value', 'component-picker-config');
-    });
-  });
-
-  describe('onPathPicked', () => {
-    let conf;
-    let putFormSpy;
-
-    beforeEach(() => {
-      spyOn(ChannelService, 'getChannel').and.returnValue({
-        contentRoot: '/channel-root',
-      });
-      spyOn(FeedbackService, 'showError');
-      spyOn(HippoIframeService, 'reload');
-      putFormSpy = spyOn(HstService, 'doPutForm').and.returnValue(Promise.resolve());
-      conf = {
-        componentPickerConfig: {
-          isRelativePath: false,
-        },
-        containerItem: {
-          getId: () => 'container-id',
-        },
-      };
-    });
-
-    it('shows an error if no container-item is found', () => {
-      OverlayService.onPathPicked({});
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SET_COMPONENT_PARAMETER_NO_CONTAINER_ITEM');
-    });
-
-    it('makes path absolute if passed path is relative', () => {
-      OverlayService.onPathPicked(conf, 'rel/path');
-      expect(putFormSpy).toHaveBeenCalledWith({ document: '/rel/path' }, 'container-id', 'hippo-default');
-    });
-
-    it('respects absolute paths', () => {
-      OverlayService.onPathPicked(conf, '/abs/path');
-      expect(putFormSpy).toHaveBeenCalledWith({ document: '/abs/path' }, 'container-id', 'hippo-default');
-    });
-
-    it('make the input path relative to the channel root', () => {
-      conf.componentPickerConfig.isRelativePath = true;
-      OverlayService.onPathPicked(conf, '/channel-root/path');
-      expect(putFormSpy).toHaveBeenCalledWith({ document: 'path' }, 'container-id', 'hippo-default');
-
-      OverlayService.onPathPicked(conf, 'channel-root/path');
-      expect(putFormSpy).toHaveBeenCalledWith({ document: 'path' }, 'container-id', 'hippo-default');
-    });
-
-    it('reload the iframe after updating the component parameter', (done) => {
-      OverlayService.onPathPicked(conf, '/abs/path');
-      setTimeout(() => {
-        expect(HippoIframeService.reload).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('shows an error when the backend fails', (done) => {
-      putFormSpy.and.returnValue(Promise.reject());
-      OverlayService.onPathPicked(conf, '/abs/path');
-      setTimeout(() => {
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SET_COMPONENT_PARAMETER_PATH', { path: '/abs/path' });
-        done();
-      });
-    });
-  });
-
   describe('Manage content dial button(s)', () => {
     beforeEach(() => {
       ChannelService.isEditable = () => true;
@@ -748,17 +691,18 @@ describe('OverlayService', () => {
         const enclosing = {
           isLocked: () => locked,
         };
-        const config = {
+        const structureElement = {
           getUuid: () => uuid,
           getTemplateQuery: () => templateQuery,
           getComponentParameter: () => componentParameter,
+          isComponentParameterRelativePath: () => false,
           getComponentPickerConfig: () => null,
           getComponentValue: () => null,
           getDefaultPath: () => null,
           getRootPath: () => null,
           getEnclosingElement: () => enclosing,
         };
-        return OverlayService._initManageContentConfig(config);
+        return OverlayService._initManageContentConfig(structureElement);
       }
 
       it('does not filter out config properties when channel is editable', () => {
