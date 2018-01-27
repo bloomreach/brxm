@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,8 +78,8 @@ public class FoldersServiceTest {
 
         final List<Folder> folders = fs.getFolders("/planets/neptune", session);
         assertThat(folders.size(), is(2));
-        assertFolder(folders.get(0), "planets", "planets", "/planets", null);
-        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null);
+        assertFolder(folders.get(0), "planets", "planets", "/planets", null, false);
+        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null, false);
 
         verifyAll();
     }
@@ -94,8 +94,8 @@ public class FoldersServiceTest {
 
         final List<Folder> folders = fs.getFolders("/planets/neptune", session);
         assertThat(folders.size(), is(2));
-        assertFolder(folders.get(0), "planets", "planets", "/planets", null);
-        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", "en");
+        assertFolder(folders.get(0), "planets", "planets", "/planets", null, true);
+        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", "en", true);
     }
 
     @Test
@@ -106,8 +106,8 @@ public class FoldersServiceTest {
 
         final List<Folder> folders = fs.getFolders("/planets/neptune", session);
         assertThat(folders.size(), is(2));
-        assertFolder(folders.get(0), "planets", "planets", "/planets", null);
-        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null);
+        assertFolder(folders.get(0), "planets", "planets", "/planets", null, true);
+        assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null, false);
         verifyAll();
     }
 
@@ -122,7 +122,7 @@ public class FoldersServiceTest {
 
         final List<Folder> folders = fs.getFolders("/planets/The planet Neptune", session);
         assertThat(folders.size(), is(2));
-        assertFolder(folders.get(1), "the-planet-neptune", "The planet Neptune", "/planets/the-planet-neptune", "de");
+        assertFolder(folders.get(1), "the-planet-neptune", "The planet Neptune", "/planets/the-planet-neptune", "de", false);
         verifyAll();
     }
 
@@ -151,10 +151,11 @@ public class FoldersServiceTest {
     }
 
     private static void assertFolder(final Folder folder, final String name, final String displayName,
-                              final String path, final String locale) {
+                              final String path, final String locale, final boolean exists) {
         assertThat(folder.getName(), is(name));
         assertThat(folder.getDisplayName(), is(displayName));
         assertThat(folder.getPath(), is(path));
         assertThat(folder.getLocale(), is(locale));
+        assertThat(folder.getExists(), is(exists));
     }
 }

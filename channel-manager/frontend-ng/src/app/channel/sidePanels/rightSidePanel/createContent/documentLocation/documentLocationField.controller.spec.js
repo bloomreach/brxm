@@ -198,6 +198,25 @@ describe('DocumentLocationField', () => {
       expect(component.documentLocation).toBe('test-document-location');
       expect(component.locale).toBe('test-locale');
       expect(component.defaultPath).toBe('test-default-path');
+      expect(component.existingPath).toBe('/');
+    });
+
+    it('stores the existingPath, i.e. that path of the last returned folder that exists in the repository', () => {
+      component.onLoadFolders([
+        { displayName: 'A', name: 'a', path: '/a', exists: true },
+        { displayName: 'B', name: 'b', path: '/a/b', exists: true },
+        { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
+      ]);
+      expect(component.existingPath).toBe('/a/b');
+    });
+
+    it('stores / as the existingPath if none of the folders already exist in the repository', () => {
+      component.onLoadFolders([
+        { displayName: 'A', name: 'a', path: '/a', exists: false },
+        { displayName: 'B', name: 'b', path: '/a/b', exists: false },
+        { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
+      ]);
+      expect(component.existingPath).toBe('/');
     });
   });
 
@@ -211,7 +230,7 @@ describe('DocumentLocationField', () => {
     it('opens the picker by publishing the "show-path-picker" event', () => {
       spyOn(CmsService, 'publish');
       const pickerConfig = {};
-      component.documentLocation = 'current-location';
+      component.existingPath = 'current-location';
       component.pickerConfig = pickerConfig;
       component.openPicker();
       expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
