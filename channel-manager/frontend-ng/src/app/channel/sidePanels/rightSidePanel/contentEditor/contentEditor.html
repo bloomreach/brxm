@@ -21,11 +21,19 @@
             class="rightSidePanel-content">
 
   <md-subheader class="md-no-sticky"
-                ng-if="$ctrl.notAllFieldsShown()"
+                ng-if="$ctrl.notAllFieldsShown() && !$ctrl.alternativeStep2()"
                 md-colors="{background: 'hippo-grey-200'}">
     <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
     <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
     <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+  </md-subheader>
+
+  <md-subheader class="md-no-sticky"
+                ng-if="$ctrl.alternativeStep2()"
+                md-colors="{background: 'hippo-grey-200'}">
+    <div>{{ ::'ALTERNATIVE_STEP_2' | translate }}</div>
+    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+    <div translate="ALTERNATIVE_STEP_2_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
   </md-subheader>
 
   <div ng-if="$ctrl.getError()"

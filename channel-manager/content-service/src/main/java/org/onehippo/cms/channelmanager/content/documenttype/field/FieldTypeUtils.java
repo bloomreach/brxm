@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,28 +163,41 @@ public class FieldTypeUtils {
      * @param context     determines which fields are available
      * @return whether all fields in the document type have been included.
      */
-    public static boolean populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+    public static Map<String, Boolean> populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+        final Map<String, Boolean> fieldInfo = new HashMap<>();
+        fieldInfo.put("allFieldIncluded", Boolean.FALSE);
+        fieldInfo.put("allRequiredFieldsIncluded", Boolean.FALSE);
+
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(sorter -> sortValidateAndAddFields(sorter, context, fields))
-                .orElse(false);
+                .orElse(fieldInfo);
     }
 
-    private static boolean sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
+    private static Map<String, Boolean> sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
                                                  final List<FieldType> fields) {
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
 
-        fieldTypeContexts.forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+        fieldTypeContexts.forEach(field -> createAndInit(field).ifPresent(fields::add));
 
-        return fieldTypeContexts.size() == fields.size();
+        final List<FieldType> unsupportedRequiredFields = fields
+                .stream()
+                .filter(field -> !field.isValid() && field.isRequired())
+                .collect(Collectors.toList());
+        fields.removeIf(field -> !field.isValid());
+
+        final Map<String, Boolean> fieldInfo = new HashMap<>();
+        fieldInfo.put("allFieldIncluded", fieldTypeContexts.size() == fields.size());
+        fieldInfo.put("allRequiredFieldsIncluded", unsupportedRequiredFields.isEmpty());
+        return fieldInfo;
     }
 
-    private static Optional<FieldType> validateCreateAndInit(final FieldTypeContext context) {
+    private static Optional<FieldType> createAndInit(final FieldTypeContext context) {
         return determineDescriptor(context)
                 .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
                 .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
                 .map(fieldType -> {
                     fieldType.init(context);
-                    return fieldType.isValid() ? fieldType : null;
+                    return fieldType;
                 });
     }
 

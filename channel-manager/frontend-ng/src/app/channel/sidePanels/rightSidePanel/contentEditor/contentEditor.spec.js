@@ -77,10 +77,15 @@ describe('ContentEditorCtrl', () => {
     [true, false].forEach((editing) => {
       [true, false].forEach((dirty) => {
         [true, false].forEach((valid) => {
-          ContentEditor.isEditing.and.returnValue(editing);
-          ContentEditor.isDocumentDirty.and.returnValue(dirty);
-          form.$valid = valid;
-          expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid);
+          [true, false].forEach((allRequiredFieldsIncluded) => {
+            ContentEditor.isEditing.and.returnValue(editing);
+            ContentEditor.isDocumentDirty.and.returnValue(dirty);
+            form.$valid = valid;
+            const docType = new DocumentType();
+            docType.allRequiredFieldsIncluded = allRequiredFieldsIncluded;
+            ContentEditor.getDocumentType.and.returnValue(docType);
+            expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && allRequiredFieldsIncluded);
+          });
         });
       });
     });

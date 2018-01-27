@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
@@ -78,8 +79,9 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
 
         docType.setUnsupportedFieldTypes(FieldTypeUtils.getUnsupportedFieldTypes(context));
 
-        final boolean allFieldsIncluded = FieldTypeUtils.populateFields(docType.getFields(), context);
-        docType.setAllFieldsIncluded(allFieldsIncluded);
+        final Map<String, Boolean> fieldInformation = FieldTypeUtils.populateFields(docType.getFields(), context);
+        docType.setAllFieldsIncluded(fieldInformation.get("allFieldIncluded"));
+        docType.setAllRequiredFieldsIncluded(fieldInformation.get("allRequiredFieldsIncluded"));
 
         return docType;
     }

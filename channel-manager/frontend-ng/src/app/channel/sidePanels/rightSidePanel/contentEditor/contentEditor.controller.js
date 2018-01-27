@@ -41,7 +41,7 @@ class ContentEditorCtrl {
   }
 
   isSaveAllowed() {
-    return this.isEditing() && this._isDocumentDirty() && this.form.$valid;
+    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().allRequiredFieldsIncluded;
   }
 
   _isDocumentDirty() {
@@ -50,6 +50,10 @@ class ContentEditorCtrl {
 
   notAllFieldsShown() {
     return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
+  }
+
+  alternativeStep2() {
+    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allRequiredFieldsIncluded;
   }
 
   getFieldTypes() {

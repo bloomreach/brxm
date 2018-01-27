@@ -36,6 +36,7 @@ public class DocumentType {
     private String displayName;
     private boolean readOnlyDueToUnknownValidator;
     private boolean allFieldsIncluded;
+    private boolean allRequiredFieldsIncluded;
     private final List<FieldType> fields; // ordered list of fields
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
@@ -85,5 +86,13 @@ public class DocumentType {
 
     public void setUnsupportedFieldTypes(final Set<String> unsupportedFieldTypes) {
         this.unsupportedFieldTypes = unsupportedFieldTypes;
+    }
+
+    public boolean isAllRequiredFieldsIncluded() {
+        return allRequiredFieldsIncluded;
+    }
+
+    public void setAllRequiredFieldsIncluded(final boolean allRequiredFieldsIncluded) {
+        this.allRequiredFieldsIncluded = allRequiredFieldsIncluded;
     }
 }
