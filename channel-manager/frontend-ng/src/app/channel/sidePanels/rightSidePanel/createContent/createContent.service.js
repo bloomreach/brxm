@@ -19,6 +19,7 @@ class CreateContentService {
     $state,
     $transitions,
     $translate,
+    CmsService,
     ContentService,
     EditContentService,
     FeedbackService,
@@ -54,6 +55,10 @@ class CreateContentService {
         return this._step2(params.document, params.url, params.locale, params.componentInfo);
       },
     );
+
+    CmsService.subscribe('kill-editor', (documentId) => {
+      this._stopStep2(documentId);
+    });
   }
 
   start(config) {
@@ -125,6 +130,13 @@ class CreateContentService {
 
   generateDocumentUrlByName(name, locale) {
     return this.ContentService._send('POST', ['slugs'], name, true, { locale });
+  }
+
+  _stopStep2(documentId) {
+    if (this.$state.$current.name === 'hippo-cm.channel.create-content-step-2'
+      && this.Step2Service.killEditor(documentId)) {
+      this.stop();
+    }
   }
 }
 

@@ -114,6 +114,14 @@ class Step2Service {
         this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       });
   }
+
+  killEditor(documentId) {
+    if (this.ContentEditor.getDocumentId() === documentId) {
+      this.ContentEditor.kill();
+      return true;
+    }
+    return false;
+  }
 }
 
 export default Step2Service;
