@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -139,7 +138,7 @@ public class FieldTypeUtils {
      * unknown validator'.
      *
      * @param fieldType  Specification of a field type
-     * @param docType The document type the field is a part of
+     * @param docType    The document type the field is a part of
      * @param validators List of 0 or more validators specified at JCR level
      */
     public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
@@ -159,8 +158,8 @@ public class FieldTypeUtils {
     /**
      * Populate the list of fields of a content type, in the context of assembling a Document Type.
      *
-     * @param fields      list of fields to populate
-     * @param context     determines which fields are available
+     * @param fields  list of fields to populate
+     * @param context determines which fields are available
      * @return whether all fields in the document type have been included.
      */
     public static Map<String, Boolean> populateFields(final List<FieldType> fields, final ContentTypeContext context) {
@@ -174,7 +173,7 @@ public class FieldTypeUtils {
     }
 
     private static Map<String, Boolean> sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
-                                                 final List<FieldType> fields) {
+                                                                 final List<FieldType> fields) {
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
 
         fieldTypeContexts.forEach(field -> createAndInit(field).ifPresent(fields::add));
@@ -269,14 +268,13 @@ public class FieldTypeUtils {
 
     /**
      * Write the values of a set of fields to a (JCR) node, facilitated by a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> list of field values mappings. Values are not checked yet.
      * @param fields   set of field type definitions, specifying how to interpret the corresponding field values
      * @param node     the JCR node to write the field values to.
-     * @throws ErrorWithPayloadException
-     *                 if fieldType#writeTo() bumps into an error.
+     * @throws ErrorWithPayloadException if fieldType#writeTo() bumps into an error.
      */
     public static void writeFieldValues(final Map<String, List<FieldValue>> valueMap,
                                         final List<FieldType> fields,
@@ -340,12 +338,12 @@ public class FieldTypeUtils {
 
     /**
      * Validate the values of a set of fields against a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
-     * @return         true if all checked field values are valid, false otherwise.
+     * @return true if all checked field values are valid, false otherwise.
      */
     public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
         boolean isValid = true;
