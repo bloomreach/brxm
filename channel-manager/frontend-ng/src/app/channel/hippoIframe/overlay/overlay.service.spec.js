@@ -20,7 +20,6 @@ describe('OverlayService', () => {
   let $iframe;
   let $q;
   let $rootScope;
-  let $window;
   let iframeWindow;
   let ChannelService;
   let CmsService;
@@ -42,7 +41,6 @@ describe('OverlayService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _$window_,
       _ChannelService_,
       _CmsService_,
       _CreateContentService_,
@@ -59,7 +57,6 @@ describe('OverlayService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $window = _$window_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;

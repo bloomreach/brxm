@@ -94,15 +94,15 @@ class Step2Service {
   }
 
   saveComponentParameter() {
-    const componentId = this.componentInfo.id;
+    const parameterName = this.componentInfo.parameterName;
 
-    if (!componentId) {
-      // no component, so no parameter to save
+    if (!parameterName) {
+      // no component parameter to update
       return this.$q.resolve();
     }
 
+    const componentId = this.componentInfo.id;
     const componentName = this.componentInfo.label;
-    const parameterName = this.componentInfo.parameterName;
     const parameterBasePath = this.componentInfo.parameterBasePath;
     const document = this.ContentEditor.getDocument();
 
@@ -113,6 +113,14 @@ class Step2Service {
       .catch(() => {
         this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       });
+  }
+
+  killEditor(documentId) {
+    if (this.ContentEditor.getDocumentId() === documentId) {
+      this.ContentEditor.kill();
+      return true;
+    }
+    return false;
   }
 }
 
