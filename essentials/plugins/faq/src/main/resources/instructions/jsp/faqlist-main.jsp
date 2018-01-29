@@ -5,7 +5,7 @@
   <div class="has-edit-button">
     <c:choose>
       <c:when test="${hst:isReadable(requestScope.document, 'FAQ')}">
-        <hst:manageContent document="${requestScope.document}"/> <!-- edit faq list document -->
+        <hst:manageContent document="${requestScope.document}"/> <%-- edit faq list document -->
         <h1><c:out value="${requestScope.document.title}"/></h1>
         <div><hst:html hippohtml="${requestScope.document.description}"/></div>
         <c:forEach var="faq" items="${requestScope.document.faqItems}">
@@ -15,9 +15,6 @@
             <hst:manageContent document="${faq}"/> <%-- edit faq item --%>
           </div>
         </c:forEach>
-        <div class="has-new-content-button">
-          <hst:manageContent templateQuery="new-faq-item" rootPath="faq"/> <%-- add faq item --%>
-        </div>
       </c:when>
       <c:otherwise>
         <div class="alert alert-danger">The selected document should be of type FAQ list.</div>

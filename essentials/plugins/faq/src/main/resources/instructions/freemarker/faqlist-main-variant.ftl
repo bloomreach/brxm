@@ -4,7 +4,7 @@
 <#if document??>
   <#if document.FAQ??>
   <div class="has-edit-button">
-    <@hst.manageContent templateQuery="new-faq-item" componentParameter="document" document=document rootPath="faq"/>
+    <@hst.manageContent componentParameter="document" document=document rootPath="faq"/>
     <h1>${document.title?html}</h1>
     <@hst.html hippohtml=document.description/>
     <div class="panel-group" id="faqitems" role="tablist" aria-multiselectable="true">
@@ -38,8 +38,8 @@
   </#if>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
-<div>
-  <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
+  <div>
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
   <@hst.manageContent templateQuery="new-faq-item" componentParameter="document" document=document rootPath="faq"/>
-</div>
+  </div>
 </#if>
