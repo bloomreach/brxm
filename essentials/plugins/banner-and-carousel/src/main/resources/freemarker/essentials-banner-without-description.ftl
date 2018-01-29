@@ -5,7 +5,7 @@
   <div>
     <a href="<@hst.link hippobean=document.link />">
       <figure style="position: relative">
-        <@hst.manageContent document=document/>
+        <@hst.manageContent document=document componentParameter="document" rootPath="banners"/>
         <img src="<@hst.link hippobean=document.image />" alt="${document.title?html}"/>
       </figure>
     </a>
