@@ -22,6 +22,9 @@
         </#if>
       </article>
     </#list>
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-document"/>
+    </div>
   </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
