@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,17 @@ import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
 import org.onehippo.cms7.essentials.dashboard.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImplTest.class);
     private static final String SITE_WEB_XML = "site/src/main/webapp/WEB-INF/web.xml";
     private final WebXmlService service = new WebXmlServiceImpl();
 
@@ -122,6 +126,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_filter_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
@@ -152,6 +157,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_filter_mapping_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
@@ -194,6 +200,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_dispatchers_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
@@ -233,6 +240,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_servlet_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
@@ -282,6 +290,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_servlet_mapping_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         final PluginContext context = getContext();
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
@@ -289,5 +298,16 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
             assertFalse(service.addServletMapping(context, TargetPom.SITE, "Console", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
+    }
+
+    /**
+     * On Windows, it appears that an attempt to run Dom4j's SAXReader#read method on a file which doesn't contain valid
+     * XML doesn't close the opened FileInputStream, and subsequently (in an @After step), the clean-up of that temp file
+     * fails. For that reason, we exclude the relevant tests from running on Windows.
+     */
+    private boolean isWindows() {
+        final String osName = System.getProperty("os.name");
+        LOG.warn("OS name {}.", osName);
+        return osName.startsWith("Windows");
     }
 }

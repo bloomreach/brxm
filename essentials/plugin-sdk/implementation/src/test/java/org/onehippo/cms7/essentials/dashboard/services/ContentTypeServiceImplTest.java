@@ -101,7 +101,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         assertEquals("ContentType{fullName='testnamespace:compoundWithBean', name='compoundWithBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(0).toString());
         assertFalse(cts.get(0).isDraftMode());
         assertEquals("Compound.java", cts.get(0).getJavaName());
-        assertEquals("/path/to/Compound.java", cts.get(0).getFullPath());
+        assertEquals(Paths.get("/path/to/Compound.java").toString(), cts.get(0).getFullPath());
         assertEquals("testnamespace:compoundWithBean", cts.get(0).getDisplayName());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithoutBean', name='compoundWithoutBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(1).toString());
