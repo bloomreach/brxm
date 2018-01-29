@@ -42,6 +42,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
@@ -97,9 +98,9 @@ public class FieldTypeUtilsTest {
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
 
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.addValidator(Validator.REQUIRED);
         expectLastCall();
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.addValidator(Validator.REQUIRED);
         expectLastCall();
         replay(fieldType);
 
@@ -111,9 +112,9 @@ public class FieldTypeUtilsTest {
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
 
-        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
+        fieldType.addValidator(Validator.UNSUPPORTED);
         expectLastCall();
-        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
+        fieldType.addValidator(Validator.UNSUPPORTED);
         expectLastCall();
         replay(fieldType);
 
@@ -142,7 +143,9 @@ public class FieldTypeUtilsTest {
         replay(context);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertFalse(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(context);
@@ -161,7 +164,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context);
         PowerMock.replayAll();
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context);
@@ -185,7 +190,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -209,7 +216,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -235,7 +244,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -261,7 +272,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -288,7 +301,9 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -315,11 +330,14 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
         fieldType.init(fieldContext);
         expectLastCall();
-        expect(fieldType.isValid()).andReturn(false);
+        expect(fieldType.isValid()).andReturn(false).times(2);
+        expect(fieldType.isRequired()).andReturn(true);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        assertFalse(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertFalse(allFieldsMapped.get("allFieldIncluded"));
+        assertFalse(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item, fieldType);
@@ -346,11 +364,13 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
         fieldType.init(fieldContext);
         expectLastCall();
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isValid()).andReturn(true).times(2);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -393,15 +413,15 @@ public class FieldTypeUtilsTest {
 
         stringField1.init(fieldContext1);
         expectLastCall();
-        expect(stringField1.isValid()).andReturn(true);
+        expect(stringField1.isValid()).andReturn(true).times(2);
 
         multilineStringField.init(fieldContext2);
         expectLastCall();
-        expect(multilineStringField.isValid()).andReturn(true);
+        expect(multilineStringField.isValid()).andReturn(true).times(2);
 
         stringField2.init(fieldContext3);
         expectLastCall();
-        expect(stringField2.isValid()).andReturn(true);
+        expect(stringField2.isValid()).andReturn(true).times(2);
 
         PowerMock.replayAll();
         replay(sorter, context,
@@ -409,7 +429,9 @@ public class FieldTypeUtilsTest {
                 item1, item2, item3,
                 stringField1, multilineStringField, stringField2);
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(3));
         assertThat(fields.get(0), equalTo(stringField1));
@@ -456,16 +478,18 @@ public class FieldTypeUtilsTest {
 
         formattedTextField.init(fieldContext1);
         expectLastCall();
-        expect(formattedTextField.isValid()).andReturn(true);
+        expect(formattedTextField.isValid()).andReturn(true).times(2);
 
         richTextField.init(fieldContext2);
         expectLastCall();
-        expect(richTextField.isValid()).andReturn(true);
+        expect(richTextField.isValid()).andReturn(true).times(2);
 
         PowerMock.replayAll();
         replay(sorter, context, fieldContext1, fieldContext2, item1, item2, formattedTextField, richTextField);
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(2));
         assertThat(fields.get(0), equalTo(formattedTextField));
@@ -495,11 +519,13 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         fieldType.init(fieldContext);
         expectLastCall();
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isValid()).andReturn(true).times(2);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -527,11 +553,13 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(ChoiceFieldType.class)).andReturn(Optional.of(fieldType));
         fieldType.init(fieldContext);
         expectLastCall();
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isValid()).andReturn(true).times(2);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        assertTrue(FieldTypeUtils.populateFields(fields, context));
+        Map<String, Boolean> allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
+        assertTrue(allFieldsMapped.get("allFieldIncluded"));
+        assertTrue(allFieldsMapped.get("allRequiredFieldsIncluded"));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));

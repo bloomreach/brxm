@@ -17,8 +17,10 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Session;
@@ -132,6 +134,9 @@ public class DocumentTypesServiceImplTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
+        final Map<String, Boolean> fieldInfo = new HashMap<>();
+        fieldInfo.put("allFieldIncluded", Boolean.TRUE);
+        fieldInfo.put("allRequiredFieldsIncluded", Boolean.TRUE);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -139,7 +144,8 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(true);
+        docType.setAllRequiredFieldsIncluded(true);
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldInfo);
         expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
 
         expect(context.getContentType()).andReturn(contentType);
@@ -169,6 +175,9 @@ public class DocumentTypesServiceImplTest {
         final ContentType contentType = createMock(ContentType.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
         final List<FieldType> fields = new ArrayList<>();
+        final Map<String, Boolean> fieldInfo = new HashMap<>();
+        fieldInfo.put("allFieldIncluded", Boolean.TRUE);
+        fieldInfo.put("allRequiredFieldsIncluded", Boolean.TRUE);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -177,10 +186,11 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         docType.setDisplayName("Document Display Name");
+        docType.setAllRequiredFieldsIncluded(true);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
 
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(true);
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldInfo);
         expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
 
         docType.setAllFieldsIncluded(true);
@@ -209,6 +219,9 @@ public class DocumentTypesServiceImplTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
+        final Map<String, Boolean> fieldInfo = new HashMap<>();
+        fieldInfo.put("allFieldIncluded", Boolean.FALSE);
+        fieldInfo.put("allRequiredFieldsIncluded", Boolean.TRUE);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -216,7 +229,7 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(false);
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldInfo);
         expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
 
         expect(context.getContentType()).andReturn(contentType);
@@ -225,6 +238,7 @@ public class DocumentTypesServiceImplTest {
 
         docType.setAllFieldsIncluded(false);
         docType.setUnsupportedFieldTypes(null);
+        docType.setAllRequiredFieldsIncluded(true);
         expectLastCall();
 
         replayAll();

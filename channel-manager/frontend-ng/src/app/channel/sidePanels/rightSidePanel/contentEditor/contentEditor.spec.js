@@ -81,9 +81,7 @@ describe('ContentEditorCtrl', () => {
             ContentEditor.isEditing.and.returnValue(editing);
             ContentEditor.isDocumentDirty.and.returnValue(dirty);
             form.$valid = valid;
-            const docType = new DocumentType();
-            docType.allRequiredFieldsIncluded = allRequiredFieldsIncluded;
-            ContentEditor.getDocumentType.and.returnValue(docType);
+            ContentEditor.getDocumentType.and.returnValue({ allRequiredFieldsIncluded });
             expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && allRequiredFieldsIncluded);
           });
         });
