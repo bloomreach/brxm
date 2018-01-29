@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.repository.logging;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.impl.WorkflowLogger;
 import org.junit.After;
@@ -29,6 +30,7 @@ import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import static junit.framework.Assert.assertEquals;
@@ -37,22 +39,16 @@ import static org.easymock.EasyMock.*;
 public class WorkflowLoggerTest {
 
     private HippoEventBus eventBus;
+    private WorkflowLogger workflowLogger;
+    private Session session;
+    private Capture<HippoWorkflowEvent> captured;
 
     @Before
-    public void createService() {
+    public void createService() throws RepositoryException {
         eventBus = createNiceMock(HippoEventBus.class);
         HippoServiceRegistry.registerService(eventBus, HippoEventBus.class);
-    }
-
-    @After
-    public void removeService() {
-        HippoServiceRegistry.unregisterService(eventBus, HippoEventBus.class);
-    }
-
-    @Test
-    public void testEventIsPostedToEventBus() throws Exception {
-        final Session session = createNiceMock(Session.class);
-        WorkflowLogger workflowLogger = new WorkflowLogger(session);
+        session = createNiceMock(Session.class);
+        workflowLogger = new WorkflowLogger(session);
 
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
         final SecurityService securityService = createMock(SecurityService.class);
@@ -63,9 +59,19 @@ public class WorkflowLoggerTest {
         expect(securityService.getUser(EasyMock.anyObject(String.class))).andReturn(user);
         expect(user.isSystemUser()).andReturn(false);
 
-        final Capture<HippoWorkflowEvent> captured = new Capture<>();
+        captured = newCapture();
         eventBus.post(EasyMock.capture(captured));
+
         replay(eventBus, session, workspace, securityService, user);
+    }
+
+    @After
+    public void removeService() {
+        HippoServiceRegistry.unregisterService(eventBus, HippoEventBus.class);
+    }
+
+    @Test
+    public void testEventIsPostedToEventBus() throws Exception {
 
         workflowLogger.logWorkflowStep("userName", "className", "methodName", null, "returnValue", null,
                 "subjectPath", "interaction", "interactionId", "category", "workflowName", null);
@@ -86,4 +92,34 @@ public class WorkflowLoggerTest {
         assertEquals("workflowName", event.workflowName());
     }
 
+    @Test
+    public void by_default_methodName_is_the_logged_action() {
+        workflowLogger.logWorkflowStep("userName", "className", "foo", null, "returnValue", null,
+                "subjectPath", "interaction", "interactionId", "category", "workflowName", null);
+
+        verify(eventBus, session);
+
+        final HippoWorkflowEvent event = captured.getValue();
+        assertEquals("foo", event.action());
+    }
+
+    @Test
+    public void if_methodName_is_triggerAction_the_args_are_inspected_for_ActionAware_agument() {
+        workflowLogger.logWorkflowStep("userName", "className", "triggerAction", new Object[]{DocumentWorkflowAction.unlock()}, "returnValue", null,
+                "subjectPath", "interaction", "interactionId", "category", "workflowName", null);
+        verify(eventBus, session);
+
+        final HippoWorkflowEvent event = captured.getValue();
+        assertEquals("unlock", event.action());
+    }
+
+    @Test
+    public void if_methodName_is_not_triggerAction_the_ActionAware_agument_is_not_used() {
+        workflowLogger.logWorkflowStep("userName", "className", "notTriggerAction", new Object[]{DocumentWorkflowAction.unlock()}, "returnValue", null,
+                "subjectPath", "interaction", "interactionId", "category", "workflowName", null);
+        verify(eventBus, session);
+
+        final HippoWorkflowEvent event = captured.getValue();
+        assertEquals("notTriggerAction", event.action());
+    }
 }

@@ -61,7 +61,7 @@ public class WorkflowLogger {
             final String[] arguments = replaceObjectsWithStrings(args);
             final Boolean system = isSystemUser(userName);
             final String documentType = getDocumentType(subjectId);
-            event.user(userName).action(methodName).result(returnValue).system(system);
+            event.user(userName).result(returnValue).system(system);
             event.className(className).methodName(methodName).handleUuid(handleUuid).subjectId(subjectId)
                     .returnType(returnType).returnValue(returnValue).documentPath(subjectPath).subjectPath(subjectPath)
                     .interactionId(interactionId).interaction(interaction).workflowCategory(category)
@@ -69,8 +69,10 @@ public class WorkflowLogger {
             if (arguments != null) {
                 event.arguments(Arrays.asList(arguments));
             }
-            getAction(methodName, args)
-                    .ifPresent(event::action);
+
+            event.action(getAction(methodName, args)
+                            .orElse(methodName));
+
             eventBus.post(event);
         }
 
