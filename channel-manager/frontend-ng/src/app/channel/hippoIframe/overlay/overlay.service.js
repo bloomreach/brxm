@@ -365,44 +365,6 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _getButtons(config) {
-    const buttons = [];
-
-    if (config.documentUuid) {
-      const editContentButton = {
-        mainIcon: contentLinkSvg,
-        dialIcon: '', // edit button should never be a dial button
-        callback: () => this._editContent(config.documentUuid),
-        tooltip: this.$translate.instant('EDIT_CONTENT'),
-      };
-      buttons.push(editContentButton);
-    }
-
-    if (config.componentParameter) {
-      const selectDocumentButton = {
-        mainIcon: searchWhiteSvg,
-        dialIcon: searchSvg,
-        callback: () => this.pickPath(config),
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-        isDisabled: config.isDisabled,
-      };
-      buttons.push(selectDocumentButton);
-    }
-
-    if (config.templateQuery) {
-      const createContentButton = {
-        mainIcon: plusWhiteSvg,
-        dialIcon: plusSvg,
-        callback: () => this._createContent(config),
-        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
-        isDisabled: config.isDisabled,
-      };
-      buttons.push(createContentButton);
-    }
-
-    return buttons;
-  }
-
   _initManageContentConfig(structureElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
@@ -418,7 +380,6 @@ class OverlayService {
       documentUuid,
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
-      customClassName: '',
     };
 
     if (!this.ChannelService.isEditable()) {
@@ -438,10 +399,48 @@ class OverlayService {
       && config.containerItem
       && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
-      config.isDisabled = true;
+      config.isLockedByOtherUser = true;
     }
 
     return config;
+  }
+
+  _getButtons(config) {
+    const buttons = [];
+
+    if (config.documentUuid) {
+      const editContentButton = {
+        mainIcon: contentLinkSvg,
+        dialIcon: '', // edit button should never be a dial button
+        callback: () => this._editContent(config.documentUuid),
+        tooltip: this.$translate.instant('EDIT_CONTENT'),
+      };
+      buttons.push(editContentButton);
+    }
+
+    if (config.componentParameter) {
+      const selectDocumentButton = {
+        mainIcon: searchWhiteSvg,
+        dialIcon: searchSvg,
+        callback: () => this.pickPath(config),
+        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(selectDocumentButton);
+    }
+
+    if (config.templateQuery) {
+      const createContentButton = {
+        mainIcon: plusWhiteSvg,
+        dialIcon: plusSvg,
+        callback: () => this._createContent(config),
+        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(createContentButton);
+    }
+
+    return buttons;
   }
 
   _initManageContentLink(structureElement, overlayElement) {
@@ -475,11 +474,11 @@ class OverlayService {
       fabBtn.addClass('qa-manage-parameters');
     }
 
-    if (!fabBtn.hasClass('qa-edit-content') && config.isDisabled) {
-      this._disableButton(fabBtn);
+    if (buttons[0].isDisabled) {
+      fabBtn.addClass('disabled');
+    } else {
+      this._addClickHandler(fabBtn, () => buttons[0].callback());
     }
-
-    this._addClickHandler(fabBtn, () => buttons[0].callback());
 
     const adjustOptionsPosition = () => {
       const boxElement = structureElement.prepareBoxElement();
@@ -531,20 +530,15 @@ class OverlayService {
 
   _createButtonTemplate(button, index) {
     const optionButton = $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
-      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
-      .on('click', button.callback);
+      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`);
 
     if (button.isDisabled) {
-      this._disableButton(optionButton);
+      optionButton.addClass('disabled');
+    } else {
+      optionButton.on('click', button.callback);
     }
 
     return optionButton;
-  }
-
-  _disableButton(btn) {
-    btn.addClass('disabled');
-    btn.off('click');
-    btn.on('click', e => e.stopImmediatePropagation());
   }
 
   _getElementPositionObject(boxElement) {
