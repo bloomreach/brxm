@@ -223,11 +223,10 @@ public class JcrContentProcessor {
         }
     }
 
-    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType,
+    private void applyChildNodes(final DefinitionNode<?,?> modelNode, final Node jcrNode, final ActionType actionType,
                                  final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences) throws RepositoryException, IOException {
         log.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
-        for (final String name : modelNode.getNodes().keySet()) {
-            final DefinitionNode modelChild = modelNode.getNode(name);
+        for (final DefinitionNode modelChild : modelNode.getNodes()) {
             applyNode(modelChild, jcrNode, actionType, unprocessedReferences);
         }
     }
@@ -274,12 +273,12 @@ public class JcrContentProcessor {
         return modelNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
     }
 
-    private void applyProperties(final DefinitionNode source, final Node targetNode,
+    private void applyProperties(final DefinitionNode<?,?> source, final Node targetNode,
                                  final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences)
             throws RepositoryException, IOException {
         applyPrimaryAndMixinTypes(source, targetNode);
 
-        for (DefinitionProperty modelProperty : source.getProperties().values()) {
+        for (final DefinitionProperty modelProperty : source.getProperties()) {
             if (isReferenceTypeProperty(modelProperty)) {
                 unprocessedReferences.add(Pair.of(modelProperty, targetNode));
             } else {
@@ -294,9 +293,9 @@ public class JcrContentProcessor {
                 .collect(Collectors.toList());
 
         final List<String> modelMixinTypes = new ArrayList<>();
-        final DefinitionProperty modelProperty = source.getProperty(JCR_MIXINTYPES);
+        final DefinitionProperty<?> modelProperty = source.getProperty(JCR_MIXINTYPES);
         if (modelProperty != null) {
-            for (Value value : modelProperty.getValues()) {
+            for (final Value value : modelProperty.getValues()) {
                 modelMixinTypes.add(value.getString());
             }
         }
@@ -320,7 +319,7 @@ public class JcrContentProcessor {
         }
     }
 
-    private void applyProperty(final DefinitionProperty modelProperty, final Node jcrNode) throws RepositoryException, IOException {
+    private void applyProperty(final DefinitionProperty<?> modelProperty, final Node jcrNode) throws RepositoryException, IOException {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (jcrProperty != null && jcrProperty.getDefinition().isProtected()) {

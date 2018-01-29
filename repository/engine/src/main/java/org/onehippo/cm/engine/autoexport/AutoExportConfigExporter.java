@@ -309,10 +309,11 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         }
 
         // delete removed properties
-        for (final String configProperty : configNode.getProperties().keySet()) {
-            if (!jcrNode.hasProperty(configProperty)) {
+        for (final ConfigurationPropertyImpl configProperty: configNode.getProperties()) {
+            final String configPropertyName = configProperty.getName();
+            if (!jcrNode.hasProperty(configPropertyName)) {
                 defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                defNode.addProperty(configProperty, null, emptyList()).setOperation(PropertyOperation.DELETE);
+                defNode.addProperty(configPropertyName, null, emptyList()).setOperation(PropertyOperation.DELETE);
             }
         }
         return defNode;
@@ -456,13 +457,13 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         }
 
         // check if we need to delete children
-        for (final String childConfigNode : configNode.getNodes().keySet()) {
-            if (!jcrNode.hasNode(childConfigNode)) {
+        for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes()) {
+            if (!jcrNode.hasNode(childConfigNode.getName())) {
                 final DefinitionNodeImpl childNode = configSource
-                        .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childConfigNode));
+                        .getOrCreateDefinitionFor(childConfigNode.getJcrPath());
                 if (childNode == null) {
                     log.error("Produced a null result for path: {}!",
-                            jcrNode.getPath()+"/"+childConfigNode,
+                            childConfigNode.getJcrPath(),
                             new IllegalStateException());
                 }
                 else {
@@ -520,7 +521,8 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     protected void updateOrdering(final List<String> indexedJcrChildNodeNames, final ConfigurationNodeImpl configNode,
                                   final ConfigSourceImpl configSource) throws RepositoryException {
         final List<String> indexedConfigNodeNames = new ArrayList<>();
-        for (String indexedConfigChildNodeName : configNode.getNodes().keySet()) {
+        for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes()) {
+            final String indexedConfigChildNodeName = childConfigNode.getName();
             if (indexedJcrChildNodeNames.contains(indexedConfigChildNodeName)) {
                 indexedConfigNodeNames.add(indexedConfigChildNodeName);
             }

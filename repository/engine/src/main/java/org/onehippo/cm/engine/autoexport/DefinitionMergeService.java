@@ -842,7 +842,7 @@ public class DefinitionMergeService {
             }
 
             // any child node here may or may not be new -- do full recursion
-            for (DefinitionNodeImpl childNodeDef : incomingDefNode.getNodes().values()) {
+            for (final DefinitionNodeImpl childNodeDef : incomingDefNode.getNodes()) {
                 mergeConfigDefinitionNode(childNodeDef);
             }
         }
@@ -1309,11 +1309,11 @@ public class DefinitionMergeService {
         to.setCategory(from.getCategory());
 
         // copy properties using special method that migrates resources properly
-        for (final DefinitionPropertyImpl fromProperty : from.getProperties().values()) {
+        for (final DefinitionPropertyImpl fromProperty : from.getProperties()) {
             to.addProperty(fromProperty);
         }
 
-        for (final DefinitionNodeImpl childNode : from.getNodes().values()) {
+        for (final DefinitionNodeImpl childNode : from.getNodes()) {
             // for each new childNode, we need to check if LocationMapper wants a new source file
             final JcrPath incomingPath = childNode.getJcrPath();
             if (shouldPathCreateNewSource(incomingPath)) {
@@ -1432,7 +1432,7 @@ public class DefinitionMergeService {
                                                final List<AbstractDefinitionImpl> alreadyRemoved) {
         log.debug("Removing child defs for node: {} with exceptions: {}", configNode.getJcrPath(), alreadyRemoved);
 
-        for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes().values()) {
+        for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes()) {
             for (final DefinitionNodeImpl childDefItem : childConfigNode.getDefinitions()) {
                 // if child's DefinitionNode was part of a parent Definition, it may have already been removed
                 // also check the definition belongs to one of autoexport modules
@@ -1739,7 +1739,7 @@ public class DefinitionMergeService {
         incomingPropertyDefs.remove(upstreamPropertyName);
         for (final DefinitionNodeImpl localNodeDef : localNodeDefs) {
 
-            if (localNodeDef.getProperties().containsKey(upstreamPropertyName)) {
+            if (localNodeDef.getProperty(upstreamPropertyName) != null) {
                 //Remove the property definition from node definition
                 localNodeDef.getModifiableProperties().remove(upstreamPropertyName);
 
@@ -2068,12 +2068,12 @@ public class DefinitionMergeService {
      */
     protected void removeResources(final DefinitionNodeImpl node) {
         // find resource values
-        for (final DefinitionPropertyImpl dp : node.getProperties().values()) {
+        for (final DefinitionPropertyImpl dp : node.getProperties()) {
             removeResources(dp);
         }
 
         // recursively visit child definition nodes
-        for (final DefinitionNodeImpl childNode : node.getNodes().values()) {
+        for (final DefinitionNodeImpl childNode : node.getNodes()) {
             removeResources(childNode);
         }
     }

@@ -38,6 +38,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.ModelItem;
@@ -345,12 +346,12 @@ public abstract class ValueProcessor {
         try {
             Node jcrNode = property.getSession().getNodeByIdentifier(uuid);
             path = jcrNode.getPath();
-            final String rootPath = definitionNode.getDefinition().getRootPath();
-            if (!"/".equals(rootPath)) {
-                if (path.equals(rootPath)) {
+            final JcrPath rootPath = definitionNode.getDefinition().getRootPath();
+            if (!rootPath.isRoot()) {
+                if (rootPath.equals(path)) {
                     path = "";
                 } else if (path.startsWith(rootPath+"/")) {
-                    path = path.substring(rootPath.length()+1);
+                    path = path.substring(rootPath.toString().length()+1);
                 }
             }
         } catch (ItemNotFoundException e) {
@@ -400,10 +401,10 @@ public abstract class ValueProcessor {
             String nodePath = identifier;
             if (!nodePath.startsWith("/")) {
                 // path reference is relative to content definition root path
-                final String rootPath = modelValue.getParent().getDefinition().getRootPath();
-                final StringBuilder pathBuilder = new StringBuilder(rootPath);
+                final JcrPath rootPath = modelValue.getParent().getDefinition().getRootPath();
+                final StringBuilder pathBuilder = new StringBuilder(rootPath.toString());
                 if (!StringUtils.EMPTY.equals(nodePath)) {
-                    if (!"/".equals(rootPath)) {
+                    if (!rootPath.isRoot()) {
                         pathBuilder.append("/");
                     }
                     pathBuilder.append(nodePath);
