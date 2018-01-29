@@ -226,16 +226,18 @@ public class RepositoryResourceBundle extends ResourceBundle {
 
             final ModuleImpl module = loadBundleModule(file);
 
-            final List<DefinitionNodeImpl> definitions = module.getConfigSources().iterator().next().getDefinitions().stream().filter(d -> d instanceof ConfigDefinitionImpl).map(d -> ((ConfigDefinitionImpl) d).getNode()).filter(n -> n.getPath().startsWith("/hippo:configuration")).collect(Collectors.toList());
+            final List<DefinitionNodeImpl> definitions = module.getConfigSources().iterator().next()
+                    .getDefinitions().stream().filter(d -> d instanceof ConfigDefinitionImpl)
+                    .map(d -> ((ConfigDefinitionImpl) d).getNode())
+                    .filter(n -> n.getPath().startsWith("/hippo:configuration"))
+                    .collect(Collectors.toList());
             for (DefinitionNodeImpl node : definitions) {
                 if (node.getPath().equals(bundlePath)) {
                     final DefinitionNodeImpl localeNode = node.getNode(locale);
                     if (localeNode != null) {
-                        Map<String, DefinitionPropertyImpl> properties = localeNode.getProperties();
-                        for (String propName : properties.keySet()) {
-                            DefinitionPropertyImpl value = properties.get(propName);
-                            if (!propName.equals(JCR_PRIMARY_TYPE)) {
-                                entries.put(propName, value.getValue().getString());
+                        for (DefinitionPropertyImpl property : localeNode.getProperties()) {
+                            if (!property.getName().equals(JCR_PRIMARY_TYPE)) {
+                                entries.put(property.getName(), property.getValue().getString());
                             }
                         }
                         return;

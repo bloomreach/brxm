@@ -107,17 +107,17 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
         final Map<String, String> entries = new HashMap<>();
 
         if (node.getNodes().size() > 0) {
-            for (Map.Entry<String, DefinitionNodeImpl> nodeEntry : node.getNodes().entrySet()) {
-                path.push(nodeEntry.getKey());
-                collectResourceBundles(nodeEntry.getValue(), fileName, locales, path, bundles);
+            for (DefinitionNodeImpl childNode : node.getNodes()) {
+                path.push(childNode.getName());
+                collectResourceBundles(childNode, fileName, locales, path, bundles);
                 path.pop();
             }
         }
 
         if (node.getProperties().size() > 0) {
-            for (Map.Entry<String, DefinitionPropertyImpl> propertyEntry : node.getProperties().entrySet()) {
-                if (!propertyEntry.getKey().equals(JCR_PRIMARY_TYPE)) {
-                    entries.put(propertyEntry.getKey(), propertyEntry.getValue().getValue().getString());
+            for (DefinitionPropertyImpl property : node.getProperties()) {
+                if (!property.getName().equals(JCR_PRIMARY_TYPE)) {
+                    entries.put(property.getName(), property.getValue().getString());
                 }
             }
         }
