@@ -28,7 +28,7 @@ describe('EditContentService', () => {
     angular.mock.module('hippo-cm');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'close', 'confirmSaveOrDiscardChanges', 'getDocument', 'getDocumentId', 'getError', 'kill', 'open',
+      'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocument', 'getDocumentId', 'getError', 'kill', 'open',
     ]);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading', 'setTitle']);
 
@@ -134,6 +134,7 @@ describe('EditContentService', () => {
     $rootScope.$digest();
 
     expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
+    expect(ContentEditor.deleteDraft).toHaveBeenCalled();
     expect(ContentEditor.close).toHaveBeenCalled();
     expect($state.$current.name).toBe('hippo-cm');
   });
@@ -149,6 +150,7 @@ describe('EditContentService', () => {
     $rootScope.$digest();
 
     expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
+    expect(ContentEditor.deleteDraft).not.toHaveBeenCalled();
     expect(ContentEditor.close).not.toHaveBeenCalled();
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
