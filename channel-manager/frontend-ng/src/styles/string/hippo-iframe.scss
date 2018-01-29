@@ -13,13 +13,11 @@
 // limitations under the License.
 
 @mixin disabled-fab-button {
-  &.disabled {
-    background-color: $grey-300;
-    cursor: not-allowed;
+  background-color: $grey-300;
+  cursor: not-allowed;
 
-    svg {
-      fill: $grey-500;
-    }
+  svg {
+    fill: $grey-500;
   }
 }
 
@@ -316,7 +314,9 @@
       }
     }
 
-    @include disabled-fab-button;
+    &.disabled {
+      @include disabled-fab-button;
+    }
   }
   &.is-showing-options {
     .hippo-fab-btn:not(.disabled) {
@@ -331,7 +331,10 @@
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
-        @include disabled-fab-button;
+
+        &.disabled {
+          @include disabled-fab-button;
+        }
       }
 
       @for $i from 0 to 3 {
