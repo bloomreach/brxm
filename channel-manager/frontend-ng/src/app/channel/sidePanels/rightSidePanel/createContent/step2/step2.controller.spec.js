@@ -96,7 +96,6 @@ describe('Create content step 2 controller', () => {
     spyOn(CreateContentService, 'stop');
     $ctrl.close();
     expect(CreateContentService.stop).toHaveBeenCalled();
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Cancel');
   });
 
   it('returns the document reference of the ContentEditor', () => {

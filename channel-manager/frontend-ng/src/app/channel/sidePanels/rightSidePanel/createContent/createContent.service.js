@@ -87,7 +87,11 @@ class CreateContentService {
   _step1(config) {
     const component = config.containerItem;
     if (component) {
-      this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
+      if (config.componentParameter) {
+        this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
+      } else {
+        this.CmsService.reportUsageStatistic('CreateContentButton');
+      }
       this.componentInfo = {
         id: component.getId(),
         label: component.getLabel(),
@@ -95,7 +99,6 @@ class CreateContentService {
         parameterBasePath: config.componentParameterBasePath,
       };
     } else {
-      this.CmsService.reportUsageStatistic('CreateContentButton');
       this.componentInfo = {};
     }
 

@@ -81,7 +81,6 @@ describe('CreateContentService', () => {
     expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({});
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContentButton');
   });
 
   it('starts creating a new document for a component', () => {
