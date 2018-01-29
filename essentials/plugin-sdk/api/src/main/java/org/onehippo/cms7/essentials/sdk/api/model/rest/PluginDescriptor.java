@@ -46,6 +46,7 @@ public class PluginDescriptor {
     private boolean hasConfiguration;
     private boolean noRebuildAfterSetup;
     private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
+    private boolean showInDashboard = true; // "helper plugins" who provide shared functionality to other plugins can set this property to false. This implies that the plugin has no setupParameters.
     private String packageFile;
     private String type;
     @JsonIgnore private InstallState state;
@@ -56,6 +57,7 @@ public class PluginDescriptor {
 
     private Map<String, Set<String>> categories;
     private List<Dependency> pluginDependencies;
+    private String dependencySummary; // human-readable summary of inter-plugin dependencies
 
     public PluginDescriptor(final String name) {
         this.name = name;
@@ -64,7 +66,7 @@ public class PluginDescriptor {
     public PluginDescriptor() {
         // By default, all plugins rely on the base structure
         final Dependency dependency = new Dependency();
-        dependency.setPluginId("baseStructure");
+        dependency.setPluginId("skeleton");
         dependency.setMinInstallStateForInstalling(InstallState.INSTALLING.toString());
         pluginDependencies = Collections.singletonList(dependency);
     }
@@ -259,6 +261,22 @@ public class PluginDescriptor {
 
     public void setState(final InstallState state) {
         this.state = state;
+    }
+
+    public boolean isShowInDashboard() {
+        return showInDashboard;
+    }
+
+    public void setShowInDashboard(final boolean showInDashboard) {
+        this.showInDashboard = showInDashboard;
+    }
+
+    public String getDependencySummary() {
+        return dependencySummary;
+    }
+
+    public void setDependencySummary(final String dependencySummary) {
+        this.dependencySummary = dependencySummary;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

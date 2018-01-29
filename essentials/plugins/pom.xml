@@ -72,6 +72,8 @@
     <module>urlrewriter</module>
     <module>lucene-index-exporter</module>
     <module>enterprise-project</module>
+    <module>crisp</module>
+    <module>personalization</module>
   </modules>
 
   <dependencyManagement>

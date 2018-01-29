@@ -26,5 +26,11 @@
     "license": [
       "enterprise"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "relevancePlugin",
+      "minInstallStateForInstalling": "installing"
+    }
+  ]
 }

@@ -22,5 +22,11 @@
     "license": [
       "enterprise"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "enterpriseProject",
+      "minInstallStateForInstalling": "installing"
+    }
+  ]
 }

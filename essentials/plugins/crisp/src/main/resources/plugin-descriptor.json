@@ -1,0 +1,12 @@
+{
+  "id": "crisp",
+  "name": "CRISP",
+  "introduction": "Installs the CRISP dependencies",
+  "type": "feature",
+  "vendor": {
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "packageFile" : "/META-INF/crisp_instructions.xml",
+  "showInDashboard": false
+}

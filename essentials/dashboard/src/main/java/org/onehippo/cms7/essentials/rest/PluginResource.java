@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -84,7 +85,11 @@ public class PluginResource {
     @GET
     @Path("/")
     public List<PluginDescriptor> getAllPlugins() {
-        return new ArrayList<>(pluginStore.loadPlugins().getPlugins());
+        return pluginStore.loadPlugins()
+                .getPlugins()
+                .stream()
+                .filter(PluginDescriptor::isShowInDashboard)
+                .collect(Collectors.toList());
     }
 
 

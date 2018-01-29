@@ -159,21 +159,9 @@
             $rootScope.feedbackMessages = [];
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
             var root = window.SERVER_URL + '/essentials/rest';
-            var pluginsStem = root + "/plugins";
             var projectStem = root + "/project";
 
             $rootScope.REST = {
-                /**
-                 * PluginResource
-                 */
-                plugins: pluginsStem,
-                PLUGINS: { // Front-end API
-                    byId:               function(id) { return pluginsStem + '/' + id; },
-                    changesById:        function(id) { return pluginsStem + '/' + id + '/changes'; },
-                    setupById:          function(id) { return pluginsStem + '/' + id + '/setup'; },
-                    setupCompleteForId: function(id) { return pluginsStem + '/' + id + '/setupcomplete'; }
-                },
-
                 /**
                  * ProjectResource
                  */
@@ -271,9 +259,50 @@
                 myResult.options = myOptions;
                 return  myResult;
             };
-        }
-    );
-
+        })
+        .service('pluginService', function($http, $q, $log) {
+            var baseUrl = window.SERVER_URL + '/essentials/rest/plugins';
+            var plugins = [];
+            function loadPlugins() {
+                return $http.get(baseUrl).then(function(response) {
+                    plugins.splice(0, plugins.length);
+                    response.data.forEach(function(plugin) {
+                        plugins.push(plugin);
+                    });
+                });
+            }
+            this.loadPlugins = loadPlugins;
+            this.getPlugins = function() {
+                return plugins;
+            };
+            this.getPlugin = function(id) {
+                return plugins.find(function(plugin) {
+                    return plugin.id === id;
+                });
+            };
+            this.install = function(id, params) {
+                var plugin = this.getPlugin(id);
+                if (plugin.installState === 'discovered') {
+                    return $http.post(baseUrl + '/' + id + '/install').then(loadPlugins);
+                }
+                if (plugin.installState === 'onBoard') {
+                    return $http.post(baseUrl + '/' + id + '/setup', params).then(loadPlugins);
+                }
+                $log.warn('Trying to install plugin ' + id + ', but unsuitable state ' + plugin.installState + '.');
+                return $q.resolve();
+            };
+            this.autoSetup = function() {
+                return $http.post(baseUrl + '/autosetup').then(loadPlugins, loadPlugins);
+            };
+            this.getChangeMessages = function(id, params) {
+                return $http.get(baseUrl + '/' + id + '/changes', {params: params}).then(function (response) {
+                    // If there are no messages, the backend sends a single "no messages" message
+                    // with the group not set. Filter those out.
+                    var messages = response.data;
+                    return (messages.length > 1 || messages[0].group) ? messages : [];
+                });
+            };
+        });
 })();
 
 

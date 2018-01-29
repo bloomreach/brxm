@@ -52,7 +52,13 @@
             $scope.setup();
         })
 
-        .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
+        .controller('pluginCtrl', function ($scope, $rootScope, $http, pluginService) {
+            function showPlugin(plugin) {
+                var isEnterprisePlugin = plugin.categories &&
+                    plugin.categories.license &&
+                    plugin.categories.license.indexOf("enterprise") >= 0;
+                return $rootScope.projectSettings.enterprise || !isEnterprisePlugin;
+            }
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
             $scope.plugins = [];
@@ -63,24 +69,21 @@
             ];
             $scope.isInstalledFeature = function (plugin) {
                 return plugin.type === 'feature' &&
-                        plugin.installState === 'installed';
+                        plugin.installState === 'installed' &&
+                        showPlugin(plugin);
             };
             $scope.isInstalledFeatureAndRequiresAttention = function (plugin) {
                 return plugin.type === 'feature' &&
                         plugin.installState !== 'discovered' &&
-                        plugin.installState !== 'installed';
+                        plugin.installState !== 'installed' &&
+                        showPlugin(plugin);
             };
             $scope.isInstalledTool = function (plugin) {
-                return plugin.type === 'tool'; // TODO: handle install state.
+                return plugin.type === 'tool' && showPlugin(plugin); // TODO: handle install state.
             };
-            // Receive state updates from individual plugins
-            $rootScope.$on('update-plugin-install-state', function(event, data) {
-                angular.forEach($scope.plugins, function (plugin) {
-                    if (plugin.id === data.pluginId) {
-                        plugin.installState = data.state;
-                    }
-                });
-            });
+            $scope.isVisible = function (plugin) {
+                return showPlugin(plugin);
+            };
 
             //fetch plugin list
             $scope.init = function () {
@@ -90,28 +93,8 @@
                     // TODO: ugly. If this needs to be on the rootScope, it should be put there during initialization
                     // of the angular app.
                     $rootScope.projectSettings = data;
-
-                    if ($rootScope.pluginsCache) {
-                        processItems($rootScope.pluginsCache);
-                    } else {
-                        $http.get($rootScope.REST.plugins).success(function (data) {
-                            $rootScope.pluginsCache = data;
-                            processItems($rootScope.pluginsCache);
-                        });
-                    }
+                    $scope.plugins = pluginService.getPlugins();
                 });
-
-                function processItems(items) {
-                    $scope.plugins = items.filter(showPlugin);
-                }
-
-                function showPlugin(descriptor) {
-                    var isEnterprisePlugin = descriptor.categories &&
-                        descriptor.categories.license &&
-                        descriptor.categories.license.indexOf("enterprise") >= 0;
-
-                    return $rootScope.projectSettings.enterprise || !isEnterprisePlugin;
-                }
             };
             $scope.init();
         })

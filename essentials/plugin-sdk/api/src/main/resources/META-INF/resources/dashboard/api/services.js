@@ -38,15 +38,15 @@
       this.baseUrl = dashboardRoot + '/dynamic';
     })
 
-    .service('essentialsPluginService', function($http) {
+    .service('essentialsPluginService', function(pluginService) {
 
       /**
        * Retrieve the parameters for the plugin with the specified ID.
        *
-       * Returns an AngularJs 'HttpPromise', which, upon success, resolves into a deserialized PluginDescriptor object.
+       * Returns a deserialized PluginDescriptor object.
        */
       this.getPluginById = function(id) {
-        return $http.get(pluginById(id));
+        return pluginService.getPlugin(id);
       };
     })
 

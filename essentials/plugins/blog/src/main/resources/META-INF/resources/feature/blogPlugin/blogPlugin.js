@@ -50,9 +50,7 @@
             };
             $scope.init = function () {
                 // retrieve plugin data
-                essentialsPluginService.getPluginById($scope.pluginId).success(function (p) {
-                    $scope.plugin = p;
-                });
+                $scope.plugin = essentialsPluginService.getPluginById($scope.pluginId);
 
                 essentialsProjectService.getProjectSettings().success(function (data) {
                     $scope.importConfig.blogsBasePath = '/content/documents/' + data.projectNamespace + '/blog';

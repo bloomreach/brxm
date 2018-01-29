@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -175,15 +177,28 @@ public class PluginStore {
     private boolean serverStarted;
 
     private void processPlugins(final PluginSet pluginSet) {
-        // Load the state for all plugins
-        for (PluginDescriptor plugin : pluginSet.getPlugins()) {
-            installService.loadInstallStateFromFileSystem(plugin);
-        }
+        final Set<String> restClasses = new HashSet<>();
 
-        final Set<String> restClasses = pluginSet.getPlugins().stream()
-                .filter(d -> d.getRestClasses() != null)
-                .flatMap(d -> d.getRestClasses().stream())
-                .collect(Collectors.toSet());
+        for (PluginDescriptor plugin : pluginSet.getPlugins()) {
+            // load the plugin's current installation state
+            installService.loadInstallStateFromFileSystem(plugin);
+
+            // when not show in the dashboard, one cannot specify installation parameters
+            if (plugin.isShowInDashboard()) {
+                if (PluginDescriptor.TYPE_TOOL.equals(plugin.getType())) {
+                    // tools are pre-installed and should not default to depend on the skeleton package.
+                    plugin.setPluginDependencies(null);
+                }
+                plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
+            } else {
+                plugin.setSetupParameters(false);
+            }
+
+            // extract all REST classes to setup the dynamic endpoints
+            if (plugin.getRestClasses() != null) {
+                restClasses.addAll(plugin.getRestClasses());
+            }
+        }
 
         restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
 
@@ -201,5 +216,33 @@ public class PluginStore {
             server.start();
             serverStarted = true;
         }
+    }
+
+    private String makeDependencySummary(final PluginDescriptor plugin, final PluginSet pluginSet) {
+        final List<PluginDescriptor.Dependency> deps = plugin.getPluginDependencies();
+        if (deps != null) {
+            final List<String> dependentPluginIds = new ArrayList<>();
+
+            for (PluginDescriptor.Dependency dep : deps) {
+                final String pluginId = dep.getPluginId();
+                if (StringUtils.isNotBlank(pluginId)) {
+                    final PluginDescriptor p = pluginSet.getPlugin(pluginId);
+                    if (p != null) {
+                        if (p.isShowInDashboard()) {
+                            dependentPluginIds.add(p.getName());
+                        }
+                    } else {
+                        dependentPluginIds.add(pluginId + " (missing)");
+                    }
+                }
+            }
+
+            if (!dependentPluginIds.isEmpty()) {
+                final String csv = dependentPluginIds.stream().collect(Collectors.joining(", "));
+                return String.format("Depends on feature%s: %s.", dependentPluginIds.size() > 1 ? "s" : "", csv);
+            }
+        }
+
+        return null;
     }
 }

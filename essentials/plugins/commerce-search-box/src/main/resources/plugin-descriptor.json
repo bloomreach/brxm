@@ -20,5 +20,19 @@
     "type": [
       "feature"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton",
+      "minInstallStateForInstalling": "installing"
+    },
+    {
+      "pluginId": "crisp",
+      "minInstallStateForInstalling": "installing"
+    },
+    {
+      "pluginId": "personalization",
+      "minInstallStateForInstalling": "installing"
+    }
+  ]
 }

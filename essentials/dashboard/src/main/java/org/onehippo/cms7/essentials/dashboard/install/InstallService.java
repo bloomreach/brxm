@@ -32,9 +32,7 @@ import org.onehippo.cms7.essentials.plugin.PluginSet;
 import org.onehippo.cms7.essentials.plugin.sdk.config.InstallerDocument;
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
-import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
@@ -46,27 +44,25 @@ import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * InstallService provides the tooling for insyalling plugins, primarily to the InstallStateMachine, which focuses on
+ * the correct sequencing of tasks.
+ */
 @Service
 public class InstallService {
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
-    @Inject private ProjectService projectService;
     @Inject private RebuildServiceImpl rebuildService;
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
     @Inject private PluginFileService pluginFileService;
     @Inject private AutowireCapableBeanFactory injector;
-
-    public boolean hasGeneralizedSetUp(final PluginDescriptor plugin) {
-        return StringUtils.hasText(plugin.getPackageFile());
-    }
 
     public long countInstalledPlugins(final PluginSet pluginSet) {
         return pluginSet.getPlugins().stream().filter(p -> p.getState() != InstallState.DISCOVERED).count();
@@ -107,28 +103,18 @@ public class InstallService {
     }
 
     public boolean board(final PluginDescriptor plugin, final UserFeedback feedback) {
-        // TODO: replace through plugin dependency!
-        upgradeIfNecessary(plugin);
-
         return installRepositories(plugin, feedback) && installDependencies(plugin, feedback);
     }
 
     public boolean canAutoInstall(final PluginDescriptor plugin) {
         return plugin.getState() == InstallState.ONBOARD
-                && hasGeneralizedSetUp(plugin)
+                && StringUtils.hasText(plugin.getPackageFile())  // TODO: is this still needed? packageFile is the only current mechanism for triggering actions during the installation.
                 && (!plugin.hasSetupParameters() || !settingsService.getSettings().isConfirmParams());
     }
 
     public boolean install(final PluginDescriptor plugin, final Map<String, Object> parameters) {
         HstUtils.erasePreview(jcrService, settingsService);
 
-        // execute skeleton
-        // TODO: replace by inter-plugin dependency mechanism
-        final DefaultInstructionPackage commonPackage = new SkeletonInstructionPackage();
-        injector.autowireBean(commonPackage);
-        commonPackage.execute(parameters);
-
-        // execute InstructionPackage itself
         final DefaultInstructionPackage instructionPackage = makeInstructionPackageInstance(plugin);
         if (instructionPackage != null) {
             instructionPackage.execute(parameters);
@@ -182,16 +168,6 @@ public class InstallService {
 
             document.setInstallationState(state.toString());
             pluginFileService.write(fileName, document);
-        }
-    }
-
-    private void upgradeIfNecessary(final PluginDescriptor plugin) {
-        final Map<String, Set<String>> categories = plugin.getCategories();
-        if (categories != null) {
-            final Set<String> licenses = categories.get("license");
-            if (licenses != null && licenses.contains("enterprise")) {
-                EnterpriseUtils.upgradeToEnterpriseProject(projectService, dependencyService, repositoryService);
-            }
         }
     }
 

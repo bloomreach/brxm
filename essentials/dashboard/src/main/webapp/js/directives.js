@@ -136,17 +136,16 @@
                     params: '='
                 },
                 templateUrl: 'directives/essentials-messages.html',
-                controller: function ($scope, $rootScope, $http) {
+                controller: function ($scope, $rootScope, $http, pluginService) {
                     // refresh messages when changes are made:
                     $scope.$watch('params', function () {
                         getMessages();
                     }, true);
                     getMessages();
 
-                    var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
                     function getMessages() {
                         if ($scope.params) {
-                            $http.get(url, { params: $scope.params }).success(function (changeMessages) {
+                            pluginService.getChangeMessages($scope.pluginId, $scope.params).then(function(changeMessages) {
                                 $scope.changeMessages = changeMessages;
                             });
                         }
@@ -165,31 +164,20 @@
                     hasExtraTemplates: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $log, $location, $rootScope, $http) {
+                controller: function ($scope, $location, $rootScope, $http, pluginService) {
                     // initialize fields to system defaults.
+                    $scope.params = {};
                     $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                        var params = {};
-
-                        params.templateName   = data.templateLanguage;
-                        params.sampleData     = data.useSamples;
-                        params.extraTemplates = data.extraTemplates;
-
-                        $scope.params = params;
+                        $scope.params.templateName   = data.templateLanguage;
+                        $scope.params.sampleData     = data.useSamples;
+                        $scope.params.extraTemplates = data.extraTemplates;
                     });
-
                     $scope.apply = function () {
-                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), { values: $scope.params } )
-                            .success(function () {
-                                $rootScope.$broadcast('update-plugin-install-state', {
-                                    'pluginId': $scope.pluginId,
-                                    'state': 'installing'
-                                });
-                                $location.path('/installed-features');
-                            });
+                        pluginService.install($scope.pluginId, $scope.params).then(function() {
+                            $location.path('/installed-features');
+                        });
                     };
-                    $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                        $scope.plugin = plugin;
-                    });
+                    $scope.plugin = pluginService.getPlugin($scope.pluginId);
                 }
             };
         }).directive("essentialsCmsDocumentTypeDeepLink", function () {
@@ -312,7 +300,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-plugin.html',
-                controller: function ($scope, $filter, $log, $rootScope, $http) {
+                controller: function ($scope, $filter, $log, $rootScope, $http, pluginService) {
                     $scope.slides = [];
                     angular.forEach($scope.plugin.imageUrls, function(url) {
                         $scope.slides.push({
@@ -331,6 +319,9 @@
                     $scope.isBoarding = function() {
                         return $scope.plugin.installState === 'boarding' || $scope.plugin.installState === 'installing';
                     };
+                    $scope.isPending = function() {
+                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
+                    };
                     $scope.isOnBoard = function() {
                         return $scope.plugin.type === 'tool' ||
                                $scope.plugin.installState === 'onBoard' ||
@@ -338,14 +329,11 @@
                     };
                     $scope.installPlugin = function () {
                         $scope.installButtonDisabled = true; // avoid double-clicking
-                        $rootScope.pluginsCache = null;
-                        var pluginId = $scope.plugin.id;
-                        $http.post($rootScope.REST.plugins + '/' + pluginId + '/install').success(function () {
-                            // reload because of install state change:
-                            $http.get($rootScope.REST.PLUGINS.byId(pluginId)).success(function (data) {
-                                $scope.plugin = data;
-                            });
-                        });
+
+                        // Due to inter-plugin dependencies, successful installation reloads the list of plugins
+                        // to have all states updated. This causes angular to re-instantiate this controller, so
+                        // we don't need to do anything with the promise returned by #install().
+                        pluginService.install($scope.plugin.id);
                     };
                 }
             };
@@ -367,6 +355,9 @@
                     };
                     $scope.hasConfiguration = function() {
                         return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
+                    };
+                    $scope.isPending = function() {
+                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
                     };
                 }
             };
@@ -392,21 +383,20 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-feature-footer.html',
-                controller: function ($scope, $filter, $log, $rootScope, $http) {
+                controller: function ($scope, $rootScope, pluginService) {
                     $scope.toggleChanges = function($event) {
                         $event.preventDefault();
                         $scope.showChanges = !$scope.showChanges;
 
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
-                            var url = $rootScope.REST.PLUGINS.changesById($scope.plugin.id);
                             var params = {
                                 sampleData: $rootScope.projectSettings.useSamples,
                                 templateName: $rootScope.projectSettings.templateLanguage,
                                 extraTemplates: $rootScope.projectSettings.extraTemplates
                             };
 
-                            $http.get(url, { params: params }).success(function(changeMessages) {
+                            pluginService.getChangeMessages($scope.plugin.id, params).then(function(changeMessages){
                                 $scope.changeMessages = changeMessages;
                                 $scope.messagesLoaded = true;
                             });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@
         });
 
     var setupCompleted = false;
-    var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginTypeFilter) {
+    var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginService, pluginTypeFilter) {
         var startPinger = function () {
             var PING_RUNNING_TIMER = 7000;
             var PING_DOWN_TIMER = 10000;
@@ -155,7 +155,7 @@
                 });
         };
         if (!setupCompleted) {
-            $http.post($rootScope.REST.plugins + '/autosetup').then(completeInitialization, completeInitialization);
+            pluginService.autoSetup().then(completeInitialization, completeInitialization);
             return deferred.promise;
         }
     };
