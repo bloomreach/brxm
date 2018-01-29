@@ -43,6 +43,8 @@ import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.definition.ContentDefinition;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
@@ -147,7 +149,8 @@ public class PropertiesEditor extends DataView<Property> {
         final String nodeOrigin = getNodeOrigin(nodePath, cfgModel);
 
         final ConfigurationItemCategory propCat = getCategoryForProperty(propertyPath, cfgModel);
-        final ConfigurationProperty<? extends DefinitionProperty> cfgProperty = cfgModel.resolveProperty(propertyPath);
+        final JcrPath propertyJcrPath = JcrPaths.getPath(propertyPath);
+        final ConfigurationProperty<?,?> cfgProperty = cfgModel.resolveProperty(propertyJcrPath);
         String origin = "";
         if ((propCat.equals(ConfigurationItemCategory.CONFIG) || propCat.equals(ConfigurationItemCategory.SYSTEM))
                 && cfgProperty != null) {
@@ -156,7 +159,7 @@ public class PropertiesEditor extends DataView<Property> {
             // TODO: mark system-with-initial-value in a special way?
         }
         else if (propCat.equals(ConfigurationItemCategory.CONTENT)) {
-            final ContentDefinition def = cfgModel.getNearestContentDefinition(propertyPath);
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(propertyJcrPath);
             origin = (def==null)
                     ? "<content>"
                     : def.getOrigin();
@@ -176,14 +179,15 @@ public class PropertiesEditor extends DataView<Property> {
     public static String getNodeOrigin(final String nodePath, final ConfigurationModel cfgModel) {
         final ConfigurationItemCategory nodeCat = getCategoryForNode(nodePath, cfgModel);
         String nodeOrigin = "";
+        final JcrPath jcrPath = JcrPaths.getPath(nodePath);
         if (nodeCat.equals(ConfigurationItemCategory.CONFIG)) {
-            final ConfigurationNode<? extends DefinitionNode> cfgNode = cfgModel.resolveNode(nodePath);
+            final ConfigurationNode<?,?,?> cfgNode = cfgModel.resolveNode(jcrPath);
             nodeOrigin = (cfgNode==null)
                     ? "<config>"
                     : cfgNode.getDefinitions().stream().map(ModelItem::getOrigin).collect(joining("\n"));
         }
         else if (nodeCat.equals(ConfigurationItemCategory.CONTENT)) {
-            final ContentDefinition def = cfgModel.getNearestContentDefinition(nodePath);
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(jcrPath);
             nodeOrigin = (def==null)
                     ? "<content>"
                     : def.getOrigin();
