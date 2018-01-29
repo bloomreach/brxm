@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -47,9 +48,9 @@ public class DefinitionNodeImpl extends DefinitionItemImpl
         implements DefinitionNode<DefinitionNodeImpl,DefinitionPropertyImpl> {
 
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
-    private final Map<String, DefinitionNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
-    private final Map<String, DefinitionPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
+    private final Collection<DefinitionNodeImpl> nodes = Collections.unmodifiableCollection(modifiableNodes.values());
+    private final Collection<DefinitionPropertyImpl> properties = Collections.unmodifiableCollection(modifiableProperties.values());
 
     // Note: when adding additional meta properties, be sure to update:
     // - #delete and #isEmptyExceptDelete
@@ -77,8 +78,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl
         super(name, parent);
     }
 
-    public Stream<DefinitionNodeImpl> getNodes() {
-        return nodes.values().stream();
+    public Collection<DefinitionNodeImpl> getNodes() {
+        return nodes;
     }
 
     @Override
@@ -114,8 +115,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl
     }
 
     @Override
-    public Stream<DefinitionPropertyImpl> getProperties() {
-        return properties.values().stream();
+    public Collection<DefinitionPropertyImpl> getProperties() {
+        return properties;
     }
 
     @Override
@@ -123,6 +124,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl
         return getProperty(name.toString());
     }
 
+    @Override
     public DefinitionPropertyImpl getProperty(final String name) {
         return modifiableProperties.get(name);
     }
@@ -273,12 +275,19 @@ public class DefinitionNodeImpl extends DefinitionItemImpl
         modifiableNodes.putAll(newView);
     }
 
+    public DefinitionPropertyImpl addProperty(final JcrPathSegment name, final ValueImpl value) {
+        return addProperty(name.getName(), value);
+    }
+
     public DefinitionPropertyImpl addProperty(final String name, final ValueImpl value) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, value, this);
         modifiableProperties.put(name, property);
         return property;
     }
 
+    public DefinitionPropertyImpl addProperty(final JcrPathSegment name, final ValueType type, final List<ValueImpl> values) {
+        return addProperty(name.getName(), type, values);
+    }
     public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final List<ValueImpl> values) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         modifiableProperties.put(name, property);

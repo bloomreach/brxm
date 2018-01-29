@@ -143,10 +143,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
             if (node.getResidualChildNodeCategory() != null) {
                 children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
             }
-            for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+            for (DefinitionPropertyImpl childProperty : node.getProperties()) {
                 children.add(representProperty(childProperty));
             }
-            for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+            for (DefinitionNodeImpl childNode : node.getNodes()) {
                 children.add(representDefinitionNode(childNode));
             }
         }

@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.model.tree;
 
+import java.util.Collection;
+
 import org.onehippo.cm.model.path.JcrPathSegment;
 
 /**
@@ -23,6 +25,21 @@ import org.onehippo.cm.model.path.JcrPathSegment;
  */
 public interface ConfigurationNode<D extends DefinitionNode, N extends ConfigurationNode, P extends ConfigurationProperty>
         extends ConfigurationItem<D,N>, ModelNode<N,P> {
+
+    @Override
+    Collection<N> getNodes();
+
+    @Override
+    N getNode(JcrPathSegment name);
+
+    @Override
+    Collection<P> getProperties();
+
+    @Override
+    P getProperty(JcrPathSegment name);
+
+    @Override
+    P getProperty(String name);
 
     /**
      * Get the {@link ConfigurationItemCategory} of a child node by name.
@@ -47,5 +64,12 @@ public interface ConfigurationNode<D extends DefinitionNode, N extends Configura
      * @return The {@link ConfigurationItemCategory} of the child property, never returns null.
      */
     ConfigurationItemCategory getChildPropertyCategory(JcrPathSegment propertyName);
+
+    /**
+     * Get the {@link ConfigurationItemCategory} of a child property by name.
+     * @param propertyName A child property name.
+     * @return The {@link ConfigurationItemCategory} of the child property, never returns null.
+     */
+    ConfigurationItemCategory getChildPropertyCategory(String propertyName);
 
 }

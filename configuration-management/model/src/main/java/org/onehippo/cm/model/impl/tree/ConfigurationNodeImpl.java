@@ -39,6 +39,9 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
 
+    private final Collection<ConfigurationNodeImpl> nodes = Collections.unmodifiableCollection(modifiableNodes.values());
+    private final Collection<ConfigurationPropertyImpl> properties = Collections.unmodifiableCollection(modifiableProperties.values());
+
     private Boolean ignoreReorderedChildren;
 
     // Category settings are not supported for individual same-name siblings. When configuring a certain node name
@@ -58,8 +61,8 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     }
 
     @Override
-    public Stream<ConfigurationNodeImpl> getNodes() {
-        return modifiableNodes.values().stream();
+    public Collection<ConfigurationNodeImpl> getNodes() {
+        return nodes;
     }
 
     public Set<String> getNodeNames() {
@@ -139,8 +142,8 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     }
 
     @Override
-    public Stream<ConfigurationPropertyImpl> getProperties() {
-        return modifiableProperties.values().stream();
+    public Collection<ConfigurationPropertyImpl> getProperties() {
+        return properties;
     }
 
     public Set<String> getPropertyNames() {
@@ -152,6 +155,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         return getProperty(name.toString());
     }
 
+    @Override
     public ConfigurationPropertyImpl getProperty(final String name) {
         return modifiableProperties.get(name);
     }

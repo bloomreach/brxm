@@ -15,12 +15,29 @@
  */
 package org.onehippo.cm.model.tree;
 
+import java.util.Collection;
+
 import org.onehippo.cm.model.path.JcrPathSegment;
 
 /**
  * Represents the (potential) state of a JCR Node as specified in a DefinitionItem tree.
  */
 public interface DefinitionNode<N extends DefinitionNode, P extends DefinitionProperty> extends DefinitionItem<N>, ModelNode<N,P> {
+
+    @Override
+    Collection<N> getNodes();
+
+    @Override
+    N getNode(JcrPathSegment name);
+
+    @Override
+    Collection<P> getProperties();
+
+    @Override
+    P getProperty(JcrPathSegment name);
+
+    @Override
+    P getProperty(String name);
 
     /**
      * @return The property string representing an ordering dependency constraint for this node, or null of no constraint

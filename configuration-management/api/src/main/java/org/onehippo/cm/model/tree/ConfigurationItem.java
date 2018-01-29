@@ -23,6 +23,8 @@ import java.util.List;
  */
 public interface ConfigurationItem<D extends DefinitionItem, N extends ConfigurationNode> extends ModelItem<N> {
 
+    N getParent();
+
     /**
      * @return The <strong>ordered</strong> immutable {@link List} of {@link DefinitionItem}s that were used to
      * create this ConfigurationItem, or an empty immutable List if this instance was created directly without

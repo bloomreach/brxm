@@ -31,8 +31,8 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
 
     static final String PATH_DELIMITER = "/";
     static final String NS_DELIMITER = ":";
-    public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";
-    public static final String JCR_MIME_TYPE = "jcr:mimeType";
+    public static final JcrPathSegment JCR_PRIMARY_TYPE = JcrPaths.getSegment("jcr:primaryType");
+    public static final JcrPathSegment JCR_MIME_TYPE = JcrPaths.getSegment("jcr:mimeType");
     public static final String DEFAULT_EXTENSION = "bin";
     public static final String DOT_SEPARATOR = ".";
 
@@ -47,7 +47,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
             entry("application/pdf", "pdf"))
             .collect(entriesToMap()));
 
-    protected String getFileExtension(DefinitionNode node) {
+    protected String getFileExtension(DefinitionNode<?,?> node) {
         return node.getProperty(JCR_MIME_TYPE) != null ? mimeTypesToExtMap.getOrDefault(node.getProperty(JCR_MIME_TYPE).getValue().getString(), DEFAULT_EXTENSION)
                 : DEFAULT_EXTENSION;
     }
@@ -61,8 +61,8 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
         return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
     }
 
-    protected boolean isType(DefinitionNode node, String nodeType) {
-        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && node.getProperty(JCR_PRIMARY_TYPE).getValue().getString().equals(nodeType);
+    protected boolean isType(DefinitionNode node, JcrPathSegment nodeType) {
+        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && nodeType.equals(node.getProperty(JCR_PRIMARY_TYPE).getValue().getString());
     }
 
 

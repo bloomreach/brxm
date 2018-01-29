@@ -22,6 +22,8 @@ import org.onehippo.cm.model.definition.TreeDefinition;
  */
 public interface DefinitionItem<N extends DefinitionNode> extends ModelItem<N> {
 
+    N getParent();
+
     /**
      * @return the ContentDefinition (or ConfigDefinition) in which this item is defined
      */

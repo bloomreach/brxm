@@ -192,11 +192,11 @@ public class ModuleContext {
     }
 
     protected void collectResourcePathsForNode(final ResourceNameResolver resourceNameResolver, final DefinitionNodeImpl node) {
-        for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+        for (DefinitionPropertyImpl childProperty : node.getProperties()) {
             collectResourcePathsForProperty(resourceNameResolver, childProperty);
         }
 
-        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+        for (DefinitionNodeImpl childNode : node.getNodes()) {
             collectResourcePathsForNode(resourceNameResolver, childNode);
         }
     }

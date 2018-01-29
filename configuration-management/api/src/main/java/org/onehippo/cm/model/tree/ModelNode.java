@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model.tree;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.onehippo.cm.model.path.JcrPathSegment;
@@ -25,17 +26,17 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 public interface ModelNode<N extends ModelNode, P extends ModelProperty> extends ModelItem<N> {
 
     /**
-     * @return An ordered Stream of child nodes of this model node. Note the ordering is according to encounter order
+     * @return An ordered Collection of child nodes of this model node. Note the ordering is according to encounter order
      *      in the serialized yaml format.
      */
-    Stream<N> getNodes();
+    Collection<N> getNodes();
 
     /**
-     * @return An ordered Stream of properties of this model node. Note the ordering is according to encounter order in
+     * @return An ordered Collection of properties of this model node. Note the ordering is according to encounter order in
      *      the serialized yaml format. These properties may include JCR properties or metadata properties (identifiable
      *      with the ".meta:" namespace prefix).
      */
-    Stream<P> getProperties();
+    Collection<P> getProperties();
 
     /**
      * @param name the name of the child node
@@ -48,6 +49,12 @@ public interface ModelNode<N extends ModelNode, P extends ModelProperty> extends
      * @return the {@link ModelProperty} requested, or null if not configured
      */
     P getProperty(JcrPathSegment name);
+
+    /**
+     * @param name the name of the property
+     * @return the {@link ModelProperty} requested, or null if not configured
+     */
+    P getProperty(String name);
 
     /**
      * @return Boolean.TRUE if and only if the order of child nodes of this node can be ignored on detecting changes,

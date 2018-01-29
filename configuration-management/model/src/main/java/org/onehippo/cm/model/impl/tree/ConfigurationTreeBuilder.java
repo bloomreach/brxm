@@ -419,7 +419,7 @@ public class ConfigurationTreeBuilder {
         if (definitionNode.getCategory() != null) {
             if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIG) {
                 parent.clearChildNodeCategorySettings(name);
-                if (!definitionNode.getNodes().findAny().isPresent() && !definitionNode.getProperties().findAny().isPresent()) {
+                if (definitionNode.getNodes().isEmpty() && definitionNode.getProperties().isEmpty()) {
                     return null;
                 }
             } else {

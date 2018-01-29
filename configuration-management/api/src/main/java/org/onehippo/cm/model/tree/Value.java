@@ -45,12 +45,12 @@ public interface Value {
      * NamespaceDefinition, this will return null.
      * @return the DefinitionProperty to which this Value belongs, or null in case this Value is used in a NamespaceDefinition
      */
-    DefinitionProperty getParent();
+    DefinitionProperty<?> getParent();
 
     /**
      * @return the overall Definition to which this Value contributes, which may be a ContentDefinition or a NamespaceDefinition
      */
-    Definition getDefinition();
+    Definition<?> getDefinition();
 
     /**
      * Returns whether this value represents a path to a resource rather than the actual value, only applicable for

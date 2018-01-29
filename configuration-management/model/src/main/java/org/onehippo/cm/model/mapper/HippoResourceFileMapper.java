@@ -18,6 +18,8 @@ package org.onehippo.cm.model.mapper;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyKind;
@@ -34,9 +36,9 @@ public class HippoResourceFileMapper extends AbstractFileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HippoResourceFileMapper.class);
 
-    static final String HIPPO_RESOURCE = "hippo:resource";
+    static final JcrPathSegment HIPPO_RESOURCE = JcrPaths.getSegment("hippo:resource");
     private static final String DEFAULT_FILENAME = "data.bin";
-    private static final String HIPPO_FILENAME = "hippo:filename";
+    private static final JcrPathSegment HIPPO_FILENAME = JcrPaths.getSegment("hippo:filename");
 
     @Override
     public String apply(Value value) {
