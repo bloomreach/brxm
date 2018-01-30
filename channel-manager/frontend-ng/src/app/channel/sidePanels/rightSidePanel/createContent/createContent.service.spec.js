@@ -53,6 +53,7 @@ describe('CreateContentService', () => {
       _HippoIframeService_,
       _Step1Service_,
       _Step2Service_,
+      _CmsService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
