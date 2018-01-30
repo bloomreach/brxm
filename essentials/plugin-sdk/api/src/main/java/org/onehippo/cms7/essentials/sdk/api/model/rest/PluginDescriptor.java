@@ -305,7 +305,7 @@ public class PluginDescriptor {
     public static class Dependency {
         private String pluginId;
         @JsonIgnore private InstallState minStateForBoarding;
-        @JsonIgnore private InstallState minStateForInstalling;
+        @JsonIgnore private InstallState minStateForInstalling = InstallState.INSTALLING;
 
         public String getPluginId() {
             return pluginId;

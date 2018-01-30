@@ -583,6 +583,7 @@ public class InstallStateMachineTest {
 
         final PluginDescriptor.Dependency dependency = new PluginDescriptor.Dependency();
         dependency.setPluginId(id2);
+        dependency.setMinInstallStateForInstalling(null);
 
         final PluginDescriptor plugin1 = new PluginDescriptor();
         plugin1.setId(id1);

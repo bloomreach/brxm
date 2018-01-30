@@ -11,8 +11,7 @@
   "setupParameters": false,
   "pluginDependencies": [
     {
-      "pluginId": "enterpriseProject",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "enterpriseProject"
     }
   ],
   "categories": {

@@ -23,16 +23,13 @@
   },
   "pluginDependencies": [
     {
-      "pluginId": "skeleton",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "skeleton"
     },
     {
-      "pluginId": "crisp",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "crisp"
     },
     {
-      "pluginId": "personalization",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "personalization"
     }
   ]
 }

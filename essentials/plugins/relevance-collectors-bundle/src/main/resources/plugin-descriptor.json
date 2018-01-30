@@ -29,8 +29,7 @@
   },
   "pluginDependencies": [
     {
-      "pluginId": "relevancePlugin",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "relevancePlugin"
     }
   ]
 }

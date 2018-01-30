@@ -33,8 +33,7 @@
   },
   "pluginDependencies": [
     {
-      "pluginId": "enterpriseProject",
-      "minInstallStateForInstalling": "installing"
+      "pluginId": "enterpriseProject"
     }
   ]
 }
