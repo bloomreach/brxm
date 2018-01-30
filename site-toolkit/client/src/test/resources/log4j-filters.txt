@@ -17,3 +17,5 @@
 Cannot create a manage content button outside the hst request.
 Could not find handle node of /
 Error while retrieving the document handle of '/broken', skipping manage content tag
+Rootpath '/exists/not' does not exist. Parameters rootPath and defaultPath are ignored.
+Rootpath '/not/a/folder' is not a folder node. Parameters rootPath and defaultPath are ignored.
