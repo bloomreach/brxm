@@ -31,13 +31,17 @@ import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.Dom4JUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImplTest.class);
     private static final String SITE_WEB_XML = "site/src/main/webapp/WEB-INF/web.xml";
     @Inject private WebXmlService service;
 
@@ -118,6 +122,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_filter_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
@@ -146,6 +151,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_filter_mapping_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
@@ -185,6 +191,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_dispatchers_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
@@ -221,6 +228,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_servlet_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
@@ -267,11 +275,23 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void add_servlet_mapping_invalid_pom() throws Exception {
+        assumeFalse(isWindows());
         createModifiableFile("/services/webxml/pom0.xml", SITE_WEB_XML);
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addServletMapping(Module.SITE, "Console", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Failed to update XML file")));
         }
+    }
+
+    /**
+     * On Windows, it appears that an attempt to run Dom4j's SAXReader#read method on a file which doesn't contain valid
+     * XML doesn't close the opened FileInputStream, and subsequently (in an @After step), the clean-up of that temp file
+     * fails. For that reason, we exclude the relevant tests from running on Windows.
+     */
+    private boolean isWindows() {
+        final String osName = System.getProperty("os.name");
+        LOG.warn("OS name {}.", osName);
+        return osName.startsWith("Windows");
     }
 }

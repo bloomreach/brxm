@@ -171,7 +171,9 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
         List<String> fileNames = projectService.getLog4j2Files().stream().map(File::getName).collect(Collectors.toList());
 
-        assertEquals(Arrays.asList("log4j2.xml", "log4j2-foo.xml"), fileNames);
+        assertEquals(2, fileNames.size());
+        assertTrue(fileNames.contains("log4j2.xml"));
+        assertTrue(fileNames.contains("log4j2-foo.xml"));
     }
 
     @Test
