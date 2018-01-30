@@ -71,9 +71,11 @@ class Step2Controller {
       return true;
     }
     return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
-      .then(() => this.ContentEditor.deleteDocument());
-    this.CmsService.reportUsageStatistic('CreateContent2Cancel');
-  }
+      .then(() => {
+        this.ContentEditor.deleteDocument();
+        this.CmsService.reportUsageStatistic('CreateContent2Cancel');
+      });
+      }
 
   openEditNameUrlDialog() {
     this.Step2Service.openEditNameUrlDialog();
