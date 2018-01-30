@@ -85,11 +85,7 @@ public class PluginResource {
     @GET
     @Path("/")
     public List<PluginDescriptor> getAllPlugins() {
-        return pluginStore.loadPlugins()
-                .getPlugins()
-                .stream()
-                .filter(PluginDescriptor::isShowInDashboard)
-                .collect(Collectors.toList());
+        return new ArrayList<>(pluginStore.loadPlugins().getPlugins());
     }
 
 

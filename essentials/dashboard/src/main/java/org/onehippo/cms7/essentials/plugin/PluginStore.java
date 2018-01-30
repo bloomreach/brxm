@@ -183,16 +183,11 @@ public class PluginStore {
             // load the plugin's current installation state
             installService.loadInstallStateFromFileSystem(plugin);
 
-            // when not show in the dashboard, one cannot specify installation parameters
-            if (plugin.isShowInDashboard()) {
-                if (PluginDescriptor.TYPE_TOOL.equals(plugin.getType())) {
-                    // tools are pre-installed and should not default to depend on the skeleton package.
-                    plugin.setPluginDependencies(null);
-                }
-                plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
-            } else {
-                plugin.setSetupParameters(false);
+            if (PluginDescriptor.TYPE_TOOL.equals(plugin.getType())) {
+                // tools are pre-installed and should not default to depend on the skeleton package.
+                plugin.setPluginDependencies(null);
             }
+            plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
 
             // extract all REST classes to setup the dynamic endpoints
             if (plugin.getRestClasses() != null) {
@@ -228,9 +223,7 @@ public class PluginStore {
                 if (StringUtils.isNotBlank(pluginId)) {
                     final PluginDescriptor p = pluginSet.getPlugin(pluginId);
                     if (p != null) {
-                        if (p.isShowInDashboard()) {
-                            dependentPluginIds.add(p.getName());
-                        }
+                        dependentPluginIds.add(p.getName());
                     } else {
                         dependentPluginIds.add(pluginId + " (missing)");
                     }

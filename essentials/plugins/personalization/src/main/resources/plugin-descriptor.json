@@ -1,18 +1,29 @@
 {
   "id": "personalization",
-  "name": "Personalization",
-  "introduction": "Installs the Personalization dependencies",
   "type": "feature",
+  "name": "Personalization",
+  "introduction": "Installs the Personalization dependencies.",
   "vendor": {
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
   "packageFile" : "/META-INF/personalization_instructions.xml",
-  "showInDashboard": false,
+  "setupParameters": false,
   "pluginDependencies": [
     {
       "pluginId": "enterpriseProject",
       "minInstallStateForInstalling": "installing"
     }
-  ]
+  ],
+  "categories": {
+    "license": [
+      "enterprise"
+    ],
+    "application": [
+      "personalization"
+    ],
+    "type": [
+      "feature"
+    ]
+  }
 }

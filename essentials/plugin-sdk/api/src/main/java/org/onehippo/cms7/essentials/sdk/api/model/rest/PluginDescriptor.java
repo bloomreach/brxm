@@ -46,7 +46,6 @@ public class PluginDescriptor {
     private boolean hasConfiguration;
     private boolean noRebuildAfterSetup;
     private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
-    private boolean showInDashboard = true; // "helper plugins" who provide shared functionality to other plugins can set this property to false. This implies that the plugin has no setupParameters.
     private String packageFile;
     private String type;
     @JsonIgnore private InstallState state;
@@ -261,14 +260,6 @@ public class PluginDescriptor {
 
     public void setState(final InstallState state) {
         this.state = state;
-    }
-
-    public boolean isShowInDashboard() {
-        return showInDashboard;
-    }
-
-    public void setShowInDashboard(final boolean showInDashboard) {
-        this.showInDashboard = showInDashboard;
     }
 
     public String getDependencySummary() {
