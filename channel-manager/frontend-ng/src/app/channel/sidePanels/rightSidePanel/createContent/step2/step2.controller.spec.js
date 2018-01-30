@@ -28,6 +28,7 @@ const testDocument = {
 describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
+  let CmsService;
   let ContentEditor;
   let CreateContentService;
   let FeedbackService;
@@ -42,6 +43,7 @@ describe('Create content step 2 controller', () => {
       $controller,
       _$rootScope_,
       _$q_,
+      _CmsService_,
       _ContentEditor_,
       _CreateContentService_,
       _FeedbackService_,
@@ -49,6 +51,7 @@ describe('Create content step 2 controller', () => {
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
+      CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
@@ -57,6 +60,7 @@ describe('Create content step 2 controller', () => {
       $ctrl = $controller('step2Ctrl');
     });
 
+    spyOn(CmsService, 'reportUsageStatistic');
     spyOn(ContentEditor, 'getDocument').and.returnValue(testDocument);
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocument.id);
     spyOn(FeedbackService, 'showError');
@@ -82,6 +86,7 @@ describe('Create content step 2 controller', () => {
     expect($ctrl.documentIsSaved).toBe(true);
     expect(FeedbackService.showNotification).toHaveBeenCalled();
     expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
   });
 
   it('stops create content when close is called', () => {

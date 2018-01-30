@@ -20,6 +20,7 @@ describe('Create content step 1 controller', () => {
   let $rootScope;
   let Step1Service;
   let CreateContentService;
+  let CmsService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContent.step1');
@@ -28,16 +29,19 @@ describe('Create content step 1 controller', () => {
       $controller,
       _$q_,
       _$rootScope_,
+      _CmsService_,
       _CreateContentService_,
       _Step1Service_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
       Step1Service = _Step1Service_;
 
       $ctrl = $controller('step1Ctrl');
     });
+    spyOn(CmsService, 'reportUsageStatistic');
   });
 
   it('gets values from the service', () => {
@@ -83,11 +87,13 @@ describe('Create content step 1 controller', () => {
 
     expect(Step1Service.createDraft).toHaveBeenCalled();
     expect(CreateContentService.next).toHaveBeenCalledWith(document, 'test-url', 'test-locale');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Create');
   });
 
   it('stops create content when close is called', () => {
     spyOn(CreateContentService, 'stop');
     $ctrl.close();
     expect(CreateContentService.stop).toHaveBeenCalled();
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Cancel');
   });
 });

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ public class Folder {
     private String displayName;
     private String path;
     private String locale;
+    private boolean exists;
 
     public Folder() {
     }
@@ -55,5 +56,13 @@ public class Folder {
 
     public void setPath(final String path) {
         this.path = path;
+    }
+
+    public boolean getExists() {
+        return exists;
+    }
+
+    public void setExists(final boolean exists) {
+        this.exists = exists;
     }
 }

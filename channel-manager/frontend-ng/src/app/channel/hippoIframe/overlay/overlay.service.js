@@ -576,6 +576,7 @@ class OverlayService {
     const parameterBasePath = config.componentParameterBasePath;
     const pickerConfig = config.componentPickerConfig;
 
+    this.CmsService.reportUsageStatistic('PickContentButton');
     this.HstComponentService.pickPath(component.getId(), componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());

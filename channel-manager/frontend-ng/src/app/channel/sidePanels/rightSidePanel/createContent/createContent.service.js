@@ -39,6 +39,7 @@ class CreateContentService {
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
+    this.CmsService = CmsService;
 
     $transitions.onBefore(
       { to: '**.create-content-step-1' },
@@ -90,6 +91,11 @@ class CreateContentService {
   _step1(config) {
     const component = config.containerItem;
     if (component) {
+      if (config.componentParameter) {
+        this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
+      } else {
+        this.CmsService.reportUsageStatistic('CreateContentButton');
+      }
       this.componentInfo = {
         id: component.getId(),
         label: component.getLabel(),

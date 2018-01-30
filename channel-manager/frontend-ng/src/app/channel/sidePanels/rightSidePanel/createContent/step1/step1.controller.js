@@ -18,11 +18,13 @@ class Step1Controller {
   constructor(
     CreateContentService,
     Step1Service,
+    CmsService,
   ) {
     'ngInject';
 
     this.CreateContentService = CreateContentService;
     this.Step1Service = Step1Service;
+    this.CmsService = CmsService;
   }
 
   get defaultPath() {
@@ -76,10 +78,12 @@ class Step1Controller {
   submit() {
     this.Step1Service.createDraft()
       .then(document => this.CreateContentService.next(document, this.url, this.locale));
+    this.CmsService.reportUsageStatistic('CreateContent1Create');
   }
 
   close() {
     this.CreateContentService.stop();
+    this.CmsService.reportUsageStatistic('CreateContent1Cancel');
   }
 }
 

@@ -94,16 +94,16 @@ class Step2Service {
   }
 
   saveComponentParameter() {
-    const componentId = this.componentInfo.id;
+    const parameterName = this.componentInfo.parameterName;
 
-    if (!componentId) {
-      // no component, so no parameter to save
+    if (!parameterName) {
+      // no component parameter to update
       return this.$q.resolve();
     }
 
+    const componentId = this.componentInfo.id;
     const componentName = this.componentInfo.label;
     const componentVariant = this.componentInfo.variant;
-    const parameterName = this.componentInfo.parameterName;
     const parameterBasePath = this.componentInfo.parameterBasePath;
     const document = this.ContentEditor.getDocument();
 
