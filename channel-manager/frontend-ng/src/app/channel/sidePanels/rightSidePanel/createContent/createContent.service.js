@@ -27,7 +27,6 @@ class CreateContentService {
     Step1Service,
     Step2Service,
     RightSidePanelService,
-    CmsService,
   ) {
     'ngInject';
 

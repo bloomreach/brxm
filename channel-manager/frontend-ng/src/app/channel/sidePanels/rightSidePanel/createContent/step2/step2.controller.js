@@ -75,7 +75,7 @@ class Step2Controller {
         this.ContentEditor.deleteDocument();
         this.CmsService.reportUsageStatistic('CreateContent2Cancel');
       });
-      }
+  }
 
   openEditNameUrlDialog() {
     this.Step2Service.openEditNameUrlDialog();
