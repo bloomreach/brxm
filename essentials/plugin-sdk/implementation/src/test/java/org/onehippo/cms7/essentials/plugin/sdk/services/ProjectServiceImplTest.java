@@ -210,7 +210,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void copy_absent_resource() throws Exception {
         final String resourcePath = "/services/project/absent.txt";
-        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test/copy.txt";
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test" + File.separator + "copy.txt";
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
@@ -222,7 +222,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void copy_onto_directory() throws Exception {
         final String resourcePath = "/services/project/to-be-copied.txt";
-        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test";
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test";
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
         createModifiableDirectory("test");
 
@@ -235,7 +235,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void delete_non_empty_dir() throws Exception {
         final String resourcePath = "/services/project/to-be-copied.txt";
-        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}/test";
+        final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test";
         createModifiableFile(resourcePath, "test/file.txt");
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
 

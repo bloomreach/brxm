@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
+import java.io.File;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -62,6 +63,7 @@ public class FileInstruction extends BuiltinInstruction {
                     log.error("Invalid file instruction '{}'.", toString());
                     return Status.FAILED;
                 }
+                preprocessTarget();
                 return projectService.copyResource("/" + source, target, placeholderData, overwrite, binary)
                         ? Status.SUCCESS : Status.FAILED;
             case DELETE:
@@ -83,6 +85,11 @@ public class FileInstruction extends BuiltinInstruction {
         } else {
             changeMessageQueue.accept(Type.FILE_DELETE, "Delete project file '" + target + "'.");
         }
+    }
+
+    private void preprocessTarget() {
+        // the instruction file uses '/' as file separator, but the OS may use a different character...
+        target = target.replace('/', File.separatorChar);
     }
 
     @XmlAttribute

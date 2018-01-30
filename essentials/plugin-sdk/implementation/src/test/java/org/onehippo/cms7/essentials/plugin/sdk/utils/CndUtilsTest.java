@@ -40,6 +40,7 @@ public class CndUtilsTest extends BaseRepositoryTest {
     @Test
     public void testRegisterNamespaceUri() throws Exception {
 
+        jcrService.reset();
         Session session = jcrService.createSession();
         if (!session.nodeExists("/"+HippoNodeType.NAMESPACES_PATH)) {
             session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
