@@ -4,7 +4,7 @@
 <#if document??>
   <#if document.FAQ??>
   <div class="has-edit-button">
-    <@hst.manageContent componentParameter="document" document=document rootPath="faq"/>
+    <@hst.manageContent componentParameter="document" document=document/>
     <h1>${document.title?html}</h1>
     <@hst.html hippohtml=document.description/>
     <div class="panel-group" id="faqitems" role="tablist" aria-multiselectable="true">
