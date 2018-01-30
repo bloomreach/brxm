@@ -30,11 +30,11 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -50,6 +50,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_COMPONENT_WINDOW;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
@@ -181,8 +183,10 @@ public class HstManageContentTag extends TagSupport {
         }
 
         final ServletRequest request = pageContext.getRequest();
-        final HstComponentWindow window = (HstComponentWindow) request.getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
-        final String componentValue = window.getParameter(componentParameter);
+        final HstComponentWindow window = (HstComponentWindow) request.getAttribute(HST_COMPONENT_WINDOW);
+
+        final String prefixedParameterName = getPrefixedParameterName(window, componentParameter);
+        final String componentValue = window.getParameter(prefixedParameterName);
 
         if (componentValue != null && isRelativePathParameter) {
             final ResolvedMount resolvedMount = requestContext.getResolvedMount();
@@ -192,12 +196,22 @@ public class HstManageContentTag extends TagSupport {
         return componentValue;
     }
 
+    private String getPrefixedParameterName(final HstComponentWindow window, final String parameterName) {
+        final Object parameterPrefix = window.getAttribute(RENDER_VARIANT);
+
+        if (parameterPrefix == null || parameterPrefix.equals("")) {
+            return parameterName;
+        }
+
+        return ConfigurationUtils.createPrefixedParameterName(parameterPrefix.toString(), componentParameter);
+    }
+
     private JcrPath getJcrPath() {
         if (componentParameter == null) {
             return null;
         }
 
-        final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
+        final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(HST_COMPONENT_WINDOW);
         final HstComponent component = window.getComponent();
         final ComponentConfiguration componentConfig = component.getComponentConfiguration();
         final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
