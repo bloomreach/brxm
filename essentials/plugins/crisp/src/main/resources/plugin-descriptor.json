@@ -2,6 +2,7 @@
   "id": "crisp",
   "type": "feature",
   "name": "CRISP Add-on",
+  "icon": "/essentials/feature/crisp/icon.png",
   "introduction": "Installs the Common Resource model Interface and Service Provider (CRISP) dependencies for the use case of installing the BloomReach commerce features.",
   "documentationLink": "https://www.onehippo.org/library/concepts/crisp-api/introduction.html",
   "vendor": {

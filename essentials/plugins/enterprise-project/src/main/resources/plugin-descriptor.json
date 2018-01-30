@@ -22,5 +22,6 @@
     "license": [
       "enterprise"
     ]
-  }
+  },
+  "pluginDependencies": []
 }

@@ -2,6 +2,7 @@
   "id": "personalization",
   "type": "feature",
   "name": "Personalization",
+  "icon": "/essentials/feature/personalization/icon.png",
   "introduction": "Installs the Personalization dependencies.",
   "vendor": {
     "name": "BloomReach",
