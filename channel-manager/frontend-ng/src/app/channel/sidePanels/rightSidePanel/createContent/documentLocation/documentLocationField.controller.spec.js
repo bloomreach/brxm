@@ -45,6 +45,7 @@ describe('DocumentLocationField', () => {
 
     component = $componentController('documentLocationField');
     getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
+    spyOn(CmsService, 'reportUsageStatistic');
 
     component.rootPath = '/root';
     component.changeLocale = () => angular.noop();
@@ -173,6 +174,7 @@ describe('DocumentLocationField', () => {
       spyOn(CmsService, 'subscribeOnce');
       component.openPicker();
       expect(CmsService.subscribeOnce).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('DocumentLocationPicker (create content panel)');
     });
 
     it('opens the picker by publishing the "show-path-picker" event', () => {
