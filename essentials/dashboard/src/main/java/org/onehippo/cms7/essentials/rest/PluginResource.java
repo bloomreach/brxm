@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -135,7 +134,8 @@ public class PluginResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
-    public UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId, @Context HttpServletResponse response) {
+    public synchronized UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId,
+                                                   @Context HttpServletResponse response) {
         final PluginSet pluginSet = pluginStore.loadPlugins();
         final Map<String, Object> parameters = createDefaultSetupParameters();
         final UserFeedback feedback = new UserFeedback();
