@@ -17,6 +17,13 @@
 document-location-field {
   md-input-container {
     width: 100%;
+
+    md-icon {
+      left: auto;
+      position: absolute;
+      right: 13px;
+      top: 4px;
+    }
   }
 
   .input-overlay {
@@ -28,10 +35,19 @@ document-location-field {
     position: absolute;
     width: 100%;
 
+    > div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      // leave space for the icon
+      width: calc(100% - 40px);
+    }
+
     .highlight {
       color: $text-dark;
     }
 
+    // hide the text of the input
     &+.md-input {
       &[disabled] {
         color: transparent;

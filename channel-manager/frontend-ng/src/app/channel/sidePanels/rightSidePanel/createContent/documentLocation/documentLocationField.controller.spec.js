@@ -67,51 +67,37 @@ describe('DocumentLocationField', () => {
       expect(() => component.$onInit()).toThrowError('The defaultPath option can only be a relative path: /path');
     });
 
-    it('detects the root path depth', () => {
-      component.rootPath = '/root';
+    it('sets the default picker config', () => {
       component.$onInit();
-      expect(component.rootPathDepth).toBe(1);
-
-      component.rootPath = '/root/path';
-      component.$onInit();
-      expect(component.rootPathDepth).toBe(2);
-
-      component.rootPath = '/root/path/';
-      component.$onInit();
-      expect(component.rootPathDepth).toBe(3);
+      expect(component.pickerPath).toBe('/');
+      expect(component.pickerConfig).toEqual({
+        configuration: 'cms-pickers/folders',
+        rootPath: '/root',
+        selectableNodeTypes: ['hippostd:folder'],
+      });
     });
 
-    it('stores the locale returned by the "getFolders" backend call', () => {
-      const folders = [{ path: '/root' }, { path: '/root/path', locale: 'de' }];
-      getFolderSpy.and.returnValue($q.resolve(folders));
-
+    it('sets a path according to rootPath and defaultPath configuration', () => {
+      spyOn(component, 'setPath');
       component.$onInit();
-      $rootScope.$apply();
+      expect(component.setPath).toHaveBeenCalledWith('/root');
 
-      expect(component.locale).toBe('de');
+      component.defaultPath = 'desk/paper';
+      component.$onInit();
+      expect(component.setPath).toHaveBeenCalledWith('/root/desk/paper');
     });
   });
 
   describe('setting the document location', () => {
-    it('stores the path of the last folder returned by the create-content-service', () => {
-      const folders = [{ path: '/root' }, { path: '/root/path' }];
+    it('stores the path and defaultPath of the last folder returned by the create-content-service', () => {
+      const folders = [{ path: '/root' }, { path: '/root/content' }, { path: '/root/content/document' }];
       getFolderSpy.and.returnValue($q.resolve(folders));
 
       component.$onInit();
       $rootScope.$apply();
 
-      expect(component.documentLocation).toBe('/root/path');
-    });
-
-    it('stores the value of defaultPath returned by the create-content-service', () => {
-      component.rootPath = '/root';
-      const folders = [{ name: 'root' }, { name: 'default' }, { name: 'path' }];
-      getFolderSpy.and.returnValue($q.resolve(folders));
-
-      component.$onInit();
-      $rootScope.$apply();
-
-      expect(component.defaultPath).toBe('default/path');
+      expect(component.path).toBe('/root/content/document');
+      expect(component.defaultPath).toBe('content/document');
     });
   });
 
@@ -131,93 +117,55 @@ describe('DocumentLocationField', () => {
 
     it('uses displayName(s) for the document location label', () => {
       setup('/root', '', ['R00T']);
-      expect(component.documentLocationLabel).toBe('R00T');
+      expect(component.pathLabel).toBe('/R00T');
 
-      setup('/root', 'bloom', ['R00T', 'bl00m']);
-      expect(component.documentLocationLabel).toBe('R00T/bl00m');
-    });
-
-    it('uses only one folder of root path if default path is empty', () => {
-      setup('/channel/content', '', ['channel', 'content']);
-      expect(component.documentLocationLabel).toBe('content');
-
-      setup('/channel/content/root', '', ['channel', 'content', 'root']);
-      expect(component.documentLocationLabel).toBe('root');
-
-      setup('/root', '', ['root']);
-      expect(component.documentLocationLabel).toBe('root');
-
-      setup('/channel/content/root/path', '', ['channel', 'content', 'root', 'path']);
-      expect(component.documentLocationLabel).toBe('path');
-
-      setup('/root/path', '', ['root', 'path']);
-      expect(component.documentLocationLabel).toBe('path');
-    });
-
-    it('uses only one folder of root path if default path depth is less than 3', () => {
-      setup('/channel/content', 'some', ['channel', 'content', 'some']);
-      expect(component.documentLocationLabel).toBe('content/some');
-
-      setup('/channel/content', 'some/folder', ['channel', 'content', 'some', 'folder']);
-      expect(component.documentLocationLabel).toBe('content/some/folder');
-
-      setup('/channel/content/root', 'some/folder', ['channel', 'content', 'root', 'some', 'folder']);
-      expect(component.documentLocationLabel).toBe('root/some/folder');
-
-      setup('/root', 'some/folder', ['root', 'some', 'folder']);
-      expect(component.documentLocationLabel).toBe('root/some/folder');
-    });
-
-    it('always shows a maximum of 3 folders', () => {
-      setup('/channel/content/root', 'folder/with/document', ['channel', 'content', 'root', 'folder', 'with', 'document']);
-      expect(component.documentLocationLabel).toBe('folder/with/document');
-
-      setup('/root', 'folder/with/document', ['root', 'folder', 'with', 'document']);
-      expect(component.documentLocationLabel).toBe('folder/with/document');
-
-      setup('/root', 'folder/with/some/document', ['root', 'folder', 'with', 'some', 'document']);
-      expect(component.documentLocationLabel).toBe('with/some/document');
-
-      setup('/root', 'folder/with/some/nested/document', ['root', 'folder', 'with', 'some', 'nested', 'document']);
-      expect(component.documentLocationLabel).toBe('some/nested/document');
-
-      setup('/root/path', 'folder/with/some/nested/document', ['root', 'path', 'folder', 'with', 'some', 'nested', 'document']);
-      expect(component.documentLocationLabel).toBe('some/nested/document');
+      setup('/root/water', 'bloom/flower', ['R00T', 'water', 'bloom', 'fl0w3r']);
+      expect(component.pathLabel).toBe('/R00T/water/bloom/fl0w3r');
     });
   });
 
   describe('onLoadFolders', () => {
     it('ignores an empty result from the backend', () => {
-      component.documentLocationLabel = 'test-document-location-label';
-      component.documentLocation = 'test-document-location';
+      component.pathLabel = 'test-document-location-label';
+      component.path = 'test-document-location';
       component.locale = 'test-locale';
       component.defaultPath = 'test-default-path';
+      component.pickerPath = 'test-picker-path';
 
       component.onLoadFolders([]);
 
-      expect(component.documentLocationLabel).toBe('test-document-location-label');
-      expect(component.documentLocation).toBe('test-document-location');
+      expect(component.pathLabel).toBe('test-document-location-label');
+      expect(component.path).toBe('test-document-location');
       expect(component.locale).toBe('test-locale');
       expect(component.defaultPath).toBe('test-default-path');
-      expect(component.existingPath).toBe('/');
+      expect(component.pickerPath).toBe('test-picker-path');
     });
 
-    it('stores the existingPath, i.e. that path of the last returned folder that exists in the repository', () => {
+    it('stores the pickerPath, i.e. the deepest nested folder that exists in the repository', () => {
       component.onLoadFolders([
         { displayName: 'A', name: 'a', path: '/a', exists: true },
         { displayName: 'B', name: 'b', path: '/a/b', exists: true },
         { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
       ]);
-      expect(component.existingPath).toBe('/a/b');
+      expect(component.pickerPath).toBe('/a/b');
     });
 
-    it('stores / as the existingPath if none of the folders already exist in the repository', () => {
+    it('stores / as the pickerPath if none of the folders already exist in the repository', () => {
       component.onLoadFolders([
         { displayName: 'A', name: 'a', path: '/a', exists: false },
         { displayName: 'B', name: 'b', path: '/a/b', exists: false },
-        { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
       ]);
-      expect(component.existingPath).toBe('/');
+      expect(component.pickerPath).toBe('/');
+    });
+
+    it('stores the locale of the last folder', () => {
+      const folders = [{ path: '/root', locale: 'fr' }, { path: '/root/path', locale: 'de' }];
+      getFolderSpy.and.returnValue($q.resolve(folders));
+
+      component.$onInit();
+      $rootScope.$apply();
+
+      expect(component.locale).toBe('de');
     });
   });
 
@@ -232,7 +180,7 @@ describe('DocumentLocationField', () => {
     it('opens the picker by publishing the "show-path-picker" event', () => {
       spyOn(CmsService, 'publish');
       const pickerConfig = {};
-      component.existingPath = 'current-location';
+      component.pickerPath = 'current-location';
       component.pickerConfig = pickerConfig;
       component.openPicker();
       expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
@@ -241,28 +189,28 @@ describe('DocumentLocationField', () => {
 
   describe('onPathPicked', () => {
     it('only accepts callback events with callbackId "document-location-callback-id"', () => {
-      spyOn(component, 'setDocumentLocation');
+      spyOn(component, 'setPath');
 
       component.onPathPicked('some-id', '/root/some-path');
-      expect(component.setDocumentLocation).not.toHaveBeenCalled();
+      expect(component.setPath).not.toHaveBeenCalled();
 
       component.onPathPicked('document-location-callback-id', '/root/new-path');
-      expect(component.setDocumentLocation).toHaveBeenCalledWith('/root/new-path');
+      expect(component.setPath).toHaveBeenCalledWith('/root/new-path');
     });
 
     it('prepends relative paths with a /', () => {
-      spyOn(component, 'setDocumentLocation');
+      spyOn(component, 'setPath');
 
       component.onPathPicked('document-location-callback-id', 'root/path');
-      expect(component.setDocumentLocation).toHaveBeenCalledWith('/root/path');
+      expect(component.setPath).toHaveBeenCalledWith('/root/path');
     });
 
     it('shows an error if the chosen path is not part of the rootPath tree', () => {
       spyOn(FeedbackService, 'showError');
-      spyOn(component, 'setDocumentLocation');
+      spyOn(component, 'setPath');
 
       component.onPathPicked('document-location-callback-id', '/flowers/tulip');
-      expect(component.setDocumentLocation).not.toHaveBeenCalled();
+      expect(component.setPath).not.toHaveBeenCalled();
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
         root: '/root',
         path: '/flowers/tulip',

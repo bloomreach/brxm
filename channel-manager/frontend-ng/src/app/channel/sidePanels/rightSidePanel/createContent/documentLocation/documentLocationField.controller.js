@@ -15,7 +15,6 @@
  */
 
 const PICKER_CALLBACK_ID = 'document-location-callback-id';
-const MAX_DEPTH = 3;
 
 class DocumentLocationFieldController {
   constructor(
@@ -28,10 +27,6 @@ class DocumentLocationFieldController {
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
-
-    this.rootPathDepth = 0;
-    this.documentLocationLabel = '';
-    this.documentLocation = '';
   }
 
   $onInit() {
@@ -46,20 +41,47 @@ class DocumentLocationFieldController {
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
-    this.rootPathDepth = (this.rootPath.match(/\//g) || []).length;
 
-    let documentLocationPath = this.rootPath;
-    if (this.defaultPath) {
-      documentLocationPath += `/${this.defaultPath}`;
-    }
-
+    this.pickerPath = '/';
     this.pickerConfig = {
       configuration: 'cms-pickers/folders',
       rootPath: this.rootPath,
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    this.setDocumentLocation(documentLocationPath);
+    const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
+    this.setPath(path);
+  }
+
+  setPath(path) {
+    this.Step1Service.getFolders(path)
+      .then(folders => this.onLoadFolders(folders));
+  }
+
+  /**
+   * Store the path and locale of the last folder and calculate the corresponding pathLabel,
+   * defaultPath and pickerPath.
+   * @param folders The array of folders returned by the backend
+   */
+  onLoadFolders(folders = []) {
+    if (folders.length > 0) {
+      this.folders = folders;
+
+      const lastFolder = folders[folders.length - 1];
+      this.locale = lastFolder.locale;
+      this.path = lastFolder.path;
+      this.pathLabel = `/${folders.map(f => f.displayName).join('/')}`;
+      this.defaultPath = lastFolder.path.substring(this.rootPath.length + 1);
+
+      const existing = folders.filter(folder => folder.exists);
+      this.pickerPath = existing.length === 0 ? '/' : existing[existing.length - 1].path;
+    }
+  }
+
+  openPicker() {
+    this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
+    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.pickerPath, this.pickerConfig);
+    this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
   }
 
   onPathPicked(callbackId, path) {
@@ -70,53 +92,9 @@ class DocumentLocationFieldController {
       if (!path.startsWith(this.rootPath)) {
         this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
       } else {
-        this.setDocumentLocation(path);
+        this.setPath(path);
       }
     }
-  }
-
-  setDocumentLocation(documentLocation) {
-    this.Step1Service.getFolders(documentLocation)
-      .then(folders => this.onLoadFolders(folders));
-  }
-
-  /**
-   * Store the path of the last folder as documentLocation and calculate the corresponding documentLocationLabel.
-   * @param folders The array of folders returned by the backend
-   */
-  onLoadFolders(folders) {
-    if (folders.length > 0) {
-      const lastFolder = folders[folders.length - 1];
-      this.documentLocationLabel = this.calculateDocumentLocationLabel(folders);
-      this.documentLocation = lastFolder.path;
-      this.locale = lastFolder.locale;
-      this.defaultPath = folders
-        .filter((folder, index) => index >= this.rootPathDepth)
-        .map(folder => folder.name)
-        .join('/');
-    }
-  }
-
-  openPicker() {
-    this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
-    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.existingPath, this.pickerConfig);
-    this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
-  }
-
-  /**
-   * Calculate the document location label from the given array of folders, using the folder's
-   * displayName. It always shows a maximum of three folders in total, and only the last folder
-   * of the rootPath if the path after the rootPath is shorter than the maximum.
-   */
-  calculateDocumentLocationLabel(folders) {
-    const defaultPathDepth = folders.length - this.rootPathDepth;
-    const start = defaultPathDepth >= MAX_DEPTH ?
-      folders.length - MAX_DEPTH : this.rootPathDepth - 1;
-
-    return folders
-      .filter((folder, index) => index >= start)
-      .map(folder => folder.displayName)
-      .join('/');
   }
 }
 
