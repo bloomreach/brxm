@@ -30,7 +30,6 @@ describe('Create content step 2 controller', () => {
   let $q;
   let CmsService;
   let ContentEditor;
-  let ContentService;
   let CreateContentService;
   let FeedbackService;
   let Step2Service;
@@ -46,7 +45,6 @@ describe('Create content step 2 controller', () => {
       _$q_,
       _CmsService_,
       _ContentEditor_,
-      _ContentService_,
       _CreateContentService_,
       _FeedbackService_,
       _Step2Service_,
@@ -55,7 +53,6 @@ describe('Create content step 2 controller', () => {
       $q = _$q_;
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
-      ContentService = _ContentService_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
       Step2Service = _Step2Service_;
@@ -113,7 +110,7 @@ describe('Create content step 2 controller', () => {
 
     beforeEach(() => {
       spyOn(ContentEditor, 'confirmDiscardChanges').and.callThrough();
-      deleteDocumentSpy = spyOn(ContentService, 'deleteDocument').and.returnValue($q.resolve());
+      deleteDocumentSpy = spyOn(ContentEditor, 'deleteDocument').and.returnValue($q.resolve());
     });
 
     it('allows ui-exit without dialog if document is already saved', () => {
@@ -143,25 +140,9 @@ describe('Create content step 2 controller', () => {
       ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
-        expect(deleteDocumentSpy).toHaveBeenCalledWith('testId');
+        expect(deleteDocumentSpy).toHaveBeenCalled();
         done();
       }, () => fail('Dialog should not reject'));
-      $rootScope.$digest();
-    });
-
-    it('shows errors triggered by calling delete-document and exits the UI', (done) => {
-      ContentService.deleteDocument.and.returnValue($q.reject({
-        data: {
-          reason: 'error_reason',
-          params: 'error_params',
-        },
-      }));
-
-      $ctrl.uiCanExit()
-        .then(() => {
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error_reason', 'error_params');
-          done();
-        }, () => fail('Dialog should not reject'));
       $rootScope.$digest();
     });
   });

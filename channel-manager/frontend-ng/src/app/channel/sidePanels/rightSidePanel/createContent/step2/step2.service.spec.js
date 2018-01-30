@@ -148,4 +148,23 @@ describe('Step2Service', () => {
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error_reason', 'error_params');
     });
   });
+
+  describe('killEditor', () => {
+    beforeEach(() => {
+      ContentEditor.documentId = '42';
+      spyOn(ContentEditor, 'kill');
+    });
+
+    it('kills the content editor for the given document ID', () => {
+      const result = Step2Service.killEditor('42');
+      expect(result).toBe(true);
+      expect(ContentEditor.kill).toHaveBeenCalled();
+    });
+
+    it('does not kill the content editor for another document ID', () => {
+      const result = Step2Service.killEditor('1');
+      expect(result).toBe(false);
+      expect(ContentEditor.kill).not.toHaveBeenCalled();
+    });
+  });
 });

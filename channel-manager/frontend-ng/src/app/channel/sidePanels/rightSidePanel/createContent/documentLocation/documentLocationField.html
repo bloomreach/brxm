@@ -17,14 +17,15 @@
 <form name="$ctrl.form">
   <!-- Document location field -->
   <div class="field">
-    <md-input-container class="create-content-field qa-document-location create-content-field-clickable">
+    <md-input-container class="create-content-field qa-document-location">
+      <div class="input-overlay" ng-click="$ctrl.openPicker()">
+        <span ng-repeat="location in $ctrl.locationFolders track by location.path" ng-class="{ 'highlight': location.exists }"><span ng-if="!$first">/</span>{{::location.displayName }}</span>
+      </div>
       <input ng-model="$ctrl.documentLocationLabel"
              name="documentLocation"
              placeholder="Document location"
-             required
-             readonly
-             ng-click="$ctrl.openPicker()">
-
+             disabled
+             required>
       <div ng-messages="form.controls.documentLocation && form.controls.documentLocation.touched">
         <div ng-message="required">This field is required</div>
       </div>

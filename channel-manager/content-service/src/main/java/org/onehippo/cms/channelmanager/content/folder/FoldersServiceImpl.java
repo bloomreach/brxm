@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@ public class FoldersServiceImpl implements FoldersService {
         folder.setDisplayName(name);
         folder.setLocale(locale);
         folder.setPath(path);
+        folder.setExists(false);
         return folder;
     }
 
@@ -91,6 +92,7 @@ public class FoldersServiceImpl implements FoldersService {
         final Folder folder = new Folder();
         folder.setName(node.getName());
         folder.setPath(node.getPath());
+        folder.setExists(true);
 
         DocumentUtils.getDisplayName(node).ifPresent(folder::setDisplayName);
 
