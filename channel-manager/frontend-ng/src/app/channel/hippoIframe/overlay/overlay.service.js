@@ -26,8 +26,6 @@ import plusWhiteSvg from '../../../../images/html/plus-white.svg';
 import searchSvg from '../../../../images/html/search.svg';
 import searchWhiteSvg from '../../../../images/html/search-white.svg';
 
-const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
-
 class OverlayService {
   constructor(
     $log,
@@ -41,7 +39,7 @@ class OverlayService {
     ExperimentStateService,
     FeedbackService,
     HippoIframeService,
-    HstService,
+    HstComponentService,
     MaskService,
     PageStructureService,
   ) {
@@ -58,7 +56,7 @@ class OverlayService {
     this.ExperimentStateService = ExperimentStateService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.HstService = HstService;
+    this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
@@ -74,49 +72,10 @@ class OverlayService {
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
-
-    this.CmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === PATH_PICKER_CALLBACK_ID) {
-        this.pathPickedHandler(path);
-        this.pathPickedHandler = angular.noop;
-      }
-    });
   }
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  pickPath(config) {
-    this.pathPickedHandler = path => this.onPathPicked(config, path);
-    this.CmsService.publish(
-      'show-path-picker',
-      PATH_PICKER_CALLBACK_ID,
-      config.componentValue,
-      config.componentPickerConfig);
-  }
-
-  onPathPicked(config, path) {
-    if (!config.containerItem) {
-      this.FeedbackService.showError('ERROR_SET_COMPONENT_PARAMETER_NO_CONTAINER_ITEM');
-      return;
-    }
-
-    path = path.startsWith('/') ? path : `/${path}`;
-    if (config.componentPickerConfig.isRelativePath) {
-      path = this._pathRelativeToChannelRoot(path);
-    }
-
-    const component = config.containerItem;
-    this.HstService.doPutForm({ document: path }, component.getId(), 'hippo-default')
-      .then(() => this.HippoIframeService.reload())
-      .catch(() => this.FeedbackService.showError('ERROR_SET_COMPONENT_PARAMETER_PATH', { path }));
-  }
-
-  _pathRelativeToChannelRoot(path) {
-    const channel = this.ChannelService.getChannel();
-    path = path.substring(channel.contentRoot.length);
-    return path.startsWith('/') ? path.substring(1) : path;
   }
 
   _onLoad() {
@@ -370,9 +329,12 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
     const componentParameter = structureElement.getComponentParameter();
+    const componentParameterBasePath =
+      structureElement.isComponentParameterRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
 
     const config = {
       componentParameter,
+      componentParameterBasePath,
       componentPickerConfig: structureElement.getComponentPickerConfig(),
       componentValue: structureElement.getComponentValue(),
       containerItem: structureElement.getEnclosingElement(),
@@ -402,6 +364,11 @@ class OverlayService {
       config.isLockedByOtherUser = true;
     }
 
+    if (config.componentParameter && !config.containerItem) {
+      this.$log.warn(`Ignoring component parameter "${config.componentParameter}" of manage content button outside catalog item`);
+      delete config.componentParameter;
+    }
+
     return config;
   }
 
@@ -422,7 +389,7 @@ class OverlayService {
       const selectDocumentButton = {
         mainIcon: searchWhiteSvg,
         dialIcon: searchSvg,
-        callback: () => this.pickPath(config),
+        callback: () => this._pickPath(config),
         tooltip: this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
@@ -452,6 +419,11 @@ class OverlayService {
     }
 
     const buttons = this._getButtons(config);
+    if (buttons.length === 0) {
+      // no buttons to render
+      return;
+    }
+
     const buttonElement = $(`<button title="${buttons[0].tooltip}"
                  class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`);
 
@@ -601,6 +573,28 @@ class OverlayService {
   _editContent(uuid) {
     this.EditContentService.startEditing(uuid);
     this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+  }
+
+  _pickPath(config) {
+    const component = config.containerItem;
+    const componentName = component.getLabel();
+    const parameterName = config.componentParameter;
+    const parameterValue = config.componentValue;
+    const parameterBasePath = config.componentParameterBasePath;
+    const pickerConfig = config.componentPickerConfig;
+
+    this.CmsService.reportUsageStatistic('PickContentButton');
+    this.HstComponentService.pickPath(component.getId(), parameterName, parameterValue, pickerConfig, parameterBasePath)
+      .then(() => {
+        this.PageStructureService.renderComponent(component.getId());
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      })
+      .catch(() => {
+        this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+
+        // probably the container got locked by another user, so reload the page to show new locked containers
+        this.HippoIframeService.reload();
+      });
   }
 
   _linkButtonTransition(element) {

@@ -14,167 +14,86 @@
  * limitations under the License.
  */
 
-xdescribe('Create content step 1 component', () => {
-  let $rootScope;
-  let $q;
-  let CreateContentService;
-  let FeedbackService;
-
+describe('Create content step 1 controller', () => {
   let $ctrl;
+  let $q;
+  let $rootScope;
+  let Step1Service;
+  let CreateContentService;
+  let CmsService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.createContentModule');
+    angular.mock.module('hippo-cm.channel.createContent.step1');
 
     inject((
-      _$controller_,
-      _$rootScope_,
+      $controller,
       _$q_,
+      _$rootScope_,
+      _CmsService_,
       _CreateContentService_,
-      _FeedbackService_,
+      _Step1Service_,
     ) => {
-      $rootScope = _$rootScope_;
       $q = _$q_;
+      $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
-      FeedbackService = _FeedbackService_;
+      Step1Service = _Step1Service_;
 
       $ctrl = $controller('step1Ctrl');
     });
+    spyOn(CmsService, 'reportUsageStatistic');
   });
 
-  describe('DocumentType', () => {
-    it('throws an error if options are not set', () => {
-      expect(() => {
-        $ctrl.options = null;
-        $ctrl.$onInit();
-      }).toThrow();
-    });
+  it('gets values from the service', () => {
+    Step1Service.defaultPath = 'test-defaultPath';
+    Step1Service.documentType = 'test-documentType';
+    Step1Service.documentTypes = 'test-documentTypes';
+    Step1Service.name = 'test-name';
+    Step1Service.rootPath = 'test-rootPath';
+    Step1Service.url = 'test-url';
+    Step1Service.locale = 'test-locale';
 
-    it('throws an error if templateQuery is not set', () => {
-      expect(() => {
-        $ctrl.options = { templatQuery: null };
-        $ctrl.$onInit();
-      }).toThrow();
-    });
-
-    it('loads documentLocation properties from options object', () => {
-      $ctrl.options = {
-        templateQuery: 'test-templateQuery',
-        rootPath: 'test-rootPath',
-        defaultPath: 'test-defaultPath',
-      };
-      $ctrl.$onInit();
-      expect($ctrl.documentLocationField.defaultPath).toBe('test-defaultPath');
-      expect($ctrl.documentLocationField.rootPath).toBe('test-rootPath');
-    });
-
-    it('loads documentTypes from the templateQuery', () => {
-      const documentTypes = [
-        { id: 'test-id1', displayName: 'test-name 1' },
-        { id: 'test-id2', displayName: 'test-name 2' },
-      ];
-
-      const spy = spyOn(CreateContentService, 'getTemplateQuery')
-        .and.returnValue($q.resolve({ documentTypes }));
-
-      $ctrl.options = { templateQuery: 'test-template-query' };
-      $ctrl.$onInit();
-      $rootScope.$apply();
-
-      expect(spy).toHaveBeenCalledWith('test-template-query');
-      expect($ctrl.documentType).toBeNull();
-      expect($ctrl.documentTypes).toBe(documentTypes);
-    });
-
-    it('pre-selects the documentType if only one is returned from the templateQuery', () => {
-      const documentTypes = [{ id: 'test-id1', displayName: 'test-name 1' }];
-      spyOn(CreateContentService, 'getTemplateQuery')
-        .and.returnValue($q.resolve({ documentTypes }));
-
-      $ctrl.options = { templateQuery: 'test-template-query' };
-      $ctrl.$onInit();
-      $rootScope.$apply();
-
-      expect($ctrl.documentType).toBe('test-id1');
-    });
-
-    it('sends feedback as error when server returns 500', () => {
-      const feedbackSpy = spyOn(FeedbackService, 'showError');
-      spyOn(CreateContentService, 'getTemplateQuery')
-        .and.returnValue($q.reject({
-          status: 500,
-          data: {
-            reason: 'INVALID_TEMPLATE_QUERY',
-            params: {
-              templateQuery: 'new-document',
-            },
-          },
-        }));
-
-      $ctrl.options = { templateQuery: 'test-template-query' };
-      $ctrl.$onInit();
-      $rootScope.$apply();
-
-      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_TEMPLATE_QUERY', { templateQuery: 'new-document' });
-    });
+    expect($ctrl.defaultPath).toBe('test-defaultPath');
+    expect($ctrl.documentType).toBe('test-documentType');
+    expect($ctrl.documentTypes).toBe('test-documentTypes');
+    expect($ctrl.locale).toBe('test-locale');
+    expect($ctrl.name).toBe('test-name');
+    expect($ctrl.rootPath).toBe('test-rootPath');
+    expect($ctrl.url).toBe('test-url');
   });
 
-  describe('Creating a new draft', () => {
-    beforeEach(() => {
-      // Mock templateQuery calls that gets executed on "onInit"
-      // Disabling this will fail the tests
-      $ctrl.options = {
-        templateQuery: 'test-template-query',
-        rootPath: '/content/documents/hap/news',
-        defaultPath: '2017/12',
-      };
-      const documentTypes = [
-        { id: 'test-id1', displayName: 'test-name 1' },
-      ];
-      spyOn(CreateContentService, 'getTemplateQuery')
-        .and.returnValue($q.resolve({ documentTypes }));
-    });
+  it('sets values on the service', () => {
+    $ctrl.defaultPath = 'test-defaultPath';
+    $ctrl.documentType = 'test-documentType';
+    $ctrl.locale = 'test-locale';
+    $ctrl.name = 'test-name';
+    $ctrl.url = 'test-url';
 
-    it('assembles document object and sends it to the server', () => {
-      $ctrl.$onInit();
+    expect(Step1Service.defaultPath).toBe('test-defaultPath');
+    expect(Step1Service.documentType).toBe('test-documentType');
+    expect(Step1Service.name).toBe('test-name');
+    expect(Step1Service.url).toBe('test-url');
+  });
 
-      $ctrl.nameUrlFields.nameField = 'New doc';
-      $ctrl.nameUrlFields.urlField = 'new-doc';
-      $ctrl.documentType = 'hap:contentdocument';
-      $ctrl.documentLocationField.rootPath = '/content/documents/hap/news';
-      $ctrl.documentLocationField.defaultPath = '2017/12';
+  it('creates a draft and passes it on to the next step together with url and locale', () => {
+    const document = { displayName: 'document-name' };
+    Step1Service.url = 'test-url';
+    Step1Service.locale = 'test-locale';
+    spyOn(Step1Service, 'createDraft').and.returnValue($q.resolve(document));
+    spyOn(CreateContentService, 'next');
 
-      const data = {
-        name: 'New doc',
-        slug: 'new-doc',
-        templateQuery: 'test-template-query',
-        documentTypeId: 'hap:contentdocument',
-        rootPath: '/content/documents/hap/news',
-        defaultPath: '2017/12',
-      };
+    $ctrl.submit();
+    $rootScope.$digest();
 
-      const spy = spyOn(CreateContentService, 'createDraft')
-        .and.returnValue($q.resolve('resolved'));
+    expect(Step1Service.createDraft).toHaveBeenCalled();
+    expect(CreateContentService.next).toHaveBeenCalledWith(document, 'test-url', 'test-locale');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Create');
+  });
 
-      $ctrl.submit();
-      $rootScope.$apply();
-
-      expect(spy).toHaveBeenCalledWith(data);
-    });
-
-    it('sends feedback as error when server returns 500', () => {
-      const feedbackSpy = spyOn(FeedbackService, 'showError');
-      spyOn(CreateContentService, 'createDraft')
-        .and.returnValue($q.reject({
-          status: 500,
-          data: {
-            reason: 'INVALID_DOCUMENT_DETAILS',
-          },
-        }));
-
-      $ctrl.submit();
-      $rootScope.$apply();
-
-      expect(feedbackSpy).toHaveBeenCalledWith('ERROR_INVALID_DOCUMENT_DETAILS');
-    });
+  it('stops create content when close is called', () => {
+    spyOn(CreateContentService, 'stop');
+    $ctrl.close();
+    expect(CreateContentService.stop).toHaveBeenCalled();
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Cancel');
   });
 });

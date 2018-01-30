@@ -46,7 +46,7 @@ describe('Step1Service', () => {
   }
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.createContentModule');
+    angular.mock.module('hippo-cm.channel.createContent.step1');
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['initialize', 'getChannel']);
     ChannelService.getChannel.and.returnValue({

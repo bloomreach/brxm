@@ -53,11 +53,14 @@ describe('CreateContentService', () => {
       _HippoIframeService_,
       _Step1Service_,
       _Step2Service_,
+      _CmsService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
+      $window = _$window_;
+      CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
@@ -79,18 +82,52 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+    expect(CreateContentService.componentInfo).toEqual({});
+  });
+
+  it('starts creating a new document for a component', () => {
+    spyOn(Step1Service, 'open').and.returnValue($q.resolve());
+
+    const component = jasmine.createSpyObj('Component', ['getId', 'getLabel']);
+    component.getId.and.returnValue('1234');
+    component.getLabel.and.returnValue('Banner');
+    const config = {
+      templateQuery: 'tpl-query',
+      containerItem: component,
+      componentParameter: 'document',
+      componentParameterBasePath: '/content/documents/channel',
+    };
+    CreateContentService.start(config);
+    $rootScope.$digest();
+
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
+    expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
+    expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+    expect(CreateContentService.componentInfo).toEqual({
+      id: '1234',
+      label: 'Banner',
+      parameterName: 'document',
+      parameterBasePath: '/content/documents/channel',
+    });
   });
 
   it('opens the second step of creating a new document', () => {
     const docType = { displayName: 'document-type-name' };
     spyOn(Step2Service, 'open').and.returnValue($q.resolve(docType));
+    CreateContentService.componentInfo = {
+      id: '1234',
+      label: 'Banner',
+      parameterName: 'document',
+      parameterBasePath: '/content/documents/channel',
+    };
     CreateContentService.next({}, 'url', 'locale');
     $rootScope.$digest();
 
     expect($translate.instant).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE', { documentType: 'document-type-name' });
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale');
+    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', CreateContentService.componentInfo);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 

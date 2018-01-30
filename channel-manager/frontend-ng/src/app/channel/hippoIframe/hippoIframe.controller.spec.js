@@ -191,10 +191,24 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('enables/disables drag-drop when the components overlay is toggled', () => {
+  it('enables/disables drag-drop when the components overlay is toggled and the iframe finished loading', () => {
     const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     const disableSpy = spyOn(DragDropService, 'disable');
 
+    HippoIframeService.pageLoaded = false;
+    hippoIframeCtrl.showComponentsOverlay = true;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    hippoIframeCtrl.showComponentsOverlay = false;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
@@ -215,6 +229,7 @@ describe('hippoIframeCtrl', () => {
     const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
     const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
 
+    HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 

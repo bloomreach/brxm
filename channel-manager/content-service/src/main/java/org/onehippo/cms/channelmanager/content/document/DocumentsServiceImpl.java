@@ -412,6 +412,8 @@ class DocumentsServiceImpl implements DocumentsService {
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
         document.setUrlName(JcrUtils.getNodeNameQuietly(handle));
 
+        document.setRepositoryPath(JcrUtils.getNodePathQuietly(handle));
+
         return document;
     }
 
