@@ -16,26 +16,19 @@
 
 package org.onehippo.cms7.essentials.plugins.enterprise;
 
-import java.io.File;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.MavenModelUtils;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenModelService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EnterpriseInstruction implements Instruction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EnterpriseInstruction.class);
     private static final String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
     private static final String ARTIFACT_ID_ENTERPRISE_RELEASE = "hippo-cms7-enterprise-release";
     private static final MavenRepository ENTERPRISE_REPOSITORY = new MavenRepository();
@@ -50,26 +43,12 @@ public class EnterpriseInstruction implements Instruction {
         ENTERPRISE_REPOSITORY.setReleasePolicy(releasePolicy);
     }
 
-    @Inject private ProjectService projectService;
+    @Inject private MavenModelService modelService;
     @Inject private MavenRepositoryService repositoryService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
-        final File pom = projectService.getPomPathForModule(Module.PROJECT).toFile();
-        final Model pomModel = MavenModelUtils.readPom(pom);
-        if (pomModel == null) {
-            return Status.FAILED;
-        }
-
-        final Parent parent = pomModel.getParent();
-        if (parent == null) {
-            LOG.error("No parent element found in project root POM, cannot upgrade to Enterprise version.");
-            return Status.FAILED;
-        }
-
-        parent.setGroupId(GROUP_ID_ENTERPRISE);
-        parent.setArtifactId(ARTIFACT_ID_ENTERPRISE_RELEASE);
-        if (!MavenModelUtils.writePom(pomModel, pom)) {
+        if (!modelService.setParentProject(Module.PROJECT, GROUP_ID_ENTERPRISE, ARTIFACT_ID_ENTERPRISE_RELEASE, null)) {
             return Status.FAILED;
         }
 
