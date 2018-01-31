@@ -41,7 +41,6 @@ class OverlayService {
     HippoIframeService,
     HstComponentService,
     MaskService,
-    PageMetaDataService,
     PageStructureService,
   ) {
     'ngInject';
@@ -59,7 +58,6 @@ class OverlayService {
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
-    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
@@ -375,7 +373,6 @@ class OverlayService {
       componentParameterBasePath,
       componentPickerConfig: structureElement.getComponentPickerConfig(),
       componentValue: structureElement.getComponentValue(),
-      componentVariant: this.PageMetaDataService.getRenderVariant(),
       containerItem: structureElement.getEnclosingElement(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid,
@@ -569,7 +566,8 @@ class OverlayService {
 
   _pickPath(config) {
     const component = config.containerItem;
-    const componentVariant = config.componentVariant;
+    const componentId = component.getId();
+    const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
     const parameterName = config.componentParameter;
     const parameterValue = config.componentValue;
@@ -577,7 +575,7 @@ class OverlayService {
     const pickerConfig = config.componentPickerConfig;
 
     this.CmsService.reportUsageStatistic('PickContentButton');
-    this.HstComponentService.pickPath(component.getId(), componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
+    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });

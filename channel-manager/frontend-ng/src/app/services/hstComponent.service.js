@@ -64,7 +64,12 @@ class HstComponentService {
   setParameter(componentId, componentVariant, parameterName, parameterValue) {
     const params = {};
     params[parameterName] = parameterValue;
-    return this.HstService.doPutForm(params, componentId, componentVariant);
+
+    // The component variant can contain special characters (@, [, ", etc.). Since it is used as a path element
+    // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
+    const encodedVariant = encodeURIComponent(componentVariant);
+
+    return this.HstService.doPutForm(params, componentId, encodedVariant);
   }
 }
 
