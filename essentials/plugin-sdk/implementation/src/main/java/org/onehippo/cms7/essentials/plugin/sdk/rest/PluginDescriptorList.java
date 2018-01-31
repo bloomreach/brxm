@@ -17,28 +17,30 @@
 package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 
-import com.google.common.collect.Lists;
+/**
+ * In old versions of Essentials, all plugin descriptors were put together into a single JSON file, which listed the
+ * individual plugin descriptors as 'items'. For backwards compatibility reasons, we keep supporting this arrangement
+ * through this class. New mechanisms should preferably just use a plain List&lt;PluginDescriptor&gt;.
+ */
+public class PluginDescriptorList implements Serializable {
 
-@XmlRootElement(name = "collection")
-public class RestfulList<T> implements Serializable {
+    private List<PluginDescriptor> items = new ArrayList<>();
 
-    private List<T> items = Lists.newArrayList();
-
-    public void add(T resource) {
-        items.add(resource);
+    public void add(PluginDescriptor plugin) {
+        items.add(plugin);
     }
 
-    public Iterator<T> iterator() {
+    public Iterator<PluginDescriptor> iterator() {
         return items.iterator();
     }
 
-    public List<T> getItems() {
+    public List<PluginDescriptor> getItems() {
         return items;
     }
-
 }

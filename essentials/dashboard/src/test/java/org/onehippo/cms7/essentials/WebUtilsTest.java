@@ -17,12 +17,10 @@ package org.onehippo.cms7.essentials;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.junit.Test;
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,10 +88,10 @@ public class WebUtilsTest {
         final String jsonString = GlobalUtils.readStreamAsText(stream);
 
         try {
-            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptor> restfulList
-                    = WebUtils.fromJson(jsonString, new TypeReference<RestfulList<PluginDescriptor>>() { });
-            assertNotNull(restfulList);
-            assertEquals(restfulList.getItems().size(), 4);
+            @SuppressWarnings("unchecked") final PluginDescriptorList pluginDescriptorList
+                    = WebUtils.fromJson(jsonString, PluginDescriptorList.class);
+            assertNotNull(pluginDescriptorList);
+            assertEquals(pluginDescriptorList.getItems().size(), 4);
         } catch (Exception e) {
             log.error("Error parsing plugins", e);
         }

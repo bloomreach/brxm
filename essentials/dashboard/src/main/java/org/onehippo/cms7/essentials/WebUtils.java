@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,15 +55,6 @@ public final class WebUtils {
             return JSON.readValue(value, clazz);
         } catch (Exception e) {
             log.error("JSON error (see message below){}", value, e);
-        }
-        return null;
-    }
-
-    public static <T> T fromJson(final String value, final TypeReference<T> type) {
-        try {
-            return JSON.readValue(value, type);
-        } catch (Exception e) {
-            log.error("Failed deserializing JSON value '{}'.", value, e);
         }
         return null;
     }

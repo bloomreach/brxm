@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
@@ -27,12 +26,12 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class RestfulListTest {
+public class PluginDescriptorListTest {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testList() throws Exception {
-        RestfulList<PluginDescriptor> myList = new RestfulList<>();
+        PluginDescriptorList myList = new PluginDescriptorList();
         final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setDescription("test");
         final PluginDescriptor.Vendor vendor = new PluginDescriptor.Vendor();
@@ -42,7 +41,7 @@ public class RestfulListTest {
 
         ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(myList);
-        myList = mapper.readValue(json, new TypeReference<RestfulList<PluginDescriptor>>() { });
+        myList = mapper.readValue(json, PluginDescriptorList.class);
         assertEquals(1, myList.getItems().size());
         assertEquals("test", myList.getItems().get(0).getDescription());
         assertEquals("http://www.test.com", myList.getItems().get(0).getVendor().getUrl());

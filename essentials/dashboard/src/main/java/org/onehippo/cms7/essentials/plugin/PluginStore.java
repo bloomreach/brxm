@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -43,7 +42,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.RestfulList;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
@@ -237,10 +236,10 @@ public class PluginStore {
     private List<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
-                final RestfulList<PluginDescriptor> restfulList
-                        = WebUtils.fromJson(jsonString, new TypeReference<RestfulList<PluginDescriptor>>() { });
-                if (restfulList != null) {
-                    return restfulList.getItems();
+                final PluginDescriptorList pluginDescriptorList
+                        = WebUtils.fromJson(jsonString, PluginDescriptorList.class);
+                if (pluginDescriptorList != null) {
+                    return pluginDescriptorList.getItems();
                 }
             } catch (Exception e) {
                 log.error("Error parsing plugins", e);
