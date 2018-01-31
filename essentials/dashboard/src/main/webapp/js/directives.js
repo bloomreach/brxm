@@ -146,8 +146,8 @@
                     var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
                     function getMessages() {
                         if ($scope.params) {
-                            $http.get(url, { params: $scope.params }).success(function (data) {
-                                $scope.packageMessages = data;
+                            $http.get(url, { params: $scope.params }).success(function (changeMessages) {
+                                $scope.changeMessages = changeMessages;
                             });
                         }
                     }
@@ -406,21 +406,17 @@
                                 extraTemplates: $rootScope.projectSettings.extraTemplates
                             };
 
-                            $http.get(url, { params: params }).success(function(data) {
-                                // If there are no messages, the backend sends a single "no messages" message
-                                // with the group not set. Filter those out.
-                                if (data.length > 1 || data[0].group) {
-                                    $scope.messages = data;
-                                }
+                            $http.get(url, { params: params }).success(function(changeMessages) {
+                                $scope.changeMessages = changeMessages;
                                 $scope.messagesLoaded = true;
                             });
                         }
                     };
-                    $scope.isCreateFile          = function (message) { return message.group === 'FILE_CREATE'; };
-                    $scope.isRegisterDocument    = function (message) { return message.group === 'DOCUMENT_REGISTER'; };
-                    $scope.isCreateXmlNode       = function (message) { return message.group === 'XML_NODE_CREATE'; };
-                    $scope.isCreateXmlFolderNode = function (message) { return message.group === 'XML_NODE_FOLDER_CREATE'; };
-                    $scope.isExecute             = function (message) { return message.group === 'EXECUTE'; };
+                    $scope.isCreateFile          = function (message) { return message.type === 'FILE_CREATE'; };
+                    $scope.isRegisterDocument    = function (message) { return message.type === 'DOCUMENT_REGISTER'; };
+                    $scope.isCreateXmlNode       = function (message) { return message.type === 'XML_NODE_CREATE'; };
+                    $scope.isCreateXmlFolderNode = function (message) { return message.type === 'XML_NODE_FOLDER_CREATE'; };
+                    $scope.isExecute             = function (message) { return message.type === 'EXECUTE'; };
 
                     $scope.messagesLoaded = false; // Flag for lazy loading
                     $scope.showChanges = false;

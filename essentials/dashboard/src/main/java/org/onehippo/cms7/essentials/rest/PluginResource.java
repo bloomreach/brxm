@@ -16,8 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import com.google.common.collect.Multimap;
-
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
@@ -48,12 +45,10 @@ import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ChangeMessage;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
-import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
@@ -130,40 +125,29 @@ public class PluginResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @GET
     @Path("/{" + PLUGIN_ID + "}/changes")
-    public List<MessageRestful> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
-                                                             @Context final UriInfo uriInfo) throws Exception {
-        final List<MessageRestful> list = new ArrayList<>();
-
+    public List<ChangeMessage> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
+                                                            @Context final UriInfo uriInfo,
+                                                            @Context HttpServletResponse response) throws Exception {
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            list.add(new ErrorMessageRestful("Setup Changes: Plugin with ID '" + pluginId + "' was not found."));
-            return list;
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return Collections.emptyList();
         }
 
         final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage == null) {
-            list.add(new ErrorMessageRestful("Failed to create instructions package"));
-            return list;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return Collections.emptyList();
         }
 
         final Map<String, Object> parameters = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
-
-        @SuppressWarnings("unchecked")
-        final Multimap<Instruction.Type, MessageRestful> messages = instructionPackage.getInstructionsMessages(parameters);
-        final Collection<Map.Entry<Instruction.Type, MessageRestful>> entries = messages.entries();
-        for (Map.Entry<Instruction.Type, MessageRestful> entry : entries) {
-            final MessageRestful value = entry.getValue();
-            value.setGroup(entry.getKey());
-            value.setGlobalMessage(false);
-            list.add(value);
-        }
-        return list;
+        return instructionPackage.getInstructionsMessages(parameters);
     }
 
 
     @ApiOperation(
             value = "Install a plugin into Essentials",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
@@ -235,7 +219,7 @@ public class PluginResource {
 
     @ApiOperation(
             value = "Check for each plugin if its setup phase can be triggered.",
-            response = MessageRestful.class
+            response = UserFeedback.class
     )
     @POST
     @Path("/autosetup")
@@ -266,12 +250,12 @@ public class PluginResource {
             value = "Clears plugin cache",
             notes = "Remote Plugin descriptors are cached for 1 hour. " +
                     "[DEBUG] This method clears plugin cache and plugins are fetched again on next requests",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @GET
     @Path("/clearcache")
-    public MessageRestful clearCache(@Context ServletContext servletContext) {
+    public UserFeedback clearCache(@Context ServletContext servletContext) {
         pluginStore.clearCache();
-        return new MessageRestful("Plugin Cache invalidated");
+        return new UserFeedback().addSuccess("Plugin Cache invalidated");
     }
 
 

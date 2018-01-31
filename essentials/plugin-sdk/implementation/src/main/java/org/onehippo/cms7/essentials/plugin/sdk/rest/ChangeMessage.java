@@ -16,24 +16,23 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.rest;
 
-/**
- * @version "$Id$"
- */
-public class ErrorMessageRestful extends MessageRestful {
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
-    private static final long serialVersionUID = 1L;
+public class ChangeMessage {
 
+    private final Instruction.Type type;
+    private final String message;
 
-    public ErrorMessageRestful() {
-
+    public ChangeMessage(final String message, final Instruction.Type type) {
+        this.message = message;
+        this.type = type;
     }
 
-    public ErrorMessageRestful(final String value) {
-        super(value);
+    public String getMessage() {
+        return message;
     }
 
-    @Override
-    public boolean isSuccessMessage() {
-        return false;
+    public Instruction.Type getType() {
+        return type;
     }
 }

@@ -17,8 +17,11 @@
 package org.onehippo.cms7.essentials.plugin.sdk.packaging;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,7 +33,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.plugin.sdk.instruction.parser.DefaultInstructionParser;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ChangeMessage;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
@@ -55,10 +58,10 @@ public class DefaultInstructionPackage {
     private PluginInstructions instructions;
     private String path;
 
-    public Multimap<Instruction.Type, MessageRestful> getInstructionsMessages(final Map<String, Object> parameters) {
+    public List<ChangeMessage> getInstructionsMessages(final Map<String, Object> parameters) {
         final PluginInstructions myInstructions = getInstructions();
         if (myInstructions == null) {
-            return ArrayListMultimap.create();
+            return Collections.emptyList();
         }
         final Multimap<Instruction.Type, String> messageMap = ArrayListMultimap.create();
         for (PluginInstructionSet instructionSet : instructions.getInstructionSets()) {
@@ -67,12 +70,10 @@ public class DefaultInstructionPackage {
             }
         }
 
-        final Multimap<Instruction.Type, MessageRestful> instructionsMessages = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
-        for (Map.Entry<Instruction.Type, String> entry : messageMap.entries()) {
-            instructionsMessages.put(entry.getKey(), new MessageRestful(TemplateUtils.replaceTemplateData(entry.getValue(), placeholderData)));
-        }
-        return instructionsMessages;
+        return messageMap.entries().stream()
+                .map(entry -> new ChangeMessage(TemplateUtils.replaceTemplateData(entry.getValue(), placeholderData), entry.getKey()))
+                .collect(Collectors.toList());
     }
 
 

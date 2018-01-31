@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.servlet;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,7 +32,7 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.onehippo.cms7.essentials.plugin.sdk.rest.MessageRestful;
+import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +47,9 @@ public class EndPointList {
     private static Logger log = LoggerFactory.getLogger(EndPointList.class);
 
     @GET
-    public List<MessageRestful> list() {
+    public UserFeedback list() {
         log.info("@@@@ LISTING REST ENDPOINTS @@@@");
-        final List<MessageRestful> endpoints = new ArrayList<>();
+        final UserFeedback feedback = new UserFeedback();
 
         try {
             final Bus bus = BusFactory.getDefaultBus();
@@ -63,15 +61,13 @@ public class EndPointList {
                 final Collection<AbstractHTTPDestination> destinations = registry.getDestinations();
                 for (AbstractHTTPDestination destination : destinations) {
                     final String endpoint = destination.getPath();
-                    final MessageRestful message = new MessageRestful(endpoint);
-                    endpoints.add(message);
-
+                    feedback.addSuccess(endpoint);
                 }
             }
         } catch (BusException e) {
             log.error("e {}", e);
         }
-        return endpoints;
+        return feedback;
     }
 
 }

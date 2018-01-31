@@ -1,6 +1,6 @@
 <div class="feature-changes" ng-show="plugin.documentationLink || hasMessages">
   <!--
-    Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">
-    <p ng-repeat="message in messages | filter: isCreateFile"><hippo-icon name="file" size="m" ></hippo-icon> {{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isRegisterDocument"><hippo-icon name="file-text" size="m" ></hippo-icon> {{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isCreateXmlNode"><hippo-icon name="plus-square" size="m" ></hippo-icon> {{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isCreateXmlFolderNode"><hippo-icon name="folder-open" size="m" ></hippo-icon> {{message.value}}</p>
-    <p ng-repeat="message in messages | filter: isExecute"><hippo-icon name="code" size="m" ></hippo-icon> {{message.value}}</p>
+    <p ng-repeat="changeMessage in changeMessages | filter: isCreateFile"><hippo-icon name="file" size="m" ></hippo-icon> {{changeMessage.message}}</p>
+    <p ng-repeat="changeMessage in changeMessages | filter: isRegisterDocument"><hippo-icon name="file-text" size="m" ></hippo-icon> {{changeMessage.message}}</p>
+    <p ng-repeat="changeMessage in changeMessages | filter: isCreateXmlNode"><hippo-icon name="plus-square" size="m" ></hippo-icon> {{changeMessage.message}}</p>
+    <p ng-repeat="changeMessage in changeMessages | filter: isCreateXmlFolderNode"><hippo-icon name="folder-open" size="m" ></hippo-icon> {{changeMessage.message}}</p>
+    <p ng-repeat="changeMessage in changeMessages | filter: isExecute"><hippo-icon name="code" size="m" ></hippo-icon> {{changeMessage.message}}</p>
   </div>
 </div>
