@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
-
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,10 +37,14 @@ import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Semi-fork of YUI DateTimeField from Wicket extensions. Replaces Wicket extensions YUI behaviors with a {@link YuiDatePicker}
  * so it fit's in the Hippo ECM YUI framework.
- *
+ * <p>
  * DatePicker can be configured using a frontend:pluginconfig node with name <code>datepicker</code>.
  *
  * @see YuiDatePickerSettings for all configuration options
@@ -58,11 +58,17 @@ public class YuiDateTimeField extends DateTimeField {
 
     private final YuiDatePickerSettings settings;
     private boolean todayLinkVisible = true;
+    private boolean hideTime;
+
 
     public YuiDateTimeField(final String id, final IModel<Date> model) {
         this(id, model, null);
     }
 
+    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings, boolean hideTime) {
+             this(id, model, settings);
+             this.hideTime = hideTime;
+    }
     public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model);
 
@@ -117,7 +123,7 @@ public class YuiDateTimeField extends DateTimeField {
         today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
 
         //Add change behavior to super fields
-        for (final String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
+        for (final String name : new String[]{"date", "hours", "minutes", "amOrPmChoice"}) {
             get(name).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
@@ -127,12 +133,19 @@ public class YuiDateTimeField extends DateTimeField {
                 }
 
                 @Override
-                protected void onError(final AjaxRequestTarget target, final RuntimeException e){
+                protected void onError(final AjaxRequestTarget target, final RuntimeException e) {
                     super.onError(target, e);
                     send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
                 }
             });
         }
+        if (hideTime) {
+            // hiding the "hours" component hides the entire "hours" wicket:enclosure
+            get(HOURS).setVisibilityAllowed(false);
+            // hide the minutes field to prevent wicket.ajax javascript errors
+            get(MINUTES).setVisibilityAllowed(false);
+        }
+
     }
 
     private int calculateDateLength() {
@@ -149,14 +162,17 @@ public class YuiDateTimeField extends DateTimeField {
                     datetime.setZone(DateTimeZone.forTimeZone(zone));
                 }
 
-                final Integer hours = getHours();
-                if (hours != null) {
-                    datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
-
-                    final Integer minutes = getMinutes();
-                    datetime.setMinuteOfHour(minutes != null ? minutes : 0);
+                if (hideTime) {
+                    datetime.set(DateTimeFieldType.hourOfDay(), 0);
+                    datetime.setMinuteOfHour(0);
+                } else {
+                    final Integer hours = getHours();
+                    if (hours != null) {
+                        datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
+                        final Integer minutes = getMinutes();
+                        datetime.setMinuteOfHour(minutes != null ? minutes : 0);
+                    }
                 }
-
                 // the date will be in the server's timezone
                 setDate(datetime.toDate());
                 setModelObject(datetime.toDate());

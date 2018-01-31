@@ -55,7 +55,7 @@ public class DateFieldWidget extends Panel {
     }
 
     protected YuiDateTimeField newYuiDateTimeField(String id, final IModel<Date> model, final YuiDatePickerSettings settings) {
-        final boolean isHideTime = config.getAsBoolean(CONFIG_HIDE_TIME, false);
-        return isHideTime ? new YuiGMTDateField(id, model, settings) : new YuiDateTimeField(id, model, settings);
+        final boolean hideTime = config.getAsBoolean(CONFIG_HIDE_TIME, false);
+        return new YuiDateTimeField(id, model, settings, hideTime);
     }
 }

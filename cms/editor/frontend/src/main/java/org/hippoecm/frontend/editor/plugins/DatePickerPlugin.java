@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
 
     private Label newLabel(final IModel<Date> valueModel) {
         final boolean isHideTime = getPluginConfig().getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
-        return isHideTime ? new GMTDateLabel(VALUE, valueModel, FormatStyle.LONG) :
+        return isHideTime ? new DateTimeLabel(VALUE, valueModel, "MMMM, dd yyyy") :
                 new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT);
     }
 
