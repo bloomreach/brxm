@@ -25,7 +25,6 @@
 
   <context:component-scan base-package="org.onehippo.cms7.essentials"/>
 
-  <import resource="classpath:META-INF/essentialsSpringSdk.xml"/>
   <import resource="classpath:jackson.xml"/>
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
