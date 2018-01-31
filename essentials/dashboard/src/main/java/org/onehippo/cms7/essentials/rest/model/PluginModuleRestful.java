@@ -21,14 +21,11 @@ import java.util.List;
 
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 
-import io.swagger.annotations.ApiModel;
-
 /**
  * Plugin javascript module descriptor.
  * Contains application name and plugins' javascript references.
  */
 
-@ApiModel
 public class PluginModuleRestful {
 
     private static final String DEFAULT_APP_NAME = "hippo.essentials";

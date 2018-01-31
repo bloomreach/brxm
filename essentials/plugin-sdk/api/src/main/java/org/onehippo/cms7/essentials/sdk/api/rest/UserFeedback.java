@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagger.annotations.ApiModel;
-
 /**
  * UserFeedback encapsulates one or more messages to be displayed to a user of the dashboard web application,
  * as feedback for some user-triggered action.
@@ -29,7 +27,6 @@ import io.swagger.annotations.ApiModel;
  * UserFeedback will typically be serialized to JSON and sent to the front-end in the response of a REST call.
  * The field 'feedbackMessages' is used by the front-end to detect feedback messages in arbitrary REST call responses.
  */
-@ApiModel
 public class UserFeedback implements Serializable {
     private final List<Details> feedbackMessages = new ArrayList<>();
 

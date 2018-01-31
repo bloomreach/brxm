@@ -20,9 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel
 @XmlRootElement(name = "message")
 public class MessageRestful {
 
