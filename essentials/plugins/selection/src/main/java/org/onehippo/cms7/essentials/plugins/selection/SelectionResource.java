@@ -102,8 +102,8 @@ public class SelectionResource {
 
     @GET
     @Path("/fieldsfor/{docType}/")
-    public List<SelectionFieldRestful> getSelectionFields(@PathParam("docType") String docType) {
-        final List<SelectionFieldRestful> fields = new ArrayList<>();
+    public List<SelectionField> getSelectionFields(@PathParam("docType") String docType) {
+        final List<SelectionField> fields = new ArrayList<>();
         final Session session = jcrService.createSession();
 
         try {
@@ -196,7 +196,7 @@ public class SelectionResource {
      * @param session JCR session to read configuration
      * @throws RepositoryException
      */
-    private void addSelectionFields(final List<SelectionFieldRestful> fields, final String jcrContentType, final Session session)
+    private void addSelectionFields(final List<SelectionField> fields, final String jcrContentType, final Session session)
         throws RepositoryException
     {
         final String contentTypeBasePath = contentTypeService.jcrBasePathForContentType(jcrContentType);
@@ -216,7 +216,7 @@ public class SelectionResource {
      * @param editorTemplate editor template root node
      * @throws RepositoryException
      */
-    private void addSingleSelectFields(final List<SelectionFieldRestful> fields, final String jcrContentType,
+    private void addSingleSelectFields(final List<SelectionField> fields, final String jcrContentType,
                                        final Node nodeType, final Node editorTemplate)
         throws RepositoryException
     {
@@ -234,7 +234,7 @@ public class SelectionResource {
                     if (editorField != null && editorField.hasProperty("plugin.class")
                             && pluginClass.equals(editorField.getProperty("plugin.class").getString())) {
 
-                        final SelectionFieldRestful field = new SelectionFieldRestful();
+                        final SelectionField field = new SelectionField();
                         field.setType("single");
                         field.setNameSpace(namespace);
                         field.setDocumentName(shortName);
@@ -275,7 +275,7 @@ public class SelectionResource {
      * @param editorTemplate editor template root node
      * @throws RepositoryException
      */
-    private void addMultiSelectFields(final List<SelectionFieldRestful> fields, final String jcrContentType, final Node editorTemplate)
+    private void addMultiSelectFields(final List<SelectionField> fields, final String jcrContentType, final Node editorTemplate)
             throws RepositoryException
     {
         final String namespace = contentTypeService.extractPrefix(jcrContentType);
@@ -285,7 +285,7 @@ public class SelectionResource {
             final Node editorField = editorFields.nextNode();
             if (editorField.hasNode("cluster.options") && editorField.getNode("cluster.options").hasProperty("source") &&
                     editorField.hasProperty("plugin.class") && MULTISELECT_PLUGIN_CLASS.equals(editorField.getProperty("plugin.class").getString())) {
-                final SelectionFieldRestful field = new SelectionFieldRestful();
+                final SelectionField field = new SelectionField();
                 field.setType("multiple");
                 field.setNameSpace(namespace);
                 field.setDocumentName(shortName);

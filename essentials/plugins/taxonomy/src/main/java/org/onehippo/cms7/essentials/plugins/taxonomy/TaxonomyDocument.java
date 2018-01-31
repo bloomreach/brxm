@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.taxonomy;
 
-public class TaxonomyRestful {
+public class TaxonomyDocument {
     private String name;
     private String path;
     private String[] locales;

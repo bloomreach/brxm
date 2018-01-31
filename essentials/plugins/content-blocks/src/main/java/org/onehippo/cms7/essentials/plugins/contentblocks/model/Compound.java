@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
-public class CompoundRestful {
+public class Compound {
     private String id;
     private String name;
 

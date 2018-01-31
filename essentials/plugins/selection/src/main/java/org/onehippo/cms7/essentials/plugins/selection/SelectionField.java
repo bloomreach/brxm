@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-public class SelectionFieldRestful {
+public class SelectionField {
 
     private String nameSpace;
     private String documentName;

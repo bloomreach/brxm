@@ -79,8 +79,8 @@ public class TaxonomyResource {
      */
     @GET
     @Path("/taxonomies")
-    public List<TaxonomyRestful> getTaxonomies() {
-        final List<TaxonomyRestful> taxonomies = new ArrayList<>();
+    public List<TaxonomyDocument> getTaxonomies() {
+        final List<TaxonomyDocument> taxonomies = new ArrayList<>();
         final Session session = jcrService.createSession();
 
         try {
@@ -89,16 +89,16 @@ public class TaxonomyResource {
             final NodeIterator nodes = xpath.execute().getNodes();
             while (nodes.hasNext()) {
                 final Node node = nodes.nextNode();
-                final TaxonomyRestful taxonomy  = new TaxonomyRestful();
-                taxonomy.setName(node.getName());
-                taxonomy.setPath(node.getPath());
+                final TaxonomyDocument taxonomyDocument = new TaxonomyDocument();
+                taxonomyDocument.setName(node.getName());
+                taxonomyDocument.setPath(node.getPath());
                 final Value[] localeValues = node.getProperty(HIPPOTAXONOMY_LOCALES).getValues();
                 final String[] locales = new String[localeValues.length];
                 for (int i = 0; i < locales.length; i++) {
                     locales[i] = localeValues[i].getString();
                 }
-                taxonomy.setLocales(locales);
-                taxonomies.add(taxonomy);
+                taxonomyDocument.setLocales(locales);
+                taxonomies.add(taxonomyDocument);
             }
         } catch (RepositoryException e) {
             log.error("Error fetching taxonomies", e);
@@ -139,17 +139,17 @@ public class TaxonomyResource {
     /**
      * Adds taxonomy to {@code /content/taxonomies/} node.
      *
-     * @param taxonomyRestful taxonomy data
+     * @param taxonomyDocument taxonomy data
      * @param response servlet response
      * @return message or an error message in case of error
      */
     @POST
     @Path("/taxonomies/add")
-    public UserFeedback createTaxonomy(final TaxonomyRestful taxonomyRestful, @Context HttpServletResponse response) {
+    public UserFeedback createTaxonomy(final TaxonomyDocument taxonomyDocument, @Context HttpServletResponse response) {
         final Session session = jcrService.createSession();
         try {
-            final String taxonomyName = taxonomyRestful.getName();
-            String[] locales = taxonomyRestful.getLocales();
+            final String taxonomyName = taxonomyDocument.getName();
+            String[] locales = taxonomyDocument.getLocales();
             if (locales == null || locales.length == 0) {
                 locales = new String[]{"en"};
             }

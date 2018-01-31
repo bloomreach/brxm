@@ -18,10 +18,10 @@ package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
 import java.util.List;
 
-public class DocumentTypeRestful {
+public class DocumentType {
     private String id;
     private String name;
-    private List<ContentBlocksFieldRestful> contentBlocksFields;
+    private List<ContentBlocksField> contentBlocksFields;
 
     public String getId() {
         return id;
@@ -39,11 +39,11 @@ public class DocumentTypeRestful {
         this.name = name;
     }
 
-    public List<ContentBlocksFieldRestful> getContentBlocksFields() {
+    public List<ContentBlocksField> getContentBlocksFields() {
         return contentBlocksFields;
     }
 
-    public void setContentBlocksFields(final List<ContentBlocksFieldRestful> contentBlocksFields) {
+    public void setContentBlocksFields(final List<ContentBlocksField> contentBlocksFields) {
         this.contentBlocksFields = contentBlocksFields;
     }
 }

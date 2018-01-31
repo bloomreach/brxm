@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.plugins.contentblocks.model;
 
 import java.util.List;
 
-public class ContentBlocksFieldRestful {
+public class ContentBlocksField {
     private String name;
     private String originalName;
     private String pickerType;
