@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.Multiline
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.UnknownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -59,12 +61,15 @@ import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type.UNKNOWN;
+
 /**
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
  */
 public class FieldTypeUtils {
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
+    private static final String FIELD_TYPE_UNKNOWN = "Unknown";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
@@ -83,6 +88,8 @@ public class FieldTypeUtils {
 
     private static final List<String> REPORTABLE_MISSING_FIELD_TYPES;
     private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES;
+
+    private static final TypeDescriptor UNKNOWN_TYPE_DESCRIPTOR = new TypeDescriptor(UnknownFieldType.class, "");
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -113,6 +120,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
+        FIELD_TYPE_MAP.put(FIELD_TYPE_UNKNOWN, UNKNOWN_TYPE_DESCRIPTOR);
 
         REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList("Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown",
                 "Reference", "StaticDropdown");
@@ -162,46 +170,56 @@ public class FieldTypeUtils {
      * @param context determines which fields are available
      * @return whether all fields in the document type have been included.
      */
-    public static Map<String, Boolean> populateFields(final List<FieldType> fields, final ContentTypeContext context) {
-        final Map<String, Boolean> fieldInfo = new HashMap<>();
-        fieldInfo.put("allFieldIncluded", Boolean.FALSE);
-        fieldInfo.put("allRequiredFieldsIncluded", Boolean.FALSE);
-
+    public static FieldsInformation populateFields(final List<FieldType> fields, final ContentTypeContext context) {
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(sorter -> sortValidateAndAddFields(sorter, context, fields))
-                .orElse(fieldInfo);
+                .orElse(new FieldsInformation());
     }
-
-    private static Map<String, Boolean> sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
+    private static FieldsInformation sortValidateAndAddFields(final FieldSorter sorter,
+                                                                 final ContentTypeContext context,
                                                                  final List<FieldType> fields) {
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
 
-        fieldTypeContexts.forEach(field -> createAndInit(field).ifPresent(fields::add));
+        final List<FieldType> allValidFields = new ArrayList<>(fieldTypeContexts.size());
+        fieldTypeContexts.forEach(field -> createAndInit(field).ifPresent(allValidFields::add));
 
-        final List<FieldType> unsupportedRequiredFields = fields
+        allValidFields
                 .stream()
-                .filter(field -> !field.isValid() && field.isRequired())
-                .collect(Collectors.toList());
-        fields.removeIf(field -> !field.isValid());
+                .filter(field -> field.getType() != UNKNOWN)
+                .forEach(fields::add);
 
-        final Map<String, Boolean> fieldInfo = new HashMap<>();
-        fieldInfo.put("allFieldIncluded", fieldTypeContexts.size() == fields.size());
-        fieldInfo.put("allRequiredFieldsIncluded", unsupportedRequiredFields.isEmpty());
-        return fieldInfo;
+        FieldsInformation fieldsInfo = new FieldsInformation();
+        fieldsInfo.setAllFieldsIncluded(fields.size() == fieldTypeContexts.size());
+
+        boolean unknownRequiredFieldExists = allValidFields
+                .stream()
+                .anyMatch(field -> field.getType() == UNKNOWN && field.isRequired());
+
+        fieldsInfo.setAllRequiredFieldsIncluded(!unknownRequiredFieldExists);
+
+        return fieldsInfo;
     }
 
     private static Optional<FieldType> createAndInit(final FieldTypeContext context) {
         return determineDescriptor(context)
-                .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
-                .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
+                .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
+                .flatMap(FieldTypeFactory::createFieldType)
                 .map(fieldType -> {
                     fieldType.init(context);
-                    return fieldType;
+                    return fieldType.isValid() ? fieldType : null;
                 });
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
         return Optional.ofNullable(FIELD_TYPE_MAP.get(determineFieldType(context)));
+    }
+
+    private static Optional<Class<? extends FieldType>> determineFieldTypeClass(final FieldTypeContext context, final TypeDescriptor descriptor) {
+        if (usesDefaultFieldPlugin(context, descriptor)) {
+            return Optional.of(descriptor.fieldTypeClass);
+        }
+        // fields of a known type but using a non-default field plugin are also "unknown"
+        return Optional.of(UNKNOWN_TYPE_DESCRIPTOR.fieldTypeClass);
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
@@ -214,7 +232,7 @@ public class FieldTypeUtils {
 
         if (item.isProperty()) {
             // Unsupported type
-            return "";
+            return FIELD_TYPE_UNKNOWN;
         }
 
         return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
@@ -227,8 +245,9 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> determinePluginClass(final FieldTypeContext context) {
-        return context.getEditorConfigNode()
+        Optional<String> result = context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
+        return result;
     }
 
     public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
