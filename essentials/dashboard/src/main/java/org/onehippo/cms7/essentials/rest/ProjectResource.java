@@ -37,7 +37,7 @@ import org.onehippo.cms7.essentials.sdk.api.service.model.ProjectSettings;
 import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.rest.model.StatusRestful;
+import org.onehippo.cms7.essentials.rest.model.ProjectStatus;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 
@@ -60,11 +60,11 @@ public class ProjectResource {
     @ApiOperation(
             value = "Retrieve project status",
             notes = "Status contains true value if one of the InstructionPackage is installed",
-            response = StatusRestful.class)
+            response = ProjectStatus.class)
     @GET
     @Path("/status")
-    public StatusRestful getProjectStatus() {
-        final StatusRestful status = new StatusRestful();
+    public ProjectStatus getProjectStatus() {
+        final ProjectStatus status = new ProjectStatus();
         final ProjectSettingsBean settings = settingsService.getModifiableSettings();
         if (settings != null && settings.getSetupDone()) {
             status.setProjectInitialized(true);

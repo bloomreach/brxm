@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@
       $.ajax({
         url: url,
         dataType: 'json'
-      }).done(function (data) {
-        $.each(data.files, function (name, file) {
+      }).done(function (applicationData) {
+        $.each(applicationData.files, function (name, file) {
           $('head').append('<script src=\"' + file + '\" />');
         });
-        $('head').append('<script>angular.bootstrap(document.getElementById(\'container\'), [\'' + data.application + '\']);</' + 'script>');
+        $('head').append('<script>angular.bootstrap(document.getElementById(\'container\'), [\'' + applicationData.name + '\']);</' + 'script>');
       }).fail(function (jqXHR, textStatus, errorThrown) {
         errorThrown.message = '[Loader error s(' + textStatus + ')]: ' + errorThrown;
       });

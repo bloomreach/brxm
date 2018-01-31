@@ -48,7 +48,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPack
 import org.onehippo.cms7.essentials.plugin.sdk.rest.ChangeMessage;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
-import org.onehippo.cms7.essentials.rest.model.PluginModuleRestful;
+import org.onehippo.cms7.essentials.rest.model.ApplicationData;
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
@@ -263,13 +263,13 @@ public class PluginResource {
             value = "Return list of plugin Javascript modules",
             notes = "Modules are prefixed with 'tool' or 'feature', depending on their plugin type. "
                     + "This method is only used outside of the front-end's AngularJS application.",
-            response = PluginModuleRestful.class)
+            response = ApplicationData.class)
     @GET
     @Path("/modules")
-    public PluginModuleRestful getModules() {
-        final PluginModuleRestful modules = new PluginModuleRestful();
-        pluginStore.getAllPlugins().forEach(p -> modules.addFiles(p.getDescriptor()));
-        return modules;
+    public ApplicationData getModules() {
+        final ApplicationData applicationData = new ApplicationData();
+        pluginStore.getAllPlugins().forEach(p -> applicationData.addFiles(p.getDescriptor()));
+        return applicationData;
     }
 
 

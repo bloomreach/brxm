@@ -22,15 +22,11 @@ import java.util.List;
 import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
 
 /**
- * Plugin javascript module descriptor.
- * Contains application name and plugins' javascript references.
+ * Collection of data the front-end application needs in order to successfully bootstrap.
  */
+public class ApplicationData {
 
-public class PluginModuleRestful {
-
-    private static final String DEFAULT_APP_NAME = "hippo.essentials";
-
-    private String application = DEFAULT_APP_NAME;
+    private String name = "hippo.essentials";
     private List<String> files;
 
     public void addFiles(final PluginDescriptor descriptor) {
@@ -52,21 +48,11 @@ public class PluginModuleRestful {
         this.files = files;
     }
 
-    public String getApplication() {
-        return application;
+    public String getName() {
+        return name;
     }
 
-    public void setApplication(final String application) {
-        this.application = application;
-    }
-
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("PluginModuleRestful{");
-        sb.append("files=").append(files);
-        sb.append(", application='").append(application).append('\'');
-        sb.append('}');
-        return sb.toString();
+    public void setName(final String name) {
+        this.name = name;
     }
 }

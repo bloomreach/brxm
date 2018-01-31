@@ -16,15 +16,10 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
-public class StatusRestful {
-
-    private static final long serialVersionUID = 1L;
+public class ProjectStatus {
 
     private boolean projectInitialized;
     private int pluginsInstalled;

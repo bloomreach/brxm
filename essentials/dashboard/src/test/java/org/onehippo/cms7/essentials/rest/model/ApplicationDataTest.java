@@ -28,28 +28,28 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class PluginModuleRestfulTest {
+public class ApplicationDataTest {
 
     @Test
     public void testGetApplication() throws Exception {
         PluginDescriptor descriptor = new PluginDescriptor();
-        PluginModuleRestful restful = new PluginModuleRestful();
+        ApplicationData applicationData = new ApplicationData();
 
-        restful.addFiles(descriptor); // not a tool, has-config flag not set
+        applicationData.addFiles(descriptor); // not a tool, has-config flag not set
 
         descriptor.setId("isTool");
         descriptor.setType(PluginDescriptor.TYPE_TOOL);
-        restful.addFiles(descriptor);
+        applicationData.addFiles(descriptor);
 
         descriptor.setId("hasConfiguration");
         descriptor.setType(PluginDescriptor.TYPE_FEATURE);
         descriptor.setHasConfiguration(true);
-        restful.addFiles(descriptor);
+        applicationData.addFiles(descriptor);
 
         final ObjectMapper mapper = new ObjectMapper();
-        final String json = mapper.writeValueAsString(restful);
-        restful = mapper.readValue(json, PluginModuleRestful.class);
-        final List<String> files = restful.getFiles();
+        final String json = mapper.writeValueAsString(applicationData);
+        applicationData = mapper.readValue(json, ApplicationData.class);
+        final List<String> files = applicationData.getFiles();
         assertEquals(2, files.size());
         assertEquals("tool/isTool/isTool.js", files.get(0));
         assertEquals("feature/hasConfiguration/hasConfiguration.js", files.get(1));
