@@ -48,7 +48,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;

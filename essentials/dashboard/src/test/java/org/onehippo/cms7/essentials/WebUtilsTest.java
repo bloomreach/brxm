@@ -20,7 +20,7 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

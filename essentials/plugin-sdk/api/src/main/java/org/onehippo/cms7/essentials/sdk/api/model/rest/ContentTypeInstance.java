@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.sdk.api.rest;
+package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
 /**
  * ContentTypeInstance exposes properties of a specific instance of a content type.

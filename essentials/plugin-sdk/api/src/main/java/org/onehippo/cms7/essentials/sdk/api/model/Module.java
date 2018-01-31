@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.sdk.api.service.model;
+package org.onehippo.cms7.essentials.sdk.api.model;
 
 import com.google.common.base.Strings;
 

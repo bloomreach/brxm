@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials.sdk.api.service;
 
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * Service for checking if a Maven dependency (in the dependencies section) is present, and for adding them otherwise.

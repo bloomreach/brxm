@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.MavenModelUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 

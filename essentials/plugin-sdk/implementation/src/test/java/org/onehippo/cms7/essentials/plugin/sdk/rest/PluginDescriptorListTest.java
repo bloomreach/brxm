@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.plugin.sdk.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 
 import static org.junit.Assert.assertEquals;
 

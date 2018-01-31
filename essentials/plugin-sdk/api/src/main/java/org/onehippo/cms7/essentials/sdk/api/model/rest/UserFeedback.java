@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.sdk.api.rest;
+package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
 import java.io.Serializable;
 import java.util.ArrayList;

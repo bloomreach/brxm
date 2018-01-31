@@ -33,8 +33,8 @@ import com.google.common.base.Strings;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.sdk.api.service.model.ProjectSettings;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
 import org.onehippo.cms7.essentials.rest.model.ProjectStatus;

@@ -39,7 +39,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

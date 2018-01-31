@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.sdk.api.service;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * Exposes services for manipulating web.xml files.

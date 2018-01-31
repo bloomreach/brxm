@@ -21,7 +21,7 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.dom4j.Element;
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenAssemblyService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.Dom4JUtils;

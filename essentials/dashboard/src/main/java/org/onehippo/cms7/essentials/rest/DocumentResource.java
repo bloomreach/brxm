@@ -37,10 +37,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms7.essentials.sdk.api.rest.ContentType;
-import org.onehippo.cms7.essentials.sdk.api.rest.ContentTypeInstance;
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.rest.TemplateQuery;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentTypeInstance;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.TemplateQuery;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;

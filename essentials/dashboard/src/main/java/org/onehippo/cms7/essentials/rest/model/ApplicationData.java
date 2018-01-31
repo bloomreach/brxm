@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.rest.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 
 /**
  * Collection of data the front-end application needs in order to successfully bootstrap.

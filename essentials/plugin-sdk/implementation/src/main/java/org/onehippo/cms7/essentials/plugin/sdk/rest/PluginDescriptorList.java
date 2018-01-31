@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.sdk.api.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 
 /**
  * In old versions of Essentials, all plugin descriptors were put together into a single JSON file, which listed the

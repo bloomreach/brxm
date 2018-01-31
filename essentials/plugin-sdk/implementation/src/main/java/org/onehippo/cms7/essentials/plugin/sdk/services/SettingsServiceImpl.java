@@ -22,8 +22,8 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.sdk.api.service.model.ProjectSettings;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.springframework.stereotype.Service;

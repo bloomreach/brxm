@@ -42,7 +42,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.annotations.AnnotationUtils;
-import org.onehippo.cms7.essentials.sdk.api.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;

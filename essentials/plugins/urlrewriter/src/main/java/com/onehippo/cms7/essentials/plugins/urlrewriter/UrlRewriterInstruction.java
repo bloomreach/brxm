@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * Modify the site's web.xml to install the rewrite filter.

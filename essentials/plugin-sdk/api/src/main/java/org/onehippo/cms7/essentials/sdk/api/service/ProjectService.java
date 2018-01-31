@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * ProjectService provides access to the project, and in particular to the file resources of a project.

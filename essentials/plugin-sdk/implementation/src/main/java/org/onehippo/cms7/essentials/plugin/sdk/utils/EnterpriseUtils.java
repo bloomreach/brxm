@@ -20,9 +20,9 @@ import java.io.File;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenRepository;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;

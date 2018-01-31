@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials.sdk.api.service;
 
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenRepository;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * Service for checking if a Maven repository is present, and for adding them otherwise.

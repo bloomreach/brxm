@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.sdk.api.service;
 
-import org.onehippo.cms7.essentials.sdk.api.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 
 /**
  * MavenAssemblyService provides methods to manipulate Maven Assembly descriptor files.

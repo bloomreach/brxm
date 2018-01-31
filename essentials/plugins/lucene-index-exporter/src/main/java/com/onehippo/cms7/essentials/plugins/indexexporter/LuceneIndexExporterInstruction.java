@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
-import org.onehippo.cms7.essentials.sdk.api.service.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 public class LuceneIndexExporterInstruction implements Instruction {
     private static final String SERVLET_NAME = "RepositoryJaxrsServlet";
