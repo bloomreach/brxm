@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class CodecUtils {
         if (settingsService == null) {
             throw new IllegalStateException("ISettingsService not found.");
         }
-        
+
         StringCodecFactory factory = settingsService.getStringCodecFactory();
         if (factory == null) {
             throw new IllegalStateException("StringCodecFactory not found.");
@@ -64,8 +64,7 @@ public class CodecUtils {
      * @return a {@link StringCodec} for encoding/decoding a display name.
      */
     public static StringCodec getDisplayNameCodec(final IPluginContext context) {
-        //TODO: remove the null and revert to default single arg implementation
-        return getStringCodecFactory(context).getStringCodec(ENCODING_DISPLAY, null);
+        return getStringCodecFactory(context).getStringCodec(ENCODING_DISPLAY);
     }
 
     /**
@@ -76,7 +75,7 @@ public class CodecUtils {
      * @return a {@link StringCodec} for encoding/decoding a node name.
      */
     public static StringCodec getNodeNameCodec(final IPluginContext context, final String locale) {
-        return getStringCodecFactory(context).getStringCodec(ENCODING_NODE, locale); 
+        return getStringCodecFactory(context).getStringCodec(ENCODING_NODE, locale);
     }
 
     /**
