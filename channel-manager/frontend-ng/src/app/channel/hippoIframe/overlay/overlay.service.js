@@ -389,7 +389,7 @@ class OverlayService {
       const selectDocumentButton = {
         mainIcon: searchWhiteSvg,
         dialIcon: searchSvg,
-        callback: () => this.pickPath(config),
+        callback: () => this._pickPath(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
