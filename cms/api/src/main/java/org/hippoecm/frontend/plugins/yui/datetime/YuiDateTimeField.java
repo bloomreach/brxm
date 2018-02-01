@@ -58,20 +58,20 @@ public class YuiDateTimeField extends DateTimeField {
 
     private final YuiDatePickerSettings settings;
     private boolean todayLinkVisible = true;
-    private boolean hideTime;
+    private final boolean hideTime;
 
 
     public YuiDateTimeField(final String id, final IModel<Date> model) {
         this(id, model, null);
     }
 
-    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings, boolean hideTime) {
-             this(id, model, settings);
-             this.hideTime = hideTime;
-    }
     public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings) {
-        super(id, model);
+        this(id, model, settings, false);
+    }
 
+    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings, final boolean hideTime) {
+        super(id, model);
+        this.hideTime = hideTime;
         if (settings == null) {
             settings = new YuiDatePickerSettings();
             settings.setLanguage(getLocale().getLanguage());

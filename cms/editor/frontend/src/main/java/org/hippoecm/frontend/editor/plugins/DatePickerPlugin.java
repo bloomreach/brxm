@@ -64,9 +64,8 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
     }
 
     private Label newLabel(final IModel<Date> valueModel) {
-        final boolean isHideTime = getPluginConfig().getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
-        return isHideTime ? new DateTimeLabel(VALUE, valueModel, "MMMM, dd yyyy") :
-                new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT);
+        final boolean dateOnly = getPluginConfig().getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
+        return  new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT, dateOnly);
     }
 
 }

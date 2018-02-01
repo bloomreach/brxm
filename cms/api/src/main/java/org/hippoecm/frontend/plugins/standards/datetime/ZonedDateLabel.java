@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.apache.wicket.model.IModel;
  * Label component that represents only the date (year-month-day) of the
  * {@link ZonedDateTime} model object in current session locale format.
  */
+@Deprecated
 public class ZonedDateLabel extends Label {
 
     public ZonedDateLabel(final String id, final IModel<ZonedDateTime> model, final FormatStyle dateStyle) {

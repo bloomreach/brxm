@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,16 @@ public class DateTimeLabel extends Label {
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle style) {
         super(id, new DateTimePrinterModel(model, printer -> printer.print(style)));
     }
-
+    
+    public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle dateStyle, final FormatStyle timeStyle, final boolean dateOnly) {
+        super(id, new DateTimePrinterModel(model, printer -> {
+            if (dateOnly) {
+                return printer.printDate(dateStyle);
+            } else {
+                return printer.print(dateStyle, timeStyle);
+            }
+        }));
+    }
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle dateStyle, final FormatStyle timeStyle) {
         super(id, new DateTimePrinterModel(model, printer -> printer.print(dateStyle, timeStyle)));
     }
@@ -46,7 +55,6 @@ public class DateTimeLabel extends Label {
     }
 
     private static class DateTimePrinterModel extends AbstractReadOnlyModel<String> {
-
         private final IModel<Date> dateModel;
         private final Printer printer;
 
