@@ -341,4 +341,15 @@ describe('HstService', () => {
     hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
     $httpBackend.flush();
   });
+
+  it('can do a put form call', () => {
+    $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, 'foo=1&bar=a%20b', {
+      'CMS-User': 'testUser',
+      'Force-Client-Host': 'true',
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    }).respond(200);
+    hstService.doPutForm({ foo: 1, bar: 'a b' }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
 });

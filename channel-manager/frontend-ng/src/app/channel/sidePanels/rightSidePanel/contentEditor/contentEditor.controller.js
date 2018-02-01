@@ -20,6 +20,7 @@ class ContentEditorCtrl {
 
     this.$scope = $scope;
     this.ContentEditor = ContentEditor;
+    this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }
 
@@ -73,6 +74,12 @@ class ContentEditorCtrl {
         this.form.$setPristine();
         this.onSave();
       });
+  }
+
+  switchEditor() {
+    if (angular.isFunction(this.onSwitchEditor)) {
+      this.onSwitchEditor();
+    }
   }
 }
 

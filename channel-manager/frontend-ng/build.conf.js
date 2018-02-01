@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ const targetDir = path.resolve('./target/classes/angular/hippo-cm/');
 const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
+  typeScript: false,
   dist: targetDir,
   publicPath: '',
   htmlExcludes: /items.renderer.html/,
@@ -54,6 +55,26 @@ const customConfig = {
       '/styles/dragula.min.css': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.css',
       '/scripts/dragula.min.js': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.js',
     },
+  },
+
+  dlls: {
+    angularjs: [
+      'angular',
+      'angular-animate',
+      'angular-aria',
+      'angular-local-storage',
+      'angular-material',
+      'angular-messages',
+      'angular-translate',
+      'angular-translate-loader-static-files',
+      '@uirouter/angularjs',
+      'angular-ui-tree',
+      'ng-device-detector',
+      'ng-focus-if'],
+    vendor: [
+      '@bloomreach/dragula',
+      'jquery',
+      'mutation-summary'],
   },
 };
 

@@ -21,17 +21,25 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
+import plusSvg from '../../../../images/html/plus.svg';
+import plusWhiteSvg from '../../../../images/html/plus-white.svg';
+import searchSvg from '../../../../images/html/search.svg';
+import searchWhiteSvg from '../../../../images/html/search-white.svg';
 
 class OverlayService {
   constructor(
     $log,
     $rootScope,
     $translate,
+    ChannelService,
     CmsService,
+    CreateContentService,
     DomService,
     EditContentService,
     ExperimentStateService,
+    FeedbackService,
     HippoIframeService,
+    HstComponentService,
     MaskService,
     PageStructureService,
   ) {
@@ -40,15 +48,20 @@ class OverlayService {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
+    this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
@@ -264,6 +277,9 @@ class OverlayService {
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
+      case 'manage-content-link':
+        this._initManageContentLink(structureElement, overlayElement);
+        break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
@@ -303,19 +319,233 @@ class OverlayService {
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
-    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
+    overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
+  }
+
+  _initManageContentConfig(structureElement) {
+    // each property should be filled with the method that will extract the data from the HST comment
+    // Passing the full config through privileges to adjust buttons for authors
+    const documentUuid = structureElement.getUuid();
+    const componentParameter = structureElement.getComponentParameter();
+    const componentParameterBasePath =
+      structureElement.isComponentParameterRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
+
+    const config = {
+      componentParameter,
+      componentParameterBasePath,
+      componentPickerConfig: structureElement.getComponentPickerConfig(),
+      componentValue: structureElement.getComponentValue(),
+      containerItem: structureElement.getEnclosingElement(),
+      defaultPath: structureElement.getDefaultPath(),
+      documentUuid,
+      rootPath: structureElement.getRootPath(),
+      templateQuery: structureElement.getTemplateQuery(),
+    };
+
+    if (!this.ChannelService.isEditable()) {
+      delete config.componentParameter;
+
+      if (config.documentUuid) { // whenever uuid is available, only edit button for authors
+        delete config.templateQuery;
+        return config;
+      }
+
+      if (componentParameter) {
+        return {};
+      }
+    }
+
+    if (componentParameter
+      && config.containerItem
+      && config.containerItem.isLocked()
+      && !config.containerItem.isLockedByCurrentUser()) {
+      config.isLockedByOtherUser = true;
+    }
+
+    if (config.componentParameter && !config.containerItem) {
+      this.$log.warn(`Ignoring component parameter "${config.componentParameter}" of manage content button outside catalog item`);
+      delete config.componentParameter;
+    }
+
+    return config;
+  }
+
+  _getButtons(config) {
+    const buttons = [];
+
+    if (config.documentUuid) {
+      const editContentButton = {
+        mainIcon: contentLinkSvg,
+        dialIcon: '', // edit button should never be a dial button
+        callback: () => this._editContent(config.documentUuid),
+        tooltip: this.$translate.instant('EDIT_CONTENT'),
+      };
+      buttons.push(editContentButton);
+    }
+
+    if (config.componentParameter) {
+      const selectDocumentButton = {
+        mainIcon: searchWhiteSvg,
+        dialIcon: searchSvg,
+        callback: () => this._pickPath(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(selectDocumentButton);
+    }
+
+    if (config.templateQuery) {
+      const createContentButton = {
+        mainIcon: plusWhiteSvg,
+        dialIcon: plusSvg,
+        callback: () => this._createContent(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(createContentButton);
+    }
+
+    return buttons;
+  }
+
+  _initManageContentLink(structureElement, overlayElement) {
+    const config = this._initManageContentConfig(structureElement);
+
+    if (Object.keys(config).length === 0) {
+      // config is empty, no buttons to render
+      return;
+    }
+
+    const buttons = this._getButtons(config);
+    if (buttons.length === 0) {
+      // no buttons to render
+      return;
+    }
+
+    const buttonElement = $(`<button title="${buttons[0].tooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`);
+
+    overlayElement
+      .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
+      .addClass('is-left') // mouse never entered yet
+      .append(buttonElement)
+      .append('<div class="hippo-fab-dial-options"></div>');
+
+    const fabBtn = overlayElement.find('.hippo-fab-btn');
+    const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
+
+    if (config.documentUuid) {
+      fabBtn.addClass('qa-edit-content');
+    }
+    if (config.templateQuery) {
+      fabBtn.addClass('qa-add-content');
+    }
+    if (config.componentParameter) {
+      fabBtn.addClass('qa-manage-parameters');
+    }
+
+    if (buttons[0].isDisabled) {
+      fabBtn.addClass('disabled');
+    } else {
+      this._addClickHandler(fabBtn, () => buttons[0].callback());
+    }
+
+    const adjustOptionsPosition = () => {
+      const boxElement = structureElement.prepareBoxElement();
+      const position = this._getElementPositionObject(boxElement);
+
+      if (position.scrollTop > (position.top - 80)) {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      } else if (position.scrollBottom < (position.top + 130)) {
+        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
+      } else {
+        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+      }
+    };
+
+    const showOptions = () => {
+      adjustOptionsPosition();
+      if (!overlayElement.hasClass('is-showing-options')) {
+        optionButtonsContainer.html(this._createButtonsHtml(buttons.slice(1)));
+        fabBtn.addClass('hippo-fab-btn-open');
+        overlayElement.addClass('is-showing-options');
+        return true;
+      }
+      return false;
+    };
+    const hideOptions = () => {
+      fabBtn.removeClass('hippo-fab-btn-open');
+      overlayElement.removeClass('is-showing-options');
+    };
+    const showOptionsIfLeft = () => {
+      if (overlayElement.hasClass('is-left')) {
+        showOptions();
+      }
+      overlayElement.removeClass('is-left');
+    };
+    const hideOptionsAndLeave = () => {
+      hideOptions();
+      overlayElement.addClass('is-left');
+    };
+
+    if (buttons.length > 1) {
+      overlayElement.on('mouseenter', showOptionsIfLeft);
+      overlayElement.on('mouseleave', hideOptionsAndLeave);
+    }
+  }
+
+  _createButtonsHtml(buttons) {
+    return buttons.map((button, index) => this._createButtonTemplate(button, index));
+  }
+
+  _createButtonTemplate(button, index) {
+    const optionButton = $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
+      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`);
+
+    if (button.isDisabled) {
+      optionButton.addClass('disabled');
+    } else {
+      optionButton.on('click', button.callback);
+    }
+
+    return optionButton;
+  }
+
+  _getElementPositionObject(boxElement) {
+    const rect = boxElement[0].getBoundingClientRect();
+
+    let top = rect.top;
+    let left = rect.left;
+    const width = rect.width;
+    const height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    left += this.iframeWindow.pageXOffset;
+    top += this.iframeWindow.pageYOffset;
+
+    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const scrollBottom = viewHeight + scrollTop;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      scrollTop,
+      scrollBottom,
+      viewHeight,
+    };
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$apply(() => {
-        this.EditContentService.startEditing(structureElement.getUuid());
-        this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
-      });
+      this._editContent(structureElement.getUuid());
     });
   }
 
@@ -329,11 +559,44 @@ class OverlayService {
     });
   }
 
-  _addClickHandler(overlayElement, handler) {
-    overlayElement.click((event) => {
+  _addClickHandler(jqueryElement, handler) {
+    jqueryElement.click((event) => {
       event.stopPropagation();
       handler();
     });
+  }
+
+  _createContent(config) {
+    this.CreateContentService.start(config);
+  }
+
+  _editContent(uuid) {
+    this.EditContentService.startEditing(uuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+  }
+
+  _pickPath(config) {
+    const component = config.containerItem;
+    const componentId = component.getId();
+    const componentVariant = component.getRenderVariant();
+    const componentName = component.getLabel();
+    const parameterName = config.componentParameter;
+    const parameterValue = config.componentValue;
+    const parameterBasePath = config.componentParameterBasePath;
+    const pickerConfig = config.componentPickerConfig;
+
+    this.CmsService.reportUsageStatistic('PickContentButton');
+    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
+      .then(() => {
+        this.PageStructureService.renderComponent(component.getId());
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      })
+      .catch(() => {
+        this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+
+        // probably the container got locked by another user, so reload the page to show new locked containers
+        this.HippoIframeService.reload();
+      });
   }
 
   _linkButtonTransition(element) {
@@ -349,7 +612,6 @@ class OverlayService {
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
-
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
     switch (structureElement.getType()) {
@@ -377,6 +639,8 @@ class OverlayService {
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
+      case 'manage-content-link':
         return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
         return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
@@ -410,22 +674,12 @@ class OverlayService {
   }
 
   _syncPosition(overlayElement, boxElement) {
-    const rect = boxElement[0].getBoundingClientRect();
+    const position = this._getElementPositionObject(boxElement);
 
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
-
-    overlayElement.css('top', `${top}px`);
-    overlayElement.css('left', `${left}px`);
-    overlayElement.css('width', `${width}px`);
-    overlayElement.css('height', `${height}px`);
+    overlayElement.css('top', `${position.top}px`);
+    overlayElement.css('left', `${position.left}px`);
+    overlayElement.css('width', `${position.width}px`);
+    overlayElement.css('height', `${position.height}px`);
   }
 
   _tidyOverlay(elementsToKeep) {

@@ -29,7 +29,7 @@ class SharedSpaceToolbar {
   $onInit() {
     this.SharedSpaceToolbarService.registerTriggerCallback(this.setToolbarVisible.bind(this));
     this.sharedSpaceElement = this.$element.find('.ckeditor-shared-space');
-    this.rightSidePanelContent = $('#rightSidePanel-content');
+    this.rightSidePanelContent = $('.rightSidePanel-content');
 
     this.sharedSpaceElement.css('display', 'none');
   }

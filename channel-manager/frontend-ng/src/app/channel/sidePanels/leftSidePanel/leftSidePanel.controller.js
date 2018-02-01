@@ -27,14 +27,17 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$scope = $scope;
+    this.$element = $element;
     this.CatalogService = CatalogService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapService = SiteMapService;
     this.ChannelService = ChannelService;
+  }
 
-    SidePanelService.initialize('left', $element.find('.left-side-panel'));
+  $postLink() {
+    this.SidePanelService.initialize('left', this.$element.find('.left-side-panel'));
   }
 
   isLockedOpen() {

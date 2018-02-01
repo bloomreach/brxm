@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,15 +45,19 @@ class ContentService {
     return this._send('PUT', ['documents', documentId, 'draft', fieldName], value);
   }
 
+  deleteDocument(id) {
+    return this._send('DELETE', ['documents', id]);
+  }
+
   getDocumentType(id) {
     return this._send('GET', ['documenttypes', id], null, true);
   }
 
-  _send(method, pathElements, data = null, async = false) {
+  _send(method, pathElements, data = null, async = false, params = {}) {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const url = encodeURI(path);
     const headers = {};
-    const opts = { method, url, headers, data };
+    const opts = { method, url, headers, data, params };
     const promise = async ? this.$http(opts) : this._schedule(opts);
 
     return promise.then(result => result.data);

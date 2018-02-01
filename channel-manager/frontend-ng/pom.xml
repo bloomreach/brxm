@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.2.0-SNAPSHOT</version>
+    <version>5.2.0-create-content-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
@@ -54,7 +54,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run build</commandlineArgs>
+              <commandlineArgs>run build -- --lint</commandlineArgs>
             </configuration>
           </execution>
           <execution>
@@ -79,11 +79,9 @@
             <configuration>
                 <filesets>
                     <fileset>
-                        <directory>cache</directory>
+                        <directory>.cache</directory>
                         <directory>coverage</directory>
                         <directory>node_modules</directory>
-                        <directory>.awcache</directory>
-                        <directory>dll</directory>
                         <followSymlinks>false</followSymlinks>
                     </fileset>
                 </filesets>

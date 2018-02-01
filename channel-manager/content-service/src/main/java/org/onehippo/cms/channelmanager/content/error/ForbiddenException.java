@@ -24,7 +24,7 @@ public class ForbiddenException extends ErrorWithPayloadException {
         this(null);
     }
 
-    public ForbiddenException(final Object payload) {
+    public ForbiddenException(final ErrorInfo payload) {
         super(Response.Status.FORBIDDEN, payload);
     }
 }

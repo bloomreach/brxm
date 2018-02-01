@@ -18,6 +18,11 @@ import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.control
 import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
+  DOES_NOT_EXIST: {
+    titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
+    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
+    disableContentButtons: true,
+  },
   NO_CONTENT: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
@@ -99,17 +104,13 @@ class ContentEditorService {
   }
 
   _loadDocument(id) {
-    this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
+    this._setDocumentId(id);
+
     return this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)
         .then((document) => {
           if (this._hasFields(document)) {
-            return this.ContentService.getDocumentType(document.info.type.id)
-              .then((documentType) => {
-                this._onLoadSuccess(document, documentType);
-                this._reportUnsupportedFieldTypes(documentType);
-              });
+            return this.loadDocumentType(document);
           }
           return this.$q.reject(this._noContentResponse(document));
         })
@@ -117,8 +118,23 @@ class ContentEditorService {
       .catch(() => this._setErrorDraftInvalid());
   }
 
+  _setDocumentId(id) {
+    this.documentId = id;
+    this.FieldService.setDocumentId(this.documentId);
+  }
+
   _hasFields(document) {
     return document.fields && Object.keys(document.fields).length > 0;
+  }
+
+  loadDocumentType(document) {
+    this._setDocumentId(document.id);
+    return this.ContentService.getDocumentType(document.info.type.id)
+      .then((documentType) => {
+        this._onLoadSuccess(document, documentType);
+        this._reportUnsupportedFieldTypes(documentType);
+        return documentType;
+      });
   }
 
   _noContentResponse(document) {
@@ -245,17 +261,22 @@ class ContentEditorService {
     this.killed = true;
   }
 
-  confirmDiscardChanges() {
+  confirmDiscardChanges(messageKey, titleKey) {
     if (this._doNotConfirm()) {
       return this.$q.resolve();
     }
-    const messageParams = {
+    const translateParams = {
       documentName: this.document.displayName,
     };
+
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .textContent(this.$translate.instant(messageKey, translateParams))
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.$translate.instant('CANCEL'));
+
+    if (titleKey) {
+      confirm.title(this.$translate.instant(titleKey, translateParams));
+    }
 
     return this.DialogService.show(confirm);
   }
@@ -308,6 +329,16 @@ class ContentEditorService {
   deleteDraft() {
     if (this.isEditing() && !this.killed) {
       return this.ContentService.deleteDraft(this.document.id);
+    }
+    return this.$q.resolve();
+  }
+
+  deleteDocument() {
+    if (this.isEditing() && !this.killed) {
+      return this.ContentService.deleteDocument(this.document.id)
+        .catch((error) => {
+          this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        });
     }
     return this.$q.resolve();
   }

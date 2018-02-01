@@ -17,26 +17,37 @@
 package org.onehippo.cms.channelmanager.content.error;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+
+import org.hippoecm.repository.util.DocumentUtils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * ErrorInfo provides the client with additional information about the failure of a requested operation
- *
+ * <p>
  * By "additional", we mean information on top of the HTTP response status code.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class ErrorInfo {
 
     private final Reason reason;
     private Map<String, Serializable> params;
 
-    public ErrorInfo(Reason reason) {
+    public ErrorInfo(final Reason reason) {
         this(reason, null);
     }
 
-    public ErrorInfo(Reason reason, Map<String, Serializable> params) {
+    public ErrorInfo(final Reason reason, final String key, final String value) {
+        this(reason, Collections.singletonMap(key, value));
+    }
+
+    public ErrorInfo(final Reason reason, final Map<String, Serializable> params) {
         this.reason = reason;
         this.params = params;
     }
@@ -53,15 +64,35 @@ public class ErrorInfo {
         this.params = params;
     }
 
+    public static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
+        if (errorInfo != null) {
+            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
+                if (errorInfo.getParams() == null) {
+                    errorInfo.setParams(new HashMap<>());
+                }
+                errorInfo.getParams().put("displayName", displayName);
+            });
+        }
+        return errorInfo;
+    }
+
     public enum Reason {
         ALREADY_DELETED,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        DOES_NOT_EXIST,
         INVALID_DATA,
+        INVALID_TEMPLATE_QUERY,
+        NAME_ALREADY_EXISTS,
         NO_HOLDER,
         NOT_A_DOCUMENT,
+        NOT_A_FOLDER,
         OTHER_HOLDER,
         REQUEST_PENDING,
-        UNKNOWN_VALIDATOR
+        SERVER_ERROR,
+        SLUG_ALREADY_EXISTS,
+        TEMPLATE_QUERY_NOT_FOUND,
+        UNKNOWN_VALIDATOR,
+        WORKFLOW_ERROR,
         // add more specific failure reasons here.
     }
 }
