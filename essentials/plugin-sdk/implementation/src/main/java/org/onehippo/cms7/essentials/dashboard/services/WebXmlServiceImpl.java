@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,15 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import groovy.lang.Singleton;
-
 /**
  * WebXmlServiceImpl provides the actual implementation of a WebXmlService as an injectable Spring bean.
  * It shall *not* maintain any state (instance variables), so that it can be used by multiple clients
  * simultaneously.
  */
 @Service
-@Singleton
 public class WebXmlServiceImpl implements WebXmlService {
     private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImpl.class);
     private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";

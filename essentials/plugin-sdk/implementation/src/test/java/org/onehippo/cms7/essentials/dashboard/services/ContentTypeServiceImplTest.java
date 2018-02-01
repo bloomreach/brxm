@@ -29,8 +29,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -39,8 +37,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.spi.Name;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -61,7 +57,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 
-import groovy.util.logging.Log4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -97,17 +92,16 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
 
     @Test
     public void fetch_own_document_types() throws Exception {
-        final PluginContext context = getContext();
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(context, null);
+        final List<ContentType> cts = contentTypeService.fetchContentTypesFromOwnNamespace(getContext());
 
         assertEquals(4, cts.size());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithBean', name='compoundWithBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(0).toString());
         assertFalse(cts.get(0).isDraftMode());
         assertEquals("Compound.java", cts.get(0).getJavaName());
-        assertEquals("/path/to/Compound.java", cts.get(0).getFullPath());
+        assertEquals(Paths.get("/path/to/Compound.java").toString(), cts.get(0).getFullPath());
         assertEquals("testnamespace:compoundWithBean", cts.get(0).getDisplayName());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithoutBean', name='compoundWithoutBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(1).toString());
@@ -119,18 +113,19 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void fetch_filtered_document_types() throws Exception {
-        final PluginContext context = getContext();
-        final Predicate<ContentType> filter = ContentType::isCompoundType;
+    public void fetch_all_document_types() throws Exception {
         setupTestContentTypes();
 
-        final List<ContentType> cts = contentTypeService.fetchContentTypes(context, filter, false);
+        final List<ContentType> cts = contentTypeService.fetchContentTypes(getContext(), false);
 
-        assertEquals(3, cts.size());
+        assertEquals(6, cts.size());
 
         assertEquals("ContentType{fullName='testnamespace:compoundWithBean', name='compoundWithBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(0).toString());
         assertEquals("ContentType{fullName='testnamespace:compoundWithoutBean', name='compoundWithoutBean', prefix='testnamespace', mixin=false, compoundType=true, superTypes=[]}", cts.get(1).toString());
-        assertEquals("ContentType{fullName='other:otherCompound', name='otherCompound', prefix='other', mixin=false, compoundType=true, superTypes=[]}", cts.get(2).toString());
+        assertEquals("ContentType{fullName='testnamespace:documentWithBean', name='documentWithBean', prefix='testnamespace', mixin=false, compoundType=false, superTypes=[hippo:document]}", cts.get(2).toString());
+        assertEquals("ContentType{fullName='testnamespace:documentWithoutBean', name='documentWithoutBean', prefix='testnamespace', mixin=false, compoundType=false, superTypes=[hippo:document]}", cts.get(3).toString());
+        assertEquals("ContentType{fullName='other:otherCompound', name='otherCompound', prefix='other', mixin=false, compoundType=true, superTypes=[]}", cts.get(4).toString());
+        assertEquals("ContentType{fullName='other:otherDocument', name='otherDocument', prefix='other', mixin=false, compoundType=false, superTypes=[]}", cts.get(5).toString());
     }
 
     @Test
@@ -138,10 +133,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", true));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, true));
 
         // check supertypes
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
@@ -183,10 +177,9 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", false));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "hippostd:container", session, false));
 
         // check mixins of content nodes
         final Node instanceNoMixins = session.getNode("/content/instanceNoMixins");
@@ -205,10 +198,10 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
-
-        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "mix:referenceable", false));
-
         final Session session = jcrService.createSession();
+
+        assertTrue(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "mix:referenceable", session, false));
+
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(3, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
         final Node prototypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:prototypes/hipposysedit:prototype");
@@ -221,14 +214,14 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         final List<String> superTypes = Arrays.asList("hippo:document", "hippostd:publishableSummary");
         final List<String> mixins = Collections.singletonList("mix:referenceable");
         setupTestContentType(superTypes, mixins, null);
+        final Session session = jcrService.createSession();
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ContentTypeServiceImpl.class).build()) {
-            assertFalse(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "foo:bar", false));
+            assertFalse(contentTypeService.addMixinToContentType(PROJECT_NAMESPACE_TEST + ":basedocument", "foo:bar", session, false));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Failed to add mixin 'foo:bar' to content type 'testnamespace:basedocument'.")));
         }
 
-        final Session session = jcrService.createSession();
         final Node nodeTypeNode = session.getNode("/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument/hipposysedit:nodetype/hipposysedit:nodetype");
         assertEquals(2, nodeTypeNode.getProperty("hipposysedit:supertype").getValues().length);
         jcrService.destroySession(session);

@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -54,17 +53,22 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     private static final Logger LOG = LoggerFactory.getLogger(ContentTypeServiceImpl.class);
     private static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
+    private final JcrService jcrService;
+    private final ContentBeansService beansService;
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentBeansService beansService;
-
-    @Override
-    public List<ContentType> fetchContentTypesFromOwnNamespace(final PluginContext context, final Predicate<ContentType> filter) {
-        return fetchContentTypes(context, filter, true);
+    @Inject
+    public ContentTypeServiceImpl(final JcrService jcrService, final ContentBeansService beansService) {
+        this.jcrService = jcrService;
+        this.beansService = beansService;
     }
 
     @Override
-    public List<ContentType> fetchContentTypes(final PluginContext context, final Predicate<ContentType> filter, final boolean ownNamespaceOnly) {
+    public List<ContentType> fetchContentTypesFromOwnNamespace(final PluginContext context) {
+        return fetchContentTypes(context, true);
+    }
+
+    @Override
+    public List<ContentType> fetchContentTypes(final PluginContext context, final boolean ownNamespaceOnly) {
         final List<ContentType> documents = new ArrayList<>();
         final Map<String, Path> beans = beansService.findBeans(context);
         final String namespacePrefix = context.getProjectNamespacePrefix();
@@ -78,10 +82,7 @@ public class ContentTypeServiceImpl implements ContentTypeService {
             for (String prefix : typesByPrefix.keySet()) {
                 if (!ownNamespaceOnly || prefix.equals(namespacePrefix)) {
                     for (org.onehippo.cms7.services.contenttype.ContentType ct : typesByPrefix.get(prefix)) {
-                        final ContentType contentType = createContentTypeFor(ct, session, namespacePrefix, beans);
-                        if (filter == null || filter.test(contentType)) {
-                            documents.add(contentType);
-                        }
+                        documents.add(createContentTypeFor(ct, session, namespacePrefix, beans));
                     }
                 }
             }
@@ -118,14 +119,9 @@ public class ContentTypeServiceImpl implements ContentTypeService {
 
     @Override
     public boolean addMixinToContentType(final String jcrContentType, final String mixinName,
-                                         final boolean updateExisting) {
+                                         final Session session, final boolean updateExisting) {
         final String contentTypeNodePath = String.format("/hippo:namespaces/%s",
                 jcrContentType.replace(':', '/'));
-
-        final Session session = jcrService.createSession();
-        if (session == null) {
-            return false;
-        }
 
         try {
             final Node contentTypeNode = session.getNode(contentTypeNodePath);
@@ -148,13 +144,10 @@ public class ContentTypeServiceImpl implements ContentTypeService {
             if (updateExisting) {
                 addMixinToContent(session, jcrContentType, mixinName);
             }
-            session.save();
         } catch (RepositoryException e) {
-            final String message = String.format("Failed to add mixin '%s' to content type '%s'.", mixinName, jcrContentType);
-            LOG.error(message, e);
+            jcrService.refreshSession(session, false);
+            LOG.error("Failed to add mixin '{}' to content type '{}'.", mixinName, jcrContentType, e);
             return false;
-        } finally {
-            jcrService.destroySession(session);
         }
 
         return true;

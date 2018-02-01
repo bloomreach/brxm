@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.taxonomy;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -32,7 +31,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -43,22 +41,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,17 +71,15 @@ public class TaxonomyResource {
 
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
-    @Inject private PluginContextFactory contextFactory;
 
     /**
      * Returns list of taxonomies found under {@code /content/taxonomies/} node.
      *
-     * @param servletContext servlet context
      * @return list of taxonomies (name and node path pairs)
      */
     @GET
     @Path("/taxonomies")
-    public List<TaxonomyRestful> getTaxonomies(@Context ServletContext servletContext) {
+    public List<TaxonomyRestful> getTaxonomies() {
         final List<TaxonomyRestful> taxonomies = new ArrayList<>();
         final Session session = jcrService.createSession();
 
@@ -120,16 +110,13 @@ public class TaxonomyResource {
     }
 
     @GET
-    @Path("taxonomies/{document-name}")
-    public List<String> getTaxonomyFields(@PathParam("document-name") final String documentName) {
+    @Path("taxonomies/{jcr-content-type}")
+    public List<String> getTaxonomyFields(@PathParam("jcr-content-type") final String jcrContentType) {
         List<String> fields = new ArrayList<>();
 
-        final PluginContext context = contextFactory.getContext();
-        final String prefix = context.getProjectNamespacePrefix();
         final Session session = jcrService.createSession();
         try {
-            final String editorTemplatePath =
-                    MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
+            final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType);
             if (session.nodeExists(editorTemplatePath)) {
                 final Node editorTemplateNode = session.getNode(editorTemplatePath);
                 final NodeIterator it = editorTemplateNode.getNodes();
@@ -141,7 +128,7 @@ public class TaxonomyResource {
                 }
             }
         } catch (RepositoryException ex) {
-            log.error("Problem checking taxonomy fields for document " + documentName, ex);
+            log.error("Problem checking taxonomy fields for document " + jcrContentType, ex);
         } finally {
             jcrService.destroySession(session);
         }
@@ -166,7 +153,7 @@ public class TaxonomyResource {
             if (locales == null || locales.length == 0) {
                 locales = new String[]{"en"};
             }
-            if (!Strings.isNullOrEmpty(taxonomyName)) {
+            if (!StringUtils.isBlank(taxonomyName)) {
                 final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
                 if (taxonomiesNode.hasNode(taxonomyName)) {
                     response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
@@ -185,66 +172,56 @@ public class TaxonomyResource {
         return new UserFeedback().addError("Failed to create taxonomy");
     }
 
-    /**
-     * Adds taxonomy  to a document
-     *
-     * @param payloadRestful payload data
-     * @param servletContext servlet context
-     * @return message or an error message in case of error
-     */
     @POST
     @Path("/add")
-    public UserFeedback addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
-        final PluginContext context = contextFactory.getContext();
+    public UserFeedback addTaxonomyToDocument(final List<TaxonomyField> taxonomyFields, @Context HttpServletResponse response) {
         final Session session = jcrService.createSession();
         final Collection<String> changedDocuments = new HashSet<>();
+        final UserFeedback feedback = new UserFeedback();
         try {
-            final Map<String, String> values = payloadRestful.getValues();
-            final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
-            final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
-            for (int i = 0; i < documentNames.length; i++) {
-                final String documentName = documentNames[i];
-                final String taxonomyName = taxonomyNames[i];
-                final String prefix = context.getProjectNamespacePrefix();
-                final String jcrContentType = prefix + ":" + documentName;
-                contentTypeService.addMixinToContentType(jcrContentType, HIPPOTAXONOMY_MIXIN, true);
-                final String editorTemplatePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
+            for (TaxonomyField field : taxonomyFields) {
+                final String jcrContentType = field.getJcrContentType();
+                final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType) + "/editor:templates/_default_";
                 if (!session.nodeExists(editorTemplatePath)) {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return new UserFeedback().addError("Document type '" + documentName + "' not suitable for adding taxonomy field");
+                    feedback.addError("Document type '" + jcrContentType + "' not suitable for adding taxonomy field");
+                    continue;
                 }
 
                 final Node editorTemplateNode = session.getNode(editorTemplatePath);
-                if (!editorTemplateNode.hasNode("classifiable")) {
-                    // create first taxonomy field
-                    final Node fieldNode = editorTemplateNode.addNode("classifiable", "frontend:plugin");
-                    fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
-                    fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", contentTypeService.determineDefaultFieldPosition(jcrContentType));
-                    final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
-                    clusterNode.setProperty("taxonomy.name", taxonomyName);
-                    markAsTaxonomyField(fieldNode, taxonomyName);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return new UserFeedback().addError("For now, this feature allows only 1 taxonomy max per document type.");
+                if (editorTemplateNode.hasNode("classifiable")) {
+                    feedback.addError("Document type '" + jcrContentType + "' already has a taxonomy.");
+                    continue;
                 }
-                changedDocuments.add(documentName);
-            }
-            if (session.hasPendingChanges()) {
+
+                if (!contentTypeService.addMixinToContentType(jcrContentType, HIPPOTAXONOMY_MIXIN, session, true)) {
+                    feedback.addError("Failed adding taxonomy to type '" + jcrContentType + "'.");
+                    continue;
+                }
+
+                // create first taxonomy field
+                final String taxonomyName = field.getTaxonomyName();
+                final Node fieldNode = editorTemplateNode.addNode("classifiable", "frontend:plugin");
+                fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
+                fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
+                fieldNode.setProperty("wicket.id", contentTypeService.determineDefaultFieldPosition(jcrContentType));
+                final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
+                clusterNode.setProperty("taxonomy.name", taxonomyName);
+                markAsTaxonomyField(fieldNode, taxonomyName);
                 session.save();
-            }
-            if (changedDocuments.isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return new UserFeedback().addError("No taxonomy fields were added");
+                changedDocuments.add(jcrContentType);
             }
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy to a document", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new UserFeedback().addError("Error adding taxonomy fields");
+            return feedback.addError("Failed to add taxonomy fields. See back-end logs for more info.");
         } finally {
             jcrService.destroySession(session);
         }
-        return new UserFeedback().addSuccess("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
+
+        final String message = changedDocuments.isEmpty()
+                ? "No taxonomy fields were added"
+                : "Added field(s) to following documents: " + changedDocuments.stream().collect(Collectors.joining(", "));
+        return feedback.addSuccess(message);
     }
 
     /**

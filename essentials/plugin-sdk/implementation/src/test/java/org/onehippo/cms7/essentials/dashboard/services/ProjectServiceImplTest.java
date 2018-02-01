@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ProjectServiceImplTest extends ResourceModifyingTest {
 
@@ -39,6 +40,8 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
         List<String> fileNames = projectService.getLog4j2Files().stream().map(File::getName).collect(Collectors.toList());
 
-        assertEquals(Arrays.asList("log4j2.xml", "log4j2-foo.xml"), fileNames);
+        assertEquals(2, fileNames.size());
+        assertTrue(fileNames.contains("log4j2.xml"));
+        assertTrue(fileNames.contains("log4j2-foo.xml"));
     }
 }

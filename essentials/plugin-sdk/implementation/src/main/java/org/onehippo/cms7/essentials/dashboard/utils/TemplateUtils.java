@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,10 +67,6 @@ public final class TemplateUtils {
             log.error("Error flushing template", e);
         }
         return content;
-    }
-
-    public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
-        return injectTemplate(clazz.getClassLoader().getResourceAsStream(templateName), data);
     }
 
     public static String injectTemplate(final String templatePath, final Map<String, Object> data) {

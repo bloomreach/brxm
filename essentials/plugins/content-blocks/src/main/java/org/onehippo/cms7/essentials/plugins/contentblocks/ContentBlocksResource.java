@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -87,8 +88,10 @@ public class ContentBlocksResource {
     @GET
     @Path("/")
     public List<DocumentTypeRestful> getContentBlocks() {
-        final PluginContext context = contextFactory.getContext();
-        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace(context, NO_IMAGE_FILTER);
+        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+                .stream()
+                .filter(NO_IMAGE_FILTER)
+                .collect(Collectors.toList());
         List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
 
         final Session session = jcrService.createSession();
@@ -159,9 +162,11 @@ public class ContentBlocksResource {
     @GET
     @Path("/compounds")
     public List<CompoundRestful> getCompounds() {
-        final Predicate<ContentType> considerCompound = ct -> ct.isCompoundType() || BUILTIN_COMPOUNDS.contains(ct.getFullName());
         final PluginContext context = contextFactory.getContext();
-        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(context, considerCompound, false);
+        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(context, false)
+                .stream()
+                .filter(ct -> ct.isCompoundType() || BUILTIN_COMPOUNDS.contains(ct.getFullName()))
+                .collect(Collectors.toList());
         final List<CompoundRestful> cbCompounds = new ArrayList<>();
 
         for (ContentType compoundType : compoundTypes) {

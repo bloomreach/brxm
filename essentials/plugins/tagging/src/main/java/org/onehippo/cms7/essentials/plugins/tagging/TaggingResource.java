@@ -62,6 +62,7 @@ public class TaggingResource {
     @Path("/")
     public UserFeedback addDocuments(final Configuration configuration, @Context HttpServletResponse response) {
         final Collection<String> addedDocuments = new HashSet<>();
+        final UserFeedback feedback = new UserFeedback();
         final Session session = jcrService.createSession();
         try {
             final List<String> jcrContentTypes = configuration.getJcrContentTypes();
@@ -81,7 +82,11 @@ public class TaggingResource {
                     continue;
                 }
 
-                contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, true);
+                if (!contentTypeService.addMixinToContentType(jcrContentType, MIXIN_NAME, session, true)) {
+                    feedback.addError("Failed adding tagging fields for type '" + jcrContentType + "'.");
+                    continue;
+                }
+
                 // add place holders:
                 final Map<String, Object> templateData = new HashMap<>(configuration.getParameters());
                 templateData.put("fieldLocation", contentTypeService.determineDefaultFieldPosition(jcrContentType));
@@ -106,14 +111,14 @@ public class TaggingResource {
         } catch (RepositoryException e) {
             log.error("Error adding tagging documents field", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new UserFeedback().addError("Error adding tagging fields: " + e.getMessage());
+            return feedback.addError("Error adding tagging fields: " + e.getMessage());
         } finally {
             jcrService.destroySession(session);
         }
 
         final String message = addedDocuments.isEmpty()
                 ? "No tagging was added to selected documents."
-                : "Successfully added tagging to following document: " + addedDocuments.stream().collect(Collectors.joining(", "));
-        return new UserFeedback().addSuccess(message);
+                : "Successfully added tagging to following document types: " + addedDocuments.stream().collect(Collectors.joining(", "));
+        return feedback.addSuccess(message);
     }
 }

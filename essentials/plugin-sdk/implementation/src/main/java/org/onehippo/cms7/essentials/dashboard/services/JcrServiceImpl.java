@@ -21,13 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import javax.inject.Singleton;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.service.JcrService;
@@ -38,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-@Singleton
 public class JcrServiceImpl implements JcrService {
     private static final Logger LOG = LoggerFactory.getLogger(JcrServiceImpl.class);
 
@@ -75,15 +72,12 @@ public class JcrServiceImpl implements JcrService {
             return false;
         }
 
-        InputStream in = null;
         try {
-            in = new ByteArrayInputStream(interpolated.getBytes("UTF-8"));
+            InputStream in = new ByteArrayInputStream(interpolated.getBytes("UTF-8"));
             targetNode.getSession().importXML(targetNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
         } catch (IOException | RepositoryException e) {
             LOG.error("Failed to import resource '{}'.", resourcePath, e);
             return false;
-        } finally {
-            IOUtils.closeQuietly(in);
         }
         return true;
     }
