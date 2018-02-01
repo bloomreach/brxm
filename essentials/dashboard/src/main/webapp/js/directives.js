@@ -164,13 +164,13 @@
                     hasExtraTemplates: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $location, $rootScope, $http, pluginService) {
+                controller: function ($scope, $location, pluginService, projectService) {
                     // initialize fields to system defaults.
                     $scope.params = {};
-                    $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                        $scope.params.templateName   = data.templateLanguage;
-                        $scope.params.sampleData     = data.useSamples;
-                        $scope.params.extraTemplates = data.extraTemplates;
+                    projectService.getSettings().then(function(settings) {
+                        $scope.params.templateName   = settings.templateLanguage;
+                        $scope.params.sampleData     = settings.useSamples;
+                        $scope.params.extraTemplates = settings.extraTemplates;
                     });
                     $scope.apply = function () {
                         pluginService.install($scope.pluginId, $scope.params).then(function() {
@@ -190,9 +190,11 @@
                     label: '@'
                 },
                 templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
-                controller: function ($scope, $rootScope) {
+                controller: function ($scope, projectService) {
                     $scope.label = 'CMS Document Type Editor';
-                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
+                    projectService.getSettings().then(function(settings) {
+                        $scope.defaultNameSpace = settings.projectNamespace;
+                    });
                 }
             };
         }).directive("essentialsNotifier", function () {
@@ -390,13 +392,7 @@
 
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
-                            var params = {
-                                sampleData: $rootScope.projectSettings.useSamples,
-                                templateName: $rootScope.projectSettings.templateLanguage,
-                                extraTemplates: $rootScope.projectSettings.extraTemplates
-                            };
-
-                            pluginService.getChangeMessages($scope.plugin.id, params).then(function(changeMessages){
+                            pluginService.getChangeMessages($scope.plugin.id).then(function(changeMessages) {
                                 $scope.changeMessages = changeMessages;
                                 $scope.messagesLoaded = true;
                             });
@@ -419,24 +415,18 @@
                 restrict: 'E',
                 scope: {},
                 templateUrl: 'directives/essentials-draft-warning.html',
-                controller: function ($scope, $rootScope, $http) {
-                    $scope.hasDraftDocuments = false;
-                    $scope.isDraft = function (doc) {
-                        return doc.draftMode;
+                controller: function ($scope, essentialsContentTypeService) {
+                    $scope.isDraft = function (contentType) {
+                        return contentType.draftMode;
                     };
-                    $http.get($rootScope.REST.documents).success(function (data) {
-                        $scope.documentTypes = data;
-                        if (data) {
-                            for (var i = 0; i < data.length; i++) {
-                                var val = data[i];
-                                if (val && val.draftMode) {
-                                    $scope.hasDraftDocuments = true;
-                                    break;
-                                }
-                            }
+                    essentialsContentTypeService.getContentTypes().success(function(contentTypes) {
+                        $scope.documentTypes = contentTypes;
+                        if (contentTypes) {
+                            $scope.hasDraftDocuments = contentTypes.some(function(contentType) {
+                                return contentType.draftMode;
+                            });
                         }
                     });
-
                 }
             };
         });

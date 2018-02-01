@@ -158,29 +158,6 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
-            var root = window.SERVER_URL + '/essentials/rest';
-            var projectStem = root + "/project";
-
-            $rootScope.REST = {
-                /**
-                 * ProjectResource
-                 */
-                project: projectStem,
-                PROJECT: { // Front-end API
-                    settings: projectStem + '/settings'
-                }
-            };
-
-            /**
-             * Set global variables (often used stuff)
-             */
-            $rootScope.initData = function () {
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $rootScope.projectSettings = data;
-                });
-            };
-
-            $rootScope.initData();
         })
 
 
@@ -262,6 +239,36 @@
         })
         .service('pluginService', function($http, $q, $log) {
             var baseUrl = window.SERVER_URL + '/essentials/rest/plugins';
+            var changeMessageTypeMap = {
+                FILE_CREATE: {
+                    sort: 1,
+                    icon: 'file'
+                },
+                FILE_DELETE: {
+                    sort: 1,
+                    icon: 'file'
+                },
+                DOCUMENT_REGISTER: {
+                    sort: 2,
+                    icon: 'file-text'
+                },
+                XML_NODE_CREATE: {
+                    sort: 3,
+                    icon: 'plus-square'
+                },
+                XML_NODE_DELETE: {
+                    sort: 3,
+                    icon: 'plus-square'
+                },
+                XML_NODE_FOLDER_CREATE: {
+                    sort: 4,
+                    icon: 'folder-open'
+                },
+                EXECUTE: {
+                    sort: 5,
+                    icon: 'code'
+                }
+            };
             var plugins = [];
             function loadPlugins() {
                 return $http.get(baseUrl).then(function(response) {
@@ -296,11 +303,42 @@
             };
             this.getChangeMessages = function(id, params) {
                 return $http.get(baseUrl + '/' + id + '/changes', {params: params}).then(function (response) {
-                    // If there are no messages, the backend sends a single "no messages" message
-                    // with the group not set. Filter those out.
-                    var messages = response.data;
-                    return (messages.length > 1 || messages[0].group) ? messages : [];
+                    var messages = response.data || [];
+                    messages.forEach(function(message) {
+                        message.icon = changeMessageTypeMap[message.type].icon;
+                    });
+                    messages.sort(function(m1, m2) {
+                        return changeMessageTypeMap[m1.type].sort - changeMessageTypeMap[m2.type].sort;
+                    });
+                    return messages;
                 });
+            };
+        })
+        .service('projectService', function($http, $q) {
+            var baseUrl = window.SERVER_URL + '/essentials/rest/project';
+            var _settings;
+            function loadSettings() {
+                return $http.get(baseUrl + '/settings').then(function(response) {
+                    _settings = response.data;
+                });
+            }
+            this.getSettings = function() {
+                if (_settings) {
+                    return $q.resolve(_settings);
+                }
+                return loadSettings().then(function() {
+                    return _settings;
+                });
+            };
+            this.setSettings = function(settings) {
+                _settings = undefined;
+                return $http.post(baseUrl + '/settings', settings).then(loadSettings);
+            };
+            this.ping = function() {
+                return $http.get(baseUrl + '/ping');
+            };
+            this.status = function() {
+                return $http.get(baseUrl + '/status');
             };
         });
 })();

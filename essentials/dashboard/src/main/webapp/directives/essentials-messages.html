@@ -14,26 +14,14 @@
   limitations under the License.
   -->
 
-<accordion close-others="oneAtATime">
-    <accordion-group is-open="isopen">
-        <accordion-heading ng-class="active">
+<uib-accordion>
+    <div uib-accordion-group is-open="isopen">
+        <uib-accordion-heading ng-class="active">
             Changes made by this plugin
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i>
-        </accordion-heading>
-        <p ng-repeat="changeMessage in changeMessages | filter: { type: 'FILE_CREATE' }">
-            <hippo-icon name="file" size="m" ></hippo-icon> {{changeMessage.message}}
+        </uib-accordion-heading>
+        <p ng-repeat="changeMessage in changeMessages">
+            <hippo-icon name="{{changeMessage.icon}}" size="m" ></hippo-icon> {{changeMessage.message}}
         </p>
-        <p ng-repeat="changeMessage in changeMessages | filter: { type: 'DOCUMENT_REGISTER' }">
-            <hippo-icon name="file-text" size="m" ></hippo-icon> {{changeMessage.message}}
-        </p>
-        <p ng-repeat="changeMessage in changeMessages | filter: { type: 'XML_NODE_CREATE' }">
-            <hippo-icon name="plus-square" size="m" ></hippo-icon> {{changeMessage.message}}
-        </p>
-        <p ng-repeat="changeMessage in changeMessages | filter: { type: 'XML_NODE_FOLDER_CREATE' }">
-            <hippo-icon name="folder-open" size="m" ></hippo-icon> {{changeMessage.message}}
-        </p>
-        <p ng-repeat="changeMessage in changeMessages | filter: { type: 'EXECUTE' }">
-            <hippo-icon name="code" size="m" ></hippo-icon> {{changeMessage.message}}
-        </p>
-    </accordion-group>
-</accordion>
+    </div>
+</uib-accordion>

@@ -18,7 +18,6 @@
   "use strict";
 
   var dashboardRoot = window.SERVER_URL + '/essentials/rest';
-  var projectSettings = dashboardRoot + '/project/settings';
   var contentTypes = dashboardRoot + '/documents';
   var templateQueries = contentTypes + '/templatequeries';
 
@@ -50,15 +49,15 @@
       };
     })
 
-    .service('essentialsProjectService', function($http) {
+    .service('essentialsProjectService', function(projectService) {
 
       /**
        * Retrieve the project's current settings.
        *
-       * Returns an AngularJs 'HttpPromise', which, upon success, resolves into a deserialized ProjectSettings object
+       * Returns an AngularJs Promise, which, upon success, resolves into a deserialized ProjectSettings object
        */
       this.getProjectSettings = function() {
-        return $http.get(projectSettings);
+        return projectService.getSettings();
       };
     })
 

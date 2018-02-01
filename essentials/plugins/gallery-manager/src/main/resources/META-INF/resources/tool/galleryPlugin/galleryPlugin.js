@@ -190,8 +190,8 @@
             }
         }])
 
-        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal', 'essentialsRestService',
-            function ($scope, $rootScope, $http, $uibModal, essentialsRestService) {
+        .controller('GalleryManagerMainCtrl', ['$scope', '$http', '$uibModal', 'essentialsRestService', 'essentialsProjectService',
+            function ($scope, $http, $uibModal, essentialsRestService, essentialsProjectService) {
 
             var endpoint = essentialsRestService.baseUrl + "/galleryplugin";
             $scope.imageSets = [];
@@ -335,7 +335,9 @@
             //############################################
             // INIT APP
             //############################################
-            $scope.imageSetPrefix = $rootScope.projectSettings.projectNamespace;
+            essentialsProjectService.getProjectSettings().then(function(settings) {
+                $scope.imageSetPrefix = settings.projectNamespace;
+            });
             loadImageSets();
         }]);
 }());

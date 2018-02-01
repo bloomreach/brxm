@@ -18,7 +18,7 @@
     "use strict";
     angular.module('hippo.essentials')
 
-        .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
+        .controller('introductionCtrl', function ($scope, $location, projectService) {
             // just sets a hide screen boolean flag to true
             $scope.showAdvanced = false;
             $scope.addUrl = function () {
@@ -34,14 +34,13 @@
             $scope.getStarted = function () {
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
-                $http.post($rootScope.REST.PROJECT.settings, $scope.projectSettings).success(function () {
+                projectService.setSettings($scope.projectSettings).then(function() {
                     $location.path('/library'); // Start in the Library
                 });
-
             };
             $scope.setup = function () {
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $scope.projectSettings = data;
+                projectService.getSettings().then(function(settings) {
+                    $scope.projectSettings = settings;
                 });
             };
             $scope.toggleAdvanced = function($event) {
@@ -52,12 +51,12 @@
             $scope.setup();
         })
 
-        .controller('pluginCtrl', function ($scope, $rootScope, $http, pluginService) {
+        .controller('pluginCtrl', function ($scope, pluginService, projectService) {
             function showPlugin(plugin) {
                 var isEnterprisePlugin = plugin.categories &&
                     plugin.categories.license &&
                     plugin.categories.license.indexOf("enterprise") >= 0;
-                return $rootScope.projectSettings.enterprise || !isEnterprisePlugin;
+                return $scope.settings.enterprise || !isEnterprisePlugin;
             }
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
@@ -85,14 +84,10 @@
                 return showPlugin(plugin);
             };
 
-            //fetch plugin list
+            // fetch project settings and plugin list
             $scope.init = function () {
-
-                // Retrieve project settings
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    // TODO: ugly. If this needs to be on the rootScope, it should be put there during initialization
-                    // of the angular app.
-                    $rootScope.projectSettings = data;
+                projectService.getSettings().then(function(settings) {
+                    $scope.settings = settings;
                     $scope.plugins = pluginService.getPlugins();
                 });
             };
