@@ -260,6 +260,12 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>

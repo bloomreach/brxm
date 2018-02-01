@@ -32,11 +32,11 @@
     <repo.path>${project.build.directory}/storage</repo.path>
     <repo.config />
     <surefire.forkmode>once</surefire.forkmode>
-    <db.host/>
-    <db.port/>
-    <db.name/>
-    <db.user/>
-    <db.password/>
+    <db.host />
+    <db.port />
+    <db.name />
+    <db.user />
+    <db.password />
   </properties>
 
   <dependencies>
@@ -109,6 +109,11 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-testutils</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -236,7 +241,7 @@
         <db.port>3306</db.port>
         <db.name>jcr</db.name>
         <db.user>root</db.user>
-        <db.password></db.password>
+        <db.password />
       </properties>
       <dependencies>
         <dependency>
@@ -360,7 +365,7 @@
         <db.port>3306</db.port>
         <db.name>jcr</db.name>
         <db.user>root</db.user>
-        <db.password></db.password>
+        <db.password />
       </properties>
       <dependencies>
         <dependency>
@@ -380,7 +385,7 @@
         <db.port>3306</db.port>
         <db.name>jcr</db.name>
         <db.user>root</db.user>
-        <db.password></db.password>
+        <db.password />
       </properties>
       <dependencies>
         <dependency>
