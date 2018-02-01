@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -56,6 +57,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.junit.Assert.assertThat;
 
 public class HstManageContentTagTest {
@@ -357,6 +359,61 @@ public class HstManageContentTagTest {
                 + "\"componentParameter\":\"relPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentValue\":\"/mount/path/relative/path\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "} -->"));
+    }
+
+    @Test
+    public void prefixedComponentValue() throws Exception {
+        final String prefixedParameterName = ConfigurationUtils.createPrefixedParameterName("prefix", "absPath");
+        window.setParameter(prefixedParameterName, "/absolute/path");
+        window.setAttribute(RENDER_VARIANT, "prefix");
+
+        tag.setComponentParameter("absPath");
+        final HippoBean document = createMock(HippoBean.class);
+        tag.setDocument(document);
+
+        final MockNode root = MockNode.root();
+        final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+        expect(document.getNode()).andReturn(handle);
+        replay(document);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- "
+                + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\","
+                + "\"componentParameter\":\"absPath\","
+                + "\"componentParameterIsRelativePath\":\"false\","
+                + "\"componentValue\":\"/absolute/path\","
+                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
+                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "} -->"));
+    }
+
+    @Test
+    public void emptyPrefixComponentValue() throws Exception {
+        window.setParameter("absPath", "/absolute/path");
+        window.setAttribute(RENDER_VARIANT, "");
+
+        tag.setComponentParameter("absPath");
+        final HippoBean document = createMock(HippoBean.class);
+        tag.setDocument(document);
+
+        final MockNode root = MockNode.root();
+        final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+        expect(document.getNode()).andReturn(handle);
+        replay(document);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- "
+                + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\","
+                + "\"componentParameter\":\"absPath\","
+                + "\"componentParameterIsRelativePath\":\"false\","
+                + "\"componentValue\":\"/absolute/path\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
                 + "\"componentPickerRemembersLastVisited\":\"true\""
                 + "} -->"));
