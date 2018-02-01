@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.repository.util.DateTools;
 import org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo;
+import org.onehippo.cms7.essentials.components.utils.ComponentsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsNewsComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentTypes = paramInfo.getDocumentTypes();
+        ComponentsUtils.addCurrentDateStrings(request);
         if(Strings.isNullOrEmpty(documentTypes)){
             setEditMode(request);
             return;
