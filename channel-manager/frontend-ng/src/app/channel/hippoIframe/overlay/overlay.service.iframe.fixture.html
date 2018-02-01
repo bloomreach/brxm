@@ -95,63 +95,63 @@
           "uuid": "bbbb"
         } -->
           <p>Some markup in component B</p>
+
+          <!--
+            Manage Content
+            --------------
+            All 6 possible scenarios
+          -->
+          <p id="manage-content-scenario-1">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-2">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "templateQuery": "manage-content-template-query"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-3">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "templateQuery": "manage-content-template-query"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-4">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "componentParameter": "manage-content-component-parameter"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-5">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "templateQuery": "manage-content-template-query",
+              "componentParameter": "manage-content-component-parameter"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-6">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "templateQuery": "manage-content-template-query",
+              "componentParameter": "manage-content-component-parameter"
+            } -->
+          </p>
         <!-- {
           "HST-End": "true",
           "uuid": "bbbb"
         } -->
         </div>
-
-        <!--
-          Manage Content
-          --------------
-          All 6 possible scenarios
-        -->
-        <p id="manage-content-scenario-1">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "uuid": "manage-content-uuid"
-        } -->
-        </p>
-
-        <p id="manage-content-scenario-2">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "templateQuery": "manage-content-template-query"
-        } -->
-        </p>
-
-        <p id="manage-content-scenario-3">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "uuid": "manage-content-uuid",
-          "templateQuery": "manage-content-template-query"
-        } -->
-        </p>
-
-        <p id="manage-content-scenario-4">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "uuid": "manage-content-uuid",
-          "componentParameter": "manage-content-component-parameter"
-        } -->
-        </p>
-
-        <p id="manage-content-scenario-5">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "templateQuery": "manage-content-template-query",
-          "componentParameter": "manage-content-component-parameter"
-        } -->
-        </p>
-
-        <p id="manage-content-scenario-6">
-        <!-- {
-          "HST-Type": "MANAGE_CONTENT_LINK",
-          "uuid": "manage-content-uuid",
-          "templateQuery": "manage-content-template-query",
-          "componentParameter": "manage-content-component-parameter"
-        } -->
-        </p>
       </div>
       <!-- {
         "HST-End": "true",
@@ -206,11 +206,19 @@
         <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "Component with experiment",
+          "HST-Render-Variant": "@1517391925$[\"and\",{\"country\":\"thenetherlands-1440145311193\"}]",
           "uuid": "component-with-experiment",
           "Targeting-experiment-id": "1234",
           "Targeting-experiment-state": "RUNNING"
         } -->
         <p class="hst-container-item">Some markup in component with experiment</p>
+
+        <p id="manage-content-scenario-7">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "componentParameter": "manage-content-component-parameter"
+          } -->
+        </p>
         <!-- {
           "HST-End": "true",
           "uuid": "component-with-experiment"
@@ -221,7 +229,7 @@
         "uuid": "container-inherited"
       } -->
 
-      <!-- Locked container -->
+      <!-- Locked container (by other user) -->
       <!-- { 
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox locked container",
@@ -230,7 +238,7 @@
         "HST-LockedBy": "other user" 
       } -->
       <div id="container-vbox-locked" class="hst-container">
-        <p id="manage-content-scenario-7">
+        <p id="manage-content-scenario-8">
         <!-- {
           "HST-Type": "MANAGE_CONTENT_LINK",
           "uuid": "manage-content-uuid",
@@ -238,7 +246,7 @@
           "componentParameter": "manage-content-component-parameter"
         } -->
         </p>
-        <p id="manage-content-scenario-8">
+        <p id="manage-content-scenario-9">
         <!-- {
           "HST-Type": "MANAGE_CONTENT_LINK",
           "templateQuery": "manage-content-template-query",
@@ -247,7 +255,7 @@
         </p>
       </div>
 
-      <!-- Locked container -->
+      <!-- Locked container (by current user) -->
       <!-- {
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox locked container",
@@ -257,7 +265,7 @@
         "HST-LockedBy-Current-User": "true"
       } -->
       <div id="container-vbox-locked-self" class="hst-container">
-        <p id="manage-content-scenario-9">
+        <p id="manage-content-scenario-10">
         <!-- {
           "HST-Type": "MANAGE_CONTENT_LINK",
           "templateQuery": "manage-content-template-query",
@@ -271,7 +279,7 @@
       } -->
       <!-- Template part that is not a container item inside a container -->
       <div id="not-in-a-container" class="has-edit-button">
-        <p id="manage-content-scenario-10">
+        <p id="manage-content-scenario-11">
           <!-- the componentParameter is a mistake because there should not be componentParameter in this use case -->
           <!-- {
             "HST-Type":"MANAGE_CONTENT_LINK",

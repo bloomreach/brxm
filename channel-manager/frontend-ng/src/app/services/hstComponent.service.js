@@ -34,10 +34,10 @@ class HstComponentService {
     });
   }
 
-  pickPath(componentId, parameterName, parameterValue, pickerConfig, basePath) {
+  pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, basePath) {
     const deferred = this.$q.defer();
     this.pathPickedHandler = (path) => {
-      this.setPathParameter(componentId, parameterName, path, basePath)
+      this.setPathParameter(componentId, componentVariant, parameterName, path, basePath)
         .then(() => deferred.resolve())
         .catch(() => deferred.reject());
     };
@@ -45,7 +45,7 @@ class HstComponentService {
     return deferred.promise;
   }
 
-  setPathParameter(componentId, parameterName, parameterValue, basePath = '') {
+  setPathParameter(componentId, componentVariant, parameterName, parameterValue, basePath = '') {
     let path = parameterValue.startsWith('/') ? parameterValue : `/${parameterValue}`;
 
     if (basePath && path.length > basePath.length) {
@@ -58,13 +58,18 @@ class HstComponentService {
     const params = {};
     params[parameterName] = path;
 
-    return this.setParameter(componentId, parameterName, path);
+    return this.setParameter(componentId, componentVariant, parameterName, path);
   }
 
-  setParameter(componentId, parameterName, parameterValue) {
+  setParameter(componentId, componentVariant, parameterName, parameterValue) {
     const params = {};
     params[parameterName] = parameterValue;
-    return this.HstService.doPutForm(params, componentId, 'hippo-default');
+
+    // The component variant can contain special characters (@, [, ", etc.). Since it is used as a path element
+    // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
+    const encodedVariant = encodeURIComponent(componentVariant);
+
+    return this.HstService.doPutForm(params, componentId, encodedVariant);
   }
 }
 

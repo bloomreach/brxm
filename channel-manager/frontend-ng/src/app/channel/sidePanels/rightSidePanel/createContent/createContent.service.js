@@ -99,6 +99,7 @@ class CreateContentService {
       this.componentInfo = {
         id: component.getId(),
         label: component.getLabel(),
+        variant: component.getRenderVariant(),
         parameterName: config.componentParameter,
         parameterBasePath: config.componentParameterBasePath,
       };

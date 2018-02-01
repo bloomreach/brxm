@@ -577,6 +577,8 @@ class OverlayService {
 
   _pickPath(config) {
     const component = config.containerItem;
+    const componentId = component.getId();
+    const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
     const parameterName = config.componentParameter;
     const parameterValue = config.componentValue;
@@ -584,7 +586,7 @@ class OverlayService {
     const pickerConfig = config.componentPickerConfig;
 
     this.CmsService.reportUsageStatistic('PickContentButton');
-    this.HstComponentService.pickPath(component.getId(), parameterName, parameterValue, pickerConfig, parameterBasePath)
+    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
