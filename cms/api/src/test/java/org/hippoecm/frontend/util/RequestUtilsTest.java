@@ -15,12 +15,6 @@
  */
 package org.hippoecm.frontend.util;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
 import javax.servlet.ServletContext;
@@ -33,6 +27,12 @@ import org.apache.wicket.request.Url;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 public class RequestUtilsTest {
 
     private static final String DEFAULT_REMOTE_ADDR = "100.100.100.100";
@@ -41,12 +41,16 @@ public class RequestUtilsTest {
 
     private static final String CUSTOM_X_FORWARDED_FOR_HEADER_NAME = "X-ACM-Forwarded-For";
 
-    private static final String CUSTOM_X_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
+    private static final String CUSTOM_MULTIPLE_X_FORWARDED_FOR_HEADER_NAMES = "X-DEV-Forwarded-For, X-ACM-Forwarded-For";
+
+    private static final String CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
+
+    private static final String CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE = "200.200.200.202, 200.200.200.22";
 
     @Before
     public void setUp() {
         // Reset the http forwarded header for clean state in each test.
-        RequestUtils.httpForwardedForHeader = null;
+        RequestUtils.httpForwardedForHeaderNames = null;
     }
 
     @Test
@@ -88,12 +92,28 @@ public class RequestUtilsTest {
         expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
-        Request request = createRequest(servletContext, null, CUSTOM_X_FORWARDED_FOR_HEADER_VALUE);
+        Request request = createRequest(servletContext, null, CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE);
 
-        String[] expArr = StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] expArr = StringUtils.split(CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE, ", ");
         String[] actArr = RequestUtils.getRemoteAddrs(request);
         assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
-        String expVal = StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0];
+        String expVal = StringUtils.split(CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE, ", ")[0];
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
+    }
+
+    @Test
+    public void testGetRemoteAddrsWithCustomMultipleForwardedForHeaders() {
+        ServletContext servletContext = createNiceMock(ServletContext.class);
+        expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
+                .andReturn(CUSTOM_MULTIPLE_X_FORWARDED_FOR_HEADER_NAMES).anyTimes();
+        replay(servletContext);
+        Request request = createRequest(servletContext, null, CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE);
+
+        String[] expArr = StringUtils.split(CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = StringUtils.split(CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE, ", ")[0];
         String actVal = RequestUtils.getFarthestRemoteAddr(request);
         assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
@@ -143,12 +163,12 @@ public class RequestUtilsTest {
     }
 
     private String createErrorMessage(String[] expArr, String[] actArr) {
-        return "Different array (RequestUtils.httpForwardedForHeader=" + RequestUtils.httpForwardedForHeader
+        return "Different array (RequestUtils.httpForwardedForHeader=" + Arrays.toString(RequestUtils.httpForwardedForHeaderNames)
                 + "). expected=" + Arrays.toString(expArr) + ", actual=" + Arrays.toString(actArr);
     }
 
     private String createErrorMessage(String expVal, String actVal) {
-        return "Different value (RequestUtils.httpForwardedForHeader=" + RequestUtils.httpForwardedForHeader
+        return "Different value (RequestUtils.httpForwardedForHeader=" + Arrays.toString(RequestUtils.httpForwardedForHeaderNames)
                 + ").expected=" + expVal + ", actual=" + actVal;
     }
 }
