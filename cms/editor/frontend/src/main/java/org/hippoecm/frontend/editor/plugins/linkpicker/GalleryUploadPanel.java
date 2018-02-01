@@ -205,12 +205,11 @@ public abstract class GalleryUploadPanel extends Panel {
 
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
-                    final String svgContent = IOUtils.toString(istream, StandardCharsets.UTF_8);
-                    if (svgContent.contains("<script")) {
-                        istream.close();
+                    final String svgContent = new String(upload.getBytes());
+                    if (StringUtils.containsIgnoreCase(svgContent,"<script")) {
+                        IOUtils.closeQuietly(istream);
                         throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
-                    istream.reset();
                 }
 
                 //Get the selected folder from the folderReference Service

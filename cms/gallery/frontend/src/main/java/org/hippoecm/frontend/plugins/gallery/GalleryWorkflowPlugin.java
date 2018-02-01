@@ -144,11 +144,10 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 final boolean svgScriptsEnabled = GalleryWorkflowPlugin.this.getPluginConfig()
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
-                    final String svgContent = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    final String svgContent = new String(upload.getBytes());
                     if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
                         throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
-                    is.reset();
                 }
 
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
