@@ -162,6 +162,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
             final Node containerItem = getCurrentContainerItem();
             final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
             componentParameters.removePrefix(oldVariantId);
+            componentParameters.removePrefix(newVariantId);
             setParameters(componentParameters, newVariantId, params);
 
             componentParameters.save(versionStamp);
@@ -190,11 +191,10 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
      *
      * @param componentParameters the component parameters of the current container item
      * @param variantId           the variantId to remove
-     * @throws IllegalArgumentException when the variantId is the 'default' variantId
-     * @throws RepositoryException
+     * @throws IllegalStateException when the variantId is the 'default' variantId
      */
     private void deleteVariant(final HstComponentParameters componentParameters, final String variantId)
-            throws IllegalArgumentException, RepositoryException, IllegalStateException {
+            throws IllegalStateException {
         if (!componentParameters.removePrefix(variantId)) {
             throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
         }
@@ -202,8 +202,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
     private void setParameters(final HstComponentParameters componentParameters,
                                final String prefix,
-                               final MultivaluedMap<String, String> parameters) throws RepositoryException, IllegalStateException {
-        componentParameters.removePrefix(prefix);
+                               final MultivaluedMap<String, String> parameters) throws IllegalStateException {
         for (String parameterName : parameters.keySet()) {
             // the Force-Client-Host is some 'magic' parameter we do not need to store
             // this check can be removed once in all code, the Force-Client-Host parameter from the queryString
