@@ -423,7 +423,7 @@ class OverlayService {
         mainIcon: searchWhiteSvg,
         dialIcon: searchSvg,
         callback: () => this.pickPath(config),
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(selectDocumentButton);
@@ -434,7 +434,7 @@ class OverlayService {
         mainIcon: plusWhiteSvg,
         dialIcon: plusSvg,
         callback: () => this._createContent(config),
-        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(createContentButton);
