@@ -874,17 +874,6 @@ describe('OverlayService', () => {
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-          expect(optionButtons.children().length).toBe(0);
-
-          done();
-        });
-      });
-
-      it('does not show any button(s)', (done) => {
-        manageContentScenario(9, (mainButton, optionButtons) => {
-          expect(mainButton.length).toBe(0);
-          expect(optionButtons.length).toBe(0);
-          expect(optionButtons.children().length).toBe(0);
           done();
         });
       });

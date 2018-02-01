@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import '../variables';
+@mixin disabled-fab-button {
+  background-color: $grey-300;
+  cursor: not-allowed;
 
+  svg {
+    fill: $grey-500;
+  }
+}
+
+@import '../variables';
 @import '~open-sans-fontface/sass/variables';
 @import '~open-sans-fontface/sass/mixins';
 @import '~open-sans-fontface/sass/Regular';
-
 @import '~@bloomreach/dragula/dist/dragula.css';
 
 .hst-cmseditlink {
@@ -286,7 +293,7 @@
     height: 100%;
     padding: 8px 0 0 5px;
     width: 100%;
-    &:hover {
+    &:hover:not(.disabled) {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-hover !important;
     }
@@ -306,9 +313,13 @@
         padding: 8px 0 0 5px;
       }
     }
+
+    &.disabled {
+      @include disabled-fab-button;
+    }
   }
   &.is-showing-options {
-    .hippo-fab-btn {
+    .hippo-fab-btn:not(.disabled) {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-active !important;
     }
@@ -320,6 +331,10 @@
         animation-name: enter;
         display: block;
         transform-origin: bottom center;
+
+        &.disabled {
+          @include disabled-fab-button;
+        }
       }
 
       @for $i from 0 to 3 {
@@ -364,5 +379,4 @@
     transform: scale(.8);
   }
 }
-
 
