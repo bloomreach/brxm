@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -43,7 +44,9 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +119,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
+    private final static Logger log = LoggerFactory.getLogger(DefaultHstSiteConfigurer.class);
+
     private static final long serialVersionUID = 1L;
 
     private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
@@ -132,8 +137,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private static final long DEFAULT_CONFIGURATION_REFRESH_DELAY = 0L;
 
-    private final static Logger log = LoggerFactory.getLogger(DefaultHstSiteConfigurer.class);
-
     private String [] assemblyOverridesConfigurations = { "META-INF/hst-assembly/overrides/*.xml" };
 
     private boolean initialized;
@@ -146,6 +149,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private boolean hstSystemPropertiesOverride = true;
 
+    private boolean lazyHstConfigurationLoading = false;
+
     private String hstConfigEnvProperties = HST_CONFIG_ENV_PROPERTIES;
 
     // -------------------------------------------------------------------
@@ -157,6 +162,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     private HstSiteConfigurationChangesChecker hstSiteConfigurationChangesCheckerThread;
 
     private ServletContext servletContext;
+
+    private Thread initThread;
 
     public DefaultHstSiteConfigurer() {
     }
@@ -190,6 +197,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             return;
         }
 
+        lazyHstConfigurationLoading = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_LAZY_HST_CONFIGURATION_LOADING_PARAM, "false"));
+
         hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
         hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
 
@@ -204,7 +213,30 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
         }
 
-        initializeComponentManager();
+        if (HippoServiceRegistry.getService(RepositoryService.class) != null) {
+            initializeComponentManager();
+        } else {
+            initThread = new Thread(() -> {
+                boolean retry = true;
+                while (retry && HippoServiceRegistry.getService(RepositoryService.class) == null) {
+                    log.info("Waiting for the RepositoryService to become available before initializing the HST component manager.");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        log.info("Waiting for the RepositoryService got interrupted. Quiting");
+                        retry = false;
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                if (HippoServiceRegistry.getService(RepositoryService.class) != null) {
+                    log.info("RepositoryService is available. Initializing the HST component manager now");
+                    initializeComponentManager();
+                }
+            });
+            // stop this init thread when the jvm exits without this init thread to finish, hence make is a daemon
+            initThread.setDaemon(true);
+            initThread.start();
+        }
     }
 
     protected synchronized boolean isInitialized() {
@@ -254,8 +286,17 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 }
             }
 
-            this.initialized = true;
+            if (!HstServices.isHstConfigurationNodesLoaded() && !lazyHstConfigurationLoading) {
+                log.info("Trigger HST Configuration nodes to be loaded");
+                final long start = System.currentTimeMillis();
+                final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
+                // triggers the loading of all the hst configuration nodes
+                hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
+            }
             log.info(INIT_DONE_MSG);
+            this.initialized = true;
+
         } catch (Exception e) {
             log.error("HstSiteConfigServlet: ComponentManager initialization failed.", e);
 
@@ -276,7 +317,16 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     @Override
     public synchronized void destroy() {
-        log.info("Done shutting down!");
+        log.info("Shutting down!");
+        if (initThread != null && initThread.isAlive()) {
+            initThread.interrupt();
+            try {
+                initThread.join();
+            } catch (InterruptedException e) {
+                log.error("Interrupted while stopping initThread", e);
+                initThread.interrupt();
+            }
+        }
         ServletContextRegistry.unregister(getServletContext());
         log.debug("Unregistered servlet context '{}' from {}",
                 getServletContext().getContextPath(), ServletContextRegistry.class.getName());
@@ -294,6 +344,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 HstServices.setComponentManager(null);
             }
         }
+        log.info("Done Shutting down!");
     }
 
     /**
