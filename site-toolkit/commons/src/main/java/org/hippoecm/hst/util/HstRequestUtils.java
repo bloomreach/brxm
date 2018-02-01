@@ -62,6 +62,11 @@ public class HstRequestUtils {
     public static final String DEFAULT_HTTP_FORWARDED_FOR_HEADER = "X-Forwarded-For";
 
     /**
+     * Array of the default HTTP Forwarded-For header name(s). <code>{ "X-Forwarded-For" }</code> by default.
+     */
+    private static final String[] DEFAULT_HTTP_FORWARDED_FOR_HEADERS = { DEFAULT_HTTP_FORWARDED_FOR_HEADER };
+
+    /**
      * Servlet context init parameter name for custom HTTP Forwarded-For header name.
      * If not set, {@link #DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
      */
@@ -70,7 +75,7 @@ public class HstRequestUtils {
     /*
      * Package protected for unit tests.
      */
-    static String httpForwardedForHeader;
+    static String[] httpForwardedForHeaderNames;
 
     private HstRequestUtils() {
 
@@ -397,16 +402,22 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
-        String headerName = getForwardedForHeaderName(request);
-        String headerValue = request.getHeader(headerName);
+        String [] headerNames = getForwardedForHeaderNames(request);
 
-        if (headerValue != null && headerValue.length() > 0) {
-            String [] addrs = headerValue.split(",");
-            for (int i = 0; i < addrs.length; i++) {
-                addrs[i] = addrs[i].trim();
+        for (String headerName : headerNames) {
+            String headerValue = request.getHeader(headerName);
+
+            if (headerValue != null && headerValue.length() > 0) {
+                String [] addrs = headerValue.split(",");
+
+                for (int i = 0; i < addrs.length; i++) {
+                    addrs[i] = addrs[i].trim();
+                }
+
+                return addrs;
             }
-            return addrs;
         }
+
         return new String [] { request.getRemoteAddr() };
     }
 
@@ -669,39 +680,41 @@ public class HstRequestUtils {
     }
 
     /**
-     * Return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
-     * if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other custom HTTP header instead.
+     * Return an array containing only <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent
+     * HTTP header names if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other
+     * comma separated custom HTTP header names instead.
      * @param request servlet request
-     * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
+     * @return an array containing <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent
+     * HTTP header names
      */
-    private static String getForwardedForHeaderName(final HttpServletRequest request) {
-        String forwardedForHeader = httpForwardedForHeader;
+    private static String[] getForwardedForHeaderNames(final HttpServletRequest request) {
+        String[] forwardedForHeaderNames = httpForwardedForHeaderNames;
 
-        if (forwardedForHeader == null) {
+        if (forwardedForHeaderNames == null) {
             synchronized (HstRequestUtils.class) {
-                forwardedForHeader = httpForwardedForHeader;
+                forwardedForHeaderNames = httpForwardedForHeaderNames;
 
-                if (forwardedForHeader == null) {
+                if (forwardedForHeaderNames == null) {
                     String param = request.getServletContext().getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM);
 
-                    if (param != null) {
-                        param = param.trim();
+                    if (param != null && !param.isEmpty()) {
+                        forwardedForHeaderNames = param.split(",");
 
-                        if (!param.isEmpty()) {
-                            forwardedForHeader = param;
+                        for (int i = 0; i < forwardedForHeaderNames.length; i++) {
+                            forwardedForHeaderNames[i] = forwardedForHeaderNames[i].trim();
                         }
                     }
 
-                    if (forwardedForHeader == null) {
-                        forwardedForHeader = DEFAULT_HTTP_FORWARDED_FOR_HEADER;
+                    if (forwardedForHeaderNames == null) {
+                        forwardedForHeaderNames = DEFAULT_HTTP_FORWARDED_FOR_HEADERS;
                     }
 
-                    httpForwardedForHeader = forwardedForHeader;
+                    httpForwardedForHeaderNames = forwardedForHeaderNames;
                 }
             }
         }
 
-        return forwardedForHeader;
+        return forwardedForHeaderNames;
     }
 
 }

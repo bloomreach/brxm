@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,23 @@ import javax.jcr.Session;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -55,6 +65,9 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
 import static org.junit.Assert.assertThat;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PrepareForTest(HstServices.class)
 public class SiteMenuItemHelperTest {
 
     // Class under test
@@ -264,6 +277,18 @@ public class SiteMenuItemHelperTest {
         modifiedItem.setLinkType(LinkType.EXTERNAL);
         final String link = "external";
         modifiedItem.setLink(link);
+
+        PowerMock.mockStatic(HstServices.class);
+        ComponentManager componentManager = createMock(ComponentManager.class);
+        ContainerConfiguration containerConfiguration = createMock(ContainerConfiguration.class);
+
+        expect(HstServices.getComponentManager()).andReturn(componentManager);
+        expect(componentManager.getContainerConfiguration()).andReturn(containerConfiguration);
+        expect(containerConfiguration.getBoolean(anyString(), anyBoolean())).andReturn(true);
+
+        replay(componentManager, containerConfiguration);
+        PowerMock.replay(HstServices.class);
+
         siteMenuItemHelper.update(node, modifiedItem);
         assertThat(linkCapture.getValue(), is(link));
 
