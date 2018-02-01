@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 
@@ -52,8 +51,6 @@ public class CndInstructionTest extends BaseRepositoryTest {
 
         // Register a test:newsdocument node type through the CND instruction
         cndInstruction.setDocumentType("newsdocument");
-        final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
-        projectSettings.setProjectNamespace(TEST_PREFIX);
         assertEquals(Instruction.Status.SUCCESS, cndInstruction.execute(dummyParameters));
 
         // trying again should 'skip'

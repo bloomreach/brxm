@@ -28,10 +28,12 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
+import org.onehippo.cms7.essentials.TestSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -54,6 +56,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
         projectSettings.setSelectedComponentsPackage("com.test.component");
     }
 
+    @Inject private TestSettings.Service settingsService;
     @Inject private ProjectServiceImpl projectService;
     @Inject private PlaceholderService placeholderService;
     private final Path projectRoot = Paths.get("/foo/bar");
@@ -120,7 +123,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
         final ProjectSettingsBean settings = new ProjectSettingsBean();
         settings.setBeansFolder("beans/src/main/java");
-        settingsService.setSettings(settings);
+        ((TestSettings.Service)settingsService).setSettings(settings);
 
         assertEquals(projectRoot.resolve("beans/src/main/java"), projectService.getBeansRootPath());
     }
@@ -133,7 +136,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
         final ProjectSettingsBean settings = new ProjectSettingsBean();
         settings.setBeansFolder("beans/src/main/java");
         settings.setSelectedBeansPackage("com.test.bean");
-        settingsService.setSettings(settings);
+        ((TestSettings.Service)settingsService).setSettings(settings);
 
         assertEquals(projectRoot.resolve("beans/src/main/java").resolve("com").resolve("test").resolve("bean"),
                 projectService.getBeansPackagePath());

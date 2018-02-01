@@ -30,8 +30,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -45,7 +45,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
-@ActiveProfiles("base-test")
+@ActiveProfiles("settings-test")
 public abstract class BaseTest {
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
 
@@ -63,7 +63,7 @@ public abstract class BaseTest {
     }
 
     @Inject protected AutowireCapableBeanFactory injector;
-    @Inject protected SettingsServiceImpl settingsService;
+    @Inject private TestSettings.Service settingsService;
 
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
@@ -79,7 +79,6 @@ public abstract class BaseTest {
             .build();
     private Path projectRoot;
     private boolean hasProjectStructure;
-
 
     public void setProjectRoot(final Path projectRoot) {
         this.projectRoot = projectRoot;
