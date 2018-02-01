@@ -5,13 +5,14 @@
   <div class="has-edit-button">
     <c:choose>
       <c:when test="${hst:isReadable(requestScope.document, 'FAQ')}">
-        <hst:cmseditlink hippobean="${requestScope.document}"/>
+        <hst:manageContent document="${requestScope.document}"/> <%-- edit faq list document -->
         <h1><c:out value="${requestScope.document.title}"/></h1>
         <div><hst:html hippohtml="${requestScope.document.description}"/></div>
         <c:forEach var="faq" items="${requestScope.document.faqItems}">
-          <div>
+          <div class="has-edit-button">
             <h3><a href="<hst:link hippobean="${faq}"/>"><c:out value="${faq.question}"/></a></h3>
             <hst:html hippohtml="${faq.answer}"/>
+            <hst:manageContent document="${faq}"/> <%-- edit faq item --%>
           </div>
         </c:forEach>
       </c:when>
@@ -23,7 +24,9 @@
 </c:if>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${requestScope.editMode && (requestScope.document eq null)}">
-  <div>
+  <div class="has-edit-button">
     <img src="<hst:link path='/images/essentials/catalog-component-icons/faq.png'/>"> Click to edit FAQ
+      <%-- add faq list document --%>
+    <hst:manageContent templateQuery="new-faq-list" componentParameter="document" rootPath="faq"/>
   </div>
 </c:if>
