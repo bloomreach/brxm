@@ -274,7 +274,7 @@ public class FieldTypeUtils {
     public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(fieldSorter -> fieldSorter.sortFields(context).stream()
-                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).isEmpty())
+                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).equals(FIELD_TYPE_UNKNOWN))
                         .map(FieldTypeUtils::mapFieldTypeName)
                         .collect(Collectors.toCollection(TreeSet::new))
                 )

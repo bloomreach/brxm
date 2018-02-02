@@ -38,6 +38,8 @@ public class DocumentType {
     private boolean allFieldsIncluded;
     private boolean allRequiredFieldsIncluded;
     private final List<FieldType> fields; // ordered list of fields
+
+    @JsonInclude(Include.NON_EMPTY)
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
     public DocumentType() {
