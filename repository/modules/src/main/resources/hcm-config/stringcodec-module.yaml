@@ -1,9 +1,9 @@
-  definitions:
-    config:
-      /hippo:configuration/hippo:modules/stringcodec:
-        jcr:primaryType: hipposys:module
-        hipposys:className: org.hippoecm.repository.stringcodec.StringCodecModule
-        /hippo:moduleconfig:
-          jcr:primaryType: hipposys:moduleconfig
-          encoding.display: org.hippoecm.repository.api.StringCodecFactory$IdentEncoding
-          encoding.node: org.hippoecm.repository.api.StringCodecFactory$UriEncoding
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/stringcodec:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.repository.stringcodec.StringCodecModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        encoding.display: org.hippoecm.repository.api.StringCodecFactory$IdentEncoding
+        encoding.node: org.hippoecm.repository.api.StringCodecFactory$UriEncoding
