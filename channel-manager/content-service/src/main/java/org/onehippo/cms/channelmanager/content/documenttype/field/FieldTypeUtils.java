@@ -32,6 +32,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -58,6 +59,8 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeChild;
+import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -231,11 +234,29 @@ public class FieldTypeUtils {
         }
 
         if (item.isProperty()) {
-            // Unsupported type
+            // All known property fields are part of the FIELD_TYPE_MAP, so this one is unknown
             return FIELD_TYPE_UNKNOWN;
         }
 
-        return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
+        if (ChoiceFieldUtils.isChoiceField(context)) {
+            return FIELD_TYPE_CHOICE;
+        }
+
+        if (isCompound(item)) {
+            return FIELD_TYPE_COMPOUND;
+        }
+
+        return FIELD_TYPE_UNKNOWN;
+    }
+
+    private static boolean isCompound(final ContentTypeItem item) {
+        final EffectiveNodeTypeItem effectiveItem = item.getEffectiveNodeTypeItem();
+
+        if (effectiveItem instanceof EffectiveNodeTypeChild) {
+            EffectiveNodeTypeChild effectiveChild = (EffectiveNodeTypeChild) effectiveItem;
+            return effectiveChild.getRequiredPrimaryTypes().contains(HippoNodeType.NT_COMPOUND);
+        }
+        return false;
     }
 
     private static boolean usesDefaultFieldPlugin(final FieldTypeContext context, final TypeDescriptor descriptor) {
