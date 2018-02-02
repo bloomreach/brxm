@@ -38,6 +38,8 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-testutils</artifactId>
       <version>${hippo.testutils.version}</version>
+      <!-- override the scope because downstream test projects will also need this dependency when using repository-testutils -->
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
