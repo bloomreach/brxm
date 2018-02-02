@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
+import org.apache.commons.collections.map.CompositeMap;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -66,7 +66,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
     protected boolean referenceNamespaceIgnored;
-    
+
+    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
+
     public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String lifecyclePhase) {
         super(servletRequest);
         this.lifecyclePhase = lifecyclePhase;
@@ -168,29 +171,53 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public String getReferenceNamespace() {
         return this.componentWindow.getReferenceNamespace();
     }
-    
+
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getAttributeMap(String referencePath) {
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
         int prefixLen = prefix.length();
         Map<String, Object> attributesMap = this.namespaceAttributesMap.get(prefix);
-        
+
         if (attributesMap == null) {
-            attributesMap = new HashMap<String, Object>();
-            
-            for (Enumeration attributeNames = super.getAttributeNames(); attributeNames.hasMoreElements(); ) {
-                String encodedAttributeName = (String) attributeNames.nextElement();
-                
+            Map<String, Object> internalAttributesMap = new HashMap<String, Object>();
+
+            for (Enumeration<String> attributeNames = super.getAttributeNames(); attributeNames.hasMoreElements(); ) {
+                String encodedAttributeName = attributeNames.nextElement();
+
                 if (encodedAttributeName.startsWith(prefix)) {
                     String attributeName = encodedAttributeName.substring(prefixLen);
                     Object attributeValue = super.getAttribute(encodedAttributeName);
-                    attributesMap.put(attributeName, attributeValue);
+                    internalAttributesMap.put(attributeName, attributeValue);
                 }
             }
-            
+
+            attributesMap = new CompositeMap(new Map[] { internalAttributesMap, getModelsMap() },
+                    new CompositeMap.MapMutator() {
+                        @Override
+                        public void resolveCollision(CompositeMap composite, Map existing, Map added,
+                                Collection intersect) {
+                            // don't care same keys in internalAttributes and modelsMap.
+                        }
+
+                        @Override
+                        public void putAll(CompositeMap map, Map[] composited, Map mapToAdd) {
+                            // The last item is the same as the first array item input in constructor.
+                            Map<String, Object> internalAttributesMap = composited[composited.length - 1];
+                            internalAttributesMap.putAll(mapToAdd);
+                        }
+
+                        @Override
+                        public Object put(CompositeMap map, Map[] composited, Object key, Object value) {
+                            // The last item is the same as the first array item input in constructor.
+                            Map<String, Object> internalAttributesMap = composited[composited.length - 1];
+                            return internalAttributesMap.put((String) key, value);
+                        }
+                    });
+
             this.namespaceAttributesMap.put(prefix, attributesMap);
         }
-        
+
         return attributesMap;
     }
 
@@ -239,10 +266,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @SuppressWarnings("unchecked")
     @Override
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         List servletRequestAttrs = EnumerationUtils.toList(super.getAttributeNames());
         Set<String> localRequestAttrs = this.getAttributeMap().keySet();
-        Collection composite = new CompositeCollection(new Collection [] { servletRequestAttrs, localRequestAttrs });
+
+        // Combine global servlet request attributes, local HstRequest attributes and model attributes.
+        // This attribute names can be queried by view templates or servlet-based frameworks.
+        Collection composite = new CompositeCollection(
+                new Collection[] { servletRequestAttrs, localRequestAttrs, getModelsMap().keySet() });
         return Collections.enumeration(composite);
     }
     
@@ -269,8 +300,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                 }
             }
         }
-        
-        return value;
+
+        if (value != null) {
+            return value;
+        }
+
+        // Fallback to model objects as this can be called in view templates.
+        return getModel(name);
     }
 
     @Override
@@ -387,4 +423,31 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public String getLifecyclePhase() {
         return this.lifecyclePhase;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Enumeration<String> getModelNames() {
+        return Collections.enumeration(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        modelsMap.remove(name);
+    }
+
 }

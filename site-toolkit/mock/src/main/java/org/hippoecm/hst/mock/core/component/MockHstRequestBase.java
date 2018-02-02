@@ -42,15 +42,14 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
 
-public class MockHstRequestBase implements HttpServletRequest {
+public abstract class MockHstRequestBase implements HstRequest {
     
     private Map<String, Object> props = new HashMap<String, Object>();
     private Map<String, Object> headers = new HashMap<String, Object>();
@@ -58,6 +57,9 @@ public class MockHstRequestBase implements HttpServletRequest {
     private Map<String, Object> attrs = new HashMap<String, Object>();
     private List<Locale> locales = Arrays.asList(new Locale [] { Locale.getDefault() });
     private Map<String, List<String>> params = new HashMap<String, List<String>>();
+
+    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     public String getAuthType() {
         return (String) props.get("authType");
@@ -343,12 +345,20 @@ public class MockHstRequestBase implements HttpServletRequest {
         this.userRoleNames = userRoleNames;
     }
 
+    @Override
     public Object getAttribute(String name) {
-        return attrs.get(name);
+        Object val = attrs.get(name);
+        if (val != null) {
+            return val;
+        }
+        return getModel(name);
     }
-    
-    public Enumeration getAttributeNames() {
-        return new IteratorEnumeration<String>(attrs.keySet().iterator());
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        Set<String> mergedAttrs = new HashSet<>(getModelsMap().keySet());
+        mergedAttrs.addAll(attrs.keySet());
+        return new IteratorEnumeration<String>(mergedAttrs.iterator());
     }
 
     public String getCharacterEncoding() {
@@ -599,4 +609,29 @@ public class MockHstRequestBase implements HttpServletRequest {
         props.put("characterEncoding", characterEncoding);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Enumeration<String> getModelNames() {
+        return Collections.enumeration(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        modelsMap.remove(name);
+    }
 }

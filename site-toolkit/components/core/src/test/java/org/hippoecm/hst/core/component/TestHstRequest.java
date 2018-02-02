@@ -39,7 +39,6 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -50,7 +49,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class HstRequestIT extends AbstractSpringTestCase {
+public class TestHstRequest extends AbstractSpringTestCase {
     
     protected HttpServletRequest servletRequest;
     protected HstMutableRequestContext requestContext;
@@ -72,7 +71,7 @@ public class HstRequestIT extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testRequestAttributes() {
+    public void testRequestModelAndAttributes() {
 
         // Sets java servlet attributes
         this.servletRequest.setAttribute("javax.servlet.include.request_uri", "/jsp/included.jsp");
@@ -102,24 +101,97 @@ public class HstRequestIT extends AbstractSpringTestCase {
         assertNotNull(hstRequestForRootWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
         assertNotNull(hstRequestForHeadWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
         assertNotNull(hstRequestForBodyWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
-        
-        hstRequestForRootWindow.setAttribute("name", "root");
+
+        hstRequestForRootWindow.setModel("nameModel1", "rootValue1");
+        hstRequestForRootWindow.setModel("nameModel2", "rootValue2");
+        hstRequestForHeadWindow.setModel("nameModel1", "headValue1");
+        hstRequestForHeadWindow.setModel("nameModel2", "headValue2");
+        hstRequestForBodyWindow.setModel("nameModel1", "bodyValue1");
+        hstRequestForBodyWindow.setModel("nameModel2", "bodyValue2");
+
+        try {
+            hstRequestForRootWindow.setAttribute("name", "root");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         hstRequestForHeadWindow.setAttribute("name", "head");
         hstRequestForBodyWindow.setAttribute("name", "body");
-        
+
+        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("nameModel2"));
+        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("nameModel2"));
+        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("nameModel2"));
+
+        assertFalse(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("name"));
+        assertFalse(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("name"));
+        assertFalse(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("name"));
+
+        assertEquals("rootValue1", hstRequestForRootWindow.getModel("nameModel1"));
+        assertEquals("rootValue2", hstRequestForRootWindow.getModel("nameModel2"));
+        assertEquals("headValue1", hstRequestForHeadWindow.getModel("nameModel1"));
+        assertEquals("headValue2", hstRequestForHeadWindow.getModel("nameModel2"));
+        assertEquals("bodyValue1", hstRequestForBodyWindow.getModel("nameModel1"));
+        assertEquals("bodyValue2", hstRequestForBodyWindow.getModel("nameModel2"));
+
+        assertNull(hstRequestForRootWindow.getModel("name"));
+        assertNull(hstRequestForHeadWindow.getModel("name"));
+        assertNull(hstRequestForBodyWindow.getModel("name"));
+
         assertEquals("root", hstRequestForRootWindow.getAttribute("name"));
         assertEquals("head", hstRequestForHeadWindow.getAttribute("name"));
         assertEquals("body", hstRequestForBodyWindow.getAttribute("name"));
-        
+
+        // Model names must be included in attribute names for view rendering for instance.
+        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getAttributeNames()).contains("name"));
+        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getAttributeNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getAttributeNames()).contains("nameModel2"));
+        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getAttributeNames()).contains("name"));
+        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getAttributeNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getAttributeNames()).contains("nameModel2"));
+        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getAttributeNames()).contains("name"));
+        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getAttributeNames()).contains("nameModel1"));
+        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getAttributeNames()).contains("nameModel2"));
+
+        // Models must be accessible through attributes too for view rendering for instance.
+        assertEquals("rootValue1", hstRequestForRootWindow.getAttribute("nameModel1"));
+        assertEquals("rootValue2", hstRequestForRootWindow.getAttribute("nameModel2"));
+        assertEquals("headValue1", hstRequestForHeadWindow.getAttribute("nameModel1"));
+        assertEquals("headValue2", hstRequestForHeadWindow.getAttribute("nameModel2"));
+        assertEquals("bodyValue1", hstRequestForBodyWindow.getAttribute("nameModel1"));
+        assertEquals("bodyValue2", hstRequestForBodyWindow.getAttribute("nameModel2"));
+
+        assertEquals("rootValue1", hstRequestForRootWindow.getAttributeMap().get("nameModel1"));
+        assertEquals("rootValue2", hstRequestForRootWindow.getAttributeMap().get("nameModel2"));
+        assertEquals("headValue1", hstRequestForHeadWindow.getAttributeMap().get("nameModel1"));
+        assertEquals("headValue2", hstRequestForHeadWindow.getAttributeMap().get("nameModel2"));
+        assertEquals("bodyValue1", hstRequestForBodyWindow.getAttributeMap().get("nameModel1"));
+        assertEquals("bodyValue2", hstRequestForBodyWindow.getAttributeMap().get("nameModel2"));
+
         assertEquals("/jsp/included.jsp", hstRequestForRootWindow.getAttribute("javax.servlet.include.request_uri"));
         assertEquals("/jsp/included.jsp", hstRequestForHeadWindow.getAttribute("javax.servlet.include.request_uri"));
         assertEquals("/jsp/included.jsp", hstRequestForBodyWindow.getAttribute("javax.servlet.include.request_uri"));
-        
+
         // Remove an attribute from bodyWindow
         hstRequestForBodyWindow.removeAttribute("name");
         assertNull("The name attribute of body window request is still available! name: " + hstRequestForBodyWindow.getAttribute("name"), hstRequestForBodyWindow.getAttribute("name"));
+
+        hstRequestForRootWindow.removeModel("nameModel1");
+        hstRequestForRootWindow.removeModel("nameModel2");
+        hstRequestForHeadWindow.removeModel("nameModel1");
+        hstRequestForHeadWindow.removeModel("nameModel2");
+        hstRequestForBodyWindow.removeModel("nameModel1");
+        hstRequestForBodyWindow.removeModel("nameModel2");
+
+        assertNull(hstRequestForRootWindow.getModel("nameModel1"));
+        assertNull(hstRequestForRootWindow.getModel("nameModel2"));
+        assertNull(hstRequestForHeadWindow.getModel("nameModel1"));
+        assertNull(hstRequestForHeadWindow.getModel("nameModel2"));
+        assertNull(hstRequestForBodyWindow.getModel("nameModel1"));
+        assertNull(hstRequestForBodyWindow.getModel("nameModel2"));
     }
-    
+
     @Test
     public void testLocales() {
         MockHttpServletRequest request = new MockHttpServletRequest();

@@ -190,7 +190,6 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
         context.setCachingObjectConverter(enabled);
     }
 
-
     @Override
     public void setHstSiteMenusManager(final HstSiteMenusManager siteMenusManager) {
         context.setHstSiteMenusManager(siteMenusManager);
@@ -279,6 +278,31 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
         return context.getParameterInfoProxyFactory();
+    }
+
+    @Override
+    public <T> T getModel(String name) {
+        return context.getModel(name);
+    }
+
+    @Override
+    public Enumeration<String> getModelNames() {
+        return context.getModelNames();
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return context.getModelsMap();
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        return context.setModel(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        context.removeModel(name);
     }
 
     @Override

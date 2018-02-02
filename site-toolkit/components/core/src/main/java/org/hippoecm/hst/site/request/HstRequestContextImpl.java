@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.collection.CompositeCollection;
+import org.apache.commons.collections.map.CompositeMap;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -96,7 +99,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected ContentBeansTool contentBeansTool;
     protected HstSiteMenusManager siteMenusManager;
     protected boolean cachingObjectConverterEnabled;
-    protected Map<String, Object> attributes;
+    protected Map<String, Object> attributes = new HashMap<>();
     protected ContainerConfiguration containerConfiguration;
     protected Subject subject;
     protected Locale preferredLocale;
@@ -113,11 +116,13 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
 
-    private Map<String, Object> unmodifiableAttributes;
+    private Map<String, Object> unmodifiableCompositeAttributes;
 
     private boolean disposed;
     private boolean matchingFinished;
 
+    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -340,6 +345,32 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Enumeration<String> getModelNames() {
+        return Collections.enumeration(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        modelsMap.remove(name);
+    }
+
     @Override
     public Object getAttribute(String name) {
         checkStateValidity();
@@ -348,25 +379,22 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
 
-        Object value = null;
+        Object value = attributes.get(name);
 
-        if (this.attributes != null) {
-            value = this.attributes.get(name);
+        if (value != null) {
+            return value;
         }
 
-        return value;
+        return getModel(name);
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
         checkStateValidity();
 
-        if (this.attributes != null) {
-            return Collections.enumeration(attributes.keySet());
-        } else {
-            List<String> emptyAttrNames = Collections.emptyList();
-            return Collections.enumeration(emptyAttrNames);
-        }
+        Collection composite = new CompositeCollection(
+                new Collection[] { attributes.keySet(), getModelsMap().keySet() });
+        return Collections.enumeration(composite);
     }
 
     @Override
@@ -377,9 +405,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
 
-        if (this.attributes != null) {
-            this.attributes.remove(name);
-        }
+        this.attributes.remove(name);
     }
 
     @Override
@@ -394,30 +420,42 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             removeAttribute(name);
         }
 
-        if (this.attributes == null) {
-            synchronized (this) {
-                if (this.attributes == null) {
-                    this.attributes = new HashMap<String, Object>();
-                }
-            }
-        }
-
         this.attributes.put(name, object);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> getAttributes() {
         checkStateValidity();
 
-        if (unmodifiableAttributes == null && attributes != null) {
-            unmodifiableAttributes = Collections.unmodifiableMap(attributes);
+        if (unmodifiableCompositeAttributes == null) {
+            Map<String, Object> compositeMap = new CompositeMap(new Map[] { attributes, getModelsMap() },
+                    new CompositeMap.MapMutator() {
+                @Override
+                public void resolveCollision(CompositeMap composite, Map existing, Map added,
+                        Collection intersect) {
+                    // don't care same keys in internalAttributes and modelsMap.
+                }
+
+                @Override
+                public void putAll(CompositeMap map, Map[] composited, Map mapToAdd) {
+                    // The last item is the same as the first array item input in constructor.
+                    Map<String, Object> internalAttributesMap = composited[composited.length - 1];
+                    internalAttributesMap.putAll(mapToAdd);
+                }
+
+                @Override
+                public Object put(CompositeMap map, Map[] composited, Object key, Object value) {
+                    // The last item is the same as the first array item input in constructor.
+                    Map<String, Object> internalAttributesMap = composited[composited.length - 1];
+                    return internalAttributesMap.put((String) key, value);
+                }
+            });
+
+            unmodifiableCompositeAttributes = Collections.unmodifiableMap(compositeMap);
         }
 
-        if (unmodifiableAttributes == null) {
-            return Collections.emptyMap();
-        }
-
-        return unmodifiableAttributes;
+        return unmodifiableCompositeAttributes;
     }
 
     @Override
@@ -869,7 +907,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         siteMenus = null;
         hstQueryManagerFactory = null;
         contentBeansTool = null;
-        attributes = null;
+        attributes.clear();
         containerConfiguration = null;
         subject = null;
         preferredLocale = null;
@@ -880,7 +918,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         renderHost = null;
         objectBeanManagers = null;
         hstQueryManagers = null;
-        unmodifiableAttributes = null;
+        unmodifiableCompositeAttributes = null;
 
         disposed = true;
     }

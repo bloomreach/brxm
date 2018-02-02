@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.request;
 
 import java.util.Map;
 
+import org.apache.commons.collections.EnumerationUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,36 +32,52 @@ import static org.junit.Assert.fail;
  * @version $Id$
  */
 public class TestHstRequestContextImpl {
-    
+
     @Test
-    public void testAttributes() {
+    public void testModelAndAttributes() {
         HstRequestContextImpl requestContext = new HstRequestContextImpl(null);
-        assertNull(requestContext.attributes);
-        
-        Map<String, Object> attributes = requestContext.getAttributes();
+        assertTrue(requestContext.attributes == null || requestContext.attributes.isEmpty());
+
+        final Map<String, Object> attributes = requestContext.getAttributes();
         assertNotNull(attributes);
         assertTrue(attributes.isEmpty());
-        
+
         try {
-            attributes.put("new1", "value1");
+            attributes.put("attr1", "value1");
             fail("Must not allow to add attribute directly from the attributes map.");
         } catch (UnsupportedOperationException expected) {
         }
-        
-        requestContext.setAttribute("new1", "value1");
-        attributes = requestContext.getAttributes();
-        assertEquals("value1", requestContext.getAttribute("new1"));
-        assertEquals("value1", attributes.get("new1"));
-        assertNotNull(requestContext.attributes);
+
+        requestContext.setModel("model1", "modelValue1");
+        assertEquals("modelValue1", requestContext.getAttribute("model1"));
+
+        requestContext.setAttribute("attr1", "value1");
+        assertEquals("value1", requestContext.getAttribute("attr1"));
+        assertEquals("modelValue1", requestContext.getAttribute("model1"));
+        assertNull(requestContext.getModel("attr1"));
+
+        assertEquals("value1", requestContext.getAttributes().get("attr1"));
+        assertEquals("modelValue1", requestContext.getAttributes().get("model1"));
+
+        assertTrue(EnumerationUtils.toList(requestContext.getModelNames()).contains("model1"));
+        assertFalse(EnumerationUtils.toList(requestContext.getModelNames()).contains("attr1"));
+        assertTrue(EnumerationUtils.toList(requestContext.getAttributeNames()).contains("attr1"));
+        assertTrue(EnumerationUtils.toList(requestContext.getAttributeNames()).contains("model1"));
+
+        assertEquals("value1", requestContext.getAttributes().get("attr1"));
         assertFalse(requestContext.attributes.isEmpty());
-        assertFalse(attributes.isEmpty());
-        
-        requestContext.removeAttribute("new1");
-        attributes = requestContext.getAttributes();
-        assertNull(requestContext.getAttribute("new1"));
-        assertNull(attributes.get("new1"));
+        assertFalse(requestContext.getAttributes().isEmpty());
+
+        requestContext.removeModel("model1");
+        assertNull(requestContext.getModel("model1"));
+        assertNull(requestContext.getModelsMap().get("model1"));
+        assertTrue(requestContext.getModelsMap().isEmpty());
+
+        requestContext.removeAttribute("attr1");
+        assertNull(requestContext.getAttribute("attr1"));
+        assertNull(requestContext.getAttributes().get("attr1"));
         assertTrue(requestContext.attributes.isEmpty());
-        assertTrue(attributes.isEmpty());
+        assertTrue(requestContext.getAttributes().isEmpty());
     }
     
 }
