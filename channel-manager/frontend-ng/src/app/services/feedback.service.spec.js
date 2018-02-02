@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('FeedbackService', () => {
+describe('FeedbackSerfvice', () => {
   let $log;
   let $translate;
   let $mdToast;
@@ -40,7 +40,6 @@ describe('FeedbackService', () => {
     toast.textContent.and.returnValue(toast);
     toast.position.and.returnValue(toast);
     toast.hideDelay.and.returnValue(toast);
-    toast.parent.and.returnValue(toast);
 
     spyOn($log, 'info');
     spyOn($translate, 'instant').and.returnValue(message);
@@ -48,7 +47,19 @@ describe('FeedbackService', () => {
     spyOn($mdToast, 'show');
   });
 
-  it('flashes a toast of the translated message', () => {
+  it('shows a translated notification message', () => {
+    const key = 'MESSAGE_KEY';
+    const params = { foo: 1 };
+    FeedbackService.showNotification(key, params);
+
+    expect($translate.instant).toHaveBeenCalledWith(key, params);
+    expect($mdToast.simple).toHaveBeenCalled();
+    expect(toast.textContent).toHaveBeenCalledWith(message);
+    expect(toast.position).toHaveBeenCalledWith('top right');
+    expect(toast.hideDelay).toHaveBeenCalledWith(1000);
+  });
+
+  it('shows a translated error message', () => {
     const key = { trans: 'parent' };
     const params = { trans: 'tarent, too' };
     FeedbackService.showError(key, params);
@@ -58,7 +69,6 @@ describe('FeedbackService', () => {
     expect(toast.textContent).toHaveBeenCalledWith(message);
     expect(toast.position).toHaveBeenCalledWith('top right');
     expect(toast.hideDelay).toHaveBeenCalledWith(3000);
-    expect(toast.parent).not.toHaveBeenCalled();
   });
 
   it('handles undefined error responses', () => {

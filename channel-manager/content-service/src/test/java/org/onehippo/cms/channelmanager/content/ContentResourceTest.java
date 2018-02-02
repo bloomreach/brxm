@@ -41,6 +41,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.powermock.api.easymock.PowerMock;
@@ -59,10 +60,11 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-@PrepareForTest({DocumentsService.class, DocumentTypesService.class})
+@PowerMockIgnore({"javax.management.*","javax.net.ssl.*"})
+@PrepareForTest({DocumentsService.class, DocumentTypesService.class, SlugFactory.class})
 public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
@@ -89,7 +91,7 @@ public class ContentResourceTest extends CXFTest {
 
         PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
-        PowerMock.replayAll();
+        replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
         config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, contextPayloadService));
@@ -111,7 +113,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .get("/documents/" + requestedUuid)
-                .then()
+        .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
     }
@@ -125,7 +127,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .get("/documents/" + requestedUuid)
-                .then()
+        .then()
                 .statusCode(404);
     }
 
@@ -142,7 +144,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(201)
                 .body(equalTo(expectedBody));
     }
@@ -151,18 +153,14 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
-        final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale, emptyMap())).andThrow(new ForbiddenException(testDocument));
+        expect(documentsService.createDraft(requestedUuid, userSession, locale, emptyMap())).andThrow(new ForbiddenException());
         replay(documentsService);
-
-        final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
-                .then()
-                .statusCode(403)
-                .body(equalTo(expectedBody));
+        .then()
+                .statusCode(403);
     }
 
     @Test
@@ -174,7 +172,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(404);
     }
 
@@ -192,9 +190,9 @@ public class ContentResourceTest extends CXFTest {
         given()
                 .body(expectedBody)
                 .contentType("application/json")
-                .when()
+        .when()
                 .put("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
     }
@@ -209,7 +207,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(204);
     }
 
@@ -223,7 +221,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(404);
     }
 
@@ -237,7 +235,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(400)
                 .body(equalTo("{\"reason\":\"ALREADY_DELETED\"}"));
     }
@@ -252,7 +250,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
-                .then()
+        .then()
                 .statusCode(500)
                 .body(equalTo("")); // no additional ErrorInfo.
     }
@@ -271,7 +269,7 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .get("/documenttypes/" + requestedId)
-                .then()
+        .then()
                 .statusCode(200)
                 .header("Cache-Control", Matchers.containsString("no-cache"))
                 .body(equalTo(expectedBody));
@@ -287,8 +285,42 @@ public class ContentResourceTest extends CXFTest {
 
         when()
                 .get("/documenttypes/" + requestedId)
-                .then()
+        .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void createSlugWithoutLocale() {
+        PowerMock.mockStaticPartial(SlugFactory.class, "createSlug");
+
+        expect(SlugFactory.createSlug(eq("some content name"), eq(null))).andReturn("some-content-name");
+        replayAll();
+
+        given()
+                .body("some content name")
+                .contentType("application/json")
+        .when()
+                .post("/slugs")
+        .then()
+                .statusCode(200)
+                .body(equalTo("some-content-name"));
+    }
+
+    @Test
+    public void createSlugWithLocale() {
+        PowerMock.mockStaticPartial(SlugFactory.class, "createSlug");
+
+        expect(SlugFactory.createSlug(eq("some content name"), eq("de"))).andReturn("some-content-name");
+        replayAll();
+
+        given()
+                .body("some content name")
+                .contentType("application/json")
+        .when()
+                .post("/slugs?locale=de")
+        .then()
+                .statusCode(200)
+                .body(equalTo("some-content-name"));
     }
 
     private String normalizeJsonResource(final String resourcePath) {

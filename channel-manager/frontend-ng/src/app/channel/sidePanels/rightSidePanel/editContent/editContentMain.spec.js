@@ -87,7 +87,7 @@ describe('EditContentMainCtrl', () => {
         ContentEditor.deleteDraft.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
           expect(ContentEditor.deleteDraft).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
@@ -100,7 +100,7 @@ describe('EditContentMainCtrl', () => {
         ContentEditor.deleteDraft.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
           expect(ContentEditor.deleteDraft).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
@@ -112,7 +112,7 @@ describe('EditContentMainCtrl', () => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().catch(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
           done();
         });
         $rootScope.$digest();

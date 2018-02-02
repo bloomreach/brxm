@@ -25,6 +25,7 @@ import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
@@ -40,6 +41,7 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If creation of the draft failed
      */
@@ -51,11 +53,11 @@ public interface DocumentsService {
      * The persisted document may differ from the posted one (e.g. when fields are subject to additional processing
      * before being persisted).
      *
-     * @param uuid           UUID of the document to be updated
-     * @param document       Document containing the to-be-persisted content
-     * @param session        user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                       pending.
-     * @param locale         Locale of the CMS user
+     * @param uuid     UUID of the document to be updated
+     * @param document Document containing the to-be-persisted content
+     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
+     *                 pending.
+     * @param locale   Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
      * @return JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException If updating the draft failed
@@ -68,12 +70,12 @@ public interface DocumentsService {
      * The persisted value may differ from the posted one (e.g. when fields are subject to additional processing before
      * being persisted).
      *
-     * @param uuid           UUID of the document
-     * @param fieldPath      Path to the field in the document
-     * @param fieldValues    Field values containing the to-be-persisted content
-     * @param session        user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                       pending.
-     * @param locale         Locale of the CMS user
+     * @param uuid        UUID of the document
+     * @param fieldPath   Path to the field in the document
+     * @param fieldValues Field values containing the to-be-persisted content
+     * @param session     user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
+     *                    pending.
+     * @param locale      Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
      * @throws ErrorWithPayloadException If updating the draft failed
      */
@@ -82,8 +84,9 @@ public interface DocumentsService {
     /**
      * Delete the draft version of a document, such that it is available for others to edit.
      *
-     * @param uuid           UUID of the document for which to delete the draft
-     * @param session        user-authenticated, invocation-scoped JCR session
+     * @param uuid    UUID of the document for which to delete the draft
+     * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
      * @throws ErrorWithPayloadException If deleting the draft failed
      */
@@ -94,8 +97,42 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated, invocation-scoped JCR session
+     * @param locale  Locale of the CMS user
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If retrieval of the live document failed
      */
     Document getPublished(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+
+    /**
+     * Creates a new document
+     *
+     * @param newDocumentInfo the information about the new document to create
+     * @param session         user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
+     *                        be pending.
+     * @param locale          Locale of the CMS user
+     * @return the created document
+     */
+    Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale) throws ErrorWithPayloadException;
+
+    /**
+     * Updates the display name and URL name of a document.
+     *
+     * @param uuid     UUID of the document (handle)
+     * @param document Document containing the to-be-persisted display name and URL name. Other fields are ignored.
+     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
+     *                 be pending.
+     * @throws ErrorWithPayloadException if the display name and/or URL name already exists, or changing the names fails.
+     */
+    Document updateDocumentNames(String uuid, Document document, Session session) throws ErrorWithPayloadException;
+
+    /**
+     * Deletes a document
+     *
+     * @param uuid            UUID of the document (handle) to delete
+     * @param session         user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
+     *                        be pending.
+     * @param locale          Locale of the CMS user
+     * @throws ErrorWithPayloadException If deleting the document failed
+     */
+    void deleteDocument(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 }

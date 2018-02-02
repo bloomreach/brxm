@@ -1,0 +1,61 @@
+// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+.create-content-step1 {
+  background: $grey-100;
+
+  form {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+
+    .field {
+      margin-bottom: 4px;
+    }
+
+    .edit-title-toolbar {
+      background: $white;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
+  }
+
+  .create-content-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 10px 16px;
+  }
+
+  .hide-select-arrow .md-select-icon {
+    visibility: hidden;
+  }
+
+  .input-document-type.ng-untouched.ng-invalid-required md-select-value span:first-child::after {
+    color: $text-dim;
+  }
+
+  .step1-bottom-toolbar {
+    background-color: transparent;
+    &:last-child {
+      border-top: 0;
+    }
+  }
+
+  md-input-container .md-errors-spacer {
+    min-height: 0;
+  }
+}

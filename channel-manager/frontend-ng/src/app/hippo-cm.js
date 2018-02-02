@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 import angular from 'angular';
 import ngAnimate from 'angular-animate';
+import ngDeviceDetector from 'ng-device-detector';
+import ngLocalStorage from 'angular-local-storage';
 import ngMaterial from 'angular-material';
 import ngMessages from 'angular-messages';
 import ngTranslate from 'angular-translate';
-import ngLocalStorage from 'angular-local-storage';
 import 'angular-translate-loader-static-files';
 import uiRouter from '@uirouter/angularjs';
-import ngDeviceDetector from 'ng-device-detector';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './services/browser.service';
@@ -31,6 +31,7 @@ import CmsService from './services/cms.service';
 import ConfigService from './services/config.service';
 import ContentService from './services/content.service';
 import DialogService from './services/dialog.service';
+import HstComponentService from './services/hstComponent.service';
 import HstService from './services/hst.service';
 import SessionService from './services/session.service';
 import SiteMapService from './services/siteMap.service';
@@ -49,21 +50,22 @@ import getByPropertyFilter from './filters/getByProperty.filter';
 import incrementPropertyFilter from './filters/incrementProperty.filter';
 import HippoGlobal from './services/hippoGlobal.service';
 
-
 import channelModule from './channel/channel';
+import factoriesModule from './factories/factories.module';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
 
 const hippoCmng = angular
   .module('hippo-cm', [
-    ngMessages,
-    ngMaterial,
-    ngTranslate,
     ngAnimate,
-    ngLocalStorage,
-    uiRouter,
     ngDeviceDetector,
+    ngLocalStorage,
+    ngMaterial,
+    ngMessages,
+    ngTranslate,
+    uiRouter,
     channelModule.name,
+    factoriesModule,
   ])
   .config(config)
   .run(run)
@@ -74,6 +76,7 @@ const hippoCmng = angular
   .service('ConfigService', ConfigService)
   .service('ContentService', ContentService)
   .service('DialogService', DialogService)
+  .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
   .service('SessionService', SessionService)
   .service('SiteMapService', SiteMapService)

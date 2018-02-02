@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,14 @@ const HstConstants = {
   TYPE_CONTAINER: 'CONTAINER_COMPONENT',
   TYPE_COMPONENT: 'CONTAINER_ITEM_COMPONENT',
   TYPE_CONTENT_LINK: 'CONTENT_LINK',
+  TYPE_MANAGE_CONTENT_LINK: 'MANAGE_CONTENT_LINK',
   TYPE_EDIT_MENU_LINK: 'EDIT_MENU_LINK',
   TYPE_PROCESSED_HEAD_CONTRIBUTIONS: 'HST_PROCESSED_HEAD_CONTRIBUTIONS',
   TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS: 'HST_UNPROCESSED_HEAD_CONTRIBUTIONS',
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
   CONTEXT_PATH: 'HST-Context-Path',
+  DEFAULT_RENDER_VARIANT: 'hippo-default',
   INHERITED: 'HST-Inherited',
   HAS_PREVIEW_CONFIGURATION: 'HST-Site-HasPreviewConfig',
   HEAD_ELEMENTS: 'headElements',

@@ -24,7 +24,7 @@ public class InternalServerErrorException extends ErrorWithPayloadException {
         this(null);
     }
 
-    public InternalServerErrorException(final Object payload) {
+    public InternalServerErrorException(final ErrorInfo payload) {
         super(Response.Status.INTERNAL_SERVER_ERROR, payload);
     }
 }

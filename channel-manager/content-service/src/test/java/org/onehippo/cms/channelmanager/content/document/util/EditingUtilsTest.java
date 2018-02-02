@@ -16,15 +16,26 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.security.SecurityService;
+import org.onehippo.repository.security.User;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -33,8 +44,268 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class EditingUtilsTest {
+
+    @Test
+    public void canCreateDraft() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canCreateDraft(workflow));
+
+        hints.put("obtainEditableInstance", Boolean.FALSE);
+        assertFalse(EditingUtils.canCreateDraft(workflow));
+
+        hints.put("obtainEditableInstance", Boolean.TRUE);
+        assertTrue(EditingUtils.canCreateDraft(workflow));
+    }
+
+    @Test
+    public void canUpdateDocument() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canUpdateDraft(workflow));
+
+        hints.put("commitEditableInstance", Boolean.FALSE);
+        assertFalse(EditingUtils.canUpdateDraft(workflow));
+
+        hints.put("commitEditableInstance", Boolean.TRUE);
+        assertTrue(EditingUtils.canUpdateDraft(workflow));
+    }
+
+    @Test
+    public void canUpdateDocumentWithException() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+
+        expect(workflow.hints()).andThrow(new WorkflowException("bla"));
+        replay(workflow);
+
+        assertFalse(EditingUtils.canUpdateDraft(workflow));
+    }
+
+    @Test
+    public void canDeleteDraft() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canDeleteDraft(workflow));
+
+        hints.put("disposeEditableInstance", Boolean.FALSE);
+        assertFalse(EditingUtils.canDeleteDraft(workflow));
+
+        hints.put("disposeEditableInstance", Boolean.TRUE);
+        assertTrue(EditingUtils.canDeleteDraft(workflow));
+    }
+
+    @Test
+    public void canArchiveDocument() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canArchiveDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canArchiveDocument(workflow));
+    }
+
+    @Test
+    public void canEraseDocument() throws Exception {
+        final FolderWorkflow workflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canEraseDocument(workflow));
+    }
+
+    @Test
+    public void canRenameDocument() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.canRenameDocument(workflow));
+
+        hints.put("rename", Boolean.FALSE);
+        assertFalse(EditingUtils.canRenameDocument(workflow));
+
+        hints.put("rename", Boolean.TRUE);
+        assertTrue(EditingUtils.canRenameDocument(workflow));
+    }
+
+    @Test
+    public void hasPreview() throws Exception {
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.FALSE);
+        assertFalse(EditingUtils.hasPreview(workflow));
+
+        hints.put("previewAvailable", Boolean.TRUE);
+        assertTrue(EditingUtils.hasPreview(workflow));
+    }
+
+    @Test
+    public void determineEditingFailureWithException() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Session session = createMock(Session.class);
+
+        expect(workflow.hints()).andThrow(new RepositoryException());
+        replay(workflow);
+
+        assertFalse(EditingUtils.determineEditingFailure(workflow, session).isPresent());
+
+        verify(workflow);
+    }
+
+    @Test
+    public void determineEditingFailureUnknown() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Session session = createMock(Session.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints);
+        replay(workflow);
+
+        assertFalse(EditingUtils.determineEditingFailure(workflow, session).isPresent());
+
+        verify(workflow);
+    }
+
+    @Test
+    public void determineEditingFailureRequestPending() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Session session = createMock(Session.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("requests", Boolean.TRUE);
+
+        expect(workflow.hints()).andReturn(hints);
+        replay(workflow);
+
+        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        assertThat(errorInfo.getReason(), equalTo(Reason.REQUEST_PENDING));
+        assertNull(errorInfo.getParams());
+
+        verify(workflow);
+    }
+
+    @Test
+    public void determineEditingFailureInUseByWithName() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Session session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final SecurityService securityService = createMock(SecurityService.class);
+        final User user = createMock(User.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("inUseBy", "admin");
+
+        expect(workflow.hints()).andReturn(hints);
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(workspace.getSecurityService()).andReturn(securityService);
+        expect(securityService.getUser("admin")).andReturn(user);
+        expect(user.getFirstName()).andReturn(" John ");
+        expect(user.getLastName()).andReturn(" Doe ");
+        replay(workflow, session, workspace, securityService, user);
+
+        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        assertThat(errorInfo.getReason(), equalTo(Reason.OTHER_HOLDER));
+        assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
+        assertThat(errorInfo.getParams().get("userName"), equalTo("John Doe"));
+
+        verify(workflow, session, workspace, securityService, user);
+    }
+
+    @Test
+    public void determineEditingFailureInUseByWithoutName() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Session session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("inUseBy", "admin");
+
+        expect(workflow.hints()).andReturn(hints);
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(workspace.getSecurityService()).andThrow(new RepositoryException());
+        replay(workflow, session, workspace);
+
+        final ErrorInfo errorInfo = EditingUtils.determineEditingFailure(workflow, session).get();
+        assertThat(errorInfo.getReason(), equalTo(Reason.OTHER_HOLDER));
+        assertThat(errorInfo.getParams().get("userId"), equalTo("admin"));
+        assertNull(errorInfo.getParams().get("userName"));
+
+        verify(workflow, session, workspace);
+    }
+
+    @Test
+    public void getUserNameNoFirstName() throws Exception {
+        final Session session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final SecurityService securityService = createMock(SecurityService.class);
+        final User user = createMock(User.class);
+
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(workspace.getSecurityService()).andReturn(securityService);
+        expect(securityService.getUser("admin")).andReturn(user);
+        expect(user.getFirstName()).andReturn(null);
+        expect(user.getLastName()).andReturn(" Doe ");
+        replay(session, workspace, securityService, user);
+
+        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("Doe"));
+
+        verify(session, workspace, securityService, user);
+    }
+
+    @Test
+    public void getUserNameNoLastName() throws Exception {
+        final Session session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final SecurityService securityService = createMock(SecurityService.class);
+        final User user = createMock(User.class);
+
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(workspace.getSecurityService()).andReturn(securityService);
+        expect(securityService.getUser("admin")).andReturn(user);
+        expect(user.getFirstName()).andReturn(" John ");
+        expect(user.getLastName()).andReturn(null);
+        replay(session, workspace, securityService, user);
+
+        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("John"));
+
+        verify(session, workspace, securityService, user);
+    }
 
     @Test
     public void createDraft() throws Exception {

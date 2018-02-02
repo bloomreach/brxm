@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import ComponentElement from './element/componentElement';
 import ContainerElement from './element/containerElement';
 import ContentLink from './element/contentLink';
+import ManageContentLink from './element/manageContentLink';
 import MenuLink from './element/menuLink';
 
 class PageStructureService {
@@ -81,6 +82,9 @@ class PageStructureService {
       case this.HST.TYPE_CONTENT_LINK:
         this._registerContentLink(commentDomElement, metaData);
         break;
+      case this.HST.TYPE_MANAGE_CONTENT_LINK:
+        this._registerManageContentLink(commentDomElement, metaData);
+        break;
       case this.HST.TYPE_EDIT_MENU_LINK:
         this._registerMenuLink(commentDomElement, metaData);
         break;
@@ -120,6 +124,10 @@ class PageStructureService {
 
   _registerContentLink(commentDomElement, metaData) {
     this.embeddedLinks.push(new ContentLink(commentDomElement, metaData));
+  }
+
+  _registerManageContentLink(commentDomElement, metaData) {
+    this.embeddedLinks.push(new ManageContentLink(commentDomElement, metaData));
   }
 
   _registerMenuLink(commentDomElement, metaData) {
@@ -270,7 +278,13 @@ class PageStructureService {
     });
   }
 
-  renderComponent(componentId, propertiesMap) {
+  /**
+   * Re-renders a component in the current page.
+   * @param componentId   ID of the component
+   * @param propertiesMap Optional: the parameter names and values to use for rendering.
+   *                      When omitted the persisted names and values are used.
+   */
+  renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
@@ -454,6 +468,10 @@ class PageStructureService {
             this._registerContentLink(commentDomElement, metaData);
             break;
 
+          case this.HST.TYPE_MANAGE_CONTENT_LINK:
+            this._registerManageContentLink(commentDomElement, metaData);
+            break;
+
           case this.HST.TYPE_EDIT_MENU_LINK:
             this._registerMenuLink(commentDomElement, metaData);
             break;
@@ -500,6 +518,10 @@ class PageStructureService {
 
         case this.HST.TYPE_CONTENT_LINK:
           this._registerContentLink(commentDomElement, metaData);
+          break;
+
+        case this.HST.TYPE_MANAGE_CONTENT_LINK:
+          this._registerManageContentLink(commentDomElement, metaData);
           break;
 
         case this.HST.TYPE_EDIT_MENU_LINK:

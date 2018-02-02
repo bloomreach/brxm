@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-const HIDE_DELAY_IN_MS = 3000;
+const NOTIFICATION_HIDE_DELAY_IN_MS = 1000;
+const ERROR_HIDE_DELAY_IN_MS = 3000;
 
 class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
@@ -26,18 +27,22 @@ class FeedbackService {
     this.$mdToast = $mdToast;
   }
 
-  showError(key, params) {
-    this._showErrorMessage(key, params);
+  showNotification(key, params) {
+    this._showTranslatedText(key, params, NOTIFICATION_HIDE_DELAY_IN_MS);
   }
 
-  _showErrorMessage(key, params) {
+  showError(key, params) {
+    this._showTranslatedText(key, params, ERROR_HIDE_DELAY_IN_MS);
+  }
+
+  _showTranslatedText(key, params, hideDelay) {
     const text = this.$translate.instant(key, params);
-    this._show(text);
+    this._showText(text, hideDelay);
   }
 
   showErrorResponse(response, defaultKey, errorMap = {}) {
     if (!response) {
-      this._showErrorMessage(defaultKey, undefined);
+      this.showError(defaultKey);
       return;
     }
 
@@ -60,15 +65,16 @@ class FeedbackService {
       text = this.$translate.instant(key, responseParams);
     }
 
-    this._show(text);
+    this._showText(text, ERROR_HIDE_DELAY_IN_MS);
   }
 
-  _show(text) {
-    this.$mdToast.show(this.$mdToast.simple()
+  _showText(text, hideDelay) {
+    const toast = this.$mdToast.simple()
       .textContent(text)
       .position('top right')
-      .hideDelay(HIDE_DELAY_IN_MS),
-    );
+      .hideDelay(hideDelay);
+
+    this.$mdToast.show(toast);
   }
 }
 

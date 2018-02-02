@@ -16,15 +16,21 @@
 
 package org.onehippo.cms.channelmanager.content.error;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.onehippo.cms.channelmanager.content.document.model.Document;
 
 public class BadRequestException extends ErrorWithPayloadException {
 
     public BadRequestException() {
-        this(null);
+        super(Status.BAD_REQUEST, null);
     }
 
-    public BadRequestException(final Object payload) {
-        super(Response.Status.BAD_REQUEST, payload);
+    public BadRequestException(final ErrorInfo payload) {
+        super(Status.BAD_REQUEST, payload);
+    }
+
+    public BadRequestException(final Document payload) {
+        super(Status.BAD_REQUEST, payload);
     }
 }

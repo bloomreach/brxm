@@ -75,7 +75,7 @@ describe('ContentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft', 'deleteDocument']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
 
@@ -538,7 +538,6 @@ describe('ContentEditorService', () => {
   });
 
   describe('confirm discard changes', () => {
-
     const showPromise = {};
 
     beforeEach(() => {
@@ -553,10 +552,26 @@ describe('ContentEditorService', () => {
     it('shows a dialog', () => {
       ContentEditor.markDocumentDirty();
 
-      const result = ContentEditor.confirmDiscardChanges();
+      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY');
 
       expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('shows a dialog with a title', () => {
+      ContentEditor.markDocumentDirty();
+
+      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY', 'TITLE_KEY');
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('TITLE_KEY', {
         documentName: 'Test',
       });
       expect(DialogService.show).toHaveBeenCalled();
@@ -583,7 +598,6 @@ describe('ContentEditorService', () => {
   });
 
   describe('confirm save or discard changes', () => {
-
     beforeEach(() => {
       testDocument.displayName = 'Test';
       ContentEditor.document = testDocument;
@@ -593,7 +607,7 @@ describe('ContentEditorService', () => {
     it('shows a dialog and saves changes', (done) => {
       ContentEditor.markDocumentDirty();
       DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.resolve(testDocument))
+      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
 
       ContentEditor.confirmSaveOrDiscardChanges('TEST_MESSAGE_KEY').then((action) => {
         expect(action).toBe('SAVE');
@@ -691,6 +705,60 @@ describe('ContentEditorService', () => {
         done();
       });
       $rootScope.$digest();
+    });
+  });
+
+  describe('delete document', () => {
+    it('happens when a document is edited and the editor is not killed', () => {
+      ContentEditor.document = testDocument;
+      ContentEditor.documentType = testDocumentType;
+
+      ContentService.deleteDocument.and.returnValue($q.resolve());
+
+      ContentEditor.deleteDocument();
+      $rootScope.$digest();
+
+      expect(ContentService.deleteDocument).toHaveBeenCalledWith(testDocument.id);
+    });
+
+    it('does not happens when no document is being edited', (done) => {
+      ContentEditor.deleteDocument().then(() => {
+        expect(ContentService.deleteDocument).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('does not happens when the editor is killed', (done) => {
+      ContentEditor.document = testDocument;
+      ContentEditor.documentType = testDocumentType;
+      ContentEditor.kill();
+
+      ContentEditor.deleteDocument().then(() => {
+        expect(ContentService.deleteDocument).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('shows an error when deleting the document fails', () => {
+      ContentEditor.document = testDocument;
+      ContentEditor.documentType = testDocumentType;
+
+      ContentService.deleteDocument.and.returnValue($q.reject({
+        data: {
+          reason: 'NOT_ALLOWED',
+          params: {
+            foo: 1,
+          },
+        },
+      }));
+
+      ContentEditor.deleteDocument();
+      $rootScope.$digest();
+
+      expect(ContentService.deleteDocument).toHaveBeenCalledWith(testDocument.id);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_NOT_ALLOWED', { foo: 1 });
     });
   });
 

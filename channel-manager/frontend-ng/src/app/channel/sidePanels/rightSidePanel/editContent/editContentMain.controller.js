@@ -60,7 +60,7 @@ class EditContentMainCtrl {
 
   _confirmExit() {
     if (this.closing) {
-      return this.ContentEditor.confirmDiscardChanges();
+      return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
     }
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
       .then((action) => {

@@ -17,18 +17,23 @@
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
 describe('OverlayService', () => {
+  let $iframe;
   let $q;
   let $rootScope;
+  let iframeWindow;
+  let ChannelService;
   let CmsService;
+  let CreateContentService;
   let DomService;
   let EditContentService;
   let ExperimentStateService;
+  let FeedbackService;
+  let HippoIframeService;
+  let HstComponentService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
   let RenderingService;
-  let $iframe;
-  let iframeWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -36,10 +41,15 @@ describe('OverlayService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _ChannelService_,
       _CmsService_,
+      _CreateContentService_,
       _DomService_,
-      _ExperimentStateService_,
       _EditContentService_,
+      _ExperimentStateService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _HstComponentService_,
       _hstCommentsProcessorService_,
       _OverlayService_,
       _PageStructureService_,
@@ -47,15 +57,22 @@ describe('OverlayService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      CreateContentService = _CreateContentService_;
       DomService = _DomService_;
       EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
+      HstComponentService = _HstComponentService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
     });
+
+    spyOn(CmsService, 'subscribe').and.callThrough();
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $('.iframe');
@@ -196,11 +213,14 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
+      // Total overlay elements
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
+
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(11);
       done();
     });
   });
@@ -259,7 +279,7 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
@@ -271,7 +291,7 @@ describe('OverlayService', () => {
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(6);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -296,7 +316,7 @@ describe('OverlayService', () => {
 
   it('renders lock icons for disabled containers', (done) => {
     loadIframeFixture(() => {
-      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -308,8 +328,9 @@ describe('OverlayService', () => {
 
   it('does not render lock icons for enabled containers', (done) => {
     loadIframeFixture(() => {
-      const enabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(1);
-      expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
+      const containers = iframe('.hippo-overlay > .hippo-overlay-element-container');
+      expect(containers.eq(0).find('.hippo-overlay-lock').length).toBe(0);
+      expect(containers.eq(1).find('.hippo-overlay-lock').length).toBe(0);
       done();
     });
   });
@@ -526,6 +547,99 @@ describe('OverlayService', () => {
     });
   });
 
+  it('can create content', (done) => {
+    spyOn(CreateContentService, 'start');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
+      const createContentButton = $(overlayElementScenario2).find('.hippo-fab-btn');
+
+      expectNoPropagatedClicks();
+      createContentButton.click();
+
+      const config = CreateContentService.start.calls.mostRecent().args[0];
+      expect(config.templateQuery).toBe('manage-content-template-query');
+
+      done();
+    });
+  });
+
+  it('can pick a path and update the component', (done) => {
+    ChannelService.isEditable = () => true;
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    spyOn(PageStructureService, 'renderComponent');
+    spyOn(FeedbackService, 'showNotification');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('bbbb');
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'component B',
+      });
+
+      done();
+    });
+  });
+
+  it('can pick a path but fail to update the component', (done) => {
+    ChannelService.isEditable = () => true;
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
+    spyOn(FeedbackService, 'showError');
+    spyOn(HippoIframeService, 'reload');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'component B',
+      });
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+
+      done();
+    });
+  });
+
+  it('can pick a path and update a specific component variant', (done) => {
+    ChannelService.isEditable = () => true;
+
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    spyOn(PageStructureService, 'renderComponent');
+    spyOn(FeedbackService, 'showNotification');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
+      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('component-with-experiment');
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'Component with experiment',
+      });
+
+      done();
+    });
+  });
+
   it('does not throw an error when calling edit menu handler if not set', (done) => {
     loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
@@ -558,7 +672,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -571,10 +685,312 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(9);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
+    });
+  });
+
+  describe('Manage content dial button(s)', () => {
+    beforeEach(() => {
+      ChannelService.isEditable = () => true;
+    });
+
+    it('returns correct configuration out of config object', () => {
+      const config = { // each property should be filled with the method that will extract the data from the HST comment
+        documentUuid: true,
+        templateQuery: true,
+        componentParameter: true,
+      };
+      const buttons = OverlayService._getButtons(config);
+
+      expect(buttons.length).toEqual(3);
+      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon', 'callback', 'tooltip']);
+    });
+
+    describe('_initManageContentConfig', () => {
+      function mockManageContentConfig(uuid = false, templateQuery = false, componentParameter = false, locked = false) {
+        const enclosing = {
+          isLocked: () => locked,
+        };
+        const structureElement = {
+          getUuid: () => uuid,
+          getTemplateQuery: () => templateQuery,
+          getComponentParameter: () => componentParameter,
+          isComponentParameterRelativePath: () => false,
+          getComponentPickerConfig: () => null,
+          getComponentValue: () => null,
+          getDefaultPath: () => null,
+          getRootPath: () => null,
+          getEnclosingElement: () => enclosing,
+        };
+        return OverlayService._initManageContentConfig(structureElement);
+      }
+
+      it('does not filter out config properties when channel is editable', () => {
+        const config = mockManageContentConfig(true, true, true);
+        expect(config.documentUuid).toBe(true);
+        expect(config.templateQuery).toBe(true);
+        expect(config.componentParameter).toBe(true);
+      });
+
+      describe('when channel is not editable', () => {
+        beforeEach(() => {
+          ChannelService.isEditable = () => false;
+        });
+
+        it('always filters out property componentParameter', () => {
+          const config = mockManageContentConfig(false, false, true);
+          expect(config.componentParameter).not.toBeDefined();
+        });
+
+        it('filters out property templateQuery when documentUuid is set', () => {
+          let config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBeDefined();
+
+          config = mockManageContentConfig(true, true);
+          expect(config.templateQuery).not.toBeDefined();
+        });
+
+        it('filters all properties when componentParameter is set but documentId is not', () => {
+          const config = mockManageContentConfig(false, true, true);
+          expect(config).toEqual({});
+        });
+
+        it('does not filter templateQuery when componentParameter and documentId are not set', () => {
+          const config = mockManageContentConfig(false, true);
+          expect(config.templateQuery).toBe(true);
+        });
+      });
+    });
+
+    function manageContentScenario(scenarioNumber, callback) {
+      loadIframeFixture(() => {
+        const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+        callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+      });
+    }
+
+    describe('Dial button scenario\'s for unlocked containers', () => {
+      it('Scenario 1', (done) => {
+        manageContentScenario(1, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+
+      it('Scenario 2', (done) => {
+        manageContentScenario(2, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+
+      it('Scenario 3', (done) => {
+        manageContentScenario(3, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 4', (done) => {
+        manageContentScenario(4, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 5', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+
+      it('Scenario 6', (done) => {
+        manageContentScenario(6, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children()[1].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+    });
+
+    describe('when channel is not editable', () => {
+      beforeEach(() => {
+        ChannelService.isEditable = () => false;
+      });
+
+      it('Scenario 5 does not show any button(s)', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.length).toBe(0);
+          expect(optionButtons.length).toBe(0);
+          expect(optionButtons.children().length).toBe(0);
+          done();
+        });
+      });
+    });
+
+    describe('when container is locked', () => {
+      it('always shows an edit button even when locked', (done) => {
+        manageContentScenario(8, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-edit-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+          done();
+        });
+      });
+
+      it('shows everything when locked by current user', (done) => {
+        manageContentScenario(5, (mainButton, optionButtons) => {
+          expect(mainButton.hasClass('qa-add-content')).toBe(true);
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+
+          mainButton.trigger('mouseenter');
+          expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
+          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
+          done();
+        });
+      });
+    });
+
+    describe('when button is on a template of a component that is not a container item', () => {
+      it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
+        (done) => {
+          manageContentScenario(11, (mainButton) => {
+            expect(mainButton.hasClass('qa-add-content')).toBe(true);
+            done();
+          });
+        });
+    });
+
+    describe('order and number of buttons', () => {
+      it('Scenario 1', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: false,
+          componentParameter: false,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+      });
+
+      it('Scenario 2', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: true,
+          componentParameter: false,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('CREATE_DOCUMENT');
+      });
+
+      it('Scenario 3', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: true,
+          componentParameter: false,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
+      });
+
+      it('Scenario 4', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: false,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
+      });
+
+      it('Scenario 5', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: true,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(2);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
+      });
+
+      it('Scenario 6', () => {
+        const config = {
+          documentUuid: true,
+          templateQuery: true,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(3);
+        expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
+        expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
+        expect(buttons[2].tooltip).toBe('CREATE_DOCUMENT');
+      });
+
+      it('Scenario 7', () => {
+        const config = {
+          documentUuid: false,
+          templateQuery: false,
+          componentParameter: true,
+        };
+
+        const buttons = OverlayService._getButtons(config);
+        expect(buttons.length).toBe(1);
+        expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
+      });
     });
   });
 });

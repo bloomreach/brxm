@@ -99,21 +99,12 @@ class ComponentCatalogService {
     this.PageStructureService.addComponentToContainer(component, container).then((newComponent) => {
       if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
         this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
-        this.HippoIframeService.reload().then(() => {
-          this.PageStructureService.showComponentProperties(newComponent);
-        });
-      } else {
-        this.PageStructureService.showComponentProperties(newComponent);
+        this.HippoIframeService.reload();
       }
     }).catch(() => {
       this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
         component: component.label,
       });
-    }).finally(() => {
-      if (this.OverlayService.toggleOverlayByComponent) {
-        this.OverlayService.toggleOverlayByComponent = false;
-        this.OverlayService.showComponentsOverlay(false);
-      }
     });
   }
 }
