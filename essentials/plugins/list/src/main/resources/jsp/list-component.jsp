@@ -14,7 +14,7 @@
       </c:choose>
 
       <article class="has-edit-button">
-        <hst:cmseditlink hippobean="${item}"/>
+        <hst:manageContent document="${item}"/>
         <hst:link var="link" hippobean="${item}"/>
         <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
         <c:if test="${hst:isReadable(item, 'introduction')}">
@@ -22,6 +22,9 @@
         </c:if>
       </article>
     </c:forEach>
+    <div class="has-new-content-button">
+      <hst:manageContent templateQuery="new-document"/>
+    </div>
     <c:if test="${requestScope.cparam.showPagination}">
       <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
     </c:if>

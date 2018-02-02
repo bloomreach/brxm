@@ -13,8 +13,7 @@
         <#else>
           <#assign linkName=item.localizedName/>
         </#if>
-        <article>
-          <@hst.cmseditlink hippobean=item/>
+        <article class="has-edit-button">
           <@hst.link var="link" hippobean=item />
           <h3><a href="${link}">${linkName?html}</a></h3>
         </article>

@@ -5,9 +5,9 @@
 <#if pageable?? && pageable.items?has_content>
   <div>
     <#list pageable.items as item>
-      <@hst.link var="link" hippobean=item />
+        <@hst.link var="link" hippobean=item />
       <article class="has-edit-button">
-        <@hst.cmseditlink hippobean=item/>
+        <@hst.manageContent document=item />
         <h3><a href="${link}">${item.title?html}</a></h3>
         <#if item.date?? && item.date.time??>
           <p><@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/></p>
@@ -19,14 +19,20 @@
         <p>${item.introduction?html}</p>
       </article>
     </#list>
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+    </div>
     <#if cparam.showPagination>
-      <#include "../include/pagination.ftl">
+        <#include "../include/pagination.ftl">
     </#if>
   </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+    </div>
   </div>
 </#if>
 

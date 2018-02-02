@@ -4,17 +4,17 @@
 <#if pageable?? && pageable.items?has_content>
   <div>
     <#if cparam.showPagination>
-      <#include "../../include/pagination.ftl">
+        <#include "../../include/pagination.ftl">
     </#if>
     <#list pageable.items as item>
-      <#if item.title??>
-        <#assign linkName=item.title>
-      <#else>
-        <#assign linkName=item.localizedName>
-      </#if>
+        <#if item.title??>
+            <#assign linkName=item.title>
+        <#else>
+            <#assign linkName=item.localizedName>
+        </#if>
 
       <article class="has-edit-button">
-        <@hst.cmseditlink hippobean=item/>
+        <@hst.manageContent document=item />
         <@hst.link var="link" hippobean=item />
         <h3><a href="${link}">${linkName?html}</a></h3>
         <#if item.introduction??>
@@ -22,6 +22,9 @@
         </#if>
       </article>
     </#list>
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-document"/>
+    </div>
   </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>

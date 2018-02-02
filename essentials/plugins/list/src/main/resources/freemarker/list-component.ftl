@@ -11,7 +11,7 @@
       </#if>
 
       <article class="has-edit-button">
-        <@hst.cmseditlink hippobean=item/>
+        <@hst.manageContent document=item />
         <@hst.link var="link" hippobean=item />
         <h3><a href="${link}">${linkName?html}</a></h3>
         <#if item.introduction??>
@@ -19,6 +19,9 @@
         </#if>
       </article>
     </#list>
+    <div class="has-new-content-button">
+      <@hst.manageContent templateQuery="new-document"/>
+    </div>
     <#if cparam.showPagination>
       <#include "../include/pagination.ftl">
     </#if>
