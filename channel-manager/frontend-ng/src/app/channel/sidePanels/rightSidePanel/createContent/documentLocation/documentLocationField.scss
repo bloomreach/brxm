@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import 'variables';
+
 document-location-field {
   md-input-container {
     width: 100%;
+
+    md-icon {
+      left: auto;
+      position: absolute;
+      right: 13px;
+      top: 4px;
+    }
   }
 
-  .create-content-field-clickable input {
+  .input-overlay {
+    color: $text-disabled;
     cursor: pointer;
+    line-height: 26px;
+    outline: 0;
+    padding: 2px 2px 1px;
+    position: absolute;
+    width: 100%;
+
+    > div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      // leave space for the icon
+      width: calc(100% - 40px);
+    }
+
+    .highlight {
+      color: $text-dark;
+    }
+
+    // hide the text of the input
+    &+.md-input {
+      &[disabled] {
+        color: transparent;
+      }
+    }
   }
 }

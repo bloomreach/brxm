@@ -46,7 +46,6 @@ describe('CreateContentService', () => {
       _$rootScope_,
       _$state_,
       _$translate_,
-      _$window_,
       _CreateContentService_,
       _EditContentService_,
       _FeedbackService_,
@@ -85,9 +84,10 @@ describe('CreateContentService', () => {
   it('starts creating a new document for a component', () => {
     spyOn(Step1Service, 'open').and.returnValue($q.resolve());
 
-    const component = jasmine.createSpyObj('Component', ['getId', 'getLabel']);
+    const component = jasmine.createSpyObj('Component', ['getId', 'getLabel', 'getRenderVariant']);
     component.getId.and.returnValue('1234');
     component.getLabel.and.returnValue('Banner');
+    component.getRenderVariant.and.returnValue('hippo-default');
     const config = {
       templateQuery: 'tpl-query',
       containerItem: component,
@@ -104,6 +104,7 @@ describe('CreateContentService', () => {
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',
       label: 'Banner',
+      variant: 'hippo-default',
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
     });
@@ -115,6 +116,7 @@ describe('CreateContentService', () => {
     CreateContentService.componentInfo = {
       id: '1234',
       label: 'Banner',
+      variant: 'hippo-default',
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
     };

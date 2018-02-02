@@ -20,7 +20,6 @@ describe('OverlayService', () => {
   let $iframe;
   let $q;
   let $rootScope;
-  let $window;
   let iframeWindow;
   let ChannelService;
   let CmsService;
@@ -42,7 +41,6 @@ describe('OverlayService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _$window_,
       _ChannelService_,
       _CmsService_,
       _CreateContentService_,
@@ -59,7 +57,6 @@ describe('OverlayService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $window = _$window_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
@@ -217,13 +214,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(10);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(11);
       done();
     });
   });
@@ -579,13 +576,13 @@ describe('OverlayService', () => {
       expectNoPropagatedClicks();
       pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
-        undefined, jasmine.any(Object), '');
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
       $rootScope.$digest();
 
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('container-vbox');
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('bbbb');
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'vBox container',
+        componentName: 'component B',
       });
 
       done();
@@ -604,14 +601,40 @@ describe('OverlayService', () => {
       expectNoPropagatedClicks();
       pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('container-vbox', 'manage-content-component-parameter',
-        undefined, jasmine.any(Object), '');
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
       $rootScope.$digest();
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'vBox container',
+        componentName: 'component B',
       });
       expect(HippoIframeService.reload).toHaveBeenCalled();
+
+      done();
+    });
+  });
+
+  it('can pick a path and update a specific component variant', (done) => {
+    ChannelService.isEditable = () => true;
+
+    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    spyOn(PageStructureService, 'renderComponent');
+    spyOn(FeedbackService, 'showNotification');
+
+    loadIframeFixture(() => {
+      const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
+      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-btn');
+      expectNoPropagatedClicks();
+      pickPathButton.click();
+
+      expect(HstComponentService.pickPath).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
+        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('component-with-experiment');
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+        componentName: 'Component with experiment',
+      });
 
       done();
     });
@@ -649,7 +672,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -662,7 +685,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(21);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
@@ -845,23 +868,12 @@ describe('OverlayService', () => {
 
     describe('when container is locked', () => {
       it('always shows an edit button even when locked', (done) => {
-        manageContentScenario(7, (mainButton, optionButtons) => {
+        manageContentScenario(8, (mainButton, optionButtons) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-          expect(optionButtons.children().length).toBe(0);
-
-          done();
-        });
-      });
-
-      it('does not show any button(s)', (done) => {
-        manageContentScenario(8, (mainButton, optionButtons) => {
-          expect(mainButton.length).toBe(0);
-          expect(optionButtons.length).toBe(0);
-          expect(optionButtons.children().length).toBe(0);
           done();
         });
       });
@@ -883,7 +895,7 @@ describe('OverlayService', () => {
     describe('when button is on a template of a component that is not a container item', () => {
       it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
         (done) => {
-          manageContentScenario(10, (mainButton) => {
+          manageContentScenario(11, (mainButton) => {
             expect(mainButton.hasClass('qa-add-content')).toBe(true);
             done();
           });

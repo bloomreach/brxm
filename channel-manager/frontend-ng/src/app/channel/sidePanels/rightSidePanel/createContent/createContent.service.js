@@ -19,6 +19,7 @@ class CreateContentService {
     $state,
     $transitions,
     $translate,
+    CmsService,
     ContentService,
     EditContentService,
     FeedbackService,
@@ -38,6 +39,7 @@ class CreateContentService {
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
     this.RightSidePanelService = RightSidePanelService;
+    this.CmsService = CmsService;
 
     $transitions.onBefore(
       { to: '**.create-content-step-1' },
@@ -54,6 +56,10 @@ class CreateContentService {
         return this._step2(params.document, params.url, params.locale, params.componentInfo);
       },
     );
+
+    CmsService.subscribe('kill-editor', (documentId) => {
+      this._stopStep2(documentId);
+    });
   }
 
   start(config) {
@@ -85,9 +91,15 @@ class CreateContentService {
   _step1(config) {
     const component = config.containerItem;
     if (component) {
+      if (config.componentParameter) {
+        this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
+      } else {
+        this.CmsService.reportUsageStatistic('CreateContentButton');
+      }
       this.componentInfo = {
         id: component.getId(),
         label: component.getLabel(),
+        variant: component.getRenderVariant(),
         parameterName: config.componentParameter,
         parameterBasePath: config.componentParameterBasePath,
       };
@@ -125,6 +137,13 @@ class CreateContentService {
 
   generateDocumentUrlByName(name, locale) {
     return this.ContentService._send('POST', ['slugs'], name, true, { locale });
+  }
+
+  _stopStep2(documentId) {
+    if (this.$state.$current.name === 'hippo-cm.channel.create-content-step-2'
+      && this.Step2Service.killEditor(documentId)) {
+      this.stop();
+    }
   }
 }
 

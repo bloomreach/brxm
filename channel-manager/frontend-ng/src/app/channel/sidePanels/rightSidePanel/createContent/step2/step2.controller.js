@@ -23,6 +23,7 @@ class Step2Controller {
     FeedbackService,
     RightSidePanelService,
     Step2Service,
+    CmsService,
   ) {
     'ngInject';
 
@@ -33,6 +34,7 @@ class Step2Controller {
     this.FeedbackService = FeedbackService;
     this.RightSidePanelService = RightSidePanelService;
     this.Step2Service = Step2Service;
+    this.CmsService = CmsService;
   }
 
   $onInit() {
@@ -52,6 +54,7 @@ class Step2Controller {
       })
       .finally(() => {
         this.RightSidePanelService.stopLoading();
+        this.CmsService.reportUsageStatistic('CreateContent2Done');
       });
   }
 
@@ -68,12 +71,10 @@ class Step2Controller {
       return true;
     }
     return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
-      .then(() => this.ContentService.deleteDocument(this.ContentEditor.getDocumentId())
-        .catch((error) => {
-          const errorKey = this.$translate.instant(`ERROR_${error.data.reason}`);
-          this.FeedbackService.showError(errorKey, error.data.params);
-        }),
-      );
+      .then(() => {
+        this.ContentEditor.deleteDocument();
+        this.CmsService.reportUsageStatistic('CreateContent2Cancel');
+      });
   }
 
   openEditNameUrlDialog() {

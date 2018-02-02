@@ -33,11 +33,16 @@ class EditContentService {
     );
 
     CmsService.subscribe('kill-editor', (documentId) => {
-      if (this.ContentEditor.getDocumentId() === documentId) {
-        this.ContentEditor.kill();
-        this.stopEditing();
-      }
+      this._stopEditingDocument(documentId);
     });
+  }
+
+  _stopEditingDocument(documentId) {
+    if (this.$state.$current.name === 'hippo-cm.channel.edit-content'
+      && this.ContentEditor.getDocumentId() === documentId) {
+      this.ContentEditor.kill();
+      this.stopEditing();
+    }
   }
 
   startEditing(documentId) {
@@ -72,6 +77,7 @@ class EditContentService {
 
   _onCloseChannel() {
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
+      .then(() => this.ContentEditor.deleteDraft())
       .then(() => this.ContentEditor.close());
   }
 }

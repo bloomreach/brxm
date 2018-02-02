@@ -324,42 +324,6 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
-  _getButtons(config) {
-    const buttons = [];
-
-    if (config.documentUuid) {
-      const editContentButton = {
-        mainIcon: contentLinkSvg,
-        dialIcon: '', // edit button should never be a dial button
-        callback: () => this._editContent(config.documentUuid),
-        tooltip: this.$translate.instant('EDIT_CONTENT'),
-      };
-      buttons.push(editContentButton);
-    }
-
-    if (config.componentParameter) {
-      const selectDocumentButton = {
-        mainIcon: searchWhiteSvg,
-        dialIcon: searchSvg,
-        callback: () => this._pickPath(config),
-        tooltip: this.$translate.instant('SELECT_DOCUMENT'),
-      };
-      buttons.push(selectDocumentButton);
-    }
-
-    if (config.templateQuery) {
-      const createContentButton = {
-        mainIcon: plusWhiteSvg,
-        dialIcon: plusSvg,
-        callback: () => this._createContent(config),
-        tooltip: this.$translate.instant('CREATE_DOCUMENT'),
-      };
-      buttons.push(createContentButton);
-    }
-
-    return buttons;
-  }
-
   _initManageContentConfig(structureElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
@@ -397,11 +361,7 @@ class OverlayService {
       && config.containerItem
       && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
-      if (!documentUuid) {
-        return {};
-      }
-      delete config.componentParameter;
-      delete config.templateQuery;
+      config.isLockedByOtherUser = true;
     }
 
     if (config.componentParameter && !config.containerItem) {
@@ -410,6 +370,44 @@ class OverlayService {
     }
 
     return config;
+  }
+
+  _getButtons(config) {
+    const buttons = [];
+
+    if (config.documentUuid) {
+      const editContentButton = {
+        mainIcon: contentLinkSvg,
+        dialIcon: '', // edit button should never be a dial button
+        callback: () => this._editContent(config.documentUuid),
+        tooltip: this.$translate.instant('EDIT_CONTENT'),
+      };
+      buttons.push(editContentButton);
+    }
+
+    if (config.componentParameter) {
+      const selectDocumentButton = {
+        mainIcon: searchWhiteSvg,
+        dialIcon: searchSvg,
+        callback: () => this._pickPath(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(selectDocumentButton);
+    }
+
+    if (config.templateQuery) {
+      const createContentButton = {
+        mainIcon: plusWhiteSvg,
+        dialIcon: plusSvg,
+        callback: () => this._createContent(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(createContentButton);
+    }
+
+    return buttons;
   }
 
   _initManageContentLink(structureElement, overlayElement) {
@@ -426,11 +424,13 @@ class OverlayService {
       return;
     }
 
+    const buttonElement = $(`<button title="${buttons[0].tooltip}"
+                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`);
+
     overlayElement
       .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
       .addClass('is-left') // mouse never entered yet
-      .append(`<button title="${buttons[0].tooltip}"
-                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`)
+      .append(buttonElement)
       .append('<div class="hippo-fab-dial-options"></div>');
 
     const fabBtn = overlayElement.find('.hippo-fab-btn');
@@ -446,7 +446,11 @@ class OverlayService {
       fabBtn.addClass('qa-manage-parameters');
     }
 
-    this._addClickHandler(fabBtn, () => buttons[0].callback());
+    if (buttons[0].isDisabled) {
+      fabBtn.addClass('disabled');
+    } else {
+      this._addClickHandler(fabBtn, () => buttons[0].callback());
+    }
 
     const adjustOptionsPosition = () => {
       const boxElement = structureElement.prepareBoxElement();
@@ -497,9 +501,16 @@ class OverlayService {
   }
 
   _createButtonTemplate(button, index) {
-    return $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
-      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`)
-      .on('click', button.callback);
+    const optionButton = $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
+      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`);
+
+    if (button.isDisabled) {
+      optionButton.addClass('disabled');
+    } else {
+      optionButton.on('click', button.callback);
+    }
+
+    return optionButton;
   }
 
   _getElementPositionObject(boxElement) {
@@ -566,13 +577,16 @@ class OverlayService {
 
   _pickPath(config) {
     const component = config.containerItem;
+    const componentId = component.getId();
+    const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
     const parameterName = config.componentParameter;
     const parameterValue = config.componentValue;
     const parameterBasePath = config.componentParameterBasePath;
     const pickerConfig = config.componentPickerConfig;
 
-    this.HstComponentService.pickPath(component.getId(), parameterName, parameterValue, pickerConfig, parameterBasePath)
+    this.CmsService.reportUsageStatistic('PickContentButton');
+    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });

@@ -28,8 +28,8 @@ const testDocument = {
 describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
+  let CmsService;
   let ContentEditor;
-  let ContentService;
   let CreateContentService;
   let FeedbackService;
   let Step2Service;
@@ -43,16 +43,16 @@ describe('Create content step 2 controller', () => {
       $controller,
       _$rootScope_,
       _$q_,
+      _CmsService_,
       _ContentEditor_,
-      _ContentService_,
       _CreateContentService_,
       _FeedbackService_,
       _Step2Service_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
+      CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
-      ContentService = _ContentService_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
       Step2Service = _Step2Service_;
@@ -60,6 +60,7 @@ describe('Create content step 2 controller', () => {
       $ctrl = $controller('step2Ctrl');
     });
 
+    spyOn(CmsService, 'reportUsageStatistic');
     spyOn(ContentEditor, 'getDocument').and.returnValue(testDocument);
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocument.id);
     spyOn(FeedbackService, 'showError');
@@ -85,6 +86,7 @@ describe('Create content step 2 controller', () => {
     expect($ctrl.documentIsSaved).toBe(true);
     expect(FeedbackService.showNotification).toHaveBeenCalled();
     expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
   });
 
   it('stops create content when close is called', () => {
@@ -108,7 +110,7 @@ describe('Create content step 2 controller', () => {
 
     beforeEach(() => {
       spyOn(ContentEditor, 'confirmDiscardChanges').and.callThrough();
-      deleteDocumentSpy = spyOn(ContentService, 'deleteDocument').and.returnValue($q.resolve());
+      deleteDocumentSpy = spyOn(ContentEditor, 'deleteDocument').and.returnValue($q.resolve());
     });
 
     it('allows ui-exit without dialog if document is already saved', () => {
@@ -138,25 +140,9 @@ describe('Create content step 2 controller', () => {
       ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
-        expect(deleteDocumentSpy).toHaveBeenCalledWith('testId');
+        expect(deleteDocumentSpy).toHaveBeenCalled();
         done();
       }, () => fail('Dialog should not reject'));
-      $rootScope.$digest();
-    });
-
-    it('shows errors triggered by calling delete-document and exits the UI', (done) => {
-      ContentService.deleteDocument.and.returnValue($q.reject({
-        data: {
-          reason: 'error_reason',
-          params: 'error_params',
-        },
-      }));
-
-      $ctrl.uiCanExit()
-        .then(() => {
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error_reason', 'error_params');
-          done();
-        }, () => fail('Dialog should not reject'));
       $rootScope.$digest();
     });
   });
