@@ -718,7 +718,7 @@
     <body-content>JSP</body-content>
     <attribute>
       <description>Bean for existing document.</description>
-      <name>hippoBean</name>
+      <name>hippobean</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>

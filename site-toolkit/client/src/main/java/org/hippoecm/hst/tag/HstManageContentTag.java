@@ -299,7 +299,7 @@ public class HstManageContentTag extends TagSupport {
         this.defaultPath = defaultPath;
     }
 
-    public void setHippoBean(final HippoBean hippoBean) {
+    public void setHippobean(final HippoBean hippoBean) {
         this.hippoBean = hippoBean;
     }
 

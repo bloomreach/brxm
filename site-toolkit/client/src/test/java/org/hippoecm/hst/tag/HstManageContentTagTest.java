@@ -145,7 +145,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentFromHandle() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -163,7 +163,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentFromVariantBelowHandle() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -182,7 +182,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentWithoutCanonicalNodeOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final HippoNode handle = createMock(HippoNode.class);
         expect(document.getNode()).andReturn(handle);
@@ -198,7 +198,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentWithoutHandleNodeOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         expect(document.getNode()).andReturn(root);
@@ -212,7 +212,7 @@ public class HstManageContentTagTest {
     @Test
     public void exceptionWhileReadingUuidOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final HippoNode brokenNode = createMock(HippoNode.class);
         expect(document.getNode()).andReturn(brokenNode).anyTimes();
@@ -311,7 +311,7 @@ public class HstManageContentTagTest {
 
         tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -343,7 +343,7 @@ public class HstManageContentTagTest {
 
         tag.setParameterName("relPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -372,7 +372,7 @@ public class HstManageContentTagTest {
 
         tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -399,7 +399,7 @@ public class HstManageContentTagTest {
 
         tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -445,7 +445,7 @@ public class HstManageContentTagTest {
         tag.setParameterName("newsDocument");
 
         final HippoBean document = createMock(HippoBean.class);
-        tag.setHippoBean(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
