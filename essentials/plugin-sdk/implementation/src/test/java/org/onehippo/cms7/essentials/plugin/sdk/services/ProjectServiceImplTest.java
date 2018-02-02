@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
@@ -66,6 +67,12 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/foo/bar");
         System.setProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY, "test-essentials");
         settingsService.setSettings(projectSettings);
+    }
+
+    @After
+    public void tearDown() {
+        System.clearProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
+        System.clearProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY);
     }
 
     @Test
