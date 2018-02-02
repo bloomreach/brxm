@@ -62,9 +62,9 @@ public class HstManageContentTag extends TagSupport {
 
     private static final Logger log = LoggerFactory.getLogger(HstManageContentTag.class);
 
-    private String componentParameter;
+    private String parameterName;
     private String defaultPath;
-    private HippoBean document;
+    private HippoBean hippoBean;
     private String rootPath;
     private String templateQuery;
 
@@ -88,14 +88,14 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            if (templateQuery == null && document == null && componentParameter == null) {
-                log.debug("Skipping manage content tag because neither 'templateQuery', 'document' or 'componentParameter' attribute specified.");
+            if (templateQuery == null && hippoBean == null && parameterName == null) {
+                log.debug("Skipping manage content tag because neither 'templateQuery', 'hippoBean' or 'parameterName' attribute specified.");
                 return EVAL_PAGE;
             }
 
             String documentId = null;
-            if (document != null) {
-                final HippoNode documentNode = (HippoNode) document.getNode();
+            if (hippoBean != null) {
+                final HippoNode documentNode = (HippoNode) hippoBean.getNode();
                 try {
                     final Node editNode = documentNode.getCanonicalNode();
                     if (editNode == null) {
@@ -113,8 +113,8 @@ public class HstManageContentTag extends TagSupport {
                     log.debug("The node path for the manage content tag is '{}'", handleNode.getPath());
                     documentId = handleNode.getIdentifier();
                 } catch (RepositoryException e) {
-                    log.warn("Error while retrieving the document handle of '{}', skipping manage content tag",
-                            JcrUtils.getNodePathQuietly(document.getNode()), e);
+                    log.warn("Error while retrieving the hippoBean handle of '{}', skipping manage content tag",
+                            JcrUtils.getNodePathQuietly(hippoBean.getNode()), e);
                     return EVAL_PAGE;
                 }
             }
@@ -127,13 +127,13 @@ public class HstManageContentTag extends TagSupport {
                                 + " attribute of the manage content tag points to the absolute path '{}'."
                                 + " Either make the root path relative to the channel content root,"
                                 + " or make the component parameter store an absolute path.",
-                        componentParameter, JcrPath.class.getSimpleName(), rootPath);
+                        parameterName, JcrPath.class.getSimpleName(), rootPath);
                 return EVAL_PAGE;
             }
 
             try {
                 checkRootPath(requestContext);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error("Exception while checking rootPath parameter.", e);
                 return EVAL_PAGE;
             }
@@ -178,14 +178,14 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private String getComponentValue(final HstRequestContext requestContext, final boolean isRelativePathParameter) {
-        if (componentParameter == null) {
+        if (parameterName == null) {
             return null;
         }
 
         final ServletRequest request = pageContext.getRequest();
         final HstComponentWindow window = (HstComponentWindow) request.getAttribute(HST_COMPONENT_WINDOW);
 
-        final String prefixedParameterName = getPrefixedParameterName(window, componentParameter);
+        final String prefixedParameterName = getPrefixedParameterName(window, parameterName);
         final String componentValue = window.getParameter(prefixedParameterName);
 
         if (componentValue != null && isRelativePathParameter) {
@@ -203,11 +203,11 @@ public class HstManageContentTag extends TagSupport {
             return parameterName;
         }
 
-        return ConfigurationUtils.createPrefixedParameterName(parameterPrefix.toString(), componentParameter);
+        return ConfigurationUtils.createPrefixedParameterName(parameterPrefix.toString(), this.parameterName);
     }
 
     private JcrPath getJcrPath() {
-        if (componentParameter == null) {
+        if (parameterName == null) {
             return null;
         }
 
@@ -215,15 +215,15 @@ public class HstManageContentTag extends TagSupport {
         final HstComponent component = window.getComponent();
         final ComponentConfiguration componentConfig = component.getComponentConfiguration();
         final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
-        return ParameterUtils.getParameterAnnotation(paramsInfo, componentParameter, JcrPath.class);
+        return ParameterUtils.getParameterAnnotation(paramsInfo, parameterName, JcrPath.class);
     }
 
     protected void cleanup() {
         templateQuery = null;
         rootPath = null;
         defaultPath = null;
-        componentParameter = null;
-        document = null;
+        parameterName = null;
+        hippoBean = null;
     }
 
     private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
@@ -242,9 +242,9 @@ public class HstManageContentTag extends TagSupport {
         writeToMap(result, "templateQuery", templateQuery);
         writeToMap(result, "rootPath", rootPath);
         writeToMap(result, "defaultPath", defaultPath);
-        writeToMap(result, "componentParameter", componentParameter);
+        writeToMap(result, "parameterName", parameterName);
 
-        if (componentParameter != null) {
+        if (parameterName != null) {
             writeToMap(result, "componentParameterIsRelativePath", Boolean.toString(isRelativePathParameter));
             writeToMap(result, "componentValue", componentValue);
         }
@@ -272,12 +272,12 @@ public class HstManageContentTag extends TagSupport {
      * when a currentNode is of type hippo:handle, we return this node, else we check the parent, until we are at the jcr root node.
      * When we hit the jcr root node, we return null;
      */
-    private Node getHandleNodeIfIsAncestor(final Node currentNode) throws RepositoryException {
+    private static Node getHandleNodeIfIsAncestor(final Node currentNode) throws RepositoryException {
         final Node rootNode = currentNode.getSession().getRootNode();
         return getHandleNodeIfIsAncestor(currentNode, rootNode);
     }
 
-    private Node getHandleNodeIfIsAncestor(final Node currentNode, final Node rootNode) throws RepositoryException {
+    private static Node getHandleNodeIfIsAncestor(final Node currentNode, final Node rootNode) throws RepositoryException {
         if (currentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
             return currentNode;
         }
@@ -287,20 +287,20 @@ public class HstManageContentTag extends TagSupport {
         return getHandleNodeIfIsAncestor(currentNode.getParent(), rootNode);
     }
 
-    public void setComponentParameter(final String componentParameter) {
-        if (StringUtils.isBlank(componentParameter)) {
-            log.warn("The componentParameter attribute of a manageContent tag is set to '{}'."
-                    + " Expected the name of an HST component parameter instead.", componentParameter);
+    public void setParameterName(final String parameterName) {
+        if (StringUtils.isBlank(parameterName)) {
+            log.warn("The parameterName attribute of a manageContent tag is set to '{}'."
+                    + " Expected the name of an HST component parameter instead.", parameterName);
         }
-        this.componentParameter = componentParameter;
+        this.parameterName = parameterName;
     }
 
     public void setDefaultPath(final String defaultPath) {
         this.defaultPath = defaultPath;
     }
 
-    public void setDocument(final HippoBean document) {
-        this.document = document;
+    public void setHippobean(final HippoBean hippoBean) {
+        this.hippoBean = hippoBean;
     }
 
     public void setRootPath(final String rootPath) {

@@ -145,7 +145,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentFromHandle() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -163,7 +163,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentFromVariantBelowHandle() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -182,7 +182,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentWithoutCanonicalNodeOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final HippoNode handle = createMock(HippoNode.class);
         expect(document.getNode()).andReturn(handle);
@@ -198,7 +198,7 @@ public class HstManageContentTagTest {
     @Test
     public void documentWithoutHandleNodeOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         expect(document.getNode()).andReturn(root);
@@ -212,7 +212,7 @@ public class HstManageContentTagTest {
     @Test
     public void exceptionWhileReadingUuidOutputsNothing() throws Exception {
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final HippoNode brokenNode = createMock(HippoNode.class);
         expect(document.getNode()).andReturn(brokenNode).anyTimes();
@@ -228,14 +228,14 @@ public class HstManageContentTagTest {
     @Test
     public void componentParameterWithAbsoluteJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
-        tag.setComponentParameter("absPath");
+        tag.setParameterName("absPath");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentParameter\":\"absPath\","
+                + "\"parameterName\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
                 + "\"componentPickerRemembersLastVisited\":\"true\""
@@ -245,14 +245,14 @@ public class HstManageContentTagTest {
     @Test
     public void componentParameterWithRelativeJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
-        tag.setComponentParameter("relPath");
+        tag.setParameterName("relPath");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentParameter\":\"relPath\","
+                + "\"parameterName\":\"relPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
                 + "\"componentPickerRemembersLastVisited\":\"true\""
@@ -262,14 +262,14 @@ public class HstManageContentTagTest {
     @Test
     public void componentParameterWithoutJcrPathIsAbsolute() throws Exception {
         tag.setTemplateQuery("new-document");
-        tag.setComponentParameter("string");
+        tag.setParameterName("string");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
-                + "\"componentParameter\":\"string\","
+                + "\"parameterName\":\"string\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
     }
@@ -277,7 +277,7 @@ public class HstManageContentTagTest {
     @Test
     public void componentParameterWithAbsoluteJcrPathAndRelativeRootPath() throws Exception {
         tag.setTemplateQuery("new-document");
-        tag.setComponentParameter("relPath");
+        tag.setParameterName("relPath");
         tag.setRootPath("/some/absolute/path");
 
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
@@ -294,13 +294,13 @@ public class HstManageContentTagTest {
 
     @Test
     public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
-        tag.setComponentParameter("test");
+        tag.setParameterName("test");
 
         tag.doEndTag();
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"componentParameter\":\"test\","
+                + "\"parameterName\":\"test\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
     }
@@ -309,9 +309,9 @@ public class HstManageContentTagTest {
     public void componentValueAbsolutePath() throws Exception {
         window.setParameter("absPath", "/absolute/path");
 
-        tag.setComponentParameter("absPath");
+        tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -323,7 +323,7 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentParameter\":\"absPath\","
+                + "\"parameterName\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentValue\":\"/absolute/path\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -341,9 +341,9 @@ public class HstManageContentTagTest {
         hstRequestContext.setResolvedMount(resolvedMount);
         window.setParameter("relPath", "relative/path");
 
-        tag.setComponentParameter("relPath");
+        tag.setParameterName("relPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -356,7 +356,7 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentParameter\":\"relPath\","
+                + "\"parameterName\":\"relPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentValue\":\"/mount/path/relative/path\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -370,9 +370,9 @@ public class HstManageContentTagTest {
         window.setParameter(prefixedParameterName, "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "prefix");
 
-        tag.setComponentParameter("absPath");
+        tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -384,7 +384,7 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentParameter\":\"absPath\","
+                + "\"parameterName\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentValue\":\"/absolute/path\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -397,9 +397,9 @@ public class HstManageContentTagTest {
         window.setParameter("absPath", "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "");
 
-        tag.setComponentParameter("absPath");
+        tag.setParameterName("absPath");
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -411,7 +411,7 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"componentParameter\":\"absPath\","
+                + "\"parameterName\":\"absPath\","
                 + "\"componentParameterIsRelativePath\":\"false\","
                 + "\"componentValue\":\"/absolute/path\","
                 + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
@@ -421,13 +421,13 @@ public class HstManageContentTagTest {
 
     @Test
     public void componentPickerConfiguration() throws Exception {
-        tag.setComponentParameter("pickerPath");
+        tag.setParameterName("pickerPath");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"componentParameter\":\"pickerPath\","
+                + "\"parameterName\":\"pickerPath\","
                 + "\"componentParameterIsRelativePath\":\"true\","
                 + "\"componentPickerConfiguration\":\"picker-config\","
                 + "\"componentPickerInitialPath\":\"initial-path\","
@@ -442,10 +442,10 @@ public class HstManageContentTagTest {
         tag.setTemplateQuery("new-newsdocument");
         tag.setRootPath("news/amsterdam");
         tag.setDefaultPath("2018/09/23");
-        tag.setComponentParameter("newsDocument");
+        tag.setParameterName("newsDocument");
 
         final HippoBean document = createMock(HippoBean.class);
-        tag.setDocument(document);
+        tag.setHippobean(document);
 
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
@@ -469,7 +469,7 @@ public class HstManageContentTagTest {
                 + "\"templateQuery\":\"new-newsdocument\","
                 + "\"rootPath\":\"news/amsterdam\","
                 + "\"defaultPath\":\"2018/09/23\","
-                + "\"componentParameter\":\"newsDocument\","
+                + "\"parameterName\":\"newsDocument\","
                 + "\"componentParameterIsRelativePath\":\"false\""
                 + "} -->"));
     }
@@ -484,10 +484,10 @@ public class HstManageContentTagTest {
     @Test
     public void setComponentParameterToNull() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            tag.setComponentParameter(null);
+            tag.setParameterName(null);
             tag.doEndTag();
 
-            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to 'null'." +
+            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to 'null'." +
                     " Expected the name of an HST component parameter instead.");
         }
     }
@@ -495,10 +495,10 @@ public class HstManageContentTagTest {
     @Test
     public void setComponentParameterToEmpty() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            tag.setComponentParameter("");
+            tag.setParameterName("");
             tag.doEndTag();
 
-            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to ''." +
+            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to ''." +
                     " Expected the name of an HST component parameter instead.");
         }
     }
@@ -506,10 +506,10 @@ public class HstManageContentTagTest {
     @Test
     public void setComponentParameterToSpaces() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            tag.setComponentParameter("  ");
+            tag.setParameterName("  ");
             tag.doEndTag();
 
-            assertLogged(listener, "The componentParameter attribute of a manageContent tag is set to '  '." +
+            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to '  '." +
                     " Expected the name of an HST component parameter instead.");
         }
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -718,7 +718,7 @@
     <body-content>JSP</body-content>
     <attribute>
       <description>Bean for existing document.</description>
-      <name>document</name>
+      <name>hippobean</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
@@ -746,7 +746,7 @@
     </attribute>
     <attribute>
       <description>Name of the component parameter to set when changing the content.</description>
-      <name>componentParameter</name>
+      <name>parameterName</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
