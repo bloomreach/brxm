@@ -271,10 +271,7 @@ public final class SearchInputParsingUtils {
                     sb.append('\\');
                     sb.append(c);
                 } else if (c == '\'') {
-                    // the jackrabbit xpath builder breaks on \' (however it should be possible according spec)
-                    if (retainWordBoundaries) {
-                        sb.append(' ');
-                    } // else skip it to provide old behavior
+                    sb.append("''");
                 } else if (c == ' ') {
                     // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
                     allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;

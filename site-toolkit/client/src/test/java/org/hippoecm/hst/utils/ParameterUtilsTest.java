@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.Calendar;
 
 import javax.servlet.ServletContext;
@@ -32,6 +29,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -41,6 +39,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ParameterUtilsTest {
 
@@ -137,6 +140,54 @@ public class ParameterUtilsTest {
         assertNull("Empty date parameter should return null", date);
     }
 
+    @Test
+    public void getParameterAnnotationOfAbsolutePath() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "absolutePath", JcrPath.class);
+        assertFalse(jcrPath.isRelative());
+    }
+
+    @Test
+    public void getParameterAnnotationOfRelativePath() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "relativePath", JcrPath.class);
+        assertTrue(jcrPath.isRelative());
+    }
+
+    @Test
+    public void getParameterAnnotationOfOtherParameter() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "queryOptions", JcrPath.class);
+        assertNull(jcrPath);
+    }
+
+    @Test
+    public void getParameterAnnotationOfUnknownParameter() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "noSuchParameter", JcrPath.class);
+        assertNull(jcrPath);
+    }
+
+    @Test
+    public void getParameterAnnotationOfNullParametersInfo() {
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(null, "parameter", JcrPath.class);
+        assertNull(jcrPath);
+    }
+
+    @Test
+    public void getParameterAnnotationOfNullParameter() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, null, JcrPath.class);
+        assertNull(jcrPath);
+    }
+
+    @Test
+    public void getParameterAnnotationOfNullAnnotationClass() {
+        final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
+        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "parameter", null);
+        assertNull(jcrPath);
+    }
+
     @ParametersInfo(type=SearchInfo.class)
     public class TestSearchComponent implements HstComponent {
 
@@ -169,7 +220,7 @@ public class ParameterUtilsTest {
 
     /**
      * NOTE: Calendar or Date return type requires ISO8601 date string.
-     * @see {@link ParameterUtils#ISO8601_DATETIME_PATTERNS}.
+     * @see ParameterUtils#ISO8601_DATETIME_PATTERNS
      */
     public interface SearchInfo {
 
@@ -182,6 +233,13 @@ public class ParameterUtilsTest {
         @Parameter(name = "dateWithoutDefaultValue")
         Calendar getDateWithoutDefaultValue();
 
+        @Parameter(name = "absolutePath")
+        @JcrPath
+        String getAbsolutePath();
+
+        @Parameter(name = "relativePath")
+        @JcrPath(isRelative = true)
+        String getRelativePath();
     }
 
 }

@@ -55,7 +55,11 @@ public class TestHstRequestUtils {
 
     private static final String CUSTOM_X_FORWARDED_FOR_HEADER_NAME = "X-ACM-Forwarded-For";
 
-    private static final String CUSTOM_X_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
+    private static final String CUSTOM_MULTIPLE_X_FORWARDED_FOR_HEADER_NAMES = "X-DEV-Forwarded-For, X-ACM-Forwarded-For";
+
+    private static final String CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
+
+    private static final String CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE = "200.200.200.202, 200.200.200.22";
 
     private ServletContext servletContext;
 
@@ -73,7 +77,7 @@ public class TestHstRequestUtils {
 
     @After
     public void tearDown() {
-        HstRequestUtils.httpForwardedForHeader = null;
+        HstRequestUtils.httpForwardedForHeaderNames = null;
     }
 
     @Test
@@ -299,13 +303,28 @@ public class TestHstRequestUtils {
         expect(servletContext.getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
-        HstRequestUtils.httpForwardedForHeader = null;
-        customHttpForwardedForHeaderValue = CUSTOM_X_FORWARDED_FOR_HEADER_VALUE;
+        HstRequestUtils.httpForwardedForHeaderNames = null;
+        customHttpForwardedForHeaderValue = CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE;
         HttpServletRequest request = setupMocks();
 
-        assertArrayEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", "),
+        assertArrayEquals(StringUtils.split(CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE, ", "),
                 HstRequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0], HstRequestUtils.getFarthestRemoteAddr(request));
+        assertEquals(StringUtils.split(CUSTOM_X_ACM_FORWARDED_FOR_HEADER_VALUE, ", ")[0], HstRequestUtils.getFarthestRemoteAddr(request));
+    }
+
+    @Test
+    public void testGetRemoteAddrsWithCustomMultipleForwardedForHeaders() {
+        servletContext = createNiceMock(ServletContext.class);
+        expect(servletContext.getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM))
+                .andReturn(CUSTOM_MULTIPLE_X_FORWARDED_FOR_HEADER_NAMES).anyTimes();
+        replay(servletContext);
+        HstRequestUtils.httpForwardedForHeaderNames = null;
+        customHttpForwardedForHeaderValue = CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE;
+        HttpServletRequest request = setupMocks();
+
+        assertArrayEquals(StringUtils.split(CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE, ", "),
+                HstRequestUtils.getRemoteAddrs(request));
+        assertEquals(StringUtils.split(CUSTOM_X_DEV_FORWARDED_FOR_HEADER_VALUE, ", ")[0], HstRequestUtils.getFarthestRemoteAddr(request));
     }
 
     @Test
@@ -315,7 +334,7 @@ public class TestHstRequestUtils {
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
         // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.
-        HstRequestUtils.httpForwardedForHeader = null;
+        HstRequestUtils.httpForwardedForHeaderNames = null;
         customHttpForwardedForHeaderValue = "";
         HttpServletRequest request = setupMocks();
         assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, HstRequestUtils.getRemoteAddrs(request));

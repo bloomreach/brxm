@@ -670,13 +670,13 @@
   </tag>
 
   <tag>
-    <description>This tag can be used to create a cms edit url OR a HTML comment snippet that contains information abuot
+    <description>This tag can be used to create a cms edit url OR a HTML comment snippet that contains information about
       the edit link in the cms. Only in preview mode, the tag can output something. In live, it will be ignored.
       Furthermore, two different behaviours are distinguished depending on where a 'var' attribute is used or not: MODE
       1: When there is an attribute 'var', then in a PREVIEW mount, the value of the cms url will be stored in this var.
       It can be used by developers to create a cms link in a website. MODE 2: When there is *NOT* an attribute 'var'
       used, then only when in PREVIEW and CMS SSO CONTEXT (template composer) an HTML COMMENT will be written directly
-      to the output containing information how to open the document in the cms. Also a HTML comment will be direcly
+      to the output containing information how to open the document in the cms. Also a HTML comment will be directly
       written. This mode is useful for a surfandedit link that is to be used in the cms template composer.
     </description>
     <name>cmseditlink</name>
@@ -705,6 +705,50 @@
       <name>scope</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to create an HTML comment snippet that contains information about
+      the manage content link in the cms. Only in preview mode, the tag can output something. In live, it will be ignored.
+    </description>
+    <name>manageContent</name>
+    <tag-class>org.hippoecm.hst.tag.HstManageContentTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>Bean for existing document.</description>
+      <name>document</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+    </attribute>
+    <attribute>
+      <description>Template query to use for creating new documents.</description>
+      <name>templateQuery</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Path to the root folder of selectable document locations. Can be a relative path to the channel's root folder or an absolute path in the repository.</description>
+      <name>rootPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Initial location of a new document, relative to the rootPath. Can still be changed by the user.</description>
+      <name>defaultPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Name of the component parameter to set when changing the content.</description>
+      <name>componentParameter</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
   </tag>
