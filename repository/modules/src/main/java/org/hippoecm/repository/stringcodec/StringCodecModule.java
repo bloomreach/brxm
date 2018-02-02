@@ -33,12 +33,12 @@ public class StringCodecModule extends AbstractReconfigurableDaemonModule {
     }
 
     @Override
-    protected void doConfigure(final Node node) throws RepositoryException {
+    protected void doConfigure(final Node node) {
         config.reconfigure(node);
     }
 
     @Override
-    protected void doInitialize(final Session session) throws RepositoryException {
+    protected void doInitialize(final Session session) {
         service = new StringCodecServiceImpl(config);
         HippoServiceRegistry.registerService(service, StringCodecService.class);
     }

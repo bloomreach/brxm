@@ -48,7 +48,7 @@ public class StringCodecModuleConfigTest {
     }
 
     @Test
-    public void emptyConfigHasDefaultCodec() throws RepositoryException {
+    public void emptyConfigHasDefaultCodec() {
         final StringCodecModuleConfig config = new StringCodecModuleConfig();
         final MockNode emptyNode = MockNode.root();
 

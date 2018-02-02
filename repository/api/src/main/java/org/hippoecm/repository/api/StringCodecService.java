@@ -54,7 +54,7 @@ public interface StringCodecService {
      * Returns the string codec for a certain encoding that is best suited for the given locale.
      *
      * @param encoding the type of encoding
-     * @param locale the locale the string codec will be used for. Can be null.
+     * @param locale   the locale the string codec will be used for. Can be null.
      *
      * @return the best matching string codec, or the default string codec if no specific one could be found.
      */
