@@ -66,7 +66,9 @@ public class AbstractFullRequestCycleTest {
     @Before
     public void setUp() throws Exception {
 
-        componentManager = new SpringComponentManager(new PropertiesConfiguration());
+        final PropertiesConfiguration configuration = new PropertiesConfiguration();
+        configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
+        componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
 
         servletContext.setContextPath("/site");
