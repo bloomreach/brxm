@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+        .controller('blogPluginCtrl', function ($scope, $http, essentialsRestService, essentialsPluginService, essentialsProjectService) {
+            $scope.pluginId = "blogPlugin";
             $scope.setupImport = false;
             $scope.importConfig = {
                 'active': true,
@@ -29,12 +30,9 @@
                     {'value': '', 'author': ''}
                 ]
             };
-            $scope.pluginId = "blogPlugin";
-            $scope.sampleData = true;
-            $scope.templateName = 'jsp';
 
             $scope.configure = function () {
-                $http.post($rootScope.REST.dynamic + 'blog/', $scope.importConfig); // user feedback is handled globally
+                $http.post(essentialsRestService.baseUrl + '/blog', $scope.importConfig); // user feedback is handled globally
             };
 
             $scope.addUrl = function () {
@@ -52,23 +50,14 @@
             };
             $scope.init = function () {
                 // retrieve plugin data
-                $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (p) {
+                essentialsPluginService.getPluginById($scope.pluginId).success(function (p) {
                     $scope.plugin = p;
                 });
 
-                $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
-                    var coordinates = Essentials.keyValueAsDict(data.items);
-                    $scope.importConfig.blogsBasePath = '/content/documents/' + coordinates.namespace + '/blog';
-                    $scope.importConfig.authorsBasePath = '/content/documents/' + coordinates.namespace + '/blog' + '/authors';
-                    $scope.importConfig.projectNamespace = coordinates.namespace;
-
-                });
-
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $scope.projectSettings = data;
-                    // set some defaults
-                    $scope.templateLanguage = data.templateLanguage;
-                    $scope.useSamples = data.useSamples;
+                essentialsProjectService.getProjectSettings().success(function (data) {
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + data.projectNamespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + data.projectNamespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = data.projectNamespace;
                 });
             };
 

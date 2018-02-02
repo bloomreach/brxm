@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.onehippo.cms7.essentials;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +88,10 @@ public class WebUtilsTest {
         final String jsonString = GlobalUtils.readStreamAsText(stream);
 
         try {
-            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptor> restfulList = WebUtils.fromJson(jsonString, RestfulList.class);
-            assertNotNull(restfulList);
-            assertEquals(restfulList.getItems().size(), 4);
+            @SuppressWarnings("unchecked") final PluginDescriptorList pluginDescriptorList
+                    = WebUtils.fromJson(jsonString, PluginDescriptorList.class);
+            assertNotNull(pluginDescriptorList);
+            assertEquals(pluginDescriptorList.getItems().size(), 4);
         } catch (Exception e) {
             log.error("Error parsing plugins", e);
         }

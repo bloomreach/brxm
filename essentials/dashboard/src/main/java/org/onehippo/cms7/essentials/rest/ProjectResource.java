@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package org.onehippo.cms7.essentials.rest;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,24 +29,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.project.ProjectUtils;
-import org.onehippo.cms7.essentials.rest.model.RestList;
-import org.onehippo.cms7.essentials.rest.model.StatusRestful;
-import org.onehippo.cms7.essentials.rest.model.SystemInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
+
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
+import org.onehippo.cms7.essentials.plugin.PluginStore;
+import org.onehippo.cms7.essentials.rest.model.ProjectStatus;
+import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.utils.DashboardUtils;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -60,22 +53,19 @@ import io.swagger.annotations.ApiOperation;
 @Path("/project")
 public class ProjectResource {
 
-    private static Logger log = LoggerFactory.getLogger(PluginResource.class);
-
+    @Inject private SettingsServiceImpl settingsService;
     @Inject private PluginStore pluginStore;
-    @Inject private PluginContextFactory contextFactory;
 
 
     @ApiOperation(
             value = "Retrieve project status",
             notes = "Status contains true value if one of the InstructionPackage is installed",
-            response = StatusRestful.class)
+            response = ProjectStatus.class)
     @GET
     @Path("/status")
-    public StatusRestful getProjectStatus() {
-        final StatusRestful status = new StatusRestful();
-        final PluginContext context = contextFactory.getContext();
-        final ProjectSettings settings = ProjectUtils.loadSettings(context);
+    public ProjectStatus getProjectStatus() {
+        final ProjectStatus status = new ProjectStatus();
+        final ProjectSettingsBean settings = settingsService.getModifiableSettings();
         if (settings != null && settings.getSetupDone()) {
             status.setProjectInitialized(true);
         }
@@ -86,14 +76,14 @@ public class ProjectResource {
 
     @ApiOperation(
             value = "Ping, returns true if application is initialized",
-            response = boolean.class)
+            response = SystemInfo.class)
     @GET
     @Path("/ping")
-    public SystemInfo ping(@Context ServletContext servletContext) {
+    public SystemInfo ping() {
         final SystemInfo systemInfo = new SystemInfo();
 
         // tell the pinger when to (re-)initialize the front-end.
-        systemInfo.setInitialized(ProjectUtils.isInitialized());
+        systemInfo.setInitialized(DashboardUtils.isInitialized());
         pluginStore.populateSystemInfo(systemInfo);
 
         return systemInfo;
@@ -106,19 +96,21 @@ public class ProjectResource {
             response = ProjectSettings.class)
     @GET
     @Path("/settings")
-    public ProjectSettings getProjectSettings() {
-        final PluginContext context = contextFactory.getContext();
-        return ProjectUtils.loadSettings(context);
+    public ProjectSettings getProjectSettings(@Context HttpServletResponse response) {
+        final ProjectSettings settings = settingsService.getSettings();
+        if (settings == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        return settings;
     }
 
 
     @ApiOperation(
             value = "Save global project settings",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @POST
     @Path("/settings")
-    public MessageRestful saveProjectSettings(final ProjectSettingsBean projectSettings) {
-        final PluginContext context = contextFactory.getContext();
+    public UserFeedback saveProjectSettings(final ProjectSettingsBean projectSettings, @Context HttpServletResponse response) {
         // Remove empty plugin repository entries
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         final Set<String> validatedRepositories = new HashSet<>();
@@ -132,34 +124,11 @@ public class ProjectResource {
         projectSettings.setPluginRepositories(validatedRepositories);
         projectSettings.setSetupDone(true);
 
-        try {
-            ProjectUtils.persistSettings(context, projectSettings);
-        } catch (Exception e) {
-            log.error("Error persisting project settings", e);
-            return new ErrorMessageRestful("Error saving project settings");
+        if (!settingsService.updateSettings(projectSettings)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new UserFeedback().addError("Failed saving project settings. See back-end logs for more details.");
         }
 
-        return new MessageRestful("Project settings saved.");
-    }
-
-
-    @ApiOperation(
-            value = "Return list of project coordinates like project namespace, project path etc.",
-            notes = "[API]",
-            response = RestfulList.class)
-    @GET
-    @Path("/coordinates")
-    public RestfulList<KeyValueRestful> getProjectCoordinates() {
-        final PluginContext context = contextFactory.getContext();
-        final Map<String, Object> placeholderData = context.getPlaceholderData();
-        final RestfulList<KeyValueRestful> list = new RestList<>();
-        for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
-            final Object value = entry.getValue();
-            if (value instanceof String) {
-                final KeyValueRestful keyValueRestful = new KeyValueRestful(entry.getKey(), (String) value);
-                list.add(keyValueRestful);
-            }
-        }
-        return list;
+        return new UserFeedback().addSuccess("Project settings saved.");
     }
 }

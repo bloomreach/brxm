@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import com.google.common.base.Strings;
@@ -41,17 +41,15 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.RebuildProjectEventListener;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
+import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
+import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,14 +63,14 @@ import org.springframework.web.context.ContextLoader;
  * Created by tjeger on 10/11/14.
  */
 @Component
-@Singleton
 public class PluginStore {
 
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildProjectEventListener rebuildListener;
-    @Inject private PluginContextFactory contextFactory;
+    @Inject private RebuildServiceImpl rebuildService;
+    @Inject private ProjectService projectService;
+    @Inject private SettingsServiceImpl settingsService;
     @Inject private AutowireCapableBeanFactory injector;
 
     /**
@@ -92,12 +90,12 @@ public class PluginStore {
      *
      * @see org.springframework.util.ResourceUtils
      */
-    private final LoadingCache<String, RestfulList<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, List<PluginDescriptor>> pluginCache = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .recordStats()
-            .build(new CacheLoader<String, RestfulList<PluginDescriptor>>() {
+            .build(new CacheLoader<String, List<PluginDescriptor>>() {
                 @Override
-                public RestfulList<PluginDescriptor> load(final String url) throws Exception {
+                public List<PluginDescriptor> load(final String url) throws Exception {
                     String pluginJson = null;
 
                     if (url.startsWith("http")) {
@@ -120,26 +118,25 @@ public class PluginStore {
 
     public List<Plugin> getAllPlugins() {
         final List<Plugin> plugins = new ArrayList<>();
-        final PluginContext context = contextFactory.getContext();
 
         // Read local descriptors
         final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
         for (PluginDescriptor descriptor : localDescriptors) {
-            final Plugin plugin = new Plugin(context, descriptor);
+            final Plugin plugin = new Plugin(descriptor, projectService);
             injector.autowireBean(plugin);
             plugins.add(plugin);
         }
 
         // Read remote descriptors
 
-        final Set<String> pluginRepositories = getProjectSettings().getPluginRepositories();
+        final Set<String> pluginRepositories = settingsService.getModifiableSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
-                final RestfulList<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
+                final List<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptor descriptor : descriptors.getItems()) {
-                        final Plugin plugin = new Plugin(context, descriptor);
+                    for (PluginDescriptor descriptor : descriptors) {
+                        final Plugin plugin = new Plugin(descriptor, projectService);
                         injector.autowireBean(plugin);
                         plugins.add(plugin);
                     }
@@ -207,9 +204,8 @@ public class PluginStore {
         }
 
         // check if we have external rebuild events:
-        final List<RebuildEvent> rebuildEvents = rebuildListener.pollEvents();
-        for (RebuildEvent rebuildEvent : rebuildEvents) {
-            final String pluginId = rebuildEvent.getPluginId();
+        final Set<String> pluginIds = rebuildService.getRequestingPluginIds();
+        for (String pluginId : pluginIds) {
             for (Plugin plugin : plugins) {
                 if (plugin.getId().equals(pluginId)) {
                     systemInfo.setNeedsRebuild(true);
@@ -218,11 +214,6 @@ public class PluginStore {
                 }
             }
         }
-    }
-
-    // TODO: this is not a *plugin* utility! Move to better place.
-    public ProjectSettings getProjectSettings() {
-        return contextFactory.getContext().getProjectSettings();
     }
 
     private List<PluginDescriptor> getLocalDescriptors() {
@@ -238,19 +229,23 @@ public class PluginStore {
         final InputStream stream = PluginStore.class.getResourceAsStream(resource);
         final String json = GlobalUtils.readStreamAsText(stream);
 
-        return parsePlugins(json).getItems();
+        return parsePlugins(json);
     }
 
     @SuppressWarnings("unchecked")
-    private RestfulList<PluginDescriptor> parsePlugins(final String jsonString) {
+    private List<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
-                return WebUtils.fromJson(jsonString, RestfulList.class);
+                final PluginDescriptorList pluginDescriptorList
+                        = WebUtils.fromJson(jsonString, PluginDescriptorList.class);
+                if (pluginDescriptorList != null) {
+                    return pluginDescriptorList.getItems();
+                }
             } catch (Exception e) {
                 log.error("Error parsing plugins", e);
             }
         }
-        return new RestfulList<>();
+        return Collections.emptyList();
     }
 
     private static final Semaphore serverSemaphore = new Semaphore(1);
@@ -267,7 +262,7 @@ public class PluginStore {
     private void registerEndPoints(final PluginDescriptor descriptor) {
         final List<String> restClasses = descriptor.getRestClasses();
         if (restClasses != null) {
-            restClasses.forEach(application::addSingleton);
+            restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
         }
     }
 

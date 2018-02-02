@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
-
 import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
  */
-public class JcrQuery implements Restful {
+public class JcrQuery {
 
-
-    private static final long serialVersionUID = 1L;
-
-    public static final Set<String> EXCLUDED_FOLDER_PATHS = new ImmutableSet.Builder<String>()
+    private static final Set<String> EXCLUDED_FOLDER_PATHS = new ImmutableSet.Builder<String>()
             .add("/content/attic")
             .build();
     private boolean folderPicker = true;

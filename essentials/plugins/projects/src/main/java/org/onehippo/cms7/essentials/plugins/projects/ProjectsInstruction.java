@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,13 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
-import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenAssemblyService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
+import org.onehippo.cms7.essentials.sdk.api.service.LoggingService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenAssemblyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenCargoService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 /**
  * Add WPM JDBC resource to context.xml.
@@ -75,7 +72,7 @@ public class ProjectsInstruction implements Instruction {
     @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         contextXmlService.addResource(WPM_RESOURCE_NAME, WPM_RESOURCE_ATTRIBUTES);
 
         projectService.getLog4j2Files().forEach(f -> {
@@ -84,27 +81,27 @@ public class ProjectsInstruction implements Instruction {
         });
 
         // Install "enterprise services" JAR
-        mavenCargoService.addDependencyToCargoSharedClasspath(context, DEPENDENCY_ENTERPRISE_SERVICES);
+        mavenCargoService.addDependencyToCargoSharedClasspath(DEPENDENCY_ENTERPRISE_SERVICES);
         mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_ENTERPRISE_SERVICES);
 
         // Install BPM WAR
-        mavenCargoService.addDeployableToCargoRunner(context, DEPENDENCY_BPM_WAR, WPM_WEBAPP_CONTEXT);
+        mavenCargoService.addDeployableToCargoRunner(DEPENDENCY_BPM_WAR, WPM_WEBAPP_CONTEXT);
         mavenAssemblyService.addDependencySet("webapps-component.xml", "webapps",
                 "bpm.war", false, "provided", DEPENDENCY_BPM_WAR);
 
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Resource '" + WPM_RESOURCE_NAME + "' to Tomcat context.xml.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + LOGGER_HST_BRANCH + "' to log4j2 configuration files.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + LOGGER_PROJECT + "' to log4j2 configuration files.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE, "Add Resource '" + WPM_RESOURCE_NAME + "' to Tomcat context.xml.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + LOGGER_HST_BRANCH + "' to log4j2 configuration files.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + LOGGER_PROJECT + "' to log4j2 configuration files.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
                 + ":" + ENTERPRISE_SERVICES_ARTIFACTID + "' to shared classpath of the Maven cargo plugin configuration.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add deployable '" + WPM_WEBAPP_ARTIFACTID
+        changeMessageQueue.accept(Type.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add deployable '" + WPM_WEBAPP_ARTIFACTID
                 + ".war' with context path '" + WPM_WEBAPP_CONTEXT + "' to deployables of Maven cargo plugin configuration.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add same web application to distribution configuration file 'webapps-component.xml'.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add same web application to distribution configuration file 'webapps-component.xml'.");
     }
 }

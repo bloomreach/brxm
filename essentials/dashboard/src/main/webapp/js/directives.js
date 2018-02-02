@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@
                 scope: {
                     title: '@',
                     buttonText: '@',
-                    endPoint: '@',
                     selectedPath: '=',
                     selected: '='
                 },
@@ -39,9 +38,7 @@
                             controller: ModalInstanceCtrl,
                             size: size,
                             resolve: {
-                                endPoint: function () {
-                                    return $scope.endPoint;
-                                }, title: function () {
+                                title: function () {
                                     return $scope.title;
                                 }, buttonText: function () {
                                     return $scope.buttonText;
@@ -65,9 +62,9 @@
                     //############################################
                     // MODAL
                     //############################################
-                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, endPoint, title) {
+                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, title) {
                         $scope.title = title;
-                        $http.get(endPoint).success(function (data) {
+                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').success(function (data) {
                             $scope.treeItems = data.items;
                         });
                         $scope.ok = function () {
@@ -149,9 +146,8 @@
                     var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
                     function getMessages() {
                         if ($scope.params) {
-                            var payload = {values: $scope.params};
-                            $http.post(url, payload).success(function (data) {
-                                $scope.packageMessages = data;
+                            $http.get(url, { params: $scope.params }).success(function (changeMessages) {
+                                $scope.changeMessages = changeMessages;
                             });
                         }
                     }
@@ -403,27 +399,24 @@
 
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
-                            var payload = {
-                                values: {
-                                    sampleData: $rootScope.projectSettings.useSamples,
-                                    templateName: $rootScope.projectSettings.templateLanguage
-                                }
+                            var url = $rootScope.REST.PLUGINS.changesById($scope.plugin.id);
+                            var params = {
+                                sampleData: $rootScope.projectSettings.useSamples,
+                                templateName: $rootScope.projectSettings.templateLanguage,
+                                extraTemplates: $rootScope.projectSettings.extraTemplates
                             };
-                            $http.post($rootScope.REST.PLUGINS.changesById($scope.plugin.id), payload).success(function (data){
-                                // If there are no messages, the backend sends a single "no messages" message
-                                // with the group not set. Filter those out.
-                                if (data.items.length > 1 || data.items[0].group) {
-                                    $scope.messages = data.items;
-                                }
+
+                            $http.get(url, { params: params }).success(function(changeMessages) {
+                                $scope.changeMessages = changeMessages;
                                 $scope.messagesLoaded = true;
                             });
                         }
                     };
-                    $scope.isCreateFile          = function (message) { return message.group === 'FILE_CREATE'; };
-                    $scope.isRegisterDocument    = function (message) { return message.group === 'DOCUMENT_REGISTER'; };
-                    $scope.isCreateXmlNode       = function (message) { return message.group === 'XML_NODE_CREATE'; };
-                    $scope.isCreateXmlFolderNode = function (message) { return message.group === 'XML_NODE_FOLDER_CREATE'; };
-                    $scope.isExecute             = function (message) { return message.group === 'EXECUTE'; };
+                    $scope.isCreateFile          = function (message) { return message.type === 'FILE_CREATE'; };
+                    $scope.isRegisterDocument    = function (message) { return message.type === 'DOCUMENT_REGISTER'; };
+                    $scope.isCreateXmlNode       = function (message) { return message.type === 'XML_NODE_CREATE'; };
+                    $scope.isCreateXmlFolderNode = function (message) { return message.type === 'XML_NODE_FOLDER_CREATE'; };
+                    $scope.isExecute             = function (message) { return message.type === 'EXECUTE'; };
 
                     $scope.messagesLoaded = false; // Flag for lazy loading
                     $scope.showChanges = false;

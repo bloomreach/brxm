@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,15 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,22 +42,23 @@ import org.slf4j.LoggerFactory;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcrbrowser")
-public class JcrBrowserResource extends BaseResource {
+public class JcrBrowserResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrBrowserResource.class);
-    public static final int DEFAULT_DEPTH = 3;
+    private static final int DEFAULT_DEPTH = 3;
 
     @Inject private JcrService jcrService;
 
     @GET
     @Path("/")
-    public JcrNode getFromRoot(@Context ServletContext servletContext) throws RepositoryException {
+    public JcrNode getFromRoot() throws RepositoryException {
         final JcrQuery query = new JcrQuery("/");
         return getNode(query);
     }
+
     @GET
     @Path("/folders")
-    public JcrNode getFolders(@Context ServletContext servletContext) throws RepositoryException {
+    public JcrNode getFolders() throws RepositoryException {
         final JcrQuery query = new JcrQuery("/content");
         query.setFolderPicker(true);
         query.setFetchProperties(false);
@@ -69,10 +66,7 @@ public class JcrBrowserResource extends BaseResource {
         return getNode(query);
     }
 
-
-    @POST
-    @Path("/")
-    public JcrNode getNode(final JcrQuery query) throws RepositoryException {
+    private JcrNode getNode(final JcrQuery query) throws RepositoryException {
         final Session session = jcrService.createSession();
         try {
             String path = query.getPath();
@@ -87,23 +81,21 @@ public class JcrBrowserResource extends BaseResource {
             populateProperties(n, jcrNode, query);
             populateNodes(n, jcrNode, query);
             return jcrNode;
-
         } finally {
             jcrService.destroySession(session);
         }
-
     }
 
     private void populateNodes(final Node node, final JcrNode jcrNode, final JcrQuery query) throws RepositoryException {
         final NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             final Node kid = nodes.nextNode();
-            if(query.isFolderPicker()) {
+            if (query.isFolderPicker()) {
                 final String name = kid.getPrimaryNodeType().getName();
-                if(!name.equals("hippostd:folder")){
+                if (!name.equals("hippostd:folder")){
                     continue;
                 }
-                if(query.isExcluded(kid)){
+                if (query.isExcluded(kid)){
                     continue;
                 }
             }
@@ -117,7 +109,6 @@ public class JcrBrowserResource extends BaseResource {
         }
     }
 
-
     private void populateProperties(final Node node, final JcrNode jcrNode, final JcrQuery query) throws RepositoryException {
         if (query.isFetchProperties()) {
             final PropertyIterator properties = node.getProperties();
@@ -129,12 +120,5 @@ public class JcrBrowserResource extends BaseResource {
                 jcrNode.addProperty(jcrProperty);
             }
         }
-    }
-
-    @POST
-    @Path("/property/")
-    public JcrProperty<?> getProperty(final JcrProperty<?> payload, @Context ServletContext servletContext) {
-
-        return new JcrProperty<>();
     }
 }

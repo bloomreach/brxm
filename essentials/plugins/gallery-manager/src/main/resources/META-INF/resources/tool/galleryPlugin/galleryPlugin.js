@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,15 +64,13 @@
                               + "be updated to this image set, too.";
 
             $scope.create = function() {
-                var payload = {
-                    values: {
-                        imageSetPrefix: prefix,
-                        imageSetName: $scope.name,
-                        updateExisting: $scope.updateExisting
-                    }
+                var parameters = {
+                    imageSetPrefix: prefix,
+                    imageSetName: $scope.name,
+                    updateExisting: $scope.updateExisting
                 };
 
-                $http.post(resource, payload).success(function () {
+                $http.post(resource, parameters).success(function () {
                     $uibModalInstance.close(prefix + ":" + $scope.name);
                 });
             };
@@ -87,13 +85,11 @@
 
             $scope.imageSet = imageSet;
             $scope.create = function() {
-                var payload = {
-                    values: {
-                        imageVariantName: $scope.name,
-                        selectedImageSet: $scope.imageSet.name
-                    }
+                var parameters = {
+                    imageVariantName: $scope.name,
+                    selectedImageSet: $scope.imageSet.name
                 };
-                $http.post(resource, payload).success(function () {
+                $http.post(resource, parameters).success(function () {
                     $uibModalInstance.close($scope.name);
                 });
             };
@@ -194,10 +190,10 @@
             }
         }])
 
-        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal',
-            function ($scope, $rootScope, $http, $uibModal) {
+        .controller('GalleryManagerMainCtrl', ['$scope', '$rootScope', '$http', '$uibModal', 'essentialsRestService',
+            function ($scope, $rootScope, $http, $uibModal, essentialsRestService) {
 
-            var endpoint = $rootScope.REST.dynamic + "galleryplugin";
+            var endpoint = essentialsRestService.baseUrl + "/galleryplugin";
             $scope.imageSets = [];
             $scope.selectedImageSet = null;
             $scope.feedback = "You have changed Image Sets and may want to update your Hippo Image Set beans now. "
@@ -313,10 +309,6 @@
                 });
             };
 
-            $scope.init = function () {
-                loadImageSets();
-            };
-
             function loadImageSets(imageSetNameToSelect) {
                 return $http.get(endpoint).success(function (data) {
                     $scope.imageSets = data;
@@ -343,11 +335,7 @@
             //############################################
             // INIT APP
             //############################################
-
-            $http.get($rootScope.REST.PROJECT.coordinates).success(function (data) {
-                var coordinates = Essentials.keyValueAsDict(data.items);
-                $scope.imageSetPrefix = coordinates ? coordinates.namespace : '';
-            });
-            $scope.init();
+            $scope.imageSetPrefix = $rootScope.projectSettings.projectNamespace;
+            loadImageSets();
         }]);
 }());

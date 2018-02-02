@@ -17,9 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('relatedDocumentsCtrl', function ($scope, $rootScope, $http) {
+        .controller('relatedDocumentsCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
             $scope.fieldsAdded = false;
-            $scope.endpoint = $rootScope.REST.root + '/jcrbrowser/folders';
             $scope.addDocs = function () {
                 var configuration = {
                     fields: []
@@ -33,12 +32,12 @@
                         });
                     }
                 });
-                $http.post($rootScope.REST.dynamic + 'related-documents', configuration).success(function () {
+                $http.post(essentialsRestService.baseUrl + '/related-documents', configuration).success(function () {
                     $scope.fieldsAdded = true;
                 });
             };
 
-            $http.get($rootScope.REST.documents).success(function (docTypes) {
+            essentialsContentTypeService.getContentTypes().success(function (docTypes) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
                 angular.forEach(docTypes, function(docType) {

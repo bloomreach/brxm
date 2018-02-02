@@ -49,8 +49,7 @@
                                 button-text="Select folder"
                                 title="Select target folder"
                                 selected-path="baseFolder"
-                                selected="selectedFolderItem"
-                                end-point="{{endpoint}}"/>
+                                selected="selectedFolderItem"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -73,7 +72,7 @@
                         <select name="documentQuery" chosen
                                 ng-model="documentQuery"
                                 ng-required="false"
-                                ng-options="option.key for option in queries | orderBy:documentFirstSorting"
+                                ng-options="option.name for option in queries | orderBy:documentFirstSorting"
                                 data-placeholder="Document query name"
                                 width="'100%'">
                         </select>
@@ -102,10 +101,10 @@
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
                     <div class="col-sm-4">
-                        <select name="valueListPath" chosen
-                                ng-model="valueListPath"
+                        <select name="valueList" chosen
+                                ng-model="valueList"
                                 ng-required="classificationType == 'list'"
-                                ng-options="option.value for option in valueLists"
+                                ng-options="option.displayName for option in valueLists"
                                 data-placeholder="Valuelist document"
                                 width="'100%'">
                             <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->

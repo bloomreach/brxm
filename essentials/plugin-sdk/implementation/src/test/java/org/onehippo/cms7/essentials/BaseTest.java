@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -45,15 +45,26 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
+@ActiveProfiles("settings-test")
 public abstract class BaseTest {
-    private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
-
-    @Inject
-    protected AutowireCapableBeanFactory injector;
-
-    public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
-    public static final String PROJECT_NAMESPACE_TEST_URI = "http://www.onehippo.org/tesnamespace/nt/1.0";
+
+    static final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+
+    private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
+    private static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
+
+    static {
+        projectSettings.setProjectNamespace(PROJECT_NAMESPACE_TEST);
+        projectSettings.setSelectedProjectPackage(TEST_PROJECT_PACKAGE);
+        projectSettings.setSelectedBeansPackage(TEST_PROJECT_PACKAGE + ".beans");
+        projectSettings.setSelectedComponentsPackage(TEST_PROJECT_PACKAGE + ".components");
+        projectSettings.setSelectedRestPackage(TEST_PROJECT_PACKAGE + ".rest");
+    }
+
+    @Inject protected AutowireCapableBeanFactory injector;
+    @Inject private TestSettings.Service settingsService;
+
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
             .add("myproject:newsdocument")
@@ -66,25 +77,15 @@ public abstract class BaseTest {
             .add("hippoplugins:version")
             .add("hippoplugins:dependency")
             .build();
-    private String oldSystemDir;
-    private PluginContext context;
     private Path projectRoot;
-
+    private boolean hasProjectStructure;
 
     public void setProjectRoot(final Path projectRoot) {
         this.projectRoot = projectRoot;
     }
 
-    public void setContext(final PluginContext context) {
-        this.context = context;
-    }
-
     @After
     public void tearDown() throws Exception {
-        // reset system property
-        if (oldSystemDir != null) {
-            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
-        }
         // delete project files:
         if (projectRoot != null) {
             final File file = projectRoot.toFile();
@@ -100,6 +101,7 @@ public abstract class BaseTest {
 
     @Before
     public void setUp() throws Exception {
+        settingsService.setSettings(projectSettings);
 
         // create temp dir:
         final String tmpDir = System.getProperty("java.io.tmpdir");
@@ -109,7 +111,7 @@ public abstract class BaseTest {
             projectRootDir.mkdir();
         }
         projectRoot = projectRootDir.toPath();
-        context = getPluginContextFile();
+        ensureProjectStructure();
     }
 
     /**
@@ -117,8 +119,8 @@ public abstract class BaseTest {
      *
      * @return PluginContext with file system initialized (so no JCR session)
      */
-    protected PluginContext getPluginContextFile() {
-        if (context == null) {
+    public void ensureProjectStructure() {
+        if (!hasProjectStructure) {
 
             final String basePath = projectRoot.toString();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
@@ -141,30 +143,11 @@ public abstract class BaseTest {
                     repositoryDataFolder.mkdir();
                 }
             }
-            context = new TestPluginContext();
-            context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
-            context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
-            context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
-            context.setProjectPackageName("org.onehippo.cms7.essentials.dashboard.test");
-            final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
-            context.setProjectSettings(projectSettings);
-
+            hasProjectStructure = true;
         }
-        return context;
     }
 
     public Path getProjectRoot() {
         return projectRoot;
     }
-
-    public PluginContext getContext() {
-
-        if (context == null) {
-            context = getPluginContextFile();
-        }
-        return context;
-    }
-
-
 }

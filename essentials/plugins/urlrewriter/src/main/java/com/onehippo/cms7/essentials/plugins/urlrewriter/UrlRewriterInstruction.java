@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,9 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.service.WebXmlService;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 
 /**
  * Modify the site's web.xml to install the rewrite filter.
@@ -41,7 +38,7 @@ public class UrlRewriterInstruction implements Instruction {
     private static final String FILTER_NAME = "RewriteFilter";
     private static final List<String> URL_PATTERNS = Collections.singletonList("/*");
     private static final List<WebXmlService.Dispatcher> DISPATCHERS = Arrays.asList(WebXmlService.Dispatcher.REQUEST, WebXmlService.Dispatcher.FORWARD);
-    private static final TargetPom MODULE = TargetPom.SITE;
+    private static final Module MODULE = Module.SITE;
     private static final Map<String, String> initParams = new HashMap<>();
 
     static {
@@ -56,18 +53,18 @@ public class UrlRewriterInstruction implements Instruction {
     @Inject private WebXmlService webXmlService;
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
-        if (webXmlService.addFilter(context, MODULE, FILTER_NAME, FILTER_CLASS, initParams)
-                && webXmlService.addFilterMapping(context, MODULE, FILTER_NAME, URL_PATTERNS)
-                && webXmlService.addDispatchersToFilterMapping(context, MODULE, FILTER_NAME, DISPATCHERS)
-                && webXmlService.addDispatchersToFilterMapping(context, MODULE, "HstFilter", DISPATCHERS)) {
-            return InstructionStatus.SUCCESS;
+    public Status execute(final Map<String, Object> parameters) {
+        if (webXmlService.addFilter(MODULE, FILTER_NAME, FILTER_CLASS, initParams)
+                && webXmlService.addFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS)
+                && webXmlService.addDispatchersToFilterMapping(MODULE, FILTER_NAME, DISPATCHERS)
+                && webXmlService.addDispatchersToFilterMapping(MODULE, "HstFilter", DISPATCHERS)) {
+            return Status.SUCCESS;
         }
-        return InstructionStatus.FAILED;
+        return Status.FAILED;
     }
 
     @Override
-    public void populateChangeMessages(final BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Install URL Rewriter filter into Site web.xml.");
+    public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE, "Install URL Rewriter filter into Site web.xml.");
     }
 }

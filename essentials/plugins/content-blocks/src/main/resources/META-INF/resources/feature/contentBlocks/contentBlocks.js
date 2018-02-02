@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
     "use strict";
 
     angular.module('hippo.essentials')
-        .controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            var restEndpoint = $rootScope.REST.dynamic + 'contentblocks/';
+        .controller('contentBlocksCtrl', function ($scope, $http, essentialsRestService) {
+            var restEndpoint = essentialsRestService.baseUrl + '/contentblocks';
 
             $scope.compounds = [];
             $scope.documentTypes = [];
@@ -102,7 +102,7 @@
             };
 
             $scope.init = function () {
-                $http.get(restEndpoint + 'compounds').success(function (data) {
+                $http.get(restEndpoint + '/compounds').success(function (data) {
                     $scope.compounds = data;
 
                     // create the compound map

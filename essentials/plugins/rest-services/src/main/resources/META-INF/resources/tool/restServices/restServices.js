@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
+        .controller('restServicesCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
+            $scope.endpoint = essentialsRestService.baseUrl + '/restservices';
             $scope.genericRestName = "api";
             $scope.manualRestName = "api-manual";
             $scope.documentTypes = [];
@@ -51,28 +51,24 @@
                 return true;
             };
             $scope.runRestSetup = function () {
-                // check if we have selected documents:
-                var files = [];
+                var parameters = {
+                    genericApiEnabled: $scope.isGenericContentRestApiEnabled,
+                    genericRestName: $scope.genericRestName,
+                    manualApiEnabled: $scope.isManualRestResourcesEnabled,
+                    manualRestName: $scope.manualRestName,
+                    javaFiles: []
+                };
                 angular.forEach($scope.documentTypes, function (docType) {
                     if (docType.checked && docType.fullPath) {
-                        files.push(docType.fullPath);
+                        parameters.javaFiles.push(docType.fullPath);
                     }
                 });
-                var payload = {
-                    values: {
-                        genericApiEnabled: $scope.isGenericContentRestApiEnabled,
-                        genericRestName: $scope.genericRestName,
-                        manualApiEnabled: $scope.isManualRestResourcesEnabled,
-                        manualRestName: $scope.manualRestName,
-                        javaFiles: files.join(',')
-                    }
-                };
-                $http.post($scope.endpoint, payload).success(function () {
+                $http.post($scope.endpoint, parameters).success(function () {
                     // empty
                 });
             };
 
-            $http.get($rootScope.REST.documents).success(function (data) {
+            essentialsContentTypeService.getContentTypes().success(function (data) {
                 angular.forEach(data, function (docType) {
                     if (docType.fullPath) {
                         $scope.documentTypes.push(docType);

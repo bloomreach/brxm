@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@
   <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.js?v=${project.version}"></script>
 
-  <script src="${pageContext.request.contextPath}/js/Essentials.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/app.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/routes.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/directives.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/dashboard/api/services.js?v=${project.version}"></script>
 
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>

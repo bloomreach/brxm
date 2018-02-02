@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -50,11 +50,11 @@
                       <a href="#">Read more</a>
                     </p>
                 </div>
-                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription && plugin.description">
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-if="showDescription && plugin.description">
                     <p ng-bind-html="plugin.description"></p>
                 </div>
             </div>
-            <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length">
+            <div class="panel panel-default" ng-if="showDescription && plugin.imageUrls.length">
                 <div class="panel-body">
                     <!--
                       the carousel indicators are white by default and most screenshots have a white

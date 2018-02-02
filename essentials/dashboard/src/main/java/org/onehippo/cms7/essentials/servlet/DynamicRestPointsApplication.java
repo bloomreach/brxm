@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
  * Implementation of a JAXRS Application which instantiates and Spring-wires resource classes as singletons.
@@ -41,7 +41,7 @@ public class DynamicRestPointsApplication extends Application {
         return singletons;
     }
 
-    public void addSingleton(final String fqcn) {
+    public void addSingleton(final String fqcn, final AutowireCapableBeanFactory injector) {
         if (fqcns.contains(fqcn)) {
             return;
         }
@@ -50,7 +50,7 @@ public class DynamicRestPointsApplication extends Application {
         if (singleton != null) {
             LOG.info("Add dynamic (plugin) REST endpoint '{}'.", fqcn);
 
-            ApplicationModule.getInjector().autowireBean(singleton);
+            injector.autowireBean(singleton);
             fqcns.add(fqcn);
             singletons.add(singleton);
         }

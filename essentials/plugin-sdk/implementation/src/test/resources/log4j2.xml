@@ -62,10 +62,10 @@
     <Logger name="org.hippoecm.repository.updater" level="info"/>
     <Logger name="org.hippoecm.repository.export" level="info"/>
     <Logger name="org.springframework" level="warn"/>
-    <Logger name="org.onehippo.cms7.essentials" level="debug"/>
+    <Logger name="org.onehippo.cms7.essentials" level="warn"/>
 
 
-    <Root level="info">
+    <Root level="warn">
       <AppenderRef ref="console"/>
     </Root>
   </Loggers>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,11 @@ import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.service.ContextXmlService;
-import org.onehippo.cms7.essentials.dashboard.service.LoggingService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenCargoService;
-import org.onehippo.cms7.essentials.dashboard.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
+import org.onehippo.cms7.essentials.sdk.api.service.LoggingService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenCargoService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 /**
  * Add JDBC resource to context.xml.
@@ -69,22 +66,22 @@ public class RelevanceInstruction implements Instruction {
     @Inject private MavenCargoService mavenCargoService;
 
     @Override
-    public InstructionStatus execute(final PluginContext context) {
+    public Status execute(final Map<String, Object> parameters) {
         contextXmlService.addResource(TARGETING_RESOURCE_NAME, TARGETING_RESOURCE_ATTRIBUTES);
         contextXmlService.addEnvironment(TARGETING_ENVIRONMENT_NAME, TARGETING_ENVIRONMENT_ATTRIBUTES);
 
         projectService.getLog4j2Files()
                 .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, TARGETING_LOGGER, "warn"));
 
-        mavenCargoService.mergeCargoProfile(context, getClass().getResource("/relevance-pom-overlay.xml"));
+        mavenCargoService.mergeCargoProfile(getClass().getResource("/relevance-pom-overlay.xml"));
 
-        return InstructionStatus.SUCCESS;
+        return Status.SUCCESS;
     }
 
-    public void populateChangeMessages(BiConsumer<MessageGroup, String> changeMessageQueue) {
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Resource '" + TARGETING_RESOURCE_NAME + "' to context.xml.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
-        changeMessageQueue.accept(MessageGroup.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
+    public void populateChangeMessages(BiConsumer<Type, String> changeMessageQueue) {
+        changeMessageQueue.accept(Type.EXECUTE, "Add Resource '" + TARGETING_RESOURCE_NAME + "' to context.xml.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
     }
 }

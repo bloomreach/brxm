@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,36 +23,36 @@ import javax.inject.Inject;
 
 import com.google.common.base.Strings;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
-import org.onehippo.cms7.essentials.dashboard.model.MavenRepository;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenRepositoryService;
-import org.onehippo.cms7.essentials.dashboard.utils.EnterpriseUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EnterpriseUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.util.StringUtils;
 
 public class Plugin {
     private final static Logger log = LoggerFactory.getLogger(Plugin.class);
 
     private final PluginDescriptor descriptor;
+    private final ProjectService projectService;
     private final InstallStateMachine stateMachine;
-    private final PluginContext context;
 
+    @Inject private AutowireCapableBeanFactory injector;
     @Inject private MavenDependencyService dependencyService;
     @Inject private MavenRepositoryService repositoryService;
 
-    public Plugin(final PluginContext context, final PluginDescriptor descriptor) {
-        this.context = context;
+    public Plugin(final PluginDescriptor descriptor, final ProjectService projectService) {
         this.descriptor = descriptor;
-        this.stateMachine = new InstallStateMachine(this, context);
+        this.projectService = projectService;
+        this.stateMachine = new InstallStateMachine(this, projectService);
     }
 
     public PluginDescriptor getDescriptor() {
@@ -84,34 +84,20 @@ public class Plugin {
     }
 
     public boolean hasGeneralizedSetUp() {
-        return StringUtils.hasText(getDescriptor().getPackageFile())
-            || StringUtils.hasText(getDescriptor().getPackageClass());
+        return StringUtils.hasText(getDescriptor().getPackageFile());
     }
 
-    public InstructionPackage makeInstructionPackageInstance() {
-        InstructionPackage instructionPackage = null;
-
-        // Prefers packageClass over packageFile.
-        final String packageClass = descriptor.getPackageClass();
-        if (!Strings.isNullOrEmpty(packageClass)) {
-            instructionPackage = GlobalUtils.newInstance(packageClass);
-            if (instructionPackage == null) {
-                log.warn("Can't create instance for instruction package class {}", packageClass);
-            }
-        }
-
-        if (instructionPackage == null) {
-            final String packageFile = descriptor.getPackageFile();
-            if (!Strings.isNullOrEmpty(packageFile)) {
-                instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);
+    public DefaultInstructionPackage makeInstructionPackageInstance() {
+        final String packageFile = descriptor.getPackageFile();
+        if (!Strings.isNullOrEmpty(packageFile)) {
+            final DefaultInstructionPackage instructionPackage = GlobalUtils.newInstance(DefaultInstructionPackage.class);
+            if (instructionPackage != null) {
                 instructionPackage.setInstructionPath(packageFile);
+                injector.autowireBean(instructionPackage);
+                return instructionPackage;
             }
         }
-
-        if (instructionPackage != null) {
-            ApplicationModule.getInjector().autowireBean(instructionPackage);
-        }
-        return instructionPackage;
+        return null;
     }
 
     @Override
@@ -124,7 +110,7 @@ public class Plugin {
         if (categories != null) {
             final Set<String> licenses = categories.get("license");
             if (licenses != null && licenses.contains("enterprise")) {
-                EnterpriseUtils.upgradeToEnterpriseProject(context, dependencyService, repositoryService);
+                EnterpriseUtils.upgradeToEnterpriseProject(projectService, dependencyService, repositoryService);
             }
         }
     }
@@ -133,7 +119,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenRepository.WithModule repository : descriptor.getRepositories()) {
-            if (!repositoryService.addRepository(context, TargetPom.pomForName(repository.getTargetPom()), repository)) {
+            if (!repositoryService.addRepository(Module.pomForName(repository.getTargetPom()), repository)) {
                 if (builder.length() == 0) {
                     builder.append("Not all repositories were installed: ");
                 } else {
@@ -152,7 +138,7 @@ public class Plugin {
         final StringBuilder builder = new StringBuilder();
 
         for (MavenDependency.WithModule dependency : descriptor.getDependencies()) {
-            if (!dependencyService.addDependency(context, TargetPom.pomForName(dependency.getTargetPom()), dependency)) {
+            if (!dependencyService.addDependency(Module.pomForName(dependency.getTargetPom()), dependency)) {
                 if (builder.length() == 0) {
                     builder.append("Not all dependencies were installed: ");
                 } else {

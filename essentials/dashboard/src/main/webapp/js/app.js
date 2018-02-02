@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,26 +62,10 @@
                 }
             }
 
-            function addMessage($rootScope, data) {
-                if (!data) {
-                    return;
+            function addMessage($rootScope, response) {
+                if (response && response.data && response.data.feedbackMessages) {
+                    addFeedbackMessages($rootScope, response.data.feedbackMessages);
                 }
-                if (data.data && data.data.items) {
-                    var items = data.data.items;
-                    angular.forEach(items, function (v) {
-                        if (v.successMessage && v.globalMessage) {
-                            $rootScope.feedbackMessages.push({type: 'info', message: v.value});
-                        }
-                    });
-                } else if (data.data && data.data.feedbackMessages) {
-                    addFeedbackMessages($rootScope, data.data.feedbackMessages);
-                }
-                else if (data.data && data.data.successMessage && data.data.globalMessage) {
-                    $rootScope.feedbackMessages.push({type: 'info', message: data.data.value});
-                } else if (data.successMessage && data.globalMessage) {
-                    $rootScope.feedbackMessages.push({type: 'info', message: data.successMessage.value});
-                }
-
             }
 
             function addFeedbackMessages($rootScope, messages) {
@@ -173,18 +157,12 @@
                 });
 
             $rootScope.feedbackMessages = [];
-            $rootScope.headerMessage = "Welcome on the Hippo Trail";
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
             var root = window.SERVER_URL + '/essentials/rest';
             var pluginsStem = root + "/plugins";
             var projectStem = root + "/project";
 
-            /* TODO generate this server side ?*/
             $rootScope.REST = {
-                root: root,
-                menus: root + '/menus/',
-                dynamic: root + '/dynamic/',
-
                 /**
                  * PluginResource
                  */
@@ -201,19 +179,8 @@
                  */
                 project: projectStem,
                 PROJECT: { // Front-end API
-                    settings:    projectStem + '/settings',
-                    coordinates: projectStem + '/coordinates'
-                },
-
-                //############################################
-                // DOCUMENTS
-                //############################################
-                documents: root + '/documents/',
-                documents_compounds: root + '/documents/' + 'compounds',
-                documents_documents: root + '/documents/' + 'documents',
-                documents_template_queries: root + '/documents/' + 'templatequeries'
-
-
+                    settings: projectStem + '/settings'
+                }
             };
 
             /**
@@ -221,7 +188,7 @@
              */
             $rootScope.initData = function () {
                 $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
+                    $rootScope.projectSettings = data;
                 });
             };
 

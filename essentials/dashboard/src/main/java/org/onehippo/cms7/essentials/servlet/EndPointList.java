@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,7 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.rest.model.RestList;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +47,11 @@ public class EndPointList {
     private static Logger log = LoggerFactory.getLogger(EndPointList.class);
 
     @GET
-    public RestfulList<MessageRestful> list() {
+    public UserFeedback list() {
         log.info("@@@@ LISTING REST ENDPOINTS @@@@");
-        final RestfulList<MessageRestful> endpoints = new RestList<>();
+        final UserFeedback feedback = new UserFeedback();
 
         try {
-
             final Bus bus = BusFactory.getDefaultBus();
             final DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
             final DestinationFactory df = dfm.getDestinationFactory("http://cxf.apache.org/transports/http/configuration");
@@ -64,16 +61,13 @@ public class EndPointList {
                 final Collection<AbstractHTTPDestination> destinations = registry.getDestinations();
                 for (AbstractHTTPDestination destination : destinations) {
                     final String endpoint = destination.getPath();
-                    final MessageRestful message = new MessageRestful(endpoint);
-                    endpoints.add(message);
-
+                    feedback.addSuccess(endpoint);
                 }
             }
         } catch (BusException e) {
-
             log.error("e {}", e);
         }
-        return endpoints;
+        return feedback;
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,13 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "system")
-public class SystemInfo implements Restful {
+public class SystemInfo {
 
     private static final long serialVersionUID = 1L;
     private int totalPlugins;

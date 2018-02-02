@@ -47,15 +47,14 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.ContentType;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.CompoundRestful;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksFieldRestful;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentTypeRestful;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.Compound;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksField;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentType;
 import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,18 +80,18 @@ public class ContentBlocksResource {
     private static final Set<String> BUILTIN_COMPOUNDS
             = new HashSet<>(Arrays.asList("hippo:mirror", "hippo:resource", "hippostd:html", "hippogallerypicker:imagelink"));
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
+    @Inject private SettingsService settingsService;
 
     @GET
     @Path("/")
-    public List<DocumentTypeRestful> getContentBlocks() {
-        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+    public List<DocumentType> getContentBlocks() {
+        List<ContentType> documents = contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(NO_IMAGE_FILTER)
                 .collect(Collectors.toList());
-        List<DocumentTypeRestful> cbDocuments = new ArrayList<>();
+        List<DocumentType> cbDocuments = new ArrayList<>();
 
         final Session session = jcrService.createSession();
         if (session != null) {
@@ -102,7 +101,7 @@ public class ContentBlocksResource {
                         continue; // don't expose the base document as you can't instantiate it.
                     }
                     final String primaryType = documentType.getFullName();
-                    final DocumentTypeRestful cbDocument = new DocumentTypeRestful();
+                    final DocumentType cbDocument = new DocumentType();
                     cbDocument.setId(primaryType);
                     cbDocument.setName(documentType.getDisplayName());
                     populateContentBlocksFields(cbDocument, session);
@@ -124,16 +123,15 @@ public class ContentBlocksResource {
      */
     @POST
     @Path("/")
-    public UserFeedback update(List<DocumentTypeRestful> docTypes, @Context HttpServletResponse response) {
-        final PluginContext context = contextFactory.getContext();
+    public UserFeedback update(List<DocumentType> docTypes, @Context HttpServletResponse response) {
         final List<UpdateRequest> updaters = new ArrayList<>();
         int updatersRun = 0;
 
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
-                for (DocumentTypeRestful docType : docTypes) {
-                    updateDocumentType(context, docType, session, updaters);
+                for (DocumentType docType : docTypes) {
+                    updateDocumentType(docType, session, updaters);
                 }
                 session.save();
                 updatersRun = executeUpdaters(session, updaters);
@@ -161,19 +159,18 @@ public class ContentBlocksResource {
 
     @GET
     @Path("/compounds")
-    public List<CompoundRestful> getCompounds() {
-        final PluginContext context = contextFactory.getContext();
-        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(context, false)
+    public List<Compound> getCompounds() {
+        final List<ContentType> compoundTypes = contentTypeService.fetchContentTypes(false)
                 .stream()
                 .filter(ct -> ct.isCompoundType() || BUILTIN_COMPOUNDS.contains(ct.getFullName()))
                 .collect(Collectors.toList());
-        final List<CompoundRestful> cbCompounds = new ArrayList<>();
+        final List<Compound> cbCompounds = new ArrayList<>();
 
         for (ContentType compoundType : compoundTypes) {
             if ("hippo:compound".equals(compoundType.getFullName())) {
                 continue; // don't expose the base compound as you don't want to instantiate it.
             }
-            final CompoundRestful cbCompound = new CompoundRestful();
+            final Compound cbCompound = new Compound();
             cbCompound.setId(compoundType.getFullName());
             cbCompound.setName(compoundType.getDisplayName());
             cbCompounds.add(cbCompound);
@@ -187,16 +184,16 @@ public class ContentBlocksResource {
      * @param docType representation of the document type.
      * @param session JCR session.
      */
-    private void populateContentBlocksFields(final DocumentTypeRestful docType, final Session session) {
+    private void populateContentBlocksFields(final DocumentType docType, final Session session) {
         final String primaryType = docType.getId();
-        final List<ContentBlocksFieldRestful> contentBlocksFields = new ArrayList<>();
+        final List<ContentBlocksField> contentBlocksFields = new ArrayList<>();
         docType.setContentBlocksFields(new ArrayList<>());
         try {
             final NodeIterator it = findContentBlockFields(primaryType, session);
 
             while (it.hasNext()) {
                 final Node fieldNode = it.nextNode();
-                final ContentBlocksFieldRestful field = new ContentBlocksFieldRestful();
+                final ContentBlocksField field = new ContentBlocksField();
                 field.setName(fieldNode.getProperty(PROP_CAPTION).getString());
                 field.setPickerType(fieldNode.getProperty(PROP_PICKERTYPE).getString());
                 if (fieldNode.getNode(NODE_OPTIONS).hasProperty(PROP_MAXITEMS)) {
@@ -219,7 +216,7 @@ public class ContentBlocksResource {
      * @param session    JCR session
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateDocumentType(final PluginContext context, final DocumentTypeRestful docType,
+    private void updateDocumentType(final DocumentType docType,
                                     final Session session, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
         final String primaryType = docType.getId();
@@ -231,11 +228,11 @@ public class ContentBlocksResource {
                 final Node fieldNode = it.nextNode();
                 final String fieldName = fieldNode.getProperty(PROP_CAPTION).getString();
                 boolean updated = false;
-                for (ContentBlocksFieldRestful field : docType.getContentBlocksFields()) {
+                for (ContentBlocksField field : docType.getContentBlocksFields()) {
                     if (fieldName.equals(field.getOriginalName())) {
                         updated = true;
                         docType.getContentBlocksFields().remove(field);
-                        updateField(context, fieldNode, docType, field, updaters);
+                        updateField(fieldNode, docType, field, updaters);
                         // the fieldNode may have been renamed (copied), don't use it anymore!
                         break;
                     }
@@ -250,8 +247,8 @@ public class ContentBlocksResource {
         }
 
         // add new content blocks fields
-        for (ContentBlocksFieldRestful field : docType.getContentBlocksFields()) {
-            createField(context, field, docType, session);
+        for (ContentBlocksField field : docType.getContentBlocksFields()) {
+            createField(field, docType, session);
         }
     }
 
@@ -263,8 +260,8 @@ public class ContentBlocksResource {
      * @param session JCR session
      * @throws ContentBlocksException for error message propagation
      */
-    private void createField(final PluginContext context, final ContentBlocksFieldRestful field,
-                             final DocumentTypeRestful docType, final Session session)
+    private void createField(final ContentBlocksField field,
+                             final DocumentType docType, final Session session)
             throws ContentBlocksException {
         final String newNodeName = makeNodeName(field.getName());
         final String primaryType = docType.getId();
@@ -300,7 +297,7 @@ public class ContentBlocksResource {
             Map<String, Object> data = new HashMap<>();
 
             data.put("name", newNodeName);
-            data.put("namespace", context.getProjectNamespacePrefix());
+            data.put("namespace", settingsService.getSettings().getProjectNamespace());
             data.put("caption", field.getName());
             data.put("pickerType", field.getPickerType());
             data.put("compoundList", makeCompoundList(field));
@@ -335,8 +332,8 @@ public class ContentBlocksResource {
      * @param field        desired field parameters
      * @throws ContentBlocksException for error message propagation
      */
-    private void updateField(final PluginContext context, final Node oldFieldNode, final DocumentTypeRestful docType,
-                             final ContentBlocksFieldRestful field, final List<UpdateRequest> updaters)
+    private void updateField(final Node oldFieldNode, final DocumentType docType,
+                             final ContentBlocksField field, final List<UpdateRequest> updaters)
             throws ContentBlocksException {
         Node fieldNode = oldFieldNode;
         try {
@@ -350,7 +347,7 @@ public class ContentBlocksResource {
                             "Document type '" + docType.getName() + "' already has field '" + field.getName() + "'.");
                 }
 
-                final String namespace = context.getProjectNamespacePrefix();
+                final String namespace = settingsService.getSettings().getProjectNamespace();
                 final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
                 final String newNodePath = namespace + ":" + newNodeName;
                 nodeTypeNode = JcrUtils.copy(nodeTypeNode, newNodeName, nodeTypeNode.getParent());
@@ -400,7 +397,7 @@ public class ContentBlocksResource {
      * @param fieldName   Name of the to-be deleted field.
      * @throws ContentBlocksException for error message propagation
      */
-    private void deleteField(final Node fieldNode, final DocumentTypeRestful docType, final String fieldName,
+    private void deleteField(final Node fieldNode, final DocumentType docType, final String fieldName,
                              final List<UpdateRequest> updaters) throws ContentBlocksException {
         try {
             final Node nodeTypeNode = getNodeTypeNode(fieldNode);
@@ -443,7 +440,7 @@ public class ContentBlocksResource {
         return NodeNameCodec.encode(caption);
     }
 
-    private String makeCompoundList(final ContentBlocksFieldRestful field) {
+    private String makeCompoundList(final ContentBlocksField field) {
         return StringUtils.join(field.getCompoundRefs(), ",");
     }
 

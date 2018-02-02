@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +20,18 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.eventbus.EventBus;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.event.RebuildEvent;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
+import org.apache.commons.lang3.BooleanUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.services.ContentBeansService;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 
 
 /**
@@ -48,30 +42,26 @@ import org.onehippo.cms7.essentials.dashboard.services.ContentBeansService;
 @Path("beanwriter/")
 public class BeanWriterResource {
 
-    @Inject private EventBus eventBus;
+    @Inject private RebuildService rebuildService;
     @Inject private JcrService jcrService;
     @Inject private ContentBeansService contentBeansService;
-    @Inject private PluginContextFactory contextFactory;
 
     @POST
-    public UserFeedback runBeanWriter(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
-        final PluginContext context = contextFactory.getContext();
+    public UserFeedback runBeanWriter(final Map<String, Object> parameters) throws Exception {
         final UserFeedback feedback = new UserFeedback();
-        final Map<String, String> values = payload.getValues();
-        final String imageSet = values.get("imageSet");
+        final String imageSet = (String) parameters.get("imageSet");
 
-        contentBeansService.createBeans(jcrService, context, feedback, imageSet);
-        if ("true".equals(values.get("updateImageMethods"))) {
-            contentBeansService.convertImageMethodsForClassname(imageSet, context, feedback);
+        contentBeansService.createBeans(jcrService, feedback, imageSet);
+        if (BooleanUtils.isTrue((Boolean) parameters.get("updateImageMethods"))) {
+            contentBeansService.convertImageMethodsForClassname(imageSet, feedback);
         }
-        contentBeansService.cleanupMethods(jcrService, context, feedback);
+        contentBeansService.cleanupMethods(jcrService, feedback);
 
         if (feedback.getFeedbackMessages().isEmpty()) {
             feedback.addSuccess("All beans were up to date");
         } else {
-            final String message = "Hippo Beans are changed, project rebuild needed";
-            eventBus.post(new RebuildEvent("beanwriter", message));
-            feedback.addSuccess(message);
+            rebuildService.requestRebuild("beanwriter");
+            feedback.addSuccess("Hippo Beans are changed, project rebuild needed");
         }
         return feedback;
     }
@@ -79,7 +69,6 @@ public class BeanWriterResource {
     @GET
     @Path("/imagesets")
     public Set<String> getImageSets() throws Exception {
-        final PluginContext context = contextFactory.getContext();
-        return contentBeansService.getExistingImageTypes(context).keySet();
+        return contentBeansService.getExistingImageTypes().keySet();
     }
 }

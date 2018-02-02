@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
     <sv:value>hst:component</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>base-layout{{templateExtension}}</sv:value>
+    <sv:value>base-layout</sv:value>
   </sv:property>
   <sv:node sv:name="menu">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -40,7 +40,7 @@
       <sv:value>main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>base-top-menu{{templateExtension}}</sv:value>
+      <sv:value>base-top-menu</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="top">
@@ -56,7 +56,7 @@
       <sv:value>hst:component</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>base-footer{{templateExtension}}</sv:value>
+      <sv:value>base-footer</sv:value>
     </sv:property>
     <sv:node sv:name="container">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

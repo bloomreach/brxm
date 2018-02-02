@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,16 @@
 
 package org.onehippo.cms7.essentials.rest.picker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "jcrProperty")
-public class JcrProperty<T> implements Restful {
+public class JcrProperty<T> {
 
-    private static final long serialVersionUID = 1L;
     private String name;
     private String title;
     private T value;
@@ -46,14 +42,6 @@ public class JcrProperty<T> implements Restful {
     public JcrProperty() {
     }
 
-
-    public void addValue(final T value) {
-        if (values == null) {
-            values = new ArrayList<>();
-        }
-        values.add(value);
-
-    }
 
     public String getTitle() {
         if (title == null) {

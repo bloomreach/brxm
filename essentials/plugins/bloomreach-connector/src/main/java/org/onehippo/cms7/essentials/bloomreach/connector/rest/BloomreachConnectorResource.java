@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.MavenDependency;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.model.UserFeedback;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,17 +55,15 @@ public class BloomreachConnectorResource {
     private static final MavenDependency CRISP_REPOSITORY
             = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-repository", CRISP_VERSION, null, null);
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private MavenDependencyService dependencyService;
     @Inject private JcrService jcrService;
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered and if not if we at least have dependencies in place::
-        final PluginContext context = contextFactory.getContext();
         final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
-        final boolean hasDependency = dependencyService.hasDependency(context, TargetPom.CMS, CRISP_API)
-                && dependencyService.hasDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
+        final boolean hasDependency = dependencyService.hasDependency(Module.CMS, CRISP_API)
+                && dependencyService.hasDependency(Module.CMS, CRISP_REPOSITORY);
 
         final ResourceData resourceData = new ResourceData();
         resourceData.setCrispDependencyExists(hasDependency);
@@ -81,9 +77,8 @@ public class BloomreachConnectorResource {
     public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
         final UserFeedback feedback = new UserFeedback();
-        final PluginContext context = contextFactory.getContext();
-        boolean added = dependencyService.addDependency(context, TargetPom.CMS, CRISP_API)
-                && dependencyService.addDependency(context, TargetPom.CMS, CRISP_REPOSITORY);
+        boolean added = dependencyService.addDependency(Module.CMS, CRISP_API)
+                && dependencyService.addDependency(Module.CMS, CRISP_REPOSITORY);
         if (added) {
             feedback.addSuccess("Successfully added dependencies");
         } else {

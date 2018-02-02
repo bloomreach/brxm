@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,26 +28,21 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.ContentType;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.service.ContentTypeService;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentTypeInstance;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.TemplateQuery;
+import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,31 +56,30 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/documents/")
-public class DocumentResource extends BaseResource {
+public class DocumentResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
-    @Inject private PluginContextFactory contextFactory;
     @Inject private JcrService jcrService;
     @Inject private ContentTypeService contentTypeService;
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/")
-    public List<ContentType> getAllTypes(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext());
+    public List<ContentType> getAllTypes() {
+        return contentTypeService.fetchContentTypesFromOwnNamespace();
     }
 
     @ApiOperation(
             value = "Fetches all project document types (compounds are *excluded*)",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/documents")
-    public List<ContentType> getDocumentTypes(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+    public List<ContentType> getDocumentTypes() {
+        return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(type -> !type.isCompoundType())
                 .collect(Collectors.toList());
@@ -94,11 +87,11 @@ public class DocumentResource extends BaseResource {
 
     @ApiOperation(
             value = "Fetches all project compound types",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/compounds")
-    public List<ContentType> getCompounds(@Context ServletContext servletContext) {
-        return contentTypeService.fetchContentTypesFromOwnNamespace(contextFactory.getContext())
+    public List<ContentType> getCompounds() {
+        return contentTypeService.fetchContentTypesFromOwnNamespace()
                 .stream()
                 .filter(ContentType::isCompoundType)
                 .collect(Collectors.toList());
@@ -112,8 +105,8 @@ public class DocumentResource extends BaseResource {
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")
-    public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
-        final List<KeyValueRestful> valueLists = new ArrayList<>();
+    public List<ContentTypeInstance> getDocumentsByType(@PathParam("docType") String docType) {
+        final List<ContentTypeInstance> instances = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
@@ -127,7 +120,8 @@ public class DocumentResource extends BaseResource {
                         node = parent;
                     }
                     final String path = node.getPath();
-                    valueLists.add(new KeyValueRestful(((HippoNode) node).getDisplayName(), path));
+                    final String displayName = ((HippoNode) node).getDisplayName();
+                    instances.add(new ContentTypeInstance(path, docType, displayName));
                 }
             } catch (RepositoryException e) {
                 log.debug("Error fetching value lists", e);
@@ -135,19 +129,18 @@ public class DocumentResource extends BaseResource {
                 jcrService.destroySession(session);
             }
         }
-        Collections.sort(valueLists);
-        return valueLists;
+        return instances;
     }
 
     @ApiOperation(
             value = "Returns all document / folder query types",
             notes = "No pairing is done (e.g.: news-folder + news-document combinations. This is left to users themselves)",
-            response = KeyValueRestful.class)
+            response = List.class)
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/templatequeries")
-    public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
-        final List<KeyValueRestful> templateList = new ArrayList<>();
+    public List<TemplateQuery> getQueries() {
+        final List<TemplateQuery> templateList = new ArrayList<>();
         final Session session = jcrService.createSession();
         if (session != null) {
             try {
@@ -157,8 +150,7 @@ public class DocumentResource extends BaseResource {
                 final NodeIterator nodes = result.getNodes();
                 while (nodes.hasNext()) {
                     final Node node = nodes.nextNode();
-                    final String name = node.getName();
-                    templateList.add(new KeyValueRestful(name, name));
+                    templateList.add(new TemplateQuery(node.getName()));
                 }
             } catch (RepositoryException e) {
                 log.debug("Error fetching value lists", e);

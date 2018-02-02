@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('bloomreachConnectorCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+        .controller('bloomreachConnectorCtrl', function ($scope, $http, essentialsRestService) {
             
-            $scope.endpoint = $rootScope.REST.dynamic + 'bloomreachConnector/';
+            $scope.endpoint = essentialsRestService.baseUrl + '/bloomreachConnector';
             $scope.data = {};
             $scope.crispExists = false;
             $scope.crispDependencyExists = false;
@@ -33,7 +33,7 @@
             };
             $scope.install = function () {
 
-                $http.post($scope.endpoint +"install", {}).success(function (data) {
+                $http.post($scope.endpoint +"/install", {}).success(function (data) {
                     // do nothing
                     $scope.crispDependencyExists = true;
                 });

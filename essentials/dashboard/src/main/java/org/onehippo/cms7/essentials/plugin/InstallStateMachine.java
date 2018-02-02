@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package org.onehippo.cms7.essentials.plugin;
 
 import java.util.Calendar;
 
-import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
-import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.plugin.sdk.config.InstallerDocument;
+import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +31,12 @@ class InstallStateMachine {
 
     private static Logger log = LoggerFactory.getLogger(InstallStateMachine.class);
     private final Plugin plugin;
-    private final PluginContext context;
+    private final ProjectService projectService;
     private InstallState state;
 
-    InstallStateMachine(final Plugin plugin, final PluginContext context) {
+    InstallStateMachine(final Plugin plugin, final ProjectService projectService) {
         this.plugin = plugin;
-        this.context = context;
+        this.projectService = projectService;
         this.state = loadStateFromFileSystem();
     }
 
@@ -120,16 +118,13 @@ class InstallStateMachine {
     private InstallState loadState(final boolean fromWar) {
         InstallState state = InstallState.DISCOVERED;
 
-        try (PluginConfigService resourceService = new ResourcePluginService(context);
-             PluginConfigService fileService = new FilePluginService(context)) {
-            PluginConfigService service = fromWar ? resourceService : fileService;
+        final PluginFileService service = fromWar
+                ? new PluginFileResourceService(projectService)
+                : new PluginFileService(projectService);
 
-            final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
-            if (document != null) {
-                state = InstallState.fromString(document.getInstallationState());
-            }
-        } catch (Exception e) {
-            log.error("Error loading install-state for plugin {}", plugin.getId(), e);
+        final InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
+        if (document != null) {
+            state = InstallState.fromString(document.getInstallationState());
         }
 
         return state;
@@ -137,26 +132,23 @@ class InstallStateMachine {
 
     private void persistState() {
         if (state != InstallState.DISCOVERED) {
-            try (PluginConfigService service = new FilePluginService(context)) {
-                InstallerDocument document = service.read(plugin.getId(), InstallerDocument.class);
-                if (document == null) {
-                    // create a new installer document
-                    document = new InstallerDocument();
+            final String filename = plugin.getId();
+            final PluginFileService service = new PluginFileService(projectService);
 
-                    document.setName(plugin.getId());
-                    document.setDateInstalled(Calendar.getInstance());
-                }
-
-                if (document.getDateAdded() == null
-                        && (state == InstallState.INSTALLING || state == InstallState.INSTALLED)) {
-                    document.setDateAdded(Calendar.getInstance());
-                }
-
-                document.setInstallationState(state.toString());
-                service.write(document);
-            } catch (Exception e) {
-                log.error("Error updating install-state for plugin {}", plugin.getId(), e);
+            InstallerDocument document = service.read(filename, InstallerDocument.class);
+            if (document == null) {
+                // create a new installer document
+                document = new InstallerDocument();
+                document.setDateInstalled(Calendar.getInstance());
             }
+
+            if (document.getDateAdded() == null
+                    && (state == InstallState.INSTALLING || state == InstallState.INSTALLED)) {
+                document.setDateAdded(Calendar.getInstance());
+            }
+
+            document.setInstallationState(state.toString());
+            service.write(filename, document);
         }
     }
 }

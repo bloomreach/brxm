@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,12 +123,14 @@ class MemoryRepository {
      * test case. Typically, use this method in conjunction with #registerNodeTypes.
      */
     static void reset() {
-        perpetualSession.logout();
-        perpetualSession = null;
-
-        repository.shutdown();
-        repository = null;
-
+        if (perpetualSession != null) {
+            perpetualSession.logout();
+            perpetualSession = null;
+        }
+        if (repository != null) {
+            repository.shutdown();
+            repository = null;
+        }
         clearStorageDirectory();
     }
 

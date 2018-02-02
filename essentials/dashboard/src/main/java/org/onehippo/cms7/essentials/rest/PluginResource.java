@@ -16,15 +16,17 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,34 +35,29 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import com.google.common.collect.Multimap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
-import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
-import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
-import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.service.JcrService;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.plugin.InstallState;
 import org.onehippo.cms7.essentials.plugin.Plugin;
 import org.onehippo.cms7.essentials.plugin.PluginException;
 import org.onehippo.cms7.essentials.plugin.PluginStore;
-import org.onehippo.cms7.essentials.project.ProjectUtils;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.SkeletonInstructionPackage;
+import org.onehippo.cms7.essentials.plugin.sdk.rest.ChangeMessage;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
+import org.onehippo.cms7.essentials.rest.model.ApplicationData;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
+import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,37 +68,34 @@ import io.swagger.annotations.ApiParam;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/plugins")
-public class PluginResource extends BaseResource {
+public class PluginResource {
 
     public static final String PLUGIN_ID = "pluginId";
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
     private static final Lock setupLock = new ReentrantLock();
 
-    @Inject
-    private PluginStore pluginStore;
-
-    @Inject private PluginContextFactory contextFactory;
+    @Inject private PluginStore pluginStore;
+    @Inject private SettingsService settingsService;
     @Inject private JcrService jcrService;
+    @Inject private AutowireCapableBeanFactory injector;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
             value = "Fetch list of all plugin descriptors. " +
                     "For all plugins with dynamic REST endpoints, these get registered at /dynamic/{pluginEndpoint}",
             notes = "Retrieve a list of PluginDescriptorRestful objects",
-            response = RestfulList.class)
+            response = List.class)
     @GET
     @Path("/")
-    public RestfulList<PluginDescriptor> getAllPlugins() {
-        final RestfulList<PluginDescriptor> restfulList = new RestfulList<>();
-        final List<Plugin> plugins = pluginStore.getAllPlugins();
-
-        for (Plugin plugin : plugins) {
-            final PluginDescriptor descriptor = plugin.getDescriptor();
-            descriptor.setInstallState(plugin.getInstallState().toString());
-            restfulList.add(descriptor);
-        }
-
-        return restfulList;
+    public List<PluginDescriptor> getAllPlugins() {
+        return pluginStore.getAllPlugins()
+                .stream()
+                .map(plugin -> {
+                    final PluginDescriptor descriptor = plugin.getDescriptor();
+                    descriptor.setInstallState(plugin.getInstallState().toString());
+                    return descriptor;
+                })
+                .collect(Collectors.toList());
     }
 
 
@@ -127,69 +121,58 @@ public class PluginResource extends BaseResource {
             value = "Return a list of changes made by the plugin during setup, given certain parameter values.",
             notes = "[API] Messages are only indication what might change, because operations may be skipped, "
                     + "e.g. file copy is not executed if file already exists.",
-            response = RestfulList.class)
+            response = List.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
-    @POST
+    @GET
     @Path("/{" + PLUGIN_ID + "}/changes")
-    public RestfulList<MessageRestful> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
-                                                                    final PostPayloadRestful payload) throws Exception {
-        final RestfulList<MessageRestful> list = new RestfulList<>();
-
+    public List<ChangeMessage> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
+                                                            @Context final UriInfo uriInfo,
+                                                            @Context HttpServletResponse response) throws Exception {
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            list.add(new ErrorMessageRestful("Setup Changes: Plugin with ID '" + pluginId + "' was not found."));
-            return list;
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return Collections.emptyList();
         }
 
-        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
+        final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage == null) {
-            list.add(new ErrorMessageRestful("Failed to create instructions package"));
-            return list;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return Collections.emptyList();
         }
 
-        final Map<String, Object> properties = makeSetupPropertiesFromValues(payload.getValues());
-        instructionPackage.setProperties(properties);
-        final PluginContext context = contextFactory.getContext();
-        context.addPlaceholderData(properties);
-
-        @SuppressWarnings("unchecked")
-        final Multimap<MessageGroup, MessageRestful> messages = (Multimap<MessageGroup, MessageRestful>) instructionPackage.getInstructionsMessages(context);
-        final Collection<Map.Entry<MessageGroup, MessageRestful>> entries = messages.entries();
-        for (Map.Entry<MessageGroup, MessageRestful> entry : entries) {
-            final MessageRestful value = entry.getValue();
-            value.setGroup(entry.getKey());
-            value.setGlobalMessage(false);
-            list.add(value);
-        }
-        return list;
+        final Map<String, Object> parameters = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
+        return instructionPackage.getInstructionsMessages(parameters);
     }
 
 
     @ApiOperation(
             value = "Install a plugin into Essentials",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
-    public MessageRestful installPlugin(@PathParam(PLUGIN_ID) String pluginId) throws Exception {
+    public UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId, @Context HttpServletResponse response) {
+        final UserFeedback feedback = new UserFeedback();
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            return new ErrorMessageRestful("Installation failed: Plugin with ID '" + pluginId + "' was not found.");
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return feedback.addError("Failed to install plugin with ID '" + pluginId + "', plugin not found");
         }
 
         try {
             plugin.install();
         } catch (PluginException e) {
             log.error(e.getMessage(), e);
-            return new ErrorMessageRestful(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return feedback.addError(e.getMessage());
         }
 
-        String msg = autoSetupIfPossible(plugin);
-        if (msg != null) {
-            return new ErrorMessageRestful(msg);
+        autoSetupIfPossible(plugin, feedback);
+        if (feedback.getFeedbackMessages().isEmpty()) {
+            feedback.addSuccess("Plugin <strong>" + plugin + "</strong> successfully installed.");
         }
 
-        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully installed.");
+        return feedback;
     }
 
 
@@ -197,24 +180,27 @@ public class PluginResource extends BaseResource {
             value = "Trigger a generalized setup (by means of executing an instructions package).",
             notes = "[API] generalized setup may be executed automatically for installed plugins," +
                     "depending on the project settings.",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/setup")
-    public MessageRestful setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
-                                                 final PostPayloadRestful payloadRestful) {
+    public UserFeedback setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
+                                               final Map<String, Object> parameters,
+                                               @Context HttpServletResponse response) {
+        final UserFeedback feedback = new UserFeedback();
         final Plugin plugin = pluginStore.getPluginById(pluginId);
         if (plugin == null) {
-            return new ErrorMessageRestful("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            return feedback.addError("Setup failed: Plugin with ID '" + pluginId + "' was not found.");
         }
 
-        final Map<String, Object> properties = makeSetupPropertiesFromValues(payloadRestful.getValues());
-        final String msg = setupPlugin(plugin, properties);
-        if (msg != null) {
-            return new ErrorMessageRestful(msg);
+        prepareSetupParameters(parameters);
+        setupPlugin(plugin, parameters, feedback);
+        if (feedback.getFeedbackMessages().isEmpty()) {
+            feedback.addSuccess("Plugin <strong>" + plugin + "</strong> successfully set up.");
         }
 
-        return new MessageRestful("Plugin <strong>" + plugin + "</strong> successfully set up.");
+        return feedback;
     }
 
 
@@ -224,19 +210,21 @@ public class PluginResource extends BaseResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/setupcomplete")
-    public void signalPluginSetupComplete(@PathParam(PLUGIN_ID) final String pluginId) {
-        updateInstallStateAfterSetup(pluginStore.getPluginById(pluginId));
+    public UserFeedback signalPluginSetupComplete(@PathParam(PLUGIN_ID) final String pluginId) {
+        final UserFeedback feedback = new UserFeedback();
+        updateInstallStateAfterSetup(pluginStore.getPluginById(pluginId), feedback);
+        return feedback;
     }
 
 
     @ApiOperation(
             value = "Check for each plugin if its setup phase can be triggered.",
-            response = MessageRestful.class
+            response = UserFeedback.class
     )
     @POST
     @Path("/autosetup")
-    public MessageRestful autoSetupPlugins(@Context ServletContext servletContext) {
-        final StringBuilder builder = new StringBuilder();
+    public UserFeedback autoSetupPlugins(@Context ServletContext servletContext) {
+        final UserFeedback feedback = new UserFeedback();
         // We lock the ping to avoid concurrent auto-setup. Concurrent auto-setup may happen
         // if the user(s) has/have two browsers pointed at the restarting Essentials WAR. Not
         // locking would lead to duplicate setup/bootstrapping.
@@ -248,16 +236,13 @@ public class PluginResource extends BaseResource {
         try {
             for (Plugin plugin : pluginStore.getAllPlugins()) {
                 plugin.promote();
-                final String msg = autoSetupIfPossible(plugin);
-                if (msg != null) {
-                    builder.append(msg).append(" - ");
-                }
+                autoSetupIfPossible(plugin, feedback);
             }
-            ProjectUtils.setInitialized(true);
+            DashboardUtils.setInitialized(true);
         } finally {
             setupLock.unlock();
         }
-        return (builder.length() > 0) ? new ErrorMessageRestful(builder.toString()) : null;
+        return feedback;
     }
 
 
@@ -265,12 +250,12 @@ public class PluginResource extends BaseResource {
             value = "Clears plugin cache",
             notes = "Remote Plugin descriptors are cached for 1 hour. " +
                     "[DEBUG] This method clears plugin cache and plugins are fetched again on next requests",
-            response = MessageRestful.class)
+            response = UserFeedback.class)
     @GET
     @Path("/clearcache")
-    public MessageRestful clearCache(@Context ServletContext servletContext) {
+    public UserFeedback clearCache(@Context ServletContext servletContext) {
         pluginStore.clearCache();
-        return new MessageRestful("Plugin Cache invalidated");
+        return new UserFeedback().addSuccess("Plugin Cache invalidated");
     }
 
 
@@ -278,102 +263,105 @@ public class PluginResource extends BaseResource {
             value = "Return list of plugin Javascript modules",
             notes = "Modules are prefixed with 'tool' or 'feature', depending on their plugin type. "
                     + "This method is only used outside of the front-end's AngularJS application.",
-            response = PluginModuleRestful.class)
+            response = ApplicationData.class)
     @GET
     @Path("/modules")
-    public PluginModuleRestful getModules() {
-        final PluginModuleRestful modules = new PluginModuleRestful();
-        pluginStore.getAllPlugins().forEach(p -> modules.addFiles(p.getDescriptor()));
-        return modules;
+    public ApplicationData getModules() {
+        final ApplicationData applicationData = new ApplicationData();
+        pluginStore.getAllPlugins().forEach(p -> applicationData.addFiles(p.getDescriptor()));
+        return applicationData;
     }
 
 
-    private String autoSetupIfPossible(final Plugin plugin) {
+    private void autoSetupIfPossible(final Plugin plugin, final UserFeedback feedback) {
         if (plugin.getInstallState() != InstallState.ONBOARD || !plugin.hasGeneralizedSetUp()) {
-            return null; // auto-setup not possible
+            return; // auto-setup not possible
         }
 
-        final ProjectSettings settings = pluginStore.getProjectSettings();
+        final ProjectSettings settings = settingsService.getSettings();
         if (settings.isConfirmParams() && plugin.getDescriptor().hasSetupParameters()) {
-            return null; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
+            return; // skip auto-setup if per-plugin parameters are requested and the plugin actually has parameters
         }
 
-        final Map<String, Object> properties = new HashMap<>();
-        preProcessSetupProperties(properties);
-
-        return setupPlugin(plugin, properties);
+        setupPlugin(plugin, createDefaultSetupParameters(), feedback);
     }
 
-    private String setupPlugin(final Plugin plugin, final Map<String, Object> properties) {
-        final PluginContext context = contextFactory.getContext();
-        context.addPlaceholderData(properties);
-
-        HstUtils.erasePreview(jcrService, context);
+    private void setupPlugin(final Plugin plugin, final Map<String, Object> parameters, final UserFeedback feedback) {
+        HstUtils.erasePreview(jcrService, settingsService);
 
         // execute skeleton
-        final InstructionPackage commonPackage = new CommonsInstructionPackage();
-        commonPackage.setProperties(properties);
-        getInjector().autowireBean(commonPackage);
-        commonPackage.execute(context);
+        // TODO: replace by inter-plugin dependency mechanism
+        final DefaultInstructionPackage commonPackage = new SkeletonInstructionPackage();
+        injector.autowireBean(commonPackage);
+        commonPackage.execute(parameters);
 
         // execute InstructionPackage itself
-        final InstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
+        final DefaultInstructionPackage instructionPackage = plugin.makeInstructionPackageInstance();
         if (instructionPackage != null) {
-            ApplicationModule.getInjector().autowireBean(instructionPackage);
-            instructionPackage.setProperties(properties);
-            instructionPackage.execute(context);
+            instructionPackage.execute(parameters);
         }
 
-        return updateInstallStateAfterSetup(plugin);
+        updateInstallStateAfterSetup(plugin, feedback);
     }
 
-    private void preProcessSetupProperties(final Map<String, Object> properties) {
-        final ProjectSettings settings = pluginStore.getProjectSettings();
+    private Map<String, Object> createDefaultSetupParameters() {
+        final Map<String, Object> parameters = new HashMap<>();
+        final ProjectSettings settings = settingsService.getSettings();
 
-        if (!properties.containsKey(EssentialConst.PROP_SAMPLE_DATA)) {
-            properties.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
-        }
-        if (!properties.containsKey(EssentialConst.PROP_TEMPLATE_NAME)) {
-            properties.put(EssentialConst.PROP_TEMPLATE_NAME, settings.getTemplateLanguage());
-        }
-        if (!properties.containsKey(EssentialConst.PROP_EXTRA_TEMPLATES)) {
-            properties.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
-        }
+        parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
+        parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        parameters.put(settings.getTemplateLanguage(), true);
+
+        return parameters;
     }
 
     /**
-     * Convert String values to Booleans if possible.
-     * Doing this here helps avoiding additional conversions downstream.
-     *
-     * TODO: check if we can refactor the PostPayloadRestful so this happens automatically?
+     * Make sure that the generic setup parameters are set.
      */
-    private Map<String, Object> makeSetupPropertiesFromValues(final Map<String, String> values) {
+    private void prepareSetupParameters(final Map<String, Object> parameters) {
+        final ProjectSettings settings = settingsService.getSettings();
+
+        final Object templateName = parameters.get(EssentialConst.PROP_TEMPLATE_NAME);
+        final String templateLanguage = (templateName instanceof String)
+                ? (String) templateName
+                : settings.getTemplateLanguage();
+        parameters.put(templateLanguage, true);
+
+        final Object sampleData = parameters.get(EssentialConst.PROP_SAMPLE_DATA);
+        if (!(sampleData instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
+        }
+
+        final Object extraTemplates = parameters.get(EssentialConst.PROP_EXTRA_TEMPLATES);
+        if (!(extraTemplates instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        }
+    }
+
+    private Map<String, Object> extractSetupParametersFromQueryParameters(final MultivaluedMap<String, String> values) {
         final Map<String, Object> properties = new HashMap<>();
 
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            if ("true".equalsIgnoreCase(entry.getValue()) ||
-                "false".equalsIgnoreCase(entry.getValue())) {
-                properties.put(entry.getKey(), Boolean.valueOf(entry.getValue()));
+        for (String key : values.keySet()) {
+            final String value = values.getFirst(key);
+            if ("true".equals(value) || "false".equals(value)) {
+                properties.put(key, Boolean.valueOf(value));
             } else {
-                properties.put(entry.getKey(), entry.getValue());
+                properties.put(key, value);
             }
         }
 
-        preProcessSetupProperties(properties);
+        properties.put((String)properties.get(EssentialConst.PROP_TEMPLATE_NAME), true);
 
         return properties;
     }
 
-    private String updateInstallStateAfterSetup(final Plugin plugin) {
-        String msg = null; // no error message, signals success.
-
+    private void updateInstallStateAfterSetup(final Plugin plugin, final UserFeedback feedback) {
         try {
             plugin.setup();
         } catch (PluginException e) {
-            log.error("Error setting up plugin '" + plugin + "'.", e);
-            msg = "There was an error in processing " + plugin + " Please see the error logs for more details";
+            final String msg = String.format("Failed to set up plugin '%s'.", plugin.getId());
+            log.error(msg, e);
+            feedback.addError(msg + " See back-end logs for more details.");
         }
-
-        return msg;
     }
 }

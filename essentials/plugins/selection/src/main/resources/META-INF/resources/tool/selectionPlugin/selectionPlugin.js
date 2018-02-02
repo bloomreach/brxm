@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('selectionPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+        .controller('selectionPluginCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
 
-            var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+            var restEndpoint = essentialsRestService.baseUrl + '/selectionplugin';
             var singlePresentations = [
                 { id: 'dropdown', label: 'Dropdown'},
                 { id: 'radioboxes', label: 'Radio Group'}
@@ -37,19 +37,16 @@
             $scope.addField = function() {
                var maxRows = isNaN(parseInt($scope.data.maxRows)) ? 10: parseInt($scope.data.maxRows);
                 var payload = {
-                    values: {
-                        namespace:     $scope.data.selectedDocumentType.prefix,
-                        documentType:  $scope.data.selectedDocumentType.name,
-                        fieldName:     $scope.data.fieldName,
-                        selectionType: $scope.data.selectionType,
-                        valueList:     $scope.data.selectedValueList.value,
-                        presentation:  $scope.data.presentation.id,
-                        orientation:   $scope.data.orientation,
-                        maxRows:       maxRows,
-                        allowOrdering: $scope.data.allowOrdering
-                    }
+                    jcrContentType: $scope.data.selectedDocumentType.fullName,
+                    fieldName:      $scope.data.fieldName,
+                    selectionType:  $scope.data.selectionType,
+                    valueList:      $scope.data.selectedValueList.jcrPath,
+                    presentation:   $scope.data.presentation.id,
+                    orientation:    $scope.data.orientation,
+                    maxRows:        maxRows,
+                    allowOrdering:  $scope.data.allowOrdering
                 };
-                $http.post(restEndpoint + 'addfield/', payload).success(function () {
+                $http.post(restEndpoint + '/addfield', payload).success(function () {
                     resetAddFieldForm();
                     reloadSelectionFields($scope.data.selectedDocumentType);
                     $scope.fieldAdded = true;
@@ -61,7 +58,7 @@
             };
 
             $scope.valueListAsOption = function(valueList) {
-                return valueList.key + ' (' + valueList.value + ')';
+                return valueList.displayName + ' (' + valueList.jcrPath + ')';
             };
             $scope.saveProvisioning = function() {
                 var provisionedValueLists = [];
@@ -73,7 +70,7 @@
                         });
                     }
                 });
-                $http.post(restEndpoint + 'spring', provisionedValueLists).success(function() {
+                $http.post(restEndpoint + '/spring', provisionedValueLists).success(function() {
                     loadProvisionedValueLists();
                 });
             };
@@ -102,7 +99,7 @@
             loadValueLists();
 
             $scope.documentTypes = [];
-            $http.get($rootScope.REST.documents).success(function (data){
+            essentialsContentTypeService.getContentTypes().success(function (data){
                 $scope.documentTypes = data;
                 $scope.initializing = false;
 
@@ -129,7 +126,7 @@
 
             // Helper functions
             function loadValueLists() {
-                $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                essentialsContentTypeService.getContentTypeInstances('selection:valuelist').success(function (data) {
                     $scope.valueLists = data;
 
                     loadProvisionedValueLists();
@@ -137,12 +134,12 @@
             }
             function loadProvisionedValueLists() {
                 if ($scope.valueLists.length > 0) {
-                    $http.get(restEndpoint + 'spring').success(function (oldProvisionedValueLists) {
+                    $http.get(restEndpoint + '/spring').success(function (oldProvisionedValueLists) {
                         var provisionedValueLists = [];
                         angular.forEach($scope.valueLists, function(valueList) {
                             var oldItem, newItem;
                             angular.forEach(oldProvisionedValueLists, function(oldValueList) {
-                                if (oldValueList.path === valueList.value) {
+                                if (oldValueList.path === valueList.jcrPath) {
                                     oldItem = oldValueList;
                                 }
                             });
@@ -151,7 +148,7 @@
                                 newItem = oldItem;
                             } else {
                                 newItem = {
-                                    path: valueList.value
+                                    path: valueList.jcrPath
                                 };
                             }
                             provisionedValueLists.push(newItem);
@@ -169,7 +166,7 @@
             }
             function reloadSelectionFields(documentType) {
                 $scope.selectionFields = [];
-                $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
+                $http.get(restEndpoint + '/fieldsfor/' + documentType.fullName).success(function (data) {
                     $scope.selectionFields = data;
                 });
             }

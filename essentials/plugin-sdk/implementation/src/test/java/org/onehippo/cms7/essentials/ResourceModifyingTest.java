@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,39 +21,54 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Charsets;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 /**
  * ResourceModifyingTest provides you with an extended PluginContext suitable for testing the modification of
  * project resources without affecting other test cases.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class})
+@ActiveProfiles("settings-test")
 public abstract class ResourceModifyingTest {
 
-    private PluginContext context;
+    @Inject private TestSettings.Service settingsService;
+    @Inject private AutowireCapableBeanFactory injector;
+
     private String oldProjectBaseDir;
     private Path projectRootPath;
 
-    public PluginContext getContext() throws IOException {
-        ensureContext();
-        return context;
+    @Before
+    public void setUp() {
+        settingsService.setSettings(BaseTest.projectSettings);
     }
 
     @After
     public void after() throws IOException {
-        if (context != null) {
+        if (projectRootPath != null) {
             FileUtils.deleteDirectory(projectRootPath.toFile());
+            projectRootPath = null;
+
             if (oldProjectBaseDir != null) {
                 System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldProjectBaseDir);
             } else {
                 System.clearProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
             }
-            context = null;
         }
     }
 
@@ -66,6 +81,10 @@ public abstract class ResourceModifyingTest {
         return output;
     }
 
+    protected File getModifiableFile(final String projectLocation) throws IOException {
+        return fileAt(projectLocation);
+    }
+
     protected File createModifiableDirectory(final String projectLocation) throws IOException {
         final File output = fileAt(projectLocation);
 
@@ -76,7 +95,7 @@ public abstract class ResourceModifyingTest {
 
     private File fileAt(final String projectLocation) throws IOException {
         final String[] projectLegs = projectLocation.split("/");
-        ensureContext();
+        ensureModifiableProjectRoot();
         Path outputPath = projectRootPath;
         for (String leg : projectLegs) {
             outputPath = outputPath.resolve(leg);
@@ -93,14 +112,16 @@ public abstract class ResourceModifyingTest {
         return com.google.common.io.Files.asCharSource(file, Charsets.UTF_8).read();
     }
 
-    private void ensureContext() throws IOException {
-        if (context == null) {
+    protected void autoWire(final Object bean) {
+        injector.autowireBean(bean);
+    }
+
+    private void ensureModifiableProjectRoot() throws IOException {
+        if (projectRootPath == null) {
             // create a temporary directory representing the root of modifiable project files
             projectRootPath = Files.createTempDirectory("test");
             oldProjectBaseDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, projectRootPath.toString());
-
-            context = new MockPluginContext();
         }
     }
 }

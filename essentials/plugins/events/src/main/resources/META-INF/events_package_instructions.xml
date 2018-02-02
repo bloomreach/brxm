@@ -81,12 +81,12 @@
 
   <!-- SAMPLES GROUP-->
   <instructionSet group="sampleData">
-    <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
-    <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/content/documents/events/sample_introduction_speech.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/content/events.xml" target="/content/documents/{{namespace}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_introduction_speech.xml" target="/content/documents/{{namespace}}/events/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
 
-    <folder path="/content/gallery/{{namespace}}/samples" template="xml/samples/content/gallery/samples.xml"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
     <xml action="copy" source="xml/samples/content/gallery/samples/blue.xml" target="/content/gallery/{{namespace}}/samples"/>
     <xml action="copy" source="xml/samples/content/gallery/samples/coffee.xml" target="/content/gallery/{{namespace}}/samples"/>
     <xml action="copy" source="xml/samples/content/gallery/samples/pencils.xml" target="/content/gallery/{{namespace}}/samples"/>
