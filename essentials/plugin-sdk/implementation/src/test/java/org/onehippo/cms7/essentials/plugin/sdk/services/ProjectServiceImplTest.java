@@ -232,10 +232,10 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void copy_onto_directory() throws Exception {
+        createModifiableDirectory("test");
         final String resourcePath = "/services/project/to-be-copied.txt";
         final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test";
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
-        createModifiableDirectory("test");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
             assertFalse(projectService.copyResource(resourcePath, targetLocation, placeholderData, true, false));
