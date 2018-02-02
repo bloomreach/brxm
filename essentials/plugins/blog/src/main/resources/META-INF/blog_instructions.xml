@@ -59,18 +59,10 @@
   </instructionSet>
 
   <!--
-    CREATE DATA FOLDERS
-  -->
-  <instructionSet>
-    <folder template="xml/folder/blog-base-folder.xml" path="/content/documents/{{namespace}}/blog"/>
-    <folder template="xml/folder/blog-author-folder.xml" path="/content/documents/{{namespace}}/blog/authors"/>
-    <folder template="xml/folder/blog-folder.xml" path="/content/documents/{{namespace}}/blog/{{dateCurrentYear}}/{{dateCurrentMonth}}"/>
-  </instructionSet>
-
-  <!--
     DATA
   -->
   <instructionSet>
+    <xml action="copy" source="xml/folder/blog-folder.xml" target="/content/documents/{{namespace}}"/>
     <xml action="copy" source="xml/data/account-types.xml" target="/content/documents/{{namespace}}/blog"/>
     <xml action="copy" source="xml/data/blog-categories.xml" target="/content/documents/{{namespace}}/blog"/>
     <xml action="copy" source="content/blog-labels.xml" target="/content/documents/administration/labels"/>

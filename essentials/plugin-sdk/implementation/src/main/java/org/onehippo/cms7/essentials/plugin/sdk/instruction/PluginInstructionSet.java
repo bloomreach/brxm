@@ -40,7 +40,6 @@ public class PluginInstructionSet {
 
     @XmlElementRefs({
             @XmlElementRef(type = XmlInstruction.class),
-            @XmlElementRef(type = NodeFolderInstruction.class),
             @XmlElementRef(type = CndInstruction.class),
             @XmlElementRef(type = ExecuteInstruction.class),
             @XmlElementRef(type = DirectoryInstruction.class),

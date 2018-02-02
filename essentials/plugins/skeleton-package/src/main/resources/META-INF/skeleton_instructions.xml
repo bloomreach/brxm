@@ -32,8 +32,7 @@
   </instructionSet>
 
   <instructionSet>
-    <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration"/>
-    <folder template="instructions/content/untranslated-folder.xml" path="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/untranslated-folder.xml" target="/content/documents"/>
     <xml action="copy" source="instructions/content/global-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/homepage-labels.xml" target="/content/documents/administration/labels"/>
     <xml action="copy" source="instructions/content/pagenotfound-labels.xml" target="/content/documents/administration/labels"/>

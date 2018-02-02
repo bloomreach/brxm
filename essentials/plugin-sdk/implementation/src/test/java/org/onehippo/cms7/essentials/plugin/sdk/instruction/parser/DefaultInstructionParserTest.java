@@ -66,7 +66,7 @@ public class DefaultInstructionParserTest extends BaseTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         final PluginInstructions myInstructions = instructionParser.parseInstructions(content);
         final Set<PluginInstructionSet> iset = myInstructions.getInstructionSets();
-        assertEquals(3, iset.size());
+        assertEquals(2, iset.size());
 
         final Iterator<PluginInstructionSet> myIterator = iset.iterator();
         final PluginInstructionSet set1 = myIterator.next();
@@ -74,7 +74,7 @@ public class DefaultInstructionParserTest extends BaseTest {
 
         assertEquals("myGroup", set1.getGroups().iterator().next());
         Assert.assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroups().iterator().next());
-        assertEquals(8, set1.getInstructions().size());
+        assertEquals(7, set1.getInstructions().size());
         assertEquals(1, set2.getInstructions().size());
 
         //############################################
@@ -123,10 +123,5 @@ public class DefaultInstructionParserTest extends BaseTest {
             }
             pluginInstructionSet.addInstruction(instruction);
         }
-    }
-
-    @Test
-    public void initTest() {
-        assertTrue(true);
     }
 }

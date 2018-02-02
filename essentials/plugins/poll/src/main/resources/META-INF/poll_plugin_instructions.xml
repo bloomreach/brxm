@@ -26,7 +26,7 @@
     <translations source="/json/polltemplates-translations.json" />
   </instructionSet>
   <instructionSet group="sampleData">
-    <folder path="/content/documents/{{namespace}}/polls" template="xml/poll-folder.xml"/>
+    <xml action="copy" source="xml/poll-folder.xml" target="/content/documents/{{namespace}}"/>
     <xml action="copy" source="xml/poll-example.xml" target="/content/documents/{{namespace}}/polls"/>
   </instructionSet>
 </instructions>

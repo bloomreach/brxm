@@ -23,14 +23,10 @@
     <file action="delete" target="{{projectRoot}}/test_cnd2.cnd"/>
     <xml action="copy" source="instruction_xml_file.xml" target="/"/>
     <xml action="delete" target="/testNode"/>
-    <folder path="/foo/bar/foobar" template="my_folder_template.xml"/>
     <hstBeanClasses pattern="foo"/>
     <mavenDependency groupId="group" artifactId="artifact" targetPom="project"/>
   </instructionSet>
   <!-- DEFAULT GROUP-->
-  <instructionSet>
-    <folder path="/foo/bar/foobar2/{{dateCurrentYear}}/{{dateCurrentMonth}}" template="my_folder_template.xml"/>
-  </instructionSet>
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.plugin.sdk.instruction.DummyInstruction"/>
   </instructionSet>

@@ -74,7 +74,6 @@
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="translationsType" name="translations" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="hstBeanClassesType" name="hstBeanClasses" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="dependencyType" name="mavenDependency" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
@@ -161,22 +160,6 @@
   </xs:complexType>
   <xs:complexType name="translationsType" mixed="true">
     <xs:attribute use="required" name="source" type="xs:string"/>
-    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
-  </xs:complexType>
-
-  <xs:complexType name="folderType" mixed="true">
-    <xs:attribute use="required" name="path" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>Absolute path like /content/documents/news/2012</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-
-    <xs:attribute use="required" name="template" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>NOTE: template must have following name: ${name}</xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 

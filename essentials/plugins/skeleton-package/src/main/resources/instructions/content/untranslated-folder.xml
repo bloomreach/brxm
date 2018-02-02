@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="{{name}}">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="administration">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
@@ -26,4 +26,16 @@
     <sv:value>new-resource-bundle</sv:value>
     <sv:value>new-untranslated-folder</sv:value>
   </sv:property>
+  <sv:node sv:name="labels">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+      <sv:value>new-resource-bundle</sv:value>
+      <sv:value>new-untranslated-folder</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
