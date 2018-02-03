@@ -104,6 +104,12 @@
           </a>
         </li>
         <li>
+          <a href="#/introduction">
+            <hippo-icon name="gear" size="m"></hippo-icon>
+              Settings
+          </a>
+        </li>
+        <li>
           <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/e07a17b7?os_authType=none">
             <hippo-icon name="comment" size="m"></hippo-icon>
             Feedback</a>
