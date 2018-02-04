@@ -45,6 +45,7 @@
   <script src="${pageContext.request.contextPath}/js/directives.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/dashboard/api/services.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/dashboard/api/directives.js?v=${project.version}"></script>
 
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
