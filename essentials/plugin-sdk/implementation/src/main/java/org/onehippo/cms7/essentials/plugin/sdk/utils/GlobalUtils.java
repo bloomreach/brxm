@@ -230,7 +230,7 @@ public final class GlobalUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(final String className) {
-        Class<?> aClass = loadCLass(className);
+        Class<?> aClass = loadClass(className);
         if (aClass != null) {
             return (T) newInstance(aClass);
         }
@@ -238,7 +238,7 @@ public final class GlobalUtils {
     }
 
 
-    public static Class<?> loadCLass(final String clazz) {
+    public static Class<?> loadClass(final String clazz) {
         try {
             if (Strings.isNullOrEmpty(clazz)) {
                 log.warn("Class name was null or empty");

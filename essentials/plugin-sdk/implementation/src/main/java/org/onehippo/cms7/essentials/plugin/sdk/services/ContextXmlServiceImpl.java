@@ -31,7 +31,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContextXmlServiceImpl implements ContextXmlService {
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public ContextXmlServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean addResource(final String name, final Map<String, String> attributes) {

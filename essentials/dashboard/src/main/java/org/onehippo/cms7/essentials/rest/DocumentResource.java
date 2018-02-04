@@ -61,8 +61,14 @@ public class DocumentResource {
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+
+    @Inject
+    public DocumentResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+    }
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",

@@ -39,7 +39,12 @@ public class MavenDependencyServiceImpl implements MavenDependencyService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyServiceImpl.class);
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public MavenDependencyServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean hasDependency(final Module module, final MavenDependency dependency) {

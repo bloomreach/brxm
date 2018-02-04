@@ -55,8 +55,14 @@ public class TaggingResource {
     private static final String TAGS_FIELD = "tags";
     private static final String TAGSUGGEST_FIELD = "tagsuggest";
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+
+    @Inject
+    public TaggingResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+    }
 
     @POST
     @Path("/")

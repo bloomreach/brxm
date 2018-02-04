@@ -45,7 +45,12 @@ public class WebXmlServiceImpl implements WebXmlService {
     private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImpl.class);
     private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public WebXmlServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean addHstBeanClassPattern(final String pattern) {

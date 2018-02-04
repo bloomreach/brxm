@@ -51,12 +51,21 @@ public class DefaultInstructionPackage {
 
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
-    @Inject private PluginInstructionExecutor executor;
-    @Inject private DefaultInstructionParser instructionParser;
-    @Inject private PlaceholderService placeholderService;
+    private final PluginInstructionExecutor executor;
+    private final DefaultInstructionParser instructionParser;
+    private final PlaceholderService placeholderService;
 
     private PluginInstructions instructions;
     private String path;
+
+    @Inject
+    public DefaultInstructionPackage(final PluginInstructionExecutor executor,
+                                     final DefaultInstructionParser instructionParser,
+                                     final PlaceholderService placeholderService) {
+        this.executor = executor;
+        this.instructionParser = instructionParser;
+        this.placeholderService = placeholderService;
+    }
 
     public List<ChangeMessage> getInstructionsMessages(final Map<String, Object> parameters) {
         final PluginInstructions myInstructions = getInstructions();

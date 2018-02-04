@@ -35,7 +35,12 @@ public class MavenModelServiceImpl implements MavenModelService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenModelServiceImpl.class);
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public MavenModelServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean setParentProject(final Module module, final String groupId, final String artifactId, final String version) {

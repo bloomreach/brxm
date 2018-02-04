@@ -17,37 +17,24 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('bloomreachConnectorCtrl', function ($scope, $http, essentialsRestService) {
-            
+        .controller('bloomreachConnectorCtrl', function ($scope, $http, $log, essentialsRestService) {
             $scope.endpoint = essentialsRestService.baseUrl + '/bloomreachConnector';
             $scope.data = {};
-            $scope.crispExists = false;
-            $scope.crispDependencyExists = false;
-
-
             $scope.run = function () {
                 var payload = $scope.data;
                 $http.post($scope.endpoint, payload).success(function (data) {
 
                 });
             };
-            $scope.install = function () {
-
-                $http.post($scope.endpoint +"/install", {}).success(function (data) {
-                    // do nothing
-                    $scope.crispDependencyExists = true;
-                });
-            };
             $http.get($scope.endpoint).success(function (data) {
-                console.log(data);
+                $log.info(data);
                 data.resourceName = "productsResource";
                 data.realm = "prod";
                 data.refUrl = "refUrl";
                 data.fl = "pid,title,brand,price,sale_price,promotions,thumb_image,sku_thumb_images,sku_swatch_images,sku_color_group,url,price_range,sale_price_range,description,is_live,score";
                 $scope.data = data;
                 $scope.crispExists = data.crispExists;
-                $scope.crispDependencyExists = data.crispDependencyExists;
+                $scope.crispDoesntExist = !data.crispExists; // using 2 flags avoid a flickering UI
             });
-
         });
 })();

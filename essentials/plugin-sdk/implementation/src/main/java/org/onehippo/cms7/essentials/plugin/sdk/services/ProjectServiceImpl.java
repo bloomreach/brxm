@@ -55,7 +55,12 @@ public class ProjectServiceImpl implements ProjectService {
     private final static String MODULE_NAME_WEB_FILES = "webfiles";
     private final static Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
-    @Inject private SettingsService settingsService;
+    private final SettingsService settingsService;
+
+    @Inject
+    public ProjectServiceImpl(final SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
 
     @Override
     public Path getBasePathForModule(final Module module) {

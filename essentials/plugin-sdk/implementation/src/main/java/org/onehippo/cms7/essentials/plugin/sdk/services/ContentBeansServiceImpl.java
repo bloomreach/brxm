@@ -84,14 +84,20 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     private static final String RESOURCE = "hippo:resource";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
 
-    @Inject private ProjectService projectService;
-    @Inject private SettingsService settingsService;
+    private final ProjectService projectService;
+    private final SettingsService settingsService;
 
     /**
      * How many loops we run (beans extending none existing beans)
      */
     private static final int MISSING_DEPTH_MAX = 5;
     private int missingBeansDepth = 0;
+
+    @Inject
+    public ContentBeansServiceImpl(final ProjectService projectService, final SettingsService settingsService) {
+        this.projectService = projectService;
+        this.settingsService = settingsService;
+    }
 
     @Override
     public void createBeans(final JcrService jcrService, final UserFeedback feedback, final String imageSetClassName) {

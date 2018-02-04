@@ -40,7 +40,12 @@ public class InstallStateMachine {
 
     private static final Logger log = LoggerFactory.getLogger(InstallStateMachine.class);
 
-    @Inject private InstallService installService;
+    private final InstallService installService;
+
+    @Inject
+    public InstallStateMachine(final InstallService installService) {
+        this.installService = installService;
+    }
 
     /**
      * Call this method after a restart to see if to-be-installed plugin can be "advanced" through the plugin

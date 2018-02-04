@@ -54,10 +54,16 @@ import io.swagger.annotations.ApiOperation;
 @Path("/project")
 public class ProjectResource {
 
-    @Inject private SettingsServiceImpl settingsService;
-    @Inject private PluginStore pluginStore;
-    @Inject private InstallService installService;
+    private final SettingsServiceImpl settingsService;
+    private final PluginStore pluginStore;
+    private final InstallService installService;
 
+    @Inject
+    public ProjectResource(final SettingsServiceImpl settingsService, final PluginStore pluginStore, final InstallService installService) {
+        this.settingsService = settingsService;
+        this.pluginStore = pluginStore;
+        this.installService = installService;
+    }
 
     @ApiOperation(
             value = "Retrieve project status",

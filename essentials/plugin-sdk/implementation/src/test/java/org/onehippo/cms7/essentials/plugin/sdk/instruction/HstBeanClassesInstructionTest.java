@@ -20,10 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.plugin.sdk.services.WebXmlServiceImpl;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.WebXmlService;
 
 import static org.junit.Assert.assertEquals;
@@ -32,6 +35,8 @@ import static org.junit.Assert.assertTrue;
 public class HstBeanClassesInstructionTest extends BaseTest {
 
     private static Map<String, Object> dummyParameters = new HashMap<>();
+
+    @Inject private ProjectService projectService;
 
     private String relayedPattern;
     private boolean result;
@@ -72,7 +77,7 @@ public class HstBeanClassesInstructionTest extends BaseTest {
 
     @Test
     public void relay_to_service() {
-        final WebXmlService webXmlService = new WebXmlServiceImpl() {
+        final WebXmlService webXmlService = new WebXmlServiceImpl(projectService) {
             public boolean addHstBeanClassPattern(final String pattern) {
                 relayedPattern = pattern;
                 return result;

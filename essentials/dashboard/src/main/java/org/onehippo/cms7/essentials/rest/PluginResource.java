@@ -70,10 +70,19 @@ public class PluginResource {
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
     private static final Lock setupLock = new ReentrantLock();
 
-    @Inject private PluginStore pluginStore;
-    @Inject private SettingsService settingsService;
-    @Inject private InstallService installService;
-    @Inject private InstallStateMachine installStateMachine;
+    private final PluginStore pluginStore;
+    private final SettingsService settingsService;
+    private final InstallService installService;
+    private final InstallStateMachine installStateMachine;
+
+    @Inject
+    public PluginResource(final PluginStore pluginStore, final SettingsService settingsService,
+                          final InstallService installService, final InstallStateMachine installStateMachine) {
+        this.pluginStore = pluginStore;
+        this.settingsService = settingsService;
+        this.installService = installService;
+        this.installStateMachine = installStateMachine;
+    }
 
     @SuppressWarnings("unchecked")
     @ApiOperation(

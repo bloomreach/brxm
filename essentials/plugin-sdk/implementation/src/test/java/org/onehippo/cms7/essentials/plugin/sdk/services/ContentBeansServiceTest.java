@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.services;
 
+import javax.inject.Inject;
+
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Ignore;
@@ -27,7 +29,7 @@ import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 @Ignore("Needs running hippo repository through RMI")
 public class ContentBeansServiceTest extends BaseRepositoryTest {
 
-    private ContentBeansService contentBeansService = new ContentBeansServiceImpl();
+    @Inject private ContentBeansService contentBeansService;
 
     @Test
     public void testCreateBeans() throws Exception {

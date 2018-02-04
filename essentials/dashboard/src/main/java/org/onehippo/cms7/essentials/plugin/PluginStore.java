@@ -66,11 +66,11 @@ import org.springframework.web.context.ContextLoader;
 public class PluginStore {
 
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
-    private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private SettingsServiceImpl settingsService;
-    @Inject private InstallService installService;
-    @Inject private AutowireCapableBeanFactory injector;
+    private final DynamicRestPointsApplication application;
+    private final SettingsServiceImpl settingsService;
+    private final InstallService installService;
+    private final AutowireCapableBeanFactory injector;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -113,6 +113,15 @@ public class PluginStore {
                     return parsePlugins(pluginJson);
                 }
             });
+
+    @Inject
+    public PluginStore(final DynamicRestPointsApplication application, final SettingsServiceImpl settingsService,
+                       final InstallService installService, final AutowireCapableBeanFactory injector) {
+        this.application = application;
+        this.settingsService = settingsService;
+        this.installService = installService;
+        this.injector = injector;
+    }
 
 
     public synchronized PluginSet loadPlugins() {
@@ -195,7 +204,7 @@ public class PluginStore {
             }
         }
 
-        restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
+        restClasses.forEach(application::addSingleton);
 
         if (!restClasses.isEmpty() && !serverStarted) {
             injector.autowireBean(application);

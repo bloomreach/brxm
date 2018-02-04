@@ -72,10 +72,19 @@ public class GalleryPluginResource {
     private static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     private static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
 
-    @Inject private ContentBeansService contentBeansService;
-    @Inject private JcrService jcrService;
-    @Inject private SettingsService settingsService;
-    @Inject private PlaceholderService placeholderService;
+    private final ContentBeansService contentBeansService;
+    private final JcrService jcrService;
+    private final SettingsService settingsService;
+    private final PlaceholderService placeholderService;
+
+    @Inject
+    public GalleryPluginResource(final ContentBeansService contentBeansService, final JcrService jcrService,
+                                 final SettingsService settingsService, final PlaceholderService placeholderService) {
+        this.contentBeansService = contentBeansService;
+        this.jcrService = jcrService;
+        this.settingsService = settingsService;
+        this.placeholderService = placeholderService;
+    }
 
     /**
      * Updates an image model

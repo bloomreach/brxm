@@ -625,6 +625,10 @@ public class InstallStateMachineTest {
     private static class TestInstallService extends InstallService {
         Map<String, PluginData> pluginData = new HashMap<>();
 
+        public TestInstallService() {
+            super(null, null, null, null, null, null, null);
+        }
+
         @Override
         public InstallState readInstallStateFromWar(final PluginDescriptor plugin) {
             final PluginData data = pluginData.get(plugin.getId());

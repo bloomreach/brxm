@@ -22,9 +22,8 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
-import org.onehippo.cms7.essentials.sdk.api.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +32,16 @@ public class SettingsServiceImpl implements SettingsService {
 
     private static final String DEFAULT_NAME = "project-settings";
 
-    @Inject private ProjectService projectService;
-    @Inject private PluginFileService pluginFileService;
+    private final PluginFileService pluginFileService;
 
     private ProjectSettingsBean settings; // in-memory cached copy of settings
     private File projectSettingsFile;
     private long lastModified;            // last modified timestamp for reloading settings upon FS change
+
+    @Inject
+    public SettingsServiceImpl(final PluginFileService pluginFileService) {
+        this.pluginFileService = pluginFileService;
+    }
 
     @Override
     public ProjectSettings getSettings() {
@@ -47,8 +50,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     public ProjectSettingsBean getModifiableSettings() {
         if (projectSettingsFile == null) {
-            projectSettingsFile = projectService.getResourcesRootPathForModule(Module.ESSENTIALS)
-                    .resolve("project-settings.xml").toFile();
+            projectSettingsFile = ProjectUtils.getEssentialsResourcesRootPath().resolve("project-settings.xml").toFile();
         }
 
         final long lastModified = projectSettingsFile.lastModified();

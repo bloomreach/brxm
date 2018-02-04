@@ -56,13 +56,27 @@ import org.springframework.util.StringUtils;
  */
 @Service
 public class InstallService {
-    @Inject private JcrService jcrService;
-    @Inject private SettingsService settingsService;
-    @Inject private RebuildServiceImpl rebuildService;
-    @Inject private MavenDependencyService dependencyService;
-    @Inject private MavenRepositoryService repositoryService;
-    @Inject private PluginFileService pluginFileService;
-    @Inject private AutowireCapableBeanFactory injector;
+    private final JcrService jcrService;
+    private final SettingsService settingsService;
+    private final RebuildServiceImpl rebuildService;
+    private final MavenDependencyService dependencyService;
+    private final MavenRepositoryService repositoryService;
+    private final PluginFileService pluginFileService;
+    private final AutowireCapableBeanFactory injector;
+
+    @Inject
+    public InstallService(final JcrService jcrService, final SettingsService settingsService,
+                          final RebuildServiceImpl rebuildService, final MavenDependencyService dependencyService,
+                          final MavenRepositoryService repositoryService, final PluginFileService pluginFileService,
+                          final AutowireCapableBeanFactory injector) {
+        this.jcrService = jcrService;
+        this.settingsService = settingsService;
+        this.rebuildService = rebuildService;
+        this.dependencyService = dependencyService;
+        this.repositoryService = repositoryService;
+        this.pluginFileService = pluginFileService;
+        this.injector = injector;
+    }
 
     public long countInstalledPlugins(final PluginSet pluginSet) {
         return pluginSet.getPlugins().stream().filter(p -> p.getState() != InstallState.DISCOVERED).count();
@@ -212,12 +226,9 @@ public class InstallService {
     public DefaultInstructionPackage makeInstructionPackageInstance(final PluginDescriptor plugin) {
         final String packageFile = plugin.getPackageFile();
         if (!Strings.isNullOrEmpty(packageFile)) {
-            final DefaultInstructionPackage instructionPackage = GlobalUtils.newInstance(DefaultInstructionPackage.class);
-            if (instructionPackage != null) {
-                instructionPackage.setInstructionPath(packageFile);
-                injector.autowireBean(instructionPackage);
-                return instructionPackage;
-            }
+            final DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
+            instructionPackage.setInstructionPath(packageFile);
+            return instructionPackage;
         }
         return null;
     }
