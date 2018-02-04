@@ -272,10 +272,22 @@
             var plugins = [];
             function loadPlugins() {
                 return $http.get(baseUrl).then(function(response) {
-                    plugins.splice(0, plugins.length);
-                    response.data.forEach(function(plugin) {
-                        plugins.push(plugin);
-                    });
+                    if (plugins.length !== response.data.length) {
+                        // a new number of plugins has been returned, replace the old list.
+                        plugins.splice(0, plugins.length);
+                        response.data.forEach(function(plugin) {
+                            plugins.push(plugin);
+                        });
+                    } else {
+                        // to avoid a jumpy UX, only update the plugins' installState
+                        response.data.forEach(function(incoming) {
+                            plugins.some(function(existing) {
+                                if (existing.id === incoming.id) {
+                                    existing.installState = incoming.installState;
+                                }
+                            });
+                        });
+                    }
                 });
             }
             this.loadPlugins = loadPlugins;
