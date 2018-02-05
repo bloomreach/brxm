@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -64,8 +65,8 @@ public class Dom4JUtils {
      * @return         true if the modifier was applied and potential changes were saved successfully, false otherwise.
      */
     public static boolean update(final File xmlFile, final Modifier modifier) {
-        try {
-            final Document doc = new SAXReader().read(xmlFile);
+        try (FileInputStream xmlStream = new FileInputStream(xmlFile)){
+            final Document doc = new SAXReader().read(xmlStream);
             modifier.run(doc);
             final FileWriter writer = new FileWriter(xmlFile);
             doc.write(writer);

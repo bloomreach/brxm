@@ -28,17 +28,13 @@
   <description>Hippo Essentials Selection Plugin</description>
   <artifactId>hippo-essentials-plugin-selection</artifactId>
 
-  <properties>
-    <dom4j.version>1.6.1</dom4j.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>dom4j</groupId>
+      <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
       <version>${dom4j.version}</version>
     </dependency>
