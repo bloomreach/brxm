@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.install;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,7 +74,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setPluginDependencies(new ArrayList<>());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
@@ -101,7 +99,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setPluginDependencies(new ArrayList<>());
         plugin.setNoRebuildAfterSetup(true);
 
         final PluginSet pluginSet = new PluginSet();
@@ -140,7 +137,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setPluginDependencies(new ArrayList<>());
         plugin.setDependencies(Collections.singletonList(new MavenDependency.WithModule())); // trigger rebuild during boarding
 
         final PluginSet pluginSet = new PluginSet();
@@ -205,7 +201,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setPluginDependencies(new ArrayList<>());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
@@ -227,7 +222,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.ONBOARD);
-        plugin.setPluginDependencies(new ArrayList<>());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
@@ -249,7 +243,6 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.BOARDING);
-        plugin.setPluginDependencies(new ArrayList<>());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
@@ -433,7 +426,6 @@ public class InstallStateMachineTest {
         plugin2.setId(id2);
         plugin2.setName("Test Plugin 2");
         plugin2.setState(InstallState.DISCOVERED);
-        plugin2.setPluginDependencies(Collections.emptyList());
         plugin2.setRepositories(Collections.singletonList(new MavenRepository.WithModule()));
 
         final PluginSet pluginSet = new PluginSet();
@@ -529,7 +521,6 @@ public class InstallStateMachineTest {
         plugin3.setName("Test Plugin 3");
         plugin3.setState(InstallState.DISCOVERED);
         plugin3.setNoRebuildAfterSetup(true);
-        plugin3.setPluginDependencies(Collections.emptyList());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin1);
@@ -597,7 +588,6 @@ public class InstallStateMachineTest {
         plugin2.setName("Test Plugin 2");
         plugin2.setState(InstallState.DISCOVERED);
         plugin2.setNoRebuildAfterSetup(true);
-        plugin2.setPluginDependencies(Collections.emptyList());
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin1);

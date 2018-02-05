@@ -8,6 +8,5 @@
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"
   },
-  "packageFile" : "/META-INF/skeleton_instructions.xml",
-  "pluginDependencies": []
+  "packageFile" : "/META-INF/skeleton_instructions.xml"
 }

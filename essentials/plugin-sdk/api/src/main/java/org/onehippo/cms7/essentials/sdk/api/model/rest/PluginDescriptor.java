@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,18 +56,6 @@ public class PluginDescriptor {
     private Map<String, Set<String>> categories;
     private List<Dependency> pluginDependencies;
     private String dependencySummary; // human-readable summary of inter-plugin dependencies
-
-    public PluginDescriptor(final String name) {
-        this.name = name;
-    }
-
-    public PluginDescriptor() {
-        // By default, all plugins rely on the base structure
-        final Dependency dependency = new Dependency();
-        dependency.setPluginId("skeleton");
-        dependency.setMinInstallStateForInstalling(InstallState.INSTALLING.toString());
-        pluginDependencies = Collections.singletonList(dependency);
-    }
 
     public Map<String, Set<String>> getCategories() {
         return categories;
