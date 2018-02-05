@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -84,7 +84,6 @@
     <hippo.commons.version>4.2.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>1.2.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
     <hippo.utilities.version>4.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.2.0-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>4.2.0-SNAPSHOT</hippo.services.eventbus.version>
