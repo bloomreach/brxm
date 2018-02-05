@@ -29,7 +29,7 @@
                     <#assign active = ''/>
                 </#if>
                 <div class="item${active}">
-                  <@hst.manageContent hippobean=item/>
+                  <@hst.manageContent document=item/>
                   <img src="<@hst.link hippobean=item.image />" alt="${item.title?html}"/>
                     <div class="carousel-caption">
                         <#if item.link??>
@@ -102,6 +102,6 @@
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
   </div>
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-banner-document" parameterName="document1" rootPath="banners"/>
+    <@hst.manageContent templateQuery="new-banner-document" componentParameter="document1" rootPath="banners"/>
   </div>
 </#if>

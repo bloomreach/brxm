@@ -6,7 +6,7 @@
 <div>
   <#list pageable.items as item>
     <article class="has-edit-button">
-      <@hst.manageContent hippobean=item/>
+      <@hst.manageContent document=item/>
       <@hst.link var="link" hippobean=item/>
       <h3><a href="${link}">${item.title?html}</a></h3>
       <#if item.publicationDate??>

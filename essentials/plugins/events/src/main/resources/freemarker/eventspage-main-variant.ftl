@@ -5,7 +5,7 @@
   <@hst.link var="link" hippobean=document/>
   <article>
     <div class="has-edit-button">
-      <@hst.manageContent hippobean=document/>
+      <@hst.manageContent document=document/>
     </div>
     <h3>
       <a href="${link}">${document.title?html}</a>

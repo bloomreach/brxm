@@ -26,7 +26,7 @@
       <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="counter">
         <c:set var="active" value="${counter.first ? ' active':''}"/>
         <div class="item${active}">
-          <hst:manageContent hippobean="${item}"/>
+          <hst:manageContent document="${item}"/>
           <img src="<hst:link hippobean="${item.image}" />" alt="${fn:escapeXml(item.title)}"/>
           <div class="carousel-caption">
             <c:choose>
@@ -103,6 +103,6 @@
     <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
   </div>
   <div class="has-new-content-button">
-    <hst:manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+    <hst:manageContent templateQuery="new-banner-document" componentParameter="document" rootPath="banners"/>
   </div>
 </c:if>

@@ -4,7 +4,7 @@
 
 <hst:link var="link" hippobean="${requestScope.document}"/>
 <article class="has-edit-button">
-  <hst:manageContent hippobean="${requestScope.document}"/>
+  <hst:manageContent document="${requestScope.document}"/>
   <h3><a href="${link}"><c:out value="${requestScope.document.title}"/></a></h3>
   <c:if test="${hst:isReadable(requestScope.document, 'date.time')}">
     <p>

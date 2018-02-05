@@ -17,7 +17,7 @@
         </a>
       </div>
       <div class="media-body has-edit-button">
-        <@hst.manageContent hippobean=item/>
+        <@hst.manageContent document=item/>
         <h4 class="media-heading"><a href="${link}">${item.title?html}</a>
             <#if item.date?? && item.date.time??>
               <span class="label label-success pull-right">

@@ -4,7 +4,7 @@
 <#if document??>
   <@hst.link var="link" hippobean=document/>
 <article class="has-edit-button">
-  <@hst.manageContent hippobean=document/>
+  <@hst.manageContent document=document/>
   <h3><a href="${link}">${document.title?html}</a>
     <#if document.date??>
       <small><@fmt.formatDate value=document.date.time type="date" dateStyle="medium"/></small>

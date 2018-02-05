@@ -11,7 +11,7 @@
       </#if>
 
       <article class="has-edit-button">
-        <@hst.manageContent hippobean=item />
+        <@hst.manageContent document=item />
         <@hst.link var="link" hippobean=item />
         <h3><a href="${link}">${linkName?html}</a></h3>
         <#if item.introduction??>
