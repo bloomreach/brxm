@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms7.utilities.logging;
 import java.io.PrintStream;
 
 import org.slf4j.Logger;
+import org.slf4j.event.Level;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
@@ -29,12 +30,6 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
 
     private static final long serialVersionUID = -1l;
 
-    private static String TRACE_STR = "TRACE";
-    private static String DEBUG_STR = "DEBUG";
-    private static String INFO_STR = "INFO";
-    private static String WARN_STR = "WARN";
-    private static String ERROR_STR = "ERROR";
-
     public static final int TRACE_LEVEL = 0;
     public static final int DEBUG_LEVEL = 1;
     public static final int INFO_LEVEL = 2;
@@ -44,7 +39,32 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
     private final PrintStream[] out;
     private final int level;
 
-    public PrintStreamLogger(String name, int level, PrintStream... out) throws IllegalArgumentException {
+    /**
+     * Maps a slf4j {@link Level#toString()} value (case-insensitive) to a matching PrintStreamLogger int level.
+     * Defaults to "DEBUG" when passing in a null string.
+     * @param level slf4j logging level string value
+     * @return matching int value
+     */
+    private static int getLogLevel(final String level) {
+        final String logLevel = level != null ? level.toUpperCase() : Level.DEBUG.toString();
+        if (Level.DEBUG.toString().equals(logLevel)) {
+            return DEBUG_LEVEL;
+        } else if (Level.INFO.toString().equals(logLevel)) {
+            return INFO_LEVEL;
+        } else if (Level.TRACE.toString().equals(logLevel)) {
+            return TRACE_LEVEL;
+        } else if (Level.WARN.toString().equals(logLevel)) {
+            return WARN_LEVEL;
+        } else {
+            return ERROR_LEVEL;
+        }
+    }
+
+    public PrintStreamLogger(final String name, final String level, final PrintStream... out) throws IllegalArgumentException {
+        this(name, getLogLevel(level), out);
+    }
+
+    public PrintStreamLogger(final String name, final int level, final PrintStream... out) throws IllegalArgumentException {
         this.name = name;
         if (out == null || out.length == 0) {
             throw new IllegalArgumentException("No print streams provided");
@@ -90,35 +110,35 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
         if (!isTraceEnabled()) {
             return;
         }
-        log(TRACE_STR, msg, null);
+        log(Level.TRACE.toString(), msg, null);
     }
 
     public void trace(String format, Object arg) {
         if (!isTraceEnabled()) {
             return;
         }
-        formatAndLog(TRACE_STR, format, arg, null);
+        formatAndLog(Level.TRACE.toString(), format, arg, null);
     }
 
     public void trace(String format, Object arg1, Object arg2) {
         if (!isTraceEnabled()) {
             return;
         }
-        formatAndLog(TRACE_STR, format, arg1, arg2);
+        formatAndLog(Level.TRACE.toString(), format, arg1, arg2);
     }
 
     public void trace(String format, Object[] argArray) {
         if (!isTraceEnabled()) {
             return;
         }
-        formatAndLog(TRACE_STR, format, argArray);
+        formatAndLog(Level.TRACE.toString(), format, argArray);
     }
 
     public void trace(String msg, Throwable t) {
         if (!isTraceEnabled()) {
             return;
         }
-        log(TRACE_STR, msg, t);
+        log(Level.TRACE.toString(), msg, t);
     }
 
     public boolean isDebugEnabled() {
@@ -129,35 +149,35 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
         if (!isDebugEnabled()) {
             return;
         }
-        log(DEBUG_STR, msg, null);
+        log(Level.DEBUG.toString(), msg, null);
     }
 
     public void debug(String format, Object arg) {
         if (!isDebugEnabled()) {
             return;
         }
-        formatAndLog(DEBUG_STR, format, arg, null);
+        formatAndLog(Level.DEBUG.toString(), format, arg, null);
     }
 
     public void debug(String format, Object arg1, Object arg2) {
         if (!isDebugEnabled()) {
             return;
         }
-        formatAndLog(DEBUG_STR, format, arg1, arg2);
+        formatAndLog(Level.DEBUG.toString(), format, arg1, arg2);
     }
 
     public void debug(String format, Object[] argArray) {
         if (!isDebugEnabled()) {
             return;
         }
-        formatAndLog(DEBUG_STR, format, argArray);
+        formatAndLog(Level.DEBUG.toString(), format, argArray);
     }
 
     public void debug(String msg, Throwable t) {
         if (!isDebugEnabled()) {
             return;
         }
-        log(DEBUG_STR, msg, t);
+        log(Level.DEBUG.toString(), msg, t);
     }
 
     public boolean isInfoEnabled() {
@@ -168,35 +188,35 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
         if (!isInfoEnabled()) {
             return;
         }
-        log(INFO_STR, msg, null);
+        log(Level.INFO.toString(), msg, null);
     }
 
     public void info(String format, Object arg) {
         if (!isInfoEnabled()) {
             return;
         }
-        formatAndLog(INFO_STR, format, arg, null);
+        formatAndLog(Level.INFO.toString(), format, arg, null);
     }
 
     public void info(String format, Object arg1, Object arg2) {
         if (!isInfoEnabled()) {
             return;
         }
-        formatAndLog(INFO_STR, format, arg1, arg2);
+        formatAndLog(Level.INFO.toString(), format, arg1, arg2);
     }
 
     public void info(String format, Object[] argArray) {
         if (!isInfoEnabled()) {
             return;
         }
-        formatAndLog(INFO_STR, format, argArray);
+        formatAndLog(Level.INFO.toString(), format, argArray);
     }
 
     public void info(String msg, Throwable t) {
         if (!isInfoEnabled()) {
             return;
         }
-        log(INFO_STR, msg, t);
+        log(Level.INFO.toString(), msg, t);
     }
 
     public boolean isWarnEnabled() {
@@ -207,35 +227,35 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
         if (!isWarnEnabled()) {
             return;
         }
-        log(WARN_STR, msg, null);
+        log(Level.WARN.toString(), msg, null);
     }
 
     public void warn(String format, Object arg) {
         if (!isWarnEnabled()) {
             return;
         }
-        formatAndLog(WARN_STR, format, arg, null);
+        formatAndLog(Level.WARN.toString(), format, arg, null);
     }
 
     public void warn(String format, Object arg1, Object arg2) {
         if (!isWarnEnabled()) {
             return;
         }
-        formatAndLog(WARN_STR, format, arg1, arg2);
+        formatAndLog(Level.WARN.toString(), format, arg1, arg2);
     }
 
     public void warn(String format, Object[] argArray) {
         if (!isWarnEnabled()) {
             return;
         }
-        formatAndLog(WARN_STR, format, argArray);
+        formatAndLog(Level.WARN.toString(), format, argArray);
     }
 
     public void warn(String msg, Throwable t) {
         if (!isWarnEnabled()) {
             return;
         }
-        log(WARN_STR, msg, t);
+        log(Level.WARN.toString(), msg, t);
     }
 
     public boolean isErrorEnabled() {
@@ -246,35 +266,35 @@ public class PrintStreamLogger extends MarkerIgnoringBase implements Logger {
         if (!isErrorEnabled()) {
             return;
         }
-        log(ERROR_STR, msg, null);
+        log(Level.ERROR.toString(), msg, null);
     }
 
     public void error(String format, Object arg) {
         if (!isErrorEnabled()) {
             return;
         }
-        formatAndLog(ERROR_STR, format, arg, null);
+        formatAndLog(Level.ERROR.toString(), format, arg, null);
     }
 
     public void error(String format, Object arg1, Object arg2) {
         if (!isErrorEnabled()) {
             return;
         }
-        formatAndLog(ERROR_STR, format, arg1, arg2);
+        formatAndLog(Level.ERROR.toString(), format, arg1, arg2);
     }
 
     public void error(String format, Object[] argArray) {
         if (!isErrorEnabled()) {
             return;
         }
-        formatAndLog(ERROR_STR, format, argArray);
+        formatAndLog(Level.ERROR.toString(), format, argArray);
     }
 
     public void error(String msg, Throwable t) {
         if (!isErrorEnabled()) {
             return;
         }
-        log(ERROR_STR, msg, t);
+        log(Level.ERROR.toString(), msg, t);
     }
 
 }
