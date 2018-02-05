@@ -28,7 +28,7 @@
               </#if>
             </span>
             <div class="has-edit-button">
-              <@hst.manageContent document=item/>
+              <@hst.manageContent hippobean=item/>
             </div>
           </h4>
           <p>${item.introduction?html}</p>
