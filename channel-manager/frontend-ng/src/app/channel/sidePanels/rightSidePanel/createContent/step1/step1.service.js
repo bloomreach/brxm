@@ -39,6 +39,7 @@ class Step1Service {
     delete this.rootPath;
     delete this.defaultPath;
     delete this.templateQuery;
+    delete this.defaultPickerPath;
   }
 
   stop() {
@@ -51,6 +52,7 @@ class Step1Service {
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
     this.templateQuery = templateQuery;
+    this.defaultPickerPath = this.ChannelService.getChannel().contentRoot;
 
     return this.ContentService._send('GET', ['templatequery', templateQuery], null, true)
       .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))
@@ -59,7 +61,6 @@ class Step1Service {
 
   /**
    * Parse the rootPath input value;
-   * - use channelRootPath if rootPath is empty
    * - use as is if rootPath is absolute
    * - concatenate with channelRootPath if rootPath is relative
    * - make sure it does not end with a slash
@@ -69,7 +70,7 @@ class Step1Service {
   _initRootPath(rootPath) {
     const channel = this.ChannelService.getChannel();
     if (!rootPath) {
-      return channel.contentRoot;
+      return null;
     }
 
     if (rootPath.endsWith('/')) {

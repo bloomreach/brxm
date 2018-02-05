@@ -30,11 +30,7 @@ class DocumentLocationFieldController {
   }
 
   $onInit() {
-    if (!this.rootPath) {
-      throw new Error('The rootPath option can not be empty');
-    }
-
-    if (!this.rootPath.startsWith('/')) {
+    if (this.rootPath && !this.rootPath.startsWith('/')) {
       throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
     }
 
@@ -45,12 +41,14 @@ class DocumentLocationFieldController {
     this.pickerPath = '/';
     this.pickerConfig = {
       configuration: 'cms-pickers/folders',
-      rootPath: this.rootPath,
+      rootPath: this.rootPath || this.defaultPickerPath,
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
-    this.setPath(path);
+    if (this.rootPath) {
+      const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
+      this.setPath(path);
+    }
   }
 
   setPath(path) {
@@ -89,9 +87,13 @@ class DocumentLocationFieldController {
       if (!path.startsWith('/')) {
         path = `/${path}`;
       }
-      if (!path.startsWith(this.rootPath)) {
+      const checkPath = this.rootPath || this.defaultPickerPath;
+      if (!path.startsWith(checkPath)) {
         this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
       } else {
+        if (!this.rootPath) {
+          this.rootPath = path;
+        }
         this.setPath(path);
       }
     }
