@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,10 @@ public class StringFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
+        final FieldsInformation fieldsInfo = super.init(fieldContext);
         initializeMaxLength(fieldContext);
+        return fieldsInfo;
     }
 
     void initializeMaxLength(final FieldTypeContext fieldContext) {

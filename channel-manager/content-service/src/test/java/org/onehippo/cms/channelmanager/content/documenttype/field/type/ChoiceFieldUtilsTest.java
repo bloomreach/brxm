@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class ChoiceFieldUtilsTest {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final Map<String, NodeFieldType> choices = new HashMap<>();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         assertTrue(choices.isEmpty());
     }
@@ -146,7 +146,7 @@ public class ChoiceFieldUtilsTest {
         replay(node);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         verify(node);
         PowerMock.verifyAll();
@@ -167,7 +167,7 @@ public class ChoiceFieldUtilsTest {
 
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         PowerMock.verifyAll();
 
@@ -197,7 +197,7 @@ public class ChoiceFieldUtilsTest {
         replay(provider, choice);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         verify(provider, choice);
         PowerMock.verifyAll();
@@ -231,7 +231,7 @@ public class ChoiceFieldUtilsTest {
         replay(provider, choice, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         verify(provider, choice, compound);
         PowerMock.verifyAll();
@@ -268,7 +268,7 @@ public class ChoiceFieldUtilsTest {
         replay(provider, choice, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         verify(provider, choice, compound);
         PowerMock.verifyAll();
@@ -309,7 +309,7 @@ public class ChoiceFieldUtilsTest {
         replay(provider, choice, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, null);
 
         verify(provider, choice, compound);
         PowerMock.verifyAll();
@@ -324,7 +324,7 @@ public class ChoiceFieldUtilsTest {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final Map<String, NodeFieldType> choices = new HashMap<>();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         assertTrue(choices.isEmpty());
     }
@@ -343,7 +343,7 @@ public class ChoiceFieldUtilsTest {
         replay(node);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(node);
         PowerMock.verifyAll();
@@ -371,7 +371,7 @@ public class ChoiceFieldUtilsTest {
         replay(parentContext, contentType);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(parentContext, contentType);
         PowerMock.verifyAll();
@@ -398,7 +398,7 @@ public class ChoiceFieldUtilsTest {
         replay(parentContext, childContext, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(parentContext, childContext, compound);
         PowerMock.verifyAll();
@@ -431,7 +431,7 @@ public class ChoiceFieldUtilsTest {
         replay(parentContext, childContext, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(parentContext, childContext, compound);
         PowerMock.verifyAll();
@@ -471,7 +471,7 @@ public class ChoiceFieldUtilsTest {
         replay(parentContext, childContext, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(parentContext, childContext, compound);
         PowerMock.verifyAll();
@@ -507,7 +507,7 @@ public class ChoiceFieldUtilsTest {
         replay(parentContext, childContext, compound);
         PowerMock.replayAll();
 
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
         verify(parentContext, childContext, compound);
         PowerMock.verifyAll();

@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldsInformation;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
@@ -135,7 +135,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(true);
-        fieldsInfo.setAllRequiredFieldsIncluded(true);
+        fieldsInfo.setCanCreateAllRequiredFields(true);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -143,7 +143,7 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        docType.setAllRequiredFieldsIncluded(true);
+        docType.setCanCreateAllRequiredFields(true);
         expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
         expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
 
@@ -176,7 +176,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(true);
-        fieldsInfo.setAllRequiredFieldsIncluded(true);
+        fieldsInfo.setCanCreateAllRequiredFields(true);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -185,7 +185,7 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         docType.setDisplayName("Document Display Name");
-        docType.setAllRequiredFieldsIncluded(true);
+        docType.setCanCreateAllRequiredFields(true);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
 
@@ -220,7 +220,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(false);
-        fieldsInfo.setAllRequiredFieldsIncluded(true);
+        fieldsInfo.setCanCreateAllRequiredFields(true);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -237,7 +237,7 @@ public class DocumentTypesServiceImplTest {
 
         docType.setAllFieldsIncluded(false);
         docType.setUnsupportedFieldTypes(null);
-        docType.setAllRequiredFieldsIncluded(true);
+        docType.setCanCreateAllRequiredFields(true);
         expectLastCall();
 
         replayAll();

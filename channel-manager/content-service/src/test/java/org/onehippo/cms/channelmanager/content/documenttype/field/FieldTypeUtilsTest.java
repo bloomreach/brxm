@@ -41,6 +41,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
@@ -141,7 +142,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertFalse(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertFalse(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(context);
@@ -162,7 +163,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context);
@@ -183,12 +184,13 @@ public class FieldTypeUtilsTest {
         expect(fieldContext.getContentTypeItem()).andReturn(item);
         expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("unknown");
+        expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -214,7 +216,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -242,7 +244,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -270,7 +272,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -299,7 +301,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -333,7 +335,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertFalse(allFieldsMapped.isAllFieldsIncluded());
-        assertFalse(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertFalse(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item, fieldType);
@@ -366,7 +368,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -427,7 +429,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(3));
         assertThat(fields.get(0), equalTo(stringField1));
@@ -485,7 +487,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(2));
         assertThat(fields.get(0), equalTo(formattedTextField));
@@ -521,7 +523,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -555,7 +557,7 @@ public class FieldTypeUtilsTest {
 
         FieldsInformation allFieldsMapped = FieldTypeUtils.populateFields(fields, context);
         assertTrue(allFieldsMapped.isAllFieldsIncluded());
-        assertTrue(allFieldsMapped.isAllRequiredFieldsIncluded());
+        assertTrue(allFieldsMapped.getCanCreateAllRequiredFields());
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));

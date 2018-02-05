@@ -36,7 +36,7 @@ public class DocumentType {
     private String displayName;
     private boolean readOnlyDueToUnknownValidator;
     private boolean allFieldsIncluded;
-    private boolean allRequiredFieldsIncluded;
+    private boolean canCreateAllRequiredFields;
     private final List<FieldType> fields; // ordered list of fields
 
     @JsonInclude(Include.NON_EMPTY)
@@ -90,11 +90,11 @@ public class DocumentType {
         this.unsupportedFieldTypes = unsupportedFieldTypes;
     }
 
-    public boolean isAllRequiredFieldsIncluded() {
-        return allRequiredFieldsIncluded;
+    public boolean getCanCreateAllRequiredFields() {
+        return canCreateAllRequiredFields;
     }
 
-    public void setAllRequiredFieldsIncluded(final boolean allRequiredFieldsIncluded) {
-        this.allRequiredFieldsIncluded = allRequiredFieldsIncluded;
+    public void setCanCreateAllRequiredFields(final boolean canCreateAllRequiredFields) {
+        this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 }

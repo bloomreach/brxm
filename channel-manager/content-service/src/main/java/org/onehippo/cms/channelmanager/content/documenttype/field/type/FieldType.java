@@ -93,8 +93,9 @@ public interface FieldType {
      * Initialize a {@link FieldType}, given a field context.
      *
      * @param fieldContext  information about the field (as part of a parent content type)
+     * @return information about the initialized fields.
      */
-    void init(final FieldTypeContext fieldContext);
+    FieldsInformation init(final FieldTypeContext fieldContext);
 
     /**
      * Read a document field instance from a document variant node

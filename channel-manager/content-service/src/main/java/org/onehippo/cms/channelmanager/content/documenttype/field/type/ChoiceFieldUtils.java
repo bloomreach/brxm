@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,10 +79,11 @@ public class ChoiceFieldUtils {
      */
     public static void populateProviderBasedChoices(final Node editorFieldNode,
                                                     final ContentTypeContext parentContext,
-                                                    final Map<String, NodeFieldType> choices) {
+                                                    final Map<String, NodeFieldType> choices,
+                                                    final FieldsInformation fieldsInfo) {
         getProviderId(editorFieldNode)
                 .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
-                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices)));
+                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices, fieldsInfo)));
     }
 
     private static Optional<String> getProviderId(final Node editorFieldNode) {
@@ -99,7 +100,8 @@ public class ChoiceFieldUtils {
 
     private static void populateChoicesForProvider(final ContentType provider,
                                                    final ContentTypeContext parentContext,
-                                                   final Map<String, NodeFieldType> choices) {
+                                                   final Map<String, NodeFieldType> choices,
+                                                   final FieldsInformation fieldsInfo) {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
 
@@ -114,6 +116,9 @@ public class ChoiceFieldUtils {
                     if (choice != null) {
                         patchDisplayNameForChoice(choice, fieldContext);
                         choices.put(choiceId, choice);
+                    } else {
+                        // not all available choices are supported
+                        fieldsInfo.setAllFieldsIncluded(false);
                     }
                 }
             });
@@ -152,7 +157,8 @@ public class ChoiceFieldUtils {
      */
     public static void populateListBasedChoices(final Node editorFieldNode,
                                                 final ContentTypeContext parentContext,
-                                                final Map<String, NodeFieldType> choices) {
+                                                final Map<String, NodeFieldType> choices,
+                                                final FieldsInformation fieldsInfo) {
         final String[] choiceNames = getListBasedChoiceNames(editorFieldNode);
 
         for (String choiceName : choiceNames) {
@@ -169,6 +175,9 @@ public class ChoiceFieldUtils {
                     if (choice != null) {
                         patchDisplayNameForChoice(choice, choiceContext);
                         choices.put(id, choice);
+                    } else {
+                        // not all available choices are supported
+                        fieldsInfo.setAllFieldsIncluded(false);
                     }
                 }
             });

@@ -17,12 +17,11 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -52,11 +51,14 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
-        try {
-            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
-        } catch (final ExecutionException ignore) {
-            throw new NotFoundException();
-        }
+//        try {
+//            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
+//        } catch (final ExecutionException ignore) {
+//            throw new NotFoundException();
+//        }
+
+        // disable cache during testing
+        return createDocumentType(id, userSession, locale);
     }
 
     @Override
@@ -79,9 +81,9 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
 
         docType.setUnsupportedFieldTypes(FieldTypeUtils.getUnsupportedFieldTypes(context));
 
-        final Map<String, Boolean> fieldInformation = FieldTypeUtils.populateFields(docType.getFields(), context);
-        docType.setAllFieldsIncluded(fieldInformation.get("allFieldIncluded"));
-        docType.setAllRequiredFieldsIncluded(fieldInformation.get("allRequiredFieldsIncluded"));
+        final FieldsInformation fieldsInformation = FieldTypeUtils.populateFields(docType.getFields(), context);
+        docType.setAllFieldsIncluded(fieldsInformation.isAllFieldsIncluded());
+        docType.setCanCreateAllRequiredFields(fieldsInformation.getCanCreateAllRequiredFields());
 
         return docType;
     }
