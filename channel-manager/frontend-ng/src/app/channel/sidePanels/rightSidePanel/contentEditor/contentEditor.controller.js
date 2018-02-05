@@ -41,7 +41,7 @@ class ContentEditorCtrl {
   }
 
   isSaveAllowed() {
-    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().allRequiredFieldsIncluded;
+    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
   }
 
   _isDocumentDirty() {
@@ -53,7 +53,7 @@ class ContentEditorCtrl {
   }
 
   alternativeStep2() {
-    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allRequiredFieldsIncluded;
+    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
   }
 
   getFieldTypes() {

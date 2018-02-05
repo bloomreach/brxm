@@ -77,12 +77,12 @@ describe('ContentEditorCtrl', () => {
     [true, false].forEach((editing) => {
       [true, false].forEach((dirty) => {
         [true, false].forEach((valid) => {
-          [true, false].forEach((allRequiredFieldsIncluded) => {
+          [true, false].forEach((canCreateAllRequiredFields) => {
             ContentEditor.isEditing.and.returnValue(editing);
             ContentEditor.isDocumentDirty.and.returnValue(dirty);
             form.$valid = valid;
-            ContentEditor.getDocumentType.and.returnValue({ allRequiredFieldsIncluded });
-            expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && allRequiredFieldsIncluded);
+            ContentEditor.getDocumentType.and.returnValue({ canCreateAllRequiredFields });
+            expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && canCreateAllRequiredFields);
           });
         });
       });
