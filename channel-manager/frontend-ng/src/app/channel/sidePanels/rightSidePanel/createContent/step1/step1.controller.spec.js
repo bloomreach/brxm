@@ -52,6 +52,7 @@ describe('Create content step 1 controller', () => {
     Step1Service.rootPath = 'test-rootPath';
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';
+    Step1Service.defaultPickerPath = 'test-defaultPickerPath';
 
     expect($ctrl.defaultPath).toBe('test-defaultPath');
     expect($ctrl.documentType).toBe('test-documentType');
@@ -59,6 +60,7 @@ describe('Create content step 1 controller', () => {
     expect($ctrl.locale).toBe('test-locale');
     expect($ctrl.name).toBe('test-name');
     expect($ctrl.rootPath).toBe('test-rootPath');
+    expect($ctrl.defaultPickerPath).toBe('test-defaultPickerPath');
     expect($ctrl.url).toBe('test-url');
   });
 
@@ -68,11 +70,13 @@ describe('Create content step 1 controller', () => {
     $ctrl.locale = 'test-locale';
     $ctrl.name = 'test-name';
     $ctrl.url = 'test-url';
+    $ctrl.rootPath = 'test-rootPath';
 
     expect(Step1Service.defaultPath).toBe('test-defaultPath');
     expect(Step1Service.documentType).toBe('test-documentType');
     expect(Step1Service.name).toBe('test-name');
     expect(Step1Service.url).toBe('test-url');
+    expect(Step1Service.rootPath).toBe('test-rootPath');
   });
 
   it('creates a draft and passes it on to the next step together with url and locale', () => {

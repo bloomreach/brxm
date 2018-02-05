@@ -30,8 +30,16 @@ class DocumentLocationFieldController {
   }
 
   $onInit() {
+    if (!this.rootPath && !this.defaultPickerPath) {
+      throw new Error('Either rootPath or defaultPickerPath must be defined');
+    }
+
     if (this.rootPath && !this.rootPath.startsWith('/')) {
       throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
+    }
+
+    if (this.defaultPickerPath && !this.defaultPickerPath.startsWith('/')) {
+      throw new Error(`The defaultPickerPath can only be an absolute path: ${this.defaultPickerPath}`);
     }
 
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
@@ -89,7 +97,7 @@ class DocumentLocationFieldController {
       }
       const checkPath = this.rootPath || this.defaultPickerPath;
       if (!path.startsWith(checkPath)) {
-        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: checkPath, path });
       } else {
         if (!this.rootPath) {
           this.rootPath = path;

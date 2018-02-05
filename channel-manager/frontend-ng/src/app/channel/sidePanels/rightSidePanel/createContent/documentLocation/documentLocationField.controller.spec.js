@@ -47,173 +47,232 @@ describe('DocumentLocationField', () => {
     getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
     spyOn(CmsService, 'reportUsageStatistic');
 
-    component.rootPath = '/root';
     component.changeLocale = () => angular.noop();
   });
 
-  describe('$onInit', () => {
-    it('throws an error if rootPath if not configured', () => {
-      component.rootPath = undefined;
-      expect(() => component.$onInit()).toThrowError('The rootPath option can not be empty');
+  describe('withRootPath', () => {
+    beforeEach(() => {
+      component.rootPath = '/root';
     });
 
-    it('throws an error if rootPath is a relative path', () => {
-      component.rootPath = 'relative/path';
-      expect(() => component.$onInit()).toThrowError('The rootPath option can only be an absolute path: relative/path');
-    });
+    describe('$onInit', () => {
+      it('throws an error if rootPath is a relative path', () => {
+        component.rootPath = 'relative/path';
+        expect(() => component.$onInit()).toThrowError('The rootPath option can only be an absolute path: relative/path');
+      });
 
-    it('throws an error if defaultPath is absolute', () => {
-      component.defaultPath = '/path';
-      expect(() => component.$onInit()).toThrowError('The defaultPath option can only be a relative path: /path');
-    });
+      it('throws an error if defaultPath is absolute', () => {
+        component.defaultPath = '/path';
+        expect(() => component.$onInit()).toThrowError('The defaultPath option can only be a relative path: /path');
+      });
 
-    it('sets the default picker config', () => {
-      component.$onInit();
-      expect(component.pickerPath).toBe('/');
-      expect(component.pickerConfig).toEqual({
-        configuration: 'cms-pickers/folders',
-        rootPath: '/root',
-        selectableNodeTypes: ['hippostd:folder'],
+      it('sets the default picker config', () => {
+        component.$onInit();
+        expect(component.pickerPath).toBe('/');
+        expect(component.pickerConfig).toEqual({
+          configuration: 'cms-pickers/folders',
+          rootPath: '/root',
+          selectableNodeTypes: ['hippostd:folder'],
+        });
+      });
+
+      it('sets a path according to rootPath and defaultPath configuration', () => {
+        spyOn(component, 'setPath');
+        component.$onInit();
+        expect(component.setPath).toHaveBeenCalledWith('/root');
+
+        component.defaultPath = 'desk/paper';
+        component.$onInit();
+        expect(component.setPath).toHaveBeenCalledWith('/root/desk/paper');
       });
     });
 
-    it('sets a path according to rootPath and defaultPath configuration', () => {
-      spyOn(component, 'setPath');
-      component.$onInit();
-      expect(component.setPath).toHaveBeenCalledWith('/root');
+    describe('setting the document location', () => {
+      it('stores the path and defaultPath of the last folder returned by the create-content-service', () => {
+        const folders = [{ path: '/root' }, { path: '/root/content' }, { path: '/root/content/document' }];
+        getFolderSpy.and.returnValue($q.resolve(folders));
 
-      component.defaultPath = 'desk/paper';
-      component.$onInit();
-      expect(component.setPath).toHaveBeenCalledWith('/root/desk/paper');
-    });
-  });
+        component.$onInit();
+        $rootScope.$apply();
 
-  describe('setting the document location', () => {
-    it('stores the path and defaultPath of the last folder returned by the create-content-service', () => {
-      const folders = [{ path: '/root' }, { path: '/root/content' }, { path: '/root/content/document' }];
-      getFolderSpy.and.returnValue($q.resolve(folders));
-
-      component.$onInit();
-      $rootScope.$apply();
-
-      expect(component.path).toBe('/root/content/document');
-      expect(component.defaultPath).toBe('content/document');
-    });
-  });
-
-  describe('setting the document location label', () => {
-    const setup = (rootPath, defaultPath, displayNames) => {
-      const folders = [];
-      displayNames.forEach((displayName) => {
-        folders.push({ displayName, path: '' });
+        expect(component.path).toBe('/root/content/document');
+        expect(component.defaultPath).toBe('content/document');
       });
-      getFolderSpy.and.returnValue($q.resolve(folders));
+    });
 
-      component.rootPath = rootPath;
-      component.defaultPath = defaultPath;
-      component.$onInit();
-      $rootScope.$apply();
-    };
+    describe('setting the document location label', () => {
+      const setup = (rootPath, defaultPath, displayNames) => {
+        const folders = [];
+        displayNames.forEach((displayName) => {
+          folders.push({ displayName, path: '' });
+        });
+        getFolderSpy.and.returnValue($q.resolve(folders));
 
-    it('uses displayName(s) for the document location label', () => {
-      setup('/root', '', ['R00T']);
-      expect(component.pathLabel).toBe('/R00T');
+        component.rootPath = rootPath;
+        component.defaultPath = defaultPath;
+        component.$onInit();
+        $rootScope.$apply();
+      };
 
-      setup('/root/water', 'bloom/flower', ['R00T', 'water', 'bloom', 'fl0w3r']);
-      expect(component.pathLabel).toBe('/R00T/water/bloom/fl0w3r');
+      it('uses displayName(s) for the document location label', () => {
+        setup('/root', '', ['R00T']);
+        expect(component.pathLabel).toBe('/R00T');
+
+        setup('/root/water', 'bloom/flower', ['R00T', 'water', 'bloom', 'fl0w3r']);
+        expect(component.pathLabel).toBe('/R00T/water/bloom/fl0w3r');
+      });
+    });
+
+    describe('onLoadFolders', () => {
+      it('ignores an empty result from the backend', () => {
+        component.pathLabel = 'test-document-location-label';
+        component.path = 'test-document-location';
+        component.locale = 'test-locale';
+        component.defaultPath = 'test-default-path';
+        component.pickerPath = 'test-picker-path';
+
+        component.onLoadFolders([]);
+
+        expect(component.pathLabel).toBe('test-document-location-label');
+        expect(component.path).toBe('test-document-location');
+        expect(component.locale).toBe('test-locale');
+        expect(component.defaultPath).toBe('test-default-path');
+        expect(component.pickerPath).toBe('test-picker-path');
+      });
+
+      it('stores the pickerPath, i.e. the deepest nested folder that exists in the repository', () => {
+        component.onLoadFolders([
+          { displayName: 'A', name: 'a', path: '/a', exists: true },
+          { displayName: 'B', name: 'b', path: '/a/b', exists: true },
+          { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
+        ]);
+        expect(component.pickerPath).toBe('/a/b');
+      });
+
+      it('stores / as the pickerPath if none of the folders already exist in the repository', () => {
+        component.onLoadFolders([
+          { displayName: 'A', name: 'a', path: '/a', exists: false },
+          { displayName: 'B', name: 'b', path: '/a/b', exists: false },
+        ]);
+        expect(component.pickerPath).toBe('/');
+      });
+
+      it('stores the locale of the last folder', () => {
+        const folders = [{ path: '/root', locale: 'fr' }, { path: '/root/path', locale: 'de' }];
+        getFolderSpy.and.returnValue($q.resolve(folders));
+
+        component.$onInit();
+        $rootScope.$apply();
+
+        expect(component.locale).toBe('de');
+      });
+    });
+
+    describe('openPicker', () => {
+      it('subscribes once to the "path-picked" event of the CMS before opening the picker', () => {
+        spyOn(CmsService, 'subscribeOnce');
+        component.openPicker();
+        expect(CmsService.subscribeOnce).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('DocumentLocationPicker (create content panel)');
+      });
+
+      it('opens the picker by publishing the "show-path-picker" event', () => {
+        spyOn(CmsService, 'publish');
+        const pickerConfig = {};
+        component.pickerPath = 'current-location';
+        component.pickerConfig = pickerConfig;
+        component.openPicker();
+        expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
+      });
+    });
+
+    describe('onPathPicked', () => {
+      it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+        spyOn(component, 'setPath');
+
+        component.onPathPicked('some-id', '/root/some-path');
+        expect(component.setPath).not.toHaveBeenCalled();
+
+        component.onPathPicked('document-location-callback-id', '/root/new-path');
+        expect(component.setPath).toHaveBeenCalledWith('/root/new-path');
+      });
+
+      it('prepends relative paths with a /', () => {
+        spyOn(component, 'setPath');
+
+        component.onPathPicked('document-location-callback-id', 'root/path');
+        expect(component.setPath).toHaveBeenCalledWith('/root/path');
+      });
+
+      it('shows an error if the chosen path is not part of the rootPath tree', () => {
+        spyOn(FeedbackService, 'showError');
+        spyOn(component, 'setPath');
+
+        component.onPathPicked('document-location-callback-id', '/flowers/tulip');
+        expect(component.setPath).not.toHaveBeenCalled();
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
+          root: '/root',
+          path: '/flowers/tulip',
+        });
+      });
     });
   });
 
-  describe('onLoadFolders', () => {
-    it('ignores an empty result from the backend', () => {
-      component.pathLabel = 'test-document-location-label';
-      component.path = 'test-document-location';
-      component.locale = 'test-locale';
-      component.defaultPath = 'test-default-path';
-      component.pickerPath = 'test-picker-path';
-
-      component.onLoadFolders([]);
-
-      expect(component.pathLabel).toBe('test-document-location-label');
-      expect(component.path).toBe('test-document-location');
-      expect(component.locale).toBe('test-locale');
-      expect(component.defaultPath).toBe('test-default-path');
-      expect(component.pickerPath).toBe('test-picker-path');
+  describe('withoutRootPath', () => {
+    beforeEach(() => {
+      component.defaultPickerPath = '/default/path';
     });
 
-    it('stores the pickerPath, i.e. the deepest nested folder that exists in the repository', () => {
-      component.onLoadFolders([
-        { displayName: 'A', name: 'a', path: '/a', exists: true },
-        { displayName: 'B', name: 'b', path: '/a/b', exists: true },
-        { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
-      ]);
-      expect(component.pickerPath).toBe('/a/b');
+    describe('$onInit', () => {
+      it('throws an error if rootPath nor defaultPickerPath are defined ', () => {
+        component.defaultPickerPath = undefined;
+        expect(() => component.$onInit()).toThrowError('Either rootPath or defaultPickerPath must be defined');
+      });
+
+      it('throws an error if defaultPath is a relative path', () => {
+        component.defaultPickerPath = 'relative/path';
+        expect(() => component.$onInit()).toThrowError('The defaultPickerPath can only be an absolute path: relative/path');
+      });
+
+      it('sets the default picker config', () => {
+        component.$onInit();
+        expect(component.pickerPath).toBe('/');
+        expect(component.pickerConfig).toEqual({
+          configuration: 'cms-pickers/folders',
+          rootPath: '/default/path',
+          selectableNodeTypes: ['hippostd:folder'],
+        });
+      });
     });
 
-    it('stores / as the pickerPath if none of the folders already exist in the repository', () => {
-      component.onLoadFolders([
-        { displayName: 'A', name: 'a', path: '/a', exists: false },
-        { displayName: 'B', name: 'b', path: '/a/b', exists: false },
-      ]);
-      expect(component.pickerPath).toBe('/');
-    });
+    describe('onPathPicked', () => {
+      it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+        spyOn(component, 'setPath');
 
-    it('stores the locale of the last folder', () => {
-      const folders = [{ path: '/root', locale: 'fr' }, { path: '/root/path', locale: 'de' }];
-      getFolderSpy.and.returnValue($q.resolve(folders));
+        component.onPathPicked('some-id', '/default/path/some-path');
+        expect(component.setPath).not.toHaveBeenCalled();
 
-      component.$onInit();
-      $rootScope.$apply();
+        component.onPathPicked('document-location-callback-id', '/default/path/new-path');
+        expect(component.setPath).toHaveBeenCalledWith('/default/path/new-path');
+      });
 
-      expect(component.locale).toBe('de');
-    });
-  });
+      it('prepends relative paths with a /', () => {
+        spyOn(component, 'setPath');
 
-  describe('openPicker', () => {
-    it('subscribes once to the "path-picked" event of the CMS before opening the picker', () => {
-      spyOn(CmsService, 'subscribeOnce');
-      component.openPicker();
-      expect(CmsService.subscribeOnce).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('DocumentLocationPicker (create content panel)');
-    });
+        component.onPathPicked('document-location-callback-id', 'default/path/path');
+        expect(component.setPath).toHaveBeenCalledWith('/default/path/path');
+      });
 
-    it('opens the picker by publishing the "show-path-picker" event', () => {
-      spyOn(CmsService, 'publish');
-      const pickerConfig = {};
-      component.pickerPath = 'current-location';
-      component.pickerConfig = pickerConfig;
-      component.openPicker();
-      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
-    });
-  });
+      it('shows an error if the chosen path is not part of the rootPath tree', () => {
+        spyOn(FeedbackService, 'showError');
+        spyOn(component, 'setPath');
 
-  describe('onPathPicked', () => {
-    it('only accepts callback events with callbackId "document-location-callback-id"', () => {
-      spyOn(component, 'setPath');
-
-      component.onPathPicked('some-id', '/root/some-path');
-      expect(component.setPath).not.toHaveBeenCalled();
-
-      component.onPathPicked('document-location-callback-id', '/root/new-path');
-      expect(component.setPath).toHaveBeenCalledWith('/root/new-path');
-    });
-
-    it('prepends relative paths with a /', () => {
-      spyOn(component, 'setPath');
-
-      component.onPathPicked('document-location-callback-id', 'root/path');
-      expect(component.setPath).toHaveBeenCalledWith('/root/path');
-    });
-
-    it('shows an error if the chosen path is not part of the rootPath tree', () => {
-      spyOn(FeedbackService, 'showError');
-      spyOn(component, 'setPath');
-
-      component.onPathPicked('document-location-callback-id', '/flowers/tulip');
-      expect(component.setPath).not.toHaveBeenCalled();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
-        root: '/root',
-        path: '/flowers/tulip',
+        component.onPathPicked('document-location-callback-id', '/flowers/tulip');
+        expect(component.setPath).not.toHaveBeenCalled();
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
+          root: '/default/path',
+          path: '/flowers/tulip',
+        });
       });
     });
   });
