@@ -91,7 +91,7 @@ describe('CreateContentService', () => {
     const config = {
       templateQuery: 'tpl-query',
       containerItem: component,
-      componentParameter: 'document',
+      parameterName: 'document',
       componentParameterBasePath: '/content/documents/channel',
     };
     CreateContentService.start(config);

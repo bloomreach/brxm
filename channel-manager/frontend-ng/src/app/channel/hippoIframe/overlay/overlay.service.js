@@ -328,12 +328,12 @@ class OverlayService {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
-    const componentParameter = structureElement.getComponentParameter();
+    const parameterName = structureElement.getParameterName();
     const componentParameterBasePath =
       structureElement.isComponentParameterRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
 
     const config = {
-      componentParameter,
+      parameterName,
       componentParameterBasePath,
       componentPickerConfig: structureElement.getComponentPickerConfig(),
       componentValue: structureElement.getComponentValue(),
@@ -345,28 +345,28 @@ class OverlayService {
     };
 
     if (!this.ChannelService.isEditable()) {
-      delete config.componentParameter;
+      delete config.parameterName;
 
       if (config.documentUuid) { // whenever uuid is available, only edit button for authors
         delete config.templateQuery;
         return config;
       }
 
-      if (componentParameter) {
+      if (parameterName) {
         return {};
       }
     }
 
-    if (componentParameter
+    if (parameterName
       && config.containerItem
       && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
       config.isLockedByOtherUser = true;
     }
 
-    if (config.componentParameter && !config.containerItem) {
-      this.$log.warn(`Ignoring component parameter "${config.componentParameter}" of manage content button outside catalog item`);
-      delete config.componentParameter;
+    if (config.parameterName && !config.containerItem) {
+      this.$log.warn(`Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`);
+      delete config.parameterName;
     }
 
     return config;
@@ -385,7 +385,7 @@ class OverlayService {
       buttons.push(editContentButton);
     }
 
-    if (config.componentParameter) {
+    if (config.parameterName) {
       const selectDocumentButton = {
         mainIcon: searchWhiteSvg,
         dialIcon: searchSvg,
@@ -442,7 +442,7 @@ class OverlayService {
     if (config.templateQuery) {
       fabBtn.addClass('qa-add-content');
     }
-    if (config.componentParameter) {
+    if (config.parameterName) {
       fabBtn.addClass('qa-manage-parameters');
     }
 
@@ -580,7 +580,7 @@ class OverlayService {
     const componentId = component.getId();
     const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
-    const parameterName = config.componentParameter;
+    const parameterName = config.parameterName;
     const parameterValue = config.componentValue;
     const parameterBasePath = config.componentParameterBasePath;
     const pickerConfig = config.componentPickerConfig;

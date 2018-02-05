@@ -91,7 +91,7 @@ class CreateContentService {
   _step1(config) {
     const component = config.containerItem;
     if (component) {
-      if (config.componentParameter) {
+      if (config.parameterName) {
         this.CmsService.reportUsageStatistic('CreateContentButtonWithComponent');
       } else {
         this.CmsService.reportUsageStatistic('CreateContentButton');
@@ -100,7 +100,7 @@ class CreateContentService {
         id: component.getId(),
         label: component.getLabel(),
         variant: component.getRenderVariant(),
-        parameterName: config.componentParameter,
+        parameterName: config.parameterName,
         parameterBasePath: config.componentParameterBasePath,
       };
     } else {

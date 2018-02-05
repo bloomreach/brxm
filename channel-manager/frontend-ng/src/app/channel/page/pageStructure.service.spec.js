@@ -244,7 +244,7 @@ describe('PageStructureService', () => {
     expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
     expect(manageContentLink.getRootPath()).toBe('test-root-path');
-    expect(manageContentLink.getComponentParameter()).toBe('test-component-parameter');
+    expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
     expect(manageContentLink.getComponentValue()).toBe('test-component-value');
     expect(manageContentLink.getComponentPickerConfig()).toEqual({
       configuration: 'test-component-picker configuration',

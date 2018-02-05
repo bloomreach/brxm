@@ -21,8 +21,8 @@ class ManageContentLink extends EmbeddedLink {
     super('manage-content-link', commentElement, metaData);
   }
 
-  getComponentParameter() {
-    return this.metaData.componentParameter;
+  getParameterName() {
+    return this.metaData.parameterName;
   }
 
   getDefaultPath() {
@@ -46,7 +46,7 @@ class ManageContentLink extends EmbeddedLink {
   }
 
   getComponentPickerConfig() {
-    if (!this.metaData.componentParameter) {
+    if (!this.metaData.parameterName) {
       return null;
     }
     return {
