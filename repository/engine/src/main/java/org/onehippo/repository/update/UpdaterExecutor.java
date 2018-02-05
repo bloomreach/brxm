@@ -76,7 +76,10 @@ public class UpdaterExecutor implements EventListener {
     public UpdaterExecutor(Node updaterNode, final Session session) throws Exception {
         this.session = session;
         this.background = session.impersonate(new SimpleCredentials("system", new char[] {}));
-        report = new UpdaterExecutionReport();
+
+        final String logLevel = JcrUtils.getStringProperty(updaterNode, HippoNodeType.HIPPOSYS_LOGLEVEL, null);
+        report = new UpdaterExecutionReport(logLevel);
+
         try {
             updaterInfo = new UpdaterInfo(updaterNode);
         } catch (Exception e) {
