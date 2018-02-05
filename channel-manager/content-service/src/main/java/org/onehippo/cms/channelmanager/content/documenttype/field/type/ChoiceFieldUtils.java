@@ -104,22 +104,19 @@ public class ChoiceFieldUtils {
                                                    final FieldsInformation fieldsInfo) {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
+                // Suggestion: the provider compound may have an editor configuration, helping to initialize
+                //             the choice compound. We could try to find a node and add it to the fieldContext.
+                final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
+                final String choiceId = item.getItemType();
 
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-                    // Suggestion: the provider compound may have an editor configuration, helping to initialize
-                    //             the choice compound. We could try to find a node and add it to the fieldContext.
-                    final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
-                    final String choiceId = item.getItemType();
+                final NodeFieldType choice = createChoiceForProvider(contentType, fieldContext, choiceId);
 
-                    final NodeFieldType choice = createChoiceForProvider(contentType, fieldContext, choiceId);
-
-                    if (choice != null) {
-                        patchDisplayNameForChoice(choice, fieldContext);
-                        choices.put(choiceId, choice);
-                    } else {
-                        // not all available choices are supported
-                        fieldsInfo.setAllFieldsIncluded(false);
-                    }
+                if (choice != null) {
+                    patchDisplayNameForChoice(choice, fieldContext);
+                    choices.put(choiceId, choice);
+                } else {
+                    // not all available choices are supported
+                    fieldsInfo.addUnknownField(fieldContext);
                 }
             });
         }
@@ -166,19 +163,16 @@ public class ChoiceFieldUtils {
 
             ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
                 final ContentType contentType = choiceContext.getContentType();
+                final String id = choiceContext.getContentType().getName();
 
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-                    final String id = choiceContext.getContentType().getName();
+                final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
 
-                    final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
-
-                    if (choice != null) {
-                        patchDisplayNameForChoice(choice, choiceContext);
-                        choices.put(id, choice);
-                    } else {
-                        // not all available choices are supported
-                        fieldsInfo.setAllFieldsIncluded(false);
-                    }
+                if (choice != null) {
+                    patchDisplayNameForChoice(choice, choiceContext);
+                    choices.put(id, choice);
+                } else {
+                    // not all available choices are supported
+                    fieldsInfo.addUnknownField(choiceName);
                 }
             });
         }

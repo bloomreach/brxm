@@ -15,11 +15,24 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+
 public class FieldsInformation {
+
+    private static final List<String> REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList(
+            "Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown", "Reference", "StaticDropdown"
+    );
+    private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList(
+            "hippo:", "hippogallerypicker:", "hippostd:", "hipposys:", "hippotaxonomy:", "poll:", "selection:"
+    );
 
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
@@ -69,14 +82,32 @@ public class FieldsInformation {
         unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
     }
 
-    public void addUnknownField(final String fieldTypeName, final boolean isRequired) {
-        unsupportedFieldTypes.add(fieldTypeName);
-
-        // The unknown field is not included, so not all fields are included
-        allFieldsIncluded = false;
+    public void addUnknownField(final FieldTypeContext fieldTypeContext) {
+        final String fieldTypeName = fieldTypeContext.getContentTypeItem().getItemType();
+        this.addUnknownField(fieldTypeName);
 
         // Unknown fields cannot be created, so only when the unknown field is not required
         // it may still be possible to create all required fields
+        final ContentTypeItem item = fieldTypeContext.getContentTypeItem();
+        final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
         canCreateAllRequiredFields &= !isRequired;
+    }
+
+    public void addUnknownField(final String fieldTypeName) {
+        // The unknown field is not included, so not all fields are included
+        allFieldsIncluded = false;
+
+        // Add the name of the field to the list of unsupported types
+        final String reportedFieldTypeName = mapFieldTypeName(fieldTypeName);
+        unsupportedFieldTypes.add(reportedFieldTypeName);
+    }
+
+    private static String mapFieldTypeName(final String name) {
+        if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
+                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
+            return name;
+        } else {
+            return "Custom";
+        }
     }
 }

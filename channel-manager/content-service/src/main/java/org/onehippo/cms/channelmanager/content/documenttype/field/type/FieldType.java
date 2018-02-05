@@ -40,8 +40,7 @@ public interface FieldType {
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
-        COMPOUND,
-        UNKNOWN
+        COMPOUND
     }
 
     /**

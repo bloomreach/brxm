@@ -16,15 +16,12 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -67,7 +64,6 @@ import org.slf4j.LoggerFactory;
 public class FieldTypeUtils {
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
-    private static final String FIELD_TYPE_UNKNOWN = "Unknown";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
@@ -83,11 +79,6 @@ public class FieldTypeUtils {
 
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
-
-    private static final List<String> REPORTABLE_MISSING_FIELD_TYPES;
-    private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES;
-
-//    private static final TypeDescriptor UNKNOWN_TYPE_DESCRIPTOR = new TypeDescriptor(UnknownFieldType.class, "");
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -118,11 +109,6 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
-
-        REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList("Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown",
-                "Reference", "StaticDropdown");
-        REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList("hippo:", "hippogallerypicker:", "hippostd:", "hipposys:",
-                "hippotaxonomy:", "poll:", "selection:");
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
@@ -201,7 +187,7 @@ public class FieldTypeUtils {
                         return fieldType.isValid() ? fieldType : null;
                     });
         } else {
-            handleUnknownField(context, allFieldsInfo);
+            allFieldsInfo.addUnknownField(context);
             return Optional.empty();
         }
     }
@@ -227,7 +213,7 @@ public class FieldTypeUtils {
 
         if (item.isProperty()) {
             // All known property fields are part of the FIELD_TYPE_MAP, so this one is unknown
-            return FIELD_TYPE_UNKNOWN;
+            return null;
         }
 
         if (ChoiceFieldUtils.isChoiceField(context)) {
@@ -238,7 +224,7 @@ public class FieldTypeUtils {
             return FIELD_TYPE_COMPOUND;
         }
 
-        return FIELD_TYPE_UNKNOWN;
+        return null;
     }
 
     private static boolean isCompound(final ContentTypeItem item) {
@@ -257,25 +243,6 @@ public class FieldTypeUtils {
         Optional<String> result = context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
         return result;
-    }
-
-    private static void handleUnknownField(final FieldTypeContext fieldTypeContext, final FieldsInformation fieldsInfo) {
-        final String fieldTypeName = mapFieldTypeName(fieldTypeContext);
-
-        final ContentTypeItem item = fieldTypeContext.getContentTypeItem();
-        final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
-
-        fieldsInfo.addUnknownField(fieldTypeName, isRequired);
-    }
-
-    private static String mapFieldTypeName(final FieldTypeContext fieldTypeContext) {
-        final String name = fieldTypeContext.getContentTypeItem().getItemType();
-        if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
-                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
-            return name;
-        } else {
-            return "Custom";
-        }
     }
 
     /**
