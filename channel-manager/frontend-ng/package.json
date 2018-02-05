@@ -39,7 +39,8 @@
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
-    "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c"
+    "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c",
+    "uglify-es": "3.3.7"
   },
   "devDependencies": {
     "@bloomreach/frontend-build": "6.0.5",
