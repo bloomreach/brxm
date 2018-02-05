@@ -2,7 +2,7 @@
 
 <%--@elvariable id="document" type="{{beansPackage}}.Blogpost"--%>
 <div class="has-edit-button">
-  <hst:manageContent document="${requestScope.document}"/>
+  <hst:manageContent hippobean="${requestScope.document}"/>
   <h1><c:out value="${requestScope.document.title}"/></h1>
   <h2>by: <c:out value="${requestScope.document.author}"/></h2>
   <strong>
