@@ -260,19 +260,12 @@ public class FieldTypeUtils {
     }
 
     private static void handleUnknownField(final FieldTypeContext fieldTypeContext, final FieldsInformation fieldsInfo) {
-        final ContentTypeItem item = fieldTypeContext.getContentTypeItem();
-        boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
-        fieldsInfo.addUnknownField(isRequired);
-    }
+        final String fieldTypeName = mapFieldTypeName(fieldTypeContext);
 
-    public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
-        return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
-                .map(fieldSorter -> fieldSorter.sortFields(context).stream()
-                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).equals(FIELD_TYPE_UNKNOWN))
-                        .map(FieldTypeUtils::mapFieldTypeName)
-                        .collect(Collectors.toCollection(TreeSet::new))
-                )
-                .orElse(null);
+        final ContentTypeItem item = fieldTypeContext.getContentTypeItem();
+        final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
+
+        fieldsInfo.addUnknownField(fieldTypeName, isRequired);
     }
 
     private static String mapFieldTypeName(final FieldTypeContext fieldTypeContext) {

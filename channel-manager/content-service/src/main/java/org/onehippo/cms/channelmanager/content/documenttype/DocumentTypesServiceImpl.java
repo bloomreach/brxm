@@ -79,11 +79,10 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setId(id);
         LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
 
-        docType.setUnsupportedFieldTypes(FieldTypeUtils.getUnsupportedFieldTypes(context));
-
         final FieldsInformation fieldsInformation = FieldTypeUtils.populateFields(docType.getFields(), context);
         docType.setAllFieldsIncluded(fieldsInformation.isAllFieldsIncluded());
         docType.setCanCreateAllRequiredFields(fieldsInformation.getCanCreateAllRequiredFields());
+        docType.setUnsupportedFieldTypes(fieldsInformation.getUnsupportedFieldTypes());
 
         return docType;
     }

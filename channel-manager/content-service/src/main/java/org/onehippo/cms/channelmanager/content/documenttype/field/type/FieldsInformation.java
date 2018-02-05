@@ -15,10 +15,15 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 public class FieldsInformation {
 
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
+    private final SortedSet<String> unsupportedFieldTypes;
 
     public static FieldsInformation allSupported() {
         return new FieldsInformation(true, true);
@@ -29,11 +34,13 @@ public class FieldsInformation {
     }
 
     private FieldsInformation(final boolean allFieldsIncluded, final boolean canCreateAllRequiredFields) {
+        this();
         this.allFieldsIncluded = allFieldsIncluded;
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 
     public FieldsInformation() {
+        unsupportedFieldTypes = new TreeSet<>();
     }
 
     public boolean isAllFieldsIncluded() {
@@ -52,17 +59,24 @@ public class FieldsInformation {
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 
-    public void add(final FieldsInformation fieldInfo) {
-        this.allFieldsIncluded &= fieldInfo.allFieldsIncluded;
-        this.canCreateAllRequiredFields &= fieldInfo.canCreateAllRequiredFields;
+    public Set<String> getUnsupportedFieldTypes() {
+        return unsupportedFieldTypes;
     }
 
-    public void addUnknownField(final boolean isRequired) {
+    public void add(final FieldsInformation fieldInfo) {
+        allFieldsIncluded &= fieldInfo.allFieldsIncluded;
+        canCreateAllRequiredFields &= fieldInfo.canCreateAllRequiredFields;
+        unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
+    }
+
+    public void addUnknownField(final String fieldTypeName, final boolean isRequired) {
+        unsupportedFieldTypes.add(fieldTypeName);
+
         // The unknown field is not included, so not all fields are included
-        this.allFieldsIncluded = false;
+        allFieldsIncluded = false;
 
         // Unknown fields cannot be created, so only when the unknown field is not required
         // it may still be possible to create all required fields
-        this.canCreateAllRequiredFields &= !isRequired;
+        canCreateAllRequiredFields &= !isRequired;
     }
 }
