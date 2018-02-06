@@ -49,7 +49,6 @@ import java.util.TimeZone;
  *
  * @see YuiDatePickerSettings for all configuration options
  */
-
 public class YuiDateTimeField extends DateTimeField {
 
     public static final String DATE_LABEL = "date-label";
@@ -65,18 +64,20 @@ public class YuiDateTimeField extends DateTimeField {
         this(id, model, null);
     }
 
-    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings) {
+    public YuiDateTimeField(final String id, final IModel<Date> model, final YuiDatePickerSettings settings) {
         this(id, model, settings, false);
     }
 
-    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings, final boolean hideTime) {
+    public YuiDateTimeField(final String id, final IModel<Date> model, final YuiDatePickerSettings settings, final boolean hideTime) {
         super(id, model);
-        this.hideTime = hideTime;
-        if (settings == null) {
-            settings = new YuiDatePickerSettings();
-            settings.setLanguage(getLocale().getLanguage());
+
+        if (settings != null) {
+            this.settings = settings;
         }
-        this.settings = settings;
+        else {
+            this.settings = new YuiDatePickerSettings();
+            this.settings.setLanguage(getLocale().getLanguage());
+        }
 
         setOutputMarkupId(true);
 
@@ -139,13 +140,14 @@ public class YuiDateTimeField extends DateTimeField {
                 }
             });
         }
+
         if (hideTime) {
             // hiding the "hours" component hides the entire "hours" wicket:enclosure
             get(HOURS).setVisibilityAllowed(false);
             // hide the minutes field to prevent wicket.ajax javascript errors
             get(MINUTES).setVisibilityAllowed(false);
         }
-
+        this.hideTime = hideTime;
     }
 
     private int calculateDateLength() {

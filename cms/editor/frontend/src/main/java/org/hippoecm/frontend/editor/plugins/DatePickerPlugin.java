@@ -23,7 +23,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimeLabel;
-import org.hippoecm.frontend.plugins.standards.datetime.GMTDateLabel;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.service.IEditor.Mode;

@@ -22,6 +22,9 @@ import org.apache.wicket.model.IModel;
 
 /**
  * The component to represent only the date section of the {@link Date} object value in GMT timezone.
+ *
+ * @deprecated no longer used because it uses a hardcoded GMT timezone, while user session time zone is to be used.
+ *              Use YuiDateTimeField instead.
  */
 @Deprecated
 public class YuiGMTDateField extends YuiDateTimeField {

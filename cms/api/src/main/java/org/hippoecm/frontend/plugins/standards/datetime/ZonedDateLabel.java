@@ -30,6 +30,8 @@ import org.apache.wicket.model.IModel;
 /**
  * Label component that represents only the date (year-month-day) of the
  * {@link ZonedDateTime} model object in current session locale format.
+ *
+ * @deprecated no longer used because it was only used by deprecated GMTDateLabel.
  */
 @Deprecated
 public class ZonedDateLabel extends Label {

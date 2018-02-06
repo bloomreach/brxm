@@ -27,6 +27,9 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Label component to render a date (year-month-day) of the {@link Date} object in GMT timezone.
+ *
+ * @deprecated no longer used because it uses a hardcoded GMT timezone, while user session time zone is to be used.
+ *              Use DateTimeLabel instead.
  */
 @Deprecated
 public class GMTDateLabel extends ZonedDateLabel {
