@@ -113,7 +113,7 @@ public class HstManageContentTag extends TagSupport {
                     log.debug("The node path for the manage content tag is '{}'", handleNode.getPath());
                     documentId = handleNode.getIdentifier();
                 } catch (RepositoryException e) {
-                    log.warn("Error while retrieving the hippoBean handle of '{}', skipping manage content tag",
+                    log.warn("Error while retrieving the handle of '{}', skipping manage content tag",
                             JcrUtils.getNodePathQuietly(hippoBean.getNode()), e);
                     return EVAL_PAGE;
                 }
@@ -245,18 +245,18 @@ public class HstManageContentTag extends TagSupport {
         writeToMap(result, "parameterName", parameterName);
 
         if (parameterName != null) {
-            writeToMap(result, "componentParameterIsRelativePath", Boolean.toString(isRelativePathParameter));
-            writeToMap(result, "componentValue", componentValue);
+            writeToMap(result, "parameterValueIsRelativePath", Boolean.toString(isRelativePathParameter));
+            writeToMap(result, "parameterValue", componentValue);
         }
 
         if (jcrPath != null) {
-            writeToMap(result, "componentPickerConfiguration", jcrPath.pickerConfiguration());
-            writeToMap(result, "componentPickerInitialPath", jcrPath.pickerInitialPath());
-            writeToMap(result, "componentPickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
-            writeToMap(result, "componentPickerRootPath", jcrPath.pickerRootPath());
+            writeToMap(result, "pickerConfiguration", jcrPath.pickerConfiguration());
+            writeToMap(result, "pickerInitialPath", jcrPath.pickerInitialPath());
+            writeToMap(result, "pickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
+            writeToMap(result, "pickerRootPath", jcrPath.pickerRootPath());
 
             final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
-            writeToMap(result, "componentPickerSelectableNodeTypes", nodeTypes);
+            writeToMap(result, "pickerSelectableNodeTypes", nodeTypes);
         }
 
         return result;
