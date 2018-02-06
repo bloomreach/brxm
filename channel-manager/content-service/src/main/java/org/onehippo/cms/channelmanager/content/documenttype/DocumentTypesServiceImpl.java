@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
 
@@ -51,14 +52,11 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
-//        try {
-//            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
-//        } catch (final ExecutionException ignore) {
-//            throw new NotFoundException();
-//        }
-
-        // disable cache during testing
-        return createDocumentType(id, userSession, locale);
+        try {
+            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
+        } catch (final ExecutionException ignore) {
+            throw new NotFoundException();
+        }
     }
 
     @Override
