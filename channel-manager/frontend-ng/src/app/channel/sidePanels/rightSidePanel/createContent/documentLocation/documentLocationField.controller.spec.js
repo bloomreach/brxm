@@ -241,22 +241,58 @@ describe('DocumentLocationField', () => {
 
   describe('without root path', () => {
 
-    describe('$onInit', () => {
-      it('sets the initialPickerPath to the channel content root', () => {
-        component.$onInit();
-        expect(component.initialPickerPath).toBe('/channel/content');
-      });
+    describe('and without default path', () => {
+      describe('$onInit', () => {
+        it('sets the initialPickerPath to the channel content root', () => {
+          component.$onInit();
+          expect(component.initialPickerPath).toBe('/channel/content');
+        });
 
-      it('sets the default picker config', () => {
-        component.$onInit();
-        expect(component.pickerPath).toBe('/');
-        expect(component.pickerConfig).toEqual({
-          configuration: 'cms-pickers/folders',
-          rootPath: '/channel/content',
-          selectableNodeTypes: ['hippostd:folder'],
+        it('does not set the rootPath', () => {
+          component.$onInit();
+          expect(component.rootPath).toBeUndefined();
+        });
+
+        it('sets the default picker config', () => {
+          component.$onInit();
+          expect(component.pickerPath).toBe('/');
+          expect(component.pickerConfig).toEqual({
+            configuration: 'cms-pickers/folders',
+            rootPath: '/channel/content',
+            selectableNodeTypes: ['hippostd:folder'],
+          });
         });
       });
     });
+
+    describe('but with default path', () => {
+      describe('$onInit', () => {
+        beforeEach(() => {
+          component.defaultPath = 'default/path';
+        });
+
+        it('sets the initialPickerPath to the channel content root', () => {
+          component.$onInit();
+          expect(component.initialPickerPath).toBe('/channel/content');
+        });
+
+        it('does set the rootPath', () => {
+          component.$onInit();
+          expect(component.rootPath).toBe('/channel/content');
+        });
+
+        it('sets the default picker config with root path of channel path plus default path', () => {
+          component.$onInit();
+          expect(component.pickerPath).toBe('/');
+          expect(component.pickerConfig).toEqual({
+            configuration: 'cms-pickers/folders',
+            rootPath: '/channel/content',
+            selectableNodeTypes: ['hippostd:folder'],
+          });
+        });
+      });
+    });
+
 
     describe('onPathPicked', () => {
       beforeEach(() => {
