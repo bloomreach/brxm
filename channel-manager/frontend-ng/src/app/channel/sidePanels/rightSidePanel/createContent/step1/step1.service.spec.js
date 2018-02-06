@@ -142,14 +142,6 @@ describe('Step1Service', () => {
     });
 
     describe('parsing the rootPath', () => {
-      it('defaults to the channel root if not set', () => {
-        Step1Service.open('tpl-query');
-        expect(Step1Service.rootPath).toBe('/channel/content');
-
-        Step1Service.open('tpl-query', '');
-        expect(Step1Service.rootPath).toBe('/channel/content');
-      });
-
       it('overrides the channel root path if absolute', () => {
         Step1Service.open('tpl-query', '/root/path');
         expect(Step1Service.rootPath).toBe('/root/path');
