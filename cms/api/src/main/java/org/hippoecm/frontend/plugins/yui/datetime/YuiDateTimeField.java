@@ -24,6 +24,7 @@ import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -54,7 +55,10 @@ public class YuiDateTimeField extends DateTimeField {
     public static final String DATE_LABEL = "date-label";
     public static final String HOURS_LABEL = "hours-label";
     public static final String MINUTES_LABEL = "minutes-label";
-
+    public static final String CURRENT_DATE_TIME_TOOLTIP = "set-to-current-date-tooltip";
+    public static final String CURRENT_DATE_TIME_LABEL = "set-to-current-date";
+    public static final String CURRENT_DATE_TOOLTIP = "set-to-current-date-only-tooltip";
+    public static final String CURRENT_DATE_LABEL = "set-to-current-date-only";
     private final YuiDatePickerSettings settings;
     private boolean todayLinkVisible = true;
     private final boolean hideTime;
@@ -70,7 +74,7 @@ public class YuiDateTimeField extends DateTimeField {
 
     public YuiDateTimeField(final String id, final IModel<Date> model, final YuiDatePickerSettings settings, final boolean hideTime) {
         super(id, model);
-
+        this.hideTime = hideTime;
         if (settings != null) {
             this.settings = settings;
         }
@@ -122,6 +126,12 @@ public class YuiDateTimeField extends DateTimeField {
         });
 
         today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
+        // add tooltip:
+        final Model<String> dateTooltip = hideTime ? Model.of(getString(CURRENT_DATE_TOOLTIP)) : Model.of(getString(CURRENT_DATE_TIME_TOOLTIP));
+        today.add(new AttributeModifier("title", dateTooltip));
+        // add text:
+        final Model<String> dateLabel = hideTime ? Model.of(getString(CURRENT_DATE_LABEL)): Model.of(getString(CURRENT_DATE_TIME_LABEL));
+        today.add(new Label("current-date-label", dateLabel));
 
         //Add change behavior to super fields
         for (final String name : new String[]{"date", "hours", "minutes", "amOrPmChoice"}) {
@@ -147,7 +157,7 @@ public class YuiDateTimeField extends DateTimeField {
             // hide the minutes field to prevent wicket.ajax javascript errors
             get(MINUTES).setVisibilityAllowed(false);
         }
-        this.hideTime = hideTime;
+
     }
 
     private int calculateDateLength() {
