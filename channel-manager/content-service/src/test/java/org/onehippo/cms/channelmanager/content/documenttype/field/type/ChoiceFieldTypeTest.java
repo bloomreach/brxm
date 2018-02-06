@@ -44,11 +44,14 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -92,13 +95,14 @@ public class ChoiceFieldTypeTest {
 
         replay(context);
 
-        choice.init(context);
+        FieldsInformation fieldsInfo = choice.init(context);
 
         verify(context);
         PowerMock.verifyAll();
 
         assertThat(choice.getId(), equalTo("choiceId"));
         assertTrue(choice.getChoices().isEmpty());
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
     }
 
     @Test
@@ -110,21 +114,22 @@ public class ChoiceFieldTypeTest {
 
         PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "populateProviderBasedChoices", "populateListBasedChoices");
 
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choice.getChoices(), null);
+        ChoiceFieldUtils.populateProviderBasedChoices(eq(node), eq(parentContext), eq(choice.getChoices()), anyObject(FieldsInformation.class));
         expectLastCall();
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choice.getChoices(), null);
+        ChoiceFieldUtils.populateListBasedChoices(eq(node), eq(parentContext), eq(choice.getChoices()), anyObject(FieldsInformation.class));
         expectLastCall();
 
         replay(context, parentContext);
         PowerMock.replayAll();
 
-        choice.init(context);
+        FieldsInformation fieldsInfo = choice.init(context);
 
         verify(context);
         PowerMock.verifyAll();
 
         assertThat(choice.getId(), equalTo("choiceId"));
         assertTrue(choice.getChoices().isEmpty());
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
     }
 
     @Test
