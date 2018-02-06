@@ -80,4 +80,9 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     public boolean isSuppressWasteMessage() {
         return delegatee.isSuppressWasteMessage();
     }
+
+    @Override
+    public String getLabel() {
+        return delegatee.getLabel();
+    }
 }

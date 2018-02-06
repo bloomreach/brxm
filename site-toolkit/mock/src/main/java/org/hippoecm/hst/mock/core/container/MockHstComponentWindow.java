@@ -60,6 +60,8 @@ public class MockHstComponentWindow implements HstComponentWindow {
     private HstComponentInfo componentInfo;
     private Map<String, Object> attributes;
     boolean visible = true;
+    private boolean containerWindow;
+    private boolean containerItemWindow;
 
     public void addComponentExcpetion(HstComponentException e) {
         componentExceptions.add(e);
@@ -299,5 +301,23 @@ public class MockHstComponentWindow implements HstComponentWindow {
     @Override
     public void removeChildWindow(final HstComponentWindow window) {
         throw new UnsupportedOperationException("Not supported");
+    }
+
+    @Override
+    public boolean isContainerWindow() {
+        return containerWindow;
+    }
+
+    public void setContainerWindow(boolean containerWindow) {
+        this.containerWindow = containerWindow;
+    }
+
+    @Override
+    public boolean isContainerItemWindow() {
+        return containerItemWindow;
+    }
+
+    public void setContainerItemWindow(boolean containerItemWindow) {
+        this.containerItemWindow = containerItemWindow;
     }
 }

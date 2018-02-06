@@ -94,4 +94,10 @@ public interface HstComponentInfo {
      * @return {@code true} when possible waste messages about this component should be suppressed
      */
     boolean isSuppressWasteMessage();
+
+    /**
+     * @return the label if present and <code>null</code> otherwise
+     */
+    String getLabel();
+
 }

@@ -342,6 +342,12 @@
              </property>
            </bean>
         </entry>
+
+        <!-- Page Model Pipeline -->
+        <entry key="PageModelPipeline">
+          <ref bean="pageModelPipeline" />
+        </entry>
+
         <!-- A noop pipeline -->
         <entry key="NoopPipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">

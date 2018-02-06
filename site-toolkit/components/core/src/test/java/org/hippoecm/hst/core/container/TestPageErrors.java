@@ -48,18 +48,18 @@ public class TestPageErrors {
         List<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptionPairs = 
             new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
         
-        rootComponentInfo = new SimpleHstComponentInfo("root", "rootcomp", "examples.RootComponent", null);
+        rootComponentInfo = new SimpleHstComponentInfo("root", "rootcomp", "examples.RootComponent", null, null);
         List<HstComponentException> exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Root exception - 1", new ClassNotFoundException()));
         exceptions.add(new HstComponentException("Root exception - 2", new NoClassDefFoundError()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(rootComponentInfo, exceptions));
         
-        leftComponentInfo = new SimpleHstComponentInfo("left", "leftcomp", "examples.LeftComponent", null);
+        leftComponentInfo = new SimpleHstComponentInfo("left", "leftcomp", "examples.LeftComponent", null, null);
         exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Left exception - 1", new RuntimeException()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(leftComponentInfo, exceptions));
         
-        rightComponentInfo = new SimpleHstComponentInfo("right", "rightcomp", "examples.RightComponent", null);
+        rightComponentInfo = new SimpleHstComponentInfo("right", "rightcomp", "examples.RightComponent", null, null);
         exceptions = new ArrayList<HstComponentException>();
         exceptions.add(new HstComponentException("Right exception - 1", new IllegalArgumentException()));
         componentExceptionPairs.add(new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(rightComponentInfo, exceptions));
@@ -131,12 +131,14 @@ public class TestPageErrors {
         private String name;
         private String className;
         private String parametersInfoClassName;
+        private String label;
 
-        private SimpleHstComponentInfo(String id, String name, String className, String parametersInfoClassName) {
+        private SimpleHstComponentInfo(String id, String name, String className, String parametersInfoClassName, String label) {
             this.id = id;
             this.name = name;
             this.className = className;
             this.parametersInfoClassName = parametersInfoClassName;
+            this.label = label;
         }
         
         public String getId() {
@@ -174,6 +176,11 @@ public class TestPageErrors {
         @Override
         public boolean isSuppressWasteMessage() {
             return false;
+        }
+
+        @Override
+        public String getLabel() {
+            return label;
         }
     }
 }

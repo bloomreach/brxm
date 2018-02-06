@@ -234,4 +234,16 @@ public interface HstComponentWindow {
      */
     void removeChildWindow(HstComponentWindow window);
 
+    /**
+     * Return true if this window is an HST Container window which can contain container item component windows.
+     * @return
+     */
+    boolean isContainerWindow();
+
+    /**
+     * Return true if this window is a HST Container Item window which can be contained in an HST Container window.
+     * @return
+     */
+    boolean isContainerItemWindow();
+
 }

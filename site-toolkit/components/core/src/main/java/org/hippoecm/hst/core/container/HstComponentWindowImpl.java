@@ -313,4 +313,15 @@ public class HstComponentWindowImpl implements HstComponentWindow {
             }
         }
     }
+
+    @Override
+    public boolean isContainerWindow() {
+        return HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(hstComponentConfiguration.getComponentType());
+    }
+
+    @Override
+    public boolean isContainerItemWindow() {
+        return HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(hstComponentConfiguration.getComponentType());
+    }
+
 }
