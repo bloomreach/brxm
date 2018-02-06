@@ -16,6 +16,7 @@ definitions:
               hst:parametervalues: ['#921CFF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block
             /block2:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -23,6 +24,7 @@ definitions:
               hst:parametervalues: ['#F1F399']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block2
             /block1:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -30,6 +32,7 @@ definitions:
               hst:parametervalues: ['#1199FF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block1
           /ul-content:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.UnorderedList
@@ -40,6 +43,7 @@ definitions:
               hst:parametervalues: ['#19CCFF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block
             /block2:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -47,6 +51,7 @@ definitions:
               hst:parametervalues: ['#FFAF99']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block2
             /block1:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -54,6 +59,7 @@ definitions:
               hst:parametervalues: ['#C399FF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block1
           /right:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.vBox
@@ -64,6 +70,7 @@ definitions:
               hst:parametervalues: ['#FFCC99']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block2
             /block1:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -71,6 +78,7 @@ definitions:
               hst:parametervalues: ['#CCFFFF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block1
           /span-content:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.Span
@@ -81,6 +89,7 @@ definitions:
               hst:parametervalues: ['#99CCFF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block
             /block2:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -88,6 +97,7 @@ definitions:
               hst:parametervalues: ['#FFFF99']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block2
             /block1:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -95,6 +105,7 @@ definitions:
               hst:parametervalues: ['#CC99FF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block1
           /div-content:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.vBox
@@ -105,6 +116,7 @@ definitions:
               hst:parametervalues: ['#91CCFF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block
             /block2:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -112,6 +124,7 @@ definitions:
               hst:parametervalues: ['#F1FF99']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block2
             /block1:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Block
@@ -119,6 +132,7 @@ definitions:
               hst:parametervalues: ['#CA99FF']
               hst:template: block
               hst:xtype: HST.Item
+              hst:label: Block1
         /bodyhome:
           jcr:primaryType: hst:containercomponentfolder
           /container-with-skipped-banners:
@@ -131,6 +145,7 @@ definitions:
               hst:parametervalues: ['true']
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner1Ul
             /banner2-ul:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
@@ -138,6 +153,7 @@ definitions:
               hst:parametervalues: ['true']
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner2Ul
           /banners-ul:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.UnorderedList
@@ -146,11 +162,13 @@ definitions:
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner1Ul
             /banner2-ul:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner2Ul
           /banners-ol:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.OrderedList
@@ -159,11 +177,13 @@ definitions:
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner1Ol
             /banner2-ol:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner2Ol
           /banners-div:
             jcr:primaryType: hst:containercomponent
             hst:xtype: HST.vBox
@@ -173,12 +193,14 @@ definitions:
               hst:componentfiltertag: aap
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner1Div
             /banner2-div:
               jcr:primaryType: hst:containeritemcomponent
               hst:componentclassname: org.hippoecm.hst.demo.components.Banner
               hst:componentfiltertag: noot
               hst:template: banner
               hst:xtype: HST.Item
+              hst:label: Banner2Div
       /hst:channel:
         jcr:primaryType: hst:channel
         hst:channelinfoclass: org.hippoecm.hst.demo.channel.DemoChannelInfo

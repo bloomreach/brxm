@@ -27,6 +27,10 @@ definitions:
             hst:mountrest: restapi
             hst:parameternames: [exampleMountParam]
             hst:parametervalues: [testValue]
+            /resourceapi:
+              jcr:primaryType: hst:mount
+              hst:alias: pageapi
+              hst:namedpipeline: PageModelPipeline
             /demosite_fr:
               jcr:primaryType: hst:mount
               hst:alias: fr_site

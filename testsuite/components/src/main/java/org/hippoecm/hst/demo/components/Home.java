@@ -46,7 +46,7 @@ public class Home extends BaseHstComponent {
         }
         try {
             HippoBean image = (HippoBean) requestContext.getObjectBeanManager().getObject("/content/gallery/images/screenshot_cms_small.jpg");
-            request.setAttribute("image",image);
+            request.setModel("image",image);
         } catch (ObjectBeanManagerException e) {
             throw new HstComponentException(e);
         }
@@ -61,7 +61,7 @@ public class Home extends BaseHstComponent {
             throw new HstComponentException("Client component 'greeting' should state 'Hello, HST-2'");
         }
 
-        request.setAttribute("document", n);
+        request.setModel("document", n);
 
         // test parametere from mount property
         request.setAttribute("testParamFromMount", getComponentParameter("testParamFromMount"));

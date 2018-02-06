@@ -9,14 +9,17 @@ definitions:
           hst:componentclassname: org.hippoecm.hst.demo.components.Banner
           hst:template: banner
           hst:xtype: HST.Item
+          hst:label: Banner
         /block:
           jcr:primaryType: hst:containeritemcomponent
           hst:componentclassname: org.hippoecm.hst.demo.components.Block
           hst:template: block
           hst:xtype: HST.Item
+          hst:label: Block
         /springBlock:
           jcr:primaryType: hst:containeritemcomponent
           hst:componentclassname: springBlock
           hst:parametersinfoclassname: org.hippoecm.hst.demo.components.BlockInfo
           hst:template: block
           hst:xtype: HST.Item
+          hst:label: SpringBlock
