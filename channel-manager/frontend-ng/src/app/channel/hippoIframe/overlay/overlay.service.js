@@ -590,6 +590,9 @@ class OverlayService {
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+
+        // record own change to enable the publish button in the application toolbar
+        this.ChannelService.recordOwnChange();
       })
       .catch(() => {
         this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });

@@ -569,6 +569,7 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
+    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
@@ -584,6 +585,7 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'component B',
       });
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
@@ -620,6 +622,7 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
+    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
@@ -635,6 +638,7 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'Component with experiment',
       });
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
