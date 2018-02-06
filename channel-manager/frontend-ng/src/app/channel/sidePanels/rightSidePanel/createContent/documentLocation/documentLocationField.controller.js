@@ -40,6 +40,10 @@ class DocumentLocationFieldController {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
 
+    if (!this.rootPath && this.defaultPath) {
+      this.rootPath = this.ChannelService.getChannel().contentRoot;
+    }
+
     this.initialPickerPath = this.rootPath || this.ChannelService.getChannel().contentRoot;
 
     this.pickerPath = '/';
