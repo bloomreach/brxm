@@ -715,15 +715,15 @@ describe('OverlayService', () => {
           isLocked: () => locked,
         };
         const structureElement = {
-          getUuid: () => uuid,
-          getTemplateQuery: () => templateQuery,
-          getParameterName: () => parameterName,
-          isComponentParameterRelativePath: () => false,
-          getComponentPickerConfig: () => null,
-          getComponentValue: () => null,
           getDefaultPath: () => null,
-          getRootPath: () => null,
           getEnclosingElement: () => enclosing,
+          getParameterName: () => parameterName,
+          getParameterValue: () => null,
+          getPickerConfig: () => null,
+          getRootPath: () => null,
+          getTemplateQuery: () => templateQuery,
+          getUuid: () => uuid,
+          isParameterValueRelativePath: () => false,
         };
         return OverlayService._initManageContentConfig(structureElement);
       }

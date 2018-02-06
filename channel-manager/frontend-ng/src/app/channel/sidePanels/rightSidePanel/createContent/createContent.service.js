@@ -101,7 +101,7 @@ class CreateContentService {
         label: component.getLabel(),
         variant: component.getRenderVariant(),
         parameterName: config.parameterName,
-        parameterBasePath: config.componentParameterBasePath,
+        parameterBasePath: config.parameterBasePath,
       };
     } else {
       this.componentInfo = {};

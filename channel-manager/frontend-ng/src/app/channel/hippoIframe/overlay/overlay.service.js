@@ -329,17 +329,17 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
     const parameterName = structureElement.getParameterName();
-    const componentParameterBasePath =
-      structureElement.isComponentParameterRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
+    const parameterBasePath =
+      structureElement.isParameterValueRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
 
     const config = {
-      parameterName,
-      componentParameterBasePath,
-      componentPickerConfig: structureElement.getComponentPickerConfig(),
-      componentValue: structureElement.getComponentValue(),
       containerItem: structureElement.getEnclosingElement(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid,
+      parameterBasePath,
+      parameterName,
+      parameterValue: structureElement.getParameterValue(),
+      pickerConfig: structureElement.getPickerConfig(),
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
     };
@@ -578,12 +578,12 @@ class OverlayService {
   _pickPath(config) {
     const component = config.containerItem;
     const componentId = component.getId();
-    const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
+    const componentVariant = component.getRenderVariant();
+    const parameterBasePath = config.parameterBasePath;
     const parameterName = config.parameterName;
-    const parameterValue = config.componentValue;
-    const parameterBasePath = config.componentParameterBasePath;
-    const pickerConfig = config.componentPickerConfig;
+    const parameterValue = config.parameterValue;
+    const pickerConfig = config.pickerConfig;
 
     this.CmsService.reportUsageStatistic('PickContentButton');
     this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
