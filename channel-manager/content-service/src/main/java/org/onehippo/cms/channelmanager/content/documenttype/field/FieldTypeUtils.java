@@ -187,7 +187,7 @@ public class FieldTypeUtils {
                         return fieldType.isValid() ? fieldType : null;
                     });
         } else {
-            allFieldsInfo.addUnknownField(context);
+            allFieldsInfo.addUnknownField(context.getContentTypeItem());
             return Optional.empty();
         }
     }

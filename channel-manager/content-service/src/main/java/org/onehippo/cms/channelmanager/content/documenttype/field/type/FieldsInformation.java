@@ -82,13 +82,11 @@ public class FieldsInformation {
         unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
     }
 
-    public void addUnknownField(final FieldTypeContext fieldTypeContext) {
-        final String fieldTypeName = fieldTypeContext.getContentTypeItem().getItemType();
-        this.addUnknownField(fieldTypeName);
+    public void addUnknownField(final ContentTypeItem item) {
+        this.addUnknownField(item.getItemType());
 
         // Unknown fields cannot be created, so only when the unknown field is not required
         // it may still be possible to create all required fields
-        final ContentTypeItem item = fieldTypeContext.getContentTypeItem();
         final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
         canCreateAllRequiredFields &= !isRequired;
     }

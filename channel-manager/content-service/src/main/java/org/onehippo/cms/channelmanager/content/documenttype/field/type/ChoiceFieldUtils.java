@@ -116,7 +116,7 @@ public class ChoiceFieldUtils {
                     choices.put(choiceId, choice);
                 } else {
                     // not all available choices are supported
-                    fieldsInfo.addUnknownField(fieldContext);
+                    fieldsInfo.addUnknownField(item);
                 }
             });
         }
