@@ -226,7 +226,7 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void componentParameterWithAbsoluteJcrPath() throws Exception {
+    public void parameterWithAbsoluteJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("absPath");
 
@@ -236,14 +236,14 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void componentParameterWithRelativeJcrPath() throws Exception {
+    public void parameterWithRelativeJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("relPath");
 
@@ -253,14 +253,14 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"relPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void componentParameterWithoutJcrPathIsAbsolute() throws Exception {
+    public void parameterWithoutJcrPathIsAbsolute() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("string");
 
@@ -270,7 +270,7 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"string\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
@@ -293,7 +293,7 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
+    public void parameterWithoutDocumentOrTemplateQuery() throws Exception {
         tag.setParameterName("test");
 
         tag.doEndTag();
@@ -301,12 +301,12 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"parameterName\":\"test\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
     @Test
-    public void componentValueAbsolutePath() throws Exception {
+    public void parameterValueAbsolutePath() throws Exception {
         window.setParameter("absPath", "/absolute/path");
 
         tag.setParameterName("absPath");
@@ -324,15 +324,15 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void componentValueRelativePath() throws Exception {
+    public void parameterValueRelativePath() throws Exception {
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
         final Mount mount = createMock(Mount.class);
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
@@ -357,15 +357,15 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"relPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentValue\":\"/mount/path/relative/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"parameterValue\":\"/mount/path/relative/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void prefixedComponentValue() throws Exception {
+    public void prefixedParameterValue() throws Exception {
         final String prefixedParameterName = ConfigurationUtils.createPrefixedParameterName("prefix", "absPath");
         window.setParameter(prefixedParameterName, "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "prefix");
@@ -385,15 +385,15 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void emptyPrefixComponentValue() throws Exception {
+    public void emptyPrefixParameterValue() throws Exception {
         window.setParameter("absPath", "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "");
 
@@ -412,15 +412,15 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\""
                 + "} -->"));
     }
 
     @Test
-    public void componentPickerConfiguration() throws Exception {
+    public void pickerConfiguration() throws Exception {
         tag.setParameterName("pickerPath");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
@@ -428,12 +428,12 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"parameterName\":\"pickerPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentPickerConfiguration\":\"picker-config\","
-                + "\"componentPickerInitialPath\":\"initial-path\","
-                + "\"componentPickerRemembersLastVisited\":\"false\","
-                + "\"componentPickerRootPath\":\"root-path\","
-                + "\"componentPickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"pickerConfiguration\":\"picker-config\","
+                + "\"pickerInitialPath\":\"initial-path\","
+                + "\"pickerRemembersLastVisited\":\"false\","
+                + "\"pickerRootPath\":\"root-path\","
+                + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
                 + "} -->"));
     }
 
@@ -470,7 +470,7 @@ public class HstManageContentTagTest {
                 + "\"rootPath\":\"news/amsterdam\","
                 + "\"defaultPath\":\"2018/09/23\","
                 + "\"parameterName\":\"newsDocument\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
