@@ -21,6 +21,7 @@ class HstComponentService {
     'ngInject';
 
     this.$q = $q;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.HstService = HstService;
 
@@ -69,7 +70,8 @@ class HstComponentService {
     // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
     const encodedVariant = encodeURIComponent(componentVariant);
 
-    return this.HstService.doPutForm(params, componentId, encodedVariant);
+    return this.HstService.doPutForm(params, componentId, encodedVariant)
+      .then(() => this.ChannelService.recordOwnChange());
   }
 }
 
