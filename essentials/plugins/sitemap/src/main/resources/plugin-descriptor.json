@@ -5,7 +5,7 @@
   "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
   "description": "This feature wraps the 'Sitemap' Standard Plugin.",
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/sitemap/about.html",
-  "setupParameters": false,
+  "installWithParameters": false,
   "packageFile": "/META-INF/sitemap_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

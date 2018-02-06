@@ -9,7 +9,7 @@
     "url": "https://www.bloomreach.com"
   },
   "packageFile" : "/META-INF/personalization_instructions.xml",
-  "setupParameters": false,
+  "installWithParameters": false,
   "pluginDependencies": [
     {
       "pluginId": "enterpriseProject"

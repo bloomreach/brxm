@@ -132,7 +132,7 @@ public class PluginResource {
             return Collections.emptyList();
         }
 
-        final Map<String, Object> parameters = extractSetupParametersFromQueryParameters(uriInfo.getQueryParameters());
+        final Map<String, Object> parameters = extractInstallationParametersFromQueryParameters(uriInfo.getQueryParameters());
         return instructionPackage.getInstructionsMessages(parameters);
     }
 
@@ -146,7 +146,7 @@ public class PluginResource {
     public synchronized UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId,
                                                    @Context HttpServletResponse response) {
         final PluginSet pluginSet = pluginStore.loadPlugins();
-        final Map<String, Object> parameters = createDefaultSetupParameters();
+        final Map<String, Object> parameters = createDefaultInstallationParameters();
         final UserFeedback feedback = new UserFeedback();
 
         if (!installStateMachine.tryBoarding(pluginId, pluginSet, parameters, feedback)) {
@@ -170,7 +170,7 @@ public class PluginResource {
                                                @Context HttpServletResponse response) {
         final PluginSet pluginSet = pluginStore.loadPlugins();
         final UserFeedback feedback = new UserFeedback();
-        ensureGenericSetupParameters(parameters);
+        ensureGenericInstallationParameters(parameters);
 
         if (!installStateMachine.tryInstallation(pluginId, pluginSet, parameters, feedback)) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
@@ -198,7 +198,7 @@ public class PluginResource {
         }
         try {
             final PluginSet pluginSet = pluginStore.loadPlugins();
-            final Map<String, Object> parameters = createDefaultSetupParameters();
+            final Map<String, Object> parameters = createDefaultInstallationParameters();
             installStateMachine.signalRestart(pluginSet, parameters, feedback);
             DashboardUtils.setInitialized(true);
         } finally {
@@ -235,11 +235,11 @@ public class PluginResource {
     }
 
 
-    private Map<String, Object> createDefaultSetupParameters() {
-        return ensureGenericSetupParameters(new HashMap<>());
+    private Map<String, Object> createDefaultInstallationParameters() {
+        return ensureGenericInstallationParameters(new HashMap<>());
     }
 
-    private Map<String, Object> extractSetupParametersFromQueryParameters(final MultivaluedMap<String, String> queryParams) {
+    private Map<String, Object> extractInstallationParametersFromQueryParameters(final MultivaluedMap<String, String> queryParams) {
         final Map<String, Object> parameters = new HashMap<>();
 
         for (String key : queryParams.keySet()) {
@@ -251,13 +251,13 @@ public class PluginResource {
             }
         }
 
-        return ensureGenericSetupParameters(parameters);
+        return ensureGenericInstallationParameters(parameters);
     }
 
     /**
      * Make sure that the generic setup parameters are set.
      */
-    private Map<String, Object> ensureGenericSetupParameters(final Map<String, Object> parameters) {
+    private Map<String, Object> ensureGenericInstallationParameters(final Map<String, Object> parameters) {
         final ProjectSettings settings = settingsService.getSettings();
 
         final Object templateName = parameters.get(EssentialConst.PROP_TEMPLATE_NAME);

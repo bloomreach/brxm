@@ -11,7 +11,7 @@
     "/essentials/feature/images/screenshots/audiences-segments.png",
     "/essentials/feature/images/screenshots/audiences-trends.png"
   ],
-  "setupParameters": false,
+  "installWithParameters": false,
   "packageFile": "/META-INF/relevance_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

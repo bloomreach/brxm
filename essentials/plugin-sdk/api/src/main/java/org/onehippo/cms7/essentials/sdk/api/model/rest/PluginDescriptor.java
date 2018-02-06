@@ -43,8 +43,8 @@ public class PluginDescriptor {
     private List<String> imageUrls;
     private String id;
     private boolean hasConfiguration;
-    private boolean noRebuildAfterSetup;
-    private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
+    private boolean rebuildAfterInstallation = true;
+    private boolean installWithParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
     private String packageFile;
     private String type;
     @JsonIgnore private InstallState state;
@@ -113,12 +113,12 @@ public class PluginDescriptor {
         return hasConfiguration;
     }
 
-    public boolean isNoRebuildAfterSetup() {
-        return noRebuildAfterSetup;
+    public boolean isRebuildAfterInstallation() {
+        return rebuildAfterInstallation;
     }
 
-    public void setNoRebuildAfterSetup(final boolean noRebuildAfterSetup) {
-        this.noRebuildAfterSetup = noRebuildAfterSetup;
+    public void setRebuildAfterInstallation(final boolean rebuildAfterInstallation) {
+        this.rebuildAfterInstallation = rebuildAfterInstallation;
     }
     
     public Vendor getVendor() {
@@ -225,12 +225,12 @@ public class PluginDescriptor {
         return sb.toString();
     }
 
-    public boolean hasSetupParameters() {
-        return setupParameters;
+    public boolean isInstallWithParameters() {
+        return installWithParameters;
     }
 
-    public void setSetupParameters(final boolean setupParameters) {
-        this.setupParameters = setupParameters;
+    public void setInstallWithParameters(final boolean installWithParameters) {
+        this.installWithParameters = installWithParameters;
     }
 
     public List<Dependency> getPluginDependencies() {

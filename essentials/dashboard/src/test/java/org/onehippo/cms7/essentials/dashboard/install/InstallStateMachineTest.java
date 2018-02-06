@@ -99,7 +99,7 @@ public class InstallStateMachineTest {
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setNoRebuildAfterSetup(true);
+        plugin.setRebuildAfterInstallation(false);
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
@@ -419,7 +419,7 @@ public class InstallStateMachineTest {
         plugin1.setId(id1);
         plugin1.setName("Test Plugin 1");
         plugin1.setState(InstallState.DISCOVERED);
-        plugin1.setNoRebuildAfterSetup(true);
+        plugin1.setRebuildAfterInstallation(false);
         plugin1.setPluginDependencies(Collections.singletonList(dependency));
 
         final PluginDescriptor plugin2 = new PluginDescriptor();
@@ -506,21 +506,21 @@ public class InstallStateMachineTest {
         plugin1.setId(id1);
         plugin1.setName("Test Plugin 1");
         plugin1.setState(InstallState.DISCOVERED);
-        plugin1.setNoRebuildAfterSetup(true);
+        plugin1.setRebuildAfterInstallation(false);
         plugin1.setPluginDependencies(Collections.singletonList(dependsOn2));
 
         final PluginDescriptor plugin2 = new PluginDescriptor();
         plugin2.setId(id2);
         plugin2.setName("Test Plugin 2");
         plugin2.setState(InstallState.DISCOVERED);
-        plugin2.setNoRebuildAfterSetup(true);
+        plugin2.setRebuildAfterInstallation(false);
         plugin2.setPluginDependencies(Collections.singletonList(dependsOn3));
 
         final PluginDescriptor plugin3 = new PluginDescriptor();
         plugin3.setId(id3);
         plugin3.setName("Test Plugin 3");
         plugin3.setState(InstallState.DISCOVERED);
-        plugin3.setNoRebuildAfterSetup(true);
+        plugin3.setRebuildAfterInstallation(false);
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin1);
@@ -580,14 +580,14 @@ public class InstallStateMachineTest {
         plugin1.setId(id1);
         plugin1.setName("Test Plugin 1");
         plugin1.setState(InstallState.DISCOVERED);
-        plugin1.setNoRebuildAfterSetup(true);
+        plugin1.setRebuildAfterInstallation(false);
         plugin1.setPluginDependencies(Collections.singletonList(dependency));
 
         final PluginDescriptor plugin2 = new PluginDescriptor();
         plugin2.setId(id2);
         plugin2.setName("Test Plugin 2");
         plugin2.setState(InstallState.DISCOVERED);
-        plugin2.setNoRebuildAfterSetup(true);
+        plugin2.setRebuildAfterInstallation(false);
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin1);

@@ -10,5 +10,5 @@
     "url": "https://www.bloomreach.com"
   },
   "packageFile" : "/META-INF/crisp_instructions.xml",
-  "setupParameters": false
+  "installWithParameters": false
 }

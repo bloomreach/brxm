@@ -271,14 +271,14 @@ public class InstallStateMachine {
             return;
         }
 
-        if (plugin.isNoRebuildAfterSetup()) {
-            plugin.setState(InstallState.INSTALLED);
-            final String message = String.format("Plugin '%s' has been installed successfully.", plugin.getName());
-            feedback.addSuccess(message);
-        } else {
+        if (plugin.isRebuildAfterInstallation()) {
             plugin.setState(InstallState.INSTALLING);
             final String message = String.format("Plugin '%s' has been installed successfully, " +
                     "but requires a restart.", plugin.getName());
+            feedback.addSuccess(message);
+        } else {
+            plugin.setState(InstallState.INSTALLED);
+            final String message = String.format("Plugin '%s' has been installed successfully.", plugin.getName());
             feedback.addSuccess(message);
         }
         installService.storeInstallStateToFileSystem(plugin);

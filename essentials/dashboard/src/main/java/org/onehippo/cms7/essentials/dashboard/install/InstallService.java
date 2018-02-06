@@ -123,7 +123,7 @@ public class InstallService {
     public boolean canAutoInstall(final PluginDescriptor plugin) {
         return plugin.getState() == InstallState.ONBOARD
                 && StringUtils.hasText(plugin.getPackageFile())  // TODO: is this still needed? packageFile is the only current mechanism for triggering actions during the installation.
-                && (!plugin.hasSetupParameters() || !settingsService.getSettings().isConfirmParams());
+                && (!plugin.isInstallWithParameters() || !settingsService.getSettings().isConfirmParams());
     }
 
     public boolean install(final PluginDescriptor plugin, final Map<String, Object> parameters) {
