@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.jetty.util.Fields;
 import org.junit.Test;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
@@ -145,4 +146,30 @@ public class FieldsInformationTest {
         assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("Custom")));
     }
 
+    @Test
+    public void testEquals() {
+        assertTrue(FieldsInformation.allSupported().equals(FieldsInformation.allSupported()));
+        assertTrue(FieldsInformation.noneSupported().equals(FieldsInformation.noneSupported()));
+        assertFalse(FieldsInformation.allSupported().equals(FieldsInformation.noneSupported()));
+
+        FieldsInformation unknown = new FieldsInformation();
+        unknown.addUnknownField("Test");
+
+        assertFalse(unknown.equals(new FieldsInformation()));
+
+        assertTrue(unknown.equals(unknown)); // test object equality
+        assertFalse(new FieldsInformation().equals(new FieldsInformation() {})); // test subclass
+    }
+
+    @Test
+    public void testHashCode() {
+        assertTrue(FieldsInformation.allSupported().hashCode() == FieldsInformation.allSupported().hashCode());
+        assertTrue(FieldsInformation.noneSupported().hashCode() == FieldsInformation.noneSupported().hashCode());
+        assertTrue(FieldsInformation.allSupported().hashCode() != FieldsInformation.noneSupported().hashCode());
+
+        FieldsInformation unknown = new FieldsInformation();
+        unknown.addUnknownField("Test");
+
+        assertTrue(unknown.hashCode() != new FieldsInformation().hashCode());
+    }
 }
