@@ -43,7 +43,6 @@ describe('Step1Service', () => {
     expect(Step1Service.locale).toBeUndefined();
     expect(Step1Service.rootPath).toBeUndefined();
     expect(Step1Service.templateQuery).toBeUndefined();
-    expect(Step1Service.defaultPickerPath).toBeUndefined();
   }
 
   beforeEach(() => {
@@ -82,7 +81,6 @@ describe('Step1Service', () => {
     Step1Service.rootPath = 'rootPath';
     Step1Service.defaultPath = 'defaultPath';
     Step1Service.templateQuery = 'templateQuery';
-    Step1Service.defaultPickerPath = 'defaultPickerPath';
     Step1Service.stop();
     expectReset();
   });
@@ -160,13 +158,6 @@ describe('Step1Service', () => {
 
         Step1Service.open('tpl-query', 'some/path/');
         expect(Step1Service.rootPath).toBe('/channel/content/some/path');
-      });
-    });
-
-    describe('sets the default picker path', () => {
-      it('has the channel root path as value ', () => {
-        Step1Service.open('tpl-query');
-        expect(Step1Service.defaultPickerPath).toBe('/channel/content');
       });
     });
   });

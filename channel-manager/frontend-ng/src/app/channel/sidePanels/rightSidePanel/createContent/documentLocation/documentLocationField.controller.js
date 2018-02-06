@@ -18,38 +18,34 @@ const PICKER_CALLBACK_ID = 'document-location-callback-id';
 
 class DocumentLocationFieldController {
   constructor(
+    ChannelService,
     CmsService,
     Step1Service,
     FeedbackService,
   ) {
     'ngInject';
 
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
   }
 
   $onInit() {
-    if (!this.rootPath && !this.defaultPickerPath) {
-      throw new Error('Either rootPath or defaultPickerPath must be defined');
-    }
-
     if (this.rootPath && !this.rootPath.startsWith('/')) {
       throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
-    }
-
-    if (this.defaultPickerPath && !this.defaultPickerPath.startsWith('/')) {
-      throw new Error(`The defaultPickerPath can only be an absolute path: ${this.defaultPickerPath}`);
     }
 
     if (this.defaultPath && this.defaultPath.startsWith('/')) {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
 
+    this.initialPickerPath = this.rootPath || this.ChannelService.getChannel().contentRoot;
+
     this.pickerPath = '/';
     this.pickerConfig = {
       configuration: 'cms-pickers/folders',
-      rootPath: this.rootPath || this.defaultPickerPath,
+      rootPath: this.initialPickerPath,
       selectableNodeTypes: ['hippostd:folder'],
     };
 
@@ -95,9 +91,8 @@ class DocumentLocationFieldController {
       if (!path.startsWith('/')) {
         path = `/${path}`;
       }
-      const checkPath = this.rootPath || this.defaultPickerPath;
-      if (!path.startsWith(checkPath)) {
-        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: checkPath, path });
+      if (!path.startsWith(this.initialPickerPath)) {
+        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.initialPickerPath, path });
       } else {
         if (!this.rootPath) {
           this.rootPath = path;

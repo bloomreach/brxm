@@ -39,7 +39,6 @@ class Step1Service {
     delete this.rootPath;
     delete this.defaultPath;
     delete this.templateQuery;
-    delete this.defaultPickerPath;
   }
 
   stop() {
@@ -52,7 +51,6 @@ class Step1Service {
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
     this.templateQuery = templateQuery;
-    this.defaultPickerPath = this.ChannelService.getChannel().contentRoot;
 
     return this.ContentService._send('GET', ['templatequery', templateQuery], null, true)
       .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))

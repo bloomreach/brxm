@@ -71,10 +71,6 @@ class Step1Controller {
     this.Step1Service.rootPath = path;
   }
 
-  get defaultPickerPath() {
-    return this.Step1Service.defaultPickerPath;
-  }
-
   get url() {
     return this.Step1Service.url;
   }

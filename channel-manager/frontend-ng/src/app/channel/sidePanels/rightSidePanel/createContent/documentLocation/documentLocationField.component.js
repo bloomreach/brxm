@@ -25,7 +25,6 @@ const documentLocationFieldComponent = {
     defaultPath: '=',
     locale: '=',
     rootPath: '=',
-    defaultPickerPath: '<',
   },
 };
 

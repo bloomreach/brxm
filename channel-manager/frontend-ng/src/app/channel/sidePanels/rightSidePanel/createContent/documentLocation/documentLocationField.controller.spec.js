@@ -18,6 +18,7 @@ describe('DocumentLocationField', () => {
   let $componentController;
   let $q;
   let $rootScope;
+  let ChannelService;
   let CmsService;
   let FeedbackService;
   let Step1Service;
@@ -27,10 +28,20 @@ describe('DocumentLocationField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
+    ChannelService = jasmine.createSpyObj('ChannelService', ['initialize', 'getChannel']);
+    ChannelService.getChannel.and.returnValue({
+      contentRoot: '/channel/content',
+    });
+
+    angular.mock.module(($provide) => {
+      $provide.value('ChannelService', ChannelService);
+    });
+
     inject((
       _$componentController_,
       _$q_,
       _$rootScope_,
+      _ChannelService_,
       _CmsService_,
       _FeedbackService_,
       _Step1Service_,
@@ -38,6 +49,7 @@ describe('DocumentLocationField', () => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       FeedbackService = _FeedbackService_;
       Step1Service = _Step1Service_;
@@ -50,12 +62,17 @@ describe('DocumentLocationField', () => {
     component.changeLocale = () => angular.noop();
   });
 
-  describe('withRootPath', () => {
+  describe('with root path', () => {
     beforeEach(() => {
       component.rootPath = '/root';
     });
 
     describe('$onInit', () => {
+      it('sets the initialPickerPath to the root path', () => {
+        component.$onInit();
+        expect(component.initialPickerPath).toBe('/root');
+      });
+
       it('throws an error if rootPath is a relative path', () => {
         component.rootPath = 'relative/path';
         expect(() => component.$onInit()).toThrowError('The rootPath option can only be an absolute path: relative/path');
@@ -187,6 +204,10 @@ describe('DocumentLocationField', () => {
     });
 
     describe('onPathPicked', () => {
+      beforeEach(() => {
+        component.initialPickerPath = component.rootPath;
+      });
+
       it('only accepts callback events with callbackId "document-location-callback-id"', () => {
         spyOn(component, 'setPath');
 
@@ -218,20 +239,12 @@ describe('DocumentLocationField', () => {
     });
   });
 
-  describe('withoutRootPath', () => {
-    beforeEach(() => {
-      component.defaultPickerPath = '/default/path';
-    });
+  describe('without root path', () => {
 
     describe('$onInit', () => {
-      it('throws an error if rootPath nor defaultPickerPath are defined ', () => {
-        component.defaultPickerPath = undefined;
-        expect(() => component.$onInit()).toThrowError('Either rootPath or defaultPickerPath must be defined');
-      });
-
-      it('throws an error if defaultPath is a relative path', () => {
-        component.defaultPickerPath = 'relative/path';
-        expect(() => component.$onInit()).toThrowError('The defaultPickerPath can only be an absolute path: relative/path');
+      it('sets the initialPickerPath to the channel content root', () => {
+        component.$onInit();
+        expect(component.initialPickerPath).toBe('/channel/content');
       });
 
       it('sets the default picker config', () => {
@@ -239,28 +252,32 @@ describe('DocumentLocationField', () => {
         expect(component.pickerPath).toBe('/');
         expect(component.pickerConfig).toEqual({
           configuration: 'cms-pickers/folders',
-          rootPath: '/default/path',
+          rootPath: '/channel/content',
           selectableNodeTypes: ['hippostd:folder'],
         });
       });
     });
 
     describe('onPathPicked', () => {
+      beforeEach(() => {
+        component.initialPickerPath = '/channel/content';
+      });
+
       it('only accepts callback events with callbackId "document-location-callback-id"', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('some-id', '/default/path/some-path');
+        component.onPathPicked('some-id', '/channel/content/some-path');
         expect(component.setPath).not.toHaveBeenCalled();
 
-        component.onPathPicked('document-location-callback-id', '/default/path/new-path');
-        expect(component.setPath).toHaveBeenCalledWith('/default/path/new-path');
+        component.onPathPicked('document-location-callback-id', '/channel/content/new-path');
+        expect(component.setPath).toHaveBeenCalledWith('/channel/content/new-path');
       });
 
       it('prepends relative paths with a /', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('document-location-callback-id', 'default/path/path');
-        expect(component.setPath).toHaveBeenCalledWith('/default/path/path');
+        component.onPathPicked('document-location-callback-id', 'channel/content/path');
+        expect(component.setPath).toHaveBeenCalledWith('/channel/content/path');
       });
 
       it('shows an error if the chosen path is not part of the rootPath tree', () => {
@@ -270,8 +287,16 @@ describe('DocumentLocationField', () => {
         component.onPathPicked('document-location-callback-id', '/flowers/tulip');
         expect(component.setPath).not.toHaveBeenCalled();
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
-          root: '/default/path',
+          root: '/channel/content',
           path: '/flowers/tulip',
+        });
+
+        it('it is allowed to subsequently choose a shorter path', () => {
+          // the path check is done on the original picker path, not on the last selected rootpath
+          spyOn(component, 'setPath');
+          component.onPathPicked('document-location-callback-id', '/channel/content/folder1/folder2');
+          component.onPathPicked('document-location-callback-id', '/channel/content/folder1');
+          expect(component.setPath).toHaveBeenCalled();
         });
       });
     });

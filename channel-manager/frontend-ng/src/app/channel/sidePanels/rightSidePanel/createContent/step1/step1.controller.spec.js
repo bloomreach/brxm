@@ -52,7 +52,6 @@ describe('Create content step 1 controller', () => {
     Step1Service.rootPath = 'test-rootPath';
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';
-    Step1Service.defaultPickerPath = 'test-defaultPickerPath';
 
     expect($ctrl.defaultPath).toBe('test-defaultPath');
     expect($ctrl.documentType).toBe('test-documentType');
@@ -60,7 +59,6 @@ describe('Create content step 1 controller', () => {
     expect($ctrl.locale).toBe('test-locale');
     expect($ctrl.name).toBe('test-name');
     expect($ctrl.rootPath).toBe('test-rootPath');
-    expect($ctrl.defaultPickerPath).toBe('test-defaultPickerPath');
     expect($ctrl.url).toBe('test-url');
   });
 
