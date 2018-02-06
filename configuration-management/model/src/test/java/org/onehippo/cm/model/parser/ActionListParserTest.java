@@ -63,6 +63,37 @@ public class ActionListParserTest extends AbstractBaseTest {
     }
 
     @Test
+    public void expect_error_for_append_action() {
+        final String yaml =
+                "action-lists:\n" +
+                        "- 1.0:\n" +
+                        "    /content/dup: append\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("APPEND action type can't be specified in action lists file", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expect_error_for_duplicate_path() {
+        final String yaml =
+                "action-lists:\n" +
+                        "- 1.0:\n" +
+                        "    /content/dup: delete\n" +
+                        "    /content/dup: reload\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("Duplicate paths are not allowed in the same version: /content/dup", e.getMessage());
+        }
+    }
+
+    @Test
     public void expect_error_when_using_not_absolute_path() {
         final String yaml =
                 "action-lists:\n" +

@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -67,12 +68,14 @@ public class ActionListParser extends AbstractBaseParser {
 
     protected Set<ActionItem> collectActionItems(final Node node) throws ParserException {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
+        final Set<String> paths = new HashSet<>();
         for (NodeTuple tuple : asTuples(node)) {
             final String path = asPathScalar(tuple.getKeyNode(), true, false);
             final ActionItem actionItem = asActionItem(tuple.getValueNode(), path);
-            if (!actionItems.add(actionItem)) {
-                throw new RuntimeException(String.format("Duplicate items are not allowed: %s", actionItem));
+            if (!paths.add(actionItem.getPath())) {
+                throw new ParserException(String.format("Duplicate paths are not allowed in the same version: %s", actionItem.getPath()));
             }
+            actionItems.add(actionItem);
         }
         return actionItems;
     }
@@ -81,7 +84,7 @@ public class ActionListParser extends AbstractBaseParser {
         String action = asStringScalar(node);
         ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
         if (type == ActionType.APPEND) {
-            throw new RuntimeException("APPEND action type can't be specified in action lists file");
+            throw new ParserException("APPEND action type can't be specified in action lists file");
         }
         return new ActionItemImpl(path, type);
     }
