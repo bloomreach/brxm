@@ -18,7 +18,6 @@ package org.onehippo.cms7.channelmanager.plugins.channelactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -31,6 +30,7 @@ import java.util.concurrent.Future;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -259,7 +259,12 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         @Override
         protected void invoke() {
             if (channelManagerService != null) {
-                channelManagerService.viewChannel(channelDocument.getChannelId(), channelDocument.getPathInfo());
+                final String branchId = channelDocument.getBranchId();
+                if (StringUtils.isNotBlank(branchId)) {
+                    channelManagerService.viewChannel(channelDocument.getBranchOf(), channelDocument.getPathInfo(), branchId);
+                } else {
+                    channelManagerService.viewChannel(channelDocument.getChannelId(), channelDocument.getPathInfo());
+                }
             } else {
                 log.info("Cannot view channel, no channel manager service available");
             }
