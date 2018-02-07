@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
@@ -33,7 +34,6 @@ import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -66,6 +66,12 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, "/foo/bar");
         System.setProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY, "test-essentials");
         settingsService.setSettings(projectSettings);
+    }
+
+    @After
+    public void tearDown() {
+        System.clearProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
+        System.clearProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY);
     }
 
     @Test
@@ -123,7 +129,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
         final ProjectSettingsBean settings = new ProjectSettingsBean();
         settings.setBeansFolder("beans/src/main/java");
-        ((TestSettings.Service)settingsService).setSettings(settings);
+        settingsService.setSettings(settings);
 
         assertEquals(projectRoot.resolve("beans/src/main/java"), projectService.getBeansRootPath());
     }
@@ -136,7 +142,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
         final ProjectSettingsBean settings = new ProjectSettingsBean();
         settings.setBeansFolder("beans/src/main/java");
         settings.setSelectedBeansPackage("com.test.bean");
-        ((TestSettings.Service)settingsService).setSettings(settings);
+        settingsService.setSettings(settings);
 
         assertEquals(projectRoot.resolve("beans/src/main/java").resolve("com").resolve("test").resolve("bean"),
                 projectService.getBeansPackagePath());
@@ -212,7 +218,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     }
 
     @Test
-    public void copy_absent_resource() throws Exception {
+    public void copy_absent_resource() {
         final String resourcePath = "/services/project/absent.txt";
         final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test" + File.separator + "copy.txt";
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
@@ -225,10 +231,10 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void copy_onto_directory() throws Exception {
+        createModifiableDirectory("test");
         final String resourcePath = "/services/project/to-be-copied.txt";
         final String targetLocation = "{{" + PlaceholderService.PROJECT_ROOT + "}}" + File.separator + "test";
         final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
-        createModifiableDirectory("test");
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ProjectServiceImpl.class).build()) {
             assertFalse(projectService.copyResource(resourcePath, targetLocation, placeholderData, true, false));
