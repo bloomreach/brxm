@@ -41,19 +41,11 @@ class ContentEditorCtrl {
   }
 
   isSaveAllowed() {
-    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
+    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.allowSave;
   }
 
   _isDocumentDirty() {
     return this.ContentEditor.isDocumentDirty();
-  }
-
-  notAllFieldsShown() {
-    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
-  }
-
-  alternativeStep2() {
-    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
   }
 
   getFieldTypes() {
@@ -78,12 +70,6 @@ class ContentEditorCtrl {
         this.form.$setPristine();
         this.onSave();
       });
-  }
-
-  switchEditor() {
-    if (angular.isFunction(this.onSwitchEditor)) {
-      this.onSwitchEditor();
-    }
   }
 }
 

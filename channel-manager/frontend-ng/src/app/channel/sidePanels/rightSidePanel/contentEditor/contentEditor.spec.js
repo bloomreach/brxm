@@ -36,7 +36,7 @@ describe('ContentEditorCtrl', () => {
     });
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'getDocument', 'getDocumentType', 'getError', 'isDocumentDirty', 'isDocumentDirty', 'isEditing',
+      'getDocument', 'getDocumentType', 'getError', 'isDocumentDirty', 'isEditing',
       'markDocumentDirty', 'save',
     ]);
 
@@ -77,24 +77,14 @@ describe('ContentEditorCtrl', () => {
     [true, false].forEach((editing) => {
       [true, false].forEach((dirty) => {
         [true, false].forEach((valid) => {
-          [true, false].forEach((canCreateAllRequiredFields) => {
+          [true, false].forEach((allowSave) => {
             ContentEditor.isEditing.and.returnValue(editing);
             ContentEditor.isDocumentDirty.and.returnValue(dirty);
             form.$valid = valid;
-            ContentEditor.getDocumentType.and.returnValue({ canCreateAllRequiredFields });
-            expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && canCreateAllRequiredFields);
+            $ctrl.allowSave = allowSave;
+            expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid && allowSave);
           });
         });
-      });
-    });
-  });
-
-  it('knows when not all fields are shown', () => {
-    [true, false].forEach((editing) => {
-      [true, false].forEach((allFieldsIncluded) => {
-        ContentEditor.isEditing.and.returnValue(editing);
-        ContentEditor.getDocumentType.and.returnValue({ allFieldsIncluded });
-        expect($ctrl.notAllFieldsShown()).toBe(editing && !allFieldsIncluded);
       });
     });
   });

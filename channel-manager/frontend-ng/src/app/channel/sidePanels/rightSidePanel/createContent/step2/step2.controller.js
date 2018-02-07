@@ -41,6 +41,16 @@ class Step2Controller {
     this.documentIsSaved = false;
   }
 
+  allMandatoryFieldsShown() {
+    return this.ContentEditor.isEditing() && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
+  }
+
+  switchEditor() {
+    this.ContentEditor.close();
+    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
+    this.close();
+  }
+
   save() {
     this.RightSidePanelService.startLoading();
     this.ContentEditor.save()
