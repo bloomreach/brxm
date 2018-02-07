@@ -57,9 +57,24 @@
     </property>
   </bean>
 
+  <bean id="pageModelComponentWindowResponseAppender"
+        class="org.hippoecm.hst.core.pagemodel.container.PageModelComponentWindowResponseAppender">
+    <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
+    <property name="previewOnly" value="${pagemodel.component.window.response.appender.previewonly}" />
+  </bean>
+
+  <bean id="pageModelComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <ref bean="pageModelComponentWindowResponseAppender" />
+      </list>
+    </property>
+  </bean>
+
   <bean id="pageModelAggregationValve" parent="aggregationValve"
         class="org.hippoecm.hst.core.pagemodel.container.PageModelAggregationValve">
     <property name="valveName" value="pageModelAggregationValve"/>
+    <property name="componentWindowResponseAppenders" ref="pageModelComponentWindowResponseAppenders" />
     <property name="objectMapper" ref="pageModelJacksonObjectMapper" />
   </bean>
 

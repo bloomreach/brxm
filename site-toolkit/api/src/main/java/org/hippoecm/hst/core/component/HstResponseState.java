@@ -26,6 +26,7 @@ import javax.servlet.http.Cookie;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Temporarily holds the current state of a HST response.
@@ -145,7 +146,19 @@ public interface HstResponseState
      */
     public void addPreambleNode(Element element);
 
+    /**
+     * Return unmodifiable preamble {@link org.w3c.dom.Node}s.
+     * @return unmodifiable preamble {@link org.w3c.dom.Node}s
+     */
+    public List<Node> getPreambleNodes();
+
     void addEpilogueNode(Comment comment);
+
+    /**
+     * Return unmodifiable epilogue {@link org.w3c.dom.Node}s.
+     * @return unmodifiable epilogue {@link org.w3c.dom.Node}s
+     */
+    public List<Node> getEpilogueNodes();
 
     void setWrapperElement(Element element);
     

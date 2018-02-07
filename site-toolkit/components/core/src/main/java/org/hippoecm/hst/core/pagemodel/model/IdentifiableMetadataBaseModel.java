@@ -15,16 +15,23 @@
  */
 package org.hippoecm.hst.core.pagemodel.model;
 
-public class PageDefinitionModel {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-    private String id;
+/**
+ * Identifiable metadata base model.
+ */
+public class IdentifiableMetadataBaseModel extends MetadataBaseModel {
 
-    public PageDefinitionModel(String id) {
+    private final String id;
+
+    public IdentifiableMetadataBaseModel(final String id) {
+        super();
         this.id = id;
     }
 
+    @JsonInclude(Include.NON_NULL)
     public String getId() {
         return id;
     }
-
 }

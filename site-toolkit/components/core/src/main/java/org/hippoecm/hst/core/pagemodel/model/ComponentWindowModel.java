@@ -19,38 +19,44 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ComponentWindowModel {
+import org.hippoecm.hst.core.component.HstRequest;
 
-    private String id;
-    private String name;
-    private String type;
+/**
+ * Component window model representation.
+ */
+public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
+
+    private final String name;
+    private final String type;
     private String label;
     private Map<String, Object> models;
 
-    public String getId() {
-        return id;
+    public ComponentWindowModel(final String id, final String name, final String type) {
+        super(id);
+        this.name = name;
+        this.type = type;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Return container item component's name.
+     * @return
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * Return component's type name. i.e component class' FQCN.
+     * @return
+     */
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
+    /**
+     * Return component's label. i.e. hst:label property value of an hst:containeritemcomponent.
+     * @return
+     */
     public String getLabel() {
         return label;
     }
@@ -59,6 +65,10 @@ public class ComponentWindowModel {
         this.label = label;
     }
 
+    /**
+     * Return the contributed model map by <code>HstRequest{@link HstRequest#setModel(String,Object)} calls.
+s     * @return
+     */
     public Map<String, Object> getModels() {
         if (models == null) {
             return Collections.emptyMap();

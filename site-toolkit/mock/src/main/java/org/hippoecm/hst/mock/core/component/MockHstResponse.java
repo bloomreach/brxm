@@ -35,6 +35,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * MockHstResponse
@@ -273,7 +274,30 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         preambleElements.add(element);
     }
 
+    @Override
+    public List<Node> getPreambleNodes() {
+        if (preambleComments == null && preambleElements == null) {
+            return Collections.emptyList();
+        }
+        List<Node> preambleNodes = new LinkedList<>();
+        if (preambleComments != null) {
+            preambleNodes.addAll(preambleComments);
+        }
+        if (preambleElements != null) {
+            preambleNodes.addAll(preambleElements);
+        }
+        return Collections.unmodifiableList(preambleNodes);
+    }
+
     public void addEpilogue(Comment comment) { epilogueComments.add(comment); }
+
+    @Override
+    public List<Node> getEpilogueNodes() {
+        if (epilogueComments != null) {
+            return Collections.unmodifiableList(epilogueComments);
+        }
+        return Collections.emptyList();
+    }
 
     public List<Comment> getPreambleComments() {
         return preambleComments;

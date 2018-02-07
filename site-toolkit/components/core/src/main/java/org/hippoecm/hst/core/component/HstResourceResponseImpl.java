@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * HTTP Response Wrappers for resource response
@@ -161,6 +162,11 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke addPreambleNode().");
     }
 
+    @Override
+    public List<Node> getPreambleNodes() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke getPreambleNodes().");
+    }
+
     public void setWrapperElement(Element element) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setWrapperElement().");
     }
@@ -168,6 +174,11 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     @Override
     public void addEpilogue(final Comment comment) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke addEpilogue().");
+    }
+
+    @Override
+    public List<Node> getEpilogueNodes() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke getEpilogueNodes().");
     }
 
     @Override

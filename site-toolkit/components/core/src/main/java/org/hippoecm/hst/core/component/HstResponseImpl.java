@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Factory implementation for creating HTTP Response Wrappers
@@ -358,8 +359,18 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         responseState.addPreambleNode(element);
     }
 
+    @Override
+    public List<Node> getPreambleNodes() {
+        return responseState.getPreambleNodes();
+    }
+
     public void addEpilogue(Comment comment) {
         responseState.addEpilogueNode(comment);
+    }
+
+    @Override
+    public List<Node> getEpilogueNodes() {
+        return responseState.getEpilogueNodes();
     }
 
     public void setWrapperElement(Element element) {

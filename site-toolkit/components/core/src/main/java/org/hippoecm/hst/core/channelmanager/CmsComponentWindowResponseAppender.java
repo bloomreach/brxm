@@ -37,9 +37,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
-import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT;
-
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
@@ -54,12 +51,12 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
-        if (!isCmsRequest(request)) {
+        if (!isApplicableRequest(request)) {
             return;
         }
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
+        if (session == null && isComposerMode(request)) {
             throw new IllegalStateException("HttpSession should never be null here.");
         }
 
@@ -67,12 +64,17 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
 
         if (isContainerOrContainerItem(compConfig)) {
-            if (isComposerMode(request)) {
+            if (isComponentMetadataAppilcableRequest(request)) {
                 populateComponentMetaData(request, response, window);
             }
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
             populatePageMetaData(request, response, session, compConfig);
         }
+    }
+
+    @Override
+    protected boolean isComponentMetadataAppilcableRequest(final HstRequest request) {
+        return true;
     }
 
     private void populatePageMetaData(final HstRequest request, final HstResponse response, final HttpSession session, final HstComponentConfiguration compConfig) {
@@ -104,7 +106,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
         }
 
-        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
+        Object variant = (session != null) ? session.getAttribute(ContainerConstants.RENDER_VARIANT) : null;
         if (variant == null) {
             variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
         }

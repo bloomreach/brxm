@@ -46,6 +46,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
@@ -597,7 +598,17 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         @Override
+        public List<Node> getPreambleNodes() {
+            return null;
+        }
+
+        @Override
         public void addEpilogue(Comment comment) {
+        }
+
+        @Override
+        public List<Node> getEpilogueNodes() {
+            return null;
         }
 
         @Override

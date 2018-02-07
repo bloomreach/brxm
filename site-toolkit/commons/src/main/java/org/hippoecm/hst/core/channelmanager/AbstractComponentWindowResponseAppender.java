@@ -27,7 +27,22 @@ import org.w3c.dom.Comment;
 public abstract class AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
 
+    /**
+     * @deprecated Use {@link #isApplicableRequest(HstRequest)} instead.
+     * @param request
+     * @return
+     */
+    @Deprecated
     protected boolean isCmsRequest(HstRequest request) {
+        return isApplicableRequest(request);
+    }
+
+    /**
+     * Determine if the request is applicable for appending somethings to the component window's response.
+     * @param request
+     * @return
+     */
+    protected boolean isApplicableRequest(HstRequest request) {
         return request.getRequestContext().isCmsRequest();
     }
 
@@ -40,6 +55,15 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
     protected boolean isComposerMode(final HstRequest request) {
         Boolean composerMode = (Boolean) request.getSession().getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
         return Boolean.TRUE.equals(composerMode);
+    }
+
+    /**
+     * Determine if the request is applicable for reading component metadata.
+     * @param request
+     * @return
+     */
+    protected boolean isComponentMetadataAppilcableRequest(final HstRequest request) {
+        return false;
     }
 
     protected Comment createCommentWithAttr(Map<String, String> attributes, HstResponse response) {

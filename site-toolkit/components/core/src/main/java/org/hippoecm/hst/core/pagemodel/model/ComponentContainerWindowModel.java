@@ -21,26 +21,25 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ComponentContainerWindowModel {
+/**
+ * Component container window model representation.
+ */
+public class ComponentContainerWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
-    private String id;
-    private String name;
+    private final String name;
     private Set<ComponentWindowModel> componentWindowSet;
 
-    public String getId() {
-        return id;
+    public ComponentContainerWindowModel(final String id, final String name) {
+        super(id);
+        this.name = name;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Return container component's name.
+     * @return
+     */
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @JsonProperty("components")

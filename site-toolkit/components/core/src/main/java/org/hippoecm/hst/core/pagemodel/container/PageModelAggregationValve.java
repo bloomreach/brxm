@@ -18,35 +18,94 @@ package org.hippoecm.hst.core.pagemodel.container;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.AggregationValve;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
 import org.hippoecm.hst.core.pagemodel.model.ComponentContainerWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
-import org.hippoecm.hst.core.pagemodel.model.HippoBeanReferenceModel;
-import org.hippoecm.hst.core.pagemodel.model.PageDefinitionModel;
+import org.hippoecm.hst.core.pagemodel.model.HippoBeanWrapperModel;
+import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
+import org.hippoecm.hst.core.pagemodel.model.MetadataBaseModel;
+import org.hippoecm.hst.core.pagemodel.model.NodeSpan;
+import org.hippoecm.hst.core.pagemodel.model.ReferenceMetadataBaseModel;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Node;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
+ */
 public class PageModelAggregationValve extends AggregationValve {
 
     private static Logger log = LoggerFactory.getLogger(PageModelAggregationValve.class);
+
+    /**
+     * Page definition ID metadata name.
+     */
+    private static final String DEFINITION_ID_METADATA = "definitionId";
+
+    /**
+     * Self link name.
+     */
+    private static final String SELF_LINK_NAME = "self";
+
+    /**
+     * Site link name.
+     */
+    private static final String SITE_LINK_NAME = "site";
+
+    /**
+     * Content JSON Pointer prefix.
+     */
+    private static final String CONTENT_JSON_POINTER_PREFIX = "#/content/";
+
+    /**
+     * JSON property name prefix for a UUID-based identifier.
+     */
+    private static final String CONTENT_ID_JSON_NAME_PREFIX = "u";
+
+    /**
+     * Page or component parameter map metadata name.
+     */
+    private static final String PARAMETERNS_METADATA = "params";
+
+    /**
+     * Container's or component's begin Node (HTML Comment) span metadata.
+     */
+    private static final String BEGIN_NODE_SPAN_METADATA = "beginNodeSpan";
+
+    /**
+     * Container's or component's end Node (HTML Comment) span metadata.
+     */
+    private static final String END_NODE_SPAN_METADATA = "endNodeSpan";
 
     private ObjectMapper objectMapper;
 
@@ -62,6 +121,10 @@ public class PageModelAggregationValve extends AggregationValve {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Overrides <code>AggregationValve#processWindowsRender()</code> to create an {@link AggregatedPageModel}
+     * from the current page request and write it as JSON output.
+     */
     @Override
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
             final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
@@ -73,8 +136,9 @@ public class PageModelAggregationValve extends AggregationValve {
         PrintWriter writer = null;
 
         try {
-            AggregatedPageModel pageModel = createAggregatedPageModel(sortedComponentWindows, requestMap);
-            response.setContentType("application/json");
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            AggregatedPageModel pageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
             writer = response.getWriter();
             writeAggregatedPageModel(writer, pageModel);
         } catch (IOException e) {
@@ -84,6 +148,13 @@ public class PageModelAggregationValve extends AggregationValve {
         }
     }
 
+    /**
+     * Write {@link AggregatedPageModel} object to the {@code writer}.
+     * @param writer
+     * @param pageModel
+     * @throws ContainerException
+     * @throws IOException
+     */
     private void writeAggregatedPageModel(final Writer writer, final AggregatedPageModel pageModel)
             throws ContainerException, IOException {
         try {
@@ -95,60 +166,236 @@ public class PageModelAggregationValve extends AggregationValve {
         }
     }
 
+    /**
+     * Create an {@link AggregatedPageModel} instance to write.
+     * @param sortedComponentWindows
+     * @param requestMap
+     * @param responseMap
+     * @return
+     * @throws ContainerException
+     */
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
-            final Map<HstComponentWindow, HstRequest> requestMap) throws ContainerException {
-        final AggregatedPageModel pageModel = new AggregatedPageModel();
-
+            final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
         // root component (page component) is the first item in the sortedComponentWindows.
-        PageDefinitionModel pageDefinition = new PageDefinitionModel(sortedComponentWindows[0].getComponentInfo().getId());
-        pageModel.setPageDefinition(pageDefinition);
+        final HstComponentWindow rootWindow = sortedComponentWindows[0];
+        final String id = rootWindow.getReferenceNamespace();
+        final String definitionId = rootWindow.getComponentInfo().getId();
+        final AggregatedPageModel pageModel = new AggregatedPageModel(id);
+        pageModel.putMetadata(DEFINITION_ID_METADATA, definitionId);
+        addParameterMapMetadata(rootWindow, pageModel);
+        addLinksToPageModel(pageModel);
 
-        ComponentContainerWindowModel curContainerWindow = null;
+        final int sortedComponentWindowsLen = sortedComponentWindows.length;
+        ComponentContainerWindowModel curContainerWindowModel = null;
 
         // As sortedComponentWindows is sorted by parent-child order, we can assume all the container item component
         // window appears after a container component window.
-        for (HstComponentWindow window : sortedComponentWindows) {
+
+        for (int i = 1; i < sortedComponentWindowsLen; i++) {
+            final HstComponentWindow window = sortedComponentWindows[i];
+            final HstRequest hstRequest = requestMap.get(window);
+            final HstResponse hstResponse = responseMap.get(window);
+
             if (window.isContainerWindow()) {
-                curContainerWindow = new ComponentContainerWindowModel();
-                curContainerWindow.setId(window.getReferenceNamespace());
-                curContainerWindow.setName(window.getName());
-                pageModel.addContainerWindow(curContainerWindow);
+                curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
+                        window.getName());
+                addParameterMapMetadata(window, curContainerWindowModel);
+                addPreambleEpilogueMetadata(hstResponse, curContainerWindowModel);
+                pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.isContainerItemWindow()) {
-                if (curContainerWindow == null) {
-                    log.warn("Invalid container item component window location for {}.", window.getReferenceNamespace());
+                if (curContainerWindowModel == null) {
+                    log.warn("Invalid container item component window location for {}.",
+                            window.getReferenceNamespace());
                     continue;
                 }
 
-                final HstRequest hstRequest = requestMap.get(window);
-                final ComponentWindowModel componentWindow = new ComponentWindowModel();
-                componentWindow.setId(window.getReferenceNamespace());
-                componentWindow.setName(window.getName());
-                componentWindow.setType(window.getComponentName());
-                componentWindow.setLabel(window.getComponentInfo().getLabel());
+                final ComponentWindowModel componentWindowModel = new ComponentWindowModel(
+                        window.getReferenceNamespace(), window.getName(), window.getComponentName());
+                componentWindowModel.setLabel(window.getComponentInfo().getLabel());
+                addParameterMapMetadata(window, componentWindowModel);
+                addPreambleEpilogueMetadata(hstResponse, componentWindowModel);
 
                 for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
                     final String name = entry.getKey();
                     final Object model = entry.getValue();
+                    ReferenceMetadataBaseModel referenceModel = null;
 
                     if (model instanceof HippoBean) {
-                        final HippoBean beanModel = (HippoBean) model;
-                        pageModel.putContent(beanModel.getCanonicalUUID(), beanModel);
-
-                        final String contentRef = "#/content/" + beanModel.getIdentifier();
-                        HippoBeanReferenceModel refModel = new HippoBeanReferenceModel(contentRef);
-                        componentWindow.putModel(name, refModel);
-                    } else {
-                        componentWindow.putModel(name, model);
+                        final HippoBean bean = (HippoBean) model;
+                        final String contentId = getContentId(bean);
+                        final String jsonPointerContentId = contentIdToJsonName(contentId);
+                        addContentModelToPageModel(pageModel, bean, contentId, jsonPointerContentId);
+                        referenceModel = new ReferenceMetadataBaseModel(
+                                CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
                     }
+
+                    componentWindowModel.putModel(name, (referenceModel != null) ? referenceModel : model);
                 }
 
-                curContainerWindow.addComponentWindowSet(componentWindow);
+                curContainerWindowModel.addComponentWindowSet(componentWindowModel);
             } else {
-                curContainerWindow = null;
+                curContainerWindowModel = null;
             }
         }
 
         return pageModel;
     }
 
+    /**
+     * Add a content model to the page model's content section.
+     * @param pageModel
+     * @param bean
+     * @param contentId
+     * @param jsonPointerContentId
+     */
+    private void addContentModelToPageModel(final AggregatedPageModel pageModel, final HippoBean bean,
+            final String contentId, final String jsonPointerContentId) {
+        final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(contentId, bean);
+
+        if (bean.isHippoDocumentBean() || bean.isHippoFolderBean()) {
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
+
+            final Mount selfMount = requestContext.getResolvedMount().getMount();
+            final HstLink selfLink = linkCreator.create(bean.getNode(), selfMount);
+            wrapperBeanModel.putLink(SELF_LINK_NAME, selfLink.toUrlForm(requestContext, true));
+
+            final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+            if (siteMount != null) {
+                final HstLink siteLink = linkCreator.create(bean.getNode(), siteMount);
+                wrapperBeanModel.putLink(SITE_LINK_NAME, siteLink.toUrlForm(requestContext, true));
+            }
+        }
+
+        pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
+    }
+
+    /**
+     * Get content identifier for a {@link HippoBean}.
+     * @param bean
+     * @return
+     */
+    private String getContentId(final HippoBean bean) {
+        if (bean instanceof HippoDocumentBean) {
+            return ((HippoDocumentBean) bean).getCanonicalHandleUUID();
+        }
+
+        return bean.getCanonicalUUID();
+    }
+
+    /**
+     * Convert content identifier (e.g, UUID) to a safe JSON property/variable name.
+     * @param uuid
+     * @return
+     */
+    private String contentIdToJsonName(final String uuid) {
+        return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
+                .toString();
+    }
+
+    /**
+     * Add <code>params</code> metadata to the {@code model} from the {@code window}.
+     * @param window
+     * @param model
+     */
+    private void addParameterMapMetadata(HstComponentWindow window, MetadataBaseModel model) {
+        final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
+
+        if (compConfig == null) {
+            return;
+        }
+
+        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+        final Map<String, String> params = new LinkedHashMap<>();
+
+        for (String paramName : compConfig.getParameterNames()) {
+            String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
+            params.put(paramName, paramValue);
+        }
+
+        model.putMetadata(PARAMETERNS_METADATA, params);
+    }
+
+    /**
+     * Add links to the page model.
+     * @param pageModel
+     */
+    private void addLinksToPageModel(IdentifiableLinkableMetadataBaseModel pageModel) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
+        final HstSiteMapItem siteMapItem = requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
+
+        if (siteMapItem != null) {
+            final Mount selfMount = requestContext.getResolvedMount().getMount();
+            final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
+            pageModel.putLink(SELF_LINK_NAME, selfLink.toUrlForm(requestContext, true));
+
+            final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+            if (siteMount != null) {
+                final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
+                pageModel.putLink(SITE_LINK_NAME, siteLink.toUrlForm(requestContext, true));
+            }
+        }
+    }
+
+    /**
+     * Add preamble and epilogue comment metadata to the {@code model}.
+     * @param hstResponse
+     * @param model
+     */
+    private void addPreambleEpilogueMetadata(HstResponse hstResponse, MetadataBaseModel model) {
+        final Comment preambleComment = getPreambleComment(hstResponse);
+        final Comment epilogueComment = getEpilogueComment(hstResponse);
+
+        if (preambleComment != null) {
+            model.putMetadata(BEGIN_NODE_SPAN_METADATA, new NodeSpan(preambleComment));
+        }
+
+        if (epilogueComment != null) {
+            model.putMetadata(END_NODE_SPAN_METADATA, new NodeSpan(epilogueComment));
+        }
+    }
+
+    /**
+     * Get the preamble commend node from the {@code response}.
+     * @param response
+     * @return
+     */
+    private Comment getPreambleComment(final HstResponse response) {
+        List<Node> preambles = response.getPreambleNodes();
+
+        if (preambles == null || preambles.isEmpty()) {
+            return null;
+        }
+
+        for (Node preamble : preambles) {
+            if (preamble.getNodeType() == Node.COMMENT_NODE) {
+                return (Comment) preamble;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the epilogue commend node from the {@code response}.
+     * @param response
+     * @return
+     */
+    private Comment getEpilogueComment(final HstResponse response) {
+        List<Node> epilogues = response.getEpilogueNodes();
+
+        if (epilogues == null || epilogues.isEmpty()) {
+            return null;
+        }
+
+        for (Node epilogue : epilogues) {
+            if (epilogue.getNodeType() == Node.COMMENT_NODE) {
+                return (Comment) epilogue;
+            }
+        }
+
+        return null;
+    }
 }

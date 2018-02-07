@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.pagemodel.model;
+package org.hippoecm.hst.util;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
+import java.io.Writer;
 
-public class HippoBeanReferenceModel {
+import org.w3c.dom.Comment;
 
-    private String reference;
+/**
+ * HstResponseStateUtils 
+ */
+public class HstResponseStateUtils {
 
-    public HippoBeanReferenceModel(String reference) {
-        this.reference = reference;
+    private HstResponseStateUtils() {
     }
 
-    @JsonProperty("$ref")
-    public String getReference() {
-        return reference;
+    public static void printComment(final Comment comment, final Writer writer) throws IOException {
+        writer.write("<!--" + comment.getTextContent() + "-->");
     }
+
 }

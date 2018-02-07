@@ -21,22 +21,18 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AggregatedPageModel {
+/**
+ * Aggregated page model which represents the whole output in the page model pipeline request processing.
+ */
+public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
-    private PageDefinitionModel pageDefinition;
     private Set<ComponentContainerWindowModel> containerWindowSet;
-    private Map<String, HippoBean> contentMap;
+    private Map<String, Object> contentMap;
 
-    public PageDefinitionModel getPageDefinition() {
-        return pageDefinition;
-    }
-
-    public void setPageDefinition(PageDefinitionModel pageDefinition) {
-        this.pageDefinition = pageDefinition;
+    public AggregatedPageModel(final String id) {
+        super(id);
     }
 
     @JsonProperty("containers")
@@ -61,7 +57,7 @@ public class AggregatedPageModel {
     }
 
     @JsonProperty("content")
-    public Map<String, HippoBean> getContentMap() {
+    public Map<String, Object> getContentMap() {
         if (contentMap == null) {
             return Collections.emptyMap();
         }
@@ -69,11 +65,11 @@ public class AggregatedPageModel {
         return contentMap;
     }
 
-    public void setContentMap(Map<String, HippoBean> contentMap) {
+    public void setContentMap(Map<String, Object> contentMap) {
         this.contentMap = contentMap;
     }
 
-    public void putContent(String id, HippoBean content) {
+    public void putContent(String id, Object content) {
         if (contentMap == null) {
             contentMap = new LinkedHashMap<>();
         }
