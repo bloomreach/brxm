@@ -41,7 +41,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
     private HstLinkCreator hstLinkCreator;
-    // default a noop context augmenter
+    // default no context augmenters
     private List<DocumentContextAugmenter> documentContextAugmenters = new ArrayList<>();
 
     public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
@@ -86,6 +86,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             document.setChannelId(channel.getId());
             document.setChannelName(channel.getName());
             document.setBranchId(channel.getBranchId());
+            document.setBranchOf(channel.getBranchOf());
             if (StringUtils.isNotEmpty(link.getPath())) {
                 document.setPathInfo("/" + link.getPath());
             } else {

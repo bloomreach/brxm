@@ -26,6 +26,7 @@ public class ChannelDocument implements Serializable {
     private String channelId;
     private String channelName;
     private String branchId;
+    private String branchOf;
     private String contextPath;
     private String pathInfo;
     private String mountPath;
@@ -50,7 +51,9 @@ public class ChannelDocument implements Serializable {
         this.cmsPreviewPrefix = original.cmsPreviewPrefix;
         this.pathInfo = original.pathInfo;
         this.mountPath = original.mountPath;
-        this.hostName = original.hostName;  
+        this.hostName = original.hostName;
+        this.branchId = original.branchId;
+        this.branchOf = original.branchOf;
     }
 
     /**
@@ -91,6 +94,14 @@ public class ChannelDocument implements Serializable {
 
     public String getBranchId() {
         return branchId;
+    }
+
+    public String getBranchOf() {
+        return branchOf;
+    }
+
+    public void setBranchOf(final String branchOf) {
+        this.branchOf = branchOf;
     }
 
     /**
@@ -157,6 +168,7 @@ public class ChannelDocument implements Serializable {
         if (channelId != null ? !channelId.equals(that.channelId) : that.channelId != null) return false;
         if (channelName != null ? !channelName.equals(that.channelName) : that.channelName != null) return false;
         if (branchId != null ? !branchId.equals(that.branchId) : that.branchId != null) return false;
+        if (branchOf != null ? !branchOf.equals(that.branchOf) : that.branchOf != null) return false;
         if (contextPath != null ? !contextPath.equals(that.contextPath) : that.contextPath != null) return false;
         if (pathInfo != null ? !pathInfo.equals(that.pathInfo) : that.pathInfo != null) return false;
         if (mountPath != null ? !mountPath.equals(that.mountPath) : that.mountPath != null) return false;
@@ -169,6 +181,7 @@ public class ChannelDocument implements Serializable {
         int result = channelId != null ? channelId.hashCode() : 0;
         result = 31 * result + (channelName != null ? channelName.hashCode() : 0);
         result = 31 * result + (branchId != null ? branchId.hashCode() : 0);
+        result = 31 * result + (branchOf != null ? branchId.hashCode() : 0);
         result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
         result = 31 * result + (pathInfo != null ? pathInfo.hashCode() : 0);
         result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
@@ -179,7 +192,8 @@ public class ChannelDocument implements Serializable {
 
     @Override
     public String toString() {
-        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", branchId= " + branchId +
+        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName +
+                ", branchId= " + branchId + ", branchOf= " + branchOf +
                 ", hostName=" + hostName
                 + ", contextPath=" + contextPath + ", cmsPreviewPrefix=" + cmsPreviewPrefix + ", mountPath="
                 + mountPath + ", pathInfo=" + pathInfo + "]";
