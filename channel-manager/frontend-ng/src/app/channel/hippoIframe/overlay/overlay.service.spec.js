@@ -868,7 +868,7 @@ describe('OverlayService', () => {
 
     describe('when container is locked', () => {
       it('always shows an edit button even when locked', (done) => {
-        manageContentScenario(8, (mainButton, optionButtons) => {
+        manageContentScenario(8, (mainButton) => {
           expect(mainButton.hasClass('qa-edit-content')).toBe(true);
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
