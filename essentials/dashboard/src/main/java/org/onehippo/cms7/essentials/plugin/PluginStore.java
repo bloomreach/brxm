@@ -192,10 +192,6 @@ public class PluginStore {
             // load the plugin's current installation state
             installService.loadInstallStateFromFileSystem(plugin);
 
-            if (PluginDescriptor.TYPE_TOOL.equals(plugin.getType())) {
-                // tools are pre-installed and should not default to depend on the skeleton package.
-                plugin.setPluginDependencies(null);
-            }
             plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
 
             // extract all REST classes to setup the dynamic endpoints
