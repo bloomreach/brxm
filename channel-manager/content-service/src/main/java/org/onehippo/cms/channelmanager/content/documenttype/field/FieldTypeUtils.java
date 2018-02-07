@@ -175,21 +175,22 @@ public class FieldTypeUtils {
 
     private static Optional<FieldType> createAndInit(final FieldTypeContext context,
                                                      final FieldsInformation allFieldsInfo) {
-        final Optional<FieldType> result = determineDescriptor(context)
+        Optional<FieldType> result = determineDescriptor(context)
                 .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
-                .flatMap(FieldTypeFactory::createFieldType)
-                .map(fieldType -> {
-                    final FieldsInformation fieldInfo = fieldType.init(context);
-                    if (fieldType.isValid()) {
-                        allFieldsInfo.add(fieldInfo);
-                        return fieldType;
-                    } else {
-                        return null;
-                    }
-                });
+                .flatMap(FieldTypeFactory::createFieldType);
 
-        if (!result.isPresent()) {
+        if (result.isPresent()) {
+            final FieldType fieldType = result.get();
+            final FieldsInformation fieldInfo = fieldType.init(context);
+            if (fieldType.isValid()) {
+                allFieldsInfo.add(fieldInfo);
+            } else if (fieldType.hasUnsupportedValidator()) {
+                allFieldsInfo.addUnknownField(context.getContentTypeItem());
+                result = Optional.empty();
+            }
+        } else {
             allFieldsInfo.addUnknownField(context.getContentTypeItem());
+            result = Optional.empty();
         }
 
         return result;
