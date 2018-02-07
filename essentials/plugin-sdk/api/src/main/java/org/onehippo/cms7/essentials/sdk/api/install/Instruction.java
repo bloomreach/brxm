@@ -39,7 +39,6 @@ public interface Instruction {
         FILE_DELETE,
         XML_NODE_CREATE,
         XML_NODE_DELETE,
-        XML_NODE_FOLDER_DELETE,
         XML_NODE_FOLDER_CREATE,
         DOCUMENT_REGISTER,
         EXECUTE,

@@ -11,7 +11,7 @@
   ],
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
   "hasConfiguration": true,
-  "setupParameters": false,
+  "installWithParameters": false,
   "packageFile": "/META-INF/taxonomy_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"

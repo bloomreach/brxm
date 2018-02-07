@@ -45,6 +45,7 @@
   <script src="${pageContext.request.contextPath}/js/directives.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/dashboard/api/services.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/dashboard/api/directives.js?v=${project.version}"></script>
 
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
@@ -101,6 +102,12 @@
           <a href="#/tools">
             <hippo-icon name="wrench" size="m"></hippo-icon>
               Tools
+          </a>
+        </li>
+        <li>
+          <a href="#/introduction">
+            <hippo-icon name="gear" size="m"></hippo-icon>
+              Settings
           </a>
         </li>
         <li>

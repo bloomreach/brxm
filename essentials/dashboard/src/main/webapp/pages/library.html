@@ -16,7 +16,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div ng-repeat="plugin in plugins | orderBy:'name'">
+        <div ng-repeat="plugin in plugins | filter:isVisible | orderBy:'name'">
             <essentials-plugin plugin="plugin"></essentials-plugin>
         </div>
     </div>

@@ -17,197 +17,7 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        //############################################
-        // DIRECTIVES
-        //############################################
-        .directive("essentialsFolderPicker", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    title: '@',
-                    buttonText: '@',
-                    selectedPath: '=',
-                    selected: '='
-                },
-                templateUrl: 'directives/essentials-folder-picker.html',
-                controller: function ($scope, $rootScope, $uibModal, $log, $http) {
-                    $scope.open = function (size) {
-                        var modalInstance = $uibModal.open({
-                            templateUrl: 'tree-picker.html',
-                            controller: ModalInstanceCtrl,
-                            size: size,
-                            resolve: {
-                                title: function () {
-                                    return $scope.title;
-                                }, buttonText: function () {
-                                    return $scope.buttonText;
-                                }, selectedPath: function () {
-                                    return $scope.selectedPath;
-                                }, selected: function () {
-                                    return $scope.selected;
-                                }
-                            }
-
-                        });
-                        modalInstance.result.then(function (selected) {
-                            if (selected) {
-                                $scope.selected = selected;
-                                $scope.selectedPath = selected.id;
-                            }
-                        });
-                    };
-
-
-                    //############################################
-                    // MODAL
-                    //############################################
-                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, title) {
-                        $scope.title = title;
-                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').success(function (data) {
-                            $scope.treeItems = data.items;
-                        });
-                        $scope.ok = function () {
-                            $uibModalInstance.close($scope.selected);
-                        };
-
-                        $scope.cancel = function () {
-                            $uibModalInstance.dismiss('cancel');
-                        };
-                        $scope.callbacks = {
-                            accept: function () {
-                                // disable drag/drop stuff
-                                return false;
-                            },
-                            dragStart: function (event) {
-                                $scope.selected = event.source.nodeScope.$modelValue;
-                                $scope.selectedPath = $scope.selected.id;
-                            },
-
-                            dragStop: function (event) {
-                                // noop
-                            },
-
-                            dropped: function (event) {
-                                // noop
-                            }
-                        };
-
-                    };
-                }
-            };
-        }).directive("essentialsTemplateSettings", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    label: '@',
-                    params: '=',
-                    hasNoTemplates: '@',
-                    hasSampleData: '@',
-                    hasExtraTemplates: '@'
-                },
-                templateUrl: 'directives/essentials-template-settings.html',
-                controller: function () {
-                }
-            };
-        })
-        .directive("essentialsHelp", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    helpText: '@',
-                    helpReference: '=',
-                    showHideVariable: '='
-                },
-                templateUrl: 'directives/essentials-help.html',
-                controller: function ($scope) {
-                    $scope.text = $scope.helpText ? $scope.helpText : $scope.helpReference;
-                }
-            };
-        })
-        .directive("essentialsMessages", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    pluginId: '=',
-                    params: '='
-                },
-                templateUrl: 'directives/essentials-messages.html',
-                controller: function ($scope, $rootScope, $http) {
-                    // refresh messages when changes are made:
-                    $scope.$watch('params', function () {
-                        getMessages();
-                    }, true);
-                    getMessages();
-
-                    var url = $rootScope.REST.PLUGINS.changesById($scope.pluginId);
-                    function getMessages() {
-                        if ($scope.params) {
-                            $http.get(url, { params: $scope.params }).success(function (changeMessages) {
-                                $scope.changeMessages = changeMessages;
-                            });
-                        }
-                    }
-                }
-            };
-        }).directive("essentialsSimpleInstallPlugin", function () {
-            return {
-                replace: true,
-                restrict: 'E',
-                scope: {
-                    label: '@',
-                    pluginId: '@',
-                    hasNoTemplates: '@',
-                    hasSampleData: '@',
-                    hasExtraTemplates: '@'
-                },
-                templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $log, $location, $rootScope, $http) {
-                    // initialize fields to system defaults.
-                    $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                        var params = {};
-
-                        params.templateName   = data.templateLanguage;
-                        params.sampleData     = data.useSamples;
-                        params.extraTemplates = data.extraTemplates;
-
-                        $scope.params = params;
-                    });
-
-                    $scope.apply = function () {
-                        $http.post($rootScope.REST.PLUGINS.setupById($scope.pluginId), { values: $scope.params } )
-                            .success(function () {
-                                $rootScope.$broadcast('update-plugin-install-state', {
-                                    'pluginId': $scope.pluginId,
-                                    'state': 'installing'
-                                });
-                                $location.path('/installed-features');
-                            });
-                    };
-                    $http.get($rootScope.REST.PLUGINS.byId($scope.pluginId)).success(function (plugin) {
-                        $scope.plugin = plugin;
-                    });
-                }
-            };
-        }).directive("essentialsCmsDocumentTypeDeepLink", function () {
-            return {
-                replace: true,
-                restrict: 'E',
-                scope: {
-                    nameSpace: '@',
-                    documentName: '@',
-                    label: '@'
-                },
-                templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
-                controller: function ($scope, $rootScope) {
-                    $scope.label = 'CMS Document Type Editor';
-                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
-                }
-            };
-        }).directive("essentialsNotifier", function () {
+        .directive("essentialsNotifier", function () {
             return {
                 replace: false,
                 restrict: 'E',
@@ -312,7 +122,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-plugin.html',
-                controller: function ($scope, $filter, $log, $rootScope, $http) {
+                controller: function ($scope, $filter, $log, $rootScope, $http, pluginService) {
                     $scope.slides = [];
                     angular.forEach($scope.plugin.imageUrls, function(url) {
                         $scope.slides.push({
@@ -331,6 +141,9 @@
                     $scope.isBoarding = function() {
                         return $scope.plugin.installState === 'boarding' || $scope.plugin.installState === 'installing';
                     };
+                    $scope.isPending = function() {
+                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
+                    };
                     $scope.isOnBoard = function() {
                         return $scope.plugin.type === 'tool' ||
                                $scope.plugin.installState === 'onBoard' ||
@@ -338,14 +151,11 @@
                     };
                     $scope.installPlugin = function () {
                         $scope.installButtonDisabled = true; // avoid double-clicking
-                        $rootScope.pluginsCache = null;
-                        var pluginId = $scope.plugin.id;
-                        $http.post($rootScope.REST.plugins + '/' + pluginId + '/install').success(function () {
-                            // reload because of install state change:
-                            $http.get($rootScope.REST.PLUGINS.byId(pluginId)).success(function (data) {
-                                $scope.plugin = data;
-                            });
-                        });
+
+                        // Due to inter-plugin dependencies, successful installation reloads the list of plugins
+                        // to have all states updated. This causes angular to re-instantiate this controller, so
+                        // we don't need to do anything with the promise returned by #install().
+                        pluginService.install($scope.plugin.id);
                     };
                 }
             };
@@ -367,6 +177,9 @@
                     };
                     $scope.hasConfiguration = function() {
                         return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
+                    };
+                    $scope.isPending = function() {
+                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
                     };
                 }
             };
@@ -392,61 +205,23 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-feature-footer.html',
-                controller: function ($scope, $filter, $log, $rootScope, $http) {
+                controller: function ($scope, $rootScope, pluginService) {
                     $scope.toggleChanges = function($event) {
                         $event.preventDefault();
                         $scope.showChanges = !$scope.showChanges;
 
                         // Lazy-loading messages
                         if (!$scope.messagesLoaded) {
-                            var url = $rootScope.REST.PLUGINS.changesById($scope.plugin.id);
-                            var params = {
-                                sampleData: $rootScope.projectSettings.useSamples,
-                                templateName: $rootScope.projectSettings.templateLanguage,
-                                extraTemplates: $rootScope.projectSettings.extraTemplates
-                            };
-
-                            $http.get(url, { params: params }).success(function(changeMessages) {
+                            pluginService.getChangeMessages($scope.plugin.id).then(function(changeMessages) {
                                 $scope.changeMessages = changeMessages;
                                 $scope.messagesLoaded = true;
                             });
                         }
                     };
-                    $scope.isCreateFile          = function (message) { return message.type === 'FILE_CREATE'; };
-                    $scope.isRegisterDocument    = function (message) { return message.type === 'DOCUMENT_REGISTER'; };
-                    $scope.isCreateXmlNode       = function (message) { return message.type === 'XML_NODE_CREATE'; };
-                    $scope.isCreateXmlFolderNode = function (message) { return message.type === 'XML_NODE_FOLDER_CREATE'; };
-                    $scope.isExecute             = function (message) { return message.type === 'EXECUTE'; };
 
                     $scope.messagesLoaded = false; // Flag for lazy loading
                     $scope.showChanges = false;
                     $scope.hasMessages = !!$scope.plugin.packageFile;
-                }
-            };
-        }).directive("essentialsDraftWarning", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {},
-                templateUrl: 'directives/essentials-draft-warning.html',
-                controller: function ($scope, $rootScope, $http) {
-                    $scope.hasDraftDocuments = false;
-                    $scope.isDraft = function (doc) {
-                        return doc.draftMode;
-                    };
-                    $http.get($rootScope.REST.documents).success(function (data) {
-                        $scope.documentTypes = data;
-                        if (data) {
-                            for (var i = 0; i < data.length; i++) {
-                                var val = data[i];
-                                if (val && val.draftMode) {
-                                    $scope.hasDraftDocuments = true;
-                                    break;
-                                }
-                            }
-                        }
-                    });
-
                 }
             };
         });

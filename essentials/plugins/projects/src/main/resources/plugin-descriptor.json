@@ -8,7 +8,7 @@
   "imageUrls": [
     "/essentials/feature/images/screenshots/project-details-no-channels.png"
   ],
-  "setupParameters": false,
+  "installWithParameters": false,
   "packageFile": "/META-INF/projects_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
@@ -27,5 +27,10 @@
     "license": [
       "enterprise"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "enterpriseProject"
+    }
+  ]
 }

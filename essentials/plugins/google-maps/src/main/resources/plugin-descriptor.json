@@ -25,5 +25,10 @@
     "license": [
       "community"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton"
+    }
+  ]
 }

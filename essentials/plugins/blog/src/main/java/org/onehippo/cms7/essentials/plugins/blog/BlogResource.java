@@ -45,7 +45,12 @@ public class BlogResource {
     private static final Logger LOG = LoggerFactory.getLogger(BlogResource.class);
     private static final String CONFIG_EVENT_BUS = "/hippo:configuration/hippo:modules/essentials-eventbus-listener/hippo:moduleconfig";
 
-    @Inject private JcrService jcrService;
+    private final JcrService jcrService;
+
+    @Inject
+    public BlogResource(final JcrService jcrService) {
+        this.jcrService = jcrService;
+    }
 
     @POST
     @Path("/")

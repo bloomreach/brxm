@@ -7,7 +7,7 @@
     <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
       <hst:link var="link" hippobean="${item}"/>
       <article class="has-edit-button">
-        <hst:manageContent document="${item}"/>
+        <hst:manageContent hippobean="${item}"/>
         <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
         <c:if test="${hst:isReadable(item, 'publicationDate.time')}">
           <p>

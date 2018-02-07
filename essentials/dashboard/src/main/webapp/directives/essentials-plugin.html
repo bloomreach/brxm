@@ -38,11 +38,15 @@
                     </button>
                     <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
                     <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
+                    <a ng-show="isPending()" class="btn btn-default">Installation Pending</a>
                 </div>
             </div>
         </div>
         <div class="feature-description">
             <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8" ng-if="plugin.dependencySummary">
+                    <p>{{plugin.dependencySummary}}</p>
+                </div>
                 <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short">
                     <p ng-bind-html="plugin.introduction"></p>
                     <p ng-show="plugin.description || plugin.imageUrls.length" data-ng-click="toggleDescription($event)">

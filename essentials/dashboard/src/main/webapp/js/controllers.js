@@ -18,7 +18,7 @@
     "use strict";
     angular.module('hippo.essentials')
 
-        .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
+        .controller('introductionCtrl', function ($scope, $location, projectService) {
             // just sets a hide screen boolean flag to true
             $scope.showAdvanced = false;
             $scope.addUrl = function () {
@@ -34,14 +34,13 @@
             $scope.getStarted = function () {
                 // mark setup as done...
                 $scope.projectSettings.setupDone = true;
-                $http.post($rootScope.REST.PROJECT.settings, $scope.projectSettings).success(function () {
+                projectService.setSettings($scope.projectSettings).then(function() {
                     $location.path('/library'); // Start in the Library
                 });
-
             };
             $scope.setup = function () {
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $scope.projectSettings = data;
+                projectService.getSettings().then(function(settings) {
+                    $scope.projectSettings = settings;
                 });
             };
             $scope.toggleAdvanced = function($event) {
@@ -52,7 +51,13 @@
             $scope.setup();
         })
 
-        .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
+        .controller('pluginCtrl', function ($scope, pluginService, projectService) {
+            function showPlugin(plugin) {
+                var isEnterprisePlugin = plugin.categories &&
+                    plugin.categories.license &&
+                    plugin.categories.license.indexOf("enterprise") >= 0;
+                return $scope.settings.enterprise || !isEnterprisePlugin;
+            }
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
             $scope.plugins = [];
@@ -63,55 +68,28 @@
             ];
             $scope.isInstalledFeature = function (plugin) {
                 return plugin.type === 'feature' &&
-                        plugin.installState === 'installed';
+                        plugin.installState === 'installed' &&
+                        showPlugin(plugin);
             };
             $scope.isInstalledFeatureAndRequiresAttention = function (plugin) {
                 return plugin.type === 'feature' &&
                         plugin.installState !== 'discovered' &&
-                        plugin.installState !== 'installed';
+                        plugin.installState !== 'installed' &&
+                        showPlugin(plugin);
             };
             $scope.isInstalledTool = function (plugin) {
-                return plugin.type === 'tool'; // TODO: handle install state.
+                return plugin.type === 'tool' && showPlugin(plugin); // TODO: handle install state.
             };
-            // Receive state updates from individual plugins
-            $rootScope.$on('update-plugin-install-state', function(event, data) {
-                angular.forEach($scope.plugins, function (plugin) {
-                    if (plugin.id === data.pluginId) {
-                        plugin.installState = data.state;
-                    }
-                });
-            });
+            $scope.isVisible = function (plugin) {
+                return showPlugin(plugin);
+            };
 
-            //fetch plugin list
+            // fetch project settings and plugin list
             $scope.init = function () {
-
-                // Retrieve project settings
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    // TODO: ugly. If this needs to be on the rootScope, it should be put there during initialization
-                    // of the angular app.
-                    $rootScope.projectSettings = data;
-
-                    if ($rootScope.pluginsCache) {
-                        processItems($rootScope.pluginsCache);
-                    } else {
-                        $http.get($rootScope.REST.plugins).success(function (data) {
-                            $rootScope.pluginsCache = data;
-                            processItems($rootScope.pluginsCache);
-                        });
-                    }
+                projectService.getSettings().then(function(settings) {
+                    $scope.settings = settings;
+                    $scope.plugins = pluginService.getPlugins();
                 });
-
-                function processItems(items) {
-                    $scope.plugins = items.filter(showPlugin);
-                }
-
-                function showPlugin(descriptor) {
-                    var isEnterprisePlugin = descriptor.categories &&
-                        descriptor.categories.license &&
-                        descriptor.categories.license.indexOf("enterprise") >= 0;
-
-                    return $rootScope.projectSettings.enterprise || !isEnterprisePlugin;
-                }
             };
             $scope.init();
         })

@@ -39,7 +39,12 @@ public class MavenRepositoryServiceImpl implements MavenRepositoryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenRepositoryServiceImpl.class);
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public MavenRepositoryServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean addRepository(final Module module, final MavenRepository repository) {

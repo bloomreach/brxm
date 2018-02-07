@@ -53,9 +53,16 @@ public class ContentTypeServiceImpl implements ContentTypeService {
     private static final Logger LOG = LoggerFactory.getLogger(ContentTypeServiceImpl.class);
     private static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentBeansService beansService;
-    @Inject private SettingsService settingsService;
+    private final JcrService jcrService;
+    private final ContentBeansService beansService;
+    private final SettingsService settingsService;
+
+    @Inject
+    public ContentTypeServiceImpl(final JcrService jcrService, final ContentBeansService beansService, final SettingsService settingsService) {
+        this.jcrService = jcrService;
+        this.beansService = beansService;
+        this.settingsService = settingsService;
+    }
 
     @Override
     public List<ContentType> fetchContentTypesFromOwnNamespace() {

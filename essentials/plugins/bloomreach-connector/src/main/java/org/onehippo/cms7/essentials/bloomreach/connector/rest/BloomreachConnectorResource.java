@@ -30,13 +30,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,45 +44,23 @@ import org.slf4j.LoggerFactory;
 public class BloomreachConnectorResource {
 
     private static final Logger log = LoggerFactory.getLogger(BloomreachConnectorResource.class);
-    private static final String CRISP_GROUP_ID = "org.onehippo.cms7";
-    private static final String CRISP_VERSION = "${hippo.addon-crisp.version}";
     private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
-    private static final MavenDependency CRISP_API
-            = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-api", CRISP_VERSION, null, null);
-    private static final MavenDependency CRISP_REPOSITORY
-            = new MavenDependency(CRISP_GROUP_ID, "hippo-addon-crisp-repository", CRISP_VERSION, null, null);
 
-    @Inject private MavenDependencyService dependencyService;
-    @Inject private JcrService jcrService;
+    private final JcrService jcrService;
+
+    @Inject
+    public BloomreachConnectorResource(final JcrService jcrService) {
+        this.jcrService = jcrService;
+    }
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
-        // check if we have crisp namespace registered and if not if we at least have dependencies in place::
-        final boolean exists = CndUtils.nodeTypeExists(jcrService, CRISP_NODE);
-        final boolean hasDependency = dependencyService.hasDependency(Module.CMS, CRISP_API)
-                && dependencyService.hasDependency(Module.CMS, CRISP_REPOSITORY);
-
+        // check if we have crisp namespace registered:
         final ResourceData resourceData = new ResourceData();
-        resourceData.setCrispDependencyExists(hasDependency);
-        resourceData.setCrispExists(exists);
+        resourceData.setCrispExists(CndUtils.nodeTypeExists(jcrService, CRISP_NODE));
         return resourceData;
     }
 
-
-    @POST
-    @Path("/install")
-    public UserFeedback install(final ResourceData data, @Context ServletContext servletContext) throws Exception {
-        // check if we have crisp namespace registered:
-        final UserFeedback feedback = new UserFeedback();
-        boolean added = dependencyService.addDependency(Module.CMS, CRISP_API)
-                && dependencyService.addDependency(Module.CMS, CRISP_REPOSITORY);
-        if (added) {
-            feedback.addSuccess("Successfully added dependencies");
-        } else {
-            feedback.addError("Failed to add dependencies");
-        }
-        return feedback;
-    }
 
     @POST
     public UserFeedback run(final ResourceData data, @Context ServletContext servletContext) throws Exception {

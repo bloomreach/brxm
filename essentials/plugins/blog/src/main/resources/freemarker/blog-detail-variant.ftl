@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Blogpost" -->
 <#if document??>
   <div class="has-edit-button">
-    <@hst.manageContent document=document/>
+    <@hst.manageContent hippobean=document/>
     <h1>
       ${document.title?html}
       <#if document.publicationDate??>

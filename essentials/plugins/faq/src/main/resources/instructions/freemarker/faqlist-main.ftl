@@ -4,7 +4,7 @@
 <#if document??>
   <#if document.FAQ??>
     <div class="has-edit-button">
-      <@hst.manageContent document=document/> <#-- edit faq list document -->
+      <@hst.manageContent hippobean=document/> <#-- edit faq list document -->
       <h1>${document.title?html}</h1>
       <div>
         <@hst.html hippohtml=document.description/>
@@ -13,7 +13,7 @@
         <div class="has-edit-button">
           <h3><a href="<@hst.link hippobean=faq />">${faq.question?html}</a></h3>
           <@hst.html hippohtml=faq.answer/>
-          <@hst.manageContent document=faq/> <#-- edit faq item -->
+          <@hst.manageContent hippobean=faq/> <#-- edit faq item -->
         </div>
       </#list>
     </div>
@@ -24,6 +24,6 @@
   <div class="has-edit-button">
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
     <#-- add faq list document -->
-    <@hst.manageContent templateQuery="new-faq-list" componentParameter="document" rootPath="faq"/>
+    <@hst.manageContent templateQuery="new-faq-list" parameterName="document" rootPath="faq"/>
   </div>
 </#if>

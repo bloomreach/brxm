@@ -31,7 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.onehippo.cms7.essentials.test.ApplicationModule;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;

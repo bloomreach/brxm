@@ -42,6 +42,8 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
+import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -70,6 +72,8 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     private final String JCR_BASE_PATH = "/hippo:namespaces/" + PROJECT_NAMESPACE_TEST + "/basedocument";
 
     @Inject private ContentTypeService contentTypeService;
+    @Inject private ProjectService projectService;
+    @Inject private SettingsService settingsService;
 
     private TestContentTypeService testContentTypeService;
     private ContentTypes contentTypes;
@@ -339,7 +343,7 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
     @Bean
     @Primary
     public ContentBeansService getContentBeansService() {
-        return new ContentBeansServiceImpl() {
+        return new ContentBeansServiceImpl(projectService, settingsService) {
             @Override
             public Map<String, Path> findBeans() {
                 final Map<String, Path> beansMap = new HashMap<>();

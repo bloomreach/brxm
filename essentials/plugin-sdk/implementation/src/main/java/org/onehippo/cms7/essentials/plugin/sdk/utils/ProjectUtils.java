@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.lang.StringUtils;
 
 public final class ProjectUtils {
@@ -38,5 +41,9 @@ public final class ProjectUtils {
     public static String getEssentialsModuleName() {
         final String essentialsModuleName = System.getProperty(EssentialConst.ESSENTIALS_BASEDIR_PROPERTY);
         return StringUtils.isNotBlank(essentialsModuleName) ? essentialsModuleName : "essentials";
+    }
+
+    public static Path getEssentialsResourcesRootPath() {
+        return Paths.get(getBaseProjectDirectory()).resolve(getEssentialsModuleName()).resolve("src").resolve("main").resolve("resources");
     }
 }

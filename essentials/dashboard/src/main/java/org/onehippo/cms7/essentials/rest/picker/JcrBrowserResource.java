@@ -47,7 +47,12 @@ public class JcrBrowserResource {
     private static final Logger log = LoggerFactory.getLogger(JcrBrowserResource.class);
     private static final int DEFAULT_DEPTH = 3;
 
-    @Inject private JcrService jcrService;
+    private final JcrService jcrService;
+
+    @Inject
+    public JcrBrowserResource(final JcrService jcrService) {
+        this.jcrService = jcrService;
+    }
 
     @GET
     @Path("/")

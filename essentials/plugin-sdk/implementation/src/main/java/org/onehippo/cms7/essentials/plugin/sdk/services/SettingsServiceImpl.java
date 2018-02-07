@@ -22,9 +22,8 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
-import org.onehippo.cms7.essentials.sdk.api.model.Module;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +32,16 @@ public class SettingsServiceImpl implements SettingsService {
 
     private static final String DEFAULT_NAME = "project-settings";
 
-    @Inject private ProjectService projectService;
+    private final PluginFileService pluginFileService;
 
     private ProjectSettingsBean settings; // in-memory cached copy of settings
     private File projectSettingsFile;
     private long lastModified;            // last modified timestamp for reloading settings upon FS change
+
+    @Inject
+    public SettingsServiceImpl(final PluginFileService pluginFileService) {
+        this.pluginFileService = pluginFileService;
+    }
 
     @Override
     public ProjectSettings getSettings() {
@@ -46,14 +50,13 @@ public class SettingsServiceImpl implements SettingsService {
 
     public ProjectSettingsBean getModifiableSettings() {
         if (projectSettingsFile == null) {
-            projectSettingsFile = projectService.getResourcesRootPathForModule(Module.ESSENTIALS)
-                    .resolve("project-settings.xml").toFile();
+            projectSettingsFile = ProjectUtils.getEssentialsResourcesRootPath().resolve("project-settings.xml").toFile();
         }
 
         final long lastModified = projectSettingsFile.lastModified();
         if (settings == null || lastModified != this.lastModified) {
             this.lastModified = lastModified;
-            settings = new PluginFileService(projectService).read(DEFAULT_NAME, ProjectSettingsBean.class);
+            settings = pluginFileService.read(DEFAULT_NAME, ProjectSettingsBean.class);
         }
 
         return settings;
@@ -64,6 +67,6 @@ public class SettingsServiceImpl implements SettingsService {
      */
     public boolean updateSettings(final ProjectSettingsBean settings) {
         this.settings = settings;
-        return new PluginFileService(projectService).write(DEFAULT_NAME, settings);
+        return pluginFileService.write(DEFAULT_NAME, settings);
     }
 }

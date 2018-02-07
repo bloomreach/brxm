@@ -42,8 +42,14 @@ public class PlaceholderServiceImpl implements PlaceholderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(PlaceholderServiceImpl.class);
 
-    @Inject private SettingsService settingsService;
-    @Inject private ProjectService projectService;
+    private final SettingsService settingsService;
+    private final ProjectService projectService;
+
+    @Inject
+    public PlaceholderServiceImpl(final SettingsService settingsService, final ProjectService projectService) {
+        this.settingsService = settingsService;
+        this.projectService = projectService;
+    }
 
     @Override
     public Map<String, Object> makePlaceholders() {

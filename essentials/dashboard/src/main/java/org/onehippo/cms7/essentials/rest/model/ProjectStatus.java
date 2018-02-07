@@ -22,13 +22,13 @@ package org.onehippo.cms7.essentials.rest.model;
 public class ProjectStatus {
 
     private boolean projectInitialized;
-    private int pluginsInstalled;
+    private long pluginsInstalled;
 
-    public int getPluginsInstalled() {
+    public long getPluginsInstalled() {
         return pluginsInstalled;
     }
 
-    public void setPluginsInstalled(final int pluginsInstalled) {
+    public void setPluginsInstalled(final long pluginsInstalled) {
         this.pluginsInstalled = pluginsInstalled;
     }
 

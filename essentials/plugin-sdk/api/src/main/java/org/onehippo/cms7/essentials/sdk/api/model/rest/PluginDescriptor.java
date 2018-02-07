@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Strings;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PluginDescriptor {
 
     public static final String TYPE_TOOL = "tool";
@@ -40,25 +43,19 @@ public class PluginDescriptor {
     private List<String> imageUrls;
     private String id;
     private boolean hasConfiguration;
-    private boolean noRebuildAfterSetup;
-    private boolean setupParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
+    private boolean rebuildAfterInstallation = true;
+    private boolean installWithParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
     private String packageFile;
     private String type;
-    private String installState;
+    @JsonIgnore private InstallState state;
     private String icon;
 
     private Calendar dateInstalled;
     private String documentationLink;
 
     private Map<String, Set<String>> categories;
-
-    public PluginDescriptor(final String name) {
-        this.name = name;
-    }
-
-    public PluginDescriptor() {
-
-    }
+    private List<Dependency> pluginDependencies;
+    private String dependencySummary; // human-readable summary of inter-plugin dependencies
 
     public Map<String, Set<String>> getCategories() {
         return categories;
@@ -85,11 +82,11 @@ public class PluginDescriptor {
     }
 
     public String getInstallState() {
-        return installState;
+        return state != null ? state.toString() : null;
     }
 
     public void setInstallState(final String installState) {
-        this.installState = installState;
+        this.state = InstallState.fromString(installState);
     }
 
     public String getId() {
@@ -116,12 +113,12 @@ public class PluginDescriptor {
         return hasConfiguration;
     }
 
-    public boolean isNoRebuildAfterSetup() {
-        return noRebuildAfterSetup;
+    public boolean isRebuildAfterInstallation() {
+        return rebuildAfterInstallation;
     }
 
-    public void setNoRebuildAfterSetup(final boolean noRebuildAfterSetup) {
-        this.noRebuildAfterSetup = noRebuildAfterSetup;
+    public void setRebuildAfterInstallation(final boolean rebuildAfterInstallation) {
+        this.rebuildAfterInstallation = rebuildAfterInstallation;
     }
     
     public Vendor getVendor() {
@@ -228,14 +225,39 @@ public class PluginDescriptor {
         return sb.toString();
     }
 
-    public boolean hasSetupParameters() {
-        return setupParameters;
+    public boolean isInstallWithParameters() {
+        return installWithParameters;
     }
 
-    public void setSetupParameters(final boolean setupParameters) {
-        this.setupParameters = setupParameters;
+    public void setInstallWithParameters(final boolean installWithParameters) {
+        this.installWithParameters = installWithParameters;
     }
 
+    public List<Dependency> getPluginDependencies() {
+        return pluginDependencies;
+    }
+
+    public void setPluginDependencies(final List<Dependency> pluginDependencies) {
+        this.pluginDependencies = pluginDependencies;
+    }
+
+    public InstallState getState() {
+        return state;
+    }
+
+    public void setState(final InstallState state) {
+        this.state = state;
+    }
+
+    public String getDependencySummary() {
+        return dependencySummary;
+    }
+
+    public void setDependencySummary(final String dependencySummary) {
+        this.dependencySummary = dependencySummary;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Vendor {
         private String name;
         private String url;
@@ -263,6 +285,45 @@ public class PluginDescriptor {
 
         public void setLogo(final String logo) {
             this.logo = logo;
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Dependency {
+        private String pluginId;
+        @JsonIgnore private InstallState minStateForBoarding;
+        @JsonIgnore private InstallState minStateForInstalling = InstallState.INSTALLING;
+
+        public String getPluginId() {
+            return pluginId;
+        }
+
+        public void setPluginId(final String pluginId) {
+            this.pluginId = pluginId;
+        }
+
+        public InstallState getMinStateForBoarding() {
+            return minStateForBoarding;
+        }
+
+        public String getMinInstallStateForBoarding() {
+            return minStateForBoarding != null ? minStateForBoarding.toString() : null;
+        }
+
+        public void setMinInstallStateForBoarding(final String minInstallStateForBoarding) {
+            this.minStateForBoarding = InstallState.fromString(minInstallStateForBoarding);
+        }
+
+        public InstallState getMinStateForInstalling() {
+            return minStateForInstalling;
+        }
+
+        public String getMinInstallStateForInstalling() {
+            return minStateForInstalling != null ? minStateForInstalling.toString() : null;
+        }
+
+        public void setMinInstallStateForInstalling(final String minInstallStateForInstalling) {
+            this.minStateForInstalling = InstallState.fromString(minInstallStateForInstalling);
         }
     }
 }

@@ -42,9 +42,16 @@ import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 @Path("beanwriter/")
 public class BeanWriterResource {
 
-    @Inject private RebuildService rebuildService;
-    @Inject private JcrService jcrService;
-    @Inject private ContentBeansService contentBeansService;
+    private final RebuildService rebuildService;
+    private final JcrService jcrService;
+    private final ContentBeansService contentBeansService;
+
+    @Inject
+    public BeanWriterResource(final RebuildService rebuildService, final JcrService jcrService, final ContentBeansService contentBeansService) {
+        this.rebuildService = rebuildService;
+        this.jcrService = jcrService;
+        this.contentBeansService = contentBeansService;
+    }
 
     @POST
     public UserFeedback runBeanWriter(final Map<String, Object> parameters) throws Exception {
