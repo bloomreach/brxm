@@ -144,6 +144,12 @@ describe('Create content step 2 controller', () => {
       expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
     });
 
+    it('allows ui-exit without dialog when switching editor', () => {
+      $ctrl.switchingEditor = true;
+      expect($ctrl.uiCanExit()).toBe(true);
+      expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
+    });
+
     it('calls confirmDiscardChanges if document is not yet saved', () => {
       $ctrl.uiCanExit();
       expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();

@@ -39,6 +39,7 @@ class Step2Controller {
 
   $onInit() {
     this.documentIsSaved = false;
+    this.switchingEditor = false;
   }
 
   allMandatoryFieldsShown() {
@@ -46,8 +47,9 @@ class Step2Controller {
   }
 
   switchEditor() {
-    this.ContentEditor.close();
+    this.switchingEditor = true;
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
+    this.ContentEditor.close();
     this.close();
   }
 
@@ -77,7 +79,7 @@ class Step2Controller {
   }
 
   uiCanExit() {
-    if (this.documentIsSaved) {
+    if (this.documentIsSaved || this.switchingEditor) {
       return true;
     }
     return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
