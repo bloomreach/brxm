@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,8 @@ class JcrPathImpl implements JcrPath {
 
     @Override
     public boolean isRoot() {
-        return this == JcrPaths.ROOT;
+        // default return value is false, but ROOT overrides this to return true
+        return false;
     }
 
     @Override
@@ -85,7 +86,7 @@ class JcrPathImpl implements JcrPath {
         }
 
         if (segments.size() == 1) {
-            return JcrPaths.ROOT;
+            return getRoot();
         }
 
         // todo: implement this in a more memory-efficient way with Lisp-style list objects
@@ -105,7 +106,7 @@ class JcrPathImpl implements JcrPath {
     @Override
     public org.onehippo.cm.model.path.JcrPath subpath(final int beginIndex, final int endIndex) {
         if (beginIndex == 0 && endIndex == 0) {
-            return JcrPaths.ROOT;
+            return getRoot();
         }
 
         return new JcrPathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0);

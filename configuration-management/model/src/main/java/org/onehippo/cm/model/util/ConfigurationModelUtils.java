@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 // TODO: IMHO, these should be public instance methods on ConfigurationModelImpl
 public class ConfigurationModelUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationModelUtils.class);
-    private static final String SEPARATOR = "/";
 
     private ConfigurationModelUtils() { }
 
@@ -92,7 +91,7 @@ public class ConfigurationModelUtils {
             final Function<String, ConfigurationItemCategory> residualNodeCategoryOverrideResolver) {
 
         final JcrPath itemPath = JcrPaths.getPath(absoluteItemPath);
-        if (itemPath.equals(JcrPaths.ROOT)) {
+        if (itemPath.isRoot()) {
             return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
 
