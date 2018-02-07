@@ -86,7 +86,7 @@
     <file action="copy" source="jsp/blog-main.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-main.jsp"/>
     <file action="copy" source="jsp/blog-author-posts.jsp" target="{{jspRoot}}/hstdefault/blog/blog-author-posts.jsp"/>
     <file action="copy" source="jsp/blog-facet.jsp" target="{{jspRoot}}/hstdefault/facet/blog-facet.jsp"/>
-    <file action="copy" source="jsp/blog-detail.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-detail.jsp"/>
+    <file action="copy" source="jsp/blog-detail.jsp" target="{{jspRoot}}/hstdefault/blog/blog-detail.jsp"/>
     <file action="copy" source="jsp/blog-list.jsp" target="{{jspRoot}}/hstdefault/blog/blog-list.jsp"/>
   </instructionSet>
 
@@ -96,7 +96,7 @@
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/blog-facet.ftl" target="{{freemarkerRoot}}/hstdefault/facet/blog-facet.ftl"/>
     <freemarker action="copy" source="freemarker/blog-author-posts.ftl" target="{{freemarkerRoot}}/hstdefault/blog/blog-author-posts.ftl"/>
-    <freemarker action="copy" source="freemarker/blog-detail.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-detail.ftl" target="{{freemarkerRoot}}/hstdefault/blog/blog-detail.ftl"/>
     <freemarker action="copy" source="freemarker/blog-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-main.ftl"/>
     <freemarker action="copy" source="freemarker/blog-list.ftl" target="{{freemarkerRoot}}/hstdefault/blog/blog-list.ftl"/>
   </instructionSet>
@@ -113,13 +113,13 @@
           target="{{freemarkerRoot}}/hstdefault/blog/blog-list_nl.properties"/>
     <freemarker action="copy"
                 source="freemarker/blog-detail-variant.ftl"
-                target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail/variant.ftl"/>
+                target="{{freemarkerRoot}}/hstdefault/blog/blog-detail/variant.ftl"/>
     <file action="copy"
           source="freemarker/blog-detail.properties"
-          target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail.properties"/>
+          target="{{freemarkerRoot}}/hstdefault/blog/blog-detail.properties"/>
     <file action="copy"
           source="freemarker/blog-detail_nl.properties"
-          target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail_nl.properties"/>
+          target="{{freemarkerRoot}}/hstdefault/blog/blog-detail_nl.properties"/>
   </instructionSet>
 
   <!--
