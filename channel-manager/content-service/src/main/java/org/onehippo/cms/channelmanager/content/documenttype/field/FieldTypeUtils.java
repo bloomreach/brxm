@@ -175,32 +175,35 @@ public class FieldTypeUtils {
 
     private static Optional<FieldType> createAndInit(final FieldTypeContext context,
                                                      final FieldsInformation allFieldsInfo) {
-        final Class<? extends FieldType> fieldTypeClass = determineDescriptor(context)
-                .map(descriptor -> determineFieldTypeClass(context, descriptor))
-                .orElse(null);
-
-        if (fieldTypeClass != null) {
-            return FieldTypeFactory.createFieldType(fieldTypeClass)
-                    .map(fieldType -> {
-                        FieldsInformation fieldInfo = fieldType.init(context);
+        final Optional<FieldType> result = determineDescriptor(context)
+                .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
+                .flatMap(FieldTypeFactory::createFieldType)
+                .map(fieldType -> {
+                    final FieldsInformation fieldInfo = fieldType.init(context);
+                    if (fieldType.isValid()) {
                         allFieldsInfo.add(fieldInfo);
-                        return fieldType.isValid() ? fieldType : null;
-                    });
-        } else {
+                        return fieldType;
+                    } else {
+                        return null;
+                    }
+                });
+
+        if (!result.isPresent()) {
             allFieldsInfo.addUnknownField(context.getContentTypeItem());
-            return Optional.empty();
         }
+
+        return result;
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
         return Optional.ofNullable(FIELD_TYPE_MAP.get(determineFieldType(context)));
     }
 
-    private static Class<? extends FieldType> determineFieldTypeClass(final FieldTypeContext context, final TypeDescriptor descriptor) {
+    private static Optional<Class<? extends FieldType>> determineFieldTypeClass(final FieldTypeContext context, final TypeDescriptor descriptor) {
         if (usesDefaultFieldPlugin(context, descriptor)) {
-            return descriptor.fieldTypeClass;
+            return Optional.of(descriptor.fieldTypeClass);
         }
-        return null;
+        return Optional.empty();
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
