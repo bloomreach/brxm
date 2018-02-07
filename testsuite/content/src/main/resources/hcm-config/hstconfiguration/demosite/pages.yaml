@@ -5,6 +5,8 @@ definitions:
       /home:
         jcr:primaryType: hst:component
         hst:referencecomponent: hst:pages/standard
+        hst:parameternames: [param1,param2]
+        hst:parametervalues: [value1,value2]
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/bodyhome

@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:sitemap/login:
+      jcr:primaryType: hst:sitemapitem
+      hst:containerresource: true
+      hst:namedpipeline: PlainFilterChainInvokingPipeline
+      hst:scheme: http
+      hst:schemeagnostic: true
+      /_any_:
+        jcr:primaryType: hst:sitemapitem

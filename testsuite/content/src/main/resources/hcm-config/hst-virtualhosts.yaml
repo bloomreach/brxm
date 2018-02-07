@@ -29,7 +29,7 @@ definitions:
             hst:parametervalues: [testValue]
             /resourceapi:
               jcr:primaryType: hst:mount
-              hst:alias: pageapi
+              hst:alias: resourceapi
               hst:namedpipeline: PageModelPipeline
             /demosite_fr:
               jcr:primaryType: hst:mount
@@ -102,6 +102,10 @@ definitions:
               hst:mountrest: restapi
               hst:roles: [everybody]
               hst:type: preview
+              /resourceapi:
+                jcr:primaryType: hst:mount
+                hst:alias: resourceapi
+                hst:namedpipeline: PageModelPipeline
               /demosite_fr:
                 jcr:primaryType: hst:mount
                 hst:alias: fr_site
