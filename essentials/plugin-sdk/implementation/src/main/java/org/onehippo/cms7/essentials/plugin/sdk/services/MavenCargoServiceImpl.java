@@ -43,7 +43,12 @@ public class MavenCargoServiceImpl implements MavenCargoService {
     private static final String CARGO_PROFILE_ID = "cargo.run";
     private static final String CARGO_MAVEN2_PLUGIN = "cargo-maven2-plugin";
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public MavenCargoServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean addDependencyToCargoSharedClasspath(final MavenDependency dependency) {

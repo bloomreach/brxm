@@ -10,7 +10,7 @@
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html",
   "type": "feature",
   "hasConfiguration": true,
-  "setupParameters": false,
+  "installWithParameters": false,
   "packageFile": "/META-INF/content_blocks_plugin_instructions.xml",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"

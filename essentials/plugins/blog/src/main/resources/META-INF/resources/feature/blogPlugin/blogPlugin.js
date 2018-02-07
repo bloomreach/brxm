@@ -50,14 +50,12 @@
             };
             $scope.init = function () {
                 // retrieve plugin data
-                essentialsPluginService.getPluginById($scope.pluginId).success(function (p) {
-                    $scope.plugin = p;
-                });
+                $scope.plugin = essentialsPluginService.getPluginById($scope.pluginId);
 
-                essentialsProjectService.getProjectSettings().success(function (data) {
-                    $scope.importConfig.blogsBasePath = '/content/documents/' + data.projectNamespace + '/blog';
-                    $scope.importConfig.authorsBasePath = '/content/documents/' + data.projectNamespace + '/blog' + '/authors';
-                    $scope.importConfig.projectNamespace = data.projectNamespace;
+                essentialsProjectService.getProjectSettings().then(function (settings) {
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + settings.projectNamespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + settings.projectNamespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = settings.projectNamespace;
                 });
             };
 

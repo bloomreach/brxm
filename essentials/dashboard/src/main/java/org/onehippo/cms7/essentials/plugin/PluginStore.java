@@ -24,10 +24,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -37,19 +38,18 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
+import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
-import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
-import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +66,11 @@ import org.springframework.web.context.ContextLoader;
 public class PluginStore {
 
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
-    private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildServiceImpl rebuildService;
-    @Inject private ProjectService projectService;
-    @Inject private SettingsServiceImpl settingsService;
-    @Inject private AutowireCapableBeanFactory injector;
+    private final DynamicRestPointsApplication application;
+    private final SettingsServiceImpl settingsService;
+    private final InstallService installService;
+    private final AutowireCapableBeanFactory injector;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -115,105 +114,42 @@ public class PluginStore {
                 }
             });
 
+    @Inject
+    public PluginStore(final DynamicRestPointsApplication application, final SettingsServiceImpl settingsService,
+                       final InstallService installService, final AutowireCapableBeanFactory injector) {
+        this.application = application;
+        this.settingsService = settingsService;
+        this.installService = installService;
+        this.injector = injector;
+    }
 
-    public List<Plugin> getAllPlugins() {
-        final List<Plugin> plugins = new ArrayList<>();
 
-        // Read local descriptors
-        final List<PluginDescriptor> localDescriptors = getLocalDescriptors();
-        for (PluginDescriptor descriptor : localDescriptors) {
-            final Plugin plugin = new Plugin(descriptor, projectService);
-            injector.autowireBean(plugin);
-            plugins.add(plugin);
-        }
+    public synchronized PluginSet loadPlugins() {
+        final PluginSet pluginSet = new PluginSet();
+
+        // Read local (packaged) descriptors
+        getLocalDescriptors().forEach(pluginSet::add);
 
         // Read remote descriptors
-
         final Set<String> pluginRepositories = settingsService.getModifiableSettings().getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             try {
                 final List<PluginDescriptor> descriptors = pluginCache.get(pluginRepository);
                 log.debug("{}", pluginCache.stats());
                 if (descriptors != null) {
-                    for (PluginDescriptor descriptor : descriptors) {
-                        final Plugin plugin = new Plugin(descriptor, projectService);
-                        injector.autowireBean(plugin);
-                        plugins.add(plugin);
-                    }
+                    descriptors.forEach(pluginSet::add);
                 }
             } catch (Exception e) {
                 log.error(MessageFormat.format("Error loading plugins from repository '{0}'", pluginRepository), e);
             }
         }
 
-        processPlugins(plugins);
-        return plugins;
-    }
-
-    public Plugin getPluginById(final String id) {
-        if (Strings.isNullOrEmpty(id)) {
-            return null;
-        }
-
-        for (final Plugin plugin : getAllPlugins()) {
-            if (id.equals(plugin.getId())) {
-                return plugin;
-            }
-        }
-        return null;
-    }
-
-    public int countInstalledPlugins() {
-        int installedPlugins = 0;
-
-        for (Plugin plugin : getAllPlugins()) {
-            if (plugin.getInstallState() != InstallState.DISCOVERED) {
-                installedPlugins++;
-            }
-        }
-
-        return installedPlugins;
+        processPlugins(pluginSet);
+        return pluginSet;
     }
 
     public void clearCache() {
         pluginCache.invalidateAll();
-    }
-
-    public void populateSystemInfo(final SystemInfo systemInfo) {
-        final List<Plugin> plugins = getAllPlugins();
-        for (Plugin plugin : plugins) {
-            systemInfo.incrementPlugins();
-            final InstallState installState = plugin.getInstallState();
-            final String pluginType = plugin.getDescriptor().getType();
-            final boolean isTool = "tool".equals(pluginType);
-            if (isTool) {
-                systemInfo.incrementTools();
-            }
-            final boolean isFeature = "feature".equals(pluginType);
-            if (isFeature && installState != InstallState.DISCOVERED) {
-                systemInfo.incrementInstalledFeatures();
-            }
-            if (!isTool) {
-                if (installState == InstallState.BOARDING || installState == InstallState.INSTALLING) {
-                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
-                    systemInfo.setNeedsRebuild(true);
-                } else if (installState == InstallState.ONBOARD) {
-                    systemInfo.incrementConfigurablePlugins();
-                }
-            }
-        }
-
-        // check if we have external rebuild events:
-        final Set<String> pluginIds = rebuildService.getRequestingPluginIds();
-        for (String pluginId : pluginIds) {
-            for (Plugin plugin : plugins) {
-                if (plugin.getId().equals(pluginId)) {
-                    systemInfo.setNeedsRebuild(true);
-                    systemInfo.addRebuildPlugin(plugin.getDescriptor());
-                    break;
-                }
-            }
-        }
     }
 
     private List<PluginDescriptor> getLocalDescriptors() {
@@ -232,7 +168,6 @@ public class PluginStore {
         return parsePlugins(json);
     }
 
-    @SuppressWarnings("unchecked")
     private List<PluginDescriptor> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
             try {
@@ -248,35 +183,64 @@ public class PluginStore {
         return Collections.emptyList();
     }
 
-    private static final Semaphore serverSemaphore = new Semaphore(1);
+    private boolean serverStarted;
 
-    private void processPlugins(final List<Plugin> plugins) {
-        plugins.forEach(p -> registerEndPoints(p.getDescriptor()));
+    private void processPlugins(final PluginSet pluginSet) {
+        final Set<String> restClasses = new HashSet<>();
 
-        // Make sure we only attempt starting the server once!
-        if (!application.getSingletons().isEmpty() && serverSemaphore.drainPermits() > 0) {
-            startServer();
+        for (PluginDescriptor plugin : pluginSet.getPlugins()) {
+            // load the plugin's current installation state
+            installService.loadInstallStateFromFileSystem(plugin);
+
+            plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
+
+            // extract all REST classes to setup the dynamic endpoints
+            if (plugin.getRestClasses() != null) {
+                restClasses.addAll(plugin.getRestClasses());
+            }
+        }
+
+        restClasses.forEach(application::addSingleton);
+
+        if (!restClasses.isEmpty() && !serverStarted) {
+            injector.autowireBean(application);
+
+            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
+            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
+
+            factoryBean.setProvider(applicationContext.getBean("jsonProvider"));
+            factoryBean.setBus(BusFactory.getDefaultBus());
+
+            final Server server = factoryBean.create();
+            server.start();
+            serverStarted = true;
         }
     }
 
-    private void registerEndPoints(final PluginDescriptor descriptor) {
-        final List<String> restClasses = descriptor.getRestClasses();
-        if (restClasses != null) {
-            restClasses.forEach(fqcn -> application.addSingleton(fqcn, injector));
+    private String makeDependencySummary(final PluginDescriptor plugin, final PluginSet pluginSet) {
+        final List<PluginDescriptor.Dependency> deps = plugin.getPluginDependencies();
+        if (deps != null) {
+            final List<String> dependentPluginIds = new ArrayList<>();
+
+            for (PluginDescriptor.Dependency dep : deps) {
+                final String pluginId = dep.getPluginId();
+                if (StringUtils.isNotBlank(pluginId)) {
+                    final PluginDescriptor p = pluginSet.getPlugin(pluginId);
+                    if (p != null) {
+                        dependentPluginIds.add(p.getName());
+                    } else {
+                        dependentPluginIds.add(pluginId + " (missing)");
+                    }
+                }
+            }
+
+            if (!dependentPluginIds.isEmpty()) {
+                final String csv = dependentPluginIds.stream().collect(Collectors.joining(", "));
+                return String.format("Depends on feature%s: %s.", dependentPluginIds.size() > 1 ? "s" : "", csv);
+            }
         }
-    }
 
-    private void startServer() {
-        injector.autowireBean(application);
-
-        final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-        final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
-        final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
-
-        factoryBean.setProvider(applicationContext.getBean("jsonProvider"));
-        factoryBean.setBus(BusFactory.getDefaultBus());
-
-        final Server server = factoryBean.create();
-        server.start();
+        return null;
     }
 }

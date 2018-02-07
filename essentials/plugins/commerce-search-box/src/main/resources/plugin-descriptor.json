@@ -20,5 +20,16 @@
     "type": [
       "feature"
     ]
-  }
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton"
+    },
+    {
+      "pluginId": "crisp"
+    },
+    {
+      "pluginId": "personalization"
+    }
+  ]
 }

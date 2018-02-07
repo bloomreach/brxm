@@ -30,7 +30,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MavenAssemblyServiceImpl implements MavenAssemblyService {
 
-    @Inject private ProjectService projectService;
+    private final ProjectService projectService;
+
+    @Inject
+    public MavenAssemblyServiceImpl(final ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @Override
     public boolean addDependencySet(final String descriptorFilename, final String outputDirectory,

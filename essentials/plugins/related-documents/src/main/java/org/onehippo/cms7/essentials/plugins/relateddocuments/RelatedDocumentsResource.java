@@ -52,8 +52,14 @@ public class RelatedDocumentsResource {
     private static final Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
     private static final String MIXIN_NAME = "relateddocs:relatabledocs";
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+
+    @Inject
+    public RelatedDocumentsResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+    }
 
     @POST
     @Path("/")

@@ -158,41 +158,6 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
-            var root = window.SERVER_URL + '/essentials/rest';
-            var pluginsStem = root + "/plugins";
-            var projectStem = root + "/project";
-
-            $rootScope.REST = {
-                /**
-                 * PluginResource
-                 */
-                plugins: pluginsStem,
-                PLUGINS: { // Front-end API
-                    byId:               function(id) { return pluginsStem + '/' + id; },
-                    changesById:        function(id) { return pluginsStem + '/' + id + '/changes'; },
-                    setupById:          function(id) { return pluginsStem + '/' + id + '/setup'; },
-                    setupCompleteForId: function(id) { return pluginsStem + '/' + id + '/setupcomplete'; }
-                },
-
-                /**
-                 * ProjectResource
-                 */
-                project: projectStem,
-                PROJECT: { // Front-end API
-                    settings: projectStem + '/settings'
-                }
-            };
-
-            /**
-             * Set global variables (often used stuff)
-             */
-            $rootScope.initData = function () {
-                $http.get($rootScope.REST.PROJECT.settings).success(function (data) {
-                    $rootScope.projectSettings = data;
-                });
-            };
-
-            $rootScope.initData();
         })
 
 
@@ -271,9 +236,123 @@
                 myResult.options = myOptions;
                 return  myResult;
             };
-        }
-    );
-
+        })
+        .service('pluginService', function($http, $q, $log) {
+            var baseUrl = window.SERVER_URL + '/essentials/rest/plugins';
+            var changeMessageTypeMap = {
+                FILE_CREATE: {
+                    sort: 1,
+                    icon: 'file'
+                },
+                FILE_DELETE: {
+                    sort: 1,
+                    icon: 'file'
+                },
+                DOCUMENT_REGISTER: {
+                    sort: 2,
+                    icon: 'file-text'
+                },
+                XML_NODE_CREATE: {
+                    sort: 3,
+                    icon: 'plus-square'
+                },
+                XML_NODE_DELETE: {
+                    sort: 3,
+                    icon: 'plus-square'
+                },
+                XML_NODE_FOLDER_CREATE: {
+                    sort: 4,
+                    icon: 'folder-open'
+                },
+                EXECUTE: {
+                    sort: 5,
+                    icon: 'code'
+                }
+            };
+            var plugins = [];
+            function loadPlugins() {
+                return $http.get(baseUrl).then(function(response) {
+                    if (plugins.length !== response.data.length) {
+                        // a new number of plugins has been returned, replace the old list.
+                        plugins.splice(0, plugins.length);
+                        response.data.forEach(function(plugin) {
+                            plugins.push(plugin);
+                        });
+                    } else {
+                        // to avoid a jumpy UX, only update the plugins' installState
+                        response.data.forEach(function(incoming) {
+                            plugins.some(function(existing) {
+                                if (existing.id === incoming.id) {
+                                    existing.installState = incoming.installState;
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+            this.loadPlugins = loadPlugins;
+            this.getPlugins = function() {
+                return plugins;
+            };
+            this.getPlugin = function(id) {
+                return plugins.find(function(plugin) {
+                    return plugin.id === id;
+                });
+            };
+            this.install = function(id, params) {
+                var plugin = this.getPlugin(id);
+                if (plugin.installState === 'discovered') {
+                    return $http.post(baseUrl + '/' + id + '/install').then(loadPlugins);
+                }
+                if (plugin.installState === 'onBoard') {
+                    return $http.post(baseUrl + '/' + id + '/setup', params).then(loadPlugins);
+                }
+                $log.warn('Trying to install plugin ' + id + ', but unsuitable state ' + plugin.installState + '.');
+                return $q.resolve();
+            };
+            this.autoSetup = function() {
+                return $http.post(baseUrl + '/autosetup').then(loadPlugins, loadPlugins);
+            };
+            this.getChangeMessages = function(id, params) {
+                return $http.get(baseUrl + '/' + id + '/changes', {params: params}).then(function (response) {
+                    var messages = response.data || [];
+                    messages.forEach(function(message) {
+                        message.icon = changeMessageTypeMap[message.type].icon;
+                    });
+                    messages.sort(function(m1, m2) {
+                        return changeMessageTypeMap[m1.type].sort - changeMessageTypeMap[m2.type].sort;
+                    });
+                    return messages;
+                });
+            };
+        })
+        .service('projectService', function($http, $q) {
+            var baseUrl = window.SERVER_URL + '/essentials/rest/project';
+            var _settings;
+            function loadSettings() {
+                return $http.get(baseUrl + '/settings').then(function(response) {
+                    _settings = response.data;
+                });
+            }
+            this.getSettings = function() {
+                if (_settings) {
+                    return $q.resolve(_settings);
+                }
+                return loadSettings().then(function() {
+                    return _settings;
+                });
+            };
+            this.setSettings = function(settings) {
+                _settings = undefined;
+                return $http.post(baseUrl + '/settings', settings).then(loadSettings);
+            };
+            this.ping = function() {
+                return $http.get(baseUrl + '/ping');
+            };
+            this.status = function() {
+                return $http.get(baseUrl + '/status');
+            };
+        });
 })();
 
 

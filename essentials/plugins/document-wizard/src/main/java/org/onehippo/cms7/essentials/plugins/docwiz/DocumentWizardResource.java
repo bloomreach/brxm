@@ -46,7 +46,12 @@ public class DocumentWizardResource {
     private static final Logger log = LoggerFactory.getLogger(DocumentWizardResource.class);
     private static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
 
-    @Inject private JcrService jcrService;
+    private final JcrService jcrService;
+
+    @Inject
+    public DocumentWizardResource(final JcrService jcrService) {
+        this.jcrService = jcrService;
+    }
 
     @POST
     @Path("/")

@@ -69,8 +69,14 @@ public class TaxonomyResource {
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+
+    @Inject
+    public TaxonomyResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+    }
 
     /**
      * Returns list of taxonomies found under {@code /content/taxonomies/} node.

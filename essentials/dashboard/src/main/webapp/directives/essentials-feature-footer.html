@@ -27,10 +27,6 @@
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">
-    <p ng-repeat="changeMessage in changeMessages | filter: isCreateFile"><hippo-icon name="file" size="m" ></hippo-icon> {{changeMessage.message}}</p>
-    <p ng-repeat="changeMessage in changeMessages | filter: isRegisterDocument"><hippo-icon name="file-text" size="m" ></hippo-icon> {{changeMessage.message}}</p>
-    <p ng-repeat="changeMessage in changeMessages | filter: isCreateXmlNode"><hippo-icon name="plus-square" size="m" ></hippo-icon> {{changeMessage.message}}</p>
-    <p ng-repeat="changeMessage in changeMessages | filter: isCreateXmlFolderNode"><hippo-icon name="folder-open" size="m" ></hippo-icon> {{changeMessage.message}}</p>
-    <p ng-repeat="changeMessage in changeMessages | filter: isExecute"><hippo-icon name="code" size="m" ></hippo-icon> {{changeMessage.message}}</p>
+    <p ng-repeat="changeMessage in changeMessages"><hippo-icon name="{{changeMessage.icon}}" size="m" ></hippo-icon> {{changeMessage.message}}</p>
   </div>
 </div>

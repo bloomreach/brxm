@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@
     <xml action="copy" overwrite="false" source="hst/commerce-more-like-this-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>
-    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-addon-crisp-api" version="${hippo.addon-crisp.version}"/>
-    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-addon-crisp-repository" version="${hippo.addon-crisp.version}"/>
-    <mavenDependency targetPom="cms" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-components-repository" version="${hippo.addon-personalization.version}"/>
-    <mavenDependency targetPom="site" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-dependencies" type="pom" version="${hippo.addon-personalization.version}"/>
     <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
     <xml action="copy" overwrite="false" source="hst/commerce-more-like-this.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>

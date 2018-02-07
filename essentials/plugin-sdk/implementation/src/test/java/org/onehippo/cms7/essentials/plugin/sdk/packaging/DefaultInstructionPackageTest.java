@@ -31,22 +31,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultInstructionPackageTest extends BaseTest {
 
-
-
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testInstructionPackageNoInjection() throws Exception {
-        DefaultInstructionPackage instructionPackage = new DefaultInstructionPackage();
+        DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
         instructionPackage.execute(new HashMap<>());
     }
 
     @Test
     public void testInstructionPackage() throws Exception {
-        DefaultInstructionPackage instructionPackage = new DefaultInstructionPackage();
+        DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
         injector.autowireBean(instructionPackage);
         final String instructionPath = instructionPackage.getInstructionPath();
         Assert.assertEquals("Expected default path", instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
         final PluginInstructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
-
     }
 }

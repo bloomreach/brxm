@@ -80,9 +80,16 @@ public class ContentBlocksResource {
     private static final Set<String> BUILTIN_COMPOUNDS
             = new HashSet<>(Arrays.asList("hippo:mirror", "hippo:resource", "hippostd:html", "hippogallerypicker:imagelink"));
 
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
-    @Inject private SettingsService settingsService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+    private final SettingsService settingsService;
+
+    @Inject
+    public ContentBlocksResource(final JcrService jcrService, final ContentTypeService contentTypeService, final SettingsService settingsService) {
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+        this.settingsService = settingsService;
+    }
 
     @GET
     @Path("/")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ public class ResourceData {
     private int timeToLiveSeconds = 600;
     private int timeToIdleSeconds = 600;
     private boolean crispExists;
-    private boolean crispDependencyExists;
 
 
     public String getBasePath() {
@@ -177,13 +176,5 @@ public class ResourceData {
 
     public boolean isCrispExists() {
         return crispExists;
-    }
-
-    public void setCrispDependencyExists(final boolean crispDependencyExists) {
-        this.crispDependencyExists = crispDependencyExists;
-    }
-
-    public boolean isCrispDependencyExists() {
-        return crispDependencyExists;
     }
 }

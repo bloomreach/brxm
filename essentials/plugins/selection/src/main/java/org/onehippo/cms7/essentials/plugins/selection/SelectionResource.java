@@ -74,10 +74,19 @@ public class SelectionResource {
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
 
-    @Inject private RebuildService rebuildService;
-    @Inject private ProjectService projectService;
-    @Inject private JcrService jcrService;
-    @Inject private ContentTypeService contentTypeService;
+    private final RebuildService rebuildService;
+    private final ProjectService projectService;
+    private final JcrService jcrService;
+    private final ContentTypeService contentTypeService;
+
+    @Inject
+    public SelectionResource(final RebuildService rebuildService, final ProjectService projectService,
+                             final JcrService jcrService, final ContentTypeService contentTypeService) {
+        this.rebuildService = rebuildService;
+        this.projectService = projectService;
+        this.jcrService = jcrService;
+        this.contentTypeService = contentTypeService;
+    }
 
     @POST
     @Path("/addfield")

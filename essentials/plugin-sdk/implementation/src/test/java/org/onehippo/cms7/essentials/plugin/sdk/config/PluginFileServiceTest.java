@@ -20,19 +20,17 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PluginFileServiceTest extends BaseTest {
 
-    @Inject private ProjectService projectService;
+    @Inject private PluginFileService pluginFileService;
 
     @Test
     public void testPluginService() throws Exception {
         final String filename = "project-settings";
-        final PluginFileService service = new PluginFileService(projectService);
 
         final ProjectSettingsBean bean = new ProjectSettingsBean();
         bean.setProjectNamespace("myNamespace");
@@ -40,9 +38,9 @@ public class PluginFileServiceTest extends BaseTest {
         bean.setSelectedComponentsPackage("testComponentPackage");
         bean.setSelectedRestPackage("testRestPackage");
         bean.setSelectedProjectPackage("testProjectPackage");
-        assertTrue(service.write(filename, bean));
+        assertTrue(pluginFileService.write(filename, bean));
 
-        final ProjectSettingsBean myBean = service.read(filename, bean.getClass());
+        final ProjectSettingsBean myBean = pluginFileService.read(filename, bean.getClass());
         assertEquals(myBean.getProjectNamespace(), bean.getProjectNamespace());
         assertEquals(myBean.getSelectedBeansPackage(), bean.getSelectedBeansPackage());
         assertEquals(myBean.getSelectedComponentsPackage(), bean.getSelectedComponentsPackage());

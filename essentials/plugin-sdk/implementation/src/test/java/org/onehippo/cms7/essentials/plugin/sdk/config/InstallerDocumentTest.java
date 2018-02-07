@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,18 +31,17 @@ import static org.junit.Assert.assertNotNull;
  */
 public class InstallerDocumentTest extends BaseTest {
 
-    @Inject private ProjectService projectService;
+    @Inject private PluginFileService pluginFileService;
 
     @Test
     public void testGetPluginId() throws Exception {
         final String filename = "foo.bar.zar.MyBean";
         final Calendar today = Calendar.getInstance();
-        final PluginFileService service = new PluginFileService(projectService);
         final InstallerDocument document = new InstallerDocument();
         document.setDateInstalled(today);
-        service.write(filename, document);
+        pluginFileService.write(filename, document);
 
-        final InstallerDocument fetched = service.read(filename, InstallerDocument.class);
+        final InstallerDocument fetched = pluginFileService.read(filename, InstallerDocument.class);
         assertNotNull(fetched.getDateInstalled());
         assertEquals(fetched.getDateInstalled().getTime(), today.getTime());
     }

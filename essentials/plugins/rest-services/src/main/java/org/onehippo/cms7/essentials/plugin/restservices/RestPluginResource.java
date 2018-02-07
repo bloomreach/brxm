@@ -58,11 +58,22 @@ public class RestPluginResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestPluginResource.class);
 
-    @Inject private RebuildService rebuildService;
-    @Inject private JcrService jcrService;
-    @Inject private SettingsService settingsService;
-    @Inject private ProjectService projectService;
-    @Inject private PlaceholderService placeholderService;
+    private final RebuildService rebuildService;
+    private final JcrService jcrService;
+    private final SettingsService settingsService;
+    private final ProjectService projectService;
+    private final PlaceholderService placeholderService;
+
+    @Inject
+    public RestPluginResource(final RebuildService rebuildService, final JcrService jcrService,
+                              final SettingsService settingsService, final ProjectService projectService,
+                              final PlaceholderService placeholderService) {
+        this.rebuildService = rebuildService;
+        this.jcrService = jcrService;
+        this.settingsService = settingsService;
+        this.projectService = projectService;
+        this.placeholderService = placeholderService;
+    }
 
     @POST
     @Path("/")

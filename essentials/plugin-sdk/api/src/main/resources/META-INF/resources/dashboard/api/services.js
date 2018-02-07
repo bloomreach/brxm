@@ -18,7 +18,6 @@
   "use strict";
 
   var dashboardRoot = window.SERVER_URL + '/essentials/rest';
-  var projectSettings = dashboardRoot + '/project/settings';
   var contentTypes = dashboardRoot + '/documents';
   var templateQueries = contentTypes + '/templatequeries';
 
@@ -38,27 +37,27 @@
       this.baseUrl = dashboardRoot + '/dynamic';
     })
 
-    .service('essentialsPluginService', function($http) {
+    .service('essentialsPluginService', function(pluginService) {
 
       /**
        * Retrieve the parameters for the plugin with the specified ID.
        *
-       * Returns an AngularJs 'HttpPromise', which, upon success, resolves into a deserialized PluginDescriptor object.
+       * Returns a deserialized PluginDescriptor object.
        */
       this.getPluginById = function(id) {
-        return $http.get(pluginById(id));
+        return pluginService.getPlugin(id);
       };
     })
 
-    .service('essentialsProjectService', function($http) {
+    .service('essentialsProjectService', function(projectService) {
 
       /**
        * Retrieve the project's current settings.
        *
-       * Returns an AngularJs 'HttpPromise', which, upon success, resolves into a deserialized ProjectSettings object
+       * Returns an AngularJs Promise, which, upon success, resolves into a deserialized ProjectSettings object
        */
       this.getProjectSettings = function() {
-        return $http.get(projectSettings);
+        return projectService.getSettings();
       };
     })
 

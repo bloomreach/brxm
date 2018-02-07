@@ -44,5 +44,11 @@
       "scope": "compile",
       "targetPom": "site"
     }
+  ],
+  "pluginDependencies": [
+    {
+      "pluginId": "enterpriseProject",
+      "minInstallStateForBoarding": "installing"
+    }
   ]
 }

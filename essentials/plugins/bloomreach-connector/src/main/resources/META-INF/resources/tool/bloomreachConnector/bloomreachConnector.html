@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,36 +16,20 @@
 
 <div class="panel panel-default" ng-controller="bloomreachConnectorCtrl">
   <div class="panel-heading"><h3>Configure Bloomreach personalization connector</h3></div>
-  <div class="panel-body" ng-show="!crispDependencyExists">
+  <div class="panel-body" ng-if="crispDoesntExist">
     <div class="alert alert-danger">
       <div>
         <h3>Dependencies missing</h3>
-        <p>To be able to configure Bloomreach personalization connector, we need to install repository dependencies and restart CMS application</p>
-        <div class="pull-right">
-          <button class="btn btn-primary" ng-click="install()">Install dependencies</button>
-        </div>
-        <p style="clear: both"></p>
-
-      </div>
-
-    </div>
-  </div>
-  <div class="panel-body" ng-show="!crispExists && crispDependencyExists">
-    <div class="alert alert-info">
-      <div>
-        <h3>Rebuild required</h3>
-        <p>To use Bloomreach personalization connector, project rebuild is required</p>
+        <p>To be able to configure Bloomreach personalization connector, you need to at least install the CRISP feature, and rebuild and restart CMS application</p>
         <pre>
         mvn verify
-        mvn -Pcargo.run -Drepo.path=storage
-        </pre>
+        mvn -Pcargo.run -Drepo.path=storage</pre>
         <p style="clear: both"></p>
-
       </div>
 
     </div>
   </div>
-  <div class="panel-body" ng-show="crispExists && crispDependencyExists">
+  <div class="panel-body" ng-if="crispExists">
     <form class="form-horizontal" novalidate name="form">
       <fieldset>
         <legend>Account Settings:</legend>

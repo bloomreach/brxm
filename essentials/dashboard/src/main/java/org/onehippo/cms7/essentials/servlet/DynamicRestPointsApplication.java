@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.servlet;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
@@ -26,33 +27,44 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementation of a JAXRS Application which instantiates and Spring-wires resource classes as singletons.
  */
+@Component
 @ApplicationPath("/dynamic")
 public class DynamicRestPointsApplication extends Application {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRestPointsApplication.class);
     private final Set<String> fqcns = new HashSet<>();
     private final Set<Object> singletons = new HashSet<>();
 
+    private final AutowireCapableBeanFactory injector;
+
+    @Inject
+    public DynamicRestPointsApplication(final AutowireCapableBeanFactory injector) {
+        this.injector = injector;
+    }
+
     @Override
     public Set<Object> getSingletons() {
         return singletons;
     }
 
-    public void addSingleton(final String fqcn, final AutowireCapableBeanFactory injector) {
+    public void addSingleton(final String fqcn) {
         if (fqcns.contains(fqcn)) {
             return;
         }
 
-        final Object singleton = GlobalUtils.newInstance(fqcn);
-        if (singleton != null) {
-            LOG.info("Add dynamic (plugin) REST endpoint '{}'.", fqcn);
+        final Class<?> restClass = GlobalUtils.loadClass(fqcn);
+        if (restClass != null) {
+            final Object singleton = injector.createBean(restClass);
+            if (singleton != null) {
+                LOG.info("Add dynamic (plugin) REST endpoint '{}'.", fqcn);
 
-            injector.autowireBean(singleton);
-            fqcns.add(fqcn);
-            singletons.add(singleton);
+                fqcns.add(fqcn);
+                singletons.add(singleton);
+            }
         }
     }
 }

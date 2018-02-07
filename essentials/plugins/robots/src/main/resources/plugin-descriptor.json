@@ -41,5 +41,10 @@
       "scope": "compile",
       "targetPom": "site"
     }
+  ],
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton"
+    }
   ]
 }

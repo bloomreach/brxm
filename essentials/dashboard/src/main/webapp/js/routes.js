@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@
         });
 
     var setupCompleted = false;
-    var initAndDispatch = function ($q, $rootScope, $location, $http, $log, $timeout, modalService, pluginTypeFilter) {
+    var initAndDispatch = function ($q, $rootScope, $location, $timeout, modalService, pluginService, projectService, pluginTypeFilter) {
         var startPinger = function () {
             var PING_RUNNING_TIMER = 7000;
             var PING_DOWN_TIMER = 10000;
@@ -105,17 +105,16 @@
                     }
                 }
 
-                $http.get($rootScope.REST.project + '/ping').success(function (data) {
-                    if (data) {
-                        if (data.initialized) {
+                projectService.ping().success(function(systemInfo) {
+                    if (systemInfo) {
+                        if (systemInfo.initialized) {
                             $timeout(ping, PING_RUNNING_TIMER);
-                            $rootScope.TOTAL_PLUGINS = data.totalPlugins;
-                            $rootScope.TOTAL_TOOLS = data.totalTools;
-                            $rootScope.INSTALLED_FEATURES = data.installedFeatures;
-                            $rootScope.NEEDS_REBUILD = data.needsRebuild;
-                            $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(data.rebuildPlugins, "feature").length + data.configurablePlugins;
-                            $rootScope.REBUILD_PLUGINS = data.rebuildPlugins;
-
+                            $rootScope.TOTAL_PLUGINS = systemInfo.totalPlugins;
+                            $rootScope.TOTAL_TOOLS = systemInfo.totalTools;
+                            $rootScope.INSTALLED_FEATURES = systemInfo.installedFeatures;
+                            $rootScope.NEEDS_REBUILD = systemInfo.needsRebuild;
+                            $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(systemInfo.rebuildPlugins, "feature").length + systemInfo.configurablePlugins;
+                            $rootScope.REBUILD_PLUGINS = systemInfo.rebuildPlugins;
                         } else {
                             // app is back up, but needs to restart
                             window.location.href = $rootScope.applicationUrl;
@@ -136,7 +135,7 @@
             startPinger();
 
             // Dispatch to appropriate initial location
-            $http.get($rootScope.REST.project + '/status')
+            projectService.status()
                 .success(function (response) {
                     if ($location.url() === '') { // only dispatch if not on specific "page".
                         if (!response.projectInitialized) {
@@ -155,7 +154,7 @@
                 });
         };
         if (!setupCompleted) {
-            $http.post($rootScope.REST.plugins + '/autosetup').then(completeInitialization, completeInitialization);
+            pluginService.autoSetup().then(completeInitialization, completeInitialization);
             return deferred.promise;
         }
     };
