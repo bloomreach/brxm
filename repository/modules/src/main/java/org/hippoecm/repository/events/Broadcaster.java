@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.events;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,7 +47,7 @@ class Broadcaster implements Runnable {
     private class JobRunner {
 
         private final BroadcastJob job;
-        private boolean processedEvents = false;
+        private boolean possiblyEventsLeftToProcess = false;
 
         private JobRunner(BroadcastJob job) {
             this.job = job;
@@ -58,17 +55,16 @@ class Broadcaster implements Runnable {
 
         private void run() {
             try {
-                long lastProcessItem = job.getLastProcessed();
-                String eventCategory = job.getEventCategory();
-                log.debug("Getting latest log items in category {} starting from {}", eventCategory, lastProcessItem);
+                final long globalLastProcessedItem = job.getGlobalLastProcessed();
 
-                List<Node> logItems = getNextLogNodes(lastProcessItem, eventCategory);
-                long timeStamp = processEvents(job, logItems);
+                final List<Node> logItems = getNextLogNodes(globalLastProcessedItem);
+                final long timeStamp = processEvents(job, logItems);
 
                 if (timeStamp > -1L) {
                     job.setLastProcessed(timeStamp);
                 }
-                processedEvents = (logItems.size() > 0);
+                // if number of log items processed is equal to query limit, some more might need processing
+                possiblyEventsLeftToProcess = logItems.size() == queryLimit;
             } catch (Exception e) {
                 log.warn("Error during running thread", e);
             }
@@ -82,7 +78,7 @@ class Broadcaster implements Runnable {
             }
             for (Node logItem : logItems) {
                 try {
-                    log.debug("Publishing event {} to channel {}", JcrUtils.getNodePathQuietly(logItem), job.getChannelName());
+                    log.debug("Publishing event {}", JcrUtils.getNodePathQuietly(logItem));
                     final HippoEvent event = createEvent(logItem);
                     job.publish(event);
                     timeStamp = event.timestamp();
@@ -93,8 +89,8 @@ class Broadcaster implements Runnable {
             return timeStamp;
         }
 
-        private boolean wereEventsProcessed() {
-            return processedEvents;
+        private boolean isPossiblyEventsLeftToProcess() {
+            return possiblyEventsLeftToProcess;
         }
     }
 
@@ -105,7 +101,7 @@ class Broadcaster implements Runnable {
     private volatile boolean keepRunning = true;
 
     private long queryLimit;
-    private long maxEventAge;
+    private long maxEventAgeHours;
 
     public Broadcaster(final Session session, final BroadcastService broadcastService) {
         this.session = session;
@@ -118,7 +114,7 @@ class Broadcaster implements Runnable {
     }
 
     public void setMaxEventAge(final long maxEventAge) {
-        this.maxEventAge = maxEventAge;
+        this.maxEventAgeHours = maxEventAge;
     }
 
     public void run() {
@@ -126,10 +122,9 @@ class Broadcaster implements Runnable {
             log.debug("Polling");
             final BroadcastJob job = broadcastService.getNextJob();
             if (job != null) {
-                log.debug("Found job: {}", job.getChannelName());
                 JobRunner runner = new JobRunner(job);
                 runner.run();
-                if (!runner.wereEventsProcessed()) {
+                if (!runner.isPossiblyEventsLeftToProcess()) {
                     break;
                 }
             } else {
@@ -142,13 +137,21 @@ class Broadcaster implements Runnable {
         keepRunning = false;
     }
 
-    private List<Node> getNextLogNodes(long lastItem, final String eventCategory) throws RepositoryException {
+    private List<Node> getNextLogNodes(long lastItem) throws RepositoryException {
         log.debug("lastItem processed item: {}", lastItem);
 
         try {
             LinkedList<Node> nodes = new LinkedList<Node>();
-            final String statement = eventCategory == null ? "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp DESC"
-                    : "SELECT * FROM hippolog:item WHERE hippolog:category = '" + eventCategory + "' ORDER BY hippolog:timestamp DESC";
+
+            if (maxEventAgeHours > -1) {
+                final long maxEventAgeTimestamp = System.currentTimeMillis() - maxEventAgeHours * 60 * 60 * 1000;
+                if (lastItem < maxEventAgeTimestamp) {
+                    log.info("max event age timestamp is passed. Set lastItem to max event age timestamp");
+                    lastItem = maxEventAgeTimestamp;
+                }
+            }
+
+            final String statement = "SELECT * FROM hippolog:item WHERE hippolog:timestamp > " + lastItem + " ORDER BY hippolog:timestamp ASC";
             Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL);
 
             if (queryLimit > -1) {
@@ -159,21 +162,11 @@ class Broadcaster implements Runnable {
             QueryResult queryResult = query.execute();
             NodeIterator nodeIterator = queryResult.getNodes();
 
-            // if a maximum event age has been configured, check if last processed item
-            // is older than maximum age, and update lastItem if so
-            if (maxEventAge > -1) {
-                Calendar minTimestamp = new GregorianCalendar();
-                minTimestamp.add(Calendar.HOUR_OF_DAY, -((int) maxEventAge));
-                if (lastItem < minTimestamp.getTimeInMillis()) {
-                    log.debug("skip events older than {}", minTimestamp.getTime());
-                    lastItem = minTimestamp.getTimeInMillis();
-                }
-            }
-
             // iterate through results (which are in reverse chronological order)
             // until timestamp is older than what we are interested in
             for (Node logNode : new NodeIterable(nodeIterator)) {
-                // add log node if valid and has timestamp higher than lastItem
+                // add log node if valid and has timestamp higher than lastItem (which should always be the case since
+                // we query on hippolog:timestamp > " + lastItem + "
                 if (logNode.hasProperty(HIPPOLOG_TIMESTAMP)) {
                     long timeStamp = logNode.getProperty(HIPPOLOG_TIMESTAMP).getLong();
                     if (timeStamp > lastItem) {
@@ -184,14 +177,7 @@ class Broadcaster implements Runnable {
                 }
             }
 
-            // reverse list because query result was sorted by timestamp descending
-            List<Node> nodesSorted = new LinkedList<Node>();
-            Iterator<Node> it = nodes.descendingIterator();
-            while (it.hasNext()) {
-                nodesSorted.add(it.next());
-            }
-
-            return nodesSorted;
+            return nodes;
 
         } catch (Exception e) {
             session.refresh(false);
