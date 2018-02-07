@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -39,16 +40,14 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.createPartialMock;
 import static org.powermock.api.easymock.PowerMock.expectPrivate;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -111,7 +110,6 @@ public class DocumentTypesServiceImplTest {
         expect(contentType.isDocumentType()).andReturn(false);
 
         replayAll();
-        replay(context, contentType);
 
         try {
             documentTypesService.getDocumentType(id, session, locale);
@@ -120,7 +118,6 @@ public class DocumentTypesServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        verify(context, contentType);
         verifyAll();
     }
 
@@ -133,9 +130,6 @@ public class DocumentTypesServiceImplTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
-        final FieldsInformation fieldsInfo = new FieldsInformation();
-        fieldsInfo.setAllFieldsIncluded(true);
-        fieldsInfo.setCanCreateAllRequiredFields(true);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -143,24 +137,26 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        docType.setCanCreateAllRequiredFields(true);
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
-        expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
+
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(FieldsInformation.allSupported());
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
 
         docType.setAllFieldsIncluded(true);
-        docType.setUnsupportedFieldTypes(null);
+        expectLastCall();
+
+        docType.setCanCreateAllRequiredFields(true);
+        expectLastCall();
+
+        docType.setUnsupportedFieldTypes(Collections.emptySet());
         expectLastCall();
 
         replayAll();
-        replay(context, contentType);
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
 
-        verify(context, contentType);
         verifyAll();
     }
 
@@ -174,9 +170,6 @@ public class DocumentTypesServiceImplTest {
         final ContentType contentType = createMock(ContentType.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
         final List<FieldType> fields = new ArrayList<>();
-        final FieldsInformation fieldsInfo = new FieldsInformation();
-        fieldsInfo.setAllFieldsIncluded(true);
-        fieldsInfo.setCanCreateAllRequiredFields(true);
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -184,16 +177,20 @@ public class DocumentTypesServiceImplTest {
                 .andReturn(Optional.of("Document Display Name"));
         docType.setId(id);
         expectLastCall();
-        docType.setDisplayName("Document Display Name");
-        docType.setCanCreateAllRequiredFields(true);
-        expectLastCall();
-        expect(docType.getFields()).andReturn(fields);
 
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
-        expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
+        docType.setDisplayName("Document Display Name");
+        expectLastCall();
+
+        expect(docType.getFields()).andReturn(fields);
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(FieldsInformation.allSupported());
 
         docType.setAllFieldsIncluded(true);
-        docType.setUnsupportedFieldTypes(null);
+        expectLastCall();
+
+        docType.setCanCreateAllRequiredFields(true);
+        expectLastCall();
+
+        docType.setUnsupportedFieldTypes(Collections.emptySet());
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
@@ -201,11 +198,9 @@ public class DocumentTypesServiceImplTest {
         expect(contentType.isDocumentType()).andReturn(true);
 
         replayAll();
-        replay(context, contentType);
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
 
-        verify(context, contentType);
         verifyAll();
     }
 
@@ -221,31 +216,35 @@ public class DocumentTypesServiceImplTest {
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(false);
         fieldsInfo.setCanCreateAllRequiredFields(true);
+        fieldsInfo.addUnknownField("Test");
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
+
         docType.setId(id);
         expectLastCall();
+
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
-        expect(FieldTypeUtils.getUnsupportedFieldTypes(context)).andReturn(null);
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
 
         docType.setAllFieldsIncluded(false);
-        docType.setUnsupportedFieldTypes(null);
+        expectLastCall();
+
         docType.setCanCreateAllRequiredFields(true);
         expectLastCall();
 
+        docType.setUnsupportedFieldTypes(Collections.singleton("Custom"));
+        expectLastCall();
+
         replayAll();
-        replay(context, contentType);
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
 
-        verify(context, contentType);
         verifyAll();
     }
 
@@ -254,7 +253,7 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
-        final DocumentType docType = PowerMock.createMock(DocumentType.class);
+        final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
@@ -274,7 +273,7 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
-        final DocumentType docType = PowerMock.createMock(DocumentType.class);
+        final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
