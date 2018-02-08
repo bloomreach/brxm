@@ -150,7 +150,7 @@ public class PropertiesEditor extends DataView<Property> {
 
         final ConfigurationItemCategory propCat = getCategoryForProperty(propertyPath, cfgModel);
         final JcrPath propertyJcrPath = JcrPaths.getPath(propertyPath);
-        final ConfigurationProperty<?,?> cfgProperty = cfgModel.resolveProperty(propertyJcrPath);
+        final ConfigurationProperty cfgProperty = cfgModel.resolveProperty(propertyJcrPath);
         String origin = "";
         if ((propCat.equals(ConfigurationItemCategory.CONFIG) || propCat.equals(ConfigurationItemCategory.SYSTEM))
                 && cfgProperty != null) {
@@ -181,7 +181,7 @@ public class PropertiesEditor extends DataView<Property> {
         String nodeOrigin = "";
         final JcrPath jcrPath = JcrPaths.getPath(nodePath);
         if (nodeCat.equals(ConfigurationItemCategory.CONFIG)) {
-            final ConfigurationNode<?,?,?> cfgNode = cfgModel.resolveNode(jcrPath);
+            final ConfigurationNode cfgNode = cfgModel.resolveNode(jcrPath);
             nodeOrigin = (cfgNode==null)
                     ? "<config>"
                     : cfgNode.getDefinitions().stream().map(ModelItem::getOrigin).collect(joining("\n"));
