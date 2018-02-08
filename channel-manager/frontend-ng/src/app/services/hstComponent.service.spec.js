@@ -20,6 +20,7 @@ import 'angular-mocks';
 fdescribe('HstComponentService', () => {
   let $q;
   let $rootScope;
+  let ChannelService;
   let HstComponentService;
   let HstService;
   let CmsServiceMock;
@@ -42,9 +43,10 @@ fdescribe('HstComponentService', () => {
       $provide.value('CmsService', CmsServiceMock);
     });
 
-    inject((_$q_, _$rootScope_, _HstService_, _HstComponentService_) => {
+    inject((_$q_, _$rootScope_, _ChannelService_, _HstService_, _HstComponentService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
       HstService = _HstService_;
       HstComponentService = _HstComponentService_;
     });
@@ -150,15 +152,32 @@ fdescribe('HstComponentService', () => {
   });
 
   describe('setParameter', () => {
-    it('uses the HstService to store the parameter data of a component', () => {
+    beforeEach(() => {
       spyOn(HstService, 'doPutForm');
+      spyOn(ChannelService, 'recordOwnChange');
+    });
+
+    it('uses the HstService to store the parameter data of a component', () => {
+      HstService.doPutForm.and.returnValue($q.resolve());
 
       HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      $rootScope.$digest();
+
       expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('does not record own change if parameter change fails', () => {
+      HstService.doPutForm.and.returnValue($q.reject());
+
+      HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
     });
 
     it('URI-encodes the variant name', () => {
-      spyOn(HstService, 'doPutForm');
+      HstService.doPutForm.and.returnValue($q.resolve());
 
       HstComponentService.setParameter('id', '@variant', 'name', 'value');
       expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', '%40variant');
