@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('HstComponentService', () => {
+describe('HstComponentService', () => {
   let $q;
   let $rootScope;
   let ChannelService;
