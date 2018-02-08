@@ -18,23 +18,21 @@ const PICKER_CALLBACK_ID = 'document-location-callback-id';
 
 class DocumentLocationFieldController {
   constructor(
+    ChannelService,
     CmsService,
     Step1Service,
     FeedbackService,
   ) {
     'ngInject';
 
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
   }
 
   $onInit() {
-    if (!this.rootPath) {
-      throw new Error('The rootPath option can not be empty');
-    }
-
-    if (!this.rootPath.startsWith('/')) {
+    if (this.rootPath && !this.rootPath.startsWith('/')) {
       throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
     }
 
@@ -42,15 +40,23 @@ class DocumentLocationFieldController {
       throw new Error(`The defaultPath option can only be a relative path: ${this.defaultPath}`);
     }
 
+    if (!this.rootPath && this.defaultPath) {
+      this.rootPath = this.ChannelService.getChannel().contentRoot;
+    }
+
+    this.initialPickerPath = this.rootPath || this.ChannelService.getChannel().contentRoot;
+
     this.pickerPath = '/';
     this.pickerConfig = {
       configuration: 'cms-pickers/folders',
-      rootPath: this.rootPath,
+      rootPath: this.initialPickerPath,
       selectableNodeTypes: ['hippostd:folder'],
     };
 
-    const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
-    this.setPath(path);
+    if (this.rootPath) {
+      const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
+      this.setPath(path);
+    }
   }
 
   setPath(path) {
@@ -89,9 +95,12 @@ class DocumentLocationFieldController {
       if (!path.startsWith('/')) {
         path = `/${path}`;
       }
-      if (!path.startsWith(this.rootPath)) {
-        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.rootPath, path });
+      if (!path.startsWith(this.initialPickerPath)) {
+        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.initialPickerPath, path });
       } else {
+        if (!this.rootPath) {
+          this.rootPath = path;
+        }
         this.setPath(path);
       }
     }

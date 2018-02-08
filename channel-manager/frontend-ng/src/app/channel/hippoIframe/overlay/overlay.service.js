@@ -328,45 +328,45 @@ class OverlayService {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
-    const componentParameter = structureElement.getComponentParameter();
-    const componentParameterBasePath =
-      structureElement.isComponentParameterRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
+    const parameterName = structureElement.getParameterName();
+    const parameterBasePath =
+      structureElement.isParameterValueRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
 
     const config = {
-      componentParameter,
-      componentParameterBasePath,
-      componentPickerConfig: structureElement.getComponentPickerConfig(),
-      componentValue: structureElement.getComponentValue(),
       containerItem: structureElement.getEnclosingElement(),
       defaultPath: structureElement.getDefaultPath(),
       documentUuid,
+      parameterBasePath,
+      parameterName,
+      parameterValue: structureElement.getParameterValue(),
+      pickerConfig: structureElement.getPickerConfig(),
       rootPath: structureElement.getRootPath(),
       templateQuery: structureElement.getTemplateQuery(),
     };
 
     if (!this.ChannelService.isEditable()) {
-      delete config.componentParameter;
+      delete config.parameterName;
 
       if (config.documentUuid) { // whenever uuid is available, only edit button for authors
         delete config.templateQuery;
         return config;
       }
 
-      if (componentParameter) {
+      if (parameterName) {
         return {};
       }
     }
 
-    if (componentParameter
+    if (parameterName
       && config.containerItem
       && config.containerItem.isLocked()
       && !config.containerItem.isLockedByCurrentUser()) {
       config.isLockedByOtherUser = true;
     }
 
-    if (config.componentParameter && !config.containerItem) {
-      this.$log.warn(`Ignoring component parameter "${config.componentParameter}" of manage content button outside catalog item`);
-      delete config.componentParameter;
+    if (config.parameterName && !config.containerItem) {
+      this.$log.warn(`Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`);
+      delete config.parameterName;
     }
 
     return config;
@@ -385,7 +385,7 @@ class OverlayService {
       buttons.push(editContentButton);
     }
 
-    if (config.componentParameter) {
+    if (config.parameterName) {
       const selectDocumentButton = {
         mainIcon: searchWhiteSvg,
         dialIcon: searchSvg,
@@ -442,7 +442,7 @@ class OverlayService {
     if (config.templateQuery) {
       fabBtn.addClass('qa-add-content');
     }
-    if (config.componentParameter) {
+    if (config.parameterName) {
       fabBtn.addClass('qa-manage-parameters');
     }
 
@@ -578,18 +578,21 @@ class OverlayService {
   _pickPath(config) {
     const component = config.containerItem;
     const componentId = component.getId();
-    const componentVariant = component.getRenderVariant();
     const componentName = component.getLabel();
-    const parameterName = config.componentParameter;
-    const parameterValue = config.componentValue;
-    const parameterBasePath = config.componentParameterBasePath;
-    const pickerConfig = config.componentPickerConfig;
+    const componentVariant = component.getRenderVariant();
+    const parameterBasePath = config.parameterBasePath;
+    const parameterName = config.parameterName;
+    const parameterValue = config.parameterValue;
+    const pickerConfig = config.pickerConfig;
 
     this.CmsService.reportUsageStatistic('PickContentButton');
     this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
       .then(() => {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+
+        // record own change to enable the publish button in the application toolbar
+        this.ChannelService.recordOwnChange();
       })
       .catch(() => {
         this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });

@@ -569,6 +569,7 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
+    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
@@ -584,6 +585,7 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'component B',
       });
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
@@ -620,6 +622,7 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
+    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
@@ -635,6 +638,7 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'Component with experiment',
       });
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
@@ -701,7 +705,7 @@ describe('OverlayService', () => {
       const config = { // each property should be filled with the method that will extract the data from the HST comment
         documentUuid: true,
         templateQuery: true,
-        componentParameter: true,
+        parameterName: true,
       };
       const buttons = OverlayService._getButtons(config);
 
@@ -710,20 +714,20 @@ describe('OverlayService', () => {
     });
 
     describe('_initManageContentConfig', () => {
-      function mockManageContentConfig(uuid = false, templateQuery = false, componentParameter = false, locked = false) {
+      function mockManageContentConfig(uuid = false, templateQuery = false, parameterName = false, locked = false) {
         const enclosing = {
           isLocked: () => locked,
         };
         const structureElement = {
-          getUuid: () => uuid,
-          getTemplateQuery: () => templateQuery,
-          getComponentParameter: () => componentParameter,
-          isComponentParameterRelativePath: () => false,
-          getComponentPickerConfig: () => null,
-          getComponentValue: () => null,
           getDefaultPath: () => null,
-          getRootPath: () => null,
           getEnclosingElement: () => enclosing,
+          getParameterName: () => parameterName,
+          getParameterValue: () => null,
+          getPickerConfig: () => null,
+          getRootPath: () => null,
+          getTemplateQuery: () => templateQuery,
+          getUuid: () => uuid,
+          isParameterValueRelativePath: () => false,
         };
         return OverlayService._initManageContentConfig(structureElement);
       }
@@ -732,7 +736,7 @@ describe('OverlayService', () => {
         const config = mockManageContentConfig(true, true, true);
         expect(config.documentUuid).toBe(true);
         expect(config.templateQuery).toBe(true);
-        expect(config.componentParameter).toBe(true);
+        expect(config.parameterName).toBe(true);
       });
 
       describe('when channel is not editable', () => {
@@ -740,9 +744,9 @@ describe('OverlayService', () => {
           ChannelService.isEditable = () => false;
         });
 
-        it('always filters out property componentParameter', () => {
+        it('always filters out property parameterName', () => {
           const config = mockManageContentConfig(false, false, true);
-          expect(config.componentParameter).not.toBeDefined();
+          expect(config.parameterName).not.toBeDefined();
         });
 
         it('filters out property templateQuery when documentUuid is set', () => {
@@ -753,12 +757,12 @@ describe('OverlayService', () => {
           expect(config.templateQuery).not.toBeDefined();
         });
 
-        it('filters all properties when componentParameter is set but documentId is not', () => {
+        it('filters all properties when parameterName is set but documentId is not', () => {
           const config = mockManageContentConfig(false, true, true);
           expect(config).toEqual({});
         });
 
-        it('does not filter templateQuery when componentParameter and documentId are not set', () => {
+        it('does not filter templateQuery when parameterName and documentId are not set', () => {
           const config = mockManageContentConfig(false, true);
           expect(config.templateQuery).toBe(true);
         });
@@ -893,7 +897,7 @@ describe('OverlayService', () => {
     });
 
     describe('when button is on a template of a component that is not a container item', () => {
-      it('does not fail on checks for locks on a surrounding element when by mistake a componentParameter is used',
+      it('does not fail on checks for locks on a surrounding element when by mistake a parameterName is used',
         (done) => {
           manageContentScenario(11, (mainButton) => {
             expect(mainButton.hasClass('qa-add-content')).toBe(true);
@@ -907,7 +911,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: true,
           templateQuery: false,
-          componentParameter: false,
+          parameterName: false,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -919,7 +923,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: false,
           templateQuery: true,
-          componentParameter: false,
+          parameterName: false,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -931,7 +935,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: true,
           templateQuery: true,
-          componentParameter: false,
+          parameterName: false,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -944,7 +948,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: true,
           templateQuery: false,
-          componentParameter: true,
+          parameterName: true,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -957,7 +961,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: false,
           templateQuery: true,
-          componentParameter: true,
+          parameterName: true,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -970,7 +974,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: true,
           templateQuery: true,
-          componentParameter: true,
+          parameterName: true,
         };
 
         const buttons = OverlayService._getButtons(config);
@@ -984,7 +988,7 @@ describe('OverlayService', () => {
         const config = {
           documentUuid: false,
           templateQuery: false,
-          componentParameter: true,
+          parameterName: true,
         };
 
         const buttons = OverlayService._getButtons(config);
