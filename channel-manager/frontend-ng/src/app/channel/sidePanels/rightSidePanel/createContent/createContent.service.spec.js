@@ -19,6 +19,7 @@ describe('CreateContentService', () => {
   let $rootScope;
   let $state;
   let $translate;
+  let $window;
   let ContentService;
   let CreateContentService;
   let EditContentService;
@@ -46,6 +47,7 @@ describe('CreateContentService', () => {
       _$rootScope_,
       _$state_,
       _$translate_,
+      _$window_,
       _CreateContentService_,
       _EditContentService_,
       _FeedbackService_,
@@ -57,6 +59,7 @@ describe('CreateContentService', () => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
+      $window = _$window_;
       CreateContentService = _CreateContentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
@@ -161,5 +164,33 @@ describe('CreateContentService', () => {
   it('generates a document url by executing a "slugs" backend call', () => {
     CreateContentService.generateDocumentUrlByName('name', 'nl');
     expect(ContentService._send).toHaveBeenCalledWith('POST', ['slugs'], 'name', true, { locale: 'nl' });
+  });
+
+  describe('reacts to "kill-editor" events from the CMS', () => {
+    it('never stops if step1 is active', () => {
+      spyOn(CreateContentService, 'stop');
+      CreateContentService.$state.$current.name = 'hippo-cm.channel.create-content-step-1';
+
+      $window.CMS_TO_APP.publish('kill-editor', 'document-id');
+
+      expect(CreateContentService.stop).not.toHaveBeenCalled();
+    });
+
+    it('only stops if step2 is active and Step2Service can be killed', () => {
+      CreateContentService.$state.$current.name = 'hippo-cm.channel.create-content-step-2';
+      spyOn(CreateContentService, 'stop');
+      spyOn(Step2Service, 'killEditor');
+
+      Step2Service.killEditor.and.returnValue(false);
+      $window.CMS_TO_APP.publish('kill-editor', 'document-id');
+
+      expect(CreateContentService.stop).not.toHaveBeenCalled();
+
+      Step2Service.killEditor.and.returnValue(true);
+      $window.CMS_TO_APP.publish('kill-editor', 'document-id');
+
+      expect(CreateContentService.stop).toHaveBeenCalled();
+      expect(Step2Service.killEditor).toHaveBeenCalledWith('document-id');
+    });
   });
 });
