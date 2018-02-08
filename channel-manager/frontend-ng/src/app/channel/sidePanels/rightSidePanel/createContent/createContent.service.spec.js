@@ -71,6 +71,24 @@ describe('CreateContentService', () => {
     spyOn($translate, 'instant').and.callThrough();
   });
 
+  describe('validate step1', () => {
+    it('does not transition to "step1" state if configuration is invalid', () => {
+      CreateContentService.start();
+      $rootScope.$apply();
+
+      expect(CreateContentService.$state.$current.name).toBe('hippo-cm');
+    });
+
+    it('displays an error if configuration is missing property "templateQuery"', () => {
+      spyOn(FeedbackService, 'showError');
+
+      CreateContentService.start({});
+      $rootScope.$apply();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+    });
+  });
+
   it('starts creating a new document', () => {
     spyOn(Step1Service, 'open').and.returnValue($q.resolve());
     const config = { templateQuery: 'tpl-query' };
