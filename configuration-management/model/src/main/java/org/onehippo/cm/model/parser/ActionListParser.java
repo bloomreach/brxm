@@ -26,6 +26,7 @@ import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ActionItemImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -68,7 +69,7 @@ public class ActionListParser extends AbstractBaseParser {
 
     protected Set<ActionItem> collectActionItems(final Node node) throws ParserException {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
-        final Set<String> paths = new HashSet<>();
+        final Set<JcrPath> paths = new HashSet<>();
         for (NodeTuple tuple : asTuples(node)) {
             final String path = asPathScalar(tuple.getKeyNode(), true, false);
             final ActionItem actionItem = asActionItem(tuple.getValueNode(), path);
