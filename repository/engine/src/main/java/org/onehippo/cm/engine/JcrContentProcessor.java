@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -223,7 +223,7 @@ public class JcrContentProcessor {
         }
     }
 
-    private void applyChildNodes(final DefinitionNode<?,?> modelNode, final Node jcrNode, final ActionType actionType,
+    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType,
                                  final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences) throws RepositoryException, IOException {
         log.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
         for (final DefinitionNode modelChild : modelNode.getNodes()) {
@@ -273,7 +273,7 @@ public class JcrContentProcessor {
         return modelNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
     }
 
-    private void applyProperties(final DefinitionNode<?,?> source, final Node targetNode,
+    private void applyProperties(final DefinitionNode source, final Node targetNode,
                                  final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences)
             throws RepositoryException, IOException {
         applyPrimaryAndMixinTypes(source, targetNode);
@@ -293,7 +293,7 @@ public class JcrContentProcessor {
                 .collect(Collectors.toList());
 
         final List<String> modelMixinTypes = new ArrayList<>();
-        final DefinitionProperty<?> modelProperty = source.getProperty(JCR_MIXINTYPES);
+        final DefinitionProperty modelProperty = source.getProperty(JCR_MIXINTYPES);
         if (modelProperty != null) {
             for (final Value value : modelProperty.getValues()) {
                 modelMixinTypes.add(value.getString());
@@ -319,7 +319,7 @@ public class JcrContentProcessor {
         }
     }
 
-    private void applyProperty(final DefinitionProperty<?> modelProperty, final Node jcrNode) throws RepositoryException, IOException {
+    private void applyProperty(final DefinitionProperty modelProperty, final Node jcrNode) throws RepositoryException, IOException {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (jcrProperty != null && jcrProperty.getDefinition().isProtected()) {

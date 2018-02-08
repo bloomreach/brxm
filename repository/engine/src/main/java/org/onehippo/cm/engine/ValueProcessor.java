@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -363,7 +363,7 @@ public abstract class ValueProcessor {
         return new ValueImpl(uuid, ValueType.fromJcrType(jcrType), false, false);
     }
 
-    public static List<Value> determineVerifiedValues(final ModelProperty<?> property, final Session session)
+    public static List<Value> determineVerifiedValues(final ModelProperty property, final Session session)
             throws RepositoryException {
 
         final List<Value> verifiedValues = new ArrayList<>();

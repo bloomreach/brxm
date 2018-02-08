@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -441,8 +441,8 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void computeAndWritePropertiesDelta(final ConfigurationNode<?,?,?> baselineNode,
-                                                final ConfigurationNode<?,?,?> updateNode,
+    private void computeAndWritePropertiesDelta(final ConfigurationNode baselineNode,
+                                                final ConfigurationNode updateNode,
                                                 final Node targetNode,
                                                 final boolean isNew,
                                                 final boolean forceApply,
@@ -511,19 +511,16 @@ public class ConfigurationConfigService {
         return names;
     }
 
-    private void computeAndWriteChildNodesDelta(final ConfigurationNode<?,?,?> baselineNode,
-                                                final ConfigurationNode<?,?,?> updateNode,
+    private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
+                                                final ConfigurationNode updateNode,
                                                 final Node targetNode,
                                                 final boolean forceApply,
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-//        final Map<String, ? extends ConfigurationNode> updateChildren = updateNode.getNodes();
-//        final Map<String, ? extends ConfigurationNode> baselineChildren = baselineNode.getNodes();
-
         // Add or update child nodes
 
-        for (final ConfigurationNode<?,?,?> updateChild : updateNode.getNodes()) {
+        for (final ConfigurationNode updateChild : updateNode.getNodes()) {
             final JcrPathSegment nameAndIndex = updateChild.getJcrName().forceIndex();
             ConfigurationNode baselineChild = baselineNode.getNode(nameAndIndex);
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
