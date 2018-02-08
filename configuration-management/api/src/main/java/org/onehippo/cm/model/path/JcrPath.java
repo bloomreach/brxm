@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -147,14 +147,12 @@ public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
     /**
      * @return a {@link JcrPath} equivalent to this one, except that each segment has had forceIndex() applied to it
      */
-    // TODO: remove this
-    JcrPath toFullyIndexedPath();
+    JcrPath forceIndices();
 
     /**
      * @return a {@link JcrPath} equivalent to this one, except that each segment has had suppressIndex() applied to it
      */
-    // TODO: rename this?
-    JcrPath toMinimallyIndexedPath();
+    JcrPath suppressIndices();
 
     /**
      * @return an ordered, serial stream of {@link JcrPathSegment}s in the same order used by {@link #getSegment(int)}

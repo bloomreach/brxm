@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class JcrPaths {
     };
 
     /**
-     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link org.onehippo.cm.model.impl.path.JcrPath}.
+     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link JcrPath}.
      */
     public static final JcrPathSegment ROOT_NAME = new JcrPathSegmentImpl("", 0) {
         @Override

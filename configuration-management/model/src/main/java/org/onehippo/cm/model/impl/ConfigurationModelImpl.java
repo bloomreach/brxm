@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     private final List<ContentDefinitionImpl> modifiableContentDefinitions = new ArrayList<>();
     private final List<ContentDefinitionImpl> contentDefinitions = Collections.unmodifiableList(modifiableContentDefinitions);
     private final List<ConfigDefinitionImpl> modifiableConfigDefinitions = new ArrayList<>();
-//    private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
     private final Map<JcrPath, ConfigurationNodeImpl> modifiableDeletedConfigNodes = new HashMap<>();
     private final Map<JcrPath, ConfigurationNodeImpl> deletedConfigNodes = Collections.unmodifiableMap(modifiableDeletedConfigNodes);
 
@@ -231,8 +230,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                     log.info("Merging module {}", module.getFullName());
                     addNamespaceDefinitions(module.getNamespaceDefinitions());
                     addConfigDefinitions(module.getConfigDefinitions());
-                    // todo: why create this HashSet?
-                    addContentDefinitions(new HashSet<>(module.getContentDefinitions()));
+                    addContentDefinitions(module.getContentDefinitions());
                     addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                     module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
                     configurationTreeBuilder.finishModule();

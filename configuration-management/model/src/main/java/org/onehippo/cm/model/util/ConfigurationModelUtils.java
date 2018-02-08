@@ -1,5 +1,5 @@
 /*
- * Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.onehippo.cm.model.util;
 import java.util.function.Function;
 
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;

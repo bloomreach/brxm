@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,7 +64,6 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
     protected boolean isType(DefinitionNode node, JcrPathSegment nodeType) {
         return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && nodeType.equals(node.getProperty(JCR_PRIMARY_TYPE).getValue().getString());
     }
-
 
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
         return new AbstractMap.SimpleEntry<>(key, value);

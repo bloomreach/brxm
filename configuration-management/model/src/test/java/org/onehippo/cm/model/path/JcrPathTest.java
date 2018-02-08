@@ -89,16 +89,16 @@ public class JcrPathTest {
                 minimal.equals(full));
 
         assertEquals("minimally- and fully-indexed paths should be round-trip convertible",
-                minimal.toString(), full.toMinimallyIndexedPath().toString());
+                minimal.toString(), full.suppressIndices().toString());
 
         assertEquals("minimally- and fully-indexed paths should be round-trip convertible",
-                full.toString(), minimal.toFullyIndexedPath().toString());
+                full.toString(), minimal.forceIndices().toString());
 
         assertEquals("minimally- and fully-indexed paths should be round-trip convertible",
-                minimal.toString(), minimal.toFullyIndexedPath().toMinimallyIndexedPath().toString());
+                minimal.toString(), minimal.forceIndices().suppressIndices().toString());
 
         assertEquals("minimally- and fully-indexed paths should be round-trip convertible",
-                full.toString(), full.toMinimallyIndexedPath().toFullyIndexedPath().toString());
+                full.toString(), full.suppressIndices().forceIndices().toString());
 
         Set<JcrPath> set = new HashSet<>();
         set.add(minimal);

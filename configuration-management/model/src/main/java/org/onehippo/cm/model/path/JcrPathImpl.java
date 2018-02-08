@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ class JcrPathImpl implements JcrPath {
     }
 
     @Override
-    public org.onehippo.cm.model.path.JcrPath toFullyIndexedPath() {
+    public org.onehippo.cm.model.path.JcrPath forceIndices() {
         if (isRoot()) {
             return this;
         }
@@ -248,7 +248,7 @@ class JcrPathImpl implements JcrPath {
     }
 
     @Override
-    public JcrPathImpl toMinimallyIndexedPath() {
+    public JcrPathImpl suppressIndices() {
         if (isRoot()) {
             return this;
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -129,8 +129,9 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     /**
-     * In-place update the content of this definition with content from another definition.
-     * @param other
+     * In-place update the content of this definition with content from another definition. This is expected to be used
+     * only by auto-export.
+     * @param other a definition containing the new state that should be merged here
      */
     public void updateFrom(final DefinitionPropertyImpl other) {
         switch (other.operation) {

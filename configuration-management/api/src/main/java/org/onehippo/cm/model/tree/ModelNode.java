@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,11 +61,5 @@ public interface ModelNode<N extends ModelNode, P extends ModelProperty> extends
      * even if its primary node type indicates otherwise, or null if unspecified.
      */
     Boolean getIgnoreReorderedChildren();
-
-//    /**
-//     * @return true if and only if this model node contains no significant information, including but not limited to
-//     *      child nodes, JCR properties, and metadata properties.
-//     */
-//    boolean isEmpty();
 
 }

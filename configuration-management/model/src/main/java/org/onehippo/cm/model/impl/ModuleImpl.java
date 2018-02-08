@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -103,8 +103,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private ResourceInputProvider contentResourceInputProvider;
 
-//    private ResourceInputProvider resourceInputProvider;
-
     // store marker here to indicate whether this came from a filesystem mvn path at startup
     private String mvnPath;
 
@@ -135,7 +133,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         configResourceInputProvider = module.getConfigResourceInputProvider();
         contentResourceInputProvider = module.getContentResourceInputProvider();
         lastExecutedAction = module.lastExecutedAction;
-//        resourceInputProvider = module.getResourceInputProvider();
         actionsMap.putAll(module.getActionsMap());
 
         // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
@@ -243,7 +240,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * Returns existing or adds new source to the source list
-     * TODO: separate sources, since this currently
      * @param source
      * @return
      */
@@ -310,16 +306,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         this.contentResourceInputProvider = contentResourceInputProvider;
         return this;
     }
-
-//    @Override
-//    public ResourceInputProvider getResourceInputProvider() {
-//        return resourceInputProvider;
-//    }
-//
-//    public ModuleImpl setResourceInputProvider(final ResourceInputProvider resourceInputProvider) {
-//        this.resourceInputProvider = resourceInputProvider;
-//        return this;
-//    }
 
     /**
      * This property stores the String used to find mvn source files relative to the project.basedir. This is

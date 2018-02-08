@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -232,7 +231,7 @@ public class ConfigurationTreeBuilder {
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
                     // delay reporting an error for a missing sibling until after the module is done processing
-                    delayedOrdering.put(definitionNode.getJcrPath().resolveSibling(orderBeforeIndexedName).toFullyIndexedPath(),
+                    delayedOrdering.put(definitionNode.getJcrPath().resolveSibling(orderBeforeIndexedName).forceIndices(),
                             definitionNode);
                 }
             }
@@ -240,7 +239,7 @@ public class ConfigurationTreeBuilder {
             node.addDefinition(definitionNode);
         }
 
-        final JcrPath indexedPath = definitionNode.getJcrPath().toFullyIndexedPath();
+        final JcrPath indexedPath = definitionNode.getJcrPath().forceIndices();
         if (delayedOrdering.containsKey(indexedPath)) {
             // this node was referenced in a delayed ordering, so we need to apply that ordering now
             // apply node ordering from the perspective of the other, saved node

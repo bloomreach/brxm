@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,21 +23,6 @@ import java.io.InputStream;
  * or the JCR.
  */
 public interface ResourceInputProvider {
-
-//    /**
-//     * Can an InputStream be created for a given module resource, using a path relative to the module's base path?
-//     * @param moduleResourcePath a relative path from the module's base path to the desired resource
-//     * @return true iff this provider can create an InputStream for a resource at the given path
-//     */
-//    boolean hasResource(final String moduleResourcePath);
-//
-//    /**
-//     * Get an InputStream to resolve a resource reference relative to the module's base path. Note, caller is
-//     * responsible for closing the stream when finished with it.
-//     * @param moduleResourcePath a relative path from the module's base path to the desired resource
-//     * @throws IOException in case of any unexpected problem in opening the desired InputStream
-//     */
-//    InputStream getResourceInputStream(final String moduleResourcePath) throws IOException;
 
     /**
      * Can an InputStream be created for a given resource reference, relative to the given YAML Source or relative to

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +22,6 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
