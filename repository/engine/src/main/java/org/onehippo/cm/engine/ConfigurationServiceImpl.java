@@ -35,8 +35,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.io.Files;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -51,7 +49,6 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.definition.ActionType;
-import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -74,6 +71,8 @@ import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
@@ -399,7 +398,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
         try {
             new PathConfigurationReader().readModule(module, moduleContext, false);
-            final ContentDefinitionImpl contentDefinition = (ContentDefinitionImpl)module.getContentSources().iterator().next().getDefinitions().get(0);
+
+            // todo: check for missing content source
+            final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
             contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
         } catch (ParserException e) {
             throw new RuntimeException("Import failed", e);
@@ -426,8 +427,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
             final ContentSourceParser sourceParser = new ContentSourceParser(resourceInputProvider);
             sourceParser.parse(inputStream, "/import", "console.yaml", module);
-            final ContentDefinition contentDefinition = (ContentDefinition)module.getContentSources().iterator().next().getDefinitions().get(0);
-            contentService.importNode(((ContentDefinitionImpl)contentDefinition).getNode(), parentNode, ActionType.RELOAD);
+            final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
+            contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
         } catch (Exception e) {
             throw new RuntimeException("Import failed", e);
         }

@@ -55,7 +55,7 @@ public class ContentOrderBeforeHolder extends OrderBeforeHolder {
     }
 
     public JcrPath getContentRoot() {
-        return JcrPaths.getPath(contentDefinition.getRootPath());
+        return contentDefinition.getRootPath();
     }
 
     @Override

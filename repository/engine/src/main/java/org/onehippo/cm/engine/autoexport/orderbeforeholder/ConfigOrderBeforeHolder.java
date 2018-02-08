@@ -16,8 +16,11 @@
 
 package org.onehippo.cm.engine.autoexport.orderbeforeholder;
 
+import java.util.Iterator;
+
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 
 public abstract class ConfigOrderBeforeHolder extends OrderBeforeHolder {
@@ -70,15 +73,15 @@ public abstract class ConfigOrderBeforeHolder extends OrderBeforeHolder {
     }
 
     JcrPath getRootPath() {
-        return JcrPaths.getPath(definitionNode.getDefinition().getRootPath());
+        return definitionNode.getDefinition().getRootPath();
     }
 
     private int getSiblingIndex() {
         if (siblingIndex == -1 && !definitionNode.isRoot()) {
             int index = -1;
-            for (final String name : definitionNode.getParent().getNodes().keySet()) {
+            for (Iterator<DefinitionNodeImpl> it = definitionNode.getParent().getNodes().iterator(); it.hasNext();) {
                 index++;
-                if (definitionNode.getJcrName().equals(JcrPaths.getSegment(name))) {
+                if (definitionNode.getJcrName().equals(it.next().getJcrName())) {
                     break;
                 }
             }

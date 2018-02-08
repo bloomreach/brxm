@@ -35,10 +35,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
@@ -462,7 +464,7 @@ public class AutoExportIntegrationTest {
     }
 
     private void assertOrder(final String order, final String path, final Session session,
-                             final ConfigurationModel model) throws Exception {
+                             final ConfigurationModelImpl model) throws Exception {
         assertOrderInJcr(order, path, session);
         assertOrderModel(order, path, model);
     }
@@ -471,11 +473,11 @@ public class AutoExportIntegrationTest {
         assertEquals(order, createChildNodesString(session.getNode(path)));
     }
 
-    private void assertOrderModel(final String order, final String path, final ConfigurationModel model) throws Exception {
-        assertEquals(order, model.resolveNode(path).getNodes().keySet().toString().replaceAll("\\[1]", ""));
+    private void assertOrderModel(final String order, final String path, final ConfigurationModelImpl model) throws Exception {
+        assertEquals(order, model.resolveNode(path).getNodeNames().toString().replaceAll("\\[1]", ""));
     }
 
-    private String getOrderBefore(final ConfigurationModel configurationModel, final String definitionRootPath) {
+    private String getOrderBefore(final ConfigurationModelImpl configurationModel, final String definitionRootPath) {
         return configurationModel.getContentDefinitions().stream()
                 .filter(d -> d.getRootPath().equals(definitionRootPath))
                 .findFirst().get().getNode().getOrderBefore();
@@ -492,8 +494,7 @@ public class AutoExportIntegrationTest {
                 session.getNode("/config").addNode("TestNodeThatShouldCauseAnExceptionOnlyInTesting");
             },
             (session, configurationModel) -> {
-                assertFalse(configurationModel.resolveNode("/config").getNodes()
-                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+                assertNull(configurationModel.resolveNode("/config").getNode("TestNodeThatShouldNotBeInTheModel"));
             }
         );
     }
@@ -508,8 +509,7 @@ public class AutoExportIntegrationTest {
                 session.getNode("/config").addNode("TestNodeThatShouldNotBeInTheModel");
             },
             (session, configurationModel) -> {
-                assertFalse(configurationModel.resolveNode("/config").getNodes()
-                        .containsKey("TestNodeThatShouldNotBeInTheModel"));
+                assertNull(configurationModel.resolveNode("/config").getNode("TestNodeThatShouldNotBeInTheModel"));
             }
         );
     }
@@ -689,7 +689,7 @@ public class AutoExportIntegrationTest {
 
     @FunctionalInterface
     private interface Validator {
-        void validate(final Session session, final ConfigurationModel configurationModel) throws Exception;
+        void validate(final Session session, final ConfigurationModelImpl configurationModel) throws Exception;
     }
 
     /**
