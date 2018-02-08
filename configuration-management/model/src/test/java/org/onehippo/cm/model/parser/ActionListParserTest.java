@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,6 +59,37 @@ public class ActionListParserTest extends AbstractBaseTest {
             fail("Expected exception");
         } catch (ParserException e) {
             assertEquals("Path must not contain name indices", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expect_error_for_append_action() {
+        final String yaml =
+                "action-lists:\n" +
+                        "- 1.0:\n" +
+                        "    /content/dup: append\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("APPEND action type can't be specified in action lists file", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expect_error_for_duplicate_path() {
+        final String yaml =
+                "action-lists:\n" +
+                        "- 1.0:\n" +
+                        "    /content/dup: delete\n" +
+                        "    /content/dup: reload\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("Duplicate paths are not allowed in the same version: /content/dup", e.getMessage());
         }
     }
 

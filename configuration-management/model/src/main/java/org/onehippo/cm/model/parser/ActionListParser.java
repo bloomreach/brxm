@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ActionItemImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -67,12 +69,14 @@ public class ActionListParser extends AbstractBaseParser {
 
     protected Set<ActionItem> collectActionItems(final Node node) throws ParserException {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
+        final Set<JcrPath> paths = new HashSet<>();
         for (NodeTuple tuple : asTuples(node)) {
             final String path = asPathScalar(tuple.getKeyNode(), true, false);
             final ActionItem actionItem = asActionItem(tuple.getValueNode(), path);
-            if (!actionItems.add(actionItem)) {
-                throw new RuntimeException(String.format("Duplicate items are not allowed: %s", actionItem));
+            if (!paths.add(actionItem.getPath())) {
+                throw new ParserException(String.format("Duplicate paths are not allowed in the same version: %s", actionItem.getPath()));
             }
+            actionItems.add(actionItem);
         }
         return actionItems;
     }
@@ -81,7 +85,7 @@ public class ActionListParser extends AbstractBaseParser {
         String action = asStringScalar(node);
         ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
         if (type == ActionType.APPEND) {
-            throw new RuntimeException("APPEND action type can't be specified in action lists file");
+            throw new ParserException("APPEND action type can't be specified in action lists file");
         }
         return new ActionItemImpl(path, type);
     }

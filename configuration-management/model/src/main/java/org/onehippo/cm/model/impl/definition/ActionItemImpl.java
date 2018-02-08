@@ -49,12 +49,12 @@ public class ActionItemImpl implements ActionItem {
             return false;
         }
         final ActionItem that = (ActionItem) o;
-        return Objects.equals(path, that.getPath());
+        return Objects.equals(type, that.getType()) && Objects.equals(path, that.getPath());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(path);
+        return Objects.hash(path, type);
     }
 
     @Override
