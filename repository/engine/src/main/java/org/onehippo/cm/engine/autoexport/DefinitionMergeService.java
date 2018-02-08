@@ -1095,7 +1095,7 @@ public class DefinitionMergeService {
     protected static boolean shouldPathCreateNewSource(final JcrPath incomingPath) {
         // for the sake of creating new source files, we always want to use the minimally-indexed path
         // to avoid annoying and unnecessary "[1]" tags on filenames
-        final String minimallyIndexedPath = incomingPath.toMinimallyIndexedPath().toString();
+        final String minimallyIndexedPath = incomingPath.suppressIndices().toString();
         return JcrPaths.getPath(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
                 .equals(incomingPath);
     }
@@ -1107,7 +1107,7 @@ public class DefinitionMergeService {
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
     protected String getFilePathByLocationMapper(JcrPath path) {
-        String xmlFile = LocationMapper.fileForPath(path.toMinimallyIndexedPath().toString(), true);
+        String xmlFile = LocationMapper.fileForPath(path.suppressIndices().toString(), true);
         if (xmlFile == null) {
             return "main.yaml";
         }
@@ -1961,7 +1961,7 @@ public class DefinitionMergeService {
             }
             // if a delete path is -below- one of the sources that remains, treat it as a change
             for (final JcrPath sourceNodePath : Sets.difference(existingSourcesByNodePath.keySet(), toRemoveByNodePath)) {
-                if (deletePath.startsWith(sourceNodePath.toMinimallyIndexedPath().toString())) {
+                if (deletePath.startsWith(sourceNodePath.suppressIndices().toString())) {
                     contentChangesByPath.add(deletePath);
                 }
             }

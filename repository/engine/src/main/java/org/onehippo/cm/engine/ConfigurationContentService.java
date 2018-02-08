@@ -253,7 +253,7 @@ public class ConfigurationContentService {
         for (final ActionItem item : items) {
             if (item.getType() == ActionType.DELETE) {
                 final JcrPath baseNodePath = item.getPath();
-                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath.toMinimallyIndexedPath().toString(), model) == ConfigurationItemCategory.CONTENT) {
+                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath.suppressIndices().toString(), model) == ConfigurationItemCategory.CONTENT) {
                     log.debug("Processing delete action for node: {}", baseNodePath);
 
                     final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath,

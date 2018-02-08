@@ -17,8 +17,6 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -485,7 +483,7 @@ public class AutoExportConfigExporter extends JcrContentExporter {
     protected void checkDeletedContentChildren(final JcrPath deletedConfig) throws RepositoryException {
         for (final ContentDefinitionImpl contentDefinition : configurationModel.getContentDefinitions()) {
             final JcrPath contentRootPath = contentDefinition.getNode().getJcrPath();
-            final String contentRoot = contentRootPath.toMinimallyIndexedPath().toString();
+            final String contentRoot = contentRootPath.suppressIndices().toString();
             if (contentRootPath.startsWith(deletedConfig) && !deletedContent.matches(contentRoot)) {
                 // content root found as child of a deleted config path, which itself, or a parent path, hasn't been recorded as deleted yet
                 deletedContent.removeChildren(contentRoot);
