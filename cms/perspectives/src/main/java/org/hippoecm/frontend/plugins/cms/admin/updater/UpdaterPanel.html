@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@
 <html  xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
   <div class="hippo-panel-plugin-body updater-editor-plugin">
-    <div class="updater-editor-top">
-      <form class="updater-left" wicket:id="new-form">
+    <div class="updater-left">
+      <form class="updater-left-top" wicket:id="new-form">
         <input type="submit" class="btn btn-default btn-sm" value="New" wicket:id="new-button"/>
       </form>
-      <div class="updater-editor-top-right">
+      <div class="updater-tree" wicket:id="updater-tree"/>
+    </div>
+    <div class="updater-right">
+      <div class="updater-right-top">
         <h2 wicket:id="updater-title"></h2>
       </div>
-    </div>
-    <div class="updater-editor-main">
-      <div class="updater-left updater-tree" wicket:id="updater-tree"/>
       <div class="updater-details" wicket:id="updater-editor"/>
     </div>
   </div>
