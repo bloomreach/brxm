@@ -39,7 +39,6 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentTypeInstance;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.TemplateQuery;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
@@ -107,7 +106,7 @@ public class DocumentResource {
     @ApiOperation(
             value = "Returns all documents of the specified type",
             notes = "Specify the document type as {namespace}:{typename}.",
-            response = PluginDescriptor.class)
+            response = List.class)
     @ApiParam(name = "docType", value = "Document type", required = true)
     @GET
     @Path("/{docType}")

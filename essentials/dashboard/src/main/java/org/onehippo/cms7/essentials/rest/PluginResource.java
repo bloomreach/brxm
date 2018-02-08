@@ -84,11 +84,9 @@ public class PluginResource {
         this.installStateMachine = installStateMachine;
     }
 
-    @SuppressWarnings("unchecked")
     @ApiOperation(
             value = "Fetch list of all plugin descriptors. " +
                     "For all plugins with dynamic REST endpoints, these get registered at /dynamic/{pluginEndpoint}",
-            notes = "Retrieve a list of PluginDescriptorRestful objects",
             response = List.class)
     @GET
     @Path("/")
@@ -98,8 +96,7 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Return plugin descriptor.",
-            notes = "[API] plugin descriptor augmented with plugin's installState.",
+            value = "Fetch plugin descriptor for the specified plugin.",
             response = PluginDescriptor.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @GET
@@ -110,9 +107,9 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Return a list of changes made by the plugin during setup, given certain parameter values.",
-            notes = "[API] Messages are only indication what might change, because operations may be skipped, "
-                    + "e.g. file copy is not executed if file already exists.",
+            value = "Return a list of changes made during installation of the plugin, based on installation parameters.",
+            notes = "Messages only indicate what might change, operations could be skipped, "
+                  + "e.g. file copy is not executed if file already exists.",
             response = List.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @GET
@@ -138,7 +135,7 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Install a plugin into Essentials",
+            value = "Install a plugin into the project.",
             response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
@@ -158,9 +155,8 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Trigger a generalized setup (by means of executing an instructions package).",
-            notes = "[API] generalized setup may be executed automatically for installed plugins," +
-                    "depending on the project settings.",
+            value = "Confirm the installation of a plugin with an explicit set of installation parameters.",
+            notes = "Only used if the global settings instruct Essentials to have the installation parameters confirmed.",
             response = UserFeedback.class)
     @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
     @POST
@@ -181,7 +177,7 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Check for each plugin if its setup phase can be triggered.",
+            value = "Signal a restart of Essentials, so the installation of plugins can continue.",
             response = UserFeedback.class
     )
     @POST
@@ -210,8 +206,7 @@ public class PluginResource {
 
     @ApiOperation(
             value = "Clears plugin cache",
-            notes = "Remote Plugin descriptors are cached for 1 hour. " +
-                    "[DEBUG] This method clears plugin cache and plugins are fetched again on next requests",
+            notes = "Remote Plugin descriptors are cached for 1 hour. Trigger this endpoint manually to flush the cache earlier.",
             response = UserFeedback.class)
     @GET
     @Path("/clearcache")
@@ -222,9 +217,7 @@ public class PluginResource {
 
 
     @ApiOperation(
-            value = "Return list of plugin Javascript modules",
-            notes = "Modules are prefixed with 'tool' or 'feature', depending on their plugin type. "
-                    + "This method is only used outside of the front-end's AngularJS application.",
+            value = "Fetch list of to-be-loaded Javascript resources",
             response = ApplicationData.class)
     @GET
     @Path("/modules")

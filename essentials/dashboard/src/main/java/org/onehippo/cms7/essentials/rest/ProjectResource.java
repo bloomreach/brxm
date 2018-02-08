@@ -67,7 +67,6 @@ public class ProjectResource {
 
     @ApiOperation(
             value = "Retrieve project status",
-            notes = "Status contains true value if one of the InstructionPackage is installed",
             response = ProjectStatus.class)
     @GET
     @Path("/status")
@@ -83,7 +82,7 @@ public class ProjectResource {
 
 
     @ApiOperation(
-            value = "Ping, returns true if application is initialized",
+            value = "Ping, retrieves back-end status of Essentials, to display in the Dashboard.",
             response = SystemInfo.class)
     @GET
     @Path("/ping")
@@ -100,7 +99,7 @@ public class ProjectResource {
 
     @ApiOperation(
             value = "Retrieve project settings",
-            notes = "[API] Project settings are global to the project and typically chosen once when the project is initialized.",
+            notes = "Project settings are global to the project and typically chosen once when the project is initialized.",
             response = ProjectSettings.class)
     @GET
     @Path("/settings")
@@ -114,7 +113,7 @@ public class ProjectResource {
 
 
     @ApiOperation(
-            value = "Save global project settings",
+            value = "Save global project settings.",
             response = UserFeedback.class)
     @POST
     @Path("/settings")

@@ -36,9 +36,13 @@ import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * @version "$Id$"
  */
+@Api(value = "/jcrbrowser", description = "Rest resource which helps browsing and selecting nodes from the repository.")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcrbrowser")
@@ -54,13 +58,9 @@ public class JcrBrowserResource {
         this.jcrService = jcrService;
     }
 
-    @GET
-    @Path("/")
-    public JcrNode getFromRoot() throws RepositoryException {
-        final JcrQuery query = new JcrQuery("/");
-        return getNode(query);
-    }
-
+    @ApiOperation(
+            value = "Fetch a representation of the first 3 levels of hippostd:folder nodes below /content.",
+            response = JcrNode.class)
     @GET
     @Path("/folders")
     public JcrNode getFolders() throws RepositoryException {
