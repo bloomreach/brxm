@@ -224,5 +224,73 @@
                     $scope.hasMessages = !!$scope.plugin.packageFile;
                 }
             };
+        }).directive("essentialsFolderPicker", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    title: '@',
+                    buttonText: '@',
+                    selectedPath: '=',
+                    selected: '='
+                },
+                templateUrl: 'directives/essentials-folder-picker.html',
+                controller: function ($scope, $uibModal, $log, $http) {
+                    $scope.open = function (size) {
+                        var modalInstance = $uibModal.open({
+                            templateUrl: 'tree-picker.html',
+                            controller: ModalInstanceCtrl,
+                            size: size,
+                            resolve: {
+                                title: function () {
+                                    return $scope.title;
+                                }, buttonText: function () {
+                                    return $scope.buttonText;
+                                }, selectedPath: function () {
+                                    return $scope.selectedPath;
+                                }, selected: function () {
+                                    return $scope.selected;
+                                }
+                            }
+
+                        });
+                        modalInstance.result.then(function (selected) {
+                            if (selected) {
+                                $scope.selected = selected;
+                                $scope.selectedPath = selected.id;
+                            }
+                        });
+                    };
+
+                    var ModalInstanceCtrl = function ($scope, $uibModalInstance, title) {
+                        $scope.title = title;
+                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').success(function (data) {
+                            $scope.treeItems = data.items;
+                        });
+                        $scope.ok = function () {
+                            $uibModalInstance.close($scope.selected);
+                        };
+                        $scope.cancel = function () {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                        $scope.callbacks = {
+                            accept: function () {
+                                // disable drag/drop stuff
+                                return false;
+                            },
+                            dragStart: function (event) {
+                                $scope.selected = event.source.nodeScope.$modelValue;
+                                $scope.selectedPath = $scope.selected.id;
+                            },
+                            dragStop: function (event) {
+                                // noop
+                            },
+                            dropped: function (event) {
+                                // noop
+                            }
+                        };
+                    };
+                }
+            };
         });
 })();
