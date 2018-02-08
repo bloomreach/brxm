@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,10 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import java.util.Arrays;
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +32,9 @@ public class HippoResourceFileMapper extends AbstractFileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HippoResourceFileMapper.class);
 
-    static final String HIPPO_RESOURCE = "hippo:resource";
+    static final JcrPathSegment HIPPO_RESOURCE = JcrPaths.getSegment("hippo:resource");
     private static final String DEFAULT_FILENAME = "data.bin";
-    private static final String HIPPO_FILENAME = "hippo:filename";
+    private static final JcrPathSegment HIPPO_FILENAME = JcrPaths.getSegment("hippo:filename");
 
     @Override
     public String apply(Value value) {
@@ -79,10 +76,4 @@ public class HippoResourceFileMapper extends AbstractFileMapper {
         }
     }
 
-    private Optional<Integer> calculateArrayIndex(DefinitionProperty property, Value value) {
-        if (property.getType() == PropertyType.LIST || property.getType() == PropertyType.SET) {
-            return Optional.of(Arrays.asList(property.getValues()).indexOf(value));
-        }
-        return Optional.empty();
-    }
 }

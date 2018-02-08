@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,30 +25,31 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueType;
+
+import com.google.common.collect.Maps;
 
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
-    private final Map<String, DefinitionNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
-    private final Map<String, DefinitionPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
+    private final Collection<DefinitionNodeImpl> nodes = Collections.unmodifiableCollection(modifiableNodes.values());
+    private final Collection<DefinitionPropertyImpl> properties = Collections.unmodifiableCollection(modifiableProperties.values());
 
     // Note: when adding additional meta properties, be sure to update:
     // - #delete and #isEmptyExceptDelete
@@ -57,15 +59,17 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
-    public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
+    // TODO: clarify if path includes name or not, and possibly remove separate name param
+    public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }
 
-    public DefinitionNodeImpl(final String path, final String name, final ContentDefinitionImpl definition) {
+    // TODO: clarify if path includes name or not, and possibly remove separate name param
+    public DefinitionNodeImpl(final String path, final String name, final TreeDefinitionImpl definition) {
         super(path, name, definition);
     }
 
-    public DefinitionNodeImpl(final String path, final ContentDefinitionImpl definition) {
+    public DefinitionNodeImpl(final String path, final TreeDefinitionImpl definition) {
         super(path, definition);
     }
 
@@ -73,12 +77,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         super(name, parent);
     }
 
-    @Override
-    public Map<String, DefinitionNodeImpl> getNodes() {
+    public Collection<DefinitionNodeImpl> getNodes() {
         return nodes;
     }
 
     @Override
+    public DefinitionNodeImpl getNode(final JcrPathSegment name) {
+        return getNode(name.toString());
+    }
+
     public DefinitionNodeImpl getNode(final String name) {
         return modifiableNodes.get(name);
     }
@@ -107,8 +114,13 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     @Override
-    public Map<String, DefinitionPropertyImpl> getProperties() {
+    public Collection<DefinitionPropertyImpl> getProperties() {
         return properties;
+    }
+
+    @Override
+    public DefinitionPropertyImpl getProperty(final JcrPathSegment name) {
+        return getProperty(name.toString());
     }
 
     @Override
@@ -262,13 +274,20 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         modifiableNodes.putAll(newView);
     }
 
+    public DefinitionPropertyImpl addProperty(final JcrPathSegment name, final ValueImpl value) {
+        return addProperty(name.getName(), value);
+    }
+
     public DefinitionPropertyImpl addProperty(final String name, final ValueImpl value) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, value, this);
         modifiableProperties.put(name, property);
         return property;
     }
 
-    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final ValueImpl[] values) {
+    public DefinitionPropertyImpl addProperty(final JcrPathSegment name, final ValueType type, final List<ValueImpl> values) {
+        return addProperty(name.getName(), type, values);
+    }
+    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final List<ValueImpl> values) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         modifiableProperties.put(name, property);
         return property;
@@ -280,7 +299,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
      * @return the new property
      */
     public DefinitionPropertyImpl addProperty(final DefinitionPropertyImpl other) {
-        if (other.getType() == PropertyType.SINGLE) {
+        if (other.getKind() == PropertyKind.SINGLE) {
             DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValue().clone());
             newProp.setOperation(other.getOperation());
             return newProp;
@@ -341,13 +360,13 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public void recursiveSortProperties() {
         sortProperties();
-        getNodes().values().forEach(DefinitionNodeImpl::recursiveSortProperties);
+        getNodes().forEach(DefinitionNodeImpl::recursiveSortProperties);
     }
 
     public void visitResources(ValueConsumer consumer) throws RepositoryException, IOException {
         // find resource values
-        for (DefinitionPropertyImpl dp : getProperties().values()) {
-            switch (dp.getType()) {
+        for (DefinitionPropertyImpl dp : modifiableProperties.values()) {
+            switch (dp.getKind()) {
                 case SINGLE:
                     final ValueImpl val = dp.getValue();
                     if (val.isResource()) {
@@ -366,7 +385,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         }
 
         // recursively visit child definition nodes
-        for (DefinitionNodeImpl dn : getNodes().values()) {
+        for (DefinitionNodeImpl dn : modifiableNodes.values()) {
             dn.visitResources(consumer);
         }
     }

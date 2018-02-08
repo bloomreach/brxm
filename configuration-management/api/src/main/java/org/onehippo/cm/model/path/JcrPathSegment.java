@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Comparator;
  * states as distinct must use the {@link #compareUnindexedFirst(JcrPathSegment)} and
  * {@link #equalsUnindexedSignificant(Object)} methods or the {@link #UNINDEXED_FIRST_ORDER} comparator.
  */
+// TODO: support concept of property segment that cannot accept an index != 0
 public interface JcrPathSegment extends Comparable<JcrPathSegment> {
 
     /**
@@ -34,7 +35,7 @@ public interface JcrPathSegment extends Comparable<JcrPathSegment> {
             Comparator.comparing(JcrPathSegment::getName).thenComparingInt(JcrPathSegment::getIndex);
 
     /**
-     * @return true iff this NodePathSegment is the singleton instance representing a root node
+     * @return true iff this JcrPathSegment is the singleton instance representing a root node
      */
     boolean isRoot();
 

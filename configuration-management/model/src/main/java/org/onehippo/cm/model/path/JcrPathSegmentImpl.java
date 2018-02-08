@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,7 +93,8 @@ class JcrPathSegmentImpl implements JcrPathSegment {
 
     @Override
     public boolean isRoot() {
-        return this == JcrPaths.ROOT_NAME;
+        // default return value is false, but ROOT_NAME overrides this to return true
+        return false;
     }
 
     @Override

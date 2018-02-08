@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -27,11 +27,11 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
 
     private JcrPath path;
     private DefinitionNodeImpl parent;
-    private ContentDefinitionImpl definition;
+    private TreeDefinitionImpl definition;
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
         if (path == null) {
             throw new IllegalArgumentException("Item path must not be null!");
         }
@@ -43,7 +43,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         this.sourceLocation = new SourceLocationImpl();
     }
 
-    public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final String path, final String name, final TreeDefinitionImpl definition) {
         if (StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("Item path must not be blank! name="+name);
         }
@@ -60,7 +60,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         this.sourceLocation = new SourceLocationImpl();
     }
 
-    public DefinitionItemImpl(final String path, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final String path, final TreeDefinitionImpl definition) {
         this(path, StringUtils.substringAfterLast(path, "/"), definition);
     }
 
@@ -97,11 +97,6 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public JcrPathSegment getJcrName() {
-        return name;
-    }
-
-    @Override
     public DefinitionNodeImpl getParent() {
         if (parent == null) {
             throw new IllegalStateException("Root node does not have a parent");
@@ -115,7 +110,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public ContentDefinitionImpl getDefinition() {
+    public TreeDefinitionImpl<?> getDefinition() {
         return definition;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,26 +15,29 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
 
 public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionPropertyImpl>
-        implements ConfigurationProperty<DefinitionPropertyImpl> {
+        implements ConfigurationProperty {
 
-    private PropertyType type;
+    private PropertyKind kind;
     private ValueType valueType;
     private ValueImpl value;
-    private ValueImpl[] values;
+    private List<ValueImpl> values;
 
     @Override
-    public PropertyType getType() {
-        return type;
+    public PropertyKind getKind() {
+        return kind;
     }
 
-    public void setType(final PropertyType type) {
-        this.type = type;
+    public void setKind(final PropertyKind kind) {
+        this.kind = kind;
     }
 
     @Override
@@ -47,6 +50,11 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionP
     }
 
     @Override
+    public boolean isMultiple() {
+        return getKind().isMultiple();
+    }
+
+    @Override
     public ValueImpl getValue() throws ValueFormatException {
         return value;
     }
@@ -56,11 +64,11 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionP
     }
 
     @Override
-    public ValueImpl[] getValues() throws ValueFormatException {
+    public List<ValueImpl> getValues() throws ValueFormatException {
         return values;
     }
 
-    public void setValues(final ValueImpl[] values) {
+    public void setValues(final List<ValueImpl> values) {
         this.values = values;
     }
 

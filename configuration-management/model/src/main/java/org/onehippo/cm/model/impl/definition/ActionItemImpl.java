@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,19 +19,20 @@ import java.util.Objects;
 
 import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.ActionType;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 
 public class ActionItemImpl implements ActionItem {
 
-    private final String path;
+    private final JcrPath path;
     private final ActionType type;
 
     public ActionItemImpl(final String path, final ActionType type) {
-        this.path = path;
+        this.path = JcrPaths.getPath(path);
         this.type = type;
     }
 
-    // todo: use NodePath API
-    @Override public String getPath() {
+    @Override public JcrPath getPath() {
         return path;
     }
 

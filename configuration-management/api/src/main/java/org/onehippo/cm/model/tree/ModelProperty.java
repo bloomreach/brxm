@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.model.tree;
 
+import java.util.List;
+
 /**
  * Represents the (potential) state of a JCR Property as specified in either a ConfigurationItem or
  * DefinitionItem tree.
@@ -27,16 +29,14 @@ public interface ModelProperty extends ModelItem {
     ValueType getValueType();
 
     /**
-     * @return the type of this property: single, ordered-LIST, or unordered-SET
+     * @return the type of this property: SINGLE, ordered-LIST, or unordered-SET
      */
-    PropertyType getType();
+    PropertyKind getKind();
 
     /**
      * @return true iff this is a multi-valued property
      */
-    default boolean isMultiple() {
-        return getType().isMultiple();
-    }
+    boolean isMultiple();
 
     /**
      * @return the Value of this property
@@ -45,8 +45,9 @@ public interface ModelProperty extends ModelItem {
     Value getValue() throws ValueFormatException;
 
     /**
-     * @return the Values of this property, as an array
+     * @return the Values of this property
      * @throws ValueFormatException if the property is single-valued.
      */
-    Value[] getValues() throws ValueFormatException;
+    List<? extends Value> getValues() throws ValueFormatException;
+
 }

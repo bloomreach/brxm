@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl
-        implements ConfigurationItem<D> {
+        implements ConfigurationItem {
 
     private ConfigurationNodeImpl parent;
     private final List<D> modifiableDefinitions = new ArrayList<>();
@@ -46,17 +46,12 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
         if (isRoot()) {
             return JcrPaths.ROOT;
         } else {
-            if (SnsUtils.hasSns(getName(), parent.getNodes().keySet())) {
+            if (SnsUtils.hasSns(getName(), parent.getNodeNames())) {
                 return parent.getJcrPath().resolve(name);
             } else {
                 return parent.getJcrPath().resolve(name.withIndex(0));
             }
         }
-    }
-
-    @Override
-    public JcrPathSegment getJcrName() {
-        return name;
     }
 
     @Override

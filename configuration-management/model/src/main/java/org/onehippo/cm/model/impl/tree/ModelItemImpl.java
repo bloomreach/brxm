@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ModelItem;
+import org.onehippo.cm.model.tree.ModelNode;
 
 public abstract class ModelItemImpl implements ModelItem {
 
@@ -27,6 +28,11 @@ public abstract class ModelItemImpl implements ModelItem {
     @Override
     public String getName() {
         return name.toString();
+    }
+
+    @Override
+    public JcrPathSegment getJcrName() {
+        return name;
     }
 
     public void setName(final String name) {
@@ -41,7 +47,6 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public abstract JcrPath getJcrPath();
-    public abstract JcrPathSegment getJcrName();
 
     public String toString() {
         return getClass().getSimpleName()+"{path='"+ getPath()+"'}";

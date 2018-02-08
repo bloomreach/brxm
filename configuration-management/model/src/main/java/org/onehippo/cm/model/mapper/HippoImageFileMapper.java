@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +35,9 @@ public class HippoImageFileMapper extends AbstractFileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HippoImageFileMapper.class);
 
-    static final String HIPPOGALLERY_IMAGE = "hippogallery:image";
-    static final String HIPPOGALLERY_IMAGESET = "hippogallery:imageset";
-    private static final String HIPPOGALLERY_FILENAME = "hippogallery:filename";
+    static final JcrPathSegment HIPPOGALLERY_IMAGE = JcrPaths.getSegment("hippogallery:image");
+    static final JcrPathSegment HIPPOGALLERY_IMAGESET = JcrPaths.getSegment("hippogallery:imageset");
+    private static final JcrPathSegment HIPPOGALLERY_FILENAME = JcrPaths.getSegment("hippogallery:filename");
 
     private static final String IMAGE_NAME_ARRAY_PATTERN = "%s[%s].%s";
     private static final String GALLERY_IMAGE_ARRAY_NAME_PATTERN = "%s_" + IMAGE_NAME_ARRAY_PATTERN;
@@ -83,9 +83,10 @@ public class HippoImageFileMapper extends AbstractFileMapper {
     }
 
     private Optional<Integer> calculateArrayIndex(DefinitionProperty property, Value value) {
-        if (property.getType() == PropertyType.LIST || property.getType() == PropertyType.SET) {
-            return Optional.of(Arrays.asList(property.getValues()).indexOf(value));
+        if (property.isMultiple()) {
+            return Optional.of(property.getValues().indexOf(value));
         }
         return Optional.empty();
     }
+
 }

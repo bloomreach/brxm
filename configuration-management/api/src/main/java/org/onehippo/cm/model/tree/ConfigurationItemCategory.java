@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cm.model.tree;
  * Defines the category of a ConfigurationItem, which determines its handling during various processing operations.
  */
 public enum ConfigurationItemCategory {
+
     /**
      * Configuration data that is expected to be provided in detail by Hippo CMS projects and may include metadata.
      */
@@ -37,4 +38,5 @@ public enum ConfigurationItemCategory {
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

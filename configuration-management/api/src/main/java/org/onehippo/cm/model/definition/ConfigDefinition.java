@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package org.onehippo.cm.model.definition;
 
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 
 /**
  * Represents the definition of a JCR node tree in a {@link Source} of type {@link SourceType#CONFIG}, including metadata.
+ * {@link #getType()} always returns {@link DefinitionType#CONFIG}.
  */
-public interface ConfigDefinition extends ContentDefinition {
+public interface ConfigDefinition<S extends ConfigSource> extends TreeDefinition<S> {
 }

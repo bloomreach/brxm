@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.onehippo.cm.model.tree;
  * definitions to produce a {@link ConfigurationProperty}.
  */
 public enum PropertyOperation {
+
     /**
      * For a multi-valued property, add values defined in this {@link DefinitionProperty} to existing values.
      * This operation should not be used for single-valued properties.
@@ -47,4 +48,5 @@ public enum PropertyOperation {
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

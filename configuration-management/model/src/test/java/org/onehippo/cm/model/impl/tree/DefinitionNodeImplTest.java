@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 
 import static org.junit.Assert.assertEquals;
+import static org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilderTest.collectionToString;
 
 public class DefinitionNodeImplTest {
 
@@ -30,26 +31,26 @@ public class DefinitionNodeImplTest {
     public void test_reorder_javadoc_examples() throws Exception {
         DefinitionNodeImpl definitionNode = createDefinitionNode("a", "b");
         definitionNode.reorder(createSegmentList("a", "b"));
-        assertEquals("[a, b]", definitionNode.getNodes().keySet().toString());
+        assertEquals("[a, b]", collectionToString(definitionNode.getNodes()));
 
         definitionNode = createDefinitionNode("a", "b", "c", "d");
         definitionNode.reorder(createSegmentList("d", "c"));
-        assertEquals("[d, c, a, b]", definitionNode.getNodes().keySet().toString());
+        assertEquals("[d, c, a, b]", collectionToString(definitionNode.getNodes()));
 
         definitionNode = createDefinitionNode("a", "b");
         definitionNode.reorder(createSegmentList("b", "a", "c", "d"));
-        assertEquals("[b, a]", definitionNode.getNodes().keySet().toString());
+        assertEquals("[b, a]", collectionToString(definitionNode.getNodes()));
     }
 
     @Test
     public void test_reorder_expected_or_existing_names_can_omit_index_one() throws Exception {
         DefinitionNodeImpl definitionNode = createDefinitionNode("a", "a[2]");
         definitionNode.reorder(createSegmentList("a[1]", "a[2]"));
-        assertEquals("[a, a[2]]", definitionNode.getNodes().keySet().toString());
+        assertEquals("[a, a[2]]", collectionToString(definitionNode.getNodes()));
 
         definitionNode = createDefinitionNode("a[1]", "a[2]");
         definitionNode.reorder(createSegmentList("a", "a[2]"));
-        assertEquals("[a[1], a[2]]", definitionNode.getNodes().keySet().toString());
+        assertEquals("[a[1], a[2]]", collectionToString(definitionNode.getNodes()));
     }
 
     private DefinitionNodeImpl createDefinitionNode(final String... childNodeNames) {

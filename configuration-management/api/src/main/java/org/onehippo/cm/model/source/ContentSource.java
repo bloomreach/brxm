@@ -13,21 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl.definition;
+package org.onehippo.cm.model.source;
 
 import org.onehippo.cm.model.definition.ContentDefinition;
-import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 
-public class ContentDefinitionImpl extends TreeDefinitionImpl<ContentSourceImpl>
-        implements ContentDefinition<ContentSourceImpl> {
+/**
+ * Represents a single content source file, which may contain only a single content definition.
+ * {@link #getType()} will always return {@link SourceType#CONTENT}.
+ */
+public interface ContentSource extends Source {
 
-    public ContentDefinitionImpl(final ContentSourceImpl source) {
-        super(source);
-    }
+    /**
+     * @return the ContentDefinition in this Source, or null if none exists
+     */
+    ContentDefinition<?> getContentDefinition();
 
-    @Override
-    public DefinitionType getType() {
-        return DefinitionType.CONTENT;
-    }
 }

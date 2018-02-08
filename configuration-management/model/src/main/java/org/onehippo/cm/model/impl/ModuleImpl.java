@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
@@ -200,13 +201,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     public ContentSourceImpl addContentSource(final String path) {
-        final SourceImpl source = new ContentSourceImpl(path, this);
-        return (ContentSourceImpl) addSource(source);
+        return addSource(new ContentSourceImpl(path, this));
     }
 
     public ConfigSourceImpl addConfigSource(final String path) {
-        final SourceImpl source = new ConfigSourceImpl(path, this);
-        return (ConfigSourceImpl) addSource(source);
+        return addSource(new ConfigSourceImpl(path, this));
     }
 
     public Optional<ConfigSourceImpl> getConfigSource(final String path) {
@@ -241,12 +240,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * Returns existing or adds new source to the source list
-     * TODO: separate sources, since this currently
      * @param source
      * @return
      */
-    private SourceImpl addSource(SourceImpl source) {
-        return sortedSources.add(source) ? source : sortedSources
+    @SuppressWarnings("unchecked") // source.equals does a class.equals check
+    private <S extends SourceImpl> S addSource(S source) {
+        return sortedSources.add(source) ? source : (S) sortedSources
                 .stream()
                 .filter(source::equals)
                 .findFirst().get();
@@ -354,6 +353,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     public ModuleImpl build() {
+        // TODO: add safety check to prevent stale calls to getXxxDefinitions() after addSource() but before build()
+
         // clear and sort definitions into the different types
         namespaceDefinitions.clear();
         configDefinitions.clear();
@@ -381,8 +382,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
 
         // sort the content/config definitions, all other remain in insertion order
-        configDefinitions.sort(new ContentDefinitionComparator());
-        contentDefinitions.sort(new ContentDefinitionComparator());
+        configDefinitions.sort(new UniquenessCheckingTreeDefinitionComparator());
+        contentDefinitions.sort(new UniquenessCheckingTreeDefinitionComparator());
 
         return this;
     }
@@ -430,12 +431,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         digestResource(null, "/../" + ACTIONS_YAML, null, rip, items);
 
         // for each content source
-        for (SourceImpl source : this.getContentSources()) {
-            // assume that there is exactly one content definition here, as required
-            ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
-
-            // add the first definition path to manifest
-            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getJcrPath().toString());
+        for (ContentSourceImpl source : this.getContentSources()) {
+            // add the definition path to manifest
+            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), source.getContentDefinition().getNode().getJcrPath().toString());
         }
 
         // for each config source
@@ -479,36 +477,33 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     protected void digestResourcesForNode(DefinitionNodeImpl defNode, SourceImpl source, ResourceInputProvider rip,
                                           TreeMap<String,String> items) {
-        // find resource values
-        for (DefinitionPropertyImpl dp : defNode.getProperties().values()) {
-            // if value is a resource, digest it
-            Consumer<ValueImpl> digester = v -> {
-                if (v.isResource()) {
-                    try {
-                        digestResource(source, v.getString(), v.getResourceInputStream(), rip, items);
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException("Exception while computing resource digest", e);
-                    }
-                }
-            };
 
-            switch (dp.getType()) {
+        final Consumer<ValueImpl> digester = v -> {
+            if (v.isResource()) {
+                try {
+                    digestResource(source, v.getString(), v.getResourceInputStream(), rip, items);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException("Exception while computing resource digest", e);
+                }
+            }
+        };
+
+        // find resource values
+        defNode.getProperties().forEach(dp -> {
+            // if value is a resource, digest it
+            switch (dp.getKind()) {
                 case SINGLE:
                     digester.accept(dp.getValue());
                     break;
                 case SET: case LIST:
-                    for (ValueImpl value : dp.getValues()) {
-                        digester.accept(value);
-                    }
+                    dp.getValues().forEach(digester);
                     break;
             }
-        }
+        });
 
         // recursively visit child definition nodes
-        for (DefinitionNodeImpl dn : defNode.getNodes().values()) {
-            digestResourcesForNode(dn, source, rip, items);
-        }
+        defNode.getNodes().forEach(dn -> digestResourcesForNode(dn, source, rip, items));
     }
 
     /**
@@ -609,8 +604,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
-    private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
-        public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
+    private class UniquenessCheckingTreeDefinitionComparator implements Comparator<TreeDefinitionImpl> {
+        public int compare(final TreeDefinitionImpl def1, final TreeDefinitionImpl def2) {
             final JcrPath rootPath1 = def1.getNode().getJcrPath();
             final JcrPath rootPath2 = def2.getNode().getJcrPath();
 
@@ -692,7 +687,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
     }
 
-    protected String getFullSourcePath(final SourceImpl source, final ResourceInputProvider rip) {
+    private String getFullSourcePath(final SourceImpl source, final ResourceInputProvider rip) {
         if (rip instanceof FileResourceInputProvider) {
             return ((FileResourceInputProvider)rip).getFullSourcePath(source);
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.onehippo.cm.model.serializer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -32,7 +32,7 @@ public class ContentSourceSerializer extends SourceSerializer {
 
     public Node representSource() {
 
-        NodeTuple nodeTuple = representContentDefinition((ContentDefinitionImpl) source.getDefinitions().get(0));
+        NodeTuple nodeTuple = representContentDefinition(((ContentSourceImpl) source).getContentDefinition());
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
         sourceTuples.add(nodeTuple);

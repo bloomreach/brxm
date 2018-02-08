@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
@@ -270,7 +270,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             if (parentNode != null) {
                 defNode = parentNode.addNode(newNodeName);
             } else {
-                ContentDefinitionImpl def;
+                TreeDefinitionImpl def;
                 if (isContent(path)) {
                     def = ((ContentSourceImpl) source).addContentDefinition();
                 } else {
@@ -525,7 +525,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         return;
                     }
                 } else if (JCR_MIXINTYPES.equals(propertyName)) {
-                    Set<String> oldMixins = Arrays.stream(prop.getValues()).map(Value::getString).collect(toSet());
+                    Set<String> oldMixins = prop.getValues().stream().map(Value::getString).collect(toSet());
                     Set<String> newMixins = property.getValues().stream().map(EsvValue::getString).collect(toSet());
                     if (!oldMixins.equals(newMixins)) {
                         if (!node.isDeltaOverlay()) {
