@@ -21,12 +21,35 @@ class ManageContentLink extends EmbeddedLink {
     super('manage-content-link', commentElement, metaData);
   }
 
-  getComponentParameter() {
-    return this.metaData.componentParameter;
-  }
-
   getDefaultPath() {
     return this.metaData.defaultPath;
+  }
+
+  getParameterName() {
+    return this.metaData.parameterName;
+  }
+
+  getParameterValue() {
+    return this.metaData.parameterValue;
+  }
+
+  isParameterValueRelativePath() {
+    return this.metaData.parameterValueIsRelativePath;
+  }
+
+  getPickerConfig() {
+    if (!this.metaData.parameterName) {
+      return null;
+    }
+    return {
+      configuration: this.metaData.pickerConfiguration,
+      initialPath: this.metaData.pickerInitialPath,
+      isRelativePath: this.metaData.parameterValueIsRelativePath === 'true',
+      remembersLastVisited: this.metaData.pickerRemembersLastVisited === 'true',
+      rootPath: this.metaData.pickerRootPath,
+      selectableNodeTypes: this.metaData.pickerSelectableNodeTypes ?
+        this.metaData.pickerSelectableNodeTypes.split(',') : [],
+    };
   }
 
   getRootPath() {
@@ -35,29 +58,6 @@ class ManageContentLink extends EmbeddedLink {
 
   getTemplateQuery() {
     return this.metaData.templateQuery;
-  }
-
-  getComponentValue() {
-    return this.metaData.componentValue;
-  }
-
-  isComponentParameterRelativePath() {
-    return this.metaData.componentParameterIsRelativePath;
-  }
-
-  getComponentPickerConfig() {
-    if (!this.metaData.componentParameter) {
-      return null;
-    }
-    return {
-      configuration: this.metaData.componentPickerConfiguration,
-      initialPath: this.metaData.componentPickerInitialPath,
-      isRelativePath: this.metaData.componentParameterIsRelativePath === 'true',
-      remembersLastVisited: this.metaData.componentPickerRemembersLastVisited === 'true',
-      rootPath: this.metaData.componentPickerRootPath,
-      selectableNodeTypes: this.metaData.componentPickerSelectableNodeTypes ?
-        this.metaData.componentPickerSelectableNodeTypes.split(',') : [],
-    };
   }
 }
 

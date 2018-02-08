@@ -91,8 +91,8 @@ describe('CreateContentService', () => {
     const config = {
       templateQuery: 'tpl-query',
       containerItem: component,
-      componentParameter: 'document',
-      componentParameterBasePath: '/content/documents/channel',
+      parameterName: 'document',
+      parameterBasePath: '/content/documents/channel',
     };
     CreateContentService.start(config);
     $rootScope.$digest();

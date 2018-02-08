@@ -59,7 +59,6 @@ class Step1Service {
 
   /**
    * Parse the rootPath input value;
-   * - use channelRootPath if rootPath is empty
    * - use as is if rootPath is absolute
    * - concatenate with channelRootPath if rootPath is relative
    * - make sure it does not end with a slash
@@ -69,7 +68,7 @@ class Step1Service {
   _initRootPath(rootPath) {
     const channel = this.ChannelService.getChannel();
     if (!rootPath) {
-      return channel.contentRoot;
+      return null;
     }
 
     if (rootPath.endsWith('/')) {

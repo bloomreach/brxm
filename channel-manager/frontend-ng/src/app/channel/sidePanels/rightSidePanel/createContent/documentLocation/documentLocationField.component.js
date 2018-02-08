@@ -24,7 +24,7 @@ const documentLocationFieldComponent = {
   bindings: {
     defaultPath: '=',
     locale: '=',
-    rootPath: '<',
+    rootPath: '=',
   },
 };
 
