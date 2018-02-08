@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -568,12 +568,14 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         public Component getIcon(String id, IconSize size) {
+            if (decorator == null) {
+                return null;
+            }
             Component icon = decorator.getIcon(id, size);
             if (icon != null) {
                 return icon;
             }
-
-            ResourceReference reference = decorator != null ? decorator.getIcon(size) : null;
+            ResourceReference reference = decorator.getIcon(size);
             return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
 
