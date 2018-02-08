@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.tree;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.onehippo.cm.model.path.JcrPathSegment;
 
@@ -23,23 +24,25 @@ import org.onehippo.cm.model.path.JcrPathSegment;
  * Represents a node of category CONFIG in the ConfigurationItem tree
  * @param <D> the type of DefinitionItem expected from {@link #getDefinitions()}
  */
-public interface ConfigurationNode<D extends DefinitionNode, N extends ConfigurationNode, P extends ConfigurationProperty>
-        extends ConfigurationItem<D,N>, ModelNode<N,P> {
+public interface ConfigurationNode extends ConfigurationItem, ModelNode {
 
     @Override
-    Collection<N> getNodes();
+    List<? extends DefinitionNode> getDefinitions();
 
     @Override
-    N getNode(JcrPathSegment name);
+    Collection<? extends ConfigurationNode> getNodes();
 
     @Override
-    Collection<P> getProperties();
+    ConfigurationNode getNode(JcrPathSegment name);
 
     @Override
-    P getProperty(JcrPathSegment name);
+    Collection<? extends ConfigurationProperty> getProperties();
 
     @Override
-    P getProperty(String name);
+    ConfigurationProperty getProperty(JcrPathSegment name);
+
+    @Override
+    ConfigurationProperty getProperty(String name);
 
     /**
      * Get the {@link ConfigurationItemCategory} of a child node by name.

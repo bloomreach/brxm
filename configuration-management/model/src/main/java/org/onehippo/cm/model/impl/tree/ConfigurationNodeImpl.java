@@ -33,7 +33,7 @@ import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeImpl>
-        implements ConfigurationNode<DefinitionNodeImpl,ConfigurationNodeImpl,ConfigurationPropertyImpl> {
+        implements ConfigurationNode {
 
     // Nodes names must always be indexed names, e.g. node[1]
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();

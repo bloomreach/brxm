@@ -21,7 +21,7 @@ import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ModelItem;
 import org.onehippo.cm.model.tree.ModelNode;
 
-public abstract class ModelItemImpl<N extends ModelNode> implements ModelItem<N> {
+public abstract class ModelItemImpl implements ModelItem {
 
     protected JcrPathSegment name;
 

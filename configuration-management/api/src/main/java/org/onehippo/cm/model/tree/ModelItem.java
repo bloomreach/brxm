@@ -23,7 +23,7 @@ import org.onehippo.cm.model.path.JcrPathSegment;
  * Represents the (potential) state of a JCR Node or Property as specified in either a ConfigurationItem or
  * DefinitionItem tree.
  */
-public interface ModelItem<N extends ModelNode> {
+public interface ModelItem {
 
     /**
      * @return the name of this node or property -- not expected to be JCR encoded
@@ -48,7 +48,7 @@ public interface ModelItem<N extends ModelNode> {
     /**
      * @return the parent node for this item, or null if this item represents the root node
      */
-    N getParent();
+    ModelNode getParent();
 
     /**
      * @return true iff this item represents the JCR root node

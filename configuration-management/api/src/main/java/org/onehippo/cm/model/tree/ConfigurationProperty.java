@@ -15,9 +15,14 @@
  */
 package org.onehippo.cm.model.tree;
 
+import java.util.List;
+
 /**
  * Represents the (potential) state of a JCR Property as specified in a ConfigurationItem tree.
  * @param <D> the type of DefinitionItem expected from {@link #getDefinitions()}
  */
-public interface ConfigurationProperty<D extends DefinitionProperty, N extends ConfigurationNode> extends ConfigurationItem<D,N>, ModelProperty<N> {
+public interface ConfigurationProperty extends ConfigurationItem, ModelProperty {
+
+    @Override
+    List<? extends DefinitionProperty> getDefinitions();
 }

@@ -55,21 +55,21 @@ public interface ConfigurationModel extends Closeable {
     /**
      * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
      */
-    ConfigurationNode<?,?,?> getConfigurationRootNode();
+    ConfigurationNode getConfigurationRootNode();
 
     /**
      * Find a ConfigurationNode by its absolute path.
      * @param path the path of a node
      * @return a ConfigurationNode or null, if no node exists with this path
      */
-    ConfigurationNode<?,?,?> resolveNode(JcrPath path);
+    ConfigurationNode resolveNode(JcrPath path);
 
     /**
      * Find a ConfigurationProperty by its absolute path.
      * @param path the path of a property
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
-    ConfigurationProperty<?,?> resolveProperty(JcrPath path);
+    ConfigurationProperty resolveProperty(JcrPath path);
 
     /**
      * @param path a JCR path

@@ -21,7 +21,7 @@ import java.util.List;
  * Represents the (potential) state of a JCR Property as specified in either a ConfigurationItem or
  * DefinitionItem tree.
  */
-public interface ModelProperty<N extends ModelNode> extends ModelItem<N> {
+public interface ModelProperty extends ModelItem {
 
     /**
      * @return the JCR data type for this property as a ValueType enum

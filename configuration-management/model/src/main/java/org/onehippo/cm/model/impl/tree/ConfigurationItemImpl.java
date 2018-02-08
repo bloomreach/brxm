@@ -27,8 +27,8 @@ import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
-public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl<ConfigurationNodeImpl>
-        implements ConfigurationItem<D,ConfigurationNodeImpl> {
+public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl
+        implements ConfigurationItem {
 
     private ConfigurationNodeImpl parent;
     private final List<D> modifiableDefinitions = new ArrayList<>();

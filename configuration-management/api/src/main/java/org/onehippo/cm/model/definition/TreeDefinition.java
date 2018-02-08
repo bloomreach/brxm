@@ -28,7 +28,7 @@ public interface TreeDefinition<S extends Source> extends Definition<S>, Compara
     /**
      * @return the root node of this definition
      */
-    DefinitionNode<?,?> getNode();
+    DefinitionNode getNode();
 
     /**
      * The effective root path of this tree definition, which <em>may</em> be different from the

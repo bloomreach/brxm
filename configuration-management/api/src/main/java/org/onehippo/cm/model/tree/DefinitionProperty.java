@@ -18,7 +18,7 @@ package org.onehippo.cm.model.tree;
 /**
  * Represents the (potential) state of a JCR Property as specified in a DefinitionItem tree.
  */
-public interface DefinitionProperty<N extends DefinitionNode> extends DefinitionItem<N>, ModelProperty<N> {
+public interface DefinitionProperty extends DefinitionItem, ModelProperty {
 
     /**
      * @return the operation to be performed when merging this definition with previously-existing definitions

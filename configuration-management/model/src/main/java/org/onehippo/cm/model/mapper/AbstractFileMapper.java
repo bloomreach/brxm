@@ -47,7 +47,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
             entry("application/pdf", "pdf"))
             .collect(entriesToMap()));
 
-    protected String getFileExtension(DefinitionNode<?,?> node) {
+    protected String getFileExtension(DefinitionNode node) {
         return node.getProperty(JCR_MIME_TYPE) != null ? mimeTypesToExtMap.getOrDefault(node.getProperty(JCR_MIME_TYPE).getValue().getString(), DEFAULT_EXTENSION)
                 : DEFAULT_EXTENSION;
     }

@@ -44,8 +44,7 @@ import com.google.common.collect.Maps;
 
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
-public class DefinitionNodeImpl extends DefinitionItemImpl
-        implements DefinitionNode<DefinitionNodeImpl,DefinitionPropertyImpl> {
+public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();

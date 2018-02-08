@@ -21,9 +21,10 @@ import java.util.List;
  * Represents an item in the Configuration tree, which may be a ConfigurationNode or ConfigurationProperty.
  * @param <D> the type of DefinitionItem expected from {@link #getDefinitions()}
  */
-public interface ConfigurationItem<D extends DefinitionItem, N extends ConfigurationNode> extends ModelItem<N> {
+public interface ConfigurationItem extends ModelItem {
 
-    N getParent();
+    @Override
+    ConfigurationNode getParent();
 
     /**
      * @return The <strong>ordered</strong> immutable {@link List} of {@link DefinitionItem}s that were used to
@@ -31,6 +32,6 @@ public interface ConfigurationItem<D extends DefinitionItem, N extends Configura
      * using definitions. The order of items in this list describes the order of processing that was used when
      * merging the final state of this item.
      */
-    List<D> getDefinitions();
+    List<? extends DefinitionItem> getDefinitions();
 
 }

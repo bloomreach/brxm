@@ -99,7 +99,7 @@ public class ConfigurationModelUtils {
         }
 
         JcrPath parent = JcrPaths.ROOT;
-        ConfigurationNode<?,?,?> modelNode = model.getConfigurationRootNode();
+        ConfigurationNode modelNode = model.getConfigurationRootNode();
         for (int i = 0; i < itemPath.getSegmentCount(); i++) {
             final JcrPathSegment childSegment = itemPath.getSegment(i);
             final JcrPathSegment indexedChildSegment = childSegment.forceIndex();

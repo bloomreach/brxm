@@ -26,6 +26,6 @@ public interface ContentSource extends Source {
     /**
      * @return the ContentDefinition in this Source, or null if none exists
      */
-    ContentDefinition getContentDefinition();
+    ContentDefinition<?> getContentDefinition();
 
 }

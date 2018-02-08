@@ -23,38 +23,38 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 /**
  * Represents the (potential) state of a JCR Node as specified in either a ConfigurationItem or DefinitionItem tree.
  */
-public interface ModelNode<N extends ModelNode, P extends ModelProperty> extends ModelItem<N> {
+public interface ModelNode extends ModelItem {
 
     /**
      * @return An ordered Collection of child nodes of this model node. Note the ordering is according to encounter order
      *      in the serialized yaml format.
      */
-    Collection<N> getNodes();
+    Collection<? extends ModelNode> getNodes();
 
     /**
      * @return An ordered Collection of properties of this model node. Note the ordering is according to encounter order in
      *      the serialized yaml format. These properties may include JCR properties or metadata properties (identifiable
      *      with the ".meta:" namespace prefix).
      */
-    Collection<P> getProperties();
+    Collection<? extends ModelProperty> getProperties();
 
     /**
      * @param name the name of the child node
      * @return the child {@link ModelNode node} requested, or null if not configured
      */
-    N getNode(JcrPathSegment name);
+    ModelNode getNode(JcrPathSegment name);
 
     /**
      * @param name the name of the property
      * @return the {@link ModelProperty} requested, or null if not configured
      */
-    P getProperty(JcrPathSegment name);
+    ModelProperty getProperty(JcrPathSegment name);
 
     /**
      * @param name the name of the property
      * @return the {@link ModelProperty} requested, or null if not configured
      */
-    P getProperty(String name);
+    ModelProperty getProperty(String name);
 
     /**
      * @return Boolean.TRUE if and only if the order of child nodes of this node can be ignored on detecting changes,
