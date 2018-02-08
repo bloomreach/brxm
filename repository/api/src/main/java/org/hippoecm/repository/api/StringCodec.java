@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ public interface StringCodec {
      * @param plain the string to encode
      * @return the encoded string
      */
-    public String encode(String plain);
+    String encode(String plain);
 
     /**
      * Decodes a string of characters.  Some encoding strategies are one-way, in which case the decoding might return null.
      * @param encoded the previously encoded string
      * @return the decoded string or null if no decoding is possible
      */
-    public String decode(String encoded);
+    String decode(String encoded);
 }

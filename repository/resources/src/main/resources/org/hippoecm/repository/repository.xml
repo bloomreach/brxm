@@ -106,7 +106,7 @@
     <Journal class="org.apache.jackrabbit.core.journal.DatabaseJournal">
       <param name="driver" value="org.h2.Driver" />
       <param name="url" value="jdbc:h2:${rep.home}/datastore/db"/>
-      <param name="schemaObjectPrefix" value="journal_"/>
+      <param name="schemaObjectPrefix" value="repository_"/>
       <param name="databaseType" value="h2"/>
     </Journal>
   </Cluster>

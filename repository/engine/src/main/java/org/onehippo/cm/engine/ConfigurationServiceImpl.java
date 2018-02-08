@@ -335,6 +335,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         lockManager.lock();
         try {
             log.info("ConfigurationService: verify config");
+            // Ensure/force cluster synchronization in case another instance just modified the baseline
+            session.refresh(true);
             return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false);
         } finally {
             lockManager.unlock();

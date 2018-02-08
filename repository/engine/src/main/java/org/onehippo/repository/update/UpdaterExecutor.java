@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,10 @@ public class UpdaterExecutor implements EventListener {
     public UpdaterExecutor(Node updaterNode, final Session session) throws Exception {
         this.session = session;
         this.background = session.impersonate(new SimpleCredentials("system", new char[] {}));
-        report = new UpdaterExecutionReport();
+
+        final String logLevel = JcrUtils.getStringProperty(updaterNode, HippoNodeType.HIPPOSYS_LOGLEVEL, null);
+        report = new UpdaterExecutionReport(logLevel);
+
         try {
             updaterInfo = new UpdaterInfo(updaterNode);
         } catch (Exception e) {
@@ -97,7 +100,7 @@ public class UpdaterExecutor implements EventListener {
         logEvent(updaterInfo.getMethod(), updaterInfo.getStartedBy(), message);
         final NodeUpdateVisitor updater = updaterInfo.getUpdater();
         try {
-            if (updater instanceof BaseNodeUpdateVisitor) {
+            if (updaterInfo.isBaseNodeUpdateVisitor()) {
                 ((BaseNodeUpdateVisitor) updater).setLogger(getLogger());
                 ((BaseNodeUpdateVisitor) updater).setParametersMap(jsonToParamsMap(updaterInfo.getParameters()));
                 ((BaseNodeUpdateVisitor) updater).setVisitorContext(new BaseNodeUpdateVisitorContext());
@@ -107,8 +110,13 @@ public class UpdaterExecutor implements EventListener {
             if (updaterInfo.isRevert()) {
                 runRevertVisitor();
             } else {
-                runPathVisitor();
-                runQueryVisitor();
+                if (updaterInfo.getPath() != null) {
+                    runPathVisitor();
+                } else if (updaterInfo.getQuery() != null) {
+                    runQueryVisitor();
+                } else {
+                    runCustomVisitor();
+                }
             }
         } catch (RepositoryException e) {
             error("Unexpected exception while executing updater", e);
@@ -168,6 +176,34 @@ public class UpdaterExecutor implements EventListener {
             event.timestamp(System.currentTimeMillis()).message(message);
             event.set("query", updaterInfo.getQuery()).set("path", updaterInfo.getPath());
             eventBus.post(event);
+        }
+    }
+
+    private void runCustomVisitor() throws RepositoryException {
+        final BaseNodeUpdateVisitor customVisitor = (BaseNodeUpdateVisitor) updaterInfo.getUpdater();
+        int count = 0;
+        try {
+            Node node = customVisitor.firstNode(session);
+            while (node != null) {
+                if (cancelled) {
+                    info("Update cancelled");
+                    break;
+                }
+                executeUpdater(node);
+                commitBatchIfNeeded();
+                if (++count % PROGRESS_REPORT_INTERVAL == 0) {
+                    info("Processed " + count + " nodes");
+                }
+                node = customVisitor.nextNode();
+            }
+        } catch (UnsupportedOperationException e) {
+            warn("Cannot run updater: not implemented: " + e.getMessage());
+        } catch (RepositoryException e) {
+            error("Unexpected exception while running updater", e);
+        } finally {
+            if (count % PROGRESS_REPORT_INTERVAL != 0) {
+                info("Processed " + count + " nodes");
+            }
         }
     }
 
@@ -287,7 +323,7 @@ public class UpdaterExecutor implements EventListener {
         if (updated) {
             report.updated(path);
         } else if (!failed) {
-            report.skipped(path);
+            report.skipped(path, updaterInfo.logSkippedNodePaths());
         }
     }
 
@@ -498,7 +534,7 @@ public class UpdaterExecutor implements EventListener {
      * would fail
      */
     private void ensureIsCheckedOut(Node node) throws RepositoryException {
-        if (!node.isCheckedOut()) {
+        if (!updaterInfo.skipCheckoutNodes() && !node.isCheckedOut()) {
             log.debug("Checking out node {}" + node.getPath());
             JcrUtils.ensureIsCheckedOut(background.getNodeByIdentifier(node.getIdentifier()));
         }
@@ -608,7 +644,7 @@ public class UpdaterExecutor implements EventListener {
 
         @Override
         public void reportSkipped(String path) {
-            report.skipped(path);
+            report.skipped(path, updaterInfo.logSkippedNodePaths());
         }
 
         @Override

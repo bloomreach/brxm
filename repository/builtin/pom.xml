@@ -60,7 +60,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-testutils</artifactId>
       <version>${hippo.testutils.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

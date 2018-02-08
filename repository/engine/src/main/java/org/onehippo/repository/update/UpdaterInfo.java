@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ class UpdaterInfo {
     private final String identifier;
     private final String name;
     private final String description;
+    private final boolean baseNodeUpdateVisitor;
     private final String path;
     private final String query;
     private final String language;
@@ -70,6 +71,8 @@ class UpdaterInfo {
     private final Binary updatedNodes;
     private final String nodeType;
     private final Class<? extends NodeUpdateVisitor> updaterClass;
+    private final boolean logSkippedNodePaths;
+    private final boolean skipCheckoutNodes;
 
     /**
      * @param node  a node of type <code>hipposys:updaterinfo</code> carrying the meta data of the {@link NodeUpdateVisitor}
@@ -88,28 +91,8 @@ class UpdaterInfo {
         identifier = node.getIdentifier();
         name = node.getName();
         description = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_DESCRIPTION, null);
-        path = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PATH, null);
-        String queryString = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_QUERY, null);
-        if (!Strings.isNullOrEmpty(queryString)) {
-            queryString = RepoUtils.encodeXpath(queryString);
-        }
-        query = queryString;
-        language = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_LANGUAGE, DEFAULT_QUERY_LANGUAGE);
         parameters = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PARAMETERS, null);
 
-        boolean hasPath = path != null && !path.isEmpty();
-        boolean hasQuery = query != null && !query.isEmpty();
-        if (!hasPath && !hasQuery) {
-            throw new IllegalArgumentException("Either path or query property must be present, you specified neither");
-        }
-        if (hasPath && hasQuery) {
-            throw new IllegalArgumentException("Either path or query property must be present, you specified both");
-        }
-        revert = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
-        throttle = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THROTTLE);
-        batchSize = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE);
-        dryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
-        startedBy = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_STARTEDBY, null);
         final String script = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_SCRIPT, null);
         final String klass = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_CLASS, null);
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
@@ -126,8 +109,32 @@ class UpdaterInfo {
             throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());
         }
 
+        baseNodeUpdateVisitor = (BaseNodeUpdateVisitor.class.isAssignableFrom(updaterClass));
+        path = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PATH, null);
+        String queryString = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_QUERY, null);
+        if (!Strings.isNullOrEmpty(queryString)) {
+            queryString = RepoUtils.encodeXpath(queryString);
+        }
+        query = queryString;
+        language = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_LANGUAGE, DEFAULT_QUERY_LANGUAGE);
+        boolean hasPath = path != null && !path.isEmpty();
+        boolean hasQuery = query != null && !query.isEmpty();
+        if (!hasPath && !hasQuery && !baseNodeUpdateVisitor) {
+            throw new IllegalArgumentException("Either path or query property must be present, you specified neither");
+        }
+        if (hasPath && hasQuery) {
+            throw new IllegalArgumentException("Either path or query property must be present, you specified both");
+        }
+        revert = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
+        throttle = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THROTTLE);
+        batchSize = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE);
+        dryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
+        startedBy = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_STARTEDBY, null);
+
         final Object o = updaterClass.newInstance();
         updater = (NodeUpdateVisitor) o;
+        logSkippedNodePaths = baseNodeUpdateVisitor ? ((BaseNodeUpdateVisitor)updater).logSkippedNodePaths() : false;
+        skipCheckoutNodes = baseNodeUpdateVisitor ? ((BaseNodeUpdateVisitor)updater).skipCheckoutNodes() : true;
         updatedNodes = JcrUtils.getBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, null);
         nodeType = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_NODETYPE, null);
     }
@@ -150,7 +157,11 @@ class UpdaterInfo {
      * The description of this updater
      */
     String getDescription() {
-        return name;
+        return description;
+    }
+
+    boolean isBaseNodeUpdateVisitor() {
+        return baseNodeUpdateVisitor;
     }
 
     /**
@@ -240,6 +251,14 @@ class UpdaterInfo {
 
     Class<? extends NodeUpdateVisitor> getUpdaterClass() {
         return updaterClass;
+    }
+
+    boolean logSkippedNodePaths() {
+        return logSkippedNodePaths;
+    }
+
+    boolean skipCheckoutNodes() {
+        return skipCheckoutNodes;
     }
 
     Iterator<String> getUpdatedNodes() {
