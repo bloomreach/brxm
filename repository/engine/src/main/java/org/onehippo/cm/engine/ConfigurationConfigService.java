@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -50,17 +51,17 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
@@ -74,6 +75,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import static java.util.Collections.emptyList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -373,8 +375,8 @@ public class ConfigurationConfigService {
         final ConfigurationProperty updateMixinProperty = updateNode.getProperty(JCR_MIXINTYPES);
 
         // Update the mixin types, if needed
-        final Value[] updateMixinValues = updateMixinProperty != null ? updateMixinProperty.getValues() : new Value[0];
-        final Value[] baselineMixinValues = baselineMixinProperty != null ? baselineMixinProperty.getValues() : new Value[0];
+        final List<? extends Value> updateMixinValues = updateMixinProperty != null ? updateMixinProperty.getValues() : emptyList();
+        final List<? extends Value> baselineMixinValues = baselineMixinProperty != null ? baselineMixinProperty.getValues() : emptyList();
 
         // Add / restore mixin types
         for (Value mixinValue : updateMixinValues) {
@@ -426,8 +428,8 @@ public class ConfigurationConfigService {
         return Arrays.stream(node.getMixinNodeTypes()).anyMatch(mixinType -> mixinType.getName().equals(mixin));
     }
 
-    private boolean hasMixin(final Value[] mixinValues, final String mixin) {
-        return Arrays.stream(mixinValues).anyMatch(mixinValue -> mixinValue.getString().equals(mixin));
+    private boolean hasMixin(final List<? extends Value> mixinValues, final String mixin) {
+        return mixinValues.stream().anyMatch(mixinValue -> mixinValue.getString().equals(mixin));
     }
 
     private void removeMixin(final Node node, final String mixin) throws RepositoryException {
@@ -447,10 +449,8 @@ public class ConfigurationConfigService {
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
-
-        for (String propertyName : updateProperties.keySet()) {
+        for (final ConfigurationProperty updateProperty : updateNode.getProperties()) {
+            final String propertyName = updateProperty.getName();
             if (propertyName.equals(JCR_PRIMARYTYPE) || propertyName.equals(JCR_MIXINTYPES)) {
                 continue; // we have already addressed these properties
             }
@@ -465,8 +465,7 @@ public class ConfigurationConfigService {
                 continue;
             }
 
-            final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
-            final ConfigurationProperty baselineProperty = baselineProperties.get(propertyName);
+            final ConfigurationProperty baselineProperty = baselineNode.getProperty(propertyName);
 
             if (forceApply || baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
                 if (isReferenceTypeProperty(updateProperty)) {
@@ -480,20 +479,21 @@ public class ConfigurationConfigService {
         // Remove deleted properties
         if (forceApply) {
             for (String propertyName : getDeletablePropertyNames(targetNode)) {
-                if (!updateProperties.containsKey(propertyName)
+                if (updateNode.getProperty(propertyName) == null
                         // make sure not to remove properties (now) of category SYSTEM, not even with forceApply==true
                         && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
-                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
+                    removeProperty(propertyName, baselineNode.getProperty(propertyName), targetNode, updateNode);
                 }
             }
         } else {
-            for (String propertyName : baselineProperties.keySet()) {
+            for (final ConfigurationProperty property : baselineNode.getProperties()) {
+                final String propertyName = property.getName();
                 if (!propertyName.equals(JCR_PRIMARYTYPE)
                         && !propertyName.equals(JCR_MIXINTYPES)
-                        && !updateProperties.containsKey(propertyName)
+                        && updateNode.getProperty(propertyName) == null
                         // make sure not to remove properties (now) of category SYSTEM
                         && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
-                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
+                    removeProperty(propertyName, property, targetNode, updateNode);
                 }
             }
         }
@@ -518,15 +518,11 @@ public class ConfigurationConfigService {
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        final Map<String, ? extends ConfigurationNode> updateChildren = updateNode.getNodes();
-        final Map<String, ? extends ConfigurationNode> baselineChildren = baselineNode.getNodes();
-
         // Add or update child nodes
 
-        for (String indexedChildName : updateChildren.keySet()) {
-            ConfigurationNode baselineChild = baselineChildren.get(indexedChildName);
-            final ConfigurationNode updateChild = updateChildren.get(indexedChildName);
-            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedChildName);
+        for (final ConfigurationNode updateChild : updateNode.getNodes()) {
+            final JcrPathSegment nameAndIndex = updateChild.getJcrName().forceIndex();
+            ConfigurationNode baselineChild = baselineNode.getNode(nameAndIndex);
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             final Node childNode;
 
@@ -567,11 +563,11 @@ public class ConfigurationConfigService {
 
         // Remove child nodes that are not / no longer in the model.
 
-        final List<String> indexedNamesOfToBeRemovedChildren = new ArrayList<>();
+        final List<JcrPathSegment> indexedNamesOfToBeRemovedChildren = new ArrayList<>();
         if (forceApply) {
             for (Node childNode : new NodeIterable(targetNode.getNodes())) {
-                final String indexedChildName = SnsUtils.createIndexedName(childNode);
-                if (!updateChildren.containsKey(indexedChildName)) {
+                final JcrPathSegment indexedChildName = JcrPaths.getSegment(childNode).forceIndex();
+                if (updateNode.getNode(indexedChildName) == null) {
                     if (updateNode.getChildNodeCategory(indexedChildName) == ConfigurationItemCategory.CONFIG) {
                         indexedNamesOfToBeRemovedChildren.add(indexedChildName);
                     }
@@ -584,24 +580,24 @@ public class ConfigurationConfigService {
             //       while additional runtime/repository SNS nodes have not been added, or at the end only.
             //       This is why we process the child nodes of the baseline model in *reverse* order.
 
-            final List<String> reversedIndexedBaselineChildNames = new ArrayList<>(baselineChildren.keySet());
+            final List<JcrPathSegment> reversedIndexedBaselineChildNames =
+                    baselineNode.getNodes().stream().map(ConfigurationNode::getJcrName).collect(Collectors.toList());
             Collections.reverse(reversedIndexedBaselineChildNames);
 
-            for (String indexedChildName : reversedIndexedBaselineChildNames) {
-                if (!updateChildren.containsKey(indexedChildName)) {
+            for (JcrPathSegment indexedChildName : reversedIndexedBaselineChildNames) {
+                if (updateNode.getNode(indexedChildName) == null) {
                     indexedNamesOfToBeRemovedChildren.add(indexedChildName);
                 }
             }
         }
 
-        for (String indexedChildName : indexedNamesOfToBeRemovedChildren) {
-            final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedChildName);
+        for (JcrPathSegment nameAndIndex : indexedNamesOfToBeRemovedChildren) {
             final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             if (childNode != null) {
-                if (!baselineChildren.containsKey(indexedChildName)) {
+                if (baselineNode.getNode(nameAndIndex) == null) {
                     final String msg = String.format("[OVERRIDE] Child node '%s' exists, " +
                                     "but will be deleted while processing the children of node '%s' defined in %s.",
-                            indexedChildName, updateNode.getPath(), updateNode.getOrigin());
+                            nameAndIndex, updateNode.getPath(), updateNode.getOrigin());
                     log.info(msg);
                 }
 //                else {
@@ -615,8 +611,8 @@ public class ConfigurationConfigService {
         // Care for node ordering?
         final boolean orderingIsRelevant = targetNode.getPrimaryNodeType().hasOrderableChildNodes()
                 && (updateNode.getIgnoreReorderedChildren() == null || !updateNode.getIgnoreReorderedChildren());
-        if (orderingIsRelevant && updateChildren.size() > 0) {
-            reorderChildren(targetNode, new ArrayList<>(updateChildren.keySet()));
+        if (orderingIsRelevant && updateNode.getNodes().size() > 0) {
+            reorderChildren(targetNode, updateNode.getNodes().stream().map(ConfigurationNode::getName).collect(Collectors.toList()));
         }
     }
 
@@ -642,7 +638,7 @@ public class ConfigurationConfigService {
         final ConfigurationNodeImpl child = new ConfigurationNodeImpl();
         final ConfigurationPropertyImpl property = new ConfigurationPropertyImpl();
         property.setName(JCR_PRIMARYTYPE);
-        property.setType(PropertyType.SINGLE);
+        property.setKind(PropertyKind.SINGLE);
         property.setValueType(ValueType.NAME);
         property.setValue(new ValueImpl(primaryType));
         child.addProperty(property.getName(), property);

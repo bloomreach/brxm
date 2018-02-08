@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.OrderableByNameListSorter;
@@ -30,6 +28,8 @@ import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.SnsUtils;
+
+import com.google.common.collect.Sets;
 
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 

@@ -149,6 +149,7 @@ public class DbLockManager extends AbstractLockManager {
                         int index = 1;
                         for (String uniqueIndex : uniqueIndexes) {
                             statement.addBatch("CREATE UNIQUE INDEX " + tableName + "_idx_"+index+" on " + tableName + "("+uniqueIndex+")");
+                            index++;
                         }
                         statement.setQueryTimeout(10);
                         statement.executeBatch();

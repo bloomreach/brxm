@@ -252,12 +252,12 @@ public class ConfigurationContentService {
                                       final Session session, final boolean isUpgradeTo12) throws RepositoryException {
         for (final ActionItem item : items) {
             if (item.getType() == ActionType.DELETE) {
-                final String baseNodePath = item.getPath();
-                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
+                final JcrPath baseNodePath = item.getPath();
+                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath.suppressIndices().toString(), model) == ConfigurationItemCategory.CONTENT) {
                     log.debug("Processing delete action for node: {}", baseNodePath);
 
                     final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath,
-                            StringUtils.substringAfterLast(baseNodePath, SEPARATOR), null);
+                            baseNodePath.getLastSegment(), null);
                     contentProcessingService.apply(deleteNode, ActionType.DELETE, session, isUpgradeTo12);
                 } else {
                     log.warn(String.format("Base node '%s' is not categorized as content, skipping delete action.",

@@ -57,8 +57,9 @@ class UpdaterExecutionReport {
     private static class TimestampPrintStreamLogger extends PrintStreamLogger {
         private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        public TimestampPrintStreamLogger(final String name, final int level, final PrintStream... out) throws IllegalArgumentException {
-            super(name, level, out);
+        public TimestampPrintStreamLogger(final String name, final String logLevel, final PrintStream... out)
+                throws IllegalArgumentException {
+            super(name, logLevel, out);
         }
 
         @Override
@@ -68,11 +69,13 @@ class UpdaterExecutionReport {
         }
     }
 
-    UpdaterExecutionReport() throws IOException {
+    UpdaterExecutionReport(final String logLevel) throws IOException {
         logFile = File.createTempFile("updater-execution", ".log.tmp", null);
         logStream = new PrintStream(logFile);
         cbos = new CircularBufferOutputStream(4096);
-        logger = new TimestampPrintStreamLogger("repository", PrintStreamLogger.DEBUG_LEVEL, logStream, new PrintStream(cbos));
+
+        logger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
+
         updatedFile = File.createTempFile("updater-updated", "txt.tmp", null);
         updatedStream = new PrintStream(updatedFile);
         failedFile = File.createTempFile("updater-failed", "txt.tmp", null);
