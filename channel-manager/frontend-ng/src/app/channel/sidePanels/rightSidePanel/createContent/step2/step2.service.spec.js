@@ -22,6 +22,7 @@ describe('Step2Service', () => {
   let ContentService;
   let DialogService;
   let FeedbackService;
+  let HstComponentService;
   let Step2Service;
 
   function expectReset() {
@@ -39,18 +40,41 @@ describe('Step2Service', () => {
       $provide.value('ContentService', ContentService);
     });
 
-    inject((_$q_, _$rootScope_, _$translate_, _ContentEditor_, _DialogService_, _FeedbackService_, _Step2Service_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$translate_,
+      _ContentEditor_,
+      _DialogService_,
+      _FeedbackService_,
+      _HstComponentService_,
+      _Step2Service_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $translate = _$translate_;
       ContentEditor = _ContentEditor_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
+      HstComponentService = _HstComponentService_;
       Step2Service = _Step2Service_;
     });
 
     spyOn($translate, 'instant').and.callThrough();
     spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showNotification');
+
+    Step2Service.componentInfo = {
+      parameterName: 'componentParameterName',
+      id: 'componentId',
+      label: 'componentName',
+      variant: 'componentVariant',
+      parameterBasePath: 'componentParameterBasePath',
+    };
+
+    ContentEditor.document = {
+      repositoryPath: 'documentRepositoryPath',
+    };
   });
 
   it('is created with a clean state', () => {
@@ -146,6 +170,56 @@ describe('Step2Service', () => {
 
       expect($translate.instant).toHaveBeenCalledWith('ERROR_error_reason');
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error_reason', 'error_params');
+    });
+  });
+
+  describe('saveComponentParameter', () => {
+    it('resolves without taking action if component does not have a "parameterName"', (done) => {
+      spyOn(HstComponentService, 'setPathParameter');
+      delete Step2Service.componentInfo.parameterName;
+
+      Step2Service.saveComponentParameter().then(() => {
+        expect(HstComponentService.setPathParameter).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('invokes HstComponentService.setPathParameter to store the component parameter data', () => {
+      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
+
+      Step2Service.saveComponentParameter();
+      $rootScope.$digest();
+
+      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
+        'componentId',
+        'componentVariant',
+        'componentParameterName',
+        'documentRepositoryPath',
+        'componentParameterBasePath',
+      );
+    });
+
+    it('shows a notification if path parameter is set', () => {
+      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
+      Step2Service.saveComponentParameter();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith(
+        'NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT',
+        { componentName: 'componentName' },
+      );
+    });
+
+    it('shows an error if path parameter can not be set', () => {
+      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject());
+      Step2Service.saveComponentParameter();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith(
+        'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+        { componentName: 'componentName' },
+      );
     });
   });
 
